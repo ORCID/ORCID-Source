@@ -73,7 +73,7 @@ public class WorkFormTest extends XMLTestCase {
     public void testEmptyTranslatedTitleDontGetIntoTheWork() {
         WorkForm form = new WorkForm();
         form.setTitle(Text.valueOf("The title"));
-        org.orcid.pojo.ajaxForm.TranslatedTitle translatedTitle = new org.orcid.pojo.ajaxForm.TranslatedTitle();
+        org.orcid.pojo.ajaxForm.TranslatedTitleForm translatedTitle = new org.orcid.pojo.ajaxForm.TranslatedTitleForm();
         
         //Test with empty values
         translatedTitle.setContent(" ");

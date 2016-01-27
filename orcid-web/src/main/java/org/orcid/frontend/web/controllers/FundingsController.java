@@ -24,7 +24,6 @@ import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,27 +36,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingType;
-import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
-import org.orcid.pojo.FundingExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.FundingExternalIdentifierForm;
@@ -66,7 +58,7 @@ import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.OrgDefinedFundingSubType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,6 +105,9 @@ public class FundingsController extends BaseWorkspaceController {
 
     @Resource(name = "languagesMap")
     private LanguagesMap lm;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -139,7 +134,7 @@ public class FundingsController extends BaseWorkspaceController {
 
         FundingTitleForm title = new FundingTitleForm();
         title.setTitle(new Text());
-        TranslatedTitle tt = new TranslatedTitle();
+        TranslatedTitleForm tt = new TranslatedTitleForm();
         tt.setContent(new String());
         tt.setLanguageCode(new String());
         tt.setLanguageName(new String());
@@ -195,25 +190,11 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding.json", method = RequestMethod.DELETE)
     public @ResponseBody
     FundingForm deleteFundingJson(HttpServletRequest request, @RequestBody FundingForm funding) {
-        Funding delFunding = funding.toOrcidFunding();
-        OrcidProfile currentProfile = getEffectiveProfile();
-        FundingList fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
-        FundingForm deletedFunding = new FundingForm();
-        if (fundings != null) {
-            List<Funding> fundingList = fundings.getFundings();
-            Iterator<Funding> iterator = fundingList.iterator();
-            while (iterator.hasNext()) {
-                Funding orcidFunding = iterator.next();
-                if (delFunding.equals(orcidFunding)) {
-                    iterator.remove();
-                    deletedFunding = funding;
-                }
-            }
-            fundings.setFundings(fundingList);
-            currentProfile.getOrcidActivities().setFundings(fundings);
-            profileFundingManager.removeProfileFunding(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(funding.getPutCode().getValue()));
+        if (funding != null && !PojoUtil.isEmpty(funding.getPutCode())) {
+            String orcid = getEffectiveUserOrcid();
+            profileFundingManager.removeProfileFunding(orcid, Long.valueOf(funding.getPutCode().getValue()));
         }
-        return deletedFunding;
+        return funding;
     }
 
     /**
@@ -221,7 +202,7 @@ public class FundingsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/fundingIds.json", method = RequestMethod.GET)
     public @ResponseBody
-    List<String> getFundingsJson(HttpServletRequest request) {
+    List<String> getFundingsIds(HttpServletRequest request) {
         // Get cached profile
         List<String> fundingIds = createFundingIdList(request);
         return fundingIds;
@@ -233,24 +214,16 @@ public class FundingsController extends BaseWorkspaceController {
      * 
      */
     private List<String> createFundingIdList(HttpServletRequest request) {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        FundingList fundings = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
-
-        HashMap<String, FundingForm> fundingsMap = new HashMap<>();
+        Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);        
+        String orcid = getEffectiveUserOrcid();
+        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);        
+        List<Funding> fundings = profileFundingManager.getFundingList(orcid, lastModified.getTime());                
+        HashMap<String, FundingForm> fundingsMap = new HashMap<String, FundingForm>();
         List<String> fundingIds = new ArrayList<String>();
         if (fundings != null) {
-            for (Funding funding : fundings.getFundings()) {
+            for (Funding funding : fundings) {
                 try {
-                    FundingForm form = FundingForm.valueOf(funding);
-                    //XXX: Enhance the external identifiers with the new relationship field
-                    ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(Long.valueOf(funding.getPutCode()));
-                    if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
-                        FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
-                        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
-                        enhanceExternalIdentifiers(form, fundingExternalIdentifiers);
-                    }
-                    
+                    FundingForm form = FundingForm.valueOf(funding);                                        
                     if (funding.getType() != null) {
                         form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
                     }
@@ -267,8 +240,9 @@ public class FundingsController extends BaseWorkspaceController {
                         form.setAmount(Text.valueOf(formattedAmount));
                     }
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, funding.getOrganization().getAddress().getCountry().name())));
-                    fundingsMap.put(funding.getPutCode(), form);
-                    fundingIds.add(funding.getPutCode());
+                    String putCode = String.valueOf(funding.getPutCode());
+                    fundingsMap.put(putCode, form);
+                    fundingIds.add(putCode);
                 } catch (Exception e) {
                     LOGGER.error("Failed to parse as Funding. Put code" + funding.getPutCode(), e);
                 }
@@ -312,20 +286,11 @@ public class FundingsController extends BaseWorkspaceController {
     public @ResponseBody
     FundingForm getFundingJson(@RequestParam(value = "fundingId") Long fundingId) {
         if (fundingId == null)
-            return null;
-        ProfileFundingEntity profileFunding = profileFundingManager.getProfileFundingEntity(fundingId);
-        if (profileFunding == null) {
-            return null;
-        }
+            return null;        
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
-        Funding funding = jpa2JaxbAdapter.getFunding(profileFunding);
+        Funding funding = profileFundingManager.getFunding(getEffectiveUserOrcid(), fundingId);
         FundingForm form = FundingForm.valueOf(funding);
-        //XXX: Enhance the external identifiers with the new relationship field
-        if(!PojoUtil.isEmpty(profileFunding.getExternalIdentifiersJson())) {
-            FundingExternalIdentifiers extIdsPojo = JsonUtils.readObjectFromJsonString(profileFunding.getExternalIdentifiersJson(), FundingExternalIdentifiers.class);
-            org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers fundingExternalIdentifiers = extIdsPojo.toRecordPojo();
-            enhanceExternalIdentifiers(form, fundingExternalIdentifiers);
-        }        
+               
         if (funding.getType() != null) {
             form.setFundingTypeForDisplay(getMessage(buildInternationalizationKey(FundingType.class, funding.getType().value())));
         }
@@ -416,92 +381,42 @@ public class FundingsController extends BaseWorkspaceController {
         return funding;
     }
 
-    private void addFunding(FundingForm funding) throws Exception {
+    private void addFunding(FundingForm fundingForm) throws Exception {
         // Set the right value for the amount
-        setAmountWithTheCorrectFormat(funding);
+        setAmountWithTheCorrectFormat(fundingForm);
         // Set the credit name
-        setContributorsCreditName(funding);
+        setContributorsCreditName(fundingForm);
         // Set default type for external identifiers
-        setTypeToExternalIdentifiers(funding);
-        // Update on database
-        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
-        ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(funding.toOrcidFunding(), userProfile);
-        profileFundingEntity.setSource(new SourceEntity(userProfile));
-        //XXX: Enhance the external identifiers with the new relationship field
-        enhanceExternalIdentifiers(profileFundingEntity, funding);        
-        
-        // Persists the profile funding object
-        ProfileFundingEntity newProfileFunding = profileFundingManager.addProfileFunding(profileFundingEntity);        
-
-        // Transform it back into a OrcidGrant to add it into the cached
-        // object
-        Funding newFunding = jpa2JaxbAdapter.getFunding(newProfileFunding);
-        // Update the fundings on the cached object
-        OrcidProfile currentProfile = getEffectiveProfile();
-        // Initialize activities if needed
-        if (currentProfile.getOrcidActivities() == null) {
-            currentProfile.setOrcidActivities(new OrcidActivities());
-        }
-        // Initialize fundings if needed
-        if (currentProfile.getOrcidActivities().getFundings() == null) {
-            currentProfile.getOrcidActivities().setFundings(new FundingList());
-        }
+        setTypeToExternalIdentifiers(fundingForm);
+        // Add to database
+        Funding funding = fundingForm.toFunding();
+        funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false);        
 
         // make the newly added funding the default
-        profileFundingManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), newProfileFunding.getId());
-
-        // Set the new funding into the cached object
-        currentProfile.getOrcidActivities().getFundings().getFundings().add(newFunding);
+        profileFundingManager.updateToMaxDisplay(getEffectiveUserOrcid(), funding.getPutCode());
 
         // Send the new funding sub type for indexing
-        if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
-                && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-            profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
+        if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
+                && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+            profileFundingManager.addFundingSubType(fundingForm.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
 
-    private void editFunding(FundingForm funding) throws Exception {
+    private void editFunding(FundingForm fundingForm) throws Exception {
         // Set the right value for the amount
-        setAmountWithTheCorrectFormat(funding);
+        setAmountWithTheCorrectFormat(fundingForm);
         // Set the credit name
-        setContributorsCreditName(funding);
+        setContributorsCreditName(fundingForm);
         // Set default type for external identifiers
-        setTypeToExternalIdentifiers(funding);
-        // Update profile_funding data
-        ProfileFundingEntity updatedProfileFundingEntity = jaxb2JpaAdapter.getUpdatedProfileFundingEntity(funding.toOrcidFunding());
-        //XXX: Enhance the external identifiers with the new relationship field
-        enhanceExternalIdentifiers(updatedProfileFundingEntity, funding);
-        updatedProfileFundingEntity = profileFundingManager.updateProfileFunding(updatedProfileFundingEntity);
-        // Transform it back into a OrcidGrant to add it into the cached
-        // object
-        Funding updatedFunding = jpa2JaxbAdapter.getFunding(updatedProfileFundingEntity);
-        // Update the funding on the cached object
-        OrcidProfile currentProfile = getEffectiveProfile();
+        setTypeToExternalIdentifiers(fundingForm);
         
-        if (!currentProfile.getOrcidIdentifier().getPath().equals(funding.getSource()))
-        	throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
-        
-        // Initialize activities if needed
-        if (currentProfile.getOrcidActivities() == null) {
-            currentProfile.setOrcidActivities(new OrcidActivities());
-        }
-        // Initialize fundings if needed
-        if (currentProfile.getOrcidActivities().getFundings() == null) {
-            currentProfile.getOrcidActivities().setFundings(new FundingList());
-        }
-
-        // Set the new funding into the cached object
-        for (int i = 0; i < currentProfile.getOrcidActivities().getFundings().getFundings().size(); i++) {
-            Funding existingFunding = currentProfile.getOrcidActivities().getFundings().getFundings().get(i);
-            if (updatedFunding.getPutCode().equals(existingFunding.getPutCode())) {
-                currentProfile.getOrcidActivities().getFundings().getFundings().set(i, updatedFunding);
-                break;
-            }
-        }
+        // Add to database
+        Funding funding = fundingForm.toFunding();
+        funding = profileFundingManager.updateFunding(getEffectiveUserOrcid(), funding, false);
 
         // Send the new funding sub type for indexing
-        if (funding.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(funding.getOrganizationDefinedFundingSubType().getSubtype())
-                && !funding.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
-            profileFundingManager.addFundingSubType(funding.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
+        if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
+                && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())
+            profileFundingManager.addFundingSubType(fundingForm.getOrganizationDefinedFundingSubType().getSubtype().getValue(), getEffectiveUserOrcid());
     }
 
     private void removeEmptyExternalIds(FundingForm funding) {
@@ -564,21 +479,10 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/funding.json", method = RequestMethod.PUT)
     public @ResponseBody
     FundingForm updateProfileFundingJson(HttpServletRequest request, @RequestBody FundingForm fundingForm) {
-        // Get cached profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-        FundingList orcidGrants = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getFundings();
-        if (orcidGrants != null) {
-            List<Funding> fundings = orcidGrants.getFundings();
-            if (fundings != null) {
-                for (Funding funding : fundings) {
-                    if (funding.getPutCode().equals(fundingForm.getPutCode().getValue())) {
-                        // Update the privacy of the funding
-                        profileFundingManager.updateProfileFundingVisibility(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(fundingForm.getPutCode().getValue()),
-                                fundingForm.getVisibility().getVisibility());
-                    }
-                }
-            }
-        }
+        if(fundingForm != null && !PojoUtil.isEmpty(fundingForm.getPutCode())) {
+            profileFundingManager.updateProfileFundingVisibility(getEffectiveUserOrcid(), Long.valueOf(fundingForm.getPutCode().getValue()),
+                    fundingForm.getVisibility().getVisibility());
+        }        
         return fundingForm;
     }
 
@@ -945,52 +849,5 @@ public class FundingsController extends BaseWorkspaceController {
     boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {
         OrcidProfile profile = getEffectiveProfile();
         return profileFundingManager.updateToMaxDisplay(profile.getOrcidIdentifier().getPath(), putCode);
-    }
-            
-    /**
-     * New external identifiers for funding have relationship field, so, we need to add those new fields to the funding object so they can be persisted.
-     * This function might be used between the transition from API 1.2 style API 2.0 style
-     * @param profileFunding
-     *          The object to be enhanced
-     * @param funding
-     *          The object containing the external identifiers used to enhance funding object          
-     * */
-    private void enhanceExternalIdentifiers(ProfileFundingEntity profileFunding, FundingForm funding) {
-        if(funding != null && funding.getExternalIdentifiers() != null && !funding.getExternalIdentifiers().isEmpty()) {
-            org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers extIds = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers();
-            for(FundingExternalIdentifierForm extIdForm : funding.getExternalIdentifiers()) {
-                org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier extId = extIdForm.toRecordFundingExternalIdentifier();
-                extIds.getExternalIdentifier().add(extId);
-            }            
-            
-            //Transform the message external identifiers to core external identifiers
-            FundingExternalIdentifiers feis = FundingExternalIdentifiers.fromRecordPojo(extIds);
-            
-            profileFunding.setExternalIdentifiersJson(JsonUtils.convertToJsonString(feis));                                    
-        }
-    }
-        
-    /**
-     * New external identifiers for funding have relationship field, so, we need to add those new fields to the funding object so they can be displayed in the UI.
-     * This function might be used between the transition from API 1.2 style API 2.0 style
-     * @param funding
-     *          The object to be enhanced
-     * @param extIds
-     *          The external identifiers used to enhance funding object          
-     * */
-    private void enhanceExternalIdentifiers(FundingForm funding, org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers extIds) {
-        List<FundingExternalIdentifierForm> fundingExternalIdentifiers = new ArrayList<FundingExternalIdentifierForm>();
-        if(extIds != null && !extIds.getExternalIdentifier().isEmpty()) {
-            for(FundingExternalIdentifier extId : extIds.getExternalIdentifier()) {
-                FundingExternalIdentifierForm newExtId = FundingExternalIdentifierForm.valueOf(extId);
-                //Set the relationship default value
-                if(PojoUtil.isEmpty(newExtId.getRelationship())) {
-                    newExtId.setRelationship(Text.valueOf(Relationship.SELF.value()));
-                }                
-                fundingExternalIdentifiers.add(newExtId);
-            }
-        }
-        funding.setExternalIdentifiers(fundingExternalIdentifiers);
-    }
-    
+    }                
 }

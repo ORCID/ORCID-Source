@@ -80,7 +80,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
     
     private Text subjectName;
     
-    private TranslatedTitle translatedSubjectName;
+    private TranslatedTitleForm translatedSubjectName;
     
     private Text subjectUrl;
 
@@ -284,11 +284,11 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         this.subjectName = subjectName;
     }
 
-    public TranslatedTitle getTranslatedSubjectName() {
+    public TranslatedTitleForm getTranslatedSubjectName() {
         return translatedSubjectName;
     }
 
-    public void setTranslatedSubjectName(TranslatedTitle translatedSubjectName) {
+    public void setTranslatedSubjectName(TranslatedTitleForm translatedSubjectName) {
         this.translatedSubjectName = translatedSubjectName;
     }
 
@@ -543,7 +543,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
                 form.setSubjectName(Text.valueOf(peerReview.getSubjectName().getTitle().getContent()));
             }
             
-            TranslatedTitle tTitle = new TranslatedTitle();
+            TranslatedTitleForm tTitle = new TranslatedTitleForm();
             if(peerReview.getSubjectName().getTranslatedTitle() != null) {
                 tTitle.setContent(peerReview.getSubjectName().getTranslatedTitle().getContent());
                 tTitle.setLanguageCode(peerReview.getSubjectName().getTranslatedTitle().getLanguageCode());

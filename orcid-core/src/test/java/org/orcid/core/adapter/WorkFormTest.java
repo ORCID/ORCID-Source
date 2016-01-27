@@ -57,7 +57,7 @@ import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
@@ -202,7 +202,7 @@ public class WorkFormTest {
         form.setSource("0000-0000-0000-0000");        
         form.setSubtitle(Text.valueOf("Subtitle"));
         form.setTitle(Text.valueOf("Title"));
-        form.setTranslatedTitle(new TranslatedTitle("Translated Title", "es"));
+        form.setTranslatedTitle(new TranslatedTitleForm("Translated Title", "es"));
         form.setUrl(Text.valueOf("http://myurl.com"));
         form.setVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);        
         List<WorkExternalIdentifier> extIds = new ArrayList<WorkExternalIdentifier>();

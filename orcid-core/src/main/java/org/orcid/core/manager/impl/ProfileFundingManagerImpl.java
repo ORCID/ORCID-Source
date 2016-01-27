@@ -263,7 +263,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * */
     @Override
     @Transactional
-    public Funding createFunding(String orcid, Funding funding) {
+    public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
     	ActivityValidator.validateFunding(funding, sourceEntity, true);
         //Check for duplicates
@@ -288,7 +288,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         setIncomingWorkPrivacy(profileFundingEntity, profile);
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItem(profileFundingEntity));
+        if(isApiRequest) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItem(profileFundingEntity));
+        }        
         return jpaJaxbFundingAdapter.toFunding(profileFundingEntity);
     }
 
@@ -314,17 +316,19 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
      * @return the updated funding                  
      * */
     @Override    
-    public Funding updateFunding(String orcid, Funding funding) {
+    public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
     	ActivityValidator.validateFunding(funding, sourceEntity, false);
-    	List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
-        for(ProfileFundingEntity existingFunding : existingFundings) {
-        	Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
-            if(!existing.getPutCode().equals(funding.getPutCode())) {
-            	 ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
-            			 existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+    	if(!isApiRequest) {
+    	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
+            for(ProfileFundingEntity existingFunding : existingFundings) {
+                Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
+                if(!existing.getPutCode().equals(funding.getPutCode())) {
+                     ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+                                     existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                }
             }
-        }
+    	}    	
     	
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
@@ -340,7 +344,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         
         pfe = profileFundingDao.merge(pfe);
         profileFundingDao.flush();
-        notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItem(pfe));
+        if(!isApiRequest) {
+            notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, createItem(pfe));
+        }
         return jpaJaxbFundingAdapter.toFunding(pfe);
     }
     
@@ -365,7 +371,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
 
     
     /**
-     * Get the list of fundings that belongs to a user
+     * Get the list of fundings summaries that belongs to a user
      * 
      * @param userOrcid
      * @param lastModified
@@ -378,6 +384,22 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
         return jpaJaxbFundingAdapter.toFundingSummary(fundingEntities);
     }
+    
+    /**
+     * Get the list of fundings that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of fundings that belongs to this user
+     * */
+    @Override
+    @Cacheable(value = "fundings", key = "#userOrcid.concat('-').concat(#lastModified)")
+    public List<Funding> getFundingList(String userOrcid, long lastModified) {
+        List<ProfileFundingEntity> fundingEntities = profileFundingDao.getByUser(userOrcid);
+        return jpaJaxbFundingAdapter.toFunding(fundingEntities);
+    }
+    
     
     private Item createItem(ProfileFundingEntity profileFundingEntity) {
         Item item = new Item();
