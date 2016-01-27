@@ -52,9 +52,8 @@ public class OtherNamesForm implements ErrorsInterface, Serializable {
         OtherNames otherNames = new OtherNames();
         List<OtherName> onList = new ArrayList<OtherName>();
         if(this.otherNames != null && !this.otherNames.isEmpty()) {
-            otherNames.setOtherNames(new ArrayList<OtherName>());
             for(OtherNameForm otherNameForm : this.otherNames) {
-                otherNames.getOtherNames().add(otherNameForm.toOtherName());
+                onList.add(otherNameForm.toOtherName());
             }
         }
         
