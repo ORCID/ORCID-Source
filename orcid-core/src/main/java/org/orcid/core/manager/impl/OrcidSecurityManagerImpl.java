@@ -292,12 +292,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public String getClientIdFromAPIRequest() {
-        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        if (oAuth2Authentication == null) {
-            return null;
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = context.getAuthentication();
+        if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
+            OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
+            OAuth2Request request = oAuth2Authentication.getOAuth2Request();
+            return request.getClientId();
         }
-        OAuth2Request request = oAuth2Authentication.getOAuth2Request();
-        return request.getClientId();
+        return null;
     }
 
     private boolean hasScope(ScopePathType scope) {

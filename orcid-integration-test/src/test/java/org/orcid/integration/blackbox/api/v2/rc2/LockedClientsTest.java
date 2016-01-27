@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api;
+package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -28,8 +28,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
-import org.orcid.integration.blackbox.api.v2.rc1.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.springframework.beans.factory.annotation.Value;
@@ -69,7 +67,7 @@ public class LockedClientsTest extends BlackBoxBase {
     public String lockedClientSecret;
     @Value("${org.orcid.web.locked.member.client.ruri}")
     public String lockedClientRedirectUri;
-    @Resource(name = "memberV2ApiClient_rc1")
+    @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
     @Test
