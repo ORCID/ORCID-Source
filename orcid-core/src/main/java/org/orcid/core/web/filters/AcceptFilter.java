@@ -52,7 +52,6 @@ public class AcceptFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String accept = request.getHeader("accept");
-        String path = ((HttpServletRequest) request).getRequestURI();
         String contentType = request.getHeader("Content-Type");
 
         if (accept == null || accept.equals("*/*")) {
@@ -62,8 +61,6 @@ public class AcceptFilter extends OncePerRequestFilter {
             else
                 if (OrcidUrlManager.getPathWithoutContextPath(request).startsWith("/oauth/")) {
                     requestWrapper = new AcceptHeaderRequestWrapper(request, MediaType.APPLICATION_JSON);
-                } else if(path != null && path.startsWith("/orcid-internal-api/")) {
-                    requestWrapper = new HttpServletRequestWrapper(request);
                 } else {
                     requestWrapper = new AcceptHeaderRequestWrapper(request, VND_ORCID_XML);
                 }                    
