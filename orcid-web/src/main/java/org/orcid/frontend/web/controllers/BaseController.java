@@ -251,7 +251,7 @@ public class BaseController {
     }
 
     @ModelAttribute("sendEmailFrequencies")
-    public Map<String, String> retrieveRolesAsMap() {
+    public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
             map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
