@@ -103,8 +103,7 @@
 			<div ng-controller="EmailFrequencyCtrl" ng-show="notificationsEnabled" ng-cloak>
 				<div class="row bottomBuffer">
     				<strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
-    			</div>
-    			
+    			</div>    			
 				<div class="control-group">
     				<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
         			<form class="form-inline">
@@ -121,19 +120,13 @@
             			<small class="green" ng-show="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
         			</form>
     			</div>
-
 				<div>
 					<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
             		<p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
 	          		<p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
             		</p>
     			</div>
-
-
-			</div>
-
-
-			
+			</div>			
 	    </div><!--END .editTablePadCell35 -->
 	</td>
 </script>

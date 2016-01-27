@@ -6259,6 +6259,11 @@ a:hover .mozilla-badge{
 	padding: 15px 0 15px 15px;
 }
 
+.edit-record-emails{	
+	height: 400px;
+	padding: 15px 0 15px 15px;
+}
+
 .fixed-area .scroll-area input[type="textbox"],
 .fixed-area .scroll-area input[type="text"],
 .fixed-area .scroll-area select{
