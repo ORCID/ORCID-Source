@@ -111,7 +111,9 @@
         				<div class="form-group">
             				<div class="input-group">
                 				<select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.clearMessage()">
-         
+         							<#list sendEmailFrequencies?keys as key>
+    									<option value="${key}" ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+									</#list>
                     			</select>
                 			</div>
             			</div>

@@ -38,6 +38,10 @@
     </div>
 </#if>
 
+<script type="text/javascript">
+	orcidVar.notificationsEnabled = ${profile.orcidInternal.preferences.notificationsEnabled?string};
+</script>
+
 <div class="row">
 	<div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
         <#include "admin_menu.ftl"/>
