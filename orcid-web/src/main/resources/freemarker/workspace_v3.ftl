@@ -38,6 +38,12 @@
     </div>
 </#if>
 
+<script type="text/javascript">
+	orcidVar.notificationsEnabled = ${profile.orcidInternal.preferences.notificationsEnabled?string};
+</script>
+
+
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
