@@ -1183,6 +1183,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             inputEmail: null,
             delEmail: null,
             primaryEmail: null,
+            popUp: false,
             addEmail: function() {            	
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
@@ -1909,7 +1910,8 @@ orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
     $scope.toggleSocialNetworksEdit = function(){
         $scope.showEditSocialSettings = !$scope.showEditSocialSettings;
         $scope.socialNetworksUpdateToggleText();
-    };
+    };   
+    
 
     //init social networks row
     $scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
@@ -2127,6 +2129,9 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
     $scope.showElement = {};
+    $scope.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
+    $scope.notificationsEnabled = orcidVar.notificationsEnabled;
+    $scope.baseUri = orcidVar.baseUri;
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2213,11 +2218,16 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.showTooltip = function(el){
     	$scope.showElement[el] = true;
-    }
+    };
     
     $scope.hideTooltip = function(el){
     	$scope.showElement[el] = false;
-    }
+    };
+    
+    
+    
+    
+    
 
 }]);
 
@@ -9988,8 +9998,7 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
 }]);
 
 
-
-orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',function ($scope, emailSrvc, $compile){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -10012,8 +10021,31 @@ orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($sc
 		$scope.showElement[elem] = false;
 	}
 	
+	$scope.openEditModal = function(){
+	    var HTML = '<div class="edit-record"><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left">Edit Emails</h1></div></div><table class="settings-table"><tr>' +
+	    $('#edit-emails').html() +
+	    '</tr></table></div>';  
+	    
+	    $scope.emailSrvc.popUp = true;
+	    
+        $.colorbox({
+            scrolling: true,
+            html: $compile(HTML)($scope),
+            onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            width: formColorBoxResize(),            
+            onComplete: function() {
+                
+            },
+            onClosed: function() {
+                $scope.emailSrvc.popUp = false;        
+            }            
+        });
+        $.colorbox.resize();
+    }
+	
 }]);
-
 
 
 /*Angular Multi-selectbox*/
