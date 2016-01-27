@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<person:person xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:person="http://www.orcid.org/ns/person" xmlns:personal-details="http://www.orcid.org/ns/personal-details"
+	xmlns:other-name="http://www.orcid.org/ns/other-name"
+	xmlns:researcher-url="http://www.orcid.org/ns/researcher-url"
+	xmlns:email="http://www.orcid.org/ns/email" xmlns:address="http://www.orcid.org/ns/address"
+	xmlns:keyword="http://www.orcid.org/ns/keyword"
+	xmlns:external-identifier="http://www.orcid.org/ns/external-identifier"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/person ../person-2.0_rc2.xsd ">
+	<person:name visibility="public"> 
+		<personal-details:given-names>give-names</personal-details:given-names>
+		<personal-details:family-name>family-name</personal-details:family-name>
+		<personal-details:credit-name>credit-name</personal-details:credit-name>
+	</person:name>
+	<other-name:other-names>
+		<other-name:other-name visibility="public"
+			put-code="1">
+			<other-name:content>other-name-1</other-name:content>
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+		</other-name:other-name>
+	</other-name:other-names>
+	<person:biography visibility="public">biography</person:biography>
+	<researcher-url:researcher-urls>
+		<researcher-url:researcher-url put-code="1248"
+			visibility="public">
+			<researcher-url:url-name>url-name-1</researcher-url:url-name>
+			<researcher-url:url>http://url.com/</researcher-url:url>
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+		</researcher-url:researcher-url>
+	</researcher-url:researcher-urls>
+	<email:emails>
+		<email:email visibility="public">
+			<email:email>user1@email.com</email:email>
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+		</email:email>
+	</email:emails>
+	<address:addresses>
+		<address:address visibility="public" put-code="1">
+			<address:country>US</address:country>
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+		</address:address>
+	</address:addresses>
+	<keyword:keywords>
+		<keyword:keyword visibility="public" put-code="1">
+		<keyword:content>keyword1</keyword:content>
+		<common:created-date>2001-12-31T12:00:00</common:created-date>
+		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+		<common:source>
+			<common:source-orcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:source-orcid>
+			<common:source-name />
+		</common:source>
+	</keyword:keyword>
+	</keyword:keywords>
+	<external-identifier:external-identifiers>
+		<external-identifier:external-identifier visibility="public" put-code="1">
+			<common:external-id-type>type-1</common:external-id-type>
+			<common:external-id-value>value-1</common:external-id-value>
+			<common:external-id-url>http://url.com/1</common:external-id-url>
+			<common:created-date>2001-12-31T12:00:00</common:created-date>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<common:source>
+				<common:source-orcid>
+					<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+					<common:path>8888-8888-8888-8880</common:path>
+					<common:host>orcid.org</common:host>
+				</common:source-orcid>
+				<common:source-name />
+			</common:source>
+		</external-identifier:external-identifier>
+	</external-identifier:external-identifiers>
+	<person:delegation>
+		<person:given-permission-to>
+			<person:delegation-details>
+				<person:approval-date>2001-12-31T12:00:00</person:approval-date>
+				<person:delegate-summary>
+					<common:orcid-identifier>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:orcid-identifier>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+					<person:credit-name visibility="public">credit-name</person:credit-name>
+				</person:delegate-summary>
+			</person:delegation-details>
+		</person:given-permission-to>
+		<person:given-permission-by>
+			<person:delegation-details>
+				<person:approval-date>2001-12-31T12:00:00</person:approval-date>
+				<person:delegate-summary>
+					<common:orcid-identifier>
+						<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+						<common:path>8888-8888-8888-8880</common:path>
+						<common:host>orcid.org</common:host>
+					</common:orcid-identifier>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+					<person:credit-name visibility="public">credit-name</person:credit-name>
+				</person:delegate-summary>
+			</person:delegation-details>
+		</person:given-permission-by>
+	</person:delegation>	
+	<person:applications visibility="public">
+		<person:application-summary>
+			<common:application-orcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:application-orcid>
+			<person:application-name>application-name</person:application-name>
+			<person:application-website>http://application.com</person:application-website>
+			<common:approval-date>2001-12-31T12:00:00</common:approval-date>
+			<person:scope-paths>
+				<person:scope-path>/authenticate</person:scope-path>
+				<person:scope-path>/read-limited</person:scope-path>
+			</person:scope-paths>
+			<common:application-group-orcid>
+				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+				<common:path>8888-8888-8888-8880</common:path>
+				<common:host>orcid.org</common:host>
+			</common:application-group-orcid>
+			<person:application-group-name>application-group-name</person:application-group-name>
+		</person:application-summary>
+	</person:applications>
+</person:person>
