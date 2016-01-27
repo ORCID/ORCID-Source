@@ -2745,9 +2745,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             if (otherNames[len] == otherName){                
                 otherNames.splice(len,1);
             }
-        }
-        $scope.otherNamesForm.otherNames = otherNames;
-        console.log($scope.otherNamesForm.otherNames);
+        }        
     };
 
     $scope.setOtherNamesForm = function(v2){        
