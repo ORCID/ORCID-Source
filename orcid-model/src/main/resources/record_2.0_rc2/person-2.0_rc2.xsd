@@ -114,6 +114,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="given-permission-to" type="person:given-permission-to"
 				minOccurs="0" maxOccurs="unbounded" />
 			<xs:element name="given-permission-by" type="person:given-permission-by"
@@ -126,6 +127,7 @@
 			<xs:documentation>Given permission to</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="delegation-details" type="person:delegation-details"
 				minOccurs="1" maxOccurs="1" />
 		</xs:sequence>
@@ -136,6 +138,7 @@
 			<xs:documentation>Given permission by</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="delegation-details" type="person:delegation-details"
 				minOccurs="1" maxOccurs="1" />
 		</xs:sequence>

@@ -236,4 +236,12 @@ public class Person implements Serializable {
             return false;
         return true;
     }
+
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 }
