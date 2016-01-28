@@ -7703,27 +7703,24 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
 
     //Update client
     $scope.updateClient = function() {
-    	for(var i = 0; i < $scope.client.redirectUris.length; i ++) {
-    		if($scope.client.redirectUris[i].actType.value == "") {
-    			$scope.client.redirectUris[i].actType.value = {"import-works-wizard" : ["Articles"]};
-    			$scope.client.redirectUris[i].geoArea.value = {"import-works-wizard" : ["Global"]};
-    		}
-    		$scope.client.redirectUris[i].actType.value = JSON.stringify($scope.client.redirectUris[i].actType.value);
-    		$scope.client.redirectUris[i].geoArea.value = JSON.stringify($scope.client.redirectUris[i].geoArea.value);
+    	var clientClone = JSON.parse(JSON.stringify($scope.client));
+    	for(var i = 0; i < clientClone.redirectUris.length; i ++) {
+    		clientClone.redirectUris[i].actType.value = JSON.stringify(clientClone.redirectUris[i].actType.value);
+    		clientClone.redirectUris[i].geoArea.value = JSON.stringify(clientClone.redirectUris[i].geoArea.value);
     	}
         $.ajax({
             url: getBaseUri() + '/manage-members/update-client.json',
             type: 'POST',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
-            data: angular.toJson($scope.client),
+            data: angular.toJson(clientClone),
             success: function(data) {
                 if(data.errors.length == 0){
                     $scope.client = null;
                     $scope.client_id = "";
                     $scope.success_message = om.get('admin.edit_client.success');
                 } else {
-                    $scope.client = data;
+                    $scope.client.errors = data.errors;
                 }
                 $scope.$apply();
                 $scope.closeModal();
