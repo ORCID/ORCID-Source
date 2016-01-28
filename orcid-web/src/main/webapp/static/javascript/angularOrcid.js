@@ -7707,10 +7707,6 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
     $scope.updateClient = function() {
     	var clientClone = JSON.parse(JSON.stringify($scope.client));
     	for(var i = 0; i < clientClone.redirectUris.length; i ++) {
-    		if(clientClone.redirectUris[i].actType.value == "") {
-    			clientClone.redirectUris[i].actType.value = {"import-works-wizard" : ["Articles"]};
-    			clientClone.redirectUris[i].geoArea.value = {"import-works-wizard" : ["Global"]};
-    		}
     		clientClone.redirectUris[i].actType.value = JSON.stringify(clientClone.redirectUris[i].actType.value);
     		clientClone.redirectUris[i].geoArea.value = JSON.stringify(clientClone.redirectUris[i].geoArea.value);
     	}
@@ -7726,7 +7722,7 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
                     $scope.client_id = "";
                     $scope.success_message = om.get('admin.edit_client.success');
                 } else {
-                    $scope.client = data;
+                    $scope.client.errors = data.errors;
                 }
                 $scope.$apply();
                 $scope.closeModal();
