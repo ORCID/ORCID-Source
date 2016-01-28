@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
+import org.orcid.jaxb.model.groupid_rc1.GroupIdRecords;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc1.Educations;
 import org.orcid.jaxb.model.record.summary_rc1.Employments;
@@ -39,7 +40,7 @@ import org.orcid.jaxb.model.record.summary_rc1.Works;
 public class ConvertVrc1ToVrc2Test extends BaseTest {
 
     @Resource
-    private V2VersionConverter versionConverterV2_0_rc1ToV2_0rc2;
+    private V2VersionConverter versionConverterV2_0_rc1ToV2_0rc2; 
 
     @Test
     public void upgradeToVrc2Test() throws JAXBException {
@@ -166,5 +167,26 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         org.orcid.jaxb.model.record.summary_rc2.Works rc2Works2 = (org.orcid.jaxb.model.record.summary_rc2.Works) result.getObjectToConvert();
 
         assertEquals(rc2Works1.getLastModifiedDate(), rc2Works2.getLastModifiedDate());
+    }
+    
+    @Test
+    public void upgradeGroupIdToVrc2Test() throws JAXBException {
+
+        JAXBContext jaxbContext1 = JAXBContext.newInstance(GroupIdRecords.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.groupid_rc2.GroupIdRecords.class);
+        Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
+
+        InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-group-id-2.0_rc1.xml");
+        InputStream rc2Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-group-id-2.0_rc2.xml");
+
+        GroupIdRecords rc1Works = (GroupIdRecords) jaxbUnmarshaller.unmarshal(rc1Stream);
+
+        jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
+        org.orcid.jaxb.model.groupid_rc2.GroupIdRecords rc2GroupId1 = (org.orcid.jaxb.model.groupid_rc2.GroupIdRecords) jaxbUnmarshaller.unmarshal(rc2Stream);
+
+        V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Works, "v2_rc1"));
+        org.orcid.jaxb.model.groupid_rc2.GroupIdRecords rc2GroupId2 = (org.orcid.jaxb.model.groupid_rc2.GroupIdRecords) result.getObjectToConvert();
+
+        assertEquals(rc2GroupId1.getLastModifiedDate(), rc2GroupId2.getLastModifiedDate());
     }
 }
