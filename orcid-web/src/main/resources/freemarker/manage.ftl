@@ -527,7 +527,7 @@
 	</div>
 </script>
         
-<script type="text/ng-template" id="verify-email-modal">
+<script type="text/ng-template" id="settings-verify-email-modal">
     <div style="padding: 20px;"><h3>${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}</h3>
     <button class="btn" ng-click="closeModal()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</button>
 	</div>

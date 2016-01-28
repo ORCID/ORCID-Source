@@ -6260,8 +6260,9 @@ a:hover .mozilla-badge{
 }
 
 .edit-record-emails{	
-	height: 400px;
+	width: 600px;
 	padding: 15px 0 15px 15px;
+	min-height: 678px; 
 }
 
 .fixed-area .scroll-area input[type="textbox"],
@@ -6357,8 +6358,19 @@ a:hover .mozilla-badge{
 .not-allowed{
 	cursor:not-allowed;
 }
-	
 
+.delete-email-box{
+	height: 100px;
+}
+
+.confirm-password-box{
+	height: 140px;
+}
+
+.delete-email-box li,
+.confirm-password-box li{
+	margin-left: 10px;	
+}
 
 
 /* Media Queries */

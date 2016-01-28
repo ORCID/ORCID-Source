@@ -18,6 +18,7 @@
 -->
 
 <script type="text/ng-template" id="edit-emails">
+
 	<!-- Email edit -->
 	<td colspan="2" ng-show="showEditEmail || emailSrvc.popUp" ng-cloak>
 	    <div class="editTablePadCell35" ng-controller="EmailEditCtrl">
@@ -30,7 +31,7 @@
 	            <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
 	        </div>			
 	        <!-- Email table -->
-	        <div class="table-responsive">
+	        <div class="table-responsive bottomBuffer">
 	            <table class="table">
 	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group">
 	                    <!-- Primary Email -->
@@ -52,13 +53,19 @@
 	                    </td>
 	                    <td class="email-verified">
 	                        <span ng-hide="email.verified" class="left">
-	                        <a ng-click="verifyEmail(email)">${springMacroRequestContext.getMessage("manage.email.verify")}</a></span>
-	                        <span ng-show="email.verified" class="left">${springMacroRequestContext.getMessage("manage.email.verified")}</span>
+								<a ng-click="verifyEmail(email)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
+							</span>
+							<span ng-show="email.verified" class="left">
+								${springMacroRequestContext.getMessage("manage.email.verified")}
+							</span>
 	                    </td>
 	                    <td width="26">
 	                        <a href="" class="glyphicon glyphicon-trash grey"
-	                            ng-show="email.primary == false"
+	                            ng-show="email.primary == false && !emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmail(email)"></a>
+							<a href="" class="glyphicon glyphicon-trash grey"
+	                            ng-show="email.primary == false && emailSrvc.popUp"
+	                            ng-click="confirmDeleteEmailInline(email)"></a>
 	                    </td>
 	                    <td width="100" style="padding-top: 0;">
 	                        <div class="emailVisibility" style="float: right;">
@@ -74,31 +81,84 @@
 	                    </td>
 	                </tr>
 	            </table>
-	        </div>
-	        <!-- End Email table -->
+				<!-- Delete Email Box -->
+				<div ng-show="emailSrvc.popUp && showDeleteBox" class="delete-email-box grey-box">					
+					<div style="margin-bottom: 10px;">
+						<@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}
+					</div>
+					<div>
+						<ul class="pull-right inline-list">
+							<li><a href="" ng-click="closeDeleteBox()"><@orcid.msg 'freemarker.btncancel' /></a></li>
+							<li><button class="btn btn-danger" ng-click="deleteEmailInline(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button></li>						
+						</ul>
+					</div>
+				</div>
+				
+				
+
+
+				<!-- Email confirmation -->
+				<div ng-show="emailSrvc.popUp && showEmailVerifBox" class="delete-email-box grey-box">					
+					<div style="margin-bottom: 10px;">
+						${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}
+					</div>
+					<div>
+						<ul class="pull-right inline-list">
+							<li><a href="" ng-click="closeVerificationBox()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</a></li>
+						</ul>
+					</div>
+				</div>
+
+
+
+
+
+
+
+			
+    			
+			</div>
+	        
 			<div id="addEmailNotAllowed" ng-show="isPassConfReq" ng-cloak>
 				${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}
 			</div>	        
 	        <div class="row bottom-row" ng-hide="isPassConfReq" ng-cloak>
 	            <div class="col-md-12 add-email">
 	                <input type="email" placeholder="${springMacroRequestContext.getMessage("manage.add_another_email")}"
-	                ng-enter="checkCredentials()" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
-	                required /> <span
-	                    ng-click="checkCredentials()" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>
+	                ng-enter="checkCredentials(emailSrvc.popUp)" class="input-xlarge inline-input" ng-model="emailSrvc.inputEmail.value"
+	                required />
+					<span ng-click="checkCredentials(emailSrvc.popUp)" class="btn btn-primary">${springMacroRequestContext.getMessage("manage.spanadd")}</span>					
 	                <span class="orcid-error"
 	                    ng-show="emailSrvc.inputEmail.errors.length > 0"> <span
 	                    ng-repeat='error in emailSrvc.inputEmail.errors'
 	                    ng-bind-html="error"></span>
 	                </span>
-	            </div>
+	            </div>				
 	            <div class="col-md-12">
 	                <p style="line-height: 12px;">
 	                    <small class="italic">
 	                    ${springMacroRequestContext.getMessage("manage.verificationEmail.1")} <a href="${aboutUri}/content/orcid-terms-use" target="_blank">${springMacroRequestContext.getMessage("manage.verificationEmail.2")}</a>${springMacroRequestContext.getMessage("manage.verificationEmail.3")}
 	                    </small>
 	                </p>
-	            </div>
+	            </div>				
 	        </div>
+			<div class="row">
+				<div ng-show="emailSrvc.popUp && showConfirmationBox" class="confirm-password-box grey-box">
+					<div style="margin-bottom: 10px;">
+						<@orcid.msg 'check_password_modal.confirm_password' />	
+					</div>
+					<div>
+						<label for=""><@orcid.msg 'check_password_modal.password' /></label>:	       				
+       					<input id="check_password_modal.password" type="password" name="check_password_modal.password" ng-model="password" ng-enter="submitModal(emailSrvc.popUp)"/>
+					</div>				    
+					<div>
+						<ul class="pull-right inline-list">
+							<li><a href="" ng-click="closeModal()"><@orcid.msg 'check_password_modal.close'/></a></li>
+							<li><button id="bottom-submit" class="btn btn-primary" ng-click="submitModal()"><@orcid.msg 'check_password_modal.submit'/></button></li>
+						</ul>	
+	       			</div>
+				</div>
+			</div>			
 
 			<div ng-controller="EmailFrequencyCtrl" ng-show="notificationsEnabled" ng-cloak>
 				<div class="row bottomBuffer">
@@ -127,6 +187,6 @@
             		</p>
     			</div>
 			</div>			
-	    </div><!--END .editTablePadCell35 -->
+	    </div>
 	</td>
 </script>
