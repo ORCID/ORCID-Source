@@ -80,7 +80,8 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public ClientResponse obtainOauth2TokenPost(String grantType, MultivaluedMap<String, String> formParams) {
-        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);  
+        resource.accept(MediaType.APPLICATION_JSON);
         return resource.entity(formParams).post(ClientResponse.class);
     }
     
@@ -91,7 +92,7 @@ public class InternalOAuthOrcidApiClientImpl implements InternalOAuthAPIService<
     @Consumes(MediaType.TEXT_PLAIN)
     public ClientResponse viewMemberDetails(String member) {
         URI statusPath = UriBuilder.fromPath(OrcidApiConstants.MEMBER_INFO).build();
-        WebResource webResource = orcidClientHelper.createRootResource(statusPath);
+        WebResource webResource = orcidClientHelper.createRootResource(statusPath);        
         return webResource.entity(member).post(ClientResponse.class);
     }
 }
