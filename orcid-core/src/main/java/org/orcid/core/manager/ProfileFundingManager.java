@@ -134,7 +134,7 @@ public interface ProfileFundingManager {
      *          The funding to add
      * @return the added funding                  
      * */
-    Funding createFunding(String orcid, Funding funding);
+    Funding createFunding(String orcid, Funding funding, boolean isApiRequest);
     
     /**
      * Updates a funding that belongs to the given user
@@ -144,7 +144,7 @@ public interface ProfileFundingManager {
      *          The funding to update
      * @return the updated funding                  
      * */
-    Funding updateFunding(String orcid, Funding funding);
+    Funding updateFunding(String orcid, Funding funding, boolean isApiRequest);
     
     /**
      * Deletes a given funding, if and only if, the client that requested the delete is the source of the funding
@@ -157,7 +157,7 @@ public interface ProfileFundingManager {
     boolean checkSourceAndDelete(String orcid, Long fundingId);   
     
     /**
-     * Get the list of fundings that belongs to a user
+     * Get the list of fundings summaries that belongs to a user
      * 
      * @param userOrcid
      * @param lastModified
@@ -165,4 +165,14 @@ public interface ProfileFundingManager {
      * @return the list of fundings that belongs to this user
      * */
     List<FundingSummary> getFundingSummaryList(String userOrcid, long lastModified);
+    
+    /**
+     * Get the list of fundings that belongs to a user
+     * 
+     * @param userOrcid
+     * @param lastModified
+     *          Last modified date used to check the cache
+     * @return the list of fundings that belongs to this user
+     * */
+    List<Funding> getFundingList(String userOrcid, long lastModified);
 }

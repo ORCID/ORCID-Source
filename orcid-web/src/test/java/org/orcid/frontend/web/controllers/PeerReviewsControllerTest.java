@@ -49,7 +49,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -230,7 +230,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setExternalIdentifiers(extIds);        
         form.setSubjectContainerName(Text.valueOf("Journal Title"));
         form.setSubjectName(Text.valueOf("Title"));        
-        TranslatedTitle translated = new TranslatedTitle();
+        TranslatedTitleForm translated = new TranslatedTitleForm();
         translated.setContent("Translated title");
         translated.setLanguageCode("es");
         form.setTranslatedSubjectName(translated);

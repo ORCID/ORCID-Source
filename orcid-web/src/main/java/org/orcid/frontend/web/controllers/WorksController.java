@@ -48,7 +48,7 @@ import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
@@ -188,7 +188,7 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         if (w.getTranslatedTitle() == null) {
-            TranslatedTitle tt = new TranslatedTitle();
+            TranslatedTitleForm tt = new TranslatedTitleForm();
             tt.setContent(new String());
             tt.setLanguageCode(new String());
             tt.setLanguageName(new String());

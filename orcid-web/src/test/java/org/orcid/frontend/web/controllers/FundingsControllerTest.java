@@ -50,7 +50,7 @@ import org.orcid.pojo.ajaxForm.FundingForm;
 import org.orcid.pojo.ajaxForm.FundingTitleForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -367,7 +367,7 @@ public class FundingsControllerTest extends BaseControllerTest {
         when(servletRequest.getSession()).thenReturn(session);
         when(localeManager.getLocale()).thenReturn(new Locale("us", "EN"));
 
-        List<String> fundingIds = fundingController.getFundingsJson(servletRequest);
+        List<String> fundingIds = fundingController.getFundingsIds(servletRequest);
         assertNotNull(fundingIds);
 
         assertTrue(fundingIds.contains("1"));
@@ -514,7 +514,7 @@ public class FundingsControllerTest extends BaseControllerTest {
 
         FundingForm funding = fundingController.getFundingJson(Long.valueOf("1"));
         funding.getFundingTitle().getTitle().setValue("Grant # 1 - updated");
-        TranslatedTitle translatedTitle = new TranslatedTitle();
+        TranslatedTitleForm translatedTitle = new TranslatedTitleForm();
         translatedTitle.setContent("Grant # 1 - translated title");
         translatedTitle.setLanguageCode("en");
         funding.getFundingTitle().setTranslatedTitle(translatedTitle);

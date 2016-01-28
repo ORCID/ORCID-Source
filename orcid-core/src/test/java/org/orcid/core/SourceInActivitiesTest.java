@@ -284,7 +284,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
-        funding = profileFundingManager.createFunding(userOrcid, funding);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
     
@@ -295,7 +295,7 @@ public class SourceInActivitiesTest extends BaseTest {
         title.setTitle(new Title("Title " + System.currentTimeMillis()));
         funding.setTitle(title);
         funding.setType(org.orcid.jaxb.model.record_rc2.FundingType.AWARD);
-        funding = profileFundingManager.createFunding(userOrcid, funding);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
     
@@ -314,7 +314,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
         funding.setPutCode(Long.valueOf(111));
-        funding = profileFundingManager.createFunding(userOrcid, funding);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
 
@@ -520,7 +520,7 @@ public class SourceInActivitiesTest extends BaseTest {
         FundingExternalIdentifiers extIdentifiers = new FundingExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
-        funding = profileFundingManager.createFunding(userOrcid, funding);
+        funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
     }
 

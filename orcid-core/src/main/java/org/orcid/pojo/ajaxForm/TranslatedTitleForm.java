@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.jaxb.model.common_rc2.TranslatedTitle;
 
-public class TranslatedTitle implements ErrorsInterface, Required, Serializable {
+public class TranslatedTitleForm implements ErrorsInterface, Required, Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<String> errors = new ArrayList<String>();
@@ -37,26 +38,26 @@ public class TranslatedTitle implements ErrorsInterface, Required, Serializable 
     
     private String getRequiredMessage;
     
-    public TranslatedTitle() {
+    public TranslatedTitleForm() {
         
     }
     
-    public TranslatedTitle(String content, String languageCode) {        
+    public TranslatedTitleForm(String content, String languageCode) {        
         this.content = content;
         this.languageCode = languageCode;
     }
     
-    public static TranslatedTitle valueOf(org.orcid.jaxb.model.message.TranslatedTitle translatedTitle){
+    public static TranslatedTitleForm valueOf(TranslatedTitle translatedTitle){
     	if(translatedTitle == null)
     		return null;
-        TranslatedTitle result = new TranslatedTitle();
+        TranslatedTitleForm result = new TranslatedTitleForm();
         result.setContent(translatedTitle.getContent());
         result.setLanguageCode(translatedTitle.getLanguageCode());
         return result;
     }
     
-    public org.orcid.jaxb.model.message.TranslatedTitle toTranslatedTitle(){
-        org.orcid.jaxb.model.message.TranslatedTitle result = new org.orcid.jaxb.model.message.TranslatedTitle();
+    public TranslatedTitle toTranslatedTitle(){
+        TranslatedTitle result = new TranslatedTitle();
         result.setContent(StringUtils.isEmpty(content) ? null : content);
         result.setLanguageCode(StringUtils.isEmpty(languageCode) ? null : languageCode);        
         return result;
@@ -127,7 +128,7 @@ public class TranslatedTitle implements ErrorsInterface, Required, Serializable 
             return false;
         if (getClass() != obj.getClass())
             return false;
-        TranslatedTitle other = (TranslatedTitle) obj;
+        TranslatedTitleForm other = (TranslatedTitleForm) obj;
         if (content == null) {
             if (other.content != null)
                 return false;
