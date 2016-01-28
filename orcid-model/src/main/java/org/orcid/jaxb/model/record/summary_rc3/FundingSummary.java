@@ -25,17 +25,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc2.CreatedDate;
-import org.orcid.jaxb.model.common_rc2.FuzzyDate;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.common_rc2.VisibilityType;
-import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.FundingTitle;
-import org.orcid.jaxb.model.record_rc2.FundingType;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.common_rc3.CreatedDate;
+import org.orcid.jaxb.model.common_rc3.FuzzyDate;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Source;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc3.VisibilityType;
+import org.orcid.jaxb.model.record_rc3.Activity;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.FundingTitle;
+import org.orcid.jaxb.model.record_rc3.FundingType;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })
@@ -47,8 +47,8 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected FundingType type;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected FundingTitle title;
-    @XmlElement(name="external-identifiers", namespace = "http://www.orcid.org/ns/funding")
-    protected FundingExternalIdentifiers externalIdentifiers;
+    @XmlElement(name="external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
@@ -85,11 +85,11 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         this.title = title;
     }
 
-    public FundingExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(FundingExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 

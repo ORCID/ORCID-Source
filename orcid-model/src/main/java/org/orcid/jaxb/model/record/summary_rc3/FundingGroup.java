@@ -27,9 +27,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.record_rc2.Group;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.record_rc3.Group;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "fundingSummary" })
@@ -39,14 +40,14 @@ public class FundingGroup implements Group, Serializable {
 
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
     protected LastModifiedDate lastModifiedDate;
-    @XmlElement(name = "identifiers", namespace = "http://www.orcid.org/ns/activities")
-    private Identifiers identifiers;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    private ExternalIDs identifiers;
     @XmlElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
     private List<FundingSummary> fundingSummary;
 
-    public Identifiers getIdentifiers() {
+    public ExternalIDs getIdentifiers() {
         if (identifiers == null)
-            identifiers = new Identifiers();
+            identifiers = new ExternalIDs();
         return identifiers;
     }
 
