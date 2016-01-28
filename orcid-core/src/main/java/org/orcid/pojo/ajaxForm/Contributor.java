@@ -24,10 +24,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.message.ContributorEmail;
-import org.orcid.jaxb.model.message.ContributorOrcid;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.FundingContributorRole;
+import org.orcid.jaxb.model.common_rc2.ContributorEmail;
+import org.orcid.jaxb.model.common_rc2.ContributorOrcid;
+import org.orcid.jaxb.model.common_rc2.CreditName;
+import org.orcid.jaxb.model.record_rc2.FundingContributor;
+import org.orcid.jaxb.model.record_rc2.FundingContributorAttributes;
+import org.orcid.jaxb.model.record_rc2.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 
@@ -78,6 +80,33 @@ public class Contributor implements ErrorsInterface, Serializable {
         return c;
     }
     
+    public static Contributor valueOf(FundingContributor contributor) {
+        Contributor c = new Contributor();
+        if (contributor != null) {
+            if (contributor.getContributorAttributes() != null) {
+                contributor.getContributorAttributes();
+                if (contributor.getContributorAttributes().getContributorRole() != null)
+                    c.setContributorRole(Text.valueOf(contributor.getContributorAttributes().getContributorRole().value()));
+            }
+            if (contributor.getContributorEmail() != null)
+                c.setEmail(Text.valueOf(contributor.getContributorEmail().getValue()));
+            if (contributor.getContributorOrcid() != null) {
+                c.setOrcid(Text.valueOf(contributor.getContributorOrcid().getPath()));
+                c.setUri(Text.valueOf(contributor.getContributorOrcid().getUri()));
+            }
+            if (contributor.getCreditName() != null) {
+                c.setCreditName(Text.valueOf(contributor.getCreditName().getContent()));
+                if(contributor.getCreditName().getVisibility() != null) {
+                    c.setCreditNameVisibility(Visibility.valueOf(contributor.getCreditName().getVisibility()));
+                } else {
+                    c.setCreditNameVisibility(Visibility.valueOf(OrcidVisibilityDefaults.CONTRIBUTOR_VISIBILITY_DEFAULT.getVisibility()));
+                }
+            }
+        }
+        return c;
+    }   
+        
+    @Deprecated
     public static Contributor valueOf(org.orcid.jaxb.model.message.FundingContributor contributor) {
         Contributor c = new Contributor();
         if (contributor != null) {
@@ -102,12 +131,12 @@ public class Contributor implements ErrorsInterface, Serializable {
             }
         }
         return c;
-    }        
-    
-    public org.orcid.jaxb.model.message.FundingContributor toFundingContributor() {
-        org.orcid.jaxb.model.message.FundingContributor c = new org.orcid.jaxb.model.message.FundingContributor();
+    }  
+                    
+    public FundingContributor toFundingContributor() {
+        FundingContributor c = new FundingContributor();
         if (this.getContributorRole() != null || this.getContributorSequence() != null) {
-            org.orcid.jaxb.model.message.FundingContributorAttributes ca = new org.orcid.jaxb.model.message.FundingContributorAttributes();
+            FundingContributorAttributes ca = new FundingContributorAttributes();
             if (!PojoUtil.isEmpty(this.getContributorRole()))
                 ca.setContributorRole(FundingContributorRole.fromValue(this.getContributorRole().getValue()));
             c.setContributorAttributes(ca);
@@ -133,7 +162,7 @@ public class Contributor implements ErrorsInterface, Serializable {
         }
         if (this.getCreditName() != null) {
             CreditName cn = new CreditName(this.getCreditName().getValue());
-            cn.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
+            cn.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(this.getCreditNameVisibility().getVisibility().value()));
             c.setCreditName(cn);
         }
         return c;

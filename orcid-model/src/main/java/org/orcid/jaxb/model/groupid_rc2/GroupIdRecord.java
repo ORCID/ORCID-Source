@@ -77,7 +77,7 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "name", "groupId", "description", "type", "source", "lastModifiedDate", "createdDate", "putCode" })
+@XmlType(propOrder = { "lastModifiedDate", "createdDate", "name", "groupId", "description", "type", "source", "putCode" })
 @XmlRootElement(name = "group-id-record", namespace = "http://www.orcid.org/ns/group-id")
 public class GroupIdRecord implements Serializable {
     private static final long serialVersionUID = 1516751098639982549L;

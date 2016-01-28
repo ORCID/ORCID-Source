@@ -20,9 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.FundingExternalIdentifier;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 
 public class FundingExternalIdentifierForm implements ErrorsInterface, Serializable {
@@ -87,18 +87,7 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
         this.relationship = relationship;
     }
 
-    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.message.FundingExternalIdentifier fundingExternalIdentifier) {
-        FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
-        if (fundingExternalIdentifier.getType() != null)
-            result.setType(Text.valueOf(fundingExternalIdentifier.getType().value()));
-        if (fundingExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(fundingExternalIdentifier.getUrl().getValue()))
-            result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
-        if (!PojoUtil.isEmpty(fundingExternalIdentifier.getValue()))
-            result.setValue(Text.valueOf(fundingExternalIdentifier.getValue()));
-        return result;
-    }
-
-    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier fundingExternalIdentifier) {
+    public static FundingExternalIdentifierForm valueOf(FundingExternalIdentifier fundingExternalIdentifier) {
         FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
         if (fundingExternalIdentifier.getType() != null)
             result.setType(Text.valueOf(fundingExternalIdentifier.getType().value()));
@@ -111,8 +100,20 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
             
         return result;
     }
+                
+    @Deprecated
+    public static FundingExternalIdentifierForm valueOf(org.orcid.jaxb.model.message.FundingExternalIdentifier fundingExternalIdentifier) {
+        FundingExternalIdentifierForm result = new FundingExternalIdentifierForm();
+        if (fundingExternalIdentifier.getType() != null)
+            result.setType(Text.valueOf(fundingExternalIdentifier.getType().value()));
+        if (fundingExternalIdentifier.getUrl() != null && !PojoUtil.isEmpty(fundingExternalIdentifier.getUrl().getValue()))
+            result.setUrl(Text.valueOf(fundingExternalIdentifier.getUrl().getValue()));
+        if (!PojoUtil.isEmpty(fundingExternalIdentifier.getValue()))
+            result.setValue(Text.valueOf(fundingExternalIdentifier.getValue()));                         
+        return result;
+    }       
     
-    public org.orcid.jaxb.model.message.FundingExternalIdentifier toFundingExternalIdentifier() {
+    public FundingExternalIdentifier toFundingExternalIdentifier() {
         FundingExternalIdentifier result = new FundingExternalIdentifier();
         if (!PojoUtil.isEmpty(type))
             result.setType(FundingExternalIdentifierType.fromValue(type.getValue()));
@@ -125,14 +126,14 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
         return result;
     }
     
-    public org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier toRecordFundingExternalIdentifier() {
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier result = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
+    public FundingExternalIdentifier toRecordFundingExternalIdentifier() {
+        FundingExternalIdentifier result = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
         if (!PojoUtil.isEmpty(type))
-            result.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.fromValue(type.getValue()));
+            result.setType(FundingExternalIdentifierType.fromValue(type.getValue()));
         if (!PojoUtil.isEmpty(url))
-            result.setUrl(new org.orcid.jaxb.model.common_rc2.Url(url.getValue()));
+            result.setUrl(new Url(url.getValue()));
         else
-            result.setUrl(new org.orcid.jaxb.model.common_rc2.Url());
+            result.setUrl(new Url());
         if (!PojoUtil.isEmpty(value))
             result.setValue(value.getValue());
         if(!PojoUtil.isEmpty(relationship))

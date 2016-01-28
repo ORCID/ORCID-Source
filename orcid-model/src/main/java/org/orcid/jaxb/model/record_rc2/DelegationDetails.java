@@ -108,4 +108,12 @@ public class DelegationDetails implements Serializable {
         return true;
     }
 
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
 }

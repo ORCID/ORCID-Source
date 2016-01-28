@@ -278,7 +278,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createFunding(String orcid, Funding funding) {
         orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_CREATE);
-        Funding f = profileFundingManager.createFunding(orcid, funding);
+        Funding f = profileFundingManager.createFunding(orcid, funding, true);
         try {
             return Response.created(new URI(String.valueOf(f.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -295,7 +295,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(funding.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        Funding f = profileFundingManager.updateFunding(orcid, funding);
+        Funding f = profileFundingManager.updateFunding(orcid, funding, true);
         return Response.ok(f).build();
     }
     

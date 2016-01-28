@@ -31,6 +31,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -198,6 +199,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         
         ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
         rUrls.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(rUrls);
         return rUrls;
     }
 

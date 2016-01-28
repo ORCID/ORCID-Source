@@ -36,7 +36,7 @@ public class PeerReviewSubjectForm implements ErrorsInterface, Serializable {
 
     private Text subtitle;
 
-    private TranslatedTitle translatedTitle;
+    private TranslatedTitleForm translatedTitle;
     
     private Text journalTitle;
 
@@ -90,11 +90,11 @@ public class PeerReviewSubjectForm implements ErrorsInterface, Serializable {
         this.subtitle = subtitle;
     }
 
-    public TranslatedTitle getTranslatedTitle() {
+    public TranslatedTitleForm getTranslatedTitle() {
         return translatedTitle;
     }
 
-    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
+    public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
     }
 

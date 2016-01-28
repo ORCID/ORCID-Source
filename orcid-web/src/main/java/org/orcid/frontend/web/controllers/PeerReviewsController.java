@@ -48,7 +48,7 @@ import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PeerReviewForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +101,7 @@ public class PeerReviewsController extends BaseWorkspaceController {
         emptyDate.setMonth(StringUtils.EMPTY);
         emptyDate.setYear(StringUtils.EMPTY);
 
-        TranslatedTitle emptyTranslatedTitle = new TranslatedTitle();
+        TranslatedTitleForm emptyTranslatedTitle = new TranslatedTitleForm();
         emptyTranslatedTitle.setErrors(Collections.<String> emptyList());
         emptyTranslatedTitle.setContent(StringUtils.EMPTY);
         emptyTranslatedTitle.setLanguageCode(StringUtils.EMPTY);
