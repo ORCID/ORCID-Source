@@ -265,7 +265,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateFunding(funding, sourceEntity, true);
+    	ActivityValidator.validateFunding(funding, sourceEntity, true, isApiRequest);
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
@@ -318,7 +318,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override    
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateFunding(funding, sourceEntity, false);
+    	ActivityValidator.validateFunding(funding, sourceEntity, false, isApiRequest);
     	if(!isApiRequest) {
     	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
             for(ProfileFundingEntity existingFunding : existingFundings) {
