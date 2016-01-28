@@ -181,5 +181,7 @@
     <include file="/db/updates/add_display_index_to_researcher_url.xml" />
     <include file="/db/updates/add_display_index_to_external_identifier.xml" />
     <include file="/db/updates/set_default_visibility_to_person_elements.xml" />
-    <include file="/db/updates/add_orcid_index_on_address_researcher_url_and_external_identifiers.xml" />
+    <include file="/db/updates/add_orcid_index_on_address_researcher_url_and_external_identifiers.xml" />    
+    <include file="/db/updates/add_work_orcid_display_index_index_on_work_table.xml" />
+    <include file="/db/updates/add_orcid_index_other_names.xml" />
 </databaseChangeLog>
