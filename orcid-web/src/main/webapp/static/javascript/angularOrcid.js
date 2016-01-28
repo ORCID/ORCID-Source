@@ -2170,14 +2170,20 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     };
 
     $scope.verifyEmail = function(email, popup) {
+        
         $scope.verifyEmailObject = email;
         
         if(popup){
-            $scope.showEmailVerifBox = true;
+            emailSrvc.verifyEmail(email,function(data) {
+                $scope.showEmailVerifBox = true;
+                $scope.$apply();
+                $.colorbox.resize();
+           });    
         }else{
             emailSrvc.verifyEmail(email,function(data) {
                 $.colorbox({
-                    html : $compile($('#verify-email-modal').html())($scope)
+                    html : $compile($('#settings-verify-email-modal').html())($scope) 
+                    //Name was changed to avoid conflicts with workspace verify email modal
                 });
                 $scope.$apply();
                 $.colorbox.resize();
@@ -2192,6 +2198,10 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.closeDeleteBox = function(){
         $scope.showDeleteBox = false;
+    }
+    
+    $scope.closeVerificationBox = function(){
+        $scope.showEmailVerifBox = false;
     }
 
 

@@ -6372,6 +6372,10 @@ a:hover .mozilla-badge{
 	margin-left: 10px;	
 }
 
+.verify-email-box{
+	height: 80px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

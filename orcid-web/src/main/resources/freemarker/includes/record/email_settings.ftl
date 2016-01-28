@@ -53,7 +53,7 @@
 	                    </td>
 	                    <td class="email-verified">
 	                        <span ng-hide="email.verified" class="left">
-								<a ng-click="verifyEmail(email)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
+								<a ng-click="verifyEmail(email, emailSrvc.popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
 							</span>
 							<span ng-show="email.verified" class="left">
 								${springMacroRequestContext.getMessage("manage.email.verified")}
@@ -81,6 +81,8 @@
 	                    </td>
 	                </tr>
 	            </table>
+				
+
 				<!-- Delete Email Box -->
 				<div ng-show="emailSrvc.popUp && showDeleteBox" class="delete-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
@@ -93,12 +95,10 @@
 						</ul>
 					</div>
 				</div>
-				
-				
 
 
 				<!-- Email confirmation -->
-				<div ng-show="emailSrvc.popUp && showEmailVerifBox" class="delete-email-box grey-box">					
+				<div ng-show="emailSrvc.popUp && showEmailVerifBox" class="verify-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
 						${springMacroRequestContext.getMessage("manage.email.verificationEmail")} {{verifyEmailObject.value}}
 					</div>
