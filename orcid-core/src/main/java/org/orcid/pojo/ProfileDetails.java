@@ -45,11 +45,6 @@ public class ProfileDetails implements ErrorsInterface {
 		this.familyName = familyName;
 		this.email = email;
 	}
-	
-	public ProfileDetails(String orcid, String emailId) {
-		this.orcid = orcid;
-		this.email = emailId;
-	}
 
 	public String getOrcid() {
 		return orcid;
