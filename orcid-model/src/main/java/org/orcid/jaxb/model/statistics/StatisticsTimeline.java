@@ -35,11 +35,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StatisticsTimeline implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@XmlElement(name = "statistic-name")
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    @XmlElement(name = "statistic-name")
     protected String statisticName;
     protected Map<Date, Long> timeline;
 

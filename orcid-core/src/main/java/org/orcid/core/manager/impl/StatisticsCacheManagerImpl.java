@@ -17,57 +17,77 @@
 package org.orcid.core.manager.impl;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.Resource;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 
 import org.orcid.core.manager.StatisticsManager;
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
-import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 
 /**
  * @author Shobhit Tyagi
  */
 public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
 
+    private static final Logger LOG = LoggerFactory.getLogger(StatisticsCacheManagerImpl.class);
+
     @Resource
     StatisticsManager statisticsManager;
+
+    LockerObjectsManager lockers = new LockerObjectsManager();
 
     @Resource(name = "statisticsCache")
     private Cache statisticsCache;
 
-    LockerObjectsManager lockers = new LockerObjectsManager();
+    private static final String CACHE_STATISTICS_KEY = "cache_statistics_key";
+    private static final String CACHE_TIMELINE_KEY = "cache_timeline_key";
 
     @Override
     public StatisticsSummary retrieve() {
-        StatisticsSummary statisticsSummary = toStatisticsSummary(statisticsCache.get("statisticsValues"));
-        StatisticKeyEntity statisticKeyEntity = toStatisticsKey(statisticsCache.get("statisticsLatestKey"));
-        StatisticKeyEntity statisticKeyEntityLatest = statisticsManager.getLatestKey();
-        if (needsFresh(statisticsSummary, statisticKeyEntity, statisticKeyEntityLatest)) {
-            try {
-                synchronized (lockers.obtainLock("Statistics")) {
-                    statisticsSummary = toStatisticsSummary(statisticsCache.get("statisticsValues"));
-                    statisticKeyEntity = toStatisticsKey(statisticsCache.get("statisticsLatestKey"));
-                    statisticKeyEntityLatest = statisticsManager.getLatestKey();
-                    if (needsFresh(statisticsSummary, statisticKeyEntity, statisticKeyEntityLatest)) {
-                        StatisticsSummary temp = statisticsManager.getLatestStatisticsModel();
-                        if (temp != null && temp.getStatistics() != null && !temp.getStatistics().isEmpty()) {
-                            statisticsSummary = temp;
-                            statisticsCache.put(new Element("statisticsValues", statisticsSummary));
-                            statisticsCache.put(new Element("statisticsLatestKey", statisticKeyEntityLatest));
-                        }
-                    }
+        try {
+            synchronized (lockers.obtainLock("Statistics")) {
+                if (statisticsCache.get(CACHE_STATISTICS_KEY) == null) {
+                    setLatestStatisticsSummary();
                 }
-            } finally {
-                lockers.releaseLock("Statistics");
+
+                return toStatisticsSummary(statisticsCache.get(CACHE_STATISTICS_KEY));
             }
+        } finally {
+            lockers.releaseLock("Statistics");
         }
-        return statisticsSummary;
+    }
+
+    static public StatisticsSummary toStatisticsSummary(Element element) {
+        return (StatisticsSummary) (element != null ? element.getObjectValue() : null);
+    }
+
+    @Override
+    public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type) {
+        try {
+            synchronized (lockers.obtainLock("statisticsTimeline")) {
+                if (statisticsCache.get(CACHE_TIMELINE_KEY) == null) {
+                    setLatestStatisticsTimeline();
+                }
+                Map<StatisticsEnum, StatisticsTimeline> statisticsTimelineMap = toStatisticsTimelineMap(statisticsCache.get(CACHE_TIMELINE_KEY));
+                return statisticsTimelineMap.get(type);
+            }
+        } finally {
+            lockers.releaseLock("statisticsTimeline");
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    static public Map<StatisticsEnum, StatisticsTimeline> toStatisticsTimelineMap(Element element) {
+        return (Map<StatisticsEnum, StatisticsTimeline>) (element != null ? element.getObjectValue() : null);
     }
 
     @Override
@@ -81,64 +101,32 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
         return nf.format(amount);
     }
 
-    @Override
-    public void remove() {
-        statisticsCache.remove("statisticsValues");
-        statisticsCache.remove("statisticsLatestKey");
-    }
+    @Override    
+    public void setLatestStatisticsSummary() {
+        LOG.info("Getting the latest statistics summary");
 
-    @Override
-    public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type) {
-        String cacheKey = new StringBuffer("statisticsTimeline").append(type.value()).toString();
-        StatisticsTimeline statisticsTimeline = toStatisticsTimeline(statisticsCache.get(cacheKey));
-        StatisticKeyEntity statisticKeyEntityLatest = statisticsManager.getLatestKey();
-        if (needsFreshTimeline(statisticsTimeline, statisticKeyEntityLatest)) {
-            try {
-                synchronized (lockers.obtainLock("Statistics")) {
-                    statisticsTimeline = toStatisticsTimeline(statisticsCache.get(cacheKey));
-                    statisticKeyEntityLatest = statisticsManager.getLatestKey();
-                    if (needsFreshTimeline(statisticsTimeline, statisticKeyEntityLatest)) {
-                        StatisticsTimeline temp = statisticsManager.getStatisticsTimelineModel(type);
-                        if (temp != null) {
-                            statisticsTimeline = temp;
-                            statisticsCache.put(new Element(cacheKey, statisticsTimeline));
-                        }
-                    }
-                }
-            } finally {
-                lockers.releaseLock("Statistics");
-            }
+        StatisticsSummary summary = statisticsManager.getLatestStatisticsModel();
+
+        if (statisticsCache.get(CACHE_STATISTICS_KEY) == null) {
+            statisticsCache.put(new Element(CACHE_STATISTICS_KEY, summary));
+        } else {
+            statisticsCache.replace(new Element(CACHE_STATISTICS_KEY, summary));
         }
-        return statisticsTimeline;
     }
 
-    private boolean needsFreshTimeline(StatisticsTimeline statisticsTimeline, StatisticKeyEntity statisticKeyEntityLatest) {
-        if (statisticsTimeline == null)
-            return true;
-        if (statisticsTimeline.getTimeline() == null || statisticsTimeline.getTimeline().isEmpty())
-            return true;
-        if (!statisticsTimeline.getTimeline().containsKey(statisticKeyEntityLatest.getGenerationDate()))
-            return true;
-        return false;
-    }
+    @Override    
+    public synchronized void setLatestStatisticsTimeline() {
+        LOG.info("Getting the latest statistics timeline map");
 
-    private StatisticsTimeline toStatisticsTimeline(Element element) {
-        return (StatisticsTimeline) (element != null ? element.getObjectValue() : null);
-    }
-
-    private StatisticsSummary toStatisticsSummary(Element element) {
-        return (StatisticsSummary) (element != null ? element.getObjectValue() : null);
-    }
-
-    private StatisticKeyEntity toStatisticsKey(Element element) {
-        return (StatisticKeyEntity) (element != null ? element.getObjectValue() : null);
-    }
-
-    private boolean needsFresh(StatisticsSummary statisticsSummary, StatisticKeyEntity statisticKeyEntity, StatisticKeyEntity statisticKeyEntityLatest) {
-        if (statisticsSummary == null || statisticsSummary.getStatistics() == null)
-            return true;
-        if (!statisticKeyEntity.equals(statisticKeyEntityLatest))
-            return true;
-        return false;
+        Map<StatisticsEnum, StatisticsTimeline> latestStatisticsTimelineMap = new HashMap<StatisticsEnum, StatisticsTimeline>();
+        for (StatisticsEnum type : StatisticsEnum.values()) {
+            StatisticsTimeline statisticsTimeline = statisticsManager.getStatisticsTimelineModel(type);
+            latestStatisticsTimelineMap.put(type, statisticsTimeline);
+        }
+        if (statisticsCache.get(CACHE_TIMELINE_KEY) == null) {
+            statisticsCache.put(new Element(CACHE_TIMELINE_KEY, latestStatisticsTimelineMap));
+        } else {
+            statisticsCache.replace(new Element(CACHE_TIMELINE_KEY, latestStatisticsTimelineMap));
+        }
     }
 }
