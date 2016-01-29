@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+
 /**
  * <p>
  * Java class for anonymous complex type.
@@ -68,8 +70,8 @@ public class Item implements Serializable {
     protected ItemType itemType;
     @XmlElement(name = "item-name", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected String itemName;
-    @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/notification", required = true)
-    protected ExternalIdentifier externalIdentifier;
+    @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common", required = true)
+    protected ExternalID externalID;
 
     public String getPutCode() {
         return putCode;
@@ -124,22 +126,22 @@ public class Item implements Serializable {
     /**
      * Gets the value of the externalId property.
      * 
-     * @return possible object is {@link ExternalIdentifier }
+     * @return possible object is {@link PersonExternalIdentifier }
      * 
      */
-    public ExternalIdentifier getExternalIdentifier() {
-        return externalIdentifier;
+    public ExternalID getExternalIdentifier() {
+        return externalID;
     }
 
     /**
      * Sets the value of the externalId property.
      * 
      * @param value
-     *            allowed object is {@link ExternalIdentifier }
+     *            allowed object is {@link PersonExternalIdentifier }
      * 
      */
-    public void setExternalIdentifier(ExternalIdentifier value) {
-        this.externalIdentifier = value;
+    public void setExternalIdentifier(ExternalID value) {
+        this.externalID = value;
     }
 
 }

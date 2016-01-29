@@ -47,7 +47,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-identifiers")
-    protected WorkExternalIdentifiers externalIdentifiers;
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-url")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-type")
@@ -57,7 +57,7 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
     protected String groupId;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-external-identifier")
-    protected WorkExternalIdentifier subjectExternalIdentifier;
+    protected ExternalID subjectExternalIdentifier;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-container-name")
     protected Title subjectContainerName;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "subject-type")
@@ -98,11 +98,11 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.organization = organization;
     }
 
-    public WorkExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(WorkExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 
@@ -186,11 +186,11 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
         this.groupId = groupId;
     }
 
-    public WorkExternalIdentifier getSubjectExternalIdentifier() {
+    public ExternalID getSubjectExternalIdentifier() {
         return subjectExternalIdentifier;
     }
 
-    public void setSubjectExternalIdentifier(WorkExternalIdentifier subjectExternalIdentifier) {
+    public void setSubjectExternalIdentifier(ExternalID subjectExternalIdentifier) {
         this.subjectExternalIdentifier = subjectExternalIdentifier;
     }
 
@@ -387,13 +387,13 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             // If the unique external identifier is empty, the comparison must
             // return false, since two empty ext ids are not equals
             if (externalIdentifiers.getExternalIdentifier().size() == 1) {
-                if ((externalIdentifiers.getExternalIdentifier().get(0).getWorkExternalIdentifierId() == null && externalIdentifiers.getExternalIdentifier().get(0)
-                        .getWorkExternalIdentifierType() == null)) {
+                if ((externalIdentifiers.getExternalIdentifiers().get(0).getValue() == null && externalIdentifiers.getExternalIdentifiers().get(0)
+                        .getType() == null)) {
                     return false;
                 }
             }
 
-            for (WorkExternalIdentifier thisExtId : externalIdentifiers.getExternalIdentifier()) {
+            for (ExternalID thisExtId : externalIdentifiers.getExternalIdentifiers()) {
                 if (!other.getExternalIdentifiers().getExternalIdentifier().contains(thisExtId)) {
                     return false;
                 }

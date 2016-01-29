@@ -82,8 +82,8 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
     protected FuzzyDate startDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "end-date")
     protected FuzzyDate endDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/funding", name = "external-identifiers")
-    protected FundingExternalIdentifiers externalIdentifiers;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "external-ids")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding")
     protected FundingContributors contributors;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
@@ -190,6 +190,14 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
         this.putCode = putCode;
     }
 
+    public ExternalIDs getExternalIdentifiers() {
+        return externalIdentifiers;
+    }
+
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
+        this.externalIdentifiers = externalIdentifiers;
+    }
+
     /**
      * Gets the value of the path property.
      * 
@@ -209,14 +217,6 @@ public class Funding implements VisibilityType, Activity, Serializable, Organiza
      */
     public void setPath(String path) {
         this.path = path;
-    }
-
-    public FundingExternalIdentifiers getExternalIdentifiers() {
-        return externalIdentifiers;
-    }
-
-    public void setExternalIdentifiers(FundingExternalIdentifiers fundingExternalIdentifiers) {
-        this.externalIdentifiers = fundingExternalIdentifiers;
     }
 
     public FundingContributors getContributors() {

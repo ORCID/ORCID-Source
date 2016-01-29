@@ -39,28 +39,28 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.notification.custom.MarshallingTest;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.jaxb.model.record_rc3.ExternalID;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Funding;
-import org.orcid.jaxb.model.record_rc3.PeerReview;
-import org.orcid.jaxb.model.record_rc3.Person;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-public class ValidateV2RC3SamplesTest {
+public class ValidateV2rc3Identifiers {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2RC3SamplesTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2rc3Identifiers.class);
 
     String[] sampleNames = { "funding", "person", "record", "work", "peer-review","activities" };
 
@@ -73,7 +73,7 @@ public class ValidateV2RC3SamplesTest {
     
     @Test
     public void testFunding() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        Funding funding = unmarshallFromPath("/record_2.0_rc3/samples/funding-2.0_rc3.xml", Funding.class);
+        Funding funding = unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
         assertEquals("funding:organization-defined-type",funding.getOrganizationDefinedType().getContent());
         assertNotNull(funding.getExternalIdentifiers());
         assertNotNull(funding.getExternalIdentifiers().getExternalIdentifiers());
@@ -113,7 +113,7 @@ public class ValidateV2RC3SamplesTest {
      */
     @Test
     public void testPerson() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        Person person = unmarshallFromPath("/record_2.0_rc3/samples/person-2.0_rc3.xml", Person.class);        
+        Person person = unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);        
         assertEquals("credit-name",person.getName().getCreditName().getContent());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
         PersonExternalIdentifier id = person.getExternalIdentifiers().getExternalIdentifier().get(0);
@@ -148,7 +148,7 @@ public class ValidateV2RC3SamplesTest {
      */
     @Test
     public void testWork() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        Work work = unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);                
+        Work work = unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);                
         ExternalID id = work.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertEquals("agr",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
@@ -158,7 +158,7 @@ public class ValidateV2RC3SamplesTest {
         validator.validate(marshall(Work.class, work));
         validator.validate(marshallToDOM(Work.class, work));
         
-        work = unmarshallFromPath("/record_2.0_rc3/samples/work-full-2.0_rc3.xml", Work.class);                
+        work = unmarshallFromPath("/record_2.0_rc2/samples/work-full-2.0_rc2.xml", Work.class);                
         id = work.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertEquals("agr",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
@@ -178,7 +178,7 @@ public class ValidateV2RC3SamplesTest {
      */
     @Test
     public void testPeerReview() throws SAXException, IOException, JAXBException, ParserConfigurationException{
-        PeerReview peerReview = unmarshallFromPath("/record_2.0_rc3/samples/peer-review-2.0_rc3.xml", PeerReview.class);
+        PeerReview peerReview = unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         
         ExternalID id = peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertEquals("source-work-id",id.getType());
@@ -197,7 +197,7 @@ public class ValidateV2RC3SamplesTest {
         validator.validate(marshallToDOM(PeerReview.class, peerReview)); 
         
         //do the full record too
-        peerReview = unmarshallFromPath("/record_2.0_rc3/samples/peer-review-full-2.0_rc3.xml", PeerReview.class);
+        peerReview = unmarshallFromPath("/record_2.0_rc2/samples/peer-review-full-2.0_rc2.xml", PeerReview.class);
         id = peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertEquals("source-work-id",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
@@ -213,7 +213,7 @@ public class ValidateV2RC3SamplesTest {
 
     @Test
     public void testActivities(){
-        ActivitiesSummary as = unmarshallFromPath("/record_2.0_rc3/samples/activities-2.0_rc3.xml", ActivitiesSummary.class);
+        ActivitiesSummary as = unmarshallFromPath("/record_2.0_rc2/samples/activities-2.0_rc2.xml", ActivitiesSummary.class);
         
         ExternalIDs fundingIDs = as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
         ExternalIDs fundingIDs2 = as.getFundings().getFundingGroup().get(0).getIdentifiers();
@@ -248,7 +248,7 @@ public class ValidateV2RC3SamplesTest {
     }
     @Test
     public void testRecord(){
-        Record record = unmarshallFromPath("/record_2.0_rc3/samples/record-2.0_rc3.xml", Record.class);
+        Record record = unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
         ActivitiesSummary as = record.getActivitiesSummary();
         ExternalIDs fundingIDs = as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
         ExternalIDs fundingIDs2 = as.getFundings().getFundingGroup().get(0).getIdentifiers();
@@ -273,7 +273,7 @@ public class ValidateV2RC3SamplesTest {
     }
 
     public void validateSampleXML(String name) throws SAXException, IOException {
-        Source source = getInputStream("/record_2.0_rc3/samples/" + name + "-2.0_rc3.xml");
+        Source source = getInputStream("/record_2.0_rc2/samples/" + name + "-2.0_rc2.xml");
         Validator validator = getValidator(name);
         validator.validate(source);
     }
@@ -286,7 +286,7 @@ public class ValidateV2RC3SamplesTest {
 
     public Validator getValidator(String name) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        Schema schema = factory.newSchema(getClass().getResource("/record_2.0_rc3/" + name + "-2.0_rc3.xsd"));
+        Schema schema = factory.newSchema(getClass().getResource("/record_2.0_rc2/" + name + "-2.0_rc2.xsd"));
         Validator validator = schema.newValidator();
         return validator;
     }
