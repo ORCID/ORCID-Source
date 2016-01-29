@@ -65,7 +65,7 @@ public class StatisticsDaoImpl implements StatisticsDao {
     public StatisticKeyEntity getLatestKey() {
         try {
             return (StatisticKeyEntity) entityManager
-                    .createNativeQuery("SELECT * FROM statistic_key ORDER BY generation_date DESC LIMIT 1;",
+                    .createNativeQuery("SELECT * FROM statistic_key WHERE id IN (SELECT max(key_id) FROM statistic_values) ORDER BY generation_date DESC LIMIT 1;",
                             StatisticKeyEntity.class)
                     .getSingleResult();
         } catch (NoResultException nre) {
