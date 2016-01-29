@@ -309,7 +309,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
 
         ClientResponse clientResponse = oauthT2Client.addWorksJson(orcid, orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
-        List<MinimizedWorkEntity> works = workDao.findWorks(orcid);
+        List<MinimizedWorkEntity> works = workDao.findWorks(orcid, 0L);
         assertNotNull(works);
         long workId = -1;
         for (MinimizedWorkEntity work : works) {

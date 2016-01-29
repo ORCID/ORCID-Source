@@ -28,9 +28,9 @@ import org.orcid.jaxb.model.record_rc2.Addresses;
 public interface AddressManager {
     Address getPrimaryAddress(String orcid);
     
-    Addresses getAddresses(String orcid);
+    Addresses getAddresses(String orcid, long lastModified);
     
-    Addresses getPublicAddresses(String orcid);
+    Addresses getPublicAddresses(String orcid, long lastModified);
     
     Address getAddress(String orcid, Long putCode);        
 

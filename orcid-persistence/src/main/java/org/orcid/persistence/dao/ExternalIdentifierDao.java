@@ -42,7 +42,7 @@ public interface ExternalIdentifierDao extends GenericDao<ExternalIdentifierEnti
      * @return a list of all external identifiers associated with the given
      *         profile
      */
-    List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid);
+    List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified);
 
     /**
      * Retrieves all external identifiers associated with the given profile and

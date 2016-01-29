@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -55,7 +56,8 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<AddressEntity> findByOrcid(String orcid) {
+    @Cacheable(value = "dao-address", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<AddressEntity> findByOrcid(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();

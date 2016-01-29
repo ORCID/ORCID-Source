@@ -63,15 +63,17 @@ public class ActivityValidator {
         }
     }
 
-    public static void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag) {
+    public static void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
         }
 
-        if (funding.getExternalIdentifiers() == null || funding.getExternalIdentifiers().getExternalIdentifier() == null
-                || funding.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
-            throw new ActivityIdentifierValidationException();
+        if (isApiRequest) {
+            if (funding.getExternalIdentifiers() == null || funding.getExternalIdentifiers().getExternalIdentifier() == null
+                    || funding.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                throw new ActivityIdentifierValidationException();
+            }
         }
 
         if (funding.getPutCode() != null && createFlag) {
@@ -113,8 +115,8 @@ public class ActivityValidator {
             params.put("clientName", sourceEntity.getSourceName());
             throw new InvalidPutCodeException(params);
         }
-        
-        if(peerReview.getType() == null) {
+
+        if (peerReview.getType() == null) {
             throw new ActivityTypeValidationException();
         }
     }
@@ -134,10 +136,8 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
                 for (WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
-                    if (isDupRelationship(newId, existingId) &&
-                    		isDupValue(newId, existingId) &&
-                    		isDupType(newId, existingId) &&
-                    		sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                    if (isDupRelationship(newId, existingId) && isDupValue(newId, existingId) && isDupType(newId, existingId)
+                            && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
@@ -147,28 +147,28 @@ public class ActivityValidator {
         }
     }
 
-	private static boolean isDupRelationship(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
-    	return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) &&
-    			newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF);
-	}
-	
-    private static boolean isDupValue(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
-		return existingId.getWorkExternalIdentifierId() != null && existingId.getWorkExternalIdentifierId().getContent() != null
-				&& newId.getWorkExternalIdentifierId() != null && newId.getWorkExternalIdentifierId().getContent() != null
-				&& newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent());
-	}
-    
-    private static boolean isDupType(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
-		return existingId.getWorkExternalIdentifierType() != null && newId.getWorkExternalIdentifierType() != null
-				&& newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType());
-	}
+    private static boolean isDupRelationship(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+        return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null
+                && newId.getRelationship().equals(Relationship.SELF);
+    }
 
-	public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
+    private static boolean isDupValue(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+        return existingId.getWorkExternalIdentifierId() != null && existingId.getWorkExternalIdentifierId().getContent() != null
+                && newId.getWorkExternalIdentifierId() != null && newId.getWorkExternalIdentifierId().getContent() != null
+                && newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent());
+    }
+
+    private static boolean isDupType(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+        return existingId.getWorkExternalIdentifierType() != null && newId.getWorkExternalIdentifierType() != null
+                && newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType());
+    }
+
+    public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (FundingExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
                 for (FundingExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
-                    if (existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship().equals(Relationship.SELF)
+                    if (existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF)
                             && newId.getValue().equals(existingId.getValue()) && newId.getType().equals(existingId.getType())
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();

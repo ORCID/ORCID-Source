@@ -14,25 +14,29 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.exception;
 
-import org.orcid.jaxb.model.message.OrcidProfile;
+/**
+ * 
+ * @author Shobhit Tyagi
+ * 
+ */
+public class PutCodeFormatException extends ApplicationException {
 
-public interface OrcidProfileCacheManager {
+    private static final long serialVersionUID = 1L;
 
-    public OrcidProfile retrievePublic(String orcid);
-    
-    public OrcidProfile retrieve(String orcid);
-    
-    public OrcidProfile retrieveProfileBioAndInternal(String orcid);
-    
-    @Deprecated 
-    public void put(String orcid, OrcidProfile orcidProfile);
-    
-    public void put(OrcidProfile orcidProfile);
-    
-    public void removeAll();
-    
-    public void remove(String orcid);
-    
+	public PutCodeFormatException() {
+	}
+	
+	public PutCodeFormatException(String message) {
+		super(message);
+	}
+	
+	public PutCodeFormatException(Throwable cause) {
+		super(cause);
+	}
+	
+	public PutCodeFormatException(String message, Throwable cause) {
+		super(message, cause);
+	}
 }

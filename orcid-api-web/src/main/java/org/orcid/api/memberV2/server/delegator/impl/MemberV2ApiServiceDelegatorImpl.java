@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,6 +164,11 @@ public class MemberV2ApiServiceDelegatorImpl
     @Resource
     private AddressManager addressManager;
 
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();        
+    }
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -201,7 +207,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWork(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
-        Work w = workManager.getWork(orcid, putCode);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -211,7 +218,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED);
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -270,7 +278,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createFunding(String orcid, Funding funding) {
         orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_CREATE);
-        Funding f = profileFundingManager.createFunding(orcid, funding);
+        Funding f = profileFundingManager.createFunding(orcid, funding, true);
         try {
             return Response.created(new URI(String.valueOf(f.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -287,7 +295,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(funding.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        Funding f = profileFundingManager.updateFunding(orcid, funding);
+        Funding f = profileFundingManager.updateFunding(orcid, funding, true);
         return Response.ok(f).build();
     }
     
@@ -487,7 +495,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewResearcherUrls(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime);
         researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls()));
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
@@ -547,7 +556,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewOtherNames(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
         List<OtherName> allOtherNames = otherNames.getOtherNames();
         List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames);
         otherNames.setOtherNames(filterdOtherNames);
@@ -610,7 +620,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifiers(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiersV2(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime);
         List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
         List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
         extIds.setExternalIdentifiers(filteredExtIds);
@@ -621,7 +632,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
+        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
@@ -636,7 +647,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        ExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifierV2(orcid, externalIdentifier);
+        ExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
@@ -644,7 +655,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
-        externalIdentifier = externalIdentifierManager.createExternalIdentifierV2(orcid, externalIdentifier);
+        externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier);
         try {
             return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -672,7 +683,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewKeywords(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        Keywords keywords = keywordsManager.getKeywords(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Keywords keywords = keywordsManager.getKeywords(orcid, lastModifiedTime);
         List<Keyword> allKeywords = keywords.getKeywords();
         List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords);
         keywords.setKeywords(filterdKeywords);
@@ -726,7 +738,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewAddresses(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        Addresses addresses = addressManager.getAddresses(orcid);
+        Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid));
         List<Address> allAddresses = addresses.getAddress();
         List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses);
         addresses.setAddress(filteredAddresses);

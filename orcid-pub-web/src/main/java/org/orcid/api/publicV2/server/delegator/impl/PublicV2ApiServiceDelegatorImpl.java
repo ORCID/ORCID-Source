@@ -18,6 +18,7 @@ package org.orcid.api.publicV2.server.delegator.impl;
 
 import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,6 +165,11 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private AddressManager addressManager;
         
+    private long getLastModifiedTime(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();        
+    }
+    
     @Override
     public Response viewStatusText() {
         return Response.ok(STATUS_OK_MESSAGE).build();
@@ -202,7 +208,9 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWork(String orcid, Long putCode) {
-        Work w = workManager.getWork(orcid, putCode);
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(w);
         orcidSecurityManager.checkVisibility(w);
         ActivityUtils.setPathToActivity(w, orcid);
@@ -226,7 +234,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.ORCID_WORKS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewWorkSummary(String orcid, Long putCode) {
-        WorkSummary ws = workManager.getWorkSummary(orcid, putCode);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
         orcidSecurityManager.checkVisibility(ws);
         ActivityUtils.setPathToActivity(ws, orcid);
@@ -321,7 +330,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.READ_LIMITED, enableAnonymousAccess = true)
     public Response viewResearcherUrls(String orcid) {
-        ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        ResearcherUrls researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
@@ -354,7 +364,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewOtherNames(String orcid) {
-        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
@@ -371,7 +382,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifiers(String orcid) {
-        ExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiersV2(orcid);  
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        ExternalIdentifiers extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);  
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         return Response.ok(extIds).build();
     }
@@ -379,7 +391,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifierV2(orcid, putCode);
+        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
@@ -401,7 +413,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewKeywords(String orcid) {
-        Keywords keywords = keywordsManager.getPublicKeywords(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Keywords keywords = keywordsManager.getPublicKeywords(orcid, lastModifiedTime);
         ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }
@@ -418,7 +431,7 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewAddresses(String orcid) {
-        Addresses addresses = addressManager.getPublicAddresses(orcid);
+        Addresses addresses = addressManager.getPublicAddresses(orcid, getLastModifiedTime(orcid));
         ElementUtils.setPathToAddresses(addresses, orcid);
         return Response.ok(addresses).build();
     }

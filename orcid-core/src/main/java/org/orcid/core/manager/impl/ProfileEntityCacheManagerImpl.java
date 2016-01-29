@@ -110,9 +110,9 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     static public boolean needsFresh(Date dbDate, ProfileEntity profileEntity) {
         if (profileEntity == null)
             return true;
-        if (!profileEntity.getLastModified().equals(dbDate))
-            return true;
         if (dbDate == null) // not sure when this happens?
+            return true;
+        if (profileEntity.getLastModified().getTime() != dbDate.getTime())
             return true;
         return false;
     }

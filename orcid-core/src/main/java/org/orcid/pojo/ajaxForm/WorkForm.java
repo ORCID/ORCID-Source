@@ -80,7 +80,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
     private Text subtitle;
 
-    private TranslatedTitle translatedTitle;
+    private TranslatedTitleForm translatedTitle;
 
     private Text workCategory;
 
@@ -136,7 +136,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
             }
             // Set translated title
             if (work.getWorkTitle().getTranslatedTitle() != null) {
-                TranslatedTitle tt = new TranslatedTitle();
+                TranslatedTitleForm tt = new TranslatedTitleForm();
                 tt.setContent(work.getWorkTitle().getTranslatedTitle().getContent());
                 tt.setLanguageCode(work.getWorkTitle().getTranslatedTitle().getLanguageCode());
                 w.setTranslatedTitle(tt);
@@ -245,7 +245,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
             w.setTitle(Text.valueOf(minimizedWorkEntity.getTitle()));
 
         if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
-            TranslatedTitle translatedTitle = new TranslatedTitle();
+            TranslatedTitleForm translatedTitle = new TranslatedTitleForm();
             translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
             translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
             w.setTranslatedTitle(translatedTitle);
@@ -736,11 +736,11 @@ public class WorkForm implements ErrorsInterface, Serializable {
         this.subtitle = subtitle;
     }
 
-    public TranslatedTitle getTranslatedTitle() {
+    public TranslatedTitleForm getTranslatedTitle() {
         return translatedTitle;
     }
 
-    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
+    public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
     }
 

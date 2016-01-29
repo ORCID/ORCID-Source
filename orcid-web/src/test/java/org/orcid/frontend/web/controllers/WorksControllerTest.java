@@ -46,7 +46,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -264,7 +264,7 @@ public class WorksControllerTest extends BaseControllerTest {
         work.setTitle(Text.valueOf("Test update work"));
         work.setSubtitle(Text.valueOf("Test update subtitle"));
 
-        TranslatedTitle tTitle = new TranslatedTitle();
+        TranslatedTitleForm tTitle = new TranslatedTitleForm();
         tTitle.setContent("Test translated title");
         tTitle.setLanguageCode("EN");
 

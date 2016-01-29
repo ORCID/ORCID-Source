@@ -14,25 +14,24 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.api.memberV2.server;
 
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.core.exception.PutCodeFormatException;
 
-public interface OrcidProfileCacheManager {
+/**
+ * 
+ * @author Shobhit Tyagi
+ * 
+ */
+public class MemberV2ApiServiceImplHelper {
 
-    public OrcidProfile retrievePublic(String orcid);
-    
-    public OrcidProfile retrieve(String orcid);
-    
-    public OrcidProfile retrieveProfileBioAndInternal(String orcid);
-    
-    @Deprecated 
-    public void put(String orcid, OrcidProfile orcidProfile);
-    
-    public void put(OrcidProfile orcidProfile);
-    
-    public void removeAll();
-    
-    public void remove(String orcid);
-    
+	protected Long getPutCode(String putCode) {
+    	Long putCodeNum = null;
+    	try {
+    		putCodeNum = Long.valueOf(putCode);
+    	} catch(Exception e) {
+            throw new PutCodeFormatException();
+    	}
+    	return putCodeNum;
+    }
 }

@@ -31,6 +31,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -42,6 +43,7 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
@@ -64,7 +66,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
     
     @Resource
-    private OrcidSecurityManager orcidSecurityManager;
+    private OrcidSecurityManager orcidSecurityManager;        
+    
+    private long getLastModified(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
 
     @Override
     public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
@@ -93,7 +100,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     @Override
     @Transactional
     public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility) {
-        List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid);
+        List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(ResearcherUrlEntity existingEntity : existingEntities) {
             boolean deleteMe = true;
@@ -159,7 +166,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @return the list of public researcher urls associated with the orcid profile
      * */
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getPublicResearcherUrls(String orcid) {
+    @Cacheable(value = "public-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
+    public ResearcherUrls getPublicResearcherUrls(String orcid, long lastModified) {
         return getResearcherUrls(orcid, Visibility.PUBLIC);
     }
     
@@ -170,7 +178,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * @return the list of researcher urls associated with the orcid profile
      * */
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrls getResearcherUrls(String orcid) {
+    @Cacheable(value = "researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
+    public ResearcherUrls getResearcherUrls(String orcid, long lastModified) {
         return getResearcherUrls(orcid, null);
     }
     
@@ -183,13 +192,14 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     private ResearcherUrls getResearcherUrls(String orcid, Visibility visibility) {
         List<ResearcherUrlEntity> researcherUrlEntities = null; 
         if(visibility == null) {
-            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid);
+            researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         } else {
             researcherUrlEntities = researcherUrlDao.getResearcherUrls(orcid, visibility);
         }       
         
         ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
         rUrls.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(rUrls);
         return rUrls;
     }
 
@@ -206,7 +216,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);        
         // Validate it is not duplicated
-        List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+        List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
             if (isDuplicated(existing, researcherUrl, sourceEntity)) {
@@ -235,7 +245,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true);
         // Validate it is not duplicated
-        List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid);
+        List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
             if (isDuplicated(existing, researcherUrl, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();

@@ -167,4 +167,12 @@ public class GroupIdRecords {
         return this.groupIdRecord;
     }
 
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
 }

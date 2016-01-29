@@ -17,15 +17,19 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.CreditName;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.FamilyName;
@@ -83,7 +87,10 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             bio.setVisibility(bioVisibility);
         }
         
-        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid);
+        Date lastModified = profileEntity.getLastModified();
+        long lastMofieiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        
+        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid, lastMofieiedTime);
         
         if(bio != null) {
             personalDetails.setBiography(bio);
@@ -92,7 +99,9 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             personalDetails.setName(name);
         }                               
         if(otherNames != null && otherNames.getOtherNames() != null) {
-            personalDetails.setOtherNames(otherNames);
+        	XMLGregorianCalendar latest = LastModifiedDatesHelper.calculateLatest(otherNames);
+        	personalDetails.setLastModifiedDate(new LastModifiedDate(latest));
+        	personalDetails.setOtherNames(otherNames);
         }
                 
         return personalDetails;

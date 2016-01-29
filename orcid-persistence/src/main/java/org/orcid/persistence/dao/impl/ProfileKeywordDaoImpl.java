@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, Long> implements ProfileKeywordDao {
@@ -40,7 +41,8 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
      * */
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProfileKeywordEntity> getProfileKeywors(String orcid) {
+    @Cacheable(value = "dao-keywords", key = "#orcid.concat('-').concat(#lastModified)")
+    public List<ProfileKeywordEntity> getProfileKeywors(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();

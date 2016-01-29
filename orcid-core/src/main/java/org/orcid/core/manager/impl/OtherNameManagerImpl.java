@@ -29,9 +29,11 @@ import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.exception.OtherNameNotFoundException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
@@ -40,6 +42,7 @@ import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 public class OtherNameManagerImpl implements OtherNameManager {
@@ -56,25 +59,38 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Resource
     private SourceManager sourceManager;
     
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    private long getLastModified(String orcid) {
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
     @Override
-    public OtherNames getOtherNames(String orcid) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
+    @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
+    public OtherNames getOtherNames(String orcid, long lastModified) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, lastModified);
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     
     @Override
-    public OtherNames getPublicOtherNames(String orcid) {
+    @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
+    public OtherNames getPublicOtherNames(String orcid, long lastModified) {
         List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
         result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     
     @Override
-    public OtherNames getMinimizedOtherNames(String orcid) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid);
+    @Cacheable(value = "minimized-other-names", key = "#orcid.concat('-').concat(#lastModified)")
+    public OtherNames getMinimizedOtherNames(String orcid, long lastModified) {
+        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, lastModified);
         return jpaJaxbOtherNameAdapter.toMinimizedOtherNameList(otherNameEntityList);
     }
     
@@ -108,7 +124,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         // Validate the otherName
         PersonValidator.validateOtherName(otherName, sourceEntity, true);
         // Validate it is not duplicated
-        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid);
+        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
             if (isDuplicated(existing, otherName, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -136,7 +152,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         PersonValidator.validateOtherName(otherName, sourceEntity, false);
 
         // Validate it is not duplicated
-        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid);
+        List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
             if (isDuplicated(existing, otherName, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -165,7 +181,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Override
     @Transactional
     public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility) {
-        List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid);
+        List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
             boolean deleteMe = true;

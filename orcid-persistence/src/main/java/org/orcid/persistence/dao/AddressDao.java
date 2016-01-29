@@ -29,7 +29,7 @@ import org.orcid.persistence.jpa.entities.AddressEntity;
 public interface AddressDao extends GenericDao<AddressEntity, Long> {
     AddressEntity find(String orcid, Long id);
 
-    List<AddressEntity> findByOrcid(String orcid);
+    List<AddressEntity> findByOrcid(String orcid, long lastModified);
 
     List<Object[]> findAddressesToMigrate();
     

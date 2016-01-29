@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.message.FundingTitle;
-import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.record_rc2.FundingTitle;
+import org.orcid.jaxb.model.common_rc2.Title;
 
 public class FundingTitleForm implements ErrorsInterface, Serializable {
     
@@ -31,7 +31,7 @@ public class FundingTitleForm implements ErrorsInterface, Serializable {
 
     private Text title;
 
-    private TranslatedTitle translatedTitle;
+    private TranslatedTitleForm translatedTitle;
     
     public static FundingTitleForm valueOf(FundingTitle grantTitle) {
         FundingTitleForm gt = new FundingTitleForm(); 
@@ -40,7 +40,7 @@ public class FundingTitleForm implements ErrorsInterface, Serializable {
             	gt.setTitle(Text.valueOf(grantTitle.getTitle().getContent()));
             }
             if(grantTitle.getTranslatedTitle() != null){
-                TranslatedTitle translatedTitle = new TranslatedTitle();
+                TranslatedTitleForm translatedTitle = new TranslatedTitleForm();
                 translatedTitle.setContent((grantTitle.getTranslatedTitle() == null) ? null : grantTitle.getTranslatedTitle().getContent());
                 translatedTitle.setLanguageCode((grantTitle.getTranslatedTitle() == null || grantTitle.getTranslatedTitle().getLanguageCode() == null) ? null : grantTitle.getTranslatedTitle().getLanguageCode());
                 gt.setTranslatedTitle(translatedTitle);
@@ -77,11 +77,11 @@ public class FundingTitleForm implements ErrorsInterface, Serializable {
         this.title = title;
     }
 
-    public TranslatedTitle getTranslatedTitle() {
+    public TranslatedTitleForm getTranslatedTitle() {
         return translatedTitle;
     }
 
-    public void setTranslatedTitle(TranslatedTitle translatedTitle) {
+    public void setTranslatedTitle(TranslatedTitleForm translatedTitle) {
         this.translatedTitle = translatedTitle;
     }   
 }

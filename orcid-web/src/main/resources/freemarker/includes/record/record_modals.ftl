@@ -177,7 +177,7 @@
 								<div class="col-md-6">
 									<div class="aka">
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId || keyword.source == null" focus-me="newInput"></input>
-										<span ng-bind="otherName.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
+										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
 									</div>
 									<div class="source" ng-show="keyword.sourceName">Source: {{keyword.sourceName}}</div>										
 								</div>
@@ -242,7 +242,7 @@
 									<div class="aka">										
 										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId || website.source == null" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
 										<input type="text" ng-model="website.url" ng-show="website.source == orcidId || website.source == null" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
-										<span ng-bind="otherName.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
+ 										<a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId && website.sourceName" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>										
 									</div>
 									<div class="source" ng-show="website.sourceName">Source: {{website.sourceName}}</div>										
 								</div>
@@ -269,8 +269,13 @@
 										</li>
 									</ul>
 									<span class="created-date pull-right" ng-show="website.createdDate">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+								</div>								
+								<div ng-show="website.errors.length > 0" class="col-md-12">									
+									<div ng-repeat="error in website.errors">
+										<span ng-bind="error" class="red"></span>
+									</div>
 								</div>					 				
-							</div>											
+							</div>																								
 						</div>
 					</div>
 					

@@ -76,7 +76,6 @@ public class JpaJaxbOtherNameAdapterImpl implements JpaJaxbOtherNameAdapter {
         
         for(OtherName otherName : otherNameList) {
             otherName.setCreatedDate(null);
-            otherName.setLastModifiedDate(null);
             otherName.setSource(null);
         }
         OtherNames otherNames = new OtherNames();

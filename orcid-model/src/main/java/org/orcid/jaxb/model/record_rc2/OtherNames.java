@@ -122,4 +122,12 @@ public class OtherNames implements Serializable {
             }
         }
     }
+    
+	public LastModifiedDate getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 }

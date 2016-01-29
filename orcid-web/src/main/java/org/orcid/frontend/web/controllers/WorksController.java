@@ -48,7 +48,7 @@ import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.Date;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
-import org.orcid.pojo.ajaxForm.TranslatedTitle;
+import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.slf4j.Logger;
@@ -188,7 +188,7 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         if (w.getTranslatedTitle() == null) {
-            TranslatedTitle tt = new TranslatedTitle();
+            TranslatedTitleForm tt = new TranslatedTitleForm();
             tt.setContent(new String());
             tt.setLanguageCode(new String());
             tt.setLanguageName(new String());
@@ -297,7 +297,9 @@ public class WorksController extends BaseWorkspaceController {
         if (workId == null)
             return null;
 
-        Work work = workManager.getWork(this.getCurrentUserOrcid(), workId);
+        java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Work work = workManager.getWork(this.getCurrentUserOrcid(), workId, lastModifiedTime);
 
         if (work != null) {
             WorkForm workForm = WorkForm.valueOf(work);
