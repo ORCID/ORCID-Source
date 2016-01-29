@@ -3223,9 +3223,9 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
 
     $scope.deleteExternalIdentifier = function(idx) {
         $scope.removeExternalIdentifierIndex = idx;
-        $scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdReference.content;
-        if ($scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName != null)
-            $scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].externalIdCommonName.content + ' ' + $scope.removeExternalModalText;
+        $scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].reference;                        
+        if ($scope.externalIdentifiersPojo.externalIdentifiers[idx].commonName != null)        	
+            $scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].commonName + ' ' + $scope.removeExternalModalText;
         $.colorbox({
             html: $compile($('#delete-external-id-modal').html())($scope)
 
