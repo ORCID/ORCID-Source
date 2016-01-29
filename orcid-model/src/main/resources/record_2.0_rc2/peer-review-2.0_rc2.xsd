@@ -53,7 +53,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="review-identifiers" type="work:work-external-identifiers"
+						<xs:element name="review-identifiers" type="common:external-ids"
 							minOccurs="1">
 							<xs:annotation>
 								<xs:documentation>Unique identifier(s) of the review. <i>This identifier refers to the review itself, NOT to the item that was reviewed.</i> At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
@@ -87,7 +87,7 @@
 								</xs:documentation>
 							</xs:annotation>
 						</xs:element>						
-						<xs:element name="subject-external-identifier" type="work:external-identifier"
+						<xs:element name="subject-external-identifier" type="common:external-id"
 							minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>The unique identifier of the subject being
@@ -141,7 +141,7 @@
 				<xs:extension base="common:activity-summary">
 					<xs:sequence>						
 						<!-- orcid orgs doesn't match specification -->
-						<xs:element name="external-identifiers" type="work:work-external-identifiers"
+						<xs:element ref="common:external-ids"
 							minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>The unique generated identifier of the review.

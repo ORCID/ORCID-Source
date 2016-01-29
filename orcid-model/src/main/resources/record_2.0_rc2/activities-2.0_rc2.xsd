@@ -137,7 +137,7 @@
 	<xs:complexType name="work-group">
 		<xs:sequence>
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
+			<xs:element ref="common:external-ids"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="work:work-summary" />
@@ -148,7 +148,7 @@
 	<xs:complexType name="funding-group">
 		<xs:sequence>
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
+			<xs:element ref="common:external-ids"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="funding:summary" />
@@ -159,7 +159,7 @@
 	<xs:complexType name="peer-review-group">
 		<xs:sequence>
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="identifiers" type="activities:identifiers"></xs:element>
+			<xs:element ref="common:external-ids"></xs:element>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" minOccurs="0"
 					ref="peer-review:summary" />
@@ -167,10 +167,10 @@
 		</xs:sequence>
 	</xs:complexType>
 
-
+<!--
 	<xs:complexType name="identifiers">
 		<xs:sequence>
-			<xs:element name="identifier" type="activities:identifier"
+			<xs:element name="identifier" type="common:external-ids"
 				minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 	</xs:complexType>
@@ -188,9 +188,11 @@
 		</xs:sequence>
 	</xs:complexType>
 
+ 
 	<xs:simpleType name="identifier-types">
 		<xs:union
 			memberTypes="work:external-identifier-type funding:external-identifier-type" />
 	</xs:simpleType>
+	 -->
 
 </xs:schema>

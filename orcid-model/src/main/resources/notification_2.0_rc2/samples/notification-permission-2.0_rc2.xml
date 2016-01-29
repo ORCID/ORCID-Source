@@ -31,10 +31,10 @@
         <notification:item>
             <notification:item-type>work</notification:item-type>
             <notification:item-name>A Really Interesting Research Article</notification:item-name>
-            <notification:external-identifier>
-                <activities:external-identifier-type>doi</activities:external-identifier-type>
-                <activities:external-identifier-id>http://10.5555/12345ABCDE</activities:external-identifier-id>
-            </notification:external-identifier>
+            <common:external-id>
+                <common:external-id-type>doi</common:external-id-type>
+                <common:external-id-value>http://10.5555/12345ABCDE</common:external-id-value>
+            </common:external-id>
         </notification:item>
         <notification:item>
             <notification:item-type>employment</notification:item-type>

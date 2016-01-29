@@ -66,7 +66,7 @@
 						</xs:element>
 						<xs:element name="type" type="work:work-type" />
 						<xs:element ref="common:publication-date" minOccurs="0" />
-						<xs:element name="external-identifiers" type="work:work-external-identifiers"
+						<xs:element ref="common:external-ids"
 							minOccurs="0">
 							<xs:annotation>
 								<xs:documentation>Element containing the type and content of the
@@ -93,7 +93,7 @@
 					<xs:sequence>
 						<xs:element name="title" type="work:work-title"
 							minOccurs="1" />
-						<xs:element name="external-identifiers" type="work:work-external-identifiers"
+						<xs:element ref="common:external-ids"
 							minOccurs="0" />
 						<xs:element name="type" type="work:work-type" />
 						<xs:element ref="common:publication-date" minOccurs="0" />
@@ -152,6 +152,7 @@
 			<xs:enumeration value="working-paper" />
 		</xs:restriction>
 	</xs:simpleType>
+	<!-- 
 	<xs:complexType name="work-external-identifiers">
 		<xs:annotation>
 			<xs:documentation>Container for storing the external references to
@@ -163,6 +164,7 @@
 				name="work-external-identifier" type="work:external-identifier" />
 		</xs:sequence>
 	</xs:complexType>
+	  
 	<xs:complexType name="external-identifier">
 		<xs:annotation>
 			<xs:documentation>External references to the work.
@@ -183,6 +185,7 @@
 			</xs:extension>
 		</xs:complexContent>		
 	</xs:complexType>
+	
 	<xs:simpleType name="external-identifier-type">
 		<xs:annotation>
 			<xs:documentation>The type of work external identifier, e.g DOI, PMID
@@ -266,7 +269,8 @@
 			<xs:enumeration value="zbl" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:complexType name="work-contributors">
+	 -->
+	 <xs:complexType name="work-contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a Work.
 			</xs:documentation>
