@@ -23,11 +23,11 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common_rc2.Amount;
 import org.orcid.jaxb.model.common_rc2.DisambiguatedOrganization;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingContributor;
 import org.orcid.jaxb.model.record_rc2.FundingContributors;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.FundingType;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
@@ -344,10 +344,10 @@ public class FundingForm implements ErrorsInterface, Serializable {
         }
         // Set external identifiers
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
-            FundingExternalIdentifiers fExternalIdentifiers = new FundingExternalIdentifiers();
+            ExternalIDs fExternalIdentifiers = new ExternalIDs();
             for (FundingExternalIdentifierForm fExternalIdentifier : externalIdentifiers) {
                 if (!PojoUtil.isEmtpy(fExternalIdentifier))
-                    fExternalIdentifiers.getExternalIdentifier().add(fExternalIdentifier.toFundingExternalIdentifier());
+                    fExternalIdentifiers.getExternalIdentifiers().add(fExternalIdentifier.toFundingExternalIdentifier());
             }
             result.setExternalIdentifiers(fExternalIdentifiers);
         }
@@ -476,9 +476,9 @@ public class FundingForm implements ErrorsInterface, Serializable {
         }
 
         List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
-        // Set external identifiers
+        // Set external identifiers 
         if (funding.getExternalIdentifiers() != null) {            
-            for (FundingExternalIdentifier fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifier()) {
+            for (ExternalID fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifiers()) {
                 FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
                 externalIdentifiersList.add(fundingExternalIdentifierForm);
             }            

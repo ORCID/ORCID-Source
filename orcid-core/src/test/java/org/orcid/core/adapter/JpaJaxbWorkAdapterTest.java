@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -140,7 +140,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(workExtId.getWorkExternalIdentifierId());
         assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
         assertNotNull(workExtId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
+        assertEquals(ExternalIDType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
         assertEquals("APP-5555555555555555", sourcePath);
@@ -164,7 +164,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(workExtId.getWorkExternalIdentifierId());
         assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
         assertNotNull(workExtId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
+        assertEquals(ExternalIDType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
     }
 
     private Work getWork(boolean full) throws JAXBException {

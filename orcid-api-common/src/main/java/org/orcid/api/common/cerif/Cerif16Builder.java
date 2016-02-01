@@ -25,9 +25,9 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
@@ -68,8 +68,8 @@ public class Cerif16Builder {
      * @see https://zenodo.org/record/17065/files/
      *      OpenAIRE_Guidelines_for_CRIS_Managers_v.1.0.pdf
      */
-    private static Set<WorkExternalIdentifierType> exportedIDs = ImmutableSet.of(WorkExternalIdentifierType.DOI, WorkExternalIdentifierType.HANDLE,
-            WorkExternalIdentifierType.URI, WorkExternalIdentifierType.URN, WorkExternalIdentifierType.PMC);
+    private static Set<String> exportedIDs = ImmutableSet.of(ExternalIDType.DOI.name(), ExternalIDType.HANDLE.name(),
+            ExternalIDType.URI.name(), ExternalIDType.URN.name(), ExternalIDType.PMC.name());
 
     public Cerif16Builder() {
         objectFactory = new ObjectFactory();
@@ -88,15 +88,15 @@ public class Cerif16Builder {
      * @param externalIDs
      * @return
      */
-    public Cerif16Builder addPerson(String orcid, Optional<String> given, Optional<String> family, Optional<String> creditname, List<ExternalIdentifier> externalIDs) {
+    public Cerif16Builder addPerson(String orcid, Optional<String> given, Optional<String> family, Optional<String> creditname, List<PersonExternalIdentifier> externalIDs) {
         person = objectFactory.createCfPersType();
         person.setCfPersId(orcid);
         person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(orcid, CerifClassEnum.ORCID));
 
         // add in other external ids here
-        for (ExternalIdentifier id : externalIDs) {
+        for (PersonExternalIdentifier id : externalIDs) {
             if (translator.translate(id) != CerifClassEnum.OTHER) {
-                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getReference(), translator.translate(id)));
+                person.getCfResIntOrCfKeywOrCfPersPers().add(buildFedID(id.getValue(), translator.translate(id)));
             }
         }
 
@@ -159,11 +159,11 @@ public class Cerif16Builder {
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfResPublClass(type));
 
         // add external identifiers
-        if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getWorkExternalIdentifier() != null) {
-            for (WorkExternalIdentifier id : ws.getExternalIdentifiers().getWorkExternalIdentifier()) {
-                if (exportedIDs.contains(id.getWorkExternalIdentifierType()) && StringUtils.isNotEmpty(id.getWorkExternalIdentifierId().getContent())) {
+        if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getExternalIdentifiers() != null) {
+            for (ExternalID id : ws.getExternalIdentifiers().getExternalIdentifiers()) {
+                if (exportedIDs.contains(id.getType()) && StringUtils.isNotEmpty(id.getValue())) {
                     pub.getCfTitleOrCfAbstrOrCfKeyw()
-                            .add(this.buildFedID(id.getWorkExternalIdentifierId().getContent(), translator.translate(id.getWorkExternalIdentifierType())));
+                            .add(this.buildFedID(id.getValue(), translator.translate(id.getType())));
                 }
             }
         }
@@ -210,11 +210,11 @@ public class Cerif16Builder {
         prod.getCfNameOrCfDescrOrCfKeyw().add(objectFactory.createCfResProdTypeCfResProdClass(type));
 
         // add external identifiers
-        if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getWorkExternalIdentifier() != null) {
-            for (WorkExternalIdentifier id : ws.getExternalIdentifiers().getWorkExternalIdentifier()) {
-                if (exportedIDs.contains(id.getWorkExternalIdentifierType()) && StringUtils.isNotEmpty(id.getWorkExternalIdentifierId().getContent())) {
+        if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getExternalIdentifier() != null) {
+            for (ExternalID id : ws.getExternalIdentifiers().getExternalIdentifiers()) {
+                if (exportedIDs.contains(id.getType()) && StringUtils.isNotEmpty(id.getValue())) {
                     prod.getCfNameOrCfDescrOrCfKeyw()
-                            .add(this.buildFedID(id.getWorkExternalIdentifierId().getContent(), translator.translate(id.getWorkExternalIdentifierType())));
+                            .add(this.buildFedID(id.getValue(), translator.translate(id.getType())));
                 }
             }
         }

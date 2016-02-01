@@ -35,8 +35,10 @@ import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.orcid.utils.OrcidStringUtils;
 
@@ -300,18 +302,18 @@ public class WorkForm implements ErrorsInterface, Serializable {
     private static void populateExternalIdentifiers(Work work, WorkForm workForm) {
         List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
         if(work.getExternalIdentifiers() != null) {        
-            org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers extIds = work.getExternalIdentifiers();
+            ExternalIDs extIds = work.getExternalIdentifiers();
             if (extIds != null) {
-                for (org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier extId : extIds.getWorkExternalIdentifier()) {
+                for (ExternalID extId : extIds.getExternalIdentifiers()) {
                     
                     if(extId.getRelationship() == null) {
-                        if(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                        if(org.orcid.jaxb.model.record_rc2.ExternalIDType.ISSN.equals(extId.getType())) {
                             if(org.orcid.jaxb.model.record_rc2.WorkType.BOOK.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
                                 extId.setRelationship(Relationship.SELF);
                             }
-                        } else if(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                        } else if(org.orcid.jaxb.model.record_rc2.ExternalIDType.ISBN.equals(extId.getType())) {
                             if(org.orcid.jaxb.model.record_rc2.WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || org.orcid.jaxb.model.record_rc2.WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
@@ -331,16 +333,16 @@ public class WorkForm implements ErrorsInterface, Serializable {
     
     
     private static void populateExternalIdentifiers(WorkForm workForm, Work work) {
-        org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers workExternalIds = new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers();
+        ExternalIDs workExternalIds = new ExternalIDs();
         if(workForm.getWorkExternalIdentifiers() != null && !workForm.getWorkExternalIdentifiers().isEmpty()) {
             for(WorkExternalIdentifier wfExtId : workForm.getWorkExternalIdentifiers()) {
-                org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier wExtId = new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier();
+                ExternalID wExtId = new ExternalID();
                 if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierId())) {
-                    wExtId.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId(wfExtId.getWorkExternalIdentifierId().getValue()));
+                    wExtId.setValue(wfExtId.getWorkExternalIdentifierId().getValue());
                 }
                 
                 if(!PojoUtil.isEmpty(wfExtId.getWorkExternalIdentifierType())) {
-                    wExtId.setWorkExternalIdentifierType(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType.fromValue(wfExtId.getWorkExternalIdentifierType().getValue()));
+                    wExtId.setType(wfExtId.getWorkExternalIdentifierType().getValue());
                 }
                 
                 if(!PojoUtil.isEmpty(wfExtId.getRelationship())) {
@@ -350,7 +352,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 if(!PojoUtil.isEmpty(wfExtId.getUrl())) {
                     wExtId.setUrl(new org.orcid.jaxb.model.common_rc2.Url(wfExtId.getUrl().getValue()));
                 }
-                workExternalIds.getExternalIdentifier().add(wExtId);
+                workExternalIds.getExternalIdentifiers().add(wExtId);
             }
         }
         work.setWorkExternalIdentifiers(workExternalIds);

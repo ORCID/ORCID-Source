@@ -69,7 +69,7 @@ import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -139,7 +139,7 @@ public class MemberV2Test extends BlackBoxBase {
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId.setRelationship(Relationship.PART_OF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -172,7 +172,7 @@ public class MemberV2Test extends BlackBoxBase {
         workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -403,7 +403,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -443,7 +443,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
         String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
@@ -500,7 +500,7 @@ public class MemberV2Test extends BlackBoxBase {
         work.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
         wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
 
@@ -511,7 +511,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
         WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
         pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        pExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         pExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);                
 
@@ -567,7 +567,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         work.getWorkTitle().getTitle().setContent("Work # 2");
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
-        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        wExtId2.setWorkExternalIdentifierType(ExternalIDType.DOI);
         wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + time));
         wExtId2.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
@@ -578,7 +578,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         work.getWorkTitle().getTitle().setContent("Work # 3");
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
-        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        wExtId3.setWorkExternalIdentifierType(ExternalIDType.EID);
         wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + time));
         wExtId3.setRelationship(Relationship.SELF);
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
@@ -604,7 +604,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getCompletionDate().setYear(new Year(2016));
         peerReview.setUrl(new Url("http://peer_review/2"));
         WorkExternalIdentifier pExtId2 = new WorkExternalIdentifier();
-        pExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        pExtId2.setWorkExternalIdentifierType(ExternalIDType.DOI);
         pExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-ext-id" + System.currentTimeMillis()));
         pExtId2.setRelationship(Relationship.SELF);
         
@@ -627,7 +627,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getCompletionDate().setYear(new Year(2017));
         peerReview.setUrl(new Url("http://peer_review/3"));
         WorkExternalIdentifier pExtId3 = new WorkExternalIdentifier();
-        pExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        pExtId3.setWorkExternalIdentifierType(ExternalIDType.EID);
         pExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + System.currentTimeMillis()));
         pExtId3.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -645,7 +645,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.setUrl(new Url("http://peer_review/4"));
         
         WorkExternalIdentifier pExtId4 = new WorkExternalIdentifier();
-        pExtId4.setWorkExternalIdentifierType(WorkExternalIdentifierType.EID);
+        pExtId4.setWorkExternalIdentifierType(ExternalIDType.EID);
         pExtId4.setWorkExternalIdentifierId(new WorkExternalIdentifierId("eid-ext-id" + System.currentTimeMillis()));
         pExtId4.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -787,7 +787,7 @@ public class MemberV2Test extends BlackBoxBase {
         work1.setWorkTitle(title1);
         WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
         wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId1.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId1.setRelationship(Relationship.SELF);
         wExtId1.setUrl(new Url("http://orcid.org/work#1"));
         work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
@@ -802,7 +802,7 @@ public class MemberV2Test extends BlackBoxBase {
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId2 = new WorkExternalIdentifier();
         wExtId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId2.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId2.setRelationship(Relationship.PART_OF);
         wExtId2.setUrl(new Url("http://orcid.org/work#2"));
         work2.getExternalIdentifiers().getWorkExternalIdentifier().clear();
@@ -817,7 +817,7 @@ public class MemberV2Test extends BlackBoxBase {
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
         WorkExternalIdentifier wExtId3 = new WorkExternalIdentifier();
         wExtId3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId3.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId3.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId3.setRelationship(Relationship.SELF);
         wExtId3.setUrl(new Url("http://orcid.org/work#3"));
         work3.getExternalIdentifiers().getWorkExternalIdentifier().clear();
@@ -897,7 +897,7 @@ public class MemberV2Test extends BlackBoxBase {
         work1.setWorkTitle(title1);
         WorkExternalIdentifier wExtId1 = new WorkExternalIdentifier();
         wExtId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + time));
-        wExtId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        wExtId1.setWorkExternalIdentifierType(ExternalIDType.AGR);
         wExtId1.setRelationship(Relationship.SELF);
         wExtId1.setUrl(new Url("http://orcid.org/work#1"));
         work1.getExternalIdentifiers().getWorkExternalIdentifier().clear();
@@ -933,7 +933,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();        
         WorkExternalIdentifier pExtId = new WorkExternalIdentifier();
         pExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("Work Id " + System.currentTimeMillis()));
-        pExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        pExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         pExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(pExtId);
         

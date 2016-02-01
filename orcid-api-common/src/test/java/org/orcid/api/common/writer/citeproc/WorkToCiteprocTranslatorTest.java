@@ -22,7 +22,7 @@ import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 
 import de.undercouch.citeproc.csl.CSLItemData;
@@ -57,7 +57,7 @@ public class WorkToCiteprocTranslatorTest {
         Work w = makeWork(bibtexHyperLiteral);
         WorkExternalIdentifiers wei = new WorkExternalIdentifiers();
         WorkExternalIdentifier eid = new WorkExternalIdentifier();
-        eid.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        eid.setWorkExternalIdentifierType(ExternalIDType.DOI);
         WorkExternalIdentifierId id = new WorkExternalIdentifierId();
         id.setContent("10.1234/1234");
         eid.setWorkExternalIdentifierId(id);

@@ -74,7 +74,7 @@ import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.WorkType;
@@ -458,7 +458,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkType(org.orcid.jaxb.model.record_rc2.WorkType.BOOK);
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
-        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        extId.setWorkExternalIdentifierType(ExternalIDType.DOI);
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
@@ -471,7 +471,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkType(org.orcid.jaxb.model.record_rc2.WorkType.BOOK);
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
-        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        extId.setWorkExternalIdentifierType(ExternalIDType.DOI);
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
@@ -495,7 +495,7 @@ public class SourceInActivitiesTest extends BaseTest {
         work.setWorkTitle(title);
         WorkExternalIdentifier extId = new WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("111"));
-        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        extId.setWorkExternalIdentifierType(ExternalIDType.DOI);
         WorkExternalIdentifiers extIdentifiers = new WorkExternalIdentifiers();
         extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
@@ -540,7 +540,7 @@ public class SourceInActivitiesTest extends BaseTest {
         WorkExternalIdentifiers workExtIds = new WorkExternalIdentifiers();
         WorkExternalIdentifier workExtId = new WorkExternalIdentifier();
         workExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ID"));
-        workExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
+        workExtId.setWorkExternalIdentifierType(ExternalIDType.AGR);
         workExtIds.getExternalIdentifier().add(workExtId);        
         peerReview.setSubjectName(workTitle);
         peerReview.setSubjectExternalIdentifier(workExtId);

@@ -80,7 +80,7 @@ public class JsonUtilsTest {
         assertNotNull(wExtId2_0);
         assertNotNull(wExtId2_0.getWorkExternalIdentifier());
         org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier extId = wExtId2_0.getWorkExternalIdentifier().get(0);
-        assertEquals(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType.DOI, extId.getWorkExternalIdentifierType());
+        assertEquals(org.orcid.jaxb.model.record_rc2.ExternalIDType.DOI, extId.getWorkExternalIdentifierType());
         assertEquals("12345", extId.getWorkExternalIdentifierId().getContent());
         assertNull(extId.getUrl());
         assertNull(extId.getRelationship());
@@ -90,7 +90,7 @@ public class JsonUtilsTest {
         assertNotNull(wExtId2_0);
         assertNotNull(wExtId2_0.getWorkExternalIdentifier());
         extId = wExtId2_0.getWorkExternalIdentifier().get(0);
-        assertEquals(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType.DOI, extId.getWorkExternalIdentifierType());
+        assertEquals(org.orcid.jaxb.model.record_rc2.ExternalIDType.DOI, extId.getWorkExternalIdentifierType());
         assertEquals("67890", extId.getWorkExternalIdentifierId().getContent());
         assertNotNull(extId.getUrl());
         assertEquals("http://orcid.org", extId.getUrl().getValue());

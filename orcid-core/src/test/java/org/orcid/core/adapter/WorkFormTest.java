@@ -48,7 +48,7 @@ import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.WorkType;
@@ -157,7 +157,7 @@ public class WorkFormTest {
         WorkExternalIdentifiers externalIdentifiers = new WorkExternalIdentifiers();
         org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier extId = new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier();
         extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("External Identifier ID"));
-        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.ASIN);
+        extId.setWorkExternalIdentifierType(ExternalIDType.ASIN);
         extId.setRelationship(Relationship.SELF);
         externalIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(externalIdentifiers);

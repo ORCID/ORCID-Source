@@ -100,7 +100,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -330,20 +330,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return null;
         }
         //Transform the external id v1.2 into an external id v2.0
-        org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
+        org.orcid.jaxb.model.record_rc2.ExternalIDs recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.ExternalIDs.valueOf(work.getWorkExternalIdentifiers());
         
         /**
          * Transform the external identifiers according to the rules in: 
          * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
          * */
-        for(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
-            if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+        for(org.orcid.jaxb.model.record_rc2.ExternalID extId : recordExternalIdentifiers.getExternalIdentifiers()) {
+            if(ExternalIDType.ISSN.equals(extId.getType())) {
                 if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
                     extId.setRelationship(Relationship.PART_OF);
                 } else {
                     extId.setRelationship(Relationship.SELF);
                 }                
-            } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+            } else if(ExternalIDType.ISBN.equals(extId.getType())) {
                 if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
                     extId.setRelationship(Relationship.PART_OF);
                 } else {
