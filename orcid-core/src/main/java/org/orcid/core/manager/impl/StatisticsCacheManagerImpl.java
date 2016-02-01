@@ -137,6 +137,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
         LOG.info("Getting the latest statistics timeline map");
 
         Map<StatisticsEnum, StatisticsTimeline> latestStatisticsTimelineMap = new HashMap<StatisticsEnum, StatisticsTimeline>();
+        System.out.println("Working on method setLatestStatisticsTimeline");
         for (StatisticsEnum type : StatisticsEnum.values()) {
             System.out.println("Looking for statisticTimeline: " + type.value());
             StatisticsTimeline statisticsTimeline = statisticsManager.getStatisticsTimelineModel(type);
