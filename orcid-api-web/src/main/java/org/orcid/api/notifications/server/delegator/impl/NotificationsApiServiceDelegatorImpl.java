@@ -158,7 +158,7 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     private void checkIfProfileDeprecated(String orcid) {
     	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-        if (profileDao.isProfileDeprecated(orcid)) {
+        if (entity != null && profileDao.isProfileDeprecated(orcid)) {
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());
