@@ -118,11 +118,23 @@ public class StatsApiServiceBaseImplTest {
         Assert.assertEquals(s.getStatistics().size(), 2);
         Assert.assertEquals((long) s.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value()), 100l);
         Assert.assertEquals((long) s.getStatistics().get(StatisticsEnum.KEY_NUMBER_OF_WORKS.value()), 102l);
-
     }
 
     @Test
     public void testViewStatsTimeline() {
+        
+        // mock the methods used
+        StatisticKeyEntity key200 = new StatisticKeyEntity();
+        key200.setId(200L);
+        key200.setGenerationDate(new Date(2000, 1, 1));
+        
+        StatisticKeyEntity key201 = new StatisticKeyEntity();
+        key201.setId(200L);
+        key201.setGenerationDate(new Date(1999, 1, 1));
+        
+        when(statisticsDao.getKey(200L)).thenReturn(key200);
+        when(statisticsDao.getKey(201L)).thenReturn(key201);
+        
         Assert.assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
         StatisticsTimeline s = (StatisticsTimeline) serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS).getEntity();
         Assert.assertEquals(s.getStatisticName(), StatisticsEnum.KEY_LIVE_IDS.value());
