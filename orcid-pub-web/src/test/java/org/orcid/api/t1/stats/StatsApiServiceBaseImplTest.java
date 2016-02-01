@@ -73,7 +73,7 @@ public class StatsApiServiceBaseImplTest {
         a.setStatisticValue(100l);
         StatisticKeyEntity akey = new StatisticKeyEntity();
         akey.setGenerationDate(new Date(2000, 1, 1));
-        akey.setId(200l);
+        akey.setId(200L);
         a.setKey(akey);
 
         StatisticValuesEntity b = new StatisticValuesEntity();
@@ -82,7 +82,7 @@ public class StatsApiServiceBaseImplTest {
         b.setStatisticValue(101l);
         StatisticKeyEntity bkey = new StatisticKeyEntity();
         bkey.setGenerationDate(new Date(1999, 1, 1));
-        bkey.setId(201l);
+        bkey.setId(201L);
         b.setKey(bkey);
 
         StatisticValuesEntity c = new StatisticValuesEntity();
@@ -107,7 +107,7 @@ public class StatsApiServiceBaseImplTest {
         key200.setGenerationDate(new Date(2000, 1, 1));
         
         StatisticKeyEntity key201 = new StatisticKeyEntity();
-        key201.setId(200L);
+        key201.setId(201L);
         key201.setGenerationDate(new Date(1999, 1, 1));
         
         when(statisticsDao.getKey(200L)).thenReturn(key200);
