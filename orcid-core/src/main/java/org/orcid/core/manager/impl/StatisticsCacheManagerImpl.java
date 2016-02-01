@@ -61,6 +61,9 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
 
                 return toStatisticsSummary(statisticsCache.get(CACHE_STATISTICS_KEY));
             }
+        } catch(Exception e) {
+            LOG.error("Error fetching statistics in 'retrieve'", e);
+            return null;
         } finally {
             lockers.releaseLock("Statistics");
         }
@@ -80,6 +83,10 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
                 Map<StatisticsEnum, StatisticsTimeline> statisticsTimelineMap = toStatisticsTimelineMap(statisticsCache.get(CACHE_TIMELINE_KEY));
                 return statisticsTimelineMap.get(type);
             }
+            
+        } catch(Exception e) {
+            LOG.error("Error fetching statistics in 'getStatisticsTimelineModel'", e);
+            return null;
         } finally {
             lockers.releaseLock("statisticsTimeline");
         }
