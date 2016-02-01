@@ -27,7 +27,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -102,6 +101,18 @@ public class StatsApiServiceBaseImplTest {
         when(statisticsDao.getStatistic(StatisticsEnum.KEY_LIVE_IDS.value())).thenReturn(statsTimelineValues);
         when(statisticsDao.getStatistic(200l)).thenReturn(statsSummaryValues);
 
+        // mock the methods used
+        StatisticKeyEntity key200 = new StatisticKeyEntity();
+        key200.setId(200L);
+        key200.setGenerationDate(new Date(2000, 1, 1));
+        
+        StatisticKeyEntity key201 = new StatisticKeyEntity();
+        key201.setId(200L);
+        key201.setGenerationDate(new Date(1999, 1, 1));
+        
+        when(statisticsDao.getKey(200L)).thenReturn(key200);
+        when(statisticsDao.getKey(201L)).thenReturn(key201);
+        
         //statsManager.setStatisticsDao(statisticsDao);
         TargetProxyHelper.injectIntoProxy(statsManager, "statisticsDao", statisticsDao);
         
@@ -123,19 +134,7 @@ public class StatsApiServiceBaseImplTest {
     }
 
     @Test
-    public void testViewStatsTimeline() {        
-        // mock the methods used
-        StatisticKeyEntity key200 = new StatisticKeyEntity();
-        key200.setId(200L);
-        key200.setGenerationDate(new Date(2000, 1, 1));
-        
-        StatisticKeyEntity key201 = new StatisticKeyEntity();
-        key201.setId(200L);
-        key201.setGenerationDate(new Date(1999, 1, 1));
-        
-        when(statisticsDao.getKey(200L)).thenReturn(key200);
-        when(statisticsDao.getKey(201L)).thenReturn(key201);
-        
+    public void testViewStatsTimeline() {                        
         assertNotNull(serviceDelegator.getStatsSummary());        
         assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
         StatisticsTimeline s = (StatisticsTimeline) serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS).getEntity();
