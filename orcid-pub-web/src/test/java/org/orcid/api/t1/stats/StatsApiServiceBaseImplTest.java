@@ -16,6 +16,8 @@
  */
 package org.orcid.api.t1.stats;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -112,17 +114,16 @@ public class StatsApiServiceBaseImplTest {
 
     @Test
     public void testViewStatsSummary() {
-        Assert.assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
+        assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
         StatisticsSummary s = (StatisticsSummary) serviceDelegator.getStatsSummary().getEntity();
-        Assert.assertEquals(s.getDate(), new Date(2000, 1, 1));
-        Assert.assertEquals(s.getStatistics().size(), 2);
-        Assert.assertEquals((long) s.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value()), 100l);
-        Assert.assertEquals((long) s.getStatistics().get(StatisticsEnum.KEY_NUMBER_OF_WORKS.value()), 102l);
+        assertEquals(s.getDate(), new Date(2000, 1, 1));
+        assertEquals(s.getStatistics().size(), 2);
+        assertEquals((long) s.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value()), 100l);
+        assertEquals((long) s.getStatistics().get(StatisticsEnum.KEY_NUMBER_OF_WORKS.value()), 102l);
     }
 
     @Test
-    public void testViewStatsTimeline() {
-        
+    public void testViewStatsTimeline() {        
         // mock the methods used
         StatisticKeyEntity key200 = new StatisticKeyEntity();
         key200.setId(200L);
@@ -135,12 +136,15 @@ public class StatsApiServiceBaseImplTest {
         when(statisticsDao.getKey(200L)).thenReturn(key200);
         when(statisticsDao.getKey(201L)).thenReturn(key201);
         
-        Assert.assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
+        assertNotNull(serviceDelegator.getStatsSummary());        
+        assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
         StatisticsTimeline s = (StatisticsTimeline) serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS).getEntity();
-        Assert.assertEquals(s.getStatisticName(), StatisticsEnum.KEY_LIVE_IDS.value());
-        Assert.assertEquals(s.getTimeline().size(), 2);
-        Assert.assertEquals((long) s.getTimeline().get(new Date(1999, 1, 1)), 101l);
-        Assert.assertEquals((long) s.getTimeline().get(new Date(2000, 1, 1)), 100l);
+        assertNotNull(s);
+        assertNotNull(s.getStatisticName());
+        assertEquals(s.getStatisticName(), StatisticsEnum.KEY_LIVE_IDS.value());
+        assertEquals(s.getTimeline().size(), 2);
+        assertEquals((long) s.getTimeline().get(new Date(1999, 1, 1)), 101l);
+        assertEquals((long) s.getTimeline().get(new Date(2000, 1, 1)), 100l);
     }
     
     @Test
@@ -150,7 +154,7 @@ public class StatsApiServiceBaseImplTest {
         for (int i=1;i<it.length;i++){
             list += ","+it[i].value();
         }
-        Assert.assertEquals(StatisticsEnum.allowableSwaggerValues, list);
+        assertEquals(StatisticsEnum.allowableSwaggerValues, list);
     }
     
 }
