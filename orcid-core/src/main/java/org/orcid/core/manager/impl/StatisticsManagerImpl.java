@@ -124,16 +124,18 @@ public class StatisticsManagerImpl implements StatisticsManager {
         // convert to model
         StatisticsTimeline timeline = new StatisticsTimeline();
         timeline.setStatisticName(statisticName.value());
-        Map<Date, Long> map = new TreeMap<Date, Long>();        
+        Map<Long, Long> map = new TreeMap<Long, Long>();        
         Map<Long, Date> generationDateMap = new HashMap<Long, Date>();
         
         for (StatisticValuesEntity entry : list) {
             if(!generationDateMap.containsKey(entry.getKey().getId())) {
                 StatisticKeyEntity key = statisticsDao.getKey(entry.getKey().getId());
-                map.put(key.getGenerationDate(), entry.getStatisticValue());
+                Long time = key.getGenerationDate().getTime();
+                map.put(time, entry.getStatisticValue());
                 generationDateMap.put(key.getId(), key.getGenerationDate());
             } else {
-                map.put(generationDateMap.get(entry.getKey().getId()), entry.getStatisticValue());
+                Date date = generationDateMap.get(entry.getKey().getId());
+                map.put(date.getTime(), entry.getStatisticValue());
             }                       
         }
         timeline.setTimeline(map);

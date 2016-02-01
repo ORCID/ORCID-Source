@@ -142,8 +142,10 @@ public class StatsApiServiceBaseImplTest {
         assertNotNull(s.getStatisticName());
         assertEquals(s.getStatisticName(), StatisticsEnum.KEY_LIVE_IDS.value());
         assertEquals(s.getTimeline().size(), 2);
-        assertEquals((long) s.getTimeline().get(new Date(1999, 1, 1)), 101l);
-        assertEquals((long) s.getTimeline().get(new Date(2000, 1, 1)), 100l);
+        Long time1 = new Date(1999, 1, 1).getTime();
+        assertEquals((long) s.getTimeline().get(time1), 101l);
+        Long time2 = new Date(2000, 1, 1).getTime();
+        assertEquals((long) s.getTimeline().get(time2), 100l);
     }
     
     @Test

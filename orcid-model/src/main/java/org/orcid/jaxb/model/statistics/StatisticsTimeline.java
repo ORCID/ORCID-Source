@@ -17,7 +17,6 @@
 package org.orcid.jaxb.model.statistics;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,7 +40,7 @@ public class StatisticsTimeline implements Serializable {
 
     @XmlElement(name = "statistic-name")
     protected String statisticName;
-    protected Map<Date, Long> timeline;
+    protected Map<Long, Long> timeline;
 
     public String getStatisticName() {
         return statisticName;
@@ -51,11 +50,11 @@ public class StatisticsTimeline implements Serializable {
         this.statisticName = name;
     }
 
-    public Map<Date, Long> getTimeline() {
+    public Map<Long, Long> getTimeline() {
         return timeline;
     }
 
-    public void setTimeline(Map<Date, Long> timeline) {
+    public void setTimeline(Map<Long, Long> timeline) {
         this.timeline = timeline;
     }
 }
