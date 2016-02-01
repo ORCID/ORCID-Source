@@ -43,6 +43,7 @@
 								<div class="personal-account-login">
 									<p class="title">Sign in with your ORCID account</p>
 						            <form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
+						                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						                <div class="form-group">
 						                    <label for="userId" class="control-label">${springMacroRequestContext.getMessage("login.username")}</label>				                                   
 						                    <input type="text" id="userId" name="userId" value="" class="form-control" placeholder="${springMacroRequestContext.getMessage("login.username")}">				                    
@@ -74,6 +75,7 @@
 				                    <ul class="social-icons">
 				                        <li>
 				                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+				                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
 				                                <input type="hidden" name="scope" value="email" />
 				                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -82,6 +84,7 @@
 				                        <!-- 
 				                        <li>
 				                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+				                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				                                <button type="submit" class="btn btn-social-icon btn-twitter"></button>
 				                                <input type="hidden" name="scope" value="email" />
 				                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -90,6 +93,7 @@
 				                         -->
 				                         <li>
 				                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+				                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 				                                <button type="submit" class="btn btn-social-icon btn-google"></button>
 				                                <input type="hidden" name="scope" value="email" />
 				                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -131,6 +135,7 @@
 		<#else>
 			<div id="old-login">
 				<form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
+				    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<div class="row">
 					    <@spring.bind "loginForm" />		     
 					    <@spring.showErrors "<br/>" "error" />		     
