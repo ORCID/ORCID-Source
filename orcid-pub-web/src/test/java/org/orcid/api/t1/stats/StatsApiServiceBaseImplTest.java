@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -137,7 +138,9 @@ public class StatsApiServiceBaseImplTest {
     public void testViewStatsTimeline() {                        
         assertNotNull(serviceDelegator.getStatsSummary());        
         assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
-        StatisticsTimeline s = (StatisticsTimeline) serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS).getEntity();
+        Response r = serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS);
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());        
+        StatisticsTimeline s = (StatisticsTimeline) r.getEntity();        
         assertNotNull(s);
         assertNotNull(s.getStatisticName());
         assertEquals(s.getStatisticName(), StatisticsEnum.KEY_LIVE_IDS.value());
