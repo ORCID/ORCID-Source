@@ -139,7 +139,8 @@ public class StatsApiServiceBaseImplTest {
         assertNotNull(serviceDelegator.getStatsSummary());        
         assertEquals(serviceDelegator.getStatsSummary().getStatus(), 200);
         Response r = serviceDelegator.getStatsTimeline(StatisticsEnum.KEY_LIVE_IDS);
-        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());        
+        assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());  
+        
         StatisticsTimeline s = (StatisticsTimeline) r.getEntity();        
         assertNotNull(s);
         assertNotNull(s.getStatisticName());
