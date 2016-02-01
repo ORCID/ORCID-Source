@@ -2198,7 +2198,8 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.closeDeleteBox = function(){
         $scope.showDeleteBox = false;
-    }
+    }; 
+    
     
     $scope.closeVerificationBox = function(){
         $scope.showEmailVerifBox = false;
@@ -10044,7 +10045,9 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 	}
 	
 	$scope.close = function(){
+	    console.log('Close');
 		$scope.showEdit = false;
+	    $.colorbox.close();
 	}
 	    
 	$scope.showTooltip = function(elem){
@@ -10076,14 +10079,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
                 $scope.emailSrvc.popUp = false;        
             }            
         });
-        
-        //
     }
-	
-	$scope.close = function(){	    	    
-	    $.colorbox.close();
-	}
-	
 	
 }]);
 
