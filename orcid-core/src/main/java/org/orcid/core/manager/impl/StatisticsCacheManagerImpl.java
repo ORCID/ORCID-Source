@@ -80,18 +80,7 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
                 if (statisticsCache.get(CACHE_TIMELINE_KEY) == null) {
                     setLatestStatisticsTimeline();
                 }
-                Map<StatisticsEnum, StatisticsTimeline> statisticsTimelineMap = toStatisticsTimelineMap(statisticsCache.get(CACHE_TIMELINE_KEY));
-                
-                if(statisticsTimelineMap == null) {
-                    System.out.println("statisticsTimelineMap is null!!!!!!!");
-                } else {
-                    System.out.println("Available keys: ");
-                    for(StatisticsEnum key : statisticsTimelineMap.keySet()) {
-                        System.out.println("Keys: " + key.value());
-                        System.out.println("Value: " + statisticsTimelineMap.get(key).getStatisticName() + " " +  statisticsTimelineMap.get(key).getTimeline());
-                    }
-                }
-                                                
+                Map<StatisticsEnum, StatisticsTimeline> statisticsTimelineMap = toStatisticsTimelineMap(statisticsCache.get(CACHE_TIMELINE_KEY));                                       
                 return statisticsTimelineMap.get(type);
             }
             
@@ -137,16 +126,8 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
         LOG.info("Getting the latest statistics timeline map");
 
         Map<StatisticsEnum, StatisticsTimeline> latestStatisticsTimelineMap = new HashMap<StatisticsEnum, StatisticsTimeline>();
-        System.out.println("Working on method setLatestStatisticsTimeline");
         for (StatisticsEnum type : StatisticsEnum.values()) {
-            System.out.println("Looking for statisticTimeline: " + type.value());
             StatisticsTimeline statisticsTimeline = statisticsManager.getStatisticsTimelineModel(type);
-            if(statisticsTimeline == null) {
-                System.out.println(type.value() + " is null" );
-            } else {
-                System.out.println(type.value() + " is " + statisticsTimeline.getStatisticName());
-            }
-            
             latestStatisticsTimelineMap.put(type, statisticsTimeline);
         }
         if (statisticsCache.get(CACHE_TIMELINE_KEY) == null) {
