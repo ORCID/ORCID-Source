@@ -112,11 +112,11 @@ undetected into the code during the previous development period. Release candida
 - external-identifiers
 - keywords
 - other-names
-- person*
-- personal-details*
 - researcher-urls
+- person *
+- personal-details *
 
-* This sections are only for reading purposes
+**Note:** person and personal-details sections are only for reading purposes
 
 ## Examples
 ### Read Record Items
