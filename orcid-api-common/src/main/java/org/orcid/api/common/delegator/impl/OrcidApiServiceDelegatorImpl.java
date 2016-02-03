@@ -75,8 +75,9 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
-    
-    @Resource LocaleManager localeManager;
+
+    @Resource
+    LocaleManager localeManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
@@ -193,7 +194,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -332,7 +333,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     /**
      * See {@link OrcidApiServiceDelegator}{@link #publicSearchByQuery(Map)}
-     * */
+     */
     @Override
     @VisibilityControl
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
@@ -380,8 +381,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
         if (profile == null) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", requestedOrcid);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", requestedOrcid);
             throw new OrcidNotFoundException(params);
         }
 
@@ -394,8 +395,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     private Response getOrcidMessageResponse(OrcidMessage orcidMessage, String requestedOrcid) {
         boolean isProfileDeprecated = false;
         if (orcidMessage == null) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", requestedOrcid);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", requestedOrcid);
             throw new OrcidNotFoundException(params);
         }
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
@@ -411,15 +412,15 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
         if (isProfileDeprecated) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri()); 
-            if(orcidProfile.getOrcidDeprecated().getDate() != null) {
+            params.put(OrcidDeprecatedException.ORCID, orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+            if (orcidProfile.getOrcidDeprecated().getDate() != null) {
                 XMLGregorianCalendar deprecatedDate = orcidProfile.getOrcidDeprecated().getDate().getValue();
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, deprecatedDate.toString());
-            }        	
+            }
             throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();
-        }        
+        }
         return response;
     }
 
@@ -431,7 +432,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
             return Response.ok(orcidMessage).build();
         } else {
-        	Object params[] = {query};
+            Object params[] = { query };
             throw new NoResultException(localeManager.resolveMessage("apiError.no_search_result.exception", params));
         }
     }
