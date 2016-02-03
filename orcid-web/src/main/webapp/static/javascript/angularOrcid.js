@@ -9529,7 +9529,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //---------------------
     //-LOGIN AND AUTHORIZE-
     //---------------------
-    $scope.loadAndInitLoginForm = function(scopes, redirect_uri, response_type, user_id) {
+    $scope.loadAndInitLoginForm = function(redirect_uri, response_type, user_id) {
         $scope.isOrcidPresent = false;
         $.ajax({
             url: getBaseUri() + '/oauth/custom/authorize/empty.json',
@@ -9538,7 +9538,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;
-                $scope.authorizationForm.scope.value=scopes;
                 $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
                 $scope.authorizationForm.userName.value = user_id;
@@ -9791,7 +9790,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     //------ AUTHORIZE -------
     //------------------------
-    $scope.loadAndInitAuthorizationForm = function(scopes, redirect_uri, client_id, response_type) {
+    $scope.loadAndInitAuthorizationForm = function(redirect_uri, client_id, response_type) {
         $.ajax({
             url: getBaseUri() + '/oauth/custom/authorize/empty.json',
             type: 'GET',
@@ -9799,7 +9798,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;
-                $scope.authorizationForm.scope.value=scopes;
                 $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
             }

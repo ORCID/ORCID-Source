@@ -55,6 +55,7 @@ import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,8 +143,7 @@ public class OauthConfirmAccessController extends BaseController {
         } catch (Exception e) {
             return getLegacyOrcidEntity("OAuth2 problem", e);
         }
-        String result = JsonUtils.convertToJsonString(res.getEntity());
-        return result;
+        return JsonUtils.convertToJsonString(res.getEntity());
     }
 
     private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
@@ -293,6 +293,58 @@ public class OauthConfirmAccessController extends BaseController {
         return mav;
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @RequestMapping(value = "/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
+    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) {
+        RequestInfoForm infoForm = new RequestInfoForm();
+        
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        String scope = "";
+        String clientId = "";
+        String url = savedRequest.getRedirectUrl();
+        Matcher matcher = clientIdPattern.matcher(url);
+        if (matcher.find()) {
+            clientId = matcher.group(1);
+        }
+        Matcher scopeMatcher = scopesPattern.matcher(url);
+        if (scopeMatcher.find()) {
+            scope = scopeMatcher.group(1);
+            try {
+                scope = URLDecoder.decode(scope, "UTF-8").trim();
+                scope = scope.replaceAll(" +", " ");
+                infoForm.setScopes(ScopePathType.getScopesFromSpaceSeparatedString(scope));
+            } catch (UnsupportedEncodingException e) {
+            }                        
+        }
+        
+        return infoForm;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @RequestMapping(value = "/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam("client_id") String clientId,
             @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {

@@ -64,7 +64,7 @@
 						</div>
 						<!-- Personal Login -->
 						<!-- Login form -->
-						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm('${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
 							<div class="login-box">
 								<p class="title">Sign in with your ORCID account</p>
 								<div class="row personal-login">
@@ -298,7 +298,7 @@
 			</div>
 		<#else>
 			<!-- LOGIN FORM -->			
-			<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+			<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
 				 <div class="row">
 					 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 						<p class="pull-right"><@orcid.msg 'common.dont_have_an_id'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form"><@orcid.msg 'oauth_sign_up.btnregister'/></a>.</p>			    	
