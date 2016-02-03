@@ -277,8 +277,7 @@ public class OauthConfirmAccessController extends BaseController {
                 }
             }
         }
-        mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
-        mav.addObject("scopesString", scope);
+        mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));        
         mav.addObject("redirect_uri", redirectUri);
         mav.addObject("response_type", responseType);
         mav.addObject("client_name", clientName);

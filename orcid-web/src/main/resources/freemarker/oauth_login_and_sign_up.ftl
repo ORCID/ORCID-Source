@@ -145,7 +145,7 @@
 							</div>
 						</div>
 						<!-- Register form -->
-						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm('${redirect_uri}','${response_type}')" ng-cloak>
 							<div id="register" class="oauth-registration">
 						    	<div class="">
 						    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
@@ -350,7 +350,7 @@
 	       	</div>         	        	
 	       	
 	       	<!-- REGISTER FORM --> 
-	       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
+	       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${redirect_uri}','${response_type}')" ng-cloak>
 	       		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 					<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>
 		    	</div> 

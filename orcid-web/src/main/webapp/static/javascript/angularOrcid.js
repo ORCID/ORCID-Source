@@ -9614,15 +9614,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     //-REGISTER AND AUTHORIZE-
     //------------------------
-    $scope.loadAndInitRegistrationForm = function(scopes, redirect_uri, response_type) {
+    $scope.loadAndInitRegistrationForm = function(redirect_uri, response_type) {
         $.ajax({
             url: getBaseUri() + '/oauth/custom/register/empty.json',
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.registrationForm = data;
-                $scope.registrationForm.scope.value=scopes;
+                $scope.registrationForm = data;                
                 $scope.registrationForm.redirectUri.value=redirect_uri;                
                 $scope.registrationForm.responseType.value=response_type;                
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
