@@ -30,8 +30,10 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
@@ -80,6 +82,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     LocaleManager localeManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
+
+    private static final int MAX_SEARCH_ROWS = 1000;
 
     @Required
     public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
@@ -347,6 +351,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @Override
     @VisibilityControl
     public Response searchByQuery(Map<String, List<String>> queryMap) {
+        validateSearchParams(queryMap);
         OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(queryMap);
         List<OrcidSearchResult> searchResults = orcidMessage.getOrcidSearchResults() != null ? orcidMessage.getOrcidSearchResults().getOrcidSearchResult() : null;
         List<OrcidSearchResult> filteredResults = new ArrayList<OrcidSearchResult>();
@@ -369,6 +374,21 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         }
         orcidSearchResults.getOrcidSearchResult().addAll(filteredResults);
         return getOrcidSearchResultsResponse(orcidSearchResults, queryMap.toString());
+    }
+
+    private void validateSearchParams(Map<String, List<String>> queryMap) {
+        List<String> rowsList = queryMap.get("rows");
+        if (rowsList != null && !rowsList.isEmpty()) {
+            try {
+                String rowsString = rowsList.get(0);
+                int rows = Integer.valueOf(rowsString);
+                if (rows < 0 || rows > MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+                }
+            } catch (NumberFormatException e) {
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+            }
+        }
     }
 
     /**
