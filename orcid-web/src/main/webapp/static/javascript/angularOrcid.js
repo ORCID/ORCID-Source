@@ -9510,7 +9510,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.personalLogin = true;
     $scope.scriptsInjected = false;
     $scope.counter = 0;
-
+    $scope.requestInfoForm = null;
+    
+    $scope.showBulletIcon = false;
+    $scope.showCreateIcon = false;
+    $scope.showLimitedIcon = false;    
+    $scope.showUpdateIcon = false;
+    
+    
     $scope.model = {
             key: orcidVar.recaptchaKey
     };
@@ -9518,14 +9525,36 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.toggleClientDescription = function() {
         $scope.showClientDescription = !$scope.showClientDescription;
     };
-
-    //----------------------------
-    //-INIT GROUP AND CLIENT NAME-
-    //----------------------------
-    $scope.initScopes = function(scopes) {
-        $scope.requestScopes = scopes.trim().split(" ");
-    };
-
+    
+    $scope.loadRequestInfoForm = function() {
+    	$.ajax({
+            url: getBaseUri() + '/oauth/custom/authorize/get_request_info_form.json',
+            type: 'GET',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+            	console.log(angular.toJson(data))  
+            	
+            	angular.forEach(data.scopes, function (scope) {
+            		if(scope.name.endsWith('/create')) {
+            			$scope.showCreateIcon = true;
+            		} else if(scope.name.endsWith('/update')) {
+            			$scope.showUpdateIcon = true;
+            		} else if(scope.name.endsWith('/read-limited')) {
+            			$scope.showLimitedIcon = true;
+            		} else {
+            			$scope.showBulletIcon = true;
+            		}
+            	})
+            	            	            	            		            		            	
+            	$scope.requestInfoForm = data;
+            	$scope.$apply();
+            }
+        }).fail(function() {
+            console.log("An error occured initializing the form.");
+        });
+    };         
+    
     //---------------------
     //-LOGIN AND AUTHORIZE-
     //---------------------
@@ -9939,6 +9968,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         head.appendChild(script); //Inject the script
     };
     
+    //Init
+    $scope.loadRequestInfoForm();    
     
 }]);
 

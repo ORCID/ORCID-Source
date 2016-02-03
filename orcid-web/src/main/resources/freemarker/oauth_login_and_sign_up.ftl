@@ -22,13 +22,9 @@
 		<#assign user_id = "">			
 		<#if userId??>
 			<#assign user_id = userId>
-        </#if>        
-        <#assign js_scopes_string = "">                
-        <#list scopes as scope>
-        	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
-		</#list>				      
+        </#if>                			     
 	    <!-- Freemarker and GA variables -->	    
-		<div class="app-client-name" ng-init="initScopes('${js_scopes_string}')">
+		<div class="app-client-name">
 			<h3 ng-click="toggleClientDescription()">${client_name}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
 			</h3>
@@ -41,7 +37,7 @@
 		<div> 
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
-		<div>
+		<div> 
 			<#include "includes/oauth/scopes.ftl"/>
 		</div>
 		<div>

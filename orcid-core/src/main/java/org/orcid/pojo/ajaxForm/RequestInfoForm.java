@@ -22,25 +22,35 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.message.ScopePathType;
-
 public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<String> errors = new ArrayList<String>();    
-    private Set<ScopePathType> scopes = new HashSet<ScopePathType>();
-    
+    private List<String> errors = new ArrayList<String>();
+    private Set<ScopeInfoForm> scopes = new HashSet<ScopeInfoForm>();    
+    private boolean userPersistentTokens = false;
+
     public List<String> getErrors() {
         return errors;
     }
+
     public void setErrors(List<String> errors) {
         this.errors = errors;
     }
-    public Set<ScopePathType> getScopes() {
+
+    public Set<ScopeInfoForm> getScopes() {
         return scopes;
     }
-    public void setScopes(Set<ScopePathType> scopes) {
+
+    public void setScopes(Set<ScopeInfoForm> scopes) {
         this.scopes = scopes;
-    }        
+    }
+
+    public boolean getUserPersistentTokens() {
+        return userPersistentTokens;
+    }
+
+    public void setUserPersistentTokens(boolean userPersistentTokens) {
+        this.userPersistentTokens = userPersistentTokens;
+    }
 }

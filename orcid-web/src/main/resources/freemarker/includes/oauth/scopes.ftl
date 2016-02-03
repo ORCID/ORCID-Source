@@ -17,67 +17,35 @@
 
 -->
 <span class="dotted-green-bar"></span>
-<#assign show_create_icon = false >
-<#assign show_update_icon = false >
-<#assign show_read_limited_icon = false >
-<#assign show_bullet_icon = false >
-	
-<#list scopes as scope>
-	<#if scope.value()?ends_with("/create")>
-		<#assign show_create_icon = true>
-	<#elseif scope.value()?ends_with("/update")>
-		<#assign show_update_icon = true>
-	<#elseif scope.value()?ends_with("/read-limited")>
-		<#assign show_read_limited_icon = true>		
-	<#else>
-		<#assign show_bullet_icon = true>
-	</#if>	
-</#list>
-	
-<div class="row">	
+<div class="row" ng-cloak>	
 	<div class="col-md-12 col-sm-12 col-xs-12">
-		<ul class="oauth-icons">
-			<#if show_bullet_icon>
-				<li><span class="mini-orcid-icon oauth-bullet"></span></li>
-			</#if>
-			<#if show_read_limited_icon>
-				<li><span class="mini-icon glyphicon glyphicon-eye-open green"></span></li>
-			</#if>
-			<#if show_create_icon>
-				<li><span class="mini-icon glyphicon glyphicon-cloud-upload green"></span></li>
-			</#if>
-			<#if show_update_icon>
-				<li><span class="mini-icon glyphicon glyphicon-repeat green"></span></li>
-			</#if>					
+		<ul class="oauth-icons">			
+			<li ng-show="showBulletIcon"><span class="mini-orcid-icon oauth-bullet"></span></li>
+			<li ng-show="showLimitedIcon"><span class="mini-icon glyphicon glyphicon-eye-open green"></span></li>
+			<li ng-show="showCreateIcon"><span class="mini-icon glyphicon glyphicon-cloud-upload green"></span></li>
+			<li ng-show="showUpdateIcon"><span class="mini-icon glyphicon glyphicon-repeat green"></span></li>							
 		</ul>
 	</div>
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<ul class="oauth-scopes" id="scopes-ul">
-			<#list scopes as scope>
-				<li>
-					<span ng-mouseenter="toggleLongDescription('${scope.name()}')" ng-mouseleave="toggleLongDescription('${scope.name()}')"><@orcid.msg '${scope.declaringClass.name}.${scope.name()}'/></span>
-					<div class="popover bottom scopeLongDesc" ng-class="{'popover bottom inline':showLongDescription['${scope.name()}'] == true}">
-						<div class="arrow"></div>
-						<div class="lightbox-container">
-							<@orcid.msg '${scope.declaringClass.name}.${scope.name()+".longDesc"}'/>
-						</div>
-					</div>	
-				</li>
-		   	</#list>				
+			<li ng-repeat="theScope in requestInfoForm.scopes">
+				<span ng-mouseenter="toggleLongDescription(theScope.name)" ng-mouseleave="toggleLongDescription(theScope.name)">{{theScope.description}}</span>
+				<div class="popover bottom scopeLongDesc" ng-class="{'popover bottom inline':showLongDescription[theScope.name] == true}">
+					<div class="arrow"></div>
+					<div class="lightbox-container">{{theScope.longDescription}}</div>
+				</div>	
+			</li>		   				
 		</ul>
 	</div>
 </div>
 <span class="dotted-green-bar"></span>
-<#if usePersistentTokens?? && usePersistentTokens>
-	<div class="row">
-		<div class="col-md-1 col-sm-1 col-xs-1">
-			<input type="checkbox" name="enablePersistentToken" id="enablePersistentToken" ng-model="enablePersistentToken"/>
-		</div>
-		<div class="col-md-11 col-sm-11 col-xs-11">
-			<@orcid.msg 'oauth.persistent_token_description'/><br>
-			<p class="persistent-token-note"><@orcid.msg 'oauth.persistent_token_description.note'/></p>
-		</div> 	
+<div class="row" ng-show="requestInfoForm.userPersistentTokens">
+	<div class="col-md-1 col-sm-1 col-xs-1">
+		<input type="checkbox" name="enablePersistentToken" id="enablePersistentToken" ng-model="enablePersistentToken"/>
 	</div>
-<#else>
-	<div ng-init="enablePersistentToken = false"></div>
-</#if>
+	<div class="col-md-11 col-sm-11 col-xs-11">
+		<@orcid.msg 'oauth.persistent_token_description'/><br>
+		<p class="persistent-token-note"><@orcid.msg 'oauth.persistent_token_description.note'/></p>
+	</div> 	
+</div>
+

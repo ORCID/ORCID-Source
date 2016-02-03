@@ -56,6 +56,7 @@ import org.orcid.pojo.ajaxForm.OauthForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.orcid.pojo.ajaxForm.ScopeInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +168,6 @@ public class OauthConfirmAccessController extends BaseController {
         String responseType = "";
         String orcid = null;
         boolean showLogin = false; // default to Reg
-        boolean usePersistentTokens = false;
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
             if (url.toLowerCase().contains("show_login=true"))
@@ -233,10 +233,6 @@ public class OauthConfirmAccessController extends BaseController {
                     // Get client name
                     ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
 
-                    // Check if the client has persistent tokens enabled
-                    if (clientDetails.isPersistentTokensEnabled())
-                        usePersistentTokens = true;
-
                     // validate client scopes
                     try {
                         authorizationEndpoint.validateScope(scope, clientDetails);
@@ -286,7 +282,6 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_description", clientDescription);
         mav.addObject("userId", orcid != null ? orcid : email);
         mav.addObject("hideUserVoiceScript", true);
-        mav.addObject("usePersistentTokens", usePersistentTokens);
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.setViewName("oauth_login");
         return mav;
@@ -305,21 +300,35 @@ public class OauthConfirmAccessController extends BaseController {
     public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) {
         RequestInfoForm infoForm = new RequestInfoForm();
         
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        String scope = "";
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
         String clientId = "";
         String url = savedRequest.getRedirectUrl();
         Matcher matcher = clientIdPattern.matcher(url);
         if (matcher.find()) {
             clientId = matcher.group(1);
         }
+                
+        // Get client name
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        // Check if the client has persistent tokens enabled
+        if (clientDetails.isPersistentTokensEnabled())
+            infoForm.setUserPersistentTokens(true);
+        String scope = "";
+                
         Matcher scopeMatcher = scopesPattern.matcher(url);
         if (scopeMatcher.find()) {
             scope = scopeMatcher.group(1);
             try {
                 scope = URLDecoder.decode(scope, "UTF-8").trim();
                 scope = scope.replaceAll(" +", " ");
-                infoForm.setScopes(ScopePathType.getScopesFromSpaceSeparatedString(scope));
+                Set<ScopePathType> scopes = ScopePathType.getScopesFromSpaceSeparatedString(scope); 
+                for(ScopePathType theScope : scopes) {
+                    ScopeInfoForm scopeInfoForm = new ScopeInfoForm(); 
+                    scopeInfoForm.setName(theScope.value());
+                    scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
+                    scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
+                    infoForm.getScopes().add(scopeInfoForm);
+                }
             } catch (UnsupportedEncodingException e) {
             }                        
         }
@@ -449,10 +458,7 @@ public class OauthConfirmAccessController extends BaseController {
         mav.addObject("client_description", clientDescription);
         mav.addObject("client_group_name", clientGroupName);
         mav.addObject("client_website", clientWebsite);
-        mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));
-        mav.addObject("scopesString", scope);        
         mav.addObject("hideUserVoiceScript", true);
-        mav.addObject("usePersistentTokens", usePersistentTokens);
         mav.setViewName("confirm-oauth-access");        
         return mav;
     }
