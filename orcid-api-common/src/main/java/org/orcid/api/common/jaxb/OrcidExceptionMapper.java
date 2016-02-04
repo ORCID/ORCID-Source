@@ -199,6 +199,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (OrcidValidationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request: ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+        } else if (NotFoundException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Please specify a version number (1.2 or higher) : ", t);
+            return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
         } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             WebApplicationException webException = (WebApplicationException) t;
@@ -259,7 +262,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
-        }
+        } 
     }
 
     private OrcidMessage getLegacy500OrcidEntity(Throwable e) {
