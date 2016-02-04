@@ -9510,8 +9510,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.personalLogin = true;
     $scope.scriptsInjected = false;
     $scope.counter = 0;
-    $scope.requestInfoForm = null;
-    
+    $scope.requestInfoForm = null;    
     $scope.showBulletIcon = false;
     $scope.showCreateIcon = false;
     $scope.showLimitedIcon = false;    
@@ -9568,6 +9567,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
                 $scope.authorizationForm.userName.value = user_id;
+                
                 if($scope.authorizationForm.userName.value) {
                     $scope.isOrcidPresent = true;
                     $scope.showRegisterForm = false;                    
@@ -9578,6 +9578,16 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                     $scope.showRegisterForm = false;
                 else if(!$scope.isOrcidPresent)
                     $scope.showRegisterForm = !orcidVar.showLogin;
+                
+                var scopesString = "";
+                
+                angular.forEach($scope.requestInfoForm.scopes, function (scope) {
+                	scopesString += scope.value;
+                });
+                
+                $scope.authorizationForm.scope.value = scopesString.trim(); 
+                
+                
                 $scope.$apply();
             }
         }).fail(function() {
@@ -9603,9 +9613,10 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             $scope.authorizationForm.persistentTokenEnabled=true;
             auth_scope_prefix = 'AuthorizeP_';
         }
+        
         var is_authorize = $scope.authorizationForm.approved;
         $.ajax({
-            url: getBaseUri() + '/oauth/custom/login.json',
+            url: getBaseUri() + '/oauth/custom/login123.json',
             type: 'POST',
             data: angular.toJson($scope.authorizationForm),
             contentType: 'application/json;charset=UTF-8',
