@@ -60,9 +60,10 @@ public class StatisticsTimelineListMBWriter implements MessageBodyWriter<StatsTi
         buf.append("stat");
         buf.append('\n');
         for (StatisticsTimeline line : data.getTimelines()) {
-            for (Date d : line.getTimeline().keySet()) {
+            for (Long l : line.getTimeline().keySet()) {
                 buf.append(line.getStatisticName());
                 buf.append(',');
+                Date d = new Date(l);
                 buf.append(format.format((d)));
                 buf.append(',');
                 buf.append(line.getTimeline().get(d));

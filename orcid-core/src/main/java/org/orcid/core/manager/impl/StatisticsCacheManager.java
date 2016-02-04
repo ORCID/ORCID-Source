@@ -27,11 +27,13 @@ import org.orcid.jaxb.model.statistics.StatisticsTimeline;
  */
 public interface StatisticsCacheManager {
 
-	public StatisticsSummary retrieve();
+    String retrieveLiveIds(Locale locale);
     
-    public void remove();
+    StatisticsSummary retrieve();
 
-	String retrieveLiveIds(Locale locale);
-
-	public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type);
+    StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum type);
+            
+    void setLatestStatisticsSummary();
+            
+    void setLatestStatisticsTimeline();
 }

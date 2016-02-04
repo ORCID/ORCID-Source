@@ -35,6 +35,13 @@ public interface StatisticsDao {
      * @return the latest statistics key
      * */
     public StatisticKeyEntity getLatestKey();
+        
+    /**
+     * Get an statistics key
+     * 
+     * @return the statistics key associated with the given id
+     * */
+    public StatisticKeyEntity getKey(Long id);
 
     /**
      * Save an statistics record on database
