@@ -27,8 +27,10 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.notifications.server.delegator.NotificationsApiServiceDelegator;
+import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.core.exception.OrcidNotificationException;
@@ -37,12 +39,16 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.NotificationValidationManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -57,6 +63,9 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     private NotificationManager notificationManager;
 
     @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource
     private NotificationValidationManager notificationValidationManager;
 
     @Resource
@@ -67,6 +76,12 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
+    
+    @Resource
+    private ProfileDao profileDao;
 
     @Override
     public Response viewStatusText() {
@@ -83,7 +98,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response findPermissionNotification(String orcid, Long id) {
-        Notification notification = notificationManager.findByOrcidAndId(orcid, id);
+    	checkIfProfileDeprecated(orcid);
+    	Notification notification = notificationManager.findByOrcidAndId(orcid, id);
         if (notification != null) {
             checkSource(notification);
             return Response.ok(notification).build();
@@ -107,7 +123,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response flagNotificationAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException {
-        Notification notification = notificationManager.flagAsArchived(orcid, id);
+    	checkIfProfileDeprecated(orcid);
+    	Notification notification = notificationManager.flagAsArchived(orcid, id);
         if (notification == null) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("orcid", orcid);
@@ -120,7 +137,8 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
     @Override
     @AccessControl(requiredScope = ScopePathType.PREMIUM_NOTIFICATION)
     public Response addPermissionNotification(UriInfo uriInfo, String orcid, NotificationPermission notification) {
-        notificationValidationManager.validateNotificationPermission(notification);
+    	checkIfProfileDeprecated(orcid);
+    	notificationValidationManager.validateNotificationPermission(notification);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile == null) {
             throw OrcidNotFoundException.newInstance(orcid);
@@ -138,4 +156,17 @@ public class NotificationsApiServiceDelegatorImpl implements NotificationsApiSer
         }
     }
 
+    private void checkIfProfileDeprecated(String orcid) {
+    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        if (entity != null && profileDao.isProfileDeprecated(orcid)) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if (entity.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+            }
+            throw new OrcidDeprecatedException(params);
+        }
+    }
 }
