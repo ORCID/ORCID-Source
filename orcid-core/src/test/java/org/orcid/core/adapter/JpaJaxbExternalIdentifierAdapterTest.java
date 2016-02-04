@@ -30,7 +30,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -64,14 +64,14 @@ public class JpaJaxbExternalIdentifierAdapterTest {
     @Test
     public void fromExternalIdentifierEntityToExternalIdentifier() {
         ExternalIdentifierEntity entity = getExternalIdentifierEntity();
-        ExternalIdentifier extId = jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
+        PersonExternalIdentifier extId = jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
         assertNotNull(extId);
         assertNotNull(extId.getCreatedDate());
         assertNotNull(extId.getCreatedDate().getValue());
         assertNotNull(extId.getLastModifiedDate());
         assertNotNull(extId.getLastModifiedDate().getValue());
-        assertEquals("common-name", extId.getCommonName());               
-        assertEquals("id-reference", extId.getReference());
+        assertEquals("common-name", extId.getType());               
+        assertEquals("id-reference", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://myurl.com", extId.getUrl().getValue());        
         assertEquals(Long.valueOf(123), extId.getPutCode());
@@ -82,12 +82,12 @@ public class JpaJaxbExternalIdentifierAdapterTest {
         assertNotNull(extId.getLastModifiedDate());
     }      
     
-    private ExternalIdentifier getExternalIdentifier() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(new Class[] { ExternalIdentifier.class });
+    private PersonExternalIdentifier getExternalIdentifier() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(new Class[] { PersonExternalIdentifier.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
         String name = "/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml";             
         InputStream inputStream = getClass().getResourceAsStream(name);
-        return (ExternalIdentifier) unmarshaller.unmarshal(inputStream);
+        return (PersonExternalIdentifier) unmarshaller.unmarshal(inputStream);
     }
     
     private ExternalIdentifierEntity getExternalIdentifierEntity() {

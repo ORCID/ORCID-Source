@@ -23,11 +23,16 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.pojo.FundingExternalIdentifier;
 import org.orcid.pojo.FundingExternalIdentifiers;
 
 public class FundingExternalIdentifiersConversionsTest {
 
+    //TODO: write same test for WorkExternalIdentifiers
+    //TODO: refactor out separate pojos for the different identifiers (requires DB work?)
     @Test
     public void messageToCoreObjectTest() {
         org.orcid.jaxb.model.message.FundingExternalIdentifiers recordFei = new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
@@ -79,24 +84,24 @@ public class FundingExternalIdentifiersConversionsTest {
 
     @Test
     public void recordToCoreObjectTest() {
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers recordFei = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers();
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f1 = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
-        f1.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalIDs recordFei = new ExternalIDs();
+        ExternalID f1 = new ExternalID();
+        f1.setType(ExternalIDType.GRANT_NUMBER.value());
         f1.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f1.com"));
         f1.setValue("f1");
-        recordFei.getExternalIdentifier().add(f1);
+        recordFei.getExternalIdentifiers().add(f1);
 
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f2 = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
-        f2.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID f2 = new ExternalID();
+        f2.setType(ExternalIDType.GRANT_NUMBER.value());
         f2.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f2.com"));
         f2.setValue("f2");
-        recordFei.getExternalIdentifier().add(f2);
+        recordFei.getExternalIdentifiers().add(f2);
 
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f3 = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier();
-        f3.setType(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType.GRANT_NUMBER);
+        ExternalID f3 = new ExternalID();
+        f3.setType(ExternalIDType.GRANT_NUMBER.value());
         f3.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f3.com"));
         f3.setValue("f3");
-        recordFei.getExternalIdentifier().add(f3);
+        recordFei.getExternalIdentifiers().add(f3);
 
         FundingExternalIdentifiers fei = FundingExternalIdentifiers.fromRecordPojo(recordFei);
         assertNotNull(fei);
@@ -160,24 +165,24 @@ public class FundingExternalIdentifiersConversionsTest {
     @Test
     public void coreObjectToRecordTest() {
         FundingExternalIdentifiers fei = getFundingExternalIdentifiers();
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers messageObject = fei.toRecordPojo();
+        ExternalIDs messageObject = fei.toRecordPojo();
         assertNotNull(messageObject);
         assertEquals(3, messageObject.getExternalIdentifier().size());
 
         boolean found1 = false, found2 = false, found3 = false;
-        for (org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier f : messageObject.getExternalIdentifier()) {
+        for (ExternalID f : messageObject.getExternalIdentifiers()) {
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value(), f.getType().value());
+                assertEquals(ExternalIDType.GRANT_NUMBER.value(), f.getType());
             } else if (f.getValue().equals("f2")) {
                 found2 = true;
                 assertEquals("www.f2.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value(), f.getType().value());
+                assertEquals(ExternalIDType.GRANT_NUMBER.value(), f.getType());
             } else if (f.getValue().equals("f3")) {
                 found3 = true;
                 assertEquals("www.f3.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value(), f.getType().value());
+                assertEquals(ExternalIDType.GRANT_NUMBER.value(), f.getType());
             } else {
                 fail();
             }

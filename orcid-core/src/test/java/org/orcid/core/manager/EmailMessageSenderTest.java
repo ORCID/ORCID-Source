@@ -44,12 +44,12 @@ import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.utils.DateUtils;
 
 /**
@@ -159,9 +159,9 @@ public class EmailMessageSenderTest extends BaseTest {
         Item act = new Item();
         act.setItemType(actType);
         act.setItemName(actName);
-        ExternalIdentifier extId = new ExternalIdentifier();
-        extId.setExternalIdentifierType("DOI");
-        extId.setExternalIdentifierId(doi);
+        ExternalID extId = new ExternalID();
+        extId.setType("doi");
+        extId.setValue(doi);
         act.setExternalIdentifier(extId);
         return act;
     }

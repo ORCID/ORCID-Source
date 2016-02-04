@@ -124,7 +124,7 @@ public class FundingExternalIdentifier implements Serializable {
         org.orcid.jaxb.model.record_rc2.ExternalID recordPojo = new org.orcid.jaxb.model.record_rc2.ExternalID();
 
         if (this.getType() != null) {
-            recordPojo.setType(this.getType().name());
+            recordPojo.setType(this.getType().value());
         }
 
         if (this.getUrl() != null && !PojoUtil.isEmpty(this.getUrl().getValue())) {
@@ -146,7 +146,12 @@ public class FundingExternalIdentifier implements Serializable {
     public static FundingExternalIdentifier fromMessagePojo(org.orcid.jaxb.model.message.FundingExternalIdentifier messagePojo) {
         FundingExternalIdentifier result = new FundingExternalIdentifier();
         if (messagePojo.getType() != null) {
-            result.setType(FundingExternalIdentifierType.fromValue(messagePojo.getType().value()));
+            //TODO: fix vocab
+            try{
+                result.setType(FundingExternalIdentifierType.fromValue(messagePojo.getType().value()));
+            }catch (IllegalArgumentException e){
+                result.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+            }
         }
 
         if (messagePojo.getUrl() != null) {

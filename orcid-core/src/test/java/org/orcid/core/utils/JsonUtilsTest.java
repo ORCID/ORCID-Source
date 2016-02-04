@@ -16,9 +16,7 @@
  */
 package org.orcid.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.orcid.jaxb.model.message.Contributor;
@@ -75,6 +73,8 @@ public class JsonUtilsTest {
     
     @Test
     public void testJsonStringToWorkExternalIdentifiersV2_0() {
+        assertTrue(false);
+        /*
         String jsonString1_2ExternalIdentifiers = "{\"workExternalIdentifier\":[{\"workExternalIdentifierType\":\"DOI\",\"workExternalIdentifierId\":{\"content\":\"12345\"}}],\"scope\":null}";
         org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers wExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers.class);
         assertNotNull(wExtId2_0);
@@ -95,7 +95,8 @@ public class JsonUtilsTest {
         assertNotNull(extId.getUrl());
         assertEquals("http://orcid.org", extId.getUrl().getValue());
         assertNotNull(extId.getRelationship());
-        assertEquals(Relationship.SELF, extId.getRelationship());        
+        assertEquals(Relationship.SELF, extId.getRelationship());   */
+        
     }
     
     @Test
@@ -121,6 +122,9 @@ public class JsonUtilsTest {
     
     @Test
     public void testJsonStringToFundingExternalIdentifiersV2_0(){
+        assertTrue(false);
+        /*
+
         String jsonString1_2ExternalIdentifiers = "{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"123\",\"url\":{\"value\":\"http://orcid.org\"}}]}";
         org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers fExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers.class);
         assertNotNull(fExtId2_0);
@@ -141,5 +145,6 @@ public class JsonUtilsTest {
         assertNotNull(extId.getUrl());
         assertEquals("http://orcid.org/updated", extId.getUrl().getValue());
         assertEquals(org.orcid.jaxb.model.record_rc2.Relationship.SELF, extId.getRelationship());
+        */
     }
 }
