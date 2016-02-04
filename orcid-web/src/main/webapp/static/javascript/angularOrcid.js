@@ -9533,14 +9533,12 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-            	console.log(angular.toJson(data))  
-            	
             	angular.forEach(data.scopes, function (scope) {
-            		if(scope.name.endsWith('/create')) {
+            		if(scope.value.endsWith('/create')) {
             			$scope.showCreateIcon = true;
-            		} else if(scope.name.endsWith('/update')) {
+            		} else if(scope.value.endsWith('/update')) {
             			$scope.showUpdateIcon = true;
-            		} else if(scope.name.endsWith('/read-limited')) {
+            		} else if(scope.value.endsWith('/read-limited')) {
             			$scope.showLimitedIcon = true;
             		} else {
             			$scope.showBulletIcon = true;
@@ -9621,8 +9619,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                         //Fire google GA event
                         if(is_authorize) {
                             orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In' , 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
-                            for(var i = 0; i < $scope.requestScopes.length; i++) {
-                                orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
+                            for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+                                orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
                             }
                         } else {
                             //Fire GA authorize-deny
@@ -9768,8 +9766,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             success: function(data) {
                 orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
                 if($scope.registrationForm.approved) {
-                    for(var i = 0; i < $scope.requestScopes.length; i++) {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
+                    for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
                     }
                 } else {
                     //Fire GA register deny
@@ -9860,8 +9858,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 if(is_authorize) {
-                    for(var i = 0; i < $scope.requestScopes.length; i++) {
-                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestScopes[i], 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
+                    for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
+                        orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
                     }
                 }
                 orcidGA.windowLocationHrefDelay(data.redirectUri.value);
@@ -9904,8 +9902,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.showRegisterForm = false;
     };
 
-    $scope.toggleLongDescription = function(orcid_scope) {
-        $scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
+    $scope.toggleLongDescription = function(orcid_scope) {    	    	
+    	$scope.showLongDescription[orcid_scope] = !$scope.showLongDescription[orcid_scope];
     };
 
     document.onkeydown = function(e) {

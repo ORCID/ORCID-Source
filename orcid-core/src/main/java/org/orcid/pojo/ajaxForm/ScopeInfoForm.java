@@ -22,6 +22,7 @@ public class ScopeInfoForm implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private String name;
+    private String value;
     private String description;
     private String longDescription;
 
@@ -33,6 +34,14 @@ public class ScopeInfoForm implements Serializable {
         this.name = name;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
     public String getDescription() {
         return description;
     }

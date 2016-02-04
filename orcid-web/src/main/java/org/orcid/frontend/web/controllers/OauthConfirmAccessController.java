@@ -297,41 +297,46 @@ public class OauthConfirmAccessController extends BaseController {
     
     
     @RequestMapping(value = "/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
-    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         RequestInfoForm infoForm = new RequestInfoForm();
         
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
         String clientId = "";
-        String url = savedRequest.getRedirectUrl();
-        Matcher matcher = clientIdPattern.matcher(url);
-        if (matcher.find()) {
-            clientId = matcher.group(1);
-        }
+        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
                 
-        // Get client name
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        // Check if the client has persistent tokens enabled
-        if (clientDetails.isPersistentTokensEnabled())
-            infoForm.setUserPersistentTokens(true);
-        String scope = "";
-                
-        Matcher scopeMatcher = scopesPattern.matcher(url);
-        if (scopeMatcher.find()) {
-            scope = scopeMatcher.group(1);
-            try {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
+        if(savedRequest != null) {
+            String url = savedRequest.getRedirectUrl();
+            Matcher matcher = clientIdPattern.matcher(url);
+            if (matcher.find()) {
+                clientId = matcher.group(1);
+            }
+            
+            Matcher scopeMatcher = scopesPattern.matcher(url);
+            if (scopeMatcher.find()) {
+                String scope = scopeMatcher.group(1);
                 scope = URLDecoder.decode(scope, "UTF-8").trim();
                 scope = scope.replaceAll(" +", " ");
-                Set<ScopePathType> scopes = ScopePathType.getScopesFromSpaceSeparatedString(scope); 
-                for(ScopePathType theScope : scopes) {
-                    ScopeInfoForm scopeInfoForm = new ScopeInfoForm(); 
-                    scopeInfoForm.setName(theScope.value());
-                    scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
-                    scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
-                    infoForm.getScopes().add(scopeInfoForm);
-                }
-            } catch (UnsupportedEncodingException e) {
-            }                        
+                scopes = ScopePathType.getScopesFromSpaceSeparatedString(scope);
+            }
+        } else {
+            throw new InvalidRequestException("Unable to find parameters");
         }
+        
+        for(ScopePathType theScope : scopes) {
+            ScopeInfoForm scopeInfoForm = new ScopeInfoForm(); 
+            scopeInfoForm.setValue(theScope.value());
+            scopeInfoForm.setName(theScope.name());
+            scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
+            scopeInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
+            infoForm.getScopes().add(scopeInfoForm);
+        }    
+        
+        
+        // Check if the client has persistent tokens enabled
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);        
+        if (clientDetails.isPersistentTokensEnabled())
+            infoForm.setUserPersistentTokens(true);
+        
         
         return infoForm;
     }
@@ -453,6 +458,11 @@ public class OauthConfirmAccessController extends BaseController {
         if (StringUtils.isBlank(clientGroupName)) {
             clientGroupName = clientName;
         }
+        
+        
+        //Save the request since we will need it to get the info form
+        new HttpSessionRequestCache().saveRequest(request, response);
+        
         mav.addObject("profile", profile);
         mav.addObject("client_name", clientName);
         mav.addObject("client_description", clientDescription);
