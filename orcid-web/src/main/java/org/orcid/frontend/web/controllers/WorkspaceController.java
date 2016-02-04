@@ -348,6 +348,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if(!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
+        mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
