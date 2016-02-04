@@ -21,5 +21,5 @@
 // Generated on: 2015.01.09 at 01:28:54 PM GMT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/orcid", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/error", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.orcid.jaxb.model.error;
