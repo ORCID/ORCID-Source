@@ -1183,6 +1183,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             inputEmail: null,
             delEmail: null,
             primaryEmail: null,
+            popUp: false,
             addEmail: function() {            	
                 $.ajax({
                     url: getBaseUri() + '/account/addEmail.json',
@@ -1909,7 +1910,8 @@ orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
     $scope.toggleSocialNetworksEdit = function(){
         $scope.showEditSocialSettings = !$scope.showEditSocialSettings;
         $scope.socialNetworksUpdateToggleText();
-    };
+    };   
+    
 
     //init social networks row
     $scope.showEditSocialSettings = (window.location.hash === "#editSocialNetworks");
@@ -2127,6 +2129,12 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
     $scope.showElement = {};
+    $scope.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
+    $scope.notificationsEnabled = orcidVar.notificationsEnabled;
+    $scope.baseUri = orcidVar.baseUri;
+    $scope.showDeleteBox = false;
+    $scope.showConfirmationBox = false;
+    $scope.showEmailVerifBox = false;
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2161,35 +2169,63 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
         emailSrvc.saveEmail();
     };
 
-    $scope.verifyEmail = function(email) {
+    $scope.verifyEmail = function(email, popup) {
+        
         $scope.verifyEmailObject = email;
-        emailSrvc.verifyEmail(email,function(data) {
+        
+        if(popup){
+            emailSrvc.verifyEmail(email,function(data) {
+                $scope.showEmailVerifBox = true;
+                $scope.$apply();
+                $.colorbox.resize();
+           });    
+        }else{
+            emailSrvc.verifyEmail(email,function(data) {
                 $.colorbox({
-                    html : $compile($('#verify-email-modal').html())($scope)
+                    html : $compile($('#settings-verify-email-modal').html())($scope) 
+                    //Name was changed to avoid conflicts with workspace verify email modal
                 });
                 $scope.$apply();
                 $.colorbox.resize();
-       });
+           });    
+        }
+        
     };
 
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+    
+    $scope.closeDeleteBox = function(){
+        $scope.showDeleteBox = false;
+    }; 
+    
+    
+    $scope.closeVerificationBox = function(){
+        $scope.showEmailVerifBox = false;
+    }
 
 
     $scope.submitModal = function (obj, $event) {
         emailSrvc.inputEmail.password = $scope.password;
         emailSrvc.addEmail();
-        $.colorbox.close();
+        if(!$scope.emailSrvc.popUp){
+            $.colorbox.close();    
+        }
     };
 
     $scope.confirmDeleteEmail = function(email) {
-            emailSrvc.delEmail = email;
-            $.colorbox({
-                html : $compile($('#delete-email-modal').html())($scope)
-
-            });
-            $.colorbox.resize();
+        emailSrvc.delEmail = email;
+        $.colorbox({
+            html : $compile($('#delete-email-modal').html())($scope)
+        });
+        $.colorbox.resize();
+    };
+    
+    $scope.confirmDeleteEmailInline = function(email) {
+        $scope.showDeleteBox = true;
+        emailSrvc.delEmail = email;
+        
     };
 
     $scope.deleteEmail = function () {
@@ -2197,27 +2233,41 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
             $scope.closeModal();
         });
     };
+    
+    $scope.deleteEmailInline = function () {
+        emailSrvc.deleteEmail(function(){
+            $scope.showDeleteBox = false;            
+        });
+    };
 
-    $scope.checkCredentials = function() {
-        $scope.password=null;
+    $scope.checkCredentials = function(popup) {
+        $scope.password = null;
         if(orcidVar.isPasswordConfirmationRequired){
-            $.colorbox({
-                html: $compile($('#check-password-modal').html())($scope)
-            });
-            $.colorbox.resize();
-        }
-        else{
+            if (!popup){
+                $.colorbox({
+                    html: $compile($('#check-password-modal').html())($scope)
+                });
+                $.colorbox.resize();
+            }else{
+                $scope.showConfirmationBox = true;            
+            }
+        }else{
             $scope.submitModal();
         }
     };
     
     $scope.showTooltip = function(el){
     	$scope.showElement[el] = true;
-    }
+    };
     
     $scope.hideTooltip = function(el){
     	$scope.showElement[el] = false;
-    }
+    };
+    
+    
+    
+    
+    
 
 }]);
 
@@ -8220,6 +8270,55 @@ orcidNgModule.controller('profileReviewCtrl', ['$scope', '$compile', function($s
     };
 }]);
 
+orcidNgModule.controller('lookupIdOrEmailCtrl',['$scope','$compile', function findIdsCtrl($scope,$compile){
+    $scope.idOrEmails = "";
+    $scope.emailIdsMap = {};
+    $scope.showSection = false;
+
+    $scope.toggleSection = function(){
+        $scope.showSection = !$scope.showSection;
+        $('#lookup_ids_section').toggle();
+    };
+
+    $scope.lookupIdOrEmails = function() {
+        $.ajax({
+            url: getBaseUri()+'/admin-actions/lookup-id-or-emails.json',
+            type: 'POST',
+            dataType: 'text',
+            data: $scope.idOrEmails,
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data){
+                $scope.$apply(function(){
+                	console.log(data);
+                    $scope.result = data;
+                    $scope.idOrEmails='';
+                    $scope.showEmailIdsModal();
+                });
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error deprecating the account");
+        });
+    };
+
+    $scope.showEmailIdsModal = function() {
+        $.colorbox({
+            html : $compile($('#lookup-email-ids-modal').html())($scope),
+                scrolling: true,
+                onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            scrolling: true
+        });
+
+        setTimeout(function(){$.colorbox.resize({width:"575px"});},100);
+    };
+
+    $scope.closeModal = function() {
+        $.colorbox.close();
+    };
+}]);
+
 orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'emailSrvc', function ($scope, $compile, $sce, emailSrvc) {
     $scope.noCredentialsYet = true;
     $scope.userCredentials = null;
@@ -9983,8 +10082,7 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
 }]);
 
 
-
-orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($scope, emailSrvc){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',function ($scope, emailSrvc, $compile){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -9996,9 +10094,11 @@ orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($sc
 	}
 	
 	$scope.close = function(){
+	    console.log('Close');
 		$scope.showEdit = false;
+	    $.colorbox.close();
 	}
-	
+	    
 	$scope.showTooltip = function(elem){
 		$scope.showElement[elem] = true;
 	}
@@ -10007,8 +10107,30 @@ orcidNgModule.controller('EmailsController',['$scope', 'emailSrvc',function ($sc
 		$scope.showElement[elem] = false;
 	}
 	
+	$scope.openEditModal = function(){
+	    var HTML = '<div class="lightbox-container"><div class="edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
+	    $('#edit-emails').html() +
+	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">Cancel</a></div></div></div></div>';  
+	    
+	    $scope.emailSrvc.popUp = true;
+	    
+        $.colorbox({
+            scrolling: true,
+            html: $compile(HTML)($scope),
+            onLoad: function() {                
+                $('#cboxClose').remove();
+            },
+            width: formColorBoxResize(),
+            onComplete: function() {
+                $.colorbox.resize();
+            },
+            onClosed: function() {
+                $scope.emailSrvc.popUp = false;        
+            }            
+        });
+    }
+	
 }]);
-
 
 
 /*Angular Multi-selectbox*/

@@ -6259,6 +6259,12 @@ a:hover .mozilla-badge{
 	padding: 15px 0 15px 15px;
 }
 
+.edit-record-emails{	
+	width: 600px;
+	padding: 15px 0 15px 15px;
+	min-height: 678px; 
+}
+
 .fixed-area .scroll-area input[type="textbox"],
 .fixed-area .scroll-area input[type="text"],
 .fixed-area .scroll-area select{
@@ -6355,9 +6361,22 @@ a:hover .mozilla-badge{
 	cursor:not-allowed;
 }
 
+.delete-email-box{
+	height: 100px;
+}
 
+.confirm-password-box{
+	height: 140px;
+}
 
+.delete-email-box li,
+.confirm-password-box li{
+	margin-left: 10px;	
+}
 
+.verify-email-box{
+	height: 80px;
+}
 
 
 /* Media Queries */

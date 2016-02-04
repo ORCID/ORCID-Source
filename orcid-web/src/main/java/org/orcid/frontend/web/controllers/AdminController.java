@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -100,6 +101,11 @@ public class AdminController extends BaseController {
 
     @Resource
     private AdminManager adminManager;
+    
+    private static final String INP_STRING_SEPARATOR = " \n\r\t,";
+    private static final String OUT_STRING_SEPARATOR = "		";
+    private static final String OUT_NOT_AVAILABLE = "N/A";
+    private static final String OUT_NEW_LINE = "\n";
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
@@ -318,6 +324,51 @@ public class AdminController extends BaseController {
             profileDetList.add(tempObj);
         }
         return profileDetList;
+    }
+    
+    @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
+    public @ResponseBody String lookupIdOrEmails(@RequestBody String csvIdOrEmails) {
+    	List<String> idEmailList = new ArrayList<String>();
+    	StringBuilder builder = new StringBuilder();
+    	if (StringUtils.isNotBlank(csvIdOrEmails)) {
+	   		StringTokenizer tokenizer = new StringTokenizer(csvIdOrEmails, INP_STRING_SEPARATOR);
+	   		while (tokenizer.hasMoreTokens()) {
+	   			idEmailList.add(tokenizer.nextToken());
+	   		}
+    		
+    		for(String idEmail : idEmailList) {
+    			idEmail = idEmail.trim();
+    			boolean isOrcid = matchesOrcidPattern(idEmail);
+    			String orcid = idEmail;
+    			if (!isOrcid) {
+    				Map<String, String> email = findIdByEmailHelper(idEmail);
+    				orcid = email.get(idEmail);
+    	        }
+    			
+    			OrcidProfile profile = null;
+    			if(orcid != null) {
+    				profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+    			}
+    			if(profile != null) {
+    				if(profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null 
+    						&& profile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
+    					builder.append(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+    				} else {
+    					builder.append(OUT_NOT_AVAILABLE);
+    				}
+    				builder.append(OUT_STRING_SEPARATOR).append(orcid);
+    			} else {
+    				if(isOrcid) {
+    					builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
+    				} else {
+    					builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
+    				}
+    			}
+    			builder.append(OUT_NEW_LINE);
+    		}
+    	}
+    	
+        return builder.toString();
     }
 
     public Map<String, String> findIdByEmailHelper(String csvEmails) {

@@ -22,6 +22,8 @@ import org.orcid.core.utils.statistics.StatisticsEnum;
 
 public interface StatsApiServiceDelegator {
 
+    public void updateToLatestStatisticsTimeline();
+    
     public Response getStatsSummary();
 
     public Response getAllStatsTimelines();
