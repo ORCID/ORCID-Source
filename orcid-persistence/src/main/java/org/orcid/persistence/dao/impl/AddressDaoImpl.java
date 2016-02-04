@@ -39,10 +39,10 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     }
 
     @Override
-    public AddressEntity find(String orcid, Long id) {
+    public AddressEntity getAddress(String orcid, Long putCode) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and id = :id");
         query.setParameter("orcid", orcid);
-        query.setParameter("id", id);
+        query.setParameter("id", putCode);
         return (AddressEntity) query.getSingleResult();
     }
 
