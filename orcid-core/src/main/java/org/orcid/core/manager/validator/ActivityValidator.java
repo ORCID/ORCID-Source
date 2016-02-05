@@ -47,8 +47,8 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
-        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifiers() == null
-                || work.getExternalIdentifiers().getExternalIdentifiers().isEmpty()) {
+        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
+                || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
 
@@ -132,8 +132,8 @@ public class ActivityValidator {
     public static void checkExternalIdentifiers(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
-            for (ExternalID existingId : existingExtIds.getExternalIdentifiers()) {
-                for (ExternalID newId : newExtIds.getExternalIdentifiers()) {
+            for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
+                for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (isDupRelationship(newId, existingId) && isDupValue(newId, existingId) && isDupType(newId, existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
@@ -164,8 +164,8 @@ public class ActivityValidator {
     public static void checkFundingExternalIdentifiers(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
-            for (ExternalID existingId : existingExtIds.getExternalIdentifiers()) {
-                for (ExternalID newId : newExtIds.getExternalIdentifiers()) {
+            for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
+                for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF)
                             && newId.getValue().equals(existingId.getValue()) && newId.getType().equals(existingId.getType())
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {

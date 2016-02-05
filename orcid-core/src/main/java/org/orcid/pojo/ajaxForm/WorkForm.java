@@ -304,7 +304,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
         if(work.getExternalIdentifiers() != null) {        
             ExternalIDs extIds = work.getExternalIdentifiers();
             if (extIds != null) {
-                for (ExternalID extId : extIds.getExternalIdentifiers()) {
+                for (ExternalID extId : extIds.getExternalIdentifier()) {
                     
                     if(extId.getRelationship() == null) {
                         if(org.orcid.jaxb.model.record_rc2.ExternalIDType.ISSN.equals(extId.getType())) {
@@ -352,7 +352,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 if(!PojoUtil.isEmpty(wfExtId.getUrl())) {
                     wExtId.setUrl(new org.orcid.jaxb.model.common_rc2.Url(wfExtId.getUrl().getValue()));
                 }
-                workExternalIds.getExternalIdentifiers().add(wExtId);
+                workExternalIds.getExternalIdentifier().add(wExtId);
             }
         }
         work.setWorkExternalIdentifiers(workExternalIds);

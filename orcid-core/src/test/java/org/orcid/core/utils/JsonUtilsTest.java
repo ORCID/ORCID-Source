@@ -120,7 +120,6 @@ public class JsonUtilsTest {
     
     @Test
     public void testJsonStringToFundingExternalIdentifiersV2_0(){
-        assertTrue(false);
         String jsonString1_2ExternalIdentifiers = "{\"externalIdentifier\":[{\"type\":\"GRANT_NUMBER\",\"value\":\"123\",\"url\":{\"value\":\"http://orcid.org\"}}]}";
         org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers fExtId2_0 = JsonUtils.<org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers> readObjectFromJsonString(jsonString1_2ExternalIdentifiers, org.orcid.jaxb.model.record_rc1.FundingExternalIdentifiers.class);
         assertNotNull(fExtId2_0);

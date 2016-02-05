@@ -137,7 +137,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        ExternalID workExtId = w.getWorkExternalIdentifiers().getExternalIdentifiers().get(0);
+        ExternalID workExtId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
         assertNotNull(workExtId.getValue());
         assertEquals("123", workExtId.getValue());
         assertNotNull(workExtId.getType());
@@ -161,7 +161,7 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(ws.getExternalIdentifiers());
         assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, ws.getExternalIdentifiers().getExternalIdentifier().size());
-        ExternalID workExtId = ws.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        ExternalID workExtId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertNotNull(workExtId.getValue());
         assertEquals("123", workExtId.getValue());
         assertNotNull(workExtId.getType());

@@ -24,13 +24,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "externalIdentifiers" })
@@ -41,7 +37,7 @@ public class ExternalIDs implements Serializable, ExternalIdentifiersContainer{
     @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common")
     protected List<ExternalID> externalIdentifiers;
     
-    public List<ExternalID> getExternalIdentifiers() {
+    public List<ExternalID> getExternalIdentifier() {
         if (externalIdentifiers == null) {
             externalIdentifiers = new ArrayList<ExternalID>();
         }
@@ -51,16 +47,9 @@ public class ExternalIDs implements Serializable, ExternalIdentifiersContainer{
     public static ExternalIDs valueOf(org.orcid.jaxb.model.message.WorkExternalIdentifiers messageWorkExternalIdentifiers) {
         ExternalIDs ids = new ExternalIDs();
         for (WorkExternalIdentifier id : messageWorkExternalIdentifiers.getWorkExternalIdentifier()){
-            ids.getExternalIdentifiers().add(ExternalID.fromMessageExtId(id));
+            ids.getExternalIdentifier().add(ExternalID.fromMessageExtId(id));
         }
         return ids;
-    }
-
-    @Override
-    @XmlTransient
-    @JsonIgnore
-    public List<? extends GroupAble> getExternalIdentifier() {
-        return getExternalIdentifiers();
     }
     
     @Override
@@ -94,4 +83,6 @@ public class ExternalIDs implements Serializable, ExternalIdentifiersContainer{
         int result = externalIdentifiers != null ? externalIdentifiers.hashCode() : 0;
         return result;
     }
+
+
 }

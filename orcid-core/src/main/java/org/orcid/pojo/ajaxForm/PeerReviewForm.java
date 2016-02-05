@@ -321,7 +321,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
         if (externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
             peerReview.setExternalIdentifiers(new ExternalIDs());
             for (WorkExternalIdentifier extId : externalIdentifiers) {
-                peerReview.getExternalIdentifiers().getExternalIdentifiers().add(extId.toRecordWorkExternalIdentifier());
+                peerReview.getExternalIdentifiers().getExternalIdentifier().add(extId.toRecordWorkExternalIdentifier());
             }
         }
 
@@ -493,7 +493,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
         // External ids
         if(peerReview.getExternalIdentifiers() != null) {
-            List<ExternalID> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifiers();
+            List<ExternalID> externalIdentifiers = peerReview.getExternalIdentifiers().getExternalIdentifier();
             form.setExternalIdentifiers(new ArrayList<WorkExternalIdentifier>());
             for(ExternalID extId : externalIdentifiers) {                
                 form.getExternalIdentifiers().add(WorkExternalIdentifier.valueOf(extId));

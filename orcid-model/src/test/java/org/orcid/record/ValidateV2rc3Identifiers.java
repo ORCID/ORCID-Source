@@ -76,12 +76,12 @@ public class ValidateV2rc3Identifiers {
         Funding funding = unmarshallFromPath("/record_2.0_rc2/samples/funding-2.0_rc2.xml", Funding.class);
         assertEquals("funding:organization-defined-type",funding.getOrganizationDefinedType().getContent());
         assertNotNull(funding.getExternalIdentifiers());
-        assertNotNull(funding.getExternalIdentifiers().getExternalIdentifiers());
-        Assert.notEmpty(funding.getExternalIdentifiers().getExternalIdentifiers());
-        assertEquals("grant_number",funding.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
-        assertEquals("funding:external-identifier-value",funding.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
-        assertEquals(new Url("http://tempuri.org"),funding.getExternalIdentifiers().getExternalIdentifiers().get(0).getUrl());
-        assertEquals(Relationship.SELF, funding.getExternalIdentifiers().getExternalIdentifiers().get(0).getRelationship());
+        assertNotNull(funding.getExternalIdentifiers().getExternalIdentifier());
+        Assert.notEmpty(funding.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals("grant_number",funding.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("funding:external-identifier-value",funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(new Url("http://tempuri.org"),funding.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertEquals(Relationship.SELF, funding.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
         Validator validator = getValidator("funding");
         validator.validate(marshall(Funding.class, funding));
         validator.validate(marshallToDOM(Funding.class, funding));        
@@ -149,7 +149,7 @@ public class ValidateV2rc3Identifiers {
     @Test
     public void testWork() throws SAXException, IOException, JAXBException, ParserConfigurationException{
         Work work = unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);                
-        ExternalID id = work.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        ExternalID id = work.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("agr",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
         assertEquals(new Url("http://orcid.org"),id.getUrl());
@@ -159,7 +159,7 @@ public class ValidateV2rc3Identifiers {
         validator.validate(marshallToDOM(Work.class, work));
         
         work = unmarshallFromPath("/record_2.0_rc2/samples/work-full-2.0_rc2.xml", Work.class);                
-        id = work.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        id = work.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("agr",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
         assertEquals(new Url("http://orcid.org"),id.getUrl());
@@ -180,7 +180,7 @@ public class ValidateV2rc3Identifiers {
     public void testPeerReview() throws SAXException, IOException, JAXBException, ParserConfigurationException{
         PeerReview peerReview = unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
         
-        ExternalID id = peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        ExternalID id = peerReview.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("source-work-id",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
         assertEquals(new Url("http://orcid.org"),id.getUrl());
@@ -198,7 +198,7 @@ public class ValidateV2rc3Identifiers {
         
         //do the full record too
         peerReview = unmarshallFromPath("/record_2.0_rc2/samples/peer-review-full-2.0_rc2.xml", PeerReview.class);
-        id = peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0);
+        id = peerReview.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals("source-work-id",id.getType());
         assertEquals("work:external-identifier-id",id.getValue());
         assertEquals(new Url("http://orcid.org"),id.getUrl());
@@ -218,32 +218,32 @@ public class ValidateV2rc3Identifiers {
         ExternalIDs fundingIDs = as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
         ExternalIDs fundingIDs2 = as.getFundings().getFundingGroup().get(0).getIdentifiers();
         
-        assertEquals("grant_number",fundingIDs.getExternalIdentifiers().get(0).getType());
-        assertEquals("external-id-value",fundingIDs.getExternalIdentifiers().get(0).getValue());
-        assertEquals(new Url("http://tempuri.org"),fundingIDs.getExternalIdentifiers().get(0).getUrl());
-        assertEquals(Relationship.SELF,fundingIDs.getExternalIdentifiers().get(0).getRelationship());
-        assertEquals(fundingIDs.getExternalIdentifiers().get(0).getType(),fundingIDs2.getExternalIdentifiers().get(0).getType());
-        assertEquals(fundingIDs.getExternalIdentifiers().get(0).getValue(),fundingIDs2.getExternalIdentifiers().get(0).getValue());        
+        assertEquals("grant_number",fundingIDs.getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value",fundingIDs.getExternalIdentifier().get(0).getValue());
+        assertEquals(new Url("http://tempuri.org"),fundingIDs.getExternalIdentifier().get(0).getUrl());
+        assertEquals(Relationship.SELF,fundingIDs.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(fundingIDs.getExternalIdentifier().get(0).getType(),fundingIDs2.getExternalIdentifier().get(0).getType());
+        assertEquals(fundingIDs.getExternalIdentifier().get(0).getValue(),fundingIDs2.getExternalIdentifier().get(0).getValue());        
 
         ExternalIDs peerIDs = as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers();
         ExternalIDs peerIDs2 = as.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers();
         
-        assertEquals("something",peerIDs.getExternalIdentifiers().get(0).getType());
-        assertEquals("external-id-value",peerIDs.getExternalIdentifiers().get(0).getValue());
-        assertEquals(new Url("http://orcid.org"),peerIDs.getExternalIdentifiers().get(0).getUrl());
-        assertEquals(Relationship.SELF,peerIDs.getExternalIdentifiers().get(0).getRelationship());
-        assertEquals(peerIDs.getExternalIdentifiers().get(0).getType(),peerIDs2.getExternalIdentifiers().get(0).getType());
-        assertEquals(peerIDs.getExternalIdentifiers().get(0).getValue(),peerIDs2.getExternalIdentifiers().get(0).getValue());        
+        assertEquals("something",peerIDs.getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value",peerIDs.getExternalIdentifier().get(0).getValue());
+        assertEquals(new Url("http://orcid.org"),peerIDs.getExternalIdentifier().get(0).getUrl());
+        assertEquals(Relationship.SELF,peerIDs.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(peerIDs.getExternalIdentifier().get(0).getType(),peerIDs2.getExternalIdentifier().get(0).getType());
+        assertEquals(peerIDs.getExternalIdentifier().get(0).getValue(),peerIDs2.getExternalIdentifier().get(0).getValue());        
 
         ExternalIDs workIDs = as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers();
         ExternalIDs workIDs2 = as.getWorks().getWorkGroup().get(0).getIdentifiers();
         
-        assertEquals("agr",workIDs.getExternalIdentifiers().get(0).getType());
-        assertEquals("external-id-value",workIDs.getExternalIdentifiers().get(0).getValue());
-        assertEquals(new Url("http://orcid.org"),workIDs.getExternalIdentifiers().get(0).getUrl());
-        assertEquals(Relationship.SELF,workIDs.getExternalIdentifiers().get(0).getRelationship());
-        assertEquals(workIDs.getExternalIdentifiers().get(0).getType(),workIDs2.getExternalIdentifiers().get(0).getType());
-        assertEquals(workIDs.getExternalIdentifiers().get(0).getValue(),workIDs2.getExternalIdentifiers().get(0).getValue());        
+        assertEquals("agr",workIDs.getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value",workIDs.getExternalIdentifier().get(0).getValue());
+        assertEquals(new Url("http://orcid.org"),workIDs.getExternalIdentifier().get(0).getUrl());
+        assertEquals(Relationship.SELF,workIDs.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(workIDs.getExternalIdentifier().get(0).getType(),workIDs2.getExternalIdentifier().get(0).getType());
+        assertEquals(workIDs.getExternalIdentifier().get(0).getValue(),workIDs2.getExternalIdentifier().get(0).getValue());        
         
     }
     @Test
@@ -253,22 +253,22 @@ public class ValidateV2rc3Identifiers {
         ExternalIDs fundingIDs = as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
         ExternalIDs fundingIDs2 = as.getFundings().getFundingGroup().get(0).getIdentifiers();
         
-        assertEquals("grant_number",fundingIDs.getExternalIdentifiers().get(0).getType());
-        assertEquals("external-id-value",fundingIDs.getExternalIdentifiers().get(0).getValue());
-        assertEquals(new Url("http://tempuri.org"),fundingIDs.getExternalIdentifiers().get(0).getUrl());
-        assertEquals(Relationship.SELF,fundingIDs.getExternalIdentifiers().get(0).getRelationship());
-        assertEquals(fundingIDs.getExternalIdentifiers().get(0).getType(),fundingIDs2.getExternalIdentifiers().get(0).getType());
-        assertEquals(fundingIDs.getExternalIdentifiers().get(0).getValue(),fundingIDs2.getExternalIdentifiers().get(0).getValue());        
+        assertEquals("grant_number",fundingIDs.getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value",fundingIDs.getExternalIdentifier().get(0).getValue());
+        assertEquals(new Url("http://tempuri.org"),fundingIDs.getExternalIdentifier().get(0).getUrl());
+        assertEquals(Relationship.SELF,fundingIDs.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(fundingIDs.getExternalIdentifier().get(0).getType(),fundingIDs2.getExternalIdentifier().get(0).getType());
+        assertEquals(fundingIDs.getExternalIdentifier().get(0).getValue(),fundingIDs2.getExternalIdentifier().get(0).getValue());        
 
         ExternalIDs workIDs = as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers();
         ExternalIDs workIDs2 = as.getWorks().getWorkGroup().get(0).getIdentifiers();
         
-        assertEquals("agr",workIDs.getExternalIdentifiers().get(0).getType());
-        assertEquals("external-id-value",workIDs.getExternalIdentifiers().get(0).getValue());
-        assertEquals(new Url("http://tempuri.org"),workIDs.getExternalIdentifiers().get(0).getUrl());
-        assertEquals(Relationship.SELF,workIDs.getExternalIdentifiers().get(0).getRelationship());
-        assertEquals(workIDs.getExternalIdentifiers().get(0).getType(),workIDs2.getExternalIdentifiers().get(0).getType());
-        assertEquals(workIDs.getExternalIdentifiers().get(0).getValue(),workIDs2.getExternalIdentifiers().get(0).getValue());        
+        assertEquals("agr",workIDs.getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value",workIDs.getExternalIdentifier().get(0).getValue());
+        assertEquals(new Url("http://tempuri.org"),workIDs.getExternalIdentifier().get(0).getUrl());
+        assertEquals(Relationship.SELF,workIDs.getExternalIdentifier().get(0).getRelationship());
+        assertEquals(workIDs.getExternalIdentifier().get(0).getType(),workIDs2.getExternalIdentifier().get(0).getType());
+        assertEquals(workIDs.getExternalIdentifier().get(0).getValue(),workIDs2.getExternalIdentifier().get(0).getValue());        
         
     }
 

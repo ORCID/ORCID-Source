@@ -159,7 +159,7 @@ public class WorkFormTest {
         extId.setValue("External Identifier ID");
         extId.setType(ExternalIDType.ASIN.value());
         extId.setRelationship(Relationship.SELF);
-        externalIdentifiers.getExternalIdentifiers().add(extId);
+        externalIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(externalIdentifiers);
         return work;
     }

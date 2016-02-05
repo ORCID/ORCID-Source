@@ -455,7 +455,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             // Fill the work groups with the external identifiers
             for (GroupAble extId : externalIdentifiers) {
                 ExternalID workExtId = (ExternalID) extId;
-                workGroup.getIdentifiers().getExternalIdentifiers().add(workExtId.clone());
+                workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
             }
 
             // Fill the work group with the list of activities
@@ -493,7 +493,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             // Fill the funding groups with the external identifiers
             for (GroupAble extId : externalIdentifiers) {
                 ExternalID fundingExtId = (ExternalID) extId;
-                fundingGroup.getIdentifiers().getExternalIdentifiers().add(fundingExtId.clone());
+                fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
             }
 
             // Fill the funding group with the list of activities
@@ -535,7 +535,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 ExternalID id = new ExternalID();
                 id.setType(key.KEY_NAME);//TODO: this is not nice
                 id.setValue(key.getGroupId());
-                peerReviewGroup.getIdentifiers().getExternalIdentifiers().add(id);
+                peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
             }
 
             // Fill the peer review group with the list of activities

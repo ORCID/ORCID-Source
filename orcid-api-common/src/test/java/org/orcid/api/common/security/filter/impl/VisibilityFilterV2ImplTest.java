@@ -66,7 +66,8 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
         XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, activitiesSummary.toString());               
+        Diff diff = new Diff(expected, activitiesSummary.toString()); 
+        assertEquals(expected,activitiesSummary.toString());
         assertTrue(diff.identical());
     }
 

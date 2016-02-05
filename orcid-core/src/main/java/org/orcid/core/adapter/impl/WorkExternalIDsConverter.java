@@ -32,7 +32,7 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
                 exid.setUrl(new org.orcid.jaxb.model.common_rc2.Url(id.getUrl().getValue()));                
             }
             exid.setValue(id.getWorkExternalIdentifierId().getContent());
-            result.getExternalIdentifiers().add(exid);
+            result.getExternalIdentifier().add(exid);
         }
         return result;
     }
@@ -40,7 +40,7 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
     @Override
     public String convertTo(ExternalIDs externalIDs, Type<String> arg1) {
         WorkExternalIdentifiers ids = new WorkExternalIdentifiers();
-        for (ExternalID externalID : externalIDs.getExternalIdentifiers()){
+        for (ExternalID externalID : externalIDs.getExternalIdentifier()){
             WorkExternalIdentifier id = new WorkExternalIdentifier();
             try{
                 id.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(externalID.getType()));            

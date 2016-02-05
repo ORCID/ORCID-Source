@@ -89,19 +89,19 @@ public class FundingExternalIdentifiersConversionsTest {
         f1.setType(ExternalIDType.GRANT_NUMBER.value());
         f1.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f1.com"));
         f1.setValue("f1");
-        recordFei.getExternalIdentifiers().add(f1);
+        recordFei.getExternalIdentifier().add(f1);
 
         ExternalID f2 = new ExternalID();
         f2.setType(ExternalIDType.GRANT_NUMBER.value());
         f2.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f2.com"));
         f2.setValue("f2");
-        recordFei.getExternalIdentifiers().add(f2);
+        recordFei.getExternalIdentifier().add(f2);
 
         ExternalID f3 = new ExternalID();
         f3.setType(ExternalIDType.GRANT_NUMBER.value());
         f3.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f3.com"));
         f3.setValue("f3");
-        recordFei.getExternalIdentifiers().add(f3);
+        recordFei.getExternalIdentifier().add(f3);
 
         FundingExternalIdentifiers fei = FundingExternalIdentifiers.fromRecordPojo(recordFei);
         assertNotNull(fei);
@@ -170,7 +170,7 @@ public class FundingExternalIdentifiersConversionsTest {
         assertEquals(3, messageObject.getExternalIdentifier().size());
 
         boolean found1 = false, found2 = false, found3 = false;
-        for (ExternalID f : messageObject.getExternalIdentifiers()) {
+        for (ExternalID f : messageObject.getExternalIdentifier()) {
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());

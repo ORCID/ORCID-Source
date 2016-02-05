@@ -338,9 +338,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f3 = new ExternalID();
                 f3.setType(ExternalIDType.GRANT_NUMBER.value());
                 f3.setValue("C");
-                fei.getExternalIdentifiers().add(f1);
-                fei.getExternalIdentifiers().add(f2);
-                fei.getExternalIdentifiers().add(f3);
+                fei.getExternalIdentifier().add(f1);
+                fei.getExternalIdentifier().add(f2);
+                fei.getExternalIdentifier().add(f3);
                 break;
             case 2:
                 ExternalID f4 = new ExternalID();
@@ -352,9 +352,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f6 = new ExternalID();
                 f6.setType(ExternalIDType.GRANT_NUMBER.value());
                 f6.setValue("E");
-                fei.getExternalIdentifiers().add(f4);
-                fei.getExternalIdentifiers().add(f5);
-                fei.getExternalIdentifiers().add(f6);
+                fei.getExternalIdentifier().add(f4);
+                fei.getExternalIdentifier().add(f5);
+                fei.getExternalIdentifier().add(f6);
                 break;
             case 3:
                 ExternalID f7 = new ExternalID();
@@ -366,9 +366,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f9 = new ExternalID();
                 f9.setType(ExternalIDType.GRANT_NUMBER.value());
                 f9.setValue("Z");
-                fei.getExternalIdentifiers().add(f7);
-                fei.getExternalIdentifiers().add(f8);
-                fei.getExternalIdentifiers().add(f9);
+                fei.getExternalIdentifier().add(f7);
+                fei.getExternalIdentifier().add(f8);
+                fei.getExternalIdentifier().add(f9);
                 break;
             case 4:
                 ExternalID f10 = new ExternalID();
@@ -380,9 +380,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f12 = new ExternalID();
                 f12.setType(ExternalIDType.GRANT_NUMBER.value());
                 f12.setValue("1");
-                fei.getExternalIdentifiers().add(f10);
-                fei.getExternalIdentifiers().add(f11);
-                fei.getExternalIdentifiers().add(f12);
+                fei.getExternalIdentifier().add(f10);
+                fei.getExternalIdentifier().add(f11);
+                fei.getExternalIdentifier().add(f12);
                 break;
             case 5:
                 ExternalID f13 = new ExternalID();
@@ -394,9 +394,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f15 = new ExternalID();
                 f15.setType(ExternalIDType.GRANT_NUMBER.value());
                 f15.setValue("O");
-                fei.getExternalIdentifiers().add(f13);
-                fei.getExternalIdentifiers().add(f14);
-                fei.getExternalIdentifiers().add(f15);
+                fei.getExternalIdentifier().add(f13);
+                fei.getExternalIdentifier().add(f14);
+                fei.getExternalIdentifier().add(f15);
                 break;
             case 6:
                 ExternalID f16 = new ExternalID();
@@ -408,9 +408,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f18 = new ExternalID();
                 f18.setType(ExternalIDType.GRANT_NUMBER.value());
                 f18.setValue("Q");
-                fei.getExternalIdentifiers().add(f16);
-                fei.getExternalIdentifiers().add(f17);
-                fei.getExternalIdentifiers().add(f18);
+                fei.getExternalIdentifier().add(f16);
+                fei.getExternalIdentifier().add(f17);
+                fei.getExternalIdentifier().add(f18);
                 break;
             case 7:
                 ExternalID f19 = new ExternalID();
@@ -422,9 +422,9 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 ExternalID f21 = new ExternalID();
                 f21.setType(ExternalIDType.GRANT_NUMBER.value());
                 f21.setValue("B");
-                fei.getExternalIdentifiers().add(f19);
-                fei.getExternalIdentifiers().add(f20);
-                fei.getExternalIdentifiers().add(f21);
+                fei.getExternalIdentifier().add(f19);
+                fei.getExternalIdentifier().add(f20);
+                fei.getExternalIdentifier().add(f21);
                 break;
             }
             funding.setExternalIdentifiers(fei);

@@ -29,7 +29,7 @@ public class FundingExternalIDsConverter extends BidirectionalConverter<External
         org.orcid.pojo.FundingExternalIdentifiers jpaExtIds = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, org.orcid.pojo.FundingExternalIdentifiers.class);
         ExternalIDs result = new ExternalIDs();
         for(org.orcid.pojo.FundingExternalIdentifier jpaExtId : jpaExtIds.getFundingExternalIdentifier()) {
-            result.getExternalIdentifiers().add(jpaExtId.toRecordPojo());
+            result.getExternalIdentifier().add(jpaExtId.toRecordPojo());
         }
         return result;
     }

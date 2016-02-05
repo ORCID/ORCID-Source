@@ -278,7 +278,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setType(ExternalIDType.GRANT_NUMBER.value());
         extId.setUrl(new Url("http://test.com"));
         ExternalIDs extIdentifiers = new ExternalIDs();
-        extIdentifiers.getExternalIdentifiers().add(extId);
+        extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
         funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
@@ -307,7 +307,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setType(ExternalIDType.GRANT_NUMBER.value());
         extId.setUrl(new Url("http://test.com"));
         ExternalIDs extIdentifiers = new ExternalIDs();
-        extIdentifiers.getExternalIdentifiers().add(extId);
+        extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
         funding.setPutCode(Long.valueOf(111));
         funding = profileFundingManager.createFunding(userOrcid, funding, true);
@@ -456,7 +456,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setValue("111");
         extId.setType(ExternalIDType.DOI.value());
         ExternalIDs extIdentifiers = new ExternalIDs();
-        extIdentifiers.getExternalIdentifiers().add(extId);
+        extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work = workManager.createWork(userOrcid, work, false);
         return workManager.getWork(userOrcid, work.getPutCode(), 0L);
@@ -469,7 +469,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setValue("111");
         extId.setType(ExternalIDType.DOI.value());
         ExternalIDs extIdentifiers = new ExternalIDs();
-        extIdentifiers.getExternalIdentifiers().add(extId);
+        extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work = workManager.createWork(userOrcid, work, validate);
         return workManager.getWork(userOrcid, work.getPutCode(), 0L);
@@ -493,7 +493,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setValue("111");
         extId.setType(ExternalIDType.DOI.value());
         ExternalIDs extIdentifiers = new ExternalIDs();
-        extIdentifiers.getExternalIdentifiers().add(extId);
+        extIdentifiers.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIdentifiers);
         work.setWorkType(org.orcid.jaxb.model.record_rc2.WorkType.BOOK);
         work.setPutCode(Long.valueOf(111));
@@ -514,7 +514,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extId.setUrl(new Url("http://test.com"));
         extId.setRelationship(Relationship.PART_OF);
         ExternalIDs extIdentifiers = new ExternalIDs();
-        extIdentifiers.getExternalIdentifiers().add(extId);
+        extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
         funding = profileFundingManager.createFunding(userOrcid, funding, true);
         return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
@@ -537,7 +537,7 @@ public class SourceInActivitiesTest extends BaseTest {
         ExternalID workExtId = new ExternalID();
         workExtId.setValue("ID");
         workExtId.setType(ExternalIDType.AGR.value());
-        workExtIds.getExternalIdentifiers().add(workExtId);        
+        workExtIds.getExternalIdentifier().add(workExtId);        
         peerReview.setSubjectName(workTitle);
         peerReview.setSubjectExternalIdentifier(workExtId);
         peerReview.setSubjectType(WorkType.ARTISTIC_PERFORMANCE);

@@ -59,7 +59,7 @@ public class WorkToCiteprocTranslatorTest {
         eid.setType(ExternalIDType.DOI.name());
         //WorkExternalIdentifierId id = new WorkExternalIdentifierId();
         eid.setValue("10.1234/1234");
-        wei.getExternalIdentifiers().add(eid);
+        wei.getExternalIdentifier().add(eid);
         w.setWorkExternalIdentifiers(wei);
         
         WorkToCiteprocTranslator t = new WorkToCiteprocTranslator();

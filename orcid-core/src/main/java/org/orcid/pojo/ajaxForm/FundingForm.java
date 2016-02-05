@@ -347,7 +347,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
             ExternalIDs fExternalIdentifiers = new ExternalIDs();
             for (FundingExternalIdentifierForm fExternalIdentifier : externalIdentifiers) {
                 if (!PojoUtil.isEmtpy(fExternalIdentifier))
-                    fExternalIdentifiers.getExternalIdentifiers().add(fExternalIdentifier.toFundingExternalIdentifier());
+                    fExternalIdentifiers.getExternalIdentifier().add(fExternalIdentifier.toFundingExternalIdentifier());
             }
             result.setExternalIdentifiers(fExternalIdentifiers);
         }
@@ -478,7 +478,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
         List<FundingExternalIdentifierForm> externalIdentifiersList = new ArrayList<FundingExternalIdentifierForm>();
         // Set external identifiers 
         if (funding.getExternalIdentifiers() != null) {            
-            for (ExternalID fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifiers()) {
+            for (ExternalID fExternalIdentifier : funding.getExternalIdentifiers().getExternalIdentifier()) {
                 FundingExternalIdentifierForm fundingExternalIdentifierForm = FundingExternalIdentifierForm.valueOf(fExternalIdentifier);
                 externalIdentifiersList.add(fundingExternalIdentifierForm);
             }            

@@ -387,13 +387,13 @@ public class PeerReview implements VisibilityType, Activity, Serializable, Organ
             // If the unique external identifier is empty, the comparison must
             // return false, since two empty ext ids are not equals
             if (externalIdentifiers.getExternalIdentifier().size() == 1) {
-                if ((externalIdentifiers.getExternalIdentifiers().get(0).getValue() == null && externalIdentifiers.getExternalIdentifiers().get(0)
+                if ((externalIdentifiers.getExternalIdentifier().get(0).getValue() == null && externalIdentifiers.getExternalIdentifier().get(0)
                         .getType() == null)) {
                     return false;
                 }
             }
 
-            for (ExternalID thisExtId : externalIdentifiers.getExternalIdentifiers()) {
+            for (ExternalID thisExtId : externalIdentifiers.getExternalIdentifier()) {
                 if (!other.getExternalIdentifiers().getExternalIdentifier().contains(thisExtId)) {
                     return false;
                 }

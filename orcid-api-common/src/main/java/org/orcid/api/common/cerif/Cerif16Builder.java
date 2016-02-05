@@ -159,8 +159,8 @@ public class Cerif16Builder {
         pub.getCfTitleOrCfAbstrOrCfKeyw().add(objectFactory.createCfResPublTypeCfResPublClass(type));
 
         // add external identifiers
-        if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getExternalIdentifiers() != null) {
-            for (ExternalID id : ws.getExternalIdentifiers().getExternalIdentifiers()) {
+        if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getExternalIdentifier() != null) {
+            for (ExternalID id : ws.getExternalIdentifiers().getExternalIdentifier()) {
                 if (exportedIDs.contains(id.getType()) && StringUtils.isNotEmpty(id.getValue())) {
                     pub.getCfTitleOrCfAbstrOrCfKeyw()
                             .add(this.buildFedID(id.getValue(), translator.translate(id.getType())));
@@ -211,7 +211,7 @@ public class Cerif16Builder {
 
         // add external identifiers
         if (ws.getExternalIdentifiers() != null && ws.getExternalIdentifiers().getExternalIdentifier() != null) {
-            for (ExternalID id : ws.getExternalIdentifiers().getExternalIdentifiers()) {
+            for (ExternalID id : ws.getExternalIdentifiers().getExternalIdentifier()) {
                 if (exportedIDs.contains(id.getType()) && StringUtils.isNotEmpty(id.getValue())) {
                     prod.getCfNameOrCfDescrOrCfKeyw()
                             .add(this.buildFedID(id.getValue(), translator.translate(id.getType())));

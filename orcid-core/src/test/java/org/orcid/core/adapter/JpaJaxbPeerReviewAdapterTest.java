@@ -121,8 +121,8 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReview.getExternalIdentifiers());
         assertNotNull(peerReview.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("peer-review:external-identifier-id", peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
-        assertEquals("source-work-id", peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
+        assertEquals("peer-review:external-identifier-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("source-work-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals(Role.MEMBER.value(), peerReview.getRole().value());
         assertEquals(PeerReviewType.EVALUATION.value(), peerReview.getType().value());
         assertEquals("peer-review:url", peerReview.getUrl().getValue());
@@ -154,8 +154,8 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReviewSummary.getExternalIdentifiers());
         assertNotNull(peerReviewSummary.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
-        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());        
+        assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());        
         assertNotNull(peerReviewSummary.getSource());
         assertEquals("APP-000000001", peerReviewSummary.getSource().retrieveSourcePath());
     }

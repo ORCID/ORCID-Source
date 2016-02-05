@@ -78,7 +78,7 @@ public class FundingExternalIdentifiers implements Serializable {
         ExternalIDs result = new ExternalIDs();
         if (!this.getFundingExternalIdentifier().isEmpty()) {
             for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
-                result.getExternalIdentifiers().add(fei.toRecordPojo());
+                result.getExternalIdentifier().add(fei.toRecordPojo());
             }
         }
         return result;
@@ -102,7 +102,7 @@ public class FundingExternalIdentifiers implements Serializable {
             return null;
         FundingExternalIdentifiers result = new FundingExternalIdentifiers();
         if (!recordPojo.getExternalIdentifier().isEmpty()) {
-            for (ExternalID recordEi : recordPojo.getExternalIdentifiers()) {                               
+            for (ExternalID recordEi : recordPojo.getExternalIdentifier()) {                               
                 result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromRecordPojo(recordEi));
             }
         }

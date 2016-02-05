@@ -415,9 +415,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e3 = new ExternalID();
                 e3.setType(ExternalIDType.AGR.value());
                 e3.setValue("C");
-                wei.getExternalIdentifiers().add(e1);
-                wei.getExternalIdentifiers().add(e2);
-                wei.getExternalIdentifiers().add(e3);
+                wei.getExternalIdentifier().add(e1);
+                wei.getExternalIdentifier().add(e2);
+                wei.getExternalIdentifier().add(e3);
                 break;
             case 2:
                 ExternalID e4 = new ExternalID();
@@ -429,9 +429,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e6 = new ExternalID();
                 e6.setType(ExternalIDType.AGR.value());
                 e6.setValue("E");
-                wei.getExternalIdentifiers().add(e4);
-                wei.getExternalIdentifiers().add(e5);
-                wei.getExternalIdentifiers().add(e6);
+                wei.getExternalIdentifier().add(e4);
+                wei.getExternalIdentifier().add(e5);
+                wei.getExternalIdentifier().add(e6);
                 break;
             case 3: 
                 ExternalID e7 = new ExternalID();
@@ -443,9 +443,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e9 = new ExternalID();
                 e9.setType(ExternalIDType.AGR.value());
                 e9.setValue("Z");
-                wei.getExternalIdentifiers().add(e7);
-                wei.getExternalIdentifiers().add(e8);
-                wei.getExternalIdentifiers().add(e9);
+                wei.getExternalIdentifier().add(e7);
+                wei.getExternalIdentifier().add(e8);
+                wei.getExternalIdentifier().add(e9);
                 break;
             case 4: 
                 ExternalID e10 = new ExternalID();
@@ -457,9 +457,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e12 = new ExternalID();
                 e12.setType(ExternalIDType.AGR.value());
                 e12.setValue("1");
-                wei.getExternalIdentifiers().add(e10);
-                wei.getExternalIdentifiers().add(e11);
-                wei.getExternalIdentifiers().add(e12);
+                wei.getExternalIdentifier().add(e10);
+                wei.getExternalIdentifier().add(e11);
+                wei.getExternalIdentifier().add(e12);
                 break;
             case 5:
                 ExternalID e13 = new ExternalID();
@@ -471,9 +471,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e15 = new ExternalID();
                 e15.setType(ExternalIDType.AGR.value());
                 e15.setValue("O");
-                wei.getExternalIdentifiers().add(e13);
-                wei.getExternalIdentifiers().add(e14);
-                wei.getExternalIdentifiers().add(e15);
+                wei.getExternalIdentifier().add(e13);
+                wei.getExternalIdentifier().add(e14);
+                wei.getExternalIdentifier().add(e15);
                 break;
             case 6: 
                 ExternalID e16 = new ExternalID();
@@ -485,9 +485,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e18 = new ExternalID();
                 e18.setType(ExternalIDType.ARXIV.value());
                 e18.setValue("C");
-                wei.getExternalIdentifiers().add(e16);
-                wei.getExternalIdentifiers().add(e17);
-                wei.getExternalIdentifiers().add(e18);
+                wei.getExternalIdentifier().add(e16);
+                wei.getExternalIdentifier().add(e17);
+                wei.getExternalIdentifier().add(e18);
                 break;
             case 7:
                 ExternalID e19 = new ExternalID();
@@ -499,9 +499,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e21 = new ExternalID();
                 e21.setType(ExternalIDType.ARXIV.value());
                 e21.setValue("B");
-                wei.getExternalIdentifiers().add(e19);
-                wei.getExternalIdentifiers().add(e20);
-                wei.getExternalIdentifiers().add(e21);
+                wei.getExternalIdentifier().add(e19);
+                wei.getExternalIdentifier().add(e20);
+                wei.getExternalIdentifier().add(e21);
                 break;
             case 10:
                 ExternalID e22 = new ExternalID();
@@ -513,9 +513,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e24 = new ExternalID();
                 e24.setType(ExternalIDType.ISSN.value());
                 e24.setValue("3");
-                wei.getExternalIdentifiers().add(e22);
-                wei.getExternalIdentifiers().add(e23);
-                wei.getExternalIdentifiers().add(e24);
+                wei.getExternalIdentifier().add(e22);
+                wei.getExternalIdentifier().add(e23);
+                wei.getExternalIdentifier().add(e24);
                 break;
             case 11:
                 ExternalID e25 = new ExternalID();
@@ -527,9 +527,9 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e27 = new ExternalID();
                 e27.setType(ExternalIDType.ISSN.value());
                 e27.setValue("3");
-                wei.getExternalIdentifiers().add(e25);
-                wei.getExternalIdentifiers().add(e26);
-                wei.getExternalIdentifiers().add(e27);
+                wei.getExternalIdentifier().add(e25);
+                wei.getExternalIdentifier().add(e26);
+                wei.getExternalIdentifier().add(e27);
                 break;
             case 12: 
                 ExternalID e28 = new ExternalID();
@@ -538,8 +538,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e29 = new ExternalID();
                 e29.setType(ExternalIDType.ISSN.value());
                 e29.setValue("1");
-                wei.getExternalIdentifiers().add(e28);
-                wei.getExternalIdentifiers().add(e29);
+                wei.getExternalIdentifier().add(e28);
+                wei.getExternalIdentifier().add(e29);
                 break;
             case 13:
                 ExternalID e30 = new ExternalID();
@@ -548,8 +548,8 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 ExternalID e31 = new ExternalID();
                 e31.setType(ExternalIDType.ISSN.value());
                 e31.setValue("4");
-                wei.getExternalIdentifiers().add(e30);
-                wei.getExternalIdentifiers().add(e31);
+                wei.getExternalIdentifier().add(e30);
+                wei.getExternalIdentifier().add(e31);
                 break;
             }
             work.setExternalIdentifiers(wei);

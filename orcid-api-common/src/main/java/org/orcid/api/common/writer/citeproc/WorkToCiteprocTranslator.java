@@ -302,7 +302,7 @@ public class WorkToCiteprocTranslator {
     private String extractID(Work work, ExternalIDType type) {
         if (work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null
                 && work.getExternalIdentifiers().getExternalIdentifier().size() > 0) {
-            for (ExternalID id : work.getExternalIdentifiers().getExternalIdentifiers()) {
+            for (ExternalID id : work.getExternalIdentifiers().getExternalIdentifier()) {
                 if (id.getType().equalsIgnoreCase(type.value())) {
                     return id.getValue();
                 }

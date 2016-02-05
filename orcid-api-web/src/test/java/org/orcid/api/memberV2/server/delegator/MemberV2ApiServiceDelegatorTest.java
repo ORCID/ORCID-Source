@@ -341,7 +341,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
 
-        extIds.getExternalIdentifiers().add(extId);
+        extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -436,7 +436,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
         ;
-        extIds.getExternalIdentifiers().add(extId);
+        extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
 
         serviceDelegator.updateWork("4444-4444-4444-4443", 2L, work);
@@ -558,7 +558,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
         ExternalIDs fExtIds = new ExternalIDs();
-        fExtIds.getExternalIdentifiers().add(fExtId);
+        fExtIds.getExternalIdentifier().add(fExtId);
         newFunding.setExternalIdentifiers(fExtIds);
         newFunding.setOrganization(getOrganization());
 
@@ -611,7 +611,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
         ExternalIDs fExtIds = new ExternalIDs();
-        fExtIds.getExternalIdentifiers().add(fExtId);
+        fExtIds.getExternalIdentifier().add(fExtId);
         funding.setExternalIdentifiers(fExtIds);
 
         response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
@@ -647,7 +647,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
         ExternalIDs fExtIds = new ExternalIDs();
-        fExtIds.getExternalIdentifiers().add(fExtId);
+        fExtIds.getExternalIdentifier().add(fExtId);
         funding.setExternalIdentifiers(fExtIds);
 
         serviceDelegator.updateFunding("4444-4444-4444-4446", 5L, funding);
@@ -1046,7 +1046,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("reviewer", peerReview.getRole().value());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());
@@ -1074,7 +1074,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("limited", peerReview.getVisibility().value());
         assertEquals("issn:0000002", peerReview.getGroupId());
     }
@@ -1091,7 +1091,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("limited", peerReview.getVisibility().value());
         assertEquals("issn:0000003", peerReview.getGroupId());
     }
@@ -1122,7 +1122,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());
     }
@@ -1195,7 +1195,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         wei1.setUrl(new Url("http://myUrl.com"));
         wei1.setValue("work-external-identifier-id");
         wei1.setType(ExternalIDType.DOI.value());
-        weis.getExternalIdentifiers().add(wei1);
+        weis.getExternalIdentifier().add(wei1);
         peerReview.setExternalIdentifiers(weis);
         peerReview.setGroupId("issn:0000003");
         peerReview.setOrganization(getOrganization());

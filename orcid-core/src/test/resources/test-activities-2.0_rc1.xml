@@ -171,8 +171,7 @@
 						<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
 						<common:relationship>self</common:relationship>
 						<work:external-identifier-type>agr</work:external-identifier-type>
-						<work:external-identifier-id>work:external-identifier-id
-						</work:external-identifier-id>
+						<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
 					</work:work-external-identifier>
 				</peer-review:external-identifiers>
 				<peer-review:completion-date>
