@@ -21,8 +21,10 @@ public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, 
         WorkExternalIdentifier id = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, WorkExternalIdentifier.class);        
         ExternalID result = new ExternalID();
         result.setType(id.getWorkExternalIdentifierType().value());
-        result.setRelationship(org.orcid.jaxb.model.record_rc2.Relationship.valueOf(id.getRelationship().value()));
-        result.setUrl(new org.orcid.jaxb.model.common_rc2.Url(id.getUrl().getValue()));
+        if (id.getRelationship() !=null)
+            result.setRelationship(org.orcid.jaxb.model.record_rc2.Relationship.fromValue(id.getRelationship().value()));
+        if (id.getUrl() != null)
+            result.setUrl(new org.orcid.jaxb.model.common_rc2.Url(id.getUrl().getValue()));
         result.setValue(id.getWorkExternalIdentifierId().getContent());
         return result;
     }
@@ -41,12 +43,13 @@ public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, 
             id.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID); 
         }
         id.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
-        id.setUrl(new Url(externalID.getUrl().getValue()));
-        try{
-            id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
-        }catch (IllegalArgumentException e){
-            //?
-        }
+        if (externalID.getUrl()!=null)
+            id.setUrl(new Url(externalID.getUrl().getValue()));
+        if (externalID.getRelationship() != null)
+            try{
+                id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
+            }catch (IllegalArgumentException e){
+            }
         return JsonUtils.convertToJsonString(id);
     }
 

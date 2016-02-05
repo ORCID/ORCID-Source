@@ -25,8 +25,12 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
         for (WorkExternalIdentifier id : ids.getWorkExternalIdentifier()){
             ExternalID exid = new ExternalID();
             exid.setType(id.getWorkExternalIdentifierType().value());
-            exid.setRelationship(org.orcid.jaxb.model.record_rc2.Relationship.valueOf(id.getRelationship().value()));
-            exid.setUrl(new org.orcid.jaxb.model.common_rc2.Url(id.getUrl().getValue()));
+            if (id.getRelationship() != null){
+                exid.setRelationship(org.orcid.jaxb.model.record_rc2.Relationship.fromValue(id.getRelationship().value()));                
+            }
+            if (id.getUrl() != null){
+                exid.setUrl(new org.orcid.jaxb.model.common_rc2.Url(id.getUrl().getValue()));                
+            }
             exid.setValue(id.getWorkExternalIdentifierId().getContent());
             result.getExternalIdentifiers().add(exid);
         }
@@ -43,13 +47,18 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
             }catch(IllegalArgumentException e){
                 id.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID); 
             }
+            
             id.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
-            id.setUrl(new Url(externalID.getUrl().getValue()));
-            try{
-                id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
-            }catch (IllegalArgumentException e){
-                //?
+            
+            if (externalID.getUrl() != null){
+                id.setUrl(new Url(externalID.getUrl().getValue()));                
             }
+            if (externalID.getRelationship() != null)
+                try{
+                    id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
+                }catch (IllegalArgumentException e){
+                }
+            
             ids.getExternalIdentifier().add(id);
         }        
         return JsonUtils.convertToJsonString(ids);

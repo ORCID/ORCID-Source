@@ -171,9 +171,9 @@ public class JpaJaxbWorkAdapterTest {
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc1/samples/work-2.0_rc1.xml";
+        String name = "/record_2.0_rc2/samples/work-2.0_rc2.xml";
         if (full) {
-            name = "/record_2.0_rc1/samples/work-full-2.0_rc1.xml";
+            name = "/record_2.0_rc2/samples/work-full-2.0_rc2.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);

@@ -16,6 +16,8 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -23,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "type","value", "url", "relationship" })
-public class ExternalID implements GroupAble,Cloneable{
+public class ExternalID implements GroupAble,Cloneable,Serializable{
     private static final long serialVersionUID = 1L;
 
     @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/common", required = true)
@@ -91,6 +94,15 @@ public class ExternalID implements GroupAble,Cloneable{
         //Dont group if it is a part-of identifier
         if(Relationship.PART_OF.equals(relationship))
             return false;
+        
+        // Dont groups works where the external id is empty
+        if (this.getValue() == null || this.getValue().isEmpty())
+            return false;
+
+        // Dont work works by ISSN identifier
+        if (ExternalIDType.ISSN.value().equals(this.getType()))
+            return false;
+        
         return true;
     }
     
@@ -134,10 +146,12 @@ public class ExternalID implements GroupAble,Cloneable{
 
     public ExternalID clone() {
         ExternalID id = new ExternalID();
-        id.relationship=this.getRelationship();
         id.type=this.getType();
         id.value=this.getValue();
-        id.url=new Url(this.url.getValue());
+        if (this.getUrl()!=null)
+            id.url=new Url(this.getUrl().getValue());
+        if (this.getRelationship()!=null)
+            id.relationship=this.getRelationship();
         return id;
     }
 

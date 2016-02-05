@@ -60,7 +60,7 @@ public class ExternalIDs implements Serializable, ExternalIdentifiersContainer{
     @XmlTransient
     @JsonIgnore
     public List<? extends GroupAble> getExternalIdentifier() {
-        return externalIdentifiers;
+        return getExternalIdentifiers();
     }
     
     @Override

@@ -163,9 +163,9 @@ public class JpaJaxbPeerReviewAdapterTest {
     private PeerReview getPeerReview(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc1/samples/peer-review-2.0_rc1.xml";
+        String name = "/record_2.0_rc2/samples/peer-review-2.0_rc2.xml";
         if(full) {
-            name = "/record_2.0_rc1/samples/peer-review-full-2.0_rc1.xml";
+            name = "/record_2.0_rc2/samples/peer-review-full-2.0_rc2.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);

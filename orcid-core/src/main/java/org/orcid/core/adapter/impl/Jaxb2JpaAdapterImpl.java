@@ -329,13 +329,41 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (work == null || work.getWorkExternalIdentifiers() == null) {
             return null;
         }
-        //Transform the external id v1.2 into an external id v2.0
-        org.orcid.jaxb.model.record_rc2.ExternalIDs recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.ExternalIDs.valueOf(work.getWorkExternalIdentifiers());
+        //Transform the external id v1.2 into an external id v2.0 
+        //note uses rc1 format, rc2 no longer has WorkExternalIdentifiers, this is to maintain db compatibility
+        org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
         
         /**
          * Transform the external identifiers according to the rules in: 
          * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
          * */
+        for(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
+            if(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF);
+                } else {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
+                }                
+            } else if(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF);
+                } else {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
+                }
+            } else {
+                extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
+            }
+        }
+        
+        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
+        
+        /*
+        if (work == null || work.getWorkExternalIdentifiers() == null) {
+            return null;
+        }
+        
+        org.orcid.jaxb.model.record_rc2.ExternalIDs recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.ExternalIDs.valueOf(work.getWorkExternalIdentifiers());
+        
         for(org.orcid.jaxb.model.record_rc2.ExternalID extId : recordExternalIdentifiers.getExternalIdentifiers()) {
             if(ExternalIDType.ISSN.equals(extId.getType())) {
                 if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
@@ -355,6 +383,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         
         return JsonUtils.convertToJsonString(recordExternalIdentifiers);
+        */
     }
     
     
