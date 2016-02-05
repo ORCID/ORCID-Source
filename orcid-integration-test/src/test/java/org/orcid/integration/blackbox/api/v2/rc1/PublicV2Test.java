@@ -52,7 +52,7 @@ import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.common_rc1.Day;
 import org.orcid.jaxb.model.common_rc1.Month;
 import org.orcid.jaxb.model.common_rc1.Year;
-import org.orcid.jaxb.model.error.OrcidError;
+import org.orcid.jaxb.model.error_rc2.OrcidError;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;

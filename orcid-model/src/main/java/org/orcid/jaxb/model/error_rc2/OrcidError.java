@@ -22,7 +22,7 @@
 //
 
 
-package org.orcid.jaxb.model.error;
+package org.orcid.jaxb.model.error_rc2;
 
 import java.io.Serializable;
 

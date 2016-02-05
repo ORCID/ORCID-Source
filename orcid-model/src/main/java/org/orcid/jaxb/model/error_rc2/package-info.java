@@ -22,4 +22,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://www.orcid.org/ns/error", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.orcid.jaxb.model.error;
+package org.orcid.jaxb.model.error_rc2;

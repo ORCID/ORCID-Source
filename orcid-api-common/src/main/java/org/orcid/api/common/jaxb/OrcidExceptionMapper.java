@@ -70,7 +70,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
-import org.orcid.jaxb.model.error.OrcidError;
+import org.orcid.jaxb.model.error_rc2.OrcidError;
 import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.Orcid;
