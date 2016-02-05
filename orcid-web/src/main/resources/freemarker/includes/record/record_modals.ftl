@@ -35,14 +35,14 @@
 					<div class="fixed-area">
 						<div class="scroll-area">		
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames | orderBy : 'displayIndex'" ng-cloak> 								
-								<div class="col-md-6">
+								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">
 										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
 										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.sourceName"></span>										
 									</div>
 									<div class="source" ng-show="otherName.sourceName">Source: {{otherName.sourceName}}</div>
 								</div>							
-								<div class="col-md-6">
+								<div class="col-md-6 col-sm-6 col-xs-12">
 									<ul class="record-settings pull-right">
 										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(otherName.displayIndex)"></span>										
@@ -64,7 +64,8 @@
 		                	     				elementId="$index" />	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="otherName.createdDate">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="otherName.createdDate" ng-class="{'hidden-xs' : otherName.createdDate}">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="otherName.createdDate" ng-class="{'visible-xs' : otherName.createdDate}">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
 								</div>
 							</div>
 						</div>
@@ -134,7 +135,8 @@
 	                 	      					elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="country.createdDate">Created: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}">Created: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="country.createdDate" ng-class="{'visible-xs' : country.createdDate}">Created: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
 								</div>					 				
 							</div>											
 						</div>
@@ -203,7 +205,8 @@
                 	      						elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="keyword.createdDate">Created: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="keyword.createdDate" ng-class="{'hidden-xs' : keyword.createdDate}">Created: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="keyword.createdDate" ng-class="{'visible-xs' : keyword.createdDate}">Created: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
 								</div>					 				
 							</div>											
 						</div>
@@ -268,7 +271,8 @@
                 	      						elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="website.createdDate">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="website.createdDate" ng-class="{'hidden-xs' : website.createdDate}">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="website.createdDate" ng-class="{'visible-xs' : website.createdDate}">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
 								</div>								
 								<div ng-show="website.errors.length > 0" class="col-md-12">									
 									<div ng-repeat="error in website.errors">
