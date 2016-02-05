@@ -6376,6 +6376,14 @@ a:hover .mozilla-badge{
 	height: 80px;
 }
 
+.revoke-social .form-social-sign-in #ajax-loader{
+	margin-left: 5px;
+}
+
+.revoke-social{
+	min-height: 195px; 
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
