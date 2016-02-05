@@ -51,7 +51,7 @@
 	<xs:import namespace="http://www.orcid.org/ns/keyword"
 		schemaLocation="../record_2.0_rc2/keyword-2.0_rc2.xsd" />
 	<xs:import namespace="http://www.orcid.org/ns/external-identifier"
-		schemaLocation="../record_2.0_rc2/external-identifier-2.0_rc2.xsd" />
+		schemaLocation="../record_2.0_rc2/person-external-identifier-2.0_rc2.xsd" />
 
 	<xs:element name="person">
 		<xs:annotation>
