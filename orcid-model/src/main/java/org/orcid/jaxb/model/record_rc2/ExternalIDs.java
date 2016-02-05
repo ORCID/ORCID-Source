@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -46,7 +49,11 @@ public class ExternalIDs implements Serializable, ExternalIdentifiersContainer{
     }  
     
     public static ExternalIDs valueOf(org.orcid.jaxb.model.message.WorkExternalIdentifiers messageWorkExternalIdentifiers) {
-        return null;
+        ExternalIDs ids = new ExternalIDs();
+        for (WorkExternalIdentifier id : messageWorkExternalIdentifiers.getWorkExternalIdentifier()){
+            ids.getExternalIdentifiers().add(ExternalID.fromMessageExtId(id));
+        }
+        return ids;
     }
 
     @Override

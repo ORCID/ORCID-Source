@@ -95,8 +95,10 @@ public class ExternalID implements GroupAble,Cloneable{
     }
     
     public static ExternalID fromMessageExtId(org.orcid.jaxb.model.message.WorkExternalIdentifier oldExtId) {
-        //TODO
-        return null;
+        ExternalID id = new ExternalID();
+        id.setType(oldExtId.getWorkExternalIdentifierType().value());
+        id.setValue(oldExtId.getWorkExternalIdentifierId().getContent());
+        return id;
     }
 
     @Override
