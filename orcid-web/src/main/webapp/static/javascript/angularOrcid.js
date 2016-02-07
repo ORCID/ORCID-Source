@@ -8229,9 +8229,9 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     $scope.googleUri = 'https://developers.google.com/oauthplayground';
     $scope.runscopeUri = 'https://www.runscope.com/oauth_tool/callback';
     $scope.playgroundExample = '';
-    $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
+    $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&scopes=/authenticate&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer';
     $scope.sampleAuthCurl = '';
-    $scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
+    $scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [BASE_URI]/oauth/token";
     $scope.runscopeExample = '';
     $scope.runscopeExampleLink = 'https://www.runscope.com/oauth2_tool';
     $scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
@@ -8565,7 +8565,6 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
 
         if($scope.googleUri == selectedRedirectUriValue) {
             var example = $scope.googleExampleLink;
-            example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
             example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
             example = example.replace('[CLIENT_ID]', clientId);
             example = example.replace('[CLIENT_SECRET]', selectedClientSecret);
@@ -8573,7 +8572,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         }
 
         var example = $scope.authorizeURLTemplate;
-        example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
+        example = example.replace('BASE_URI]', orcidVar.baseUri);
         example = example.replace('[CLIENT_ID]', clientId);
         example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
         $scope.authorizeURL = example;
@@ -8582,7 +8581,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
         var sampeleCurl = $scope.sampleAuthCurlTemplate;
         $scope.sampleAuthCurl = sampeleCurl.replace('[CLIENT_ID]', clientId)
             .replace('[CLIENT_SECRET]', selectedClientSecret)
-            .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+            .replace('[BASE_URI]', orcidVar.baseUri)
             .replace('[REDIRECT_URI]', selectedRedirectUriValue);
     };
 
@@ -8673,10 +8672,10 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
     // Google example
     $scope.googleUri = 'https://developers.google.com/oauthplayground';
     $scope.playgroundExample = '';
-    $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[PUB_BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scope=[SCOPES]';
+    $scope.googleExampleLink = 'https://developers.google.com/oauthplayground/#step1&oauthEndpointSelect=Custom&oauthAuthEndpointValue=[BASE_URI_ENCODE]/oauth/authorize&oauthTokenEndpointValue=[BASE_URI_ENCODE]/oauth/token&oauthClientId=[CLIENT_ID]&oauthClientSecret=[CLIENT_SECRET]&accessTokenType=bearer&scope=[SCOPES]';
     // Curl example
     $scope.sampleAuthCurl = '';
-    $scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [PUB_BASE_URI]/oauth/token";
+    $scope.sampleAuthCurlTemplate = "curl -i -L -k -H 'Accept: application/json' --data 'client_id=[CLIENT_ID]&client_secret=[CLIENT_SECRET]&grant_type=authorization_code&redirect_uri=[REDIRECT_URI]&code=REPLACE WITH OAUTH CODE' [BASE_URI]/oauth/token";
     // Auth example
     $scope.authorizeUrlBase = getBaseUri() + '/oauth/authorize';
     $scope.authorizeURLTemplate = $scope.authorizeUrlBase + '?client_id=[CLIENT_ID]&response_type=code&redirect_uri=[REDIRECT_URI]&scope=[SCOPES]';
@@ -8959,7 +8958,6 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
 
             if($scope.googleUri == selectedRedirectUriValue) {
                 var example = $scope.googleExampleLink;
-                example = example.replace('[PUB_BASE_URI_ENCODE]', encodeURI(orcidVar.pubBaseUri));
                 example = example.replace('[BASE_URI_ENCODE]', encodeURI(getBaseUri()));
                 example = example.replace('[CLIENT_ID]', clientId);
                 example = example.replace('[CLIENT_SECRET]', selectedClientSecret);
@@ -8969,7 +8967,7 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
             }
 
             var example = $scope.authorizeURLTemplate;
-            example = example.replace('[PUB_BASE_URI]', orcidVar.pubBaseUri);
+            example = example.replace('[BASE_URI]', orcidVar.baseUri);
             example = example.replace('[CLIENT_ID]', clientId);
             example = example.replace('[REDIRECT_URI]', selectedRedirectUriValue);
             if(scope != ''){
@@ -8982,7 +8980,7 @@ orcidNgModule.controller('ClientEditCtrl',['$scope', '$compile', function ($scop
             var sampleCurl = $scope.sampleAuthCurlTemplate;
             $scope.sampleAuthCurl = sampleCurl.replace('[CLIENT_ID]', clientId)
                 .replace('[CLIENT_SECRET]', selectedClientSecret)
-                .replace('[PUB_BASE_URI]', orcidVar.pubBaseUri)
+                .replace('[BASE_URI]', orcidVar.baseUri)
                 .replace('[REDIRECT_URI]', selectedRedirectUriValue);
         }
     };
