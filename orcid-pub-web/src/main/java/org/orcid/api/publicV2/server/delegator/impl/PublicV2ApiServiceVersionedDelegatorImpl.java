@@ -40,7 +40,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Override
     public Response viewStatusText() {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewStatusText());
+        return publicV2ApiServiceDelegator.viewStatusText();
     }
 
     @Override

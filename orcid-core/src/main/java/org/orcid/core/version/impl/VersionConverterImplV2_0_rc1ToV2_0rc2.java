@@ -306,7 +306,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
             WorkExternalIdentifiers identifiers = new WorkExternalIdentifiers();
             for (ExternalID id : source.getExternalIdentifier()){
                 WorkExternalIdentifier identifier = new WorkExternalIdentifier();
-                identifier.setWorkExternalIdentifierType(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.fromValue(id.getValue()));
+                identifier.setWorkExternalIdentifierType(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.fromValue(id.getType()));
                 identifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(id.getValue()));
                 if (id.getUrl()!=null){
                     identifier.setUrl(new org.orcid.jaxb.model.common_rc1.Url(id.getUrl().getValue()));
