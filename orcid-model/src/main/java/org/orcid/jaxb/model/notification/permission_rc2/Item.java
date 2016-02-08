@@ -71,7 +71,7 @@ public class Item implements Serializable {
     @XmlElement(name = "item-name", namespace = "http://www.orcid.org/ns/notification", required = true)
     protected String itemName;
     @XmlElement(name = "external-id", namespace = "http://www.orcid.org/ns/common", required = true)
-    protected ExternalID externalID;
+    protected ExternalID externalIdentifier;
 
     public String getPutCode() {
         return putCode;
@@ -130,7 +130,7 @@ public class Item implements Serializable {
      * 
      */
     public ExternalID getExternalIdentifier() {
-        return externalID;
+        return externalIdentifier;
     }
 
     /**
@@ -141,7 +141,7 @@ public class Item implements Serializable {
      * 
      */
     public void setExternalIdentifier(ExternalID value) {
-        this.externalID = value;
+        this.externalIdentifier = value;
     }
 
 }

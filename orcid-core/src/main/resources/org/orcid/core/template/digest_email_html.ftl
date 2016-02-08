@@ -54,7 +54,7 @@
                 <div><@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})</div>
                 <ul>
                 <#list itemsByType[itemType] as item>                	
-                    <li>${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if></li>
+                    <li>${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.value?lower_case}: <#if item.externalIdentifier.value?starts_with("http")><a href="${item.externalIdentifier.value}" style="color: #338caf;">${item.externalIdentifier.value}</a><#else>${item.externalIdentifier.value}</#if>)</#if></li>
                 </#list>
                 </ul>
                 </#list>
@@ -67,7 +67,7 @@
                 <#if notification.items??>
                 <ul>
                 <#list notification.items.items as item>
-                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if></li>
                 </#list>
                 </ul>
                 </#if>
