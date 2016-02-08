@@ -77,7 +77,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
     static {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        mapperFactory.getConverterFactory().registerConverter(new ActivityIdentifierToExternalIDConverter());
+        mapperFactory.getConverterFactory().registerConverter("identifierToID",new ActivityIdentifierToExternalIDConverter());
         mapperFactory.getConverterFactory().registerConverter(new FundingExternalIdentifiersToExternalIDConverter());
         mapperFactory.getConverterFactory().registerConverter(new WorkExternalIdentifiersToExternalIDConverter());
         
@@ -105,7 +105,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
 
                         actSummaryRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestDates.last())));
                     }
-                }).register();
+                })
+                .register();
 
         // EDUCATION SUMMARY
         mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc2.Educations.class).field("summaries", "summaries")
@@ -161,7 +162,8 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         worksRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
-                }).register();
+                })
+                .register();
         
         //GROUP ID
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc2.GroupIdRecords.class)
