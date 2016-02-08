@@ -62,6 +62,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class OauthControllerBase extends BaseController {
     protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     protected Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
+    private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
     protected static String REQUEST_INFO_FORM = "requestInfoForm";
@@ -81,29 +82,37 @@ public class OauthControllerBase extends BaseController {
     @Resource
     protected OrcidAuthorizationEndpoint authorizationEndpoint;
 
-    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String redirectUrl) throws UnsupportedEncodingException {
+    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String requestUrl) throws UnsupportedEncodingException {
         String clientId = "";
         String scopesString = "";        
-
-        if (!PojoUtil.isEmpty(redirectUrl)) {
-            Matcher matcher = clientIdPattern.matcher(redirectUrl);
+        String redirectUri = "";
+        
+        if (!PojoUtil.isEmpty(requestUrl)) {
+            Matcher matcher = clientIdPattern.matcher(requestUrl);
             if (matcher.find()) {
                 clientId = matcher.group(1);
             }
-            Matcher scopeMatcher = scopesPattern.matcher(redirectUrl);
+            Matcher scopeMatcher = scopesPattern.matcher(requestUrl);
             if (scopeMatcher.find()) {
                 String scopes = scopeMatcher.group(1);
                 scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
                 scopesString = scopesString.replaceAll(" +", " ");                
             }
+            Matcher redirectUriMatcher = redirectUriPattern.matcher(requestUrl);
+            if (redirectUriMatcher.find()) {
+                try {
+                    redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+            }                        
         } 
 
-        return generateAndSaveRequestInfoForm(request, clientId, scopesString);
+        return generateAndSaveRequestInfoForm(request, clientId, scopesString, redirectUri);
     }
     
-    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String clientId, String scopesString) throws UnsupportedEncodingException {        
+    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String clientId, String scopesString, String redirectUri) throws UnsupportedEncodingException {        
         RequestInfoForm infoForm = new RequestInfoForm();
-        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
+        Set<ScopePathType> scopes = new HashSet<ScopePathType>();                
         
         if (!PojoUtil.isEmpty(clientId) && !PojoUtil.isEmpty(scopesString)) {
             scopesString = URLDecoder.decode(scopesString, "UTF-8").trim();
@@ -127,6 +136,8 @@ public class OauthControllerBase extends BaseController {
         if (clientDetails.isPersistentTokensEnabled())
             infoForm.setUserPersistentTokens(true);
 
+        infoForm.setRedirectUrl(redirectUri);
+        
         // Save the request info form in the session
         request.getSession().setAttribute(REQUEST_INFO_FORM, infoForm);
 
@@ -215,7 +226,7 @@ public class OauthControllerBase extends BaseController {
      * @param approvalParams
      * @param justRegistred
      */
-    protected void setOauthParams(OauthForm form, Map<String, String> params, Map<String, String> approvalParams, String scopes, boolean justRegistred) {
+    protected void setOauthParams(OauthForm form, Map<String, String> params, Map<String, String> approvalParams, String scopes, String redirectUri, boolean justRegistred) {
         // Scope
         if (!PojoUtil.isEmpty(scopes)) {
             params.put(OrcidOauth2Constants.SCOPE_PARAM, scopes);
@@ -226,8 +237,8 @@ public class OauthControllerBase extends BaseController {
         // Client ID
         params.put(OrcidOauth2Constants.CLIENT_ID_PARAM, form.getClientId().getValue());
         // Redirect URI
-        if (!PojoUtil.isEmpty(form.getRedirectUri())) {
-            params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, form.getRedirectUri().getValue());
+        if (!PojoUtil.isEmpty(redirectUri)) {
+            params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, redirectUri);
         } else {
             params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, new String());
         }
@@ -290,12 +301,7 @@ public class OauthControllerBase extends BaseController {
                     params.put(key, values[0]);
             }
         }
-    }
-
-    protected String getScopes(HttpServletRequest request) {
-        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
-        return requestInfoForm.getScopesAsString();
-    }
+    }    
 
     /*****************************
      * Authenticate user methods

@@ -33,7 +33,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -55,8 +55,7 @@ import org.springframework.web.servlet.view.RedirectView;
 public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);
     
-    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
-    private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
+    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");        
     
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
@@ -68,8 +67,7 @@ public class OauthLoginController extends OauthControllerBase {
         String clientGroupName = "";
         String email = "";
         String clientDescription = "";
-        String scope = "";
-        String redirectUri = "";
+        String scope = "";        
         String responseType = "";
         String orcid = null;                        
         boolean showLogin = false; // default to Reg
@@ -77,7 +75,7 @@ public class OauthLoginController extends OauthControllerBase {
             String url = savedRequest.getRedirectUrl();
             
             //Save the request information form
-            generateAndSaveRequestInfoForm(request, url);
+            RequestInfoForm requestInfoForm = generateAndSaveRequestInfoForm(request, url);
             
             if (url.toLowerCase().contains("show_login=true"))
                 showLogin = true;
@@ -120,15 +118,7 @@ public class OauthLoginController extends OauthControllerBase {
                             scope = scope.replaceAll(" +", " ");
                         } catch (UnsupportedEncodingException e) {
                         }
-                    }
-
-                    Matcher redirectUriMatcher = redirectUriPattern.matcher(url);
-                    if (redirectUriMatcher.find()) {
-                        try {
-                            redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
-                        } catch (UnsupportedEncodingException e) {
-                        }
-                    }
+                    }                    
 
                     Matcher responseTypeMatcher = responseTypePattern.matcher(url);
                     if (responseTypeMatcher.find()) {
@@ -147,7 +137,7 @@ public class OauthLoginController extends OauthControllerBase {
                         authorizationEndpoint.validateScope(scope, clientDetails);
                         orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
                     } catch (InvalidScopeException ise) {
-                        String redirectUriWithParams = redirectUri;
+                        String redirectUriWithParams = requestInfoForm.getRedirectUrl();
                         redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
                         RedirectView rView = new RedirectView(redirectUriWithParams);
 
@@ -155,7 +145,7 @@ public class OauthLoginController extends OauthControllerBase {
                         error.setView(rView);
                         return error;
                     } catch (LockedException le) {
-                        String redirectUriWithParams = redirectUri;
+                        String redirectUriWithParams = requestInfoForm.getRedirectUrl();
                         redirectUriWithParams += "?error=client_locked&error_description=" + le.getMessage();
                         RedirectView rView = new RedirectView(redirectUriWithParams);
 
@@ -181,8 +171,7 @@ public class OauthLoginController extends OauthControllerBase {
                     }
                 }
             }
-        }
-        mav.addObject("redirect_uri", redirectUri);
+        }        
         mav.addObject("response_type", responseType);
         mav.addObject("client_name", clientName);
         mav.addObject("client_id", clientId);
@@ -196,9 +185,12 @@ public class OauthLoginController extends OauthControllerBase {
     }
     
     @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
-    public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
+    public @ResponseBody RequestInfoForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
+        
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        
         boolean willBeRedirected = false;
         if (form.getApproved()) {
             // Validate name and password
@@ -212,10 +204,10 @@ public class OauthLoginController extends OauthControllerBase {
                     Map<String, Object> model = new HashMap<String, Object>();
                     Map<String, String> params = new HashMap<String, String>();
                     Map<String, String> approvalParams = new HashMap<String, String>();                    
-                    String scopes = getScopes(request);
+                    String scopes = requestInfoForm.getScopesAsString();
                     
                     // Set params
-                    setOauthParams(form, params, approvalParams, scopes, false);
+                    setOauthParams(form, params, approvalParams, scopes, requestInfoForm.getRedirectUrl(), false);
 
                     // Authorize
                     try {
@@ -228,21 +220,21 @@ public class OauthLoginController extends OauthControllerBase {
                         if (!PojoUtil.isEmpty(form.getResponseType()))
                             redirectUri += "&response_type=" + form.getResponseType().getValue();
                         // Set the redirect uri
-                        if (!PojoUtil.isEmpty(form.getRedirectUri()))
-                            redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
+                        if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl()))
+                            redirectUri += "&redirect_uri=" + requestInfoForm.getRedirectUrl();
                         // Set the scope param
                         if (!PojoUtil.isEmpty(scopes))
                             redirectUri += "&scope=" + scopes;
                         // Copy the state param if present
                         if (params != null && params.containsKey("state"))
                             redirectUri += "&state=" + params.get("state");
-                        form.setRedirectUri(Text.valueOf(redirectUri));
-                        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
-                        return form;
+                        requestInfoForm.setRedirectUrl(redirectUri);
+                        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
+                        return requestInfoForm;
                     }
                     // Approve
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-                    form.setRedirectUri(Text.valueOf(view.getUrl()));
+                    requestInfoForm.setRedirectUrl(view.getUrl());
                     willBeRedirected = true;
                 } catch (AuthenticationException ae) {
                     form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
@@ -250,11 +242,10 @@ public class OauthLoginController extends OauthControllerBase {
             }
         } else {
             String stateParam = null;
-
             if (!PojoUtil.isEmpty(form.getStateParam())) {                
                 stateParam = form.getStateParam().getValue();
             }
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(form.getRedirectUri().getValue(), stateParam)));
+            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), stateParam));
             willBeRedirected = true;
         }
 
@@ -263,9 +254,9 @@ public class OauthLoginController extends OauthControllerBase {
         if (willBeRedirected) {
             if(new HttpSessionRequestCache().getRequest(request, response) != null)
                 new HttpSessionRequestCache().removeRequest(request, response);
-            LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
+            LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
         }
-        return form;
+        return requestInfoForm;
     }
     
     private void validateUserNameAndPassword(OauthAuthorizeForm form) {

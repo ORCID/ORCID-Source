@@ -27,11 +27,7 @@ public interface OauthForm {
 
     Text getMemberName();
 
-    void setMemberName(Text memberName);
-    
-    Text getRedirectUri();
-
-    void setRedirectUri(Text redirectUri);
+    void setMemberName(Text memberName);        
 
     Text getResponseType();
     

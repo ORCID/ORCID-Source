@@ -9627,7 +9627,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                             //Fire GA authorize-deny
                             orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
                         }
-                        orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+                        orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
                     }
                 } else {
                     console.log("Error authenticating the user");
@@ -9707,7 +9707,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 } else {
                     //Fire GA register deny
                     orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
-                    orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+                    orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
                 }
 
                 $scope.$apply();
@@ -9774,8 +9774,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                     //Fire GA register deny
                     orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
                 }
-
-                orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+                orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
             }
         }).fail(function() {
             // something bad is happening!
@@ -9863,7 +9862,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + orcidGA.buildClientString($scope.authorizationForm.memberName.value, $scope.authorizationForm.clientName.value)]);
                     }
                 }
-                orcidGA.windowLocationHrefDelay(data.redirectUri.value);
+                orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
             }
         }).fail(function() {
             console.log("An error occured authorizing the user.");
@@ -9925,13 +9924,11 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //---------------------
     //------Recaptcha------
     //---------------------   
-    $scope.setRecaptchaWidgetId = function (widgetId) {                        
-        console.log('Widget ID: ' + widgetId)
+    $scope.setRecaptchaWidgetId = function (widgetId) {
         $scope.recaptchaWidgetId = widgetId;        
     };
 
-    $scope.setRecatchaResponse = function (response) {        
-        console.log('Yey recaptcha response!');
+    $scope.setRecatchaResponse = function (response) {
         $scope.recatchaResponse = response;        
     };
     

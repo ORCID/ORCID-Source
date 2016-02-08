@@ -21,7 +21,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
     Text clientId;
     Text clientName;
     Text memberName;
-    Text redirectUri;
     Text responseType;
     Text stateParam;
     boolean approved = false;
@@ -30,7 +29,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
     public OauthRegistrationForm() {
         super();
         this.clientId = new Text();
-        this.redirectUri = new Text();
         this.responseType = new Text();
     }
 
@@ -50,7 +48,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
         this.setReferredBy(reg.getReferredBy());
         this.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays());
         this.clientId = new Text();
-        this.redirectUri = new Text();
         this.responseType = new Text();
     }
 
@@ -78,14 +75,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
         this.memberName = memberName;
     }
     
-    public Text getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(Text redirectUri) {
-        this.redirectUri = redirectUri;
-    }
-
     public Text getResponseType() {
         return responseType;
     }

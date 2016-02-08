@@ -32,7 +32,7 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -65,7 +65,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         clientId = (clientId != null) ? clientId.trim() : clientId;
         scope = (scope != null) ? scope.trim().replaceAll(" +", " ") : scope;
         redirectUri = (redirectUri != null) ? redirectUri.trim() : redirectUri;
-        generateAndSaveRequestInfoForm(request, clientId, scope);        
+        generateAndSaveRequestInfoForm(request, clientId, scope, redirectUri);        
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(OrcidOauth2Constants.JUST_REGISTERED);
@@ -173,7 +173,8 @@ public class OauthAuthorizeController extends OauthControllerBase {
     }    
 
     @RequestMapping(value = { "/oauth/custom/authorize.json" }, method = RequestMethod.POST)
-    public @ResponseBody OauthAuthorizeForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
+    public @ResponseBody RequestInfoForm authorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
         Map<String, String> requestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
@@ -205,11 +206,11 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
         // Approve
         RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-        form.setRedirectUri(Text.valueOf(view.getUrl()));
+        requestInfoForm.setRedirectUrl(view.getUrl());
         if(new HttpSessionRequestCache().getRequest(request, response) != null)
             new HttpSessionRequestCache().removeRequest(request, response);
-        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + form.getRedirectUri());
-        return form;
+        LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
+        return requestInfoForm;
     }
 
     

@@ -21,16 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializable {
-
     private static final long serialVersionUID = 1L;
-
     private List<String> errors = new ArrayList<String>();
     Text userName;
     Text password;
     Text clientId;
     Text clientName;
-    Text memberName;
-    Text redirectUri;
+    Text memberName;    
     Text responseType;
     Text stateParam;
     boolean approved = false;
@@ -84,14 +81,6 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
 
     public void setMemberName(Text memberName) {
         this.memberName = memberName;
-    }
-
-    public Text getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(Text redirectUri) {
-        this.redirectUri = redirectUri;
     }
 
     public Text getResponseType() {

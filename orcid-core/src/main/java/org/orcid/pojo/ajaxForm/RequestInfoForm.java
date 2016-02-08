@@ -25,7 +25,8 @@ import java.util.Set;
 public class RequestInfoForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
-    private Set<ScopeInfoForm> scopes = new HashSet<ScopeInfoForm>();    
+    private Set<ScopeInfoForm> scopes = new HashSet<ScopeInfoForm>();
+    private String redirectUrl = null;
     private boolean userPersistentTokens = false;
     
     public List<String> getErrors() {
@@ -52,13 +53,19 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
         this.userPersistentTokens = userPersistentTokens;
     }
     
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
     public String getScopesAsString() {
-        String result = new String();
-        
+        String result = new String();        
         for(ScopeInfoForm form : scopes) {
             result += form.getValue() + " ";
-        }
-                        
+        }                        
         return result.trim();
     }
 }
