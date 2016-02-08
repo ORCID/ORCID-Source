@@ -178,11 +178,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
             }
         }
 
-        ProfileKeywordEntity updatedEntity = profileKeywordDao.find(putCode);
-        if (updatedEntity == null) {
-            throw new ApplicationException();
-        }
-
+        ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
         SourceEntity existingSource = updatedEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);

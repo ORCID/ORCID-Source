@@ -69,7 +69,7 @@ public class AddressDaoTest extends DBUnitTest {
 
     @Test
     public void findTest() {
-        AddressEntity address = addressDao.find("4444-4444-4444-4442", 1L);
+        AddressEntity address = addressDao.getAddress("4444-4444-4444-4442", 1L);
         assertNotNull(address);
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
@@ -79,7 +79,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Iso3166Country.US, address.getIso2Country());
         assertTrue(address.getPrimary());
 
-        address = addressDao.find("4444-4444-4444-4447", 2L);
+        address = addressDao.getAddress("4444-4444-4444-4447", 2L);
         assertNotNull(address);
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
@@ -89,7 +89,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Iso3166Country.US, address.getIso2Country());
         assertTrue(address.getPrimary());
 
-        address = addressDao.find("4444-4444-4444-4447", 3L);
+        address = addressDao.getAddress("4444-4444-4444-4447", 3L);
         assertNotNull(address);
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());

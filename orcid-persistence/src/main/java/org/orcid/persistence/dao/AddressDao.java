@@ -27,7 +27,7 @@ import org.orcid.persistence.jpa.entities.AddressEntity;
  * 
  */
 public interface AddressDao extends GenericDao<AddressEntity, Long> {
-    AddressEntity find(String orcid, Long id);
+    AddressEntity getAddress(String orcid, Long putCode);
 
     List<AddressEntity> findByOrcid(String orcid, long lastModified);
 
