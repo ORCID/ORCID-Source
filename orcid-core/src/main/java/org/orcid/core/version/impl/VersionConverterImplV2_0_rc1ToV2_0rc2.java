@@ -77,7 +77,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
     static {
         final MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
-        mapperFactory.getConverterFactory().registerConverter("identifierToID",new ActivityIdentifierToExternalIDConverter());
+       // mapperFactory.getConverterFactory().registerConverter(new ActivityIdentifierToExternalIDConverter());
         mapperFactory.getConverterFactory().registerConverter(new FundingExternalIdentifiersToExternalIDConverter());
         mapperFactory.getConverterFactory().registerConverter(new WorkExternalIdentifiersToExternalIDConverter());
         
@@ -139,7 +139,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
                     }
                 }).register();
-
+        
         // PEER REVIEWS
         mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviews.class)
                 .field("peerReviewGroup{identifiers}", "peerReviewGroup{identifiers}")
@@ -174,6 +174,17 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                         new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(groupsRc2))));
             }
         }).register();
+        
+        
+        //Identifiers to ExternalIDs
+        mapperFactory.classMap(Identifiers.class, ExternalIDs.class)
+        .field("identifier{}", "externalIdentifier{}")
+        .register();
+        
+        mapperFactory.classMap(Identifier.class, ExternalID.class)
+        .field("externalIdentifierId", "value")
+        .field("externalIdentifierType", "type")
+        .register();
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc2.Work.class).byDefault().register();
@@ -229,35 +240,6 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         mapper.map(objectToUpgrade.getObjectToConvert(), targetObject);
         return new V2Convertible(targetObject, UPPER_VERSION);
     }
-    
-    public static class ActivityIdentifierToExternalIDConverter extends BidirectionalConverter<Identifiers,ExternalIDs> {
-
-        @Override
-        public ExternalIDs convertTo(Identifiers source, Type<ExternalIDs> destinationType) {
-            ExternalIDs ids = new ExternalIDs();
-            for (Identifier identifier : source.getIdentifier()){
-                ExternalID id = new ExternalID();
-                id.setType(identifier.getExternalIdentifierType());
-                id.setValue(identifier.getExternalIdentifierId());
-                ids.getExternalIdentifier().add(id);
-            }
-            return ids;
-        }
-
-        @Override
-        public Identifiers convertFrom(ExternalIDs source, Type<Identifiers> destinationType) {
-            Identifiers identifiers = new Identifiers();
-            for (ExternalID id : source.getExternalIdentifier()){
-                Identifier identifier = new Identifier();
-                identifier.setExternalIdentifierId(id.getValue());
-                identifier.setExternalIdentifierType(id.getType());
-                identifiers.getIdentifier().add(identifier);
-            }
-            return identifiers;
-        }
-
-        
-     }
     
     public static class FundingExternalIdentifiersToExternalIDConverter extends BidirectionalConverter<FundingExternalIdentifiers,ExternalIDs> {
 
