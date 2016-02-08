@@ -7590,6 +7590,12 @@ a:hover .mozilla-badge{
 		width:  auto;
 		margin-top: 22px;
 	} 
+	
+	.edit-record,
+	.edit-record-emails{
+		width: 100%;
+	}
+	
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
