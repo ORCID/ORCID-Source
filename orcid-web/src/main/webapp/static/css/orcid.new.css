@@ -6269,6 +6269,7 @@ a:hover .mozilla-badge{
 .fixed-area .scroll-area input[type="text"],
 .fixed-area .scroll-area select{
 	width: 100%;
+	margin-bottom: 0;
 }
 
 .fixed-area .col-md-12{
@@ -6277,6 +6278,8 @@ a:hover .mozilla-badge{
 
 .aka-row{
 	margin-bottom: 25px;
+	min-height:55px;
+	height: auto;
 }
 
 .fixed-area .aka{
@@ -6285,7 +6288,7 @@ a:hover .mozilla-badge{
 }
 
 .fixed-area .created-date{
-	margin-right: 15px;
+	margin-right: 15px;	
 	font-size: 12px;
 }
 
@@ -6293,7 +6296,6 @@ a:hover .mozilla-badge{
 	margin-right: 15px;
 	padding-left: 0;
 }
-
 
 .fixed-area ul.record-settings .privacyToggle{
 	height: 29px;
