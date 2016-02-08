@@ -33,10 +33,6 @@ public interface OauthForm {
 
     void setRedirectUri(Text redirectUri);
 
-    Text getScope();
-
-    void setScope(Text scope);
-
     Text getResponseType();
     
     Text getStateParam();

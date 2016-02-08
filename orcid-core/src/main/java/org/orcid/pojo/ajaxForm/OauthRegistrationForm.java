@@ -17,15 +17,11 @@
 package org.orcid.pojo.ajaxForm;
 
 public class OauthRegistrationForm extends Registration implements OauthForm {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     Text clientId;
     Text clientName;
     Text memberName;
     Text redirectUri;
-    Text scope;
     Text responseType;
     Text stateParam;
     boolean approved = false;
@@ -35,7 +31,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
         super();
         this.clientId = new Text();
         this.redirectUri = new Text();
-        this.scope = new Text();
         this.responseType = new Text();
     }
 
@@ -56,7 +51,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
         this.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays());
         this.clientId = new Text();
         this.redirectUri = new Text();
-        this.scope = new Text();
         this.responseType = new Text();
     }
 
@@ -90,14 +84,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
 
     public void setRedirectUri(Text redirectUri) {
         this.redirectUri = redirectUri;
-    }
-
-    public Text getScope() {
-        return scope;
-    }
-
-    public void setScope(Text scope) {
-        this.scope = scope;
     }
 
     public Text getResponseType() {

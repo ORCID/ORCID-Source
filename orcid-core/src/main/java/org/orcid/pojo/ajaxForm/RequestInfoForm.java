@@ -23,13 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 public class RequestInfoForm implements ErrorsInterface, Serializable {
-
     private static final long serialVersionUID = 1L;
-
     private List<String> errors = new ArrayList<String>();
     private Set<ScopeInfoForm> scopes = new HashSet<ScopeInfoForm>();    
     private boolean userPersistentTokens = false;
-
+    
     public List<String> getErrors() {
         return errors;
     }
@@ -52,5 +50,15 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setUserPersistentTokens(boolean userPersistentTokens) {
         this.userPersistentTokens = userPersistentTokens;
+    }
+    
+    public String getScopesAsString() {
+        String result = new String();
+        
+        for(ScopeInfoForm form : scopes) {
+            result += form.getValue() + " ";
+        }
+                        
+        return result.trim();
     }
 }

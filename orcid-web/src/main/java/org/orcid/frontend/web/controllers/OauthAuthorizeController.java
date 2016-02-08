@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
@@ -62,12 +61,11 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @RequestMapping(value = "/oauth/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam("client_id") String clientId,
-            @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) {
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_ONLY);
+            @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) throws UnsupportedEncodingException {
         clientId = (clientId != null) ? clientId.trim() : clientId;
         scope = (scope != null) ? scope.trim().replaceAll(" +", " ") : scope;
         redirectUri = (redirectUri != null) ? redirectUri.trim() : redirectUri;
-
+        generateAndSaveRequestInfoForm(request, clientId, scope);        
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(OrcidOauth2Constants.JUST_REGISTERED);
@@ -165,7 +163,6 @@ public class OauthAuthorizeController extends OauthControllerBase {
         //Save the request since we will need it to get the info form
         new HttpSessionRequestCache().saveRequest(request, response);
         
-        mav.addObject("profile", profile);
         mav.addObject("client_name", clientName);
         mav.addObject("client_description", clientDescription);
         mav.addObject("client_group_name", clientGroupName);

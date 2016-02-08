@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
@@ -61,7 +60,7 @@ public class OauthLoginController extends OauthControllerBase {
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");        
     
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) {
+    public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         // find client name if available
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
         String clientName = "";
@@ -72,10 +71,14 @@ public class OauthLoginController extends OauthControllerBase {
         String scope = "";
         String redirectUri = "";
         String responseType = "";
-        String orcid = null;
+        String orcid = null;                        
         boolean showLogin = false; // default to Reg
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
+            
+            //Save the request information form
+            generateAndSaveRequestInfoForm(request, url);
+            
             if (url.toLowerCase().contains("show_login=true"))
                 showLogin = true;
             //TODO: We should not load any info in the freemarker ModelAndViewObject, we should move all info we need to the forms
@@ -179,7 +182,6 @@ public class OauthLoginController extends OauthControllerBase {
                 }
             }
         }
-        mav.addObject("scopes", ScopePathType.getScopesFromSpaceSeparatedString(scope));        
         mav.addObject("redirect_uri", redirectUri);
         mav.addObject("response_type", responseType);
         mav.addObject("client_name", clientName);
@@ -193,12 +195,11 @@ public class OauthLoginController extends OauthControllerBase {
         return mav;
     }
     
-    @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login123.json" }, method = RequestMethod.POST)
+    @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
     public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
         boolean willBeRedirected = false;
-
         if (form.getApproved()) {
             // Validate name and password
             validateUserNameAndPassword(form);
@@ -210,10 +211,11 @@ public class OauthLoginController extends OauthControllerBase {
                     SimpleSessionStatus status = new SimpleSessionStatus();
                     Map<String, Object> model = new HashMap<String, Object>();
                     Map<String, String> params = new HashMap<String, String>();
-                    Map<String, String> approvalParams = new HashMap<String, String>();
-
+                    Map<String, String> approvalParams = new HashMap<String, String>();                    
+                    String scopes = getScopes(request);
+                    
                     // Set params
-                    setOauthParams(form, params, approvalParams, false);
+                    setOauthParams(form, params, approvalParams, scopes, false);
 
                     // Authorize
                     try {
@@ -229,8 +231,8 @@ public class OauthLoginController extends OauthControllerBase {
                         if (!PojoUtil.isEmpty(form.getRedirectUri()))
                             redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
                         // Set the scope param
-                        if (!PojoUtil.isEmpty(form.getScope()))
-                            redirectUri += "&scope=" + form.getScope().getValue();
+                        if (!PojoUtil.isEmpty(scopes))
+                            redirectUri += "&scope=" + scopes;
                         // Copy the state param if present
                         if (params != null && params.containsKey("state"))
                             redirectUri += "&state=" + params.get("state");

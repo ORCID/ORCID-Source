@@ -19,7 +19,10 @@ package org.orcid.frontend.web.controllers;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -33,12 +36,15 @@ import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
+import org.orcid.pojo.ajaxForm.ScopeInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,65 +57,119 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 public class OauthControllerBase extends BaseController {
     protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     protected Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
-    protected static String PUBLIC_MEMBER_NAME = "PubApp";  
+    protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
-    
+    protected static String REQUEST_INFO_FORM = "requestInfoForm";
+
     @Resource
-    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;  
-    
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
     @Resource
-    protected OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;  
-    
+    protected OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
+
     @Resource
     protected ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     protected AuthenticationManager authenticationManager;
-    
+
     @Resource
     protected OrcidAuthorizationEndpoint authorizationEndpoint;
+
+    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String redirectUrl) throws UnsupportedEncodingException {
+        String clientId = "";
+        String scopesString = "";        
+
+        if (!PojoUtil.isEmpty(redirectUrl)) {
+            Matcher matcher = clientIdPattern.matcher(redirectUrl);
+            if (matcher.find()) {
+                clientId = matcher.group(1);
+            }
+            Matcher scopeMatcher = scopesPattern.matcher(redirectUrl);
+            if (scopeMatcher.find()) {
+                String scopes = scopeMatcher.group(1);
+                scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
+                scopesString = scopesString.replaceAll(" +", " ");                
+            }
+        } 
+
+        return generateAndSaveRequestInfoForm(request, clientId, scopesString);
+    }
     
+    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String clientId, String scopesString) throws UnsupportedEncodingException {        
+        RequestInfoForm infoForm = new RequestInfoForm();
+        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
+        
+        if (!PojoUtil.isEmpty(clientId) && !PojoUtil.isEmpty(scopesString)) {
+            scopesString = URLDecoder.decode(scopesString, "UTF-8").trim();
+            scopesString = scopesString.replaceAll(" +", " ");
+            scopes = ScopePathType.getScopesFromSpaceSeparatedString(scopesString);            
+        } else {
+            throw new InvalidRequestException("Unable to find parameters");
+        }
+
+        for (ScopePathType theScope : scopes) {
+            ScopeInfoForm scopeInfoForm = new ScopeInfoForm();
+            scopeInfoForm.setValue(theScope.value());
+            scopeInfoForm.setName(theScope.name());
+            scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
+            scopeInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
+            infoForm.getScopes().add(scopeInfoForm);
+        }
+
+        // Check if the client has persistent tokens enabled
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        if (clientDetails.isPersistentTokensEnabled())
+            infoForm.setUserPersistentTokens(true);
+
+        // Save the request info form in the session
+        request.getSession().setAttribute(REQUEST_INFO_FORM, infoForm);
+
+        return infoForm;
+    }
+
     /**
      * Fill the for with the state param and the client and member names.
      * 
      * @param form
      * @param request
      * @param response
-     * */
+     */
     protected void fillOauthFormWithRequestInformation(OauthForm form, HttpServletRequest request, HttpServletResponse response) {
         Map<String, String[]> requestParams = new HashMap<String, String[]>();
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
 
-        //Get the params from the saved request
-        if(savedRequest != null) {            
-            requestParams = savedRequest.getParameterMap();                        
+        // Get the params from the saved request
+        if (savedRequest != null) {
+            requestParams = savedRequest.getParameterMap();
         } else {
-            //If there are no saved request, get them from the session
+            // If there are no saved request, get them from the session
             AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
-            if(authorizationRequest != null) {
+            if (authorizationRequest != null) {
                 Map<String, String> authRequestParams = new HashMap<String, String>(authorizationRequest.getRequestParameters());
-                for(String param : authRequestParams.keySet()) {
-                    requestParams.put(param, new String []{authRequestParams.get(param)});
+                for (String param : authRequestParams.keySet()) {
+                    requestParams.put(param, new String[] { authRequestParams.get(param) });
                 }
-            }            
+            }
         }
-        
-        if(requestParams == null || requestParams.isEmpty()) {
+
+        if (requestParams == null || requestParams.isEmpty()) {
             throw new InvalidRequestException("Unable to find parameters");
         }
-        
-        //Save state param
+
+        // Save state param
         if (requestParams.containsKey(OrcidOauth2Constants.STATE_PARAM)) {
             if (requestParams.get(OrcidOauth2Constants.STATE_PARAM).length > 0)
                 form.setStateParam(Text.valueOf(requestParams.get(OrcidOauth2Constants.STATE_PARAM)[0]));
         }
-        
-        //Get and set client info
-        if(!requestParams.containsKey(OrcidOauth2Constants.CLIENT_ID_PARAM)) {
+
+        // Get and set client info
+        if (!requestParams.containsKey(OrcidOauth2Constants.CLIENT_ID_PARAM)) {
             throw new InvalidRequestException("Empty client id");
         }
         String clientId = requestParams.get(OrcidOauth2Constants.CLIENT_ID_PARAM)[0];
@@ -118,33 +178,33 @@ public class OauthControllerBase extends BaseController {
         } catch (UnsupportedEncodingException e) {
             throw new InvalidRequestException("Unable to parse client id: " + e);
         }
-        
+
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
         try {
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         } catch (LockedException le) {
             throw new InvalidRequestException("Client " + clientId + " is locked");
         }
-        
+
         String clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         String memberName = null;
-        // If it is the 
+        // If it is the
         if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
             memberName = PUBLIC_MEMBER_NAME;
         } else {
             ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
             memberName = groupProfile.getCreditName();
         }
-        
+
         form.setClientName(Text.valueOf(clientName));
         form.setMemberName(Text.valueOf(memberName));
         form.setClientId(Text.valueOf(clientId));
-        
-        //If it is a new registration, set the referred by flag
-        if(form instanceof OauthRegistrationForm) {
+
+        // If it is a new registration, set the referred by flag
+        if (form instanceof OauthRegistrationForm) {
             ((OauthRegistrationForm) form).setReferredBy(Text.valueOf(clientId));
         }
-    }     
+    }
 
     /**
      * Set the needed params for the Oauth request
@@ -154,8 +214,12 @@ public class OauthControllerBase extends BaseController {
      * @param params
      * @param approvalParams
      * @param justRegistred
-     * */
-    protected void setOauthParams(OauthForm form, Map<String, String> params, Map<String, String> approvalParams, boolean justRegistred) {
+     */
+    protected void setOauthParams(OauthForm form, Map<String, String> params, Map<String, String> approvalParams, String scopes, boolean justRegistred) {
+        // Scope
+        if (!PojoUtil.isEmpty(scopes)) {
+            params.put(OrcidOauth2Constants.SCOPE_PARAM, scopes);
+        }
         // Then, put the custom authorization params
         // Token version
         params.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
@@ -167,18 +231,14 @@ public class OauthControllerBase extends BaseController {
         } else {
             params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, new String());
         }
-        // Scope
-        if (!PojoUtil.isEmpty(form.getScope())) {
-            params.put(OrcidOauth2Constants.SCOPE_PARAM, form.getScope().getValue());
-        }
         // Response type
         if (!PojoUtil.isEmpty(form.getResponseType())) {
             params.put(OrcidOauth2Constants.RESPONSE_TYPE_PARAM, form.getResponseType().getValue());
         }
         // State param
-        if(!PojoUtil.isEmpty(form.getStateParam())) {
+        if (!PojoUtil.isEmpty(form.getStateParam())) {
             params.put(OrcidOauth2Constants.STATE_PARAM, form.getStateParam().getValue());
-        }        
+        }
         // Approved
         if (justRegistred) {
             if (form.getApproved()) {
@@ -201,14 +261,14 @@ public class OauthControllerBase extends BaseController {
             }
         }
     }
-    
+
     /**
      * Builds the redirect uri string to use when the user deny the request
      * 
      * @param redirectUri
      *            Redirect uri
      * @return the redirect uri string with the deny params
-     * */
+     */
     protected String buildDenyRedirectUri(String redirectUri, String stateParam) {
         if (!PojoUtil.isEmpty(redirectUri)) {
             if (redirectUri.contains("?")) {
@@ -220,7 +280,7 @@ public class OauthControllerBase extends BaseController {
         if (!PojoUtil.isEmpty(stateParam))
             redirectUri += "&state=" + stateParam;
         return redirectUri;
-    }    
+    }
 
     protected void copy(Map<String, String[]> savedParams, Map<String, String> params) {
         if (savedParams != null && !savedParams.isEmpty()) {
@@ -230,6 +290,11 @@ public class OauthControllerBase extends BaseController {
                     params.put(key, values[0]);
             }
         }
+    }
+
+    protected String getScopes(HttpServletRequest request) {
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
+        return requestInfoForm.getScopesAsString();
     }
 
     /*****************************
@@ -252,17 +317,17 @@ public class OauthControllerBase extends BaseController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
-    
+
     /**
      * Checks if the client has the persistent tokens enabled
      * 
      * @return true if the persistent tokens are enabled for that client
      * @throws IllegalArgumentException
-     * */
+     */
     protected boolean hasPersistenTokensEnabled(String clientId) throws IllegalArgumentException {
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
         if (clientDetails == null)
             throw new IllegalArgumentException(getMessage("web.orcid.oauth_invalid_client.exception"));
         return clientDetails.isPersistentTokensEnabled();
-    }        
+    }
 }

@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -31,8 +30,8 @@ import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
 import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 

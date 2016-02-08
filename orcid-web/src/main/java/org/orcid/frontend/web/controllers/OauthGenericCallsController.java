@@ -17,10 +17,8 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -31,17 +29,12 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
-import org.orcid.pojo.ajaxForm.ScopeInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,48 +76,16 @@ public class OauthGenericCallsController extends OauthControllerBase {
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
-    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        RequestInfoForm infoForm = new RequestInfoForm();
+    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {                    
+        RequestInfoForm requestInfoForm = null;
         
-        String clientId = "";
-        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
-                
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
-        if(savedRequest != null) {
-            String url = savedRequest.getRedirectUrl();
-            Matcher matcher = clientIdPattern.matcher(url);
-            if (matcher.find()) {
-                clientId = matcher.group(1);
-            }
-            
-            Matcher scopeMatcher = scopesPattern.matcher(url);
-            if (scopeMatcher.find()) {
-                String scope = scopeMatcher.group(1);
-                scope = URLDecoder.decode(scope, "UTF-8").trim();
-                scope = scope.replaceAll(" +", " ");
-                scopes = ScopePathType.getScopesFromSpaceSeparatedString(scope);
-            }
+        if(request.getSession() != null && request.getSession().getAttribute(REQUEST_INFO_FORM) != null) {
+            requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
         } else {
             throw new InvalidRequestException("Unable to find parameters");
         }
         
-        for(ScopePathType theScope : scopes) {
-            ScopeInfoForm scopeInfoForm = new ScopeInfoForm(); 
-            scopeInfoForm.setValue(theScope.value());
-            scopeInfoForm.setName(theScope.name());
-            scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
-            scopeInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
-            infoForm.getScopes().add(scopeInfoForm);
-        }    
-        
-        
-        // Check if the client has persistent tokens enabled
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);        
-        if (clientDetails.isPersistentTokensEnabled())
-            infoForm.setUserPersistentTokens(true);
-        
-        
-        return infoForm;
+        return requestInfoForm;
     }
         
     @RequestMapping(value = "/oauth/custom/authorize/empty.json", method = RequestMethod.GET)
@@ -133,8 +94,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
         Text emptyText = Text.valueOf(StringUtils.EMPTY);        
         empty.setPassword(emptyText);
         empty.setRedirectUri(emptyText);
-        empty.setResponseType(emptyText);
-        empty.setScope(emptyText);
+        empty.setResponseType(emptyText);        
         empty.setUserName(emptyText);
         
         //Set required params empty

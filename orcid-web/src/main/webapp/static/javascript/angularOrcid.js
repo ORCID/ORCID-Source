@@ -9501,7 +9501,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.registrationForm = {};
     $scope.clientName = "";
     $scope.clientGroupName = "";
-    $scope.requestScopes = null;
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
     $scope.showLongDescription = {};
@@ -9518,7 +9517,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     
     
     $scope.model = {
-            key: orcidVar.recaptchaKey
+		key: orcidVar.recaptchaKey
     };
     
     $scope.toggleClientDescription = function() {
@@ -9566,7 +9565,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 $scope.authorizationForm = data;
                 $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
-                $scope.authorizationForm.userName.value = user_id;
+                $scope.authorizationForm.userName.value=user_id;
                 
                 if($scope.authorizationForm.userName.value) {
                     $scope.isOrcidPresent = true;
@@ -9577,16 +9576,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 if(window.location.href.endsWith('#show_login'))
                     $scope.showRegisterForm = false;
                 else if(!$scope.isOrcidPresent)
-                    $scope.showRegisterForm = !orcidVar.showLogin;
-                
-                var scopesString = "";
-                
-                angular.forEach($scope.requestInfoForm.scopes, function (scope) {
-                	scopesString += scope.value;
-                });
-                
-                $scope.authorizationForm.scope.value = scopesString.trim(); 
-                
+                    $scope.showRegisterForm = !orcidVar.showLogin;                
                 
                 $scope.$apply();
             }
@@ -9616,7 +9606,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         
         var is_authorize = $scope.authorizationForm.approved;
         $.ajax({
-            url: getBaseUri() + '/oauth/custom/login123.json',
+            url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
             data: angular.toJson($scope.authorizationForm),
             contentType: 'application/json;charset=UTF-8',

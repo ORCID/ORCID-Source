@@ -65,7 +65,6 @@ public class OauthRegisterController extends OauthControllerBase {
         empty.setPassword(emptyText);
         empty.setRedirectUri(emptyText);
         empty.setResponseType(emptyText);
-        empty.setScope(emptyText);
 
         //Set the state param and the client and member names
         fillOauthFormWithRequestInformation(empty, request, response);        
@@ -102,12 +101,13 @@ public class OauthRegisterController extends OauthControllerBase {
             // block google.
             if (form.getGrecaptchaWidgetId().getValue() != null) {
                 // If the captcha verified key is not in the session, redirect
-                // to
-                // the login page
+                // to the login page
                 if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) == null
                         || PojoUtil.isEmpty(form.getGrecaptcha())
                         || !form.getGrecaptcha().getValue().equals(
-                                request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {
+                                request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {                                        
+                    String scopes = getScopes(request);
+                    
                     String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                     // Set the client id
                     redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
@@ -118,8 +118,8 @@ public class OauthRegisterController extends OauthControllerBase {
                     if (!PojoUtil.isEmpty(form.getRedirectUri()))
                         redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
                     // Set the scope param
-                    if (!PojoUtil.isEmpty(form.getScope()))
-                        redirectUri += "&scope=" + form.getScope().getValue();
+                    if (!PojoUtil.isEmpty(scopes))
+                        redirectUri += "&scope=" + scopes;
                     // Copy the state param if present
                     if (!PojoUtil.isEmpty(request.getParameter("state")))
                         redirectUri += "&state=" + request.getParameter("state");
@@ -152,9 +152,11 @@ public class OauthRegisterController extends OauthControllerBase {
                 SimpleSessionStatus status = new SimpleSessionStatus();
                 Map<String, Object> model = new HashMap<String, Object>();
                 Map<String, String> params = new HashMap<String, String>();
-                Map<String, String> approvalParams = new HashMap<String, String>();                
+                Map<String, String> approvalParams = new HashMap<String, String>();                   
+                String scopes = getScopes(request);
+                
                 // Set params
-                setOauthParams(form, params, approvalParams, true);
+                setOauthParams(form, params, approvalParams, scopes, true);
 
                 // Authorize
                 try {
@@ -170,8 +172,8 @@ public class OauthRegisterController extends OauthControllerBase {
                     if (!PojoUtil.isEmpty(form.getRedirectUri()))
                         redirectUri += "&redirect_uri=" + form.getRedirectUri().getValue();
                     // Set the scope param
-                    if (!PojoUtil.isEmpty(form.getScope()))
-                        redirectUri += "&scope=" + form.getScope().getValue();
+                    if (!PojoUtil.isEmpty(scopes))
+                        redirectUri += "&scope=" + scopes;
                     // Copy the state param if present
                     if (params != null && params.containsKey("state"))
                         redirectUri += "&state=" + params.get("state");

@@ -31,7 +31,6 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
     Text clientName;
     Text memberName;
     Text redirectUri;
-    Text scope;
     Text responseType;
     Text stateParam;
     boolean approved = false;
@@ -93,14 +92,6 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
 
     public void setRedirectUri(Text redirectUri) {
         this.redirectUri = redirectUri;
-    }
-
-    public Text getScope() {
-        return scope;
-    }
-
-    public void setScope(Text scope) {
-        this.scope = scope;
     }
 
     public Text getResponseType() {
