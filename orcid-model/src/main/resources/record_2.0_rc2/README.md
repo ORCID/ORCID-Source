@@ -74,6 +74,12 @@ undetected into the code during the previous development period. Release candida
 
 ## REST API Reference
 
+### Swagger
+
+The swagger interfaces to the API available at:
+- [member](https://api.orcid.org/v2.0_rc2/)
+- [public](https://pub.orcid.org/v2.0_rc2/)
+
 ### Activities summary
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
