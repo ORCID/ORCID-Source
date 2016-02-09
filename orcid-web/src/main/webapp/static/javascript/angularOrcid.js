@@ -9554,7 +9554,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //---------------------
     //-LOGIN AND AUTHORIZE-
     //---------------------
-    $scope.loadAndInitLoginForm = function(redirect_uri, response_type, user_id) {
+    $scope.loadAndInitLoginForm = function(response_type, user_id) {
         $scope.isOrcidPresent = false;
         $.ajax({
             url: getBaseUri() + '/oauth/custom/authorize/empty.json',
@@ -9563,7 +9563,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;
-                $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
                 $scope.authorizationForm.userName.value=user_id;
                 
@@ -9642,15 +9641,14 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     //-REGISTER AND AUTHORIZE-
     //------------------------
-    $scope.loadAndInitRegistrationForm = function(redirect_uri, response_type) {
+    $scope.loadAndInitRegistrationForm = function(response_type) {
         $.ajax({
             url: getBaseUri() + '/oauth/custom/register/empty.json',
             type: 'GET',
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.registrationForm = data;                
-                $scope.registrationForm.redirectUri.value=redirect_uri;                
+                $scope.registrationForm = data;                            
                 $scope.registrationForm.responseType.value=response_type;                
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
                     $scope.showRegisterForm = true;
@@ -9675,11 +9673,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.register = function() {
         if($scope.enablePersistentToken)
             $scope.registrationForm.persistentTokenEnabled=true;
-        
-        console.log("Recaptcha:");
-        console.log($scope.recatchaResponse);
-        console.log($scope.recaptchaWidgetId);
-        
         $scope.registrationForm.grecaptcha.value = $scope.recatchaResponse; //Adding the response to the register object
         $scope.registrationForm.grecaptchaWidgetId.value = $scope.recaptchaWidgetId;
         
@@ -9707,7 +9700,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                 } else {
                     //Fire GA register deny
                     orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
-                    orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                    orcidGA.windowLocationHrefDelay($scope.registrationForm.redirectUri.value);
                 }
 
                 $scope.$apply();
@@ -9765,6 +9758,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
+            	$scope.requestInfoForm = data;
                 orcidGA.gaPush(['send', 'event', 'RegGrowth', 'New-Registration', 'OAuth '+ orcidGA.buildClientString($scope.registrationForm.memberName.value, $scope.registrationForm.clientName.value)]);
                 if($scope.registrationForm.approved) {
                     for(var i = 0; i < $scope.requestInfoForm.scopes.length; i++) {
@@ -9816,7 +9810,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     //------ AUTHORIZE -------
     //------------------------
-    $scope.loadAndInitAuthorizationForm = function(redirect_uri, client_id, response_type) {
+    $scope.loadAndInitAuthorizationForm = function(client_id, response_type) {
         $.ajax({
             url: getBaseUri() + '/oauth/custom/authorize/empty.json',
             type: 'GET',
@@ -9824,7 +9818,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;
-                $scope.authorizationForm.redirectUri.value=redirect_uri;                
                 $scope.authorizationForm.responseType.value=response_type;
             }
         }).fail(function() {

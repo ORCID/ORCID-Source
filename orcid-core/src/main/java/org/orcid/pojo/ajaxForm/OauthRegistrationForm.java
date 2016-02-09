@@ -16,20 +16,13 @@
  */
 package org.orcid.pojo.ajaxForm;
 
-public class OauthRegistrationForm extends Registration implements OauthForm {
+public class OauthRegistrationForm extends Registration {
     private static final long serialVersionUID = 1L;
-    Text clientId;
-    Text clientName;
-    Text memberName;
-    Text responseType;
-    Text stateParam;
     boolean approved = false;
     boolean persistentTokenEnabled = false;
 
     public OauthRegistrationForm() {
         super();
-        this.clientId = new Text();
-        this.responseType = new Text();
     }
 
     public OauthRegistrationForm(Registration reg) {
@@ -47,40 +40,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
         this.setCreationType(reg.getCreationType());
         this.setReferredBy(reg.getReferredBy());
         this.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays());
-        this.clientId = new Text();
-        this.responseType = new Text();
-    }
-
-    public Text getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Text clientId) {
-        this.clientId = clientId;
-    }
-
-    public Text getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(Text clientName) {
-        this.clientName = clientName;
-    }
-
-    public Text getMemberName() {
-        return memberName;
-    }
-
-    public void setMemberName(Text memberName) {
-        this.memberName = memberName;
-    }
-    
-    public Text getResponseType() {
-        return responseType;
-    }
-
-    public void setResponseType(Text responseType) {
-        this.responseType = responseType;
     }
 
     public boolean getApproved() {
@@ -97,13 +56,5 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
 
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
-    }
-    
-    public Text getStateParam() {
-        return stateParam;
-    }
-
-    public void setStateParam(Text stateParam) {
-        this.stateParam = stateParam;
     }
 }

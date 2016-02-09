@@ -56,17 +56,17 @@ public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);
     
     private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
-    private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");        
+            
     
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         // find client name if available
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        String clientName = "";
-        String clientId = "";
-        String clientGroupName = "";
+        //String clientName = "";
+        //String clientId = "";
+        //String clientGroupName = "";        
+        //String clientDescription = "";
         String email = "";
-        String clientDescription = "";
         String scope = "";        
         String responseType = "";
         String orcid = null;                        
@@ -153,22 +153,7 @@ public class OauthLoginController extends OauthControllerBase {
                         error.setView(rView);
                         return error;
                     }
-                    // If client details is ok, continue
-                    clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
-                    clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
-
-                    // If client type is null it means it is a public client
-                    if (clientDetails.getClientType() == null) {
-                        clientGroupName = PUBLIC_MEMBER_NAME;
-                    } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
-                        ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-                        clientGroupName = groupProfile.getCreditName();
-                    }
-                    // If the group name is empty, use the same as the client
-                    // name, since it should be a SSO user
-                    if (StringUtils.isBlank(clientGroupName)) {
-                        clientGroupName = clientName;
-                    }
+                    
                 }
             }
         }        
@@ -237,7 +222,7 @@ public class OauthLoginController extends OauthControllerBase {
                     requestInfoForm.setRedirectUrl(view.getUrl());
                     willBeRedirected = true;
                 } catch (AuthenticationException ae) {
-                    form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+                    requestInfoForm.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
                 }
             }
         } else {

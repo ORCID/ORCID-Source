@@ -72,14 +72,14 @@ public class OauthRegisterController extends OauthControllerBase {
     }       
     
     @RequestMapping(value = "/oauth/custom/register.json", method = RequestMethod.POST)
-    public @ResponseBody RequestInfoForm checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
+    public @ResponseBody OauthRegistrationForm checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
         form.setErrors(new ArrayList<String>());
 
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
         
         if (form.getApproved()) {
             registrationController.validateRegistrationFields(request, form);
-            registrationController.validateGrcaptcha(request, form);
+            registrationController.validateGrcaptcha(request, form);            
         } else {
             SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
             String stateParam = null;
@@ -88,10 +88,10 @@ public class OauthRegisterController extends OauthControllerBase {
                 if (savedRequest.getParameterValues("state").length > 0)
                     stateParam = savedRequest.getParameterValues("state")[0];
             }
-            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), stateParam));
+            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), stateParam)));
         }
 
-        return requestInfoForm;
+        return form;
     }
 
     @RequestMapping(value = "/oauth/custom/registerConfirm.json", method = RequestMethod.POST)

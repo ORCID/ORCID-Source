@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -40,7 +41,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
-import org.orcid.pojo.ajaxForm.OauthForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -63,6 +63,8 @@ public class OauthControllerBase extends BaseController {
     protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     protected Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
+    private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
+    private Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
     protected static String REQUEST_INFO_FORM = "requestInfoForm";
@@ -133,9 +135,31 @@ public class OauthControllerBase extends BaseController {
 
         // Check if the client has persistent tokens enabled
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        if (clientDetails.isPersistentTokensEnabled())
-            infoForm.setUserPersistentTokens(true);
+        if (clientDetails.isPersistentTokensEnabled()) {
+            infoForm.setClientHavePersistentTokens(true);
+        }
 
+        // If client details is ok, continue
+        String clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
+        String clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
+        String memberName = "";
+        
+        // If client type is null it means it is a public client
+        if (clientDetails.getClientType() == null) {
+            memberName = PUBLIC_MEMBER_NAME;
+        } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
+            ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
+            memberName = groupProfile.getCreditName();
+        }
+        // If the group name is empty, use the same as the client
+        // name, since it should be a SSO user
+        if (StringUtils.isBlank(memberName)) {
+            memberName = clientName;
+        }
+        
+        infoForm.setClientId(clientId);
+        infoForm.setClientName(clientName);
+        infoForm.setMemberName(memberName);
         infoForm.setRedirectUrl(redirectUri);
         
         // Save the request info form in the session

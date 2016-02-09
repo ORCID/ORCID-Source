@@ -65,7 +65,7 @@
 			<div>
 				<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 			</div>			
-			<div id="login-buttons" ng-init="loadAndInitAuthorizationForm('${redirect_uri}','${client_id}','${response_type}')">
+			<div id="login-buttons" ng-init="loadAndInitAuthorizationForm('${client_id}','${response_type}')">
 				<div class="row">
 		            <div class="col-md-12">
 						<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/><!-- Hidden -->

@@ -60,7 +60,7 @@
 						</div>
 						<!-- Personal Login -->
 						<!-- Login form -->
-						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm('${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm('${response_type}', '${user_id}')" ng-cloak>
 							<div class="login-box">
 								<p class="title">Sign in with your ORCID account</p>
 								<div class="row personal-login">
@@ -141,7 +141,7 @@
 							</div>
 						</div>
 						<!-- Register form -->
-						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm('${redirect_uri}','${response_type}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm(,'${response_type}')" ng-cloak>
 							<div id="register" class="oauth-registration">
 						    	<div class="">
 						    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
@@ -294,7 +294,7 @@
 			</div>
 		<#else>
 			<!-- LOGIN FORM -->			
-			<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+			<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${response_type}', '${user_id}')" ng-cloak>
 				 <div class="row">
 					 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 						<p class="pull-right"><@orcid.msg 'common.dont_have_an_id'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form"><@orcid.msg 'oauth_sign_up.btnregister'/></a>.</p>			    	
@@ -346,7 +346,7 @@
 	       	</div>         	        	
 	       	
 	       	<!-- REGISTER FORM --> 
-	       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${redirect_uri}','${response_type}')" ng-cloak>
+	       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${response_type}')" ng-cloak>
 	       		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 					<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>
 		    	</div> 
