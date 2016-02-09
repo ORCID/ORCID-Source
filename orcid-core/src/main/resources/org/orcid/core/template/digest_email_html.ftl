@@ -31,53 +31,53 @@
                 <@emailMacros.msg "email.digest.youhave" />${totalMessageCount}<@emailMacros.msg "email.digest.new" /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.msg "email.digest.pleasevisit_1" /><a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.msg "email.digest.pleasevisit_4" />
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??> 
-            <p>
-                <#-- Use assign to prevent strange whitespace formatting in output -->
-                <#assign orcidwouldlikeyoutoknow><@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" /></#assign>
-                ${orcidwouldlikeyoutoknow}
-                <ul>
-                <#list digestEmail.notificationsBySourceId['ORCID'].allNotifications as notification>    
-                    <li>${notification.subject}</li>
-                </#list>
-                </ul>
-            </p>
+	            <p>
+	                <#-- Use assign to prevent strange whitespace formatting in output -->
+	                <#assign orcidwouldlikeyoutoknow><@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" /></#assign>
+	                ${orcidwouldlikeyoutoknow}
+	                <ul>
+	                <#list digestEmail.notificationsBySourceId['ORCID'].allNotifications as notification>    
+	                    <li>${notification.subject}</li>
+	                </#list>
+	                </ul>
+	            </p>
             </#if>
             <#list digestEmail.notificationsBySourceId?keys?sort as sourceId>
-            <#if sourceId != 'ORCID'>
-            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
-            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
-            <#if notificationType == 'PERMISSION'>
-            <p>
-                <div><img src="${baseUri}/static/img/request.png">${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject}<#else><@emailMacros.msg "email.digest.requesttoadd" /></#if></div>
-                <#assign itemsByType=notification.items.itemsByType>
-                <#list itemsByType?keys?sort as itemType>
-                <div><@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})</div>
-                <ul>
-                <#list itemsByType[itemType] as item>                	
-                    <li>${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if></li>
-                </#list>
-                </ul>
-                </#list>
-                <div><a href="${baseUri}/inbox#${notification.putCode}" style="color: #338caf;">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"><@emailMacros.msg "email.digest.addnow" /></a></div>
-            </p>
-            <#elseif notificationType == 'AMENDED'>
-            <p>
-                <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
-                <div><img src="${baseUri}/static/img/update.png"><@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" /></div>
-                <#if notification.items??>
-                <ul>
-                <#list notification.items.items as item>
-                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
-                </#list>
-                </ul>
-                </#if>
-            </p>
-            <#else>
-            ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
-            </#if>
-            </#list>
-            </#list>
-            </#if>
+	            <#if sourceId != 'ORCID'>
+		            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType?keys?sort as notificationType>
+			            <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
+				            <#if notificationType == 'PERMISSION'>
+					            <p>
+					                <div><img src="${baseUri}/static/img/request.png">&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject}<#else><@emailMacros.msg "email.digest.requesttoadd" /></#if></div>
+					                <#assign itemsByType=notification.items.itemsByType>
+					                <#list itemsByType?keys?sort as itemType>
+					                	<div><@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})</div>
+					                	<ul>
+					                		<#list itemsByType[itemType] as item>                	
+					                    		<li>${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if></li>
+					                		</#list>
+					                	</ul>
+					                </#list>
+					                <div><a href="${baseUri}/inbox#${notification.putCode}" style="color: #338caf;">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"><@emailMacros.msg "email.digest.addnow" /></a></div>
+					            </p>
+				            <#elseif notificationType == 'AMENDED'>
+					            <p>
+					                <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
+					                <div><img src="${baseUri}/static/img/update.png">&nbsp;<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" /></div>
+					                <#if notification.items??>
+					                <ul>
+					                <#list notification.items.items as item>
+					                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+					                </#list>
+					                </ul>
+					                </#if>
+					            </p>
+				            <#else>
+				            	${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+				            </#if>
+			            </#list>
+		            </#list>
+	            </#if>
             </#list>
             <p>
                 <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; text-align: center; color: #338caf;">
