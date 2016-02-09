@@ -20,7 +20,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
         
     <changeSet id="CLEAN-DUPLICATE-ADDRESSES" author="Shobhit Tyagi">
-        <sql>delete from address where id in (select id from address where id not in (SELECT min(id) FROM address group by iso2_country, orcid))</sql>
+        <sql>delete from address where id NOT IN (SELECT min(id) FROM address group by iso2_country, orcid)</sql>
     </changeSet>
     
 </databaseChangeLog>
