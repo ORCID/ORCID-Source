@@ -88,6 +88,8 @@ public class OauthControllerBase extends BaseController {
         String clientId = "";
         String scopesString = "";        
         String redirectUri = "";
+        String responseType = "";
+        String stateParam = "";
         
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
@@ -106,13 +108,30 @@ public class OauthControllerBase extends BaseController {
                     redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
-            }                        
+            }      
+            
+            Matcher responseTypeMatcher = responseTypePattern.matcher(requestUrl);
+            if(responseTypeMatcher.find()) {
+                try {
+                    responseType = URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+            }
+            
+            Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
+            if(stateParamMatcher.find()) {
+                try {
+                    stateParam = URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+            }
+            
         } 
 
         return generateAndSaveRequestInfoForm(request, clientId, scopesString, redirectUri);
     }
     
-    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String clientId, String scopesString, String redirectUri) throws UnsupportedEncodingException {        
+    protected @ResponseBody RequestInfoForm generateAndSaveRequestInfoForm(HttpServletRequest request, String clientId, String scopesString, String redirectUri, String stateParam, String responseType) throws UnsupportedEncodingException {        
         RequestInfoForm infoForm = new RequestInfoForm();
         Set<ScopePathType> scopes = new HashSet<ScopePathType>();                
         
@@ -158,9 +177,12 @@ public class OauthControllerBase extends BaseController {
         }
         
         infoForm.setClientId(clientId);
-        infoForm.setClientName(clientName);
+        infoForm.setClientDescription(clientDescription);
+        infoForm.setClientName(clientName);        
         infoForm.setMemberName(memberName);
         infoForm.setRedirectUrl(redirectUri);
+        infoForm.setStateParam(stateParam);
+        infoForm.setResponseType(responseType);
         
         // Save the request info form in the session
         request.getSession().setAttribute(REQUEST_INFO_FORM, infoForm);
