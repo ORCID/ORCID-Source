@@ -60,50 +60,40 @@ public class OauthAuthorizeController extends OauthControllerBase {
     protected OrcidRandomValueTokenServices tokenServices;
     
     @RequestMapping(value = "/oauth/confirm_access", method = RequestMethod.GET)
-    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav, @RequestParam("client_id") String clientId,
-            @RequestParam("scope") String scope, @RequestParam("redirect_uri") String redirectUri) throws UnsupportedEncodingException {
-        clientId = (clientId != null) ? clientId.trim() : clientId;
-        scope = (scope != null) ? scope.trim().replaceAll(" +", " ") : scope;
-        redirectUri = (redirectUri != null) ? redirectUri.trim() : redirectUri;
-        generateAndSaveRequestInfoForm(request, clientId, scope, redirectUri);        
+    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
+        
+        String requestUrl = request.getRequestURL().toString();
+        
+        //Get and save the request information form
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(requestUrl);
+        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+                
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.JUST_REGISTERED);
         if (justRegistered != null) {
             request.getSession().removeAttribute(OrcidOauth2Constants.JUST_REGISTERED);
             mav.addObject(OrcidOauth2Constants.JUST_REGISTERED, justRegistered);
         }
-        String clientName = "";
-        String clientDescription = "";
-        String clientGroupName = "";
-        String clientWebsite = "";
-
+        
         boolean usePersistentTokens = false;
 
-        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
-        clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
-        clientWebsite = clientDetails.getClientWebsite() == null ? "" : clientDetails.getClientWebsite();
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());        
 
         // validate client scopes
         try {
-            authorizationEndpoint.validateScope(scope, clientDetails);
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
             orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-        } catch (InvalidScopeException ise) {
-            String redirectUriWithParams = redirectUri;
-            redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
+        } catch (InvalidScopeException | LockedException e) {
+            String redirectUriWithParams = requestInfoForm.getRedirectUrl();                
+            if(e instanceof InvalidScopeException) {
+                redirectUriWithParams += "?error=invalid_scope&error_description=" + e.getMessage();
+            } else {
+                redirectUriWithParams += "?error=client_locked&error_description=" + e.getMessage();
+            }                               
             RedirectView rView = new RedirectView(redirectUriWithParams);
-
             ModelAndView error = new ModelAndView();
             error.setView(rView);
             return error;
-        } catch (LockedException le) {
-            String redirectUriWithParams = redirectUri;
-            redirectUriWithParams += "?error=client_locked&error_description=" + le.getMessage();
-            RedirectView rView = new RedirectView(redirectUriWithParams);
-
-            ModelAndView error = new ModelAndView();
-            error.setView(rView);
-            return error;
-        }
+        }  
 
         // Check if the client has persistent tokens enabled
         if (clientDetails.isPersistentTokensEnabled()) {
@@ -111,7 +101,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         }
 
         if (usePersistentTokens) {
-            boolean tokenAlreadyExists = tokenServices.tokenAlreadyExists(clientId, getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(scope));
+            boolean tokenAlreadyExists = tokenServices.tokenAlreadyExists(requestInfoForm.getClientId(), getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
             if (tokenAlreadyExists) {
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -126,7 +116,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
 
                 // Check if the client have persistent tokens enabled
                 requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
-                if (hasPersistenTokensEnabled(clientId)) {
+                if (hasPersistenTokensEnabled(requestInfoForm.getClientId())) {
                     // Then check if the client granted the persistent token
                     requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
                 }
@@ -145,28 +135,8 @@ public class OauthAuthorizeController extends OauthControllerBase {
                 authCodeView.setView(view);
                 return authCodeView;
             }
-        }
-        if (clientDetails.getClientType() == null) {
-            clientGroupName = PUBLIC_MEMBER_NAME;
-        } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
-            ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-            clientGroupName = groupProfile.getCreditName();
-        }
-
-        // If the group name is empty, use the same as the client name, since it
-        // should be a SSO user
-        if (StringUtils.isBlank(clientGroupName)) {
-            clientGroupName = clientName;
-        }
+        }                                
         
-        
-        //Save the request since we will need it to get the info form
-        new HttpSessionRequestCache().saveRequest(request, response);
-        
-        mav.addObject("client_name", clientName);
-        mav.addObject("client_description", clientDescription);
-        mav.addObject("client_group_name", clientGroupName);
-        mav.addObject("client_website", clientWebsite);
         mav.addObject("hideUserVoiceScript", true);
         mav.setViewName("confirm-oauth-access");        
         return mav;
@@ -191,7 +161,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         requestParams.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);
         // Check if the client have persistent tokens enabled
         requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
-        if (hasPersistenTokensEnabled(form.getClientId().getValue()))
+        if (hasPersistenTokensEnabled(requestInfoForm.getClientId()))
             // Then check if the client granted the persistent token
             if (form.getPersistentTokenEnabled())
                 requestParams.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
@@ -212,9 +182,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
         return requestInfoForm;
     }
-
-    
-
+   
     /**
      * Copies all request parameters into the provided params map
      * 

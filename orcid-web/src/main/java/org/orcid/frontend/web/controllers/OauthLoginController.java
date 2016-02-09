@@ -27,10 +27,9 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
@@ -40,6 +39,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
@@ -61,107 +61,64 @@ public class OauthLoginController extends OauthControllerBase {
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         // find client name if available
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        //String clientName = "";
-        //String clientId = "";
-        //String clientGroupName = "";        
-        //String clientDescription = "";
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
         String email = "";
-        String scope = "";        
-        String responseType = "";
         String orcid = null;                        
         boolean showLogin = false; // default to Reg
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
-            
-            //Save the request information form
-            RequestInfoForm requestInfoForm = generateAndSaveRequestInfoForm(request, url);
-            
-            if (url.toLowerCase().contains("show_login=true"))
+            //Get and save the request information form
+            RequestInfoForm requestInfoForm = generateRequestInfoForm(url);
+            request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+                        
+            if (url.toLowerCase().contains("show_login=true")) {
                 showLogin = true;
-            //TODO: We should not load any info in the freemarker ModelAndViewObject, we should move all info we need to the forms
-            Matcher matcher = clientIdPattern.matcher(url);
-            if (matcher.find()) {
-                clientId = matcher.group(1);
-                if (clientId != null) {
-                    try {
-                        clientId = URLDecoder.decode(clientId, "UTF-8").trim();
-                    } catch (UnsupportedEncodingException e) {
-                    }
-                    Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
-                    if (emailMatcher.find()) {
-                        String tempEmail = emailMatcher.group(1);
-                        try {
-                            tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
-                        } catch (UnsupportedEncodingException e) {
-                        }
-                        if (orcidProfileManager.emailExists(tempEmail))
-                            email = tempEmail;
-                    }
-
-                    Matcher orcidMatcher = orcidPattern.matcher(url);
-                    if (orcidMatcher.find()) {
-                        String tempOrcid = orcidMatcher.group(2);
-                        try {
-                            tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
-                        } catch (UnsupportedEncodingException e) {
-                        }
-                        if (orcidProfileManager.exists(tempOrcid))
-                            orcid = tempOrcid;
-                    }
-
-                    Matcher scopeMatcher = scopesPattern.matcher(url);
-                    if (scopeMatcher.find()) {
-                        scope = scopeMatcher.group(1);
-                        try {
-                            scope = URLDecoder.decode(scope, "UTF-8").trim();
-                            scope = scope.replaceAll(" +", " ");
-                        } catch (UnsupportedEncodingException e) {
-                        }
-                    }                    
-
-                    Matcher responseTypeMatcher = responseTypePattern.matcher(url);
-                    if (responseTypeMatcher.find()) {
-                        responseType = responseTypeMatcher.group(1);
-                        try {
-                            responseType = URLDecoder.decode(responseType, "UTF-8").trim();
-                        } catch (UnsupportedEncodingException e) {
-                        }
-                    }
-
-                    // Get client name
-                    ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-
-                    // validate client scopes
-                    try {
-                        authorizationEndpoint.validateScope(scope, clientDetails);
-                        orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-                    } catch (InvalidScopeException ise) {
-                        String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                        redirectUriWithParams += "?error=invalid_scope&error_description=" + ise.getMessage();
-                        RedirectView rView = new RedirectView(redirectUriWithParams);
-
-                        ModelAndView error = new ModelAndView();
-                        error.setView(rView);
-                        return error;
-                    } catch (LockedException le) {
-                        String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                        redirectUriWithParams += "?error=client_locked&error_description=" + le.getMessage();
-                        RedirectView rView = new RedirectView(redirectUriWithParams);
-
-                        ModelAndView error = new ModelAndView();
-                        error.setView(rView);
-                        return error;
-                    }
-                    
-                }
             }
-        }        
-        mav.addObject("response_type", responseType);
-        mav.addObject("client_name", clientName);
-        mav.addObject("client_id", clientId);
-        mav.addObject("client_group_name", clientGroupName);
-        mav.addObject("client_description", clientDescription);
+            
+            Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
+            if (emailMatcher.find()) {
+                String tempEmail = emailMatcher.group(1);
+                try {
+                    tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+                if (emailManager.emailExists(tempEmail))
+                    email = tempEmail;
+            }
+
+            Matcher orcidMatcher = orcidPattern.matcher(url);
+            if (orcidMatcher.find()) {
+                String tempOrcid = orcidMatcher.group(2);
+                try {
+                    tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+                if (orcidProfileManager.exists(tempOrcid))
+                    orcid = tempOrcid;
+            }                    
+            
+            //Check that the client have the required permissions
+            // Get client name
+            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
+
+            // validate client scopes
+            try {
+                authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
+                orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+            } catch (InvalidScopeException | LockedException e) {
+                String redirectUriWithParams = requestInfoForm.getRedirectUrl();                
+                if(e instanceof InvalidScopeException) {
+                    redirectUriWithParams += "?error=invalid_scope&error_description=" + e.getMessage();
+                } else {
+                    redirectUriWithParams += "?error=client_locked&error_description=" + e.getMessage();
+                }                               
+                RedirectView rView = new RedirectView(redirectUriWithParams);
+                ModelAndView error = new ModelAndView();
+                error.setView(rView);
+                return error;
+            }            
+        }
+        
         mav.addObject("userId", orcid != null ? orcid : email);
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("showLogin", String.valueOf(showLogin));
@@ -172,8 +129,7 @@ public class OauthLoginController extends OauthControllerBase {
     @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
     public @ResponseBody RequestInfoForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
-        form.setErrors(new ArrayList<String>());
-        
+        form.setErrors(new ArrayList<String>());        
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
         
         boolean willBeRedirected = false;
@@ -189,30 +145,60 @@ public class OauthLoginController extends OauthControllerBase {
                     Map<String, Object> model = new HashMap<String, Object>();
                     Map<String, String> params = new HashMap<String, String>();
                     Map<String, String> approvalParams = new HashMap<String, String>();                    
-                    String scopes = requestInfoForm.getScopesAsString();
                     
-                    // Set params
-                    setOauthParams(form, params, approvalParams, scopes, requestInfoForm.getRedirectUrl(), false);
-
+                    if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())) {
+                        params.put(OrcidOauth2Constants.SCOPE_PARAM, requestInfoForm.getScopesAsString());
+                    }
+                    
+                    params.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);                    
+                    params.put(OrcidOauth2Constants.CLIENT_ID_PARAM, requestInfoForm.getClientId());
+                    
+                    // Redirect URI
+                    if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl())) {
+                        params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, requestInfoForm.getRedirectUrl());
+                    } else {
+                        params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, new String());
+                    }
+                    
+                    // Response type
+                    if (!PojoUtil.isEmpty(requestInfoForm.getResponseType())) {
+                        params.put(OrcidOauth2Constants.RESPONSE_TYPE_PARAM, requestInfoForm.getResponseType());
+                    }
+                    // State param
+                    if (!PojoUtil.isEmpty(requestInfoForm.getStateParam())) {
+                        params.put(OrcidOauth2Constants.STATE_PARAM, requestInfoForm.getStateParam());
+                    }
+                    
+                    // Set approval params               
+                    params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                    approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+                    
+                    // Set persistent token flag
+                    if(requestInfoForm.isClientHavePersistentTokens() && form.getPersistentTokenEnabled()) {
+                        params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
+                    } else {
+                        params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
+                    }
+                                                                                
                     // Authorize
                     try {
                         authorizationEndpoint.authorize(model, params, status, auth);
                     } catch (RedirectMismatchException rUriError) {
                         String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                         // Set the client id
-                        redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                        redirectUri = redirectUri.replace("{0}", requestInfoForm.getClientId());
                         // Set the response type if needed
-                        if (!PojoUtil.isEmpty(form.getResponseType()))
-                            redirectUri += "&response_type=" + form.getResponseType().getValue();
+                        if (!PojoUtil.isEmpty(requestInfoForm.getResponseType()))
+                            redirectUri += "&response_type=" + requestInfoForm.getResponseType();
                         // Set the redirect uri
                         if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl()))
                             redirectUri += "&redirect_uri=" + requestInfoForm.getRedirectUrl();
                         // Set the scope param
-                        if (!PojoUtil.isEmpty(scopes))
-                            redirectUri += "&scope=" + scopes;
+                        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()))
+                            redirectUri += "&scope=" + requestInfoForm.getScopesAsString();
                         // Copy the state param if present
-                        if (params != null && params.containsKey("state"))
-                            redirectUri += "&state=" + params.get("state");
+                        if (!PojoUtil.isEmpty(requestInfoForm.getStateParam()))
+                            redirectUri += "&state=" + requestInfoForm.getStateParam();
                         requestInfoForm.setRedirectUrl(redirectUri);
                         LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
                         return requestInfoForm;
@@ -225,12 +211,8 @@ public class OauthLoginController extends OauthControllerBase {
                     requestInfoForm.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
                 }
             }
-        } else {
-            String stateParam = null;
-            if (!PojoUtil.isEmpty(form.getStateParam())) {                
-                stateParam = form.getStateParam().getValue();
-            }
-            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), stateParam));
+        } else {            
+            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), requestInfoForm.getStateParam()));
             willBeRedirected = true;
         }
 
