@@ -93,17 +93,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
         OauthAuthorizeForm empty = new OauthAuthorizeForm();
         Text emptyText = Text.valueOf(StringUtils.EMPTY);        
         empty.setPassword(emptyText);
-        empty.setResponseType(emptyText);        
         empty.setUserName(emptyText);
-        
-        //Set required params empty
-        empty.setStateParam(emptyText);
-        empty.setClientId(emptyText);
-        empty.setClientName(emptyText);
-        empty.setMemberName(emptyText);
-        
-        //Set the state param and the client and member names
-        fillOauthFormWithRequestInformation(empty, request, response);
         return empty;
     }
 

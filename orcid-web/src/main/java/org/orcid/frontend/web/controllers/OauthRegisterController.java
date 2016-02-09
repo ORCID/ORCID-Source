@@ -46,8 +46,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthRegisterController")
 public class OauthRegisterController extends OauthControllerBase {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthRegisterController.class);    
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthRegisterController.class);        
     @Resource
     private RegistrationController registrationController;        
     
@@ -57,17 +56,11 @@ public class OauthRegisterController extends OauthControllerBase {
         if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
         }
-
         OauthRegistrationForm empty = new OauthRegistrationForm(registrationController.getRegister(request, response));
         // Creation type in oauth will always be member referred
         empty.setCreationType(Text.valueOf(CreationMethod.MEMBER_REFERRED.value()));
         Text emptyText = Text.valueOf(StringUtils.EMPTY);
-        empty.setClientId(emptyText);
         empty.setPassword(emptyText);
-        empty.setResponseType(emptyText);
-
-        //Set the state param and the client and member names
-        fillOauthFormWithRequestInformation(empty, request, response);        
         return empty;
     }       
     
@@ -88,7 +81,7 @@ public class OauthRegisterController extends OauthControllerBase {
                 if (savedRequest.getParameterValues("state").length > 0)
                     stateParam = savedRequest.getParameterValues("state")[0];
             }
-            form.setRedirectUri(Text.valueOf(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), stateParam)));
+            form.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), stateParam));
         }
 
         return form;
@@ -109,23 +102,21 @@ public class OauthRegisterController extends OauthControllerBase {
                         || PojoUtil.isEmpty(form.getGrecaptcha())
                         || !form.getGrecaptcha().getValue().equals(
                                 request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME))) {                                        
-                    String scopes = requestInfoForm.getScopesAsString();
-                    
                     String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                     // Set the client id
-                    redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                    redirectUri = redirectUri.replace("{0}", requestInfoForm.getClientId());
                     // Set the response type if needed
-                    if (!PojoUtil.isEmpty(form.getResponseType()))
-                        redirectUri += "&response_type=" + form.getResponseType().getValue();
+                    if (!PojoUtil.isEmpty(requestInfoForm.getResponseType()))
+                        redirectUri += "&response_type=" + requestInfoForm.getResponseType();
                     // Set the redirect uri
                     if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl()))
                         redirectUri += "&redirect_uri=" + requestInfoForm.getRedirectUrl();
                     // Set the scope param
-                    if (!PojoUtil.isEmpty(scopes))
-                        redirectUri += "&scope=" + scopes;
+                    if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()))
+                        redirectUri += "&scope=" + requestInfoForm.getScopesAsString();
                     // Copy the state param if present
-                    if (!PojoUtil.isEmpty(request.getParameter("state")))
-                        redirectUri += "&state=" + request.getParameter("state");
+                    if (!PojoUtil.isEmpty(requestInfoForm.getStateParam()))
+                        redirectUri += "&state=" + requestInfoForm.getStateParam();
                     requestInfoForm.setRedirectUrl(redirectUri);
                     SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
                     if (savedRequest != null)
@@ -133,7 +124,6 @@ public class OauthRegisterController extends OauthControllerBase {
                     LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
                     return requestInfoForm;
                 }
-
                 usedCaptcha = true;
             }
 
@@ -156,10 +146,8 @@ public class OauthRegisterController extends OauthControllerBase {
                 Map<String, Object> model = new HashMap<String, Object>();
                 Map<String, String> params = new HashMap<String, String>();
                 Map<String, String> approvalParams = new HashMap<String, String>();                   
-                String scopes = requestInfoForm.getScopesAsString();
                 
-                // Set params
-                setOauthParams(form, params, approvalParams, scopes, requestInfoForm.getRedirectUrl(), true);
+                fillOauthParams(requestInfoForm, params, approvalParams, form.getPersistentTokenEnabled());
 
                 // Authorize
                 try {
@@ -167,21 +155,21 @@ public class OauthRegisterController extends OauthControllerBase {
                 } catch (RedirectMismatchException rUriError) {
                     String redirectUri = this.getBaseUri() + REDIRECT_URI_ERROR;
                     // Set the client id
-                    redirectUri = redirectUri.replace("{0}", form.getClientId().getValue());
+                    redirectUri = redirectUri.replace("{0}", requestInfoForm.getClientId());
                     // Set the response type if needed
-                    if (!PojoUtil.isEmpty(form.getResponseType()))
-                        redirectUri += "&response_type=" + form.getResponseType().getValue();
+                    if (!PojoUtil.isEmpty(requestInfoForm.getResponseType()))
+                        redirectUri += "&response_type=" + requestInfoForm.getResponseType();
                     // Set the redirect uri
                     if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl()))
                         redirectUri += "&redirect_uri=" + requestInfoForm.getRedirectUrl();
                     // Set the scope param
-                    if (!PojoUtil.isEmpty(scopes))
-                        redirectUri += "&scope=" + scopes;
+                    if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString()))
+                        redirectUri += "&scope=" + requestInfoForm.getScopesAsString();
                     // Copy the state param if present
-                    if (params != null && params.containsKey("state"))
-                        redirectUri += "&state=" + params.get("state");
+                    if (!PojoUtil.isEmpty(requestInfoForm.getStateParam()))
+                        redirectUri += "&state=" + requestInfoForm.getStateParam();
                     requestInfoForm.setRedirectUrl(redirectUri);
-                    LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
+                    LOGGER.info("OauthRegisterController being sent to client browser: " + requestInfoForm.getRedirectUrl());
                     return requestInfoForm;
                 }
                 // Approve
@@ -189,7 +177,7 @@ public class OauthRegisterController extends OauthControllerBase {
                 requestInfoForm.setRedirectUrl(view.getUrl());
             }
         } else {
-            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), request.getParameter("state")));
+            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), requestInfoForm.getStateParam()));
         }        
         
         if(new HttpSessionRequestCache().getRequest(request, response) != null)

@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidAuthorizationEndpoint;
@@ -46,6 +47,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -76,11 +78,11 @@ public class OauthControllerBase extends BaseController {
 
     protected @ResponseBody RequestInfoForm generateRequestInfoForm(String requestUrl) throws UnsupportedEncodingException {
         String clientId = "";
-        String scopesString = "";        
+        String scopesString = "";
         String redirectUri = "";
         String responseType = "";
         String stateParam = "";
-        
+
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
             if (matcher.find()) {
@@ -90,7 +92,7 @@ public class OauthControllerBase extends BaseController {
             if (scopeMatcher.find()) {
                 String scopes = scopeMatcher.group(1);
                 scopesString = URLDecoder.decode(scopes, "UTF-8").trim();
-                scopesString = scopesString.replaceAll(" +", " ");                
+                scopesString = scopesString.replaceAll(" +", " ");
             }
             Matcher redirectUriMatcher = redirectUriPattern.matcher(requestUrl);
             if (redirectUriMatcher.find()) {
@@ -98,33 +100,33 @@ public class OauthControllerBase extends BaseController {
                     redirectUri = URLDecoder.decode(redirectUriMatcher.group(1), "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
-            }      
-            
+            }
+
             Matcher responseTypeMatcher = responseTypePattern.matcher(requestUrl);
-            if(responseTypeMatcher.find()) {
+            if (responseTypeMatcher.find()) {
                 try {
                     responseType = URLDecoder.decode(responseTypeMatcher.group(1), "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
             }
-            
+
             Matcher stateParamMatcher = stateParamPattern.matcher(requestUrl);
-            if(stateParamMatcher.find()) {
+            if (stateParamMatcher.find()) {
                 try {
                     stateParam = URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
             }
-            
-        } 
-        
+
+        }
+
         RequestInfoForm infoForm = new RequestInfoForm();
-        Set<ScopePathType> scopes = new HashSet<ScopePathType>();                
-        
+        Set<ScopePathType> scopes = new HashSet<ScopePathType>();
+
         if (!PojoUtil.isEmpty(clientId) && !PojoUtil.isEmpty(scopesString)) {
             scopesString = URLDecoder.decode(scopesString, "UTF-8").trim();
             scopesString = scopesString.replaceAll(" +", " ");
-            scopes = ScopePathType.getScopesFromSpaceSeparatedString(scopesString);            
+            scopes = ScopePathType.getScopesFromSpaceSeparatedString(scopesString);
         } else {
             throw new InvalidRequestException("Unable to find parameters");
         }
@@ -148,7 +150,7 @@ public class OauthControllerBase extends BaseController {
         String clientName = clientDetails.getClientName() == null ? "" : clientDetails.getClientName();
         String clientDescription = clientDetails.getClientDescription() == null ? "" : clientDetails.getClientDescription();
         String memberName = "";
-        
+
         // If client type is null it means it is a public client
         if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
             memberName = PUBLIC_MEMBER_NAME;
@@ -161,20 +163,55 @@ public class OauthControllerBase extends BaseController {
         if (StringUtils.isBlank(memberName)) {
             memberName = clientName;
         }
-        
+
         infoForm.setClientId(clientId);
         infoForm.setClientDescription(clientDescription);
-        infoForm.setClientName(clientName);        
+        infoForm.setClientName(clientName);
         infoForm.setMemberName(memberName);
         infoForm.setRedirectUrl(redirectUri);
         infoForm.setStateParam(stateParam);
         infoForm.setResponseType(responseType);
-        
-        return infoForm;
-        
-        
-    }        
 
+        return infoForm;
+
+    }
+
+    protected void fillOauthParams(RequestInfoForm requestInfoForm, Map<String, String> params, Map<String, String> approvalParams, boolean userEnabledPersistentTokens) {
+        if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())) {
+            params.put(OrcidOauth2Constants.SCOPE_PARAM, requestInfoForm.getScopesAsString());
+        }
+        
+        params.put(OrcidOauth2Constants.TOKEN_VERSION, OrcidOauth2Constants.PERSISTENT_TOKEN);                    
+        params.put(OrcidOauth2Constants.CLIENT_ID_PARAM, requestInfoForm.getClientId());
+        
+        // Redirect URI
+        if (!PojoUtil.isEmpty(requestInfoForm.getRedirectUrl())) {
+            params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, requestInfoForm.getRedirectUrl());
+        } else {
+            params.put(OrcidOauth2Constants.REDIRECT_URI_PARAM, new String());
+        }
+        
+        // Response type
+        if (!PojoUtil.isEmpty(requestInfoForm.getResponseType())) {
+            params.put(OrcidOauth2Constants.RESPONSE_TYPE_PARAM, requestInfoForm.getResponseType());
+        }
+        // State param
+        if (!PojoUtil.isEmpty(requestInfoForm.getStateParam())) {
+            params.put(OrcidOauth2Constants.STATE_PARAM, requestInfoForm.getStateParam());
+        }
+        
+        // Set approval params               
+        params.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+        approvalParams.put(OAuth2Utils.USER_OAUTH_APPROVAL, "true");
+        
+        // Set persistent token flag
+        if(requestInfoForm.getClientHavePersistentTokens() && userEnabledPersistentTokens) {
+            params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "true");
+        } else {
+            params.put(OrcidOauth2Constants.GRANT_PERSISTENT_TOKEN, "false");
+        }
+    }
+    
     /**
      * Builds the redirect uri string to use when the user deny the request
      * 
@@ -203,7 +240,7 @@ public class OauthControllerBase extends BaseController {
                     params.put(key, values[0]);
             }
         }
-    }    
+    }
 
     /*****************************
      * Authenticate user methods

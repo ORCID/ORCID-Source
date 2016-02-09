@@ -20,6 +20,7 @@ public class OauthRegistrationForm extends Registration {
     private static final long serialVersionUID = 1L;
     boolean approved = false;
     boolean persistentTokenEnabled = false;
+    private String redirectUrl;
 
     public OauthRegistrationForm() {
         super();
@@ -57,4 +58,12 @@ public class OauthRegistrationForm extends Registration {
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
     }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }       
 }

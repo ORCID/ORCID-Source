@@ -30,7 +30,7 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String clientId;
     private String clientName;
     private String memberName;
-    private String redirectUrl = null;
+    private String redirectUrl;
     private String responseType;
     private String stateParam;
     private boolean clientHavePersistentTokens = false;
@@ -107,7 +107,7 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
         this.stateParam = stateParam;
     }
 
-    public boolean isClientHavePersistentTokens() {
+    public boolean getClientHavePersistentTokens() {
         return clientHavePersistentTokens;
     }
 
