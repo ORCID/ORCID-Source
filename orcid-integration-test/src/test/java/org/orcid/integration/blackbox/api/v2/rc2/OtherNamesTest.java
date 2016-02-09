@@ -216,6 +216,19 @@ public class OtherNamesTest extends BlackBoxBase {
         assertEquals(otherName1.getVisibility(), otherName.getVisibility());
         assertEquals(otherName1.getPutCode(), otherName.getPutCode());
     }
+        
+    @Test
+    public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        assertNotNull(accessToken);
+        
+        OtherName otherName = getOtherName();      
+        otherName.setPutCode(1234567890L);
+        
+        ClientResponse response = memberV2ApiClient.updateOtherName(user1OrcidId, otherName, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
     
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {

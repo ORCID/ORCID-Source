@@ -17,8 +17,8 @@
 package org.orcid.core.manager.impl;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,8 +31,8 @@ import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;
 import org.orcid.persistence.dao.StatisticsDao;
-import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
+import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -115,18 +115,28 @@ public class StatisticsManagerImpl implements StatisticsManager {
      * 
      * @param statisticName
      * @return all statistics values for the statistics name parameter
-     */
+     */    
     public StatisticsTimeline getStatisticsTimelineModel(StatisticsEnum statisticName) {
         List<StatisticValuesEntity> list = statisticsDao.getStatistic(statisticName.value());
         if (list == null)
             return null;
-
+               
         // convert to model
         StatisticsTimeline timeline = new StatisticsTimeline();
         timeline.setStatisticName(statisticName.value());
-        Map<Date, Long> map = new TreeMap<Date, Long>();
+        Map<Long, Long> map = new TreeMap<Long, Long>();        
+        Map<Long, Date> generationDateMap = new HashMap<Long, Date>();
+        
         for (StatisticValuesEntity entry : list) {
-            map.put(entry.getKey().getGenerationDate(), entry.getStatisticValue());
+            if(!generationDateMap.containsKey(entry.getKey().getId())) {
+                StatisticKeyEntity key = statisticsDao.getKey(entry.getKey().getId());
+                Long time = key.getGenerationDate().getTime();
+                map.put(time, entry.getStatisticValue());
+                generationDateMap.put(key.getId(), key.getGenerationDate());
+            } else {
+                Date date = generationDateMap.get(entry.getKey().getId());
+                map.put(date.getTime(), entry.getStatisticValue());
+            }                       
         }
         timeline.setTimeline(map);
         return timeline;
@@ -154,7 +164,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
             map.put(entry.getStatisticName(), entry.getStatisticValue());
         }
         summary.setStatistics(map);
-        summary.setDate(list.get(0).getKey().getGenerationDate());
+        summary.setDate(latestKey.getGenerationDate());
         return summary;
     }
 

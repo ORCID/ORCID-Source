@@ -21,12 +21,17 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
-import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
@@ -37,6 +42,15 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Resource
     private V2VersionConverterChain v2VersionConverterChain;
+    
+    @Resource
+    private ProfileDao profileDao;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
 
     @Override
     public Response viewStatusText() {
@@ -45,62 +59,64 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Override
     public Response viewActivities(String orcid) {        
-        return downgradeResponse(publicV2ApiServiceDelegator.viewActivities(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewActivities(orcid), orcid);
     }
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewWork(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewWork(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewWorkCitation(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode));
+        //DO not downgrade non-orcid schema responses (this is citeproc);
+        return publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode);
+        //return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewWorkSummary(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewWorkSummary(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewFunding(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewFunding(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewFundingSummary(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewFundingSummary(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewEducation(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewEducation(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewEducationSummary(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewEducationSummary(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewEmployment(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewEmployment(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewPeerReview(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewPeerReview(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode), orcid);
     }
 
     @Override
@@ -115,76 +131,76 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Override
     public Response viewResearcherUrls(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewResearcherUrls(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewResearcherUrls(orcid), orcid);
     }
 
     @Override
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewEmails(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewEmails(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewEmails(orcid), orcid);
     }
 
     @Override
     public Response viewOtherNames(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewOtherNames(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewOtherNames(orcid), orcid);
     }
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewOtherName(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewOtherName(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewPersonalDetails(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewPersonalDetails(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewPersonalDetails(orcid), orcid);
     }
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewExternalIdentifiers(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewExternalIdentifiers(orcid), orcid);
     }
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewBiography(String orcid) {       
-        return downgradeResponse(publicV2ApiServiceDelegator.viewBiography(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewBiography(orcid), orcid);
     }
 
     @Override
     public Response viewKeywords(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewKeywords(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewKeywords(orcid), orcid);
     }
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewKeyword(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewKeyword(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewAddresses(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewAddresses(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewAddresses(orcid), orcid);
     }
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewAddress(orcid, putCode));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewAddress(orcid, putCode), orcid);
     }
 
     @Override
     public Response viewPerson(String orcid) {
-        return downgradeResponse(publicV2ApiServiceDelegator.viewPerson(orcid));
+        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewPerson(orcid), orcid);
     }
 
-    private Response downgradeAndValidateResponse(Response response) {
-        checkProfileStatus(response);
+    private Response downgradeAndValidateResponse(Response response, String orcid) {
+        checkProfileStatus(orcid);
         Response downgradedResponse = downgradeResponse(response);
         return downgradedResponse;
     }
@@ -198,14 +214,18 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return Response.fromResponse(response).entity(result.getObjectToConvert()).build();
     }
 
-    protected Response checkProfileStatus(Response response) {
-        OrcidMessage orcidMessage = (OrcidMessage) response.getEntity();
-        if (orcidMessage != null && orcidMessage.getOrcidProfile() != null && orcidMessage.getOrcidProfile().getOrcidDeprecated() != null) {
+    private void checkProfileStatus(String orcid) {
+    	ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        if (profileDao.isProfileDeprecated(orcid)) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
-            params.put("orcid", orcidMessage.getOrcidProfile().getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getPath());
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if (entity.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+            }
             throw new OrcidDeprecatedException(params);
         }
-        return response;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

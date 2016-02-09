@@ -80,6 +80,21 @@
 	</div>
 </script>
 
+<script type="text/ng-template" id="lookup-email-ids-modal">
+	<div style="padding:20px">
+		<h1><@orcid.msg 'admin.lookup_id_email.results'/></h1>
+		<div ng-show="result">
+			<textarea style="height:100px; width: 500px; resize: none;" readonly="readonly">{{result}}</textarea>
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+			</div>
+		</div>
+		<div ng-show="!result.length">
+			<span><@orcid.msg 'admin.lookup_id_email.no_results'/></span>
+		</div>
+	</div>
+</script>
+
 <script type="text/ng-template" id="confirm-deprecation-modal">
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -531,8 +546,26 @@
 				<span id="bottom-confirm-unreview-profile" ng-click="checkProfileToUnreview()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
 			</div>
 		</div>
-	</div>	
-			
+	</div>
+	
+	<!-- Lookup id or email -->
+	<a name="lookup-id-email"></a>
+	<div ng-controller="lookupIdOrEmailCtrl" class="workspace-accordion-item" ng-cloak>
+		<p>
+			<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
+			<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
+		</p>			  	
+		<div class="collapsible bottom-margin-small admin-modal" id="lookup_ids_section" style="display:none;">
+			<div class="form-group">
+				<label for="idOrEmails"><@orcid.msg 'admin.lookup_id_email' /></label>
+				<input type="text" id="idOrEmails" ng-enter="lookupIdOrEmails()" ng-model="idOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+			</div>
+			<div class="controls save-btns pull-left">
+				<span id="lookup-ids" ng-click="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>						
+			</div>
+		</div>	
+	</div>
+	
 </div>
 
 <script type="text/ng-template" id="confirm-modal">
