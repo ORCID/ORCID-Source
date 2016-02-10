@@ -175,7 +175,7 @@ public class EmailManagerImpl implements EmailManager {
             LastModifiedDatesHelper.calculateLatest(emails);
             return emails;
         }
-        return null;
+        return new Emails();
     }
     
 }
