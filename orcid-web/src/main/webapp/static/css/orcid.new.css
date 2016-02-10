@@ -931,6 +931,7 @@ select {
 	background: #a6ce39;
 }
 
+
 .header .navigation>.menu>li.active-trail>a:hover {
 	color: #fff !important;
 }
@@ -6361,6 +6362,37 @@ a:hover .mozilla-badge{
 	cursor:not-allowed;
 }
 
+/* New Public menu */
+.container .header .navigation.public,
+.header .navigation > .menu.public,
+.header .navigation >.menu.public >li{
+	height: 30px;
+	background: #FFF;	
+}
+
+.header .navigation>.menu.public>li>a{
+	height: 30px;
+	padding: 5px 17px 5px;
+	font-weight: normal;
+	background: #FFF;
+	color: #338caf;	
+}
+
+.header .navigation >.menu.public >li{
+	border-left: 1px solid #C9CACB;	
+}
+
+.header .navigation >.menu.public >li.active-trail,
+.header .navigation>.menu.public>li.active-trail>a{
+	background: #338caf;
+	color: #FFF;	
+}
+
+.header .navigation>.menu.public>li>a:hover{
+	background: #338caf;
+	color: #FFF;	
+}
+
 .delete-email-box{
 	height: 100px;
 }
@@ -7597,13 +7629,36 @@ a:hover .mozilla-badge{
 	#old-login #loginForm #ajax-loader{
 		width:  auto;
 		margin-top: 22px;
-	} 
+	}
+
+	.container .header .navigation.public,
+	.header .navigation > .menu.public{	
+		height: 50px;
+		background: #338caf;	
+	}
 	
+	.header .navigation >.menu.public >li{
+		height: 60px;
+	}
+	
+	.header .navigation>.menu.public>li>a{
+		height: 58px;
+		padding: 20px 17px 30px;
+		font-weight: normal;
+		background: #FFF;
+	}
+	
+	.header .navigation >.menu.public >li{
+		border-bottom: 1px solid #C9CACB;
+		border-right: 1px solid #C9CACB;
+	}
+	
+
 	.edit-record,
 	.edit-record-emails{
 		width: 100%;
-	}
-	
+	}	
+
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */
