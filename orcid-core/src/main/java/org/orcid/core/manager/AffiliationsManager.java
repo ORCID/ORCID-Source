@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 
 public interface AffiliationsManager {
 
@@ -153,4 +154,6 @@ public interface AffiliationsManager {
      * @return the list of educations that belongs to this user
      * */
     List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);
+    
+    List<AffiliationForm> getAffiliations(String orcid);
 }
