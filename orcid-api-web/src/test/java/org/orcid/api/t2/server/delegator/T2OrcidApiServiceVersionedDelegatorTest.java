@@ -193,7 +193,7 @@ public class T2OrcidApiServiceVersionedDelegatorTest extends DBUnitTest {
         assertEquals(HttpStatus.SC_OK, readResponse.getStatus());
         OrcidMessage retrievedMessage = (OrcidMessage) readResponse.getEntity();
         assertEquals(orcid, retrievedMessage.getOrcidProfile().getOrcidIdentifier().getPath());
-        assertEquals("S. Milligan", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertEquals("Credit Name", retrievedMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getCreditName().getContent());
     }
 
     @Test
