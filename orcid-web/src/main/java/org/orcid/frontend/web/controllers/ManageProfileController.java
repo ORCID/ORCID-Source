@@ -72,6 +72,7 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -937,9 +938,17 @@ public class ManageProfileController extends BaseWorkspaceController {
             copyErrors(bf.getBiography(), bf);
             if (bf.getErrors().size() > 0)
                 return bf;
-            OrcidProfile currentProfile = getEffectiveProfile();
-            bf.populateProfile(currentProfile);
-            orcidProfileManager.updateBiography(currentProfile);
+            
+            Biography bio = new Biography();
+            if(bf.getBiography() != null) {
+                bio.setContent(bf.getBiography().getValue());
+            }
+            if(bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
+                org.orcid.jaxb.model.common_rc2.Visibility v = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+                bio.setVisibility(v);
+            }
+            
+            profileEntityManager.updateBiography(getCurrentUserOrcid(), bio);
         }
         return bf;
     }
