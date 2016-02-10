@@ -31,9 +31,9 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
@@ -86,6 +86,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
     
     @Resource
     private GroupIdRecordManager groupIdRecordManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     public void setLocaleManager(LocaleManager localeManager) {
         this.localeManager = localeManager;
@@ -169,9 +172,9 @@ public class PeerReviewsController extends BaseWorkspaceController {
      * 
      */
     private List<String> createPeerReviewIdList(HttpServletRequest request) {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        java.util.Date lastModified = currentProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(currentProfile.getOrcidIdentifier().getPath(), lastModified.getTime());
+        String orcid = getCurrentUserOrcid();
+        java.util.Date lastModified = profileEntityManager.getLastModified(orcid);
+        List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, lastModified.getTime());
         
         Map<String, String> languages = lm.buildLanguageMap(getUserLocale(), false);
         HashMap<Long, PeerReviewForm> peerReviewMap = new HashMap<>();

@@ -89,10 +89,9 @@ import org.orcid.pojo.ChangePassword;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ManageSocialAccount;
 import org.orcid.pojo.SecurityQuestion;
-import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AddressesForm;
-import org.orcid.pojo.ajaxForm.Emails;
+import org.orcid.pojo.ajaxForm.BiographyForm;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -242,11 +241,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
 
     @ModelAttribute("hasVerifiedEmail")
-    public boolean hasVerifiedEmail() {
-        OrcidProfile profile = getEffectiveProfile();
-        if (profile == null || profile.getOrcidBio() == null || profile.getOrcidBio().getContactDetails() == null)
+    public boolean hasVerifiedEmail() {        
+        String orcid = getCurrentUserOrcid();
+        if (PojoUtil.isEmpty(orcid)) {
             return false;
-        return profile.getOrcidBio().getContactDetails().anyEmailVerified();
+        }
+            
+        return emailManager.haveAnyEmailVerified(orcid);
     }
 
     @RequestMapping(value = "/search-for-delegate-by-email/{email}/")
@@ -665,13 +666,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         return email;
     }
 
-    @SuppressWarnings("unchecked")
+    
     @RequestMapping(value = "/emails.json", method = RequestMethod.GET)
-    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        Emails emails = new org.orcid.pojo.ajaxForm.Emails();
-        emails.setEmails((List<org.orcid.pojo.Email>) (Object) currentProfile.getOrcidBio().getContactDetails().getEmail());
-        return emails;
+    public @ResponseBody org.orcid.pojo.ajaxForm.Emails getEmailsJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {                                
+        return emailManager.getEmailsAsForm(getCurrentUserOrcid());
     }
 
     @RequestMapping(value = "/addEmail.json", method = RequestMethod.POST)
@@ -926,8 +924,8 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/biographyForm.json", method = RequestMethod.GET)
     public @ResponseBody BiographyForm getBiographyForm() {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        BiographyForm bf = BiographyForm.valueOf(currentProfile);
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        BiographyForm bf = BiographyForm.valueOf(profileEntity);
         return bf;
     }
 

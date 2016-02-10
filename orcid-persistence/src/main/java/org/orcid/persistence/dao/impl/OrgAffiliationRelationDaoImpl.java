@@ -190,4 +190,16 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
         query.setParameter("affiliationType", type.value());
         return query.getResultList();
     } 
+    
+    /**
+     * Get all affiliations that belongs to the given user
+     * @param orcid: the user id
+     * @return the list of affiliations that belongs to the user
+     * */
+    @Override
+    public List<OrgAffiliationRelationEntity> getByUser(String orcid) {
+        TypedQuery<OrgAffiliationRelationEntity> query = entityManager.createQuery("from OrgAffiliationRelationEntity where profile.id=:orcid", OrgAffiliationRelationEntity.class);
+        query.setParameter("orcid", orcid);
+        return query.getResultList();
+    }
 }
