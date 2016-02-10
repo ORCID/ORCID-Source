@@ -45,6 +45,12 @@ Not Applicable v2.0_rc1 is a first draft.
 
 ## REST API Reference
 
+### Swagger
+
+The swagger interfaces to the API available at:
+- [member](https://api.orcid.org/v2.0_rc1/)
+- [public](https://pub.orcid.org/v2.0_rc1/)
+
 ### Activities summary
 | Item                    | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|

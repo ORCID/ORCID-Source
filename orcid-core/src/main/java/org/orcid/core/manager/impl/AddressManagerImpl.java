@@ -83,7 +83,7 @@ public class AddressManagerImpl implements AddressManager {
 
     @Override
     public Address getAddress(String orcid, Long putCode) {
-        AddressEntity entity = addressDao.find(orcid, putCode);
+        AddressEntity entity = addressDao.getAddress(orcid, putCode);
         return adapter.toAddress(entity);
     }
     
@@ -108,12 +108,7 @@ public class AddressManagerImpl implements AddressManager {
             }
         }
 
-        AddressEntity updatedEntity = addressDao.find(putCode);
-        if (updatedEntity == null) {
-            throw new ApplicationException();
-        }
-
-        
+        AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
         SourceEntity existingSource = updatedEntity.getSource();
         //If it is an update from the API, check the source and preserve the original visibility
         if(isApiCall) {
@@ -158,7 +153,7 @@ public class AddressManagerImpl implements AddressManager {
     @Override
     @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {
-        AddressEntity entity = addressDao.find(orcid, putCode);
+        AddressEntity entity = addressDao.getAddress(orcid, putCode);
         SourceEntity existingSource = entity.getSource();
         orcidSecurityManager.checkSource(existingSource);
 

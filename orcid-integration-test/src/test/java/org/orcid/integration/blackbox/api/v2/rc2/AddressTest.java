@@ -196,6 +196,21 @@ public class AddressTest extends BlackBoxBase {
         assertEquals(Visibility.PUBLIC, addresses.getAddress().get(0).getVisibility());
         assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
     }
+    
+    @Test
+    public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        assertNotNull(accessToken);
+        
+        Address address = new Address();       
+        address.setCountry(new Country(Iso3166Country.CR));
+        address.setVisibility(Visibility.PUBLIC);
+        address.setPutCode(1234567890L);
+        
+        ClientResponse response = memberV2ApiClient.updateAddress(user1OrcidId, address, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
 
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {

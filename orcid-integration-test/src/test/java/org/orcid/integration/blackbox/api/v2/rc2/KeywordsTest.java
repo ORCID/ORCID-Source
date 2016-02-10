@@ -207,6 +207,21 @@ public class KeywordsTest extends BlackBoxBase {
         assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(1).getVisibility());
     }
 
+    @Test
+    public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        assertNotNull(accessToken);
+        
+        Keyword keyword = new Keyword();
+        keyword.setContent("keyword-3");
+        keyword.setVisibility(Visibility.PUBLIC);       
+        keyword.setPutCode(1234567890L);
+        
+        ClientResponse response = memberV2ApiClient.updateKeyword(user1OrcidId, keyword, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+    }
+    
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {
             return accessTokens.get(clientId);
