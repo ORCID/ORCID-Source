@@ -54,6 +54,7 @@ public class AccountSettingsPage {
     }
 
     public DelegatesSection getDelegatesSection() {
+        utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@ng-show='delegation.givenPermissionTo.delegationDetails']")));
         return new DelegatesSection();
     }
 
@@ -64,12 +65,12 @@ public class AccountSettingsPage {
         }
 
         public List<Email> getEmails() {
-            List<WebElement> emailRows = xpath.findElements("//td[@ng-controller='EmailEditCtrl']//tr");
+            List<WebElement> emailRows = xpath.findElements("//div[@ng-controller='EmailEditCtrl']//tr");
             return emailRows.stream().map(Email::new).collect(Collectors.toList());
         }
 
         public boolean canAddEmail() {
-            return xpath.isPresent("//input[@type='email']") && !xpath.isPresent("id('addEmailNotAllowed')");
+            return xpath.isVisible("//input[@type='email']") && !xpath.isVisible("id('addEmailNotAllowed')");
         }
 
         public void addEmail(String emailValue) {
@@ -161,9 +162,16 @@ public class AccountSettingsPage {
         }
 
         public void add() {
+            final int numberOfDelegatesBefore = getDelegatesSection().getDelegates().size();
             localXPath.click("td[3]/span/span");
             xpath.click("//form[@ng-submit='addDelegate()']/button");
             utils.colorBoxIsClosed();
+            utils.getWait().until(new Predicate<WebDriver>() {
+                @Override
+                public boolean apply(WebDriver driver) {
+                    return getDelegatesSection().getDelegates().size() > numberOfDelegatesBefore;
+                }
+            });
         }
     }
 
