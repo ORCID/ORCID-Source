@@ -688,39 +688,44 @@ public class RegistrationController extends BaseController {
             }
         }
     }
-    	
+
 	@RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, List<String>> resendClaimEmail(@RequestBody String emailAddresses) {
-    	List<String> emailIdList = new ArrayList<String>();
-    	if (StringUtils.isNotBlank(emailAddresses)) {
-	   		StringTokenizer tokenizer = new StringTokenizer(emailAddresses, INP_STRING_SEPARATOR);
-	   		while (tokenizer.hasMoreTokens()) {
-	   			emailIdList.add(tokenizer.nextToken());
-	   		}
-    	}
-    	
-        List<String> claimedIds = new ArrayList<String>();
-        List<String> successIds = new ArrayList<String>();
-        List<String> notFoundIds = new ArrayList<String>();
-        for(String email : emailIdList) {
-        	OrcidProfile profile = orcidProfileManager.retrieveOrcidProfileByEmail(email);
-            if (profile == null) {
-            	notFoundIds.add(email);
-            } else {
-                if (profile.getOrcidHistory() != null && profile.getOrcidHistory().isClaimed()) {
-                    claimedIds.add(email);
-                } else {
-                    notificationManager.sendApiRecordCreationEmail(email, profile);
-                    successIds.add(email);
-                }
-            }
-        }
-        Map<String, List<String>> resendIdMap = new HashMap<String, List<String>>();
-        resendIdMap.put("notFoundList", notFoundIds);
-        resendIdMap.put("claimResendSuccessfulList", successIds);
-        resendIdMap.put("alreadyClaimedList", claimedIds);
-        return resendIdMap;
-    }
+	public @ResponseBody Map<String, List<String>> resendClaimEmail(
+			@RequestBody String emailAddresses) {
+		List<String> emailIdList = new ArrayList<String>();
+		if (StringUtils.isNotBlank(emailAddresses)) {
+			StringTokenizer tokenizer = new StringTokenizer(emailAddresses,
+					INP_STRING_SEPARATOR);
+			while (tokenizer.hasMoreTokens()) {
+				emailIdList.add(tokenizer.nextToken());
+			}
+		}
+
+		List<String> claimedIds = new ArrayList<String>();
+		List<String> successIds = new ArrayList<String>();
+		List<String> notFoundIds = new ArrayList<String>();
+		for (String email : emailIdList) {
+			OrcidProfile profile = orcidProfileManager
+					.retrieveOrcidProfileByEmail(email);
+			if (profile == null) {
+				notFoundIds.add(email);
+			} else {
+				if (profile.getOrcidHistory() != null
+						&& profile.getOrcidHistory().isClaimed()) {
+					claimedIds.add(email);
+				} else {
+					notificationManager.sendApiRecordCreationEmail(email,
+							profile);
+					successIds.add(email);
+				}
+			}
+		}
+		Map<String, List<String>> resendIdMap = new HashMap<String, List<String>>();
+		resendIdMap.put("notFoundList", notFoundIds);
+		resendIdMap.put("claimResendSuccessfulList", successIds);
+		resendIdMap.put("alreadyClaimedList", claimedIds);
+		return resendIdMap;
+	}
 
     private void automaticallyLogin(HttpServletRequest request, String password, OrcidProfile orcidProfile) {
         UsernamePasswordAuthenticationToken token = null;
