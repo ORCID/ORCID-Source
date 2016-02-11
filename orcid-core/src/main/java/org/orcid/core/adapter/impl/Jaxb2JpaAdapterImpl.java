@@ -674,6 +674,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(country != null) {
             AddressEntity address = new AddressEntity();
             address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+            if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
+            	Iterator<AddressEntity> iterator = profileEntity.getAddresses().iterator();
+            	while (iterator.hasNext()) {
+            		AddressEntity temp = iterator.next();
+            	    if(temp.getPrimary()) {
+            	    	address = temp;
+            	    	break;
+            	    }
+            	}
+            }
             address.setPrimary(true);
             address.setDisplayIndex(-1L);
             address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
