@@ -33,6 +33,7 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String redirectUrl;
     private String responseType;
     private String stateParam;
+    private String userId;
     private boolean clientHavePersistentTokens = false;
 
     public List<String> getErrors() {
@@ -113,6 +114,14 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setClientHavePersistentTokens(boolean clientHavePersistentTokens) {
         this.clientHavePersistentTokens = clientHavePersistentTokens;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getScopesAsString() {

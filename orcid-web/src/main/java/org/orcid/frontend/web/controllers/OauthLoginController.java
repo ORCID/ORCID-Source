@@ -17,12 +17,9 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,15 +48,13 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthLoginController")
 public class OauthLoginController extends OauthControllerBase {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);
-    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);    
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         // find client name if available
         SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        String email = "";
-        String orcid = null;
+        
         boolean showLogin = false; // default to Reg
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
@@ -69,30 +64,8 @@ public class OauthLoginController extends OauthControllerBase {
 
             if (url.toLowerCase().contains("show_login=true")) {
                 showLogin = true;
-            }
-
-            Matcher emailMatcher = RegistrationController.emailPattern.matcher(url);
-            if (emailMatcher.find()) {
-                String tempEmail = emailMatcher.group(1);
-                try {
-                    tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
-                } catch (UnsupportedEncodingException e) {
-                }
-                if (emailManager.emailExists(tempEmail))
-                    email = tempEmail;
-            }
-
-            Matcher orcidMatcher = orcidPattern.matcher(url);
-            if (orcidMatcher.find()) {
-                String tempOrcid = orcidMatcher.group(2);
-                try {
-                    tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
-                } catch (UnsupportedEncodingException e) {
-                }
-                if (orcidProfileManager.exists(tempOrcid))
-                    orcid = tempOrcid;
-            }
-
+            }            
+            
             // Check that the client have the required permissions
             // Get client name
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
@@ -115,7 +88,6 @@ public class OauthLoginController extends OauthControllerBase {
             }
         }
 
-        mav.addObject("userId", orcid != null ? orcid : email);
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.setViewName("oauth_login");

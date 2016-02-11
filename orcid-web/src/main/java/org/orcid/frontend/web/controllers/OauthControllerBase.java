@@ -57,6 +57,7 @@ public class OauthControllerBase extends BaseController {
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
     private Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
+    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
     protected static String REQUEST_INFO_FORM = "requestInfoForm";
@@ -82,6 +83,8 @@ public class OauthControllerBase extends BaseController {
         String redirectUri = "";
         String responseType = "";
         String stateParam = "";
+        String email = "";
+        String orcid = "";
 
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
@@ -117,10 +120,40 @@ public class OauthControllerBase extends BaseController {
                 } catch (UnsupportedEncodingException e) {
                 }
             }
+            
+            Matcher emailMatcher = RegistrationController.emailPattern.matcher(requestUrl);
+            if (emailMatcher.find()) {
+                String tempEmail = emailMatcher.group(1);
+                try {
+                    tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+                if (emailManager.emailExists(tempEmail))
+                    email = tempEmail;
+            }
 
+            Matcher orcidMatcher = orcidPattern.matcher(requestUrl);
+            if (orcidMatcher.find()) {
+                String tempOrcid = orcidMatcher.group(2);
+                try {
+                    tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
+                } catch (UnsupportedEncodingException e) {
+                }
+                if (orcidProfileManager.exists(tempOrcid))
+                    orcid = tempOrcid;
+            }
         }
 
         RequestInfoForm infoForm = new RequestInfoForm();
+        
+        if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {
+            if(!PojoUtil.isEmpty(email)) {
+                infoForm.setUserId(email);
+            } else {
+                infoForm.setUserId(orcid);
+            }
+        }        
+        
         Set<ScopePathType> scopes = new HashSet<ScopePathType>();
 
         if (!PojoUtil.isEmpty(clientId) && !PojoUtil.isEmpty(scopesString)) {
