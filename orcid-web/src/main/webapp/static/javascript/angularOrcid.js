@@ -9781,7 +9781,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     //------ AUTHORIZE -------
     //------------------------
-    $scope.loadAndInitAuthorizationForm = function(client_id, response_type) {
+    $scope.loadAndInitAuthorizationForm = function() {
         $.ajax({
             url: getBaseUri() + '/oauth/custom/authorize/empty.json',
             type: 'GET',
@@ -9789,7 +9789,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;
-                $scope.authorizationForm.responseType.value=response_type;
             }
         }).fail(function() {
             console.log("An error occured initializing the form.");

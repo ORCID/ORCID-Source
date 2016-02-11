@@ -77,6 +77,18 @@ public class OauthControllerBase extends BaseController {
     @Resource
     protected OrcidAuthorizationEndpoint authorizationEndpoint;
 
+    protected @ResponseBody RequestInfoForm generateRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {
+        String clientId = request.getParameter("client_id");
+        String scopesString = request.getParameter("scope");
+        String redirectUri = request.getParameter("redirect_uri");
+        String responseType = request.getParameter("response_type");
+        String stateParam = request.getParameter("state");
+        String email = request.getParameter("email");
+        String orcid = request.getParameter("orcid");
+        
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid);
+    }
+    
     protected @ResponseBody RequestInfoForm generateRequestInfoForm(String requestUrl) throws UnsupportedEncodingException {
         String clientId = "";
         String scopesString = "";
@@ -143,8 +155,29 @@ public class OauthControllerBase extends BaseController {
                     orcid = tempOrcid;
             }
         }
-
+        
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid);
+    }
+    
+    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid) throws UnsupportedEncodingException {
         RequestInfoForm infoForm = new RequestInfoForm();
+        
+        //If the user is logged in 
+        String loggedUserOrcid = getEffectiveUserOrcid();
+        if(!PojoUtil.isEmpty(loggedUserOrcid)) {
+            ProfileEntity profile = profileEntityCacheManager.retrieve(loggedUserOrcid);
+            String creditName = "";
+            
+            if (!PojoUtil.isEmpty(profile.getCreditName())) {
+                creditName = profile.getCreditName();
+            } else {
+                creditName = PojoUtil.isEmpty(profile.getGivenNames()) ? profile.getFamilyName() : profile.getGivenNames() + " " + profile.getFamilyName();
+            }
+            
+            if(!PojoUtil.isEmpty(creditName)) {
+                infoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());
+            }                        
+        }        
         
         if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {
             if(!PojoUtil.isEmpty(email)) {
@@ -206,8 +239,61 @@ public class OauthControllerBase extends BaseController {
         infoForm.setResponseType(responseType);
 
         return infoForm;
-
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     protected void fillOauthParams(RequestInfoForm requestInfoForm, Map<String, String> params, Map<String, String> approvalParams, boolean userEnabledPersistentTokens) {
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())) {

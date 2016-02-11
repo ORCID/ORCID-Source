@@ -17,12 +17,7 @@
 
 -->
 	<#include "/common/browser-checks.ftl" />
-	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box oauth-signin-register" ng-controller="OauthAuthorizationController" ng-cloak>
-		<!-- Freemarker and GA variables -->
-		<#assign user_id = "">			
-		<#if userId??>
-			<#assign user_id = userId>
-        </#if>                			     
+	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box oauth-signin-register" ng-controller="OauthAuthorizationController" ng-cloak>		
 	    <!-- Freemarker and GA variables -->	    
 		<div class="app-client-name">
 			<h3 ng-click="toggleClientDescription()">{{requestInfoForm.clientName}}

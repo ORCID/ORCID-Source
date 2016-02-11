@@ -18,11 +18,7 @@
 -->
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
 	<div class="full-name">
-		<#if (profile.orcidBio.personalDetails.creditName.content)??>
-	        ${(profile.orcidBio.personalDetails.creditName.content)!}
-	    <#else>
-	        ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-	    </#if> 
+		{{requestInfoForm.userName}}
 	</div>
 	<div class="oid">
 		<#if (locked)?? && !locked>

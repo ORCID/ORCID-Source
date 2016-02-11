@@ -57,11 +57,8 @@ public class OauthAuthorizeController extends OauthControllerBase {
     
     @RequestMapping(value = "/oauth/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
-        
-        String requestUrl = request.getRequestURL().toString();
-        
         //Get and save the request information form
-        RequestInfoForm requestInfoForm = generateRequestInfoForm(requestUrl);
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(request);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
                 
         Boolean justRegistered = (Boolean) request.getSession().getAttribute(OrcidOauth2Constants.JUST_REGISTERED);
