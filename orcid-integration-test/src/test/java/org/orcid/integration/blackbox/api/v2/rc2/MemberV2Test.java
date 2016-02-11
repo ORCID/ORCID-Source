@@ -104,9 +104,7 @@ public class MemberV2Test extends BlackBoxBase {
     public static void afterClass() {
         String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
         String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
-        System.out.println("clients after:"+clientId1 + clientId2);
-        System.out.println("after: "+System.getProperty("org.orcid.web.testUser1.username")+" "+System.getProperty("org.orcid.web.testUser1.password"));
-
+        
         if(PojoUtil.isEmpty(clientId2)) {
             revokeApplicationsAccess(clientId1);
         } else {

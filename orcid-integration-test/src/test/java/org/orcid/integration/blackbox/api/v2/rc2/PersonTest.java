@@ -46,6 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * 
@@ -120,6 +121,10 @@ public class PersonTest extends BlackBoxBase {
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(this.user1OrcidId, accessToken);
         assertNotNull(response);
+        assertEquals("invalid "+response,200,response.getStatus());
+        //I think there is a bug that is causing this to intermittently fail.
+        //It's as if it's not waiting for the entire response before attempting to parse the XML.
+        Thread.sleep(100);
         Person person = response.getEntity(Person.class);
         assertNotNull(person);
         assertNotNull(person.getAddresses());
