@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
@@ -76,7 +77,7 @@ public class OauthGenericCallsController extends OauthControllerBase {
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
-    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {                    
+    public @ResponseBody RequestInfoForm getRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {                    
         RequestInfoForm requestInfoForm = null;
         
         if(request.getSession() != null && request.getSession().getAttribute(REQUEST_INFO_FORM) != null) {
@@ -89,11 +90,19 @@ public class OauthGenericCallsController extends OauthControllerBase {
     }
         
     @RequestMapping(value = "/oauth/custom/authorize/empty.json", method = RequestMethod.GET)
-    public @ResponseBody OauthAuthorizeForm getEmptyAuthorizeForm(HttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody OauthAuthorizeForm getEmptyAuthorizeForm(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         OauthAuthorizeForm empty = new OauthAuthorizeForm();
         Text emptyText = Text.valueOf(StringUtils.EMPTY);        
         empty.setPassword(emptyText);
         empty.setUserName(emptyText);
+        
+        RequestInfoForm requestInfoForm = getRequestInfoForm(request);
+        if(requestInfoForm != null) {
+            if(!PojoUtil.isEmpty(requestInfoForm.getUserName())) {
+                empty.setUserName(Text.valueOf(requestInfoForm.getUserName()));
+            }
+        }
+        
         return empty;
     }
 

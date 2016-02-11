@@ -67,7 +67,6 @@ public class OauthRegisterController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/custom/register.json", method = RequestMethod.POST)
     public @ResponseBody OauthRegistrationForm checkRegisterForm(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthRegistrationForm form) {
         form.setErrors(new ArrayList<String>());
-
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
         
         if (form.getApproved()) {
@@ -76,7 +75,6 @@ public class OauthRegisterController extends OauthControllerBase {
         } else {
             SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
             String stateParam = null;
-
             if (savedRequest != null && savedRequest.getParameterMap() != null && savedRequest.getParameterValues("state") != null) {
                 if (savedRequest.getParameterValues("state").length > 0)
                     stateParam = savedRequest.getParameterValues("state")[0];

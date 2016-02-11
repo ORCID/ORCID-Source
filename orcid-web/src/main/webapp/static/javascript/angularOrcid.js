@@ -9456,17 +9456,6 @@ orcidNgModule.controller('adminDelegatesCtrl',['$scope',function ($scope){
     };
 }]);
 
-
-
-
-
-
-
-
-
-
-
-
 orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '$sce', 'commonSrvc', 'vcRecaptchaService', function ($scope, $compile, $sce, commonSrvc, vcRecaptchaService){
     $scope.showClientDescription = false;
     $scope.showRegisterForm = true;
@@ -9538,9 +9527,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.authorizationForm = data;                                
-                if($scope.requestInfoForm.userId) {
-                	$scope.authorizationForm.userName.value=$scope.requestInfoForm.userId;
-                    $scope.isOrcidPresent = true;
+                if($scope.authorizationForm.userName.value) {
+                	$scope.isOrcidPresent = true;
                     $scope.showRegisterForm = false;                    
                 }
                 // #show_login - legacy fragment id, we should remove this sometime
@@ -9574,8 +9562,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         if($scope.enablePersistentToken) {
             $scope.authorizationForm.persistentTokenEnabled=true;
             auth_scope_prefix = 'AuthorizeP_';
-        }
-        
+        }        
         $.ajax({
             url: getBaseUri() + '/oauth/custom/login.json',
             type: 'POST',
@@ -9926,33 +9913,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.loadRequestInfoForm();    
     
 }]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
     

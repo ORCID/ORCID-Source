@@ -51,10 +51,9 @@ public class OauthLoginController extends OauthControllerBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(OauthLoginController.class);    
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
-    public ModelAndView loginGetHandler2(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
+    public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         // find client name if available
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
         boolean showLogin = false; // default to Reg
         if (savedRequest != null) {
             String url = savedRequest.getRedirectUrl();
