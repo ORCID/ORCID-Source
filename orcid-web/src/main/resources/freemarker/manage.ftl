@@ -476,7 +476,7 @@
                 <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
-        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
+        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])?? || (RequestParameters['newlogin'])??)>
 	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
 	            <h1>
 	                <@orcid.msg 'manage_signin_title' />
