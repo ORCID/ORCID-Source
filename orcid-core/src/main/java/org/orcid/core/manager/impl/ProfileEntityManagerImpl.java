@@ -620,7 +620,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         bio.setContent(profile.getBiography());
         return bio;
     }
-
+    
+    @Override    
+    public void updateBiography(String orcid, Biography biography) {
+        org.orcid.jaxb.model.message.Visibility visibility = OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility();        
+        if(biography.getVisibility() != null) {
+            visibility = org.orcid.jaxb.model.message.Visibility.fromValue(biography.getVisibility().value());
+        }                
+        profileDao.updateBiography(orcid, biography.getContent(), visibility);
+    }
+    
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {

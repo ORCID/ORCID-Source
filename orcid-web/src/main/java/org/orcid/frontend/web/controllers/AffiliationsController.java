@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -87,6 +90,12 @@ public class AffiliationsController extends BaseWorkspaceController {
 
     @Resource
     private OrgDisambiguatedDao orgDisambiguatedDao;
+    
+    @Resource
+    private AffiliationsManager affiliationsManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     /**
      * Removes a affiliation from a profile
@@ -198,8 +207,8 @@ public class AffiliationsController extends BaseWorkspaceController {
     AffiliationForm getAffiliation(HttpServletRequest request) {
         AffiliationForm affiliationForm = new AffiliationForm();
 
-        OrcidProfile profile = getEffectiveProfile();
-        Visibility v = Visibility.valueOf(profile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility() : profile.getActivitiesVisibilityDefault());
         affiliationForm.setVisibility(v);
 
         Text affiliationName = new Text();
@@ -327,24 +336,20 @@ public class AffiliationsController extends BaseWorkspaceController {
      * 
      */
     private List<String> createAffiliationsIdList(HttpServletRequest request) {
-        OrcidProfile currentProfile = getEffectiveProfile();
-        Affiliations affiliations = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getAffiliations();
-
+        List<AffiliationForm> affiliationsList = affiliationsManager.getAffiliations(getCurrentUserOrcid());
         HashMap<String, AffiliationForm> affiliationsMap = new HashMap<>();
         List<String> affiliationIds = new ArrayList<String>();
-        if (affiliations != null) {
-            for (Affiliation affiliation : affiliations.getAffiliation()) {
+        if (affiliationsList != null) {
+            for (AffiliationForm form : affiliationsList) {
                 try {
-                    AffiliationForm form = AffiliationForm.valueOf(affiliation);
-                    if (affiliation.getType() != null) {
-                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, affiliation.getType().value())));
+                    if (form.getAffiliationType() != null) {
+                        form.setAffiliationTypeForDisplay(getMessage(buildInternationalizationKey(AffiliationType.class, form.getAffiliationType().getValue())));
                     }
-                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, affiliation.getOrganization().getAddress().getCountry()
-                            .name())));
-                    affiliationsMap.put(affiliation.getPutCode(), form);
-                    affiliationIds.add(affiliation.getPutCode());
+                    form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, form.getCountry().getValue())));
+                    affiliationsMap.put(form.getPutCode().getValue(), form);
+                    affiliationIds.add(form.getPutCode().getValue());
                 } catch (Exception e) {
-                    LOGGER.error("Failed to parse as Affiliation. Put code" + affiliation.getPutCode(), e);
+                    LOGGER.error("Failed to parse as Affiliation. Put code" + form.getPutCode().getValue(), e);
                 }
             }
             request.getSession().setAttribute(AFFILIATIONS_MAP, affiliationsMap);

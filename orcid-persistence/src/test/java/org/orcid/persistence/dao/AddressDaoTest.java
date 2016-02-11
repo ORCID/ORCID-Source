@@ -69,7 +69,7 @@ public class AddressDaoTest extends DBUnitTest {
 
     @Test
     public void findTest() {
-        AddressEntity address = addressDao.find("4444-4444-4444-4442", 1L);
+        AddressEntity address = addressDao.getAddress("4444-4444-4444-4442", 1L);
         assertNotNull(address);
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
@@ -79,7 +79,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Iso3166Country.US, address.getIso2Country());
         assertTrue(address.getPrimary());
 
-        address = addressDao.find("4444-4444-4444-4447", 2L);
+        address = addressDao.getAddress("4444-4444-4444-4447", 2L);
         assertNotNull(address);
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
@@ -89,7 +89,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Iso3166Country.US, address.getIso2Country());
         assertTrue(address.getPrimary());
 
-        address = addressDao.find("4444-4444-4444-4447", 3L);
+        address = addressDao.getAddress("4444-4444-4444-4447", 3L);
         assertNotNull(address);
         assertNotNull(address.getLastModified());
         assertNotNull(address.getDateCreated());
@@ -112,12 +112,12 @@ public class AddressDaoTest extends DBUnitTest {
     public void pendingToMigrateTest() {
         List<Object[]> pendingToMigrate = addressDao.findAddressesToMigrate();
         assertNotNull(pendingToMigrate);
-        assertEquals(3, pendingToMigrate.size());
+        assertEquals(2, pendingToMigrate.size());
 
         for (Object[] item : pendingToMigrate) {
             String orcid = (String) item[0];
             String iso2Country = (String) item[1];
-            assertThat(orcid, anyOf(is("4444-4444-4444-4441"), is("4444-4444-4444-4443"), is("5555-5555-5555-5558")));
+            assertThat(orcid, anyOf(is("4444-4444-4444-4443"), is("5555-5555-5555-5558")));
             assertEquals("GB", iso2Country);
         }
     }

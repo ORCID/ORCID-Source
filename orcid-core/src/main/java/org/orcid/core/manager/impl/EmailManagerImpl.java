@@ -175,7 +175,47 @@ public class EmailManagerImpl implements EmailManager {
             LastModifiedDatesHelper.calculateLatest(emails);
             return emails;
         }
-        return null;
+        return new Emails();
+    }
+    
+    @Override
+    public boolean haveAnyEmailVerified(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid);
+        if(entities != null) {
+            for(EmailEntity email : entities) {
+                if(email.getVerified()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    @Override
+    public org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid) {
+        List<EmailEntity> entities = emailDao.findByOrcid(orcid);
+        org.orcid.pojo.ajaxForm.Emails form = new org.orcid.pojo.ajaxForm.Emails();
+        
+        if(entities != null) {
+            form.setEmails(new ArrayList<org.orcid.pojo.Email>());
+            for(EmailEntity entity : entities) {
+                org.orcid.pojo.Email email = new org.orcid.pojo.Email();
+                email.setCurrent(entity.getCurrent());
+                email.setPrimary(entity.getPrimary());
+                if(entity.getSource() != null) {
+                    if(entity.getSource().getSourceProfile() != null)
+                        email.setSource(entity.getSource().getSourceProfile().getId());
+                    if(entity.getSource().getSourceClient() != null)
+                        email.setSourceClientId(entity.getSource().getSourceClient().getClientId());
+                }
+                email.setValue(entity.getId());
+                email.setVerified(entity.getVerified());
+                email.setVisibility(entity.getVisibility());     
+                form.getEmails().add(email);
+            }
+        }
+                
+        return form;
     }
     
 }

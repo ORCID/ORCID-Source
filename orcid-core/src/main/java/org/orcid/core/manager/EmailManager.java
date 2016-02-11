@@ -57,4 +57,8 @@ public interface EmailManager {
     Emails getEmails(String orcid);
     
     Emails getPublicEmails(String orcid);
+    
+    boolean haveAnyEmailVerified(String orcid);
+    
+    org.orcid.pojo.ajaxForm.Emails getEmailsAsForm(String orcid);
 }

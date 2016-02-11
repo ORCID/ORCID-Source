@@ -566,6 +566,35 @@
 		</div>	
 	</div>
 	
+	<!-- Batch resend claim emails -->
+	<div ng-controller="ResendClaimCtrl" class="workspace-accordion-item" ng-cloak>
+        <p>
+			<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
+			<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
+		</p>			  	
+        
+	    <div class="collapsible bottom-margin-small admin-modal" id="batch_resend_section" style="display:none;">
+		    <div class="alert alert-success" ng-show="result.claimResendSuccessfulList.length || result.notFoundList.length || result.alreadyClaimedList.length" style="overflow-x:auto;">
+    			<div ng-show="result.claimResendSuccessfulList.length"><@spring.message "admin.resend_claim.sent_success"/>
+    				<br>{{result.claimResendSuccessfulList}}
+    			</div>
+    			<div ng-show="result.alreadyClaimedList.length"><br><@spring.message "admin.resend_claim.already_claimed"/>
+    				<br>{{result.alreadyClaimedList}}
+    			</div>
+    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.resend_claim.not_found"/>
+    				<br>{{result.notFoundList}}
+				</div>
+			</div>
+			<div class="control-group">
+    			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
+       			<div class="controls">                    	
+       				<input type="text" data-ng-model="emailIds" class="input-xlarge" />
+       				<span class="required">*</span>
+       			</div>
+       			<span class="btn btn-primary" data-ng-click="resendClaimEmails()"><@spring.message "resend_claim.resend_claim_button_text"/></span>
+			</div>
+		</div>
+    </div>
 </div>
 
 <script type="text/ng-template" id="confirm-modal">

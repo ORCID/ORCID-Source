@@ -69,7 +69,9 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
 
     @Override
     public Response viewWorkCitation(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode), orcid);
+        //DO not downgrade non-orcid schema responses (this is citeproc);
+        return publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode);
+        //return downgradeAndValidateResponse(publicV2ApiServiceDelegator.viewWorkCitation(orcid, putCode), orcid);
     }
 
     @Override

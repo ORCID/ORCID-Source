@@ -28,10 +28,10 @@
             last_indexed_date="2011-07-02 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"           
             claimed="true"
-            given_names="Spike"
-            family_name="Milligan"
+            given_names="One"
+            family_name="User"
             vocative_name="Spike Milligan"
-            credit_name="S. Milligan"
+            credit_name="Credit Name"
             names_visibility="PUBLIC"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
@@ -49,7 +49,7 @@
             send_orcid_news="false"
             activities_visibility_default='PUBLIC'
             credentials_expiry="2013-02-01"
-            biography="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor."
+            biography="This is my bio"
             indexing_status="DONE"
             iso2_country="GB"
             orcid_type="CLIENT"
@@ -278,9 +278,9 @@
             last_indexed_date="2011-07-02 15:31:00.00"
             last_modified="2011-07-02 15:31:00.00"
             claimed="true"
-            given_names="User"
-            family_name="Name"
-            vocative_name="User Name"
+            given_names="Given"
+            family_name="Familye"
+            vocative_name="Given Family"
             credit_name="U. Name"
             names_visibility="PUBLIC"
             external_identifiers_visibility="LIMITED"
@@ -315,9 +315,9 @@
             last_modified="2014-03-06 15:32:00.00"
             claimed="true"
             given_names="Admin"
-            family_name="User"
-            vocative_name="Admin User"
-            credit_name="Adm. User"
+            family_name="Admin Family"
+            vocative_name="Admin Admin"
+            credit_name="Adm. Credit"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -351,7 +351,7 @@
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
-            credit_name="Credit Name"
+            credit_name="Multi Cred Name"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -385,7 +385,7 @@
             given_names="Michael"
             family_name="Bentine"
             vocative_name="Michael Bentine"
-            credit_name="Credit Name"
+            credit_name="Multi Cred Name"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
             keywords_visibility="REGISTERED_ONLY"
@@ -522,6 +522,33 @@
             last_modified="2011-07-02 15:31:00.00"
             display_index="0"
             />
+
+    <external_identifier
+            id="7"
+            external_id_reference="A-0001"
+            external_id_type="A-0001"
+            orcid="4444-4444-4444-4441"
+            external_id_url="http://ext-id/A-0001"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="0"
+            />
+            
+    <external_identifier
+            id="8"
+            external_id_reference="A-0002"
+            external_id_type="A-0002"
+            orcid="4444-4444-4444-4441"
+            external_id_url="http://ext-id/A-0002"
+            client_source_id="APP-5555555555555555"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="0"
+            />
+    
 
     <researcher_url
             id="1"
@@ -690,7 +717,18 @@
 
     <other_name
             other_name_id="3"
-            display_name="Flobberdy Flip"
+            display_name="other-name-1"
+            orcid="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4441"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            display_index="0"
+            />
+            
+    <other_name
+            other_name_id="4"
+            display_name="other-name-2"
             orcid="4444-4444-4444-4441"
             visibility="PUBLIC"
             source_id="4444-4444-4444-4441"
@@ -700,7 +738,7 @@
             />
 	
 	<other_name
-            other_name_id="4"
+            other_name_id="5"
             display_name="Other Name # 1"
             orcid="4444-4444-4444-4446"
             visibility="PUBLIC"
@@ -711,7 +749,7 @@
             />
 
 	<other_name
-            other_name_id="5"
+            other_name_id="6"
             display_name="Other Name # 2"
             orcid="4444-4444-4444-4446"
             visibility="LIMITED"
@@ -722,7 +760,7 @@
             />
 
 	<other_name
-            other_name_id="6"
+            other_name_id="7"
             display_name="Other Name # 3"
             orcid="4444-4444-4444-4446"
             visibility="PRIVATE"
@@ -733,7 +771,7 @@
             />
 
 	<other_name
-            other_name_id="7"
+            other_name_id="8"
             display_name="Other Name # 4"
             orcid="4444-4444-4444-4446"
             visibility="PRIVATE"            
@@ -744,7 +782,7 @@
             />
 
 	<other_name
-            other_name_id="8"
+            other_name_id="9"
             display_name="Other Name # 1"
             orcid="4444-4444-4444-4447"
             visibility="PUBLIC"            
@@ -755,7 +793,7 @@
             />
 
 	<other_name
-            other_name_id="9"
+            other_name_id="10"
             display_name="Other Name # 1"
             orcid="4444-4444-4444-4442"
             visibility="PUBLIC"            
@@ -766,7 +804,7 @@
             />
 
 	<other_name
-            other_name_id="10"
+            other_name_id="11"
             display_name="Other Name # 2"
             orcid="4444-4444-4444-4442"
             visibility="PRIVATE"            
@@ -777,7 +815,7 @@
             />
 
 	<other_name
-            other_name_id="11"
+            other_name_id="12"
             display_name="Other Name # 3"
             orcid="4444-4444-4444-4442"
             visibility="PRIVATE"            
@@ -859,6 +897,18 @@
             display_index="0"
             />
     
+    <address
+            id="7"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4441"
+            visibility="PUBLIC"
+            is_primary="false"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="0"
+            />
+            
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"
@@ -879,8 +929,31 @@
         is_primary="true"
         is_current="true"
         is_verified="true"
-        visibility="PRIVATE"
+        visibility="LIMITED"
         source_id="4444-4444-4444-4441"
+        last_modified="2016-01-02 15:31:00.00"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4441"
+        email="public@email.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PUBLIC"
+        source_id="4444-4444-4444-4441"
+        last_modified="2016-01-02 15:31:00.00"
+    />
+    
+    <email
+        orcid="4444-4444-4444-4441"
+        email="limited@email.com"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="LIMITED"
+        source_id="4444-4444-4444-4441"
+        last_modified="2016-01-02 15:31:00.00"
     />
     
     <email
@@ -891,6 +964,7 @@
         is_verified="true"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+         last_modified="2016-01-01 12:22:00.00"
     />
     
     <email
@@ -901,6 +975,7 @@
         is_verified="false"
         visibility="PRIVATE"
         source_id="4444-4444-4444-4441"
+        last_modified="2016-01-02 15:31:00.00"
     />
     
     
@@ -1135,7 +1210,7 @@
     <profile_keyword
     	id="5" 
         profile_orcid="4444-4444-4444-4441"
-        keywords_name="key 1"
+        keywords_name="keyword-1"
         visibility="PUBLIC"            
         client_source_id="APP-5555555555555555"
         last_modified="2011-07-02 15:31:00.00"
@@ -1145,7 +1220,7 @@
     <profile_keyword 
     	id="6"
         profile_orcid="4444-4444-4444-4441"
-        keywords_name="key 2"
+        keywords_name="keyword-2"
         visibility="PUBLIC"            
         client_source_id="APP-5555555555555555"
         last_modified="2011-07-02 15:31:00.00"

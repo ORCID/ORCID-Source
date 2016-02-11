@@ -227,7 +227,7 @@ public class BlackBoxBase {
         unLockProfileOrcidId.sendKeys(orcidToUnlock);
         WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
         unLockButton.click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-unlock")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));
         WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
         confirmUnLockButton.click();
         webDriver.quit();
@@ -243,7 +243,7 @@ public class BlackBoxBase {
         lockProfileOrcidId.sendKeys(orcidToLock);
         WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
         lockButton.click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-lock")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
         WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
         confirmLockButton.click();
         webDriver.quit();

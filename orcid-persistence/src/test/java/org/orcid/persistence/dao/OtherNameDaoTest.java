@@ -88,10 +88,10 @@ public class OtherNameDaoTest extends DBUnitTest {
     @Test
     public void testAddOtherName() {
         Date profileLastModifiedOrig = profileDao.retrieveLastModifiedDate("4444-4444-4444-4441");
-        assertEquals(1, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
+        assertEquals(2, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
         boolean result = otherNameDao.addOtherName("4444-4444-4444-4441", "OtherName");
         assertEquals(true, result);
-        assertEquals(2, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
+        assertEquals(3, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
         assertFalse("Profile last modified date should have been updated", profileLastModifiedOrig.after(profileDao.retrieveLastModifiedDate("4444-4444-4444-4441")));
         
         
@@ -101,7 +101,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4441")));
         entity.setVisibility(Visibility.PUBLIC);
         otherNameDao.persist(entity);
-        assertEquals(3, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
+        assertEquals(4, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
     }
 
     @Test    

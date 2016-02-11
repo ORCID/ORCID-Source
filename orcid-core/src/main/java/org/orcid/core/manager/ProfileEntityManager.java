@@ -96,6 +96,8 @@ public interface ProfileEntityManager {
     
     String retrivePublicDisplayName(String orcid);
     
+    void updateBiography(String orcid, Biography biography);
+    
     Biography getBiography(String orcid); 
     
     Person getPersonDetails(String orcid);

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
@@ -27,6 +28,11 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
 import org.orcid.jaxb.model.message.Source;
+import org.orcid.persistence.jpa.entities.EndDateEntity;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OrgEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.StartDateEntity;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
 
@@ -187,16 +193,90 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
+    
+    public static AffiliationForm valueOf(OrgAffiliationRelationEntity entity) {
+        AffiliationForm form = new AffiliationForm();
+        form.setPutCode(Text.valueOf(entity.getId()));
+        form.setVisibility(Visibility.valueOf(entity.getVisibility()));
+        OrgEntity organization = entity.getOrg();
+        
+        StartDateEntity startDateEntity = entity.getStartDate();
+        EndDateEntity endDateEntity = entity.getEndDate();
+        FuzzyDate startDate = null;
+        FuzzyDate endDate = null;
+        
+        if (startDateEntity != null) {                        
+            startDate = FuzzyDate.valueOf(startDateEntity.getYear(), startDateEntity.getMonth(), startDateEntity.getDay());
+            form.setStartDate(Date.valueOf(startDate));
+        }
+                
+        if (endDateEntity != null) {                        
+            endDate = FuzzyDate.valueOf(endDateEntity.getYear(), endDateEntity.getMonth(), endDateEntity.getDay());
+            form.setEndDate(Date.valueOf(endDate));
+        }
+                
+        form.setDateSortString(PojoUtil.createDateSortString(startDate, endDate));        
+        form.setAffiliationName(Text.valueOf(organization.getName()));
+        form.setCity(Text.valueOf(organization.getCity()));
+        
+        if (organization.getRegion() != null) {
+            form.setRegion(Text.valueOf(organization.getRegion()));
+        } else {
+            form.setRegion(new Text());
+        }
+        
+        if(organization.getCountry() != null) {
+            form.setCountry(Text.valueOf(organization.getCountry().value()));
+        } else {
+            form.setCountry(new Text());
+        }        
+        
+        if (organization.getOrgDisambiguated() != null) {            
+            if (organization.getOrgDisambiguated().getSourceId() != null) {
+                form.setDisambiguatedAffiliationSourceId(Text.valueOf(organization.getOrgDisambiguated().getSourceId()));
+                form.setDisambiguationSource(Text.valueOf(organization.getOrgDisambiguated().getSourceType()));
+                form.setOrgDisambiguatedId(Text.valueOf(String.valueOf(organization.getOrgDisambiguated().getId())));
+            }
+        }
+        
+        if (entity.getDepartment() != null) {
+            form.setDepartmentName(Text.valueOf(entity.getDepartment()));
+        } else {
+            form.setDepartmentName(new Text());
+        }
+                
+        if (entity.getTitle() != null) {
+            form.setRoleTitle(Text.valueOf(entity.getTitle()));
+        } else {
+            form.setRoleTitle(new Text());
+        }
 
+        if (entity.getAffiliationType() != null) {
+            form.setAffiliationType(Text.valueOf(entity.getAffiliationType().value()));
+        } else {
+            form.setAffiliationType(new Text());
+        }        
+                        
+        SourceEntity source = entity.getSource();
+        if (source != null) {
+            form.setSource(source.getSourceId());
+            if(source.getSourceName() != null) {
+                form.setSourceName(source.getSourceName());
+            }                        
+        }
+        
+        form.setCreatedDate(Date.valueOf(entity.getDateCreated()));
+        form.setLastModified(Date.valueOf(entity.getLastModified())); 
+        return form;
+    }
+    
     public static AffiliationForm valueOf(Affiliation affiliation) {
         AffiliationForm form = new AffiliationForm();
-
         form.setPutCode(Text.valueOf(affiliation.getPutCode()));
         form.setVisibility(Visibility.valueOf(affiliation.getVisibility()));
         Organization organization = affiliation.getOrganization();
         
-        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));
-        
+        form.setDateSortString(PojoUtil.createDateSortString(affiliation.getStartDate(), affiliation.getEndDate()));        
         form.setAffiliationName(Text.valueOf(organization.getName()));
         OrganizationAddress address = organization.getAddress();
         form.setCity(Text.valueOf(address.getCity()));
@@ -224,8 +304,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         } else {
             form.setDepartmentName(new Text());
         }
-        
-        
+                
         if (affiliation.getRoleTitle() != null) {
             form.setRoleTitle(Text.valueOf(affiliation.getRoleTitle()));
         } else {
@@ -236,8 +315,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
             form.setAffiliationType(Text.valueOf(affiliation.getType().value()));
         } else {
             form.setAffiliationType(new Text());
-        }
-        
+        }        
         
         if (affiliation.getStartDate() != null) {
             form.setStartDate(Date.valueOf(affiliation.getStartDate()));
@@ -254,9 +332,7 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         }
         
         form.setCreatedDate(Date.valueOf(affiliation.getCreatedDate()));
-        form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));
-
-                
+        form.setLastModified(Date.valueOf(affiliation.getLastModifiedDate()));                
         return form;
     }
 

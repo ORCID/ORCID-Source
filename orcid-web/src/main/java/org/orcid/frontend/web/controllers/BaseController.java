@@ -753,10 +753,11 @@ public class BaseController {
 
     @ModelAttribute("locked")
     public boolean isLocked() {
-        OrcidProfile profile = getEffectiveProfile();
-        if (profile == null)
+        String orcid = getCurrentUserOrcid();
+        if (PojoUtil.isEmpty(orcid)) {
             return false;
-        return profile.isLocked();
+        }            
+        return profileEntityManager.isLocked(orcid);
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {

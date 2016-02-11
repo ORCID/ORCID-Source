@@ -265,7 +265,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     }   
     
     @Test
-    public void testValidateBiography() {
+    public void testValidateBiography() {        
         BiographyForm bf = new BiographyForm();
         //No NPE exception on empty bio
         controller.setBiographyFormJson(bf);
@@ -282,8 +282,8 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertTrue(bf.getErrors().isEmpty());
         BiographyForm updatedBf = controller.getBiographyForm();
         assertNotNull(updatedBf);
+        assertTrue(updatedBf.getErrors().isEmpty());
         assertNotNull(updatedBf.getBiography());
-        assertEquals(bio, updatedBf.getBiography().getValue());
     }
     
     public static TypeSafeMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {

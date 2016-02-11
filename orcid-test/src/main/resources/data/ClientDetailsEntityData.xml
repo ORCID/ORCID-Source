@@ -21,7 +21,7 @@
 
     <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4441" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="S. Milligan" client_description="Terence Alan Patrick Seán 'Spike' Milligan KBE (16 April 1918 – 27 February 2002) was a comedian, writer, musician, poet, playwright, soldier and actor." client_website="www.4444-4444-4444-4441.com" group_orcid="4444-4444-4444-4441" persistent_tokens_enabled="false"/>
     <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4442" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="T. Edison" client_description="" client_website="www.4444-4444-4444-4442.com" persistent_tokens_enabled="false"/>
-    <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="P. Sellers III" client_description="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer." client_website="www.4444-4444-4444-4443.com" group_orcid="4444-4444-4444-4446" persistent_tokens_enabled="false"/>
+    <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4443" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="P. Sellers III" client_description="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer." client_website="www.4444-4444-4444-4443.com" group_orcid="4444-4444-4444-4446" persistent_tokens_enabled="true"/>
     <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4444" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="H. Secombe" client_description="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice." client_website="www.4444-4444-4444-4444.com" group_orcid="4444-4444-4444-4446" persistent_tokens_enabled="false"/>
     <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4445" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2012-04-25" last_modified="2012-04-25" client_name="A. Timothy" client_description="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show." client_website="www.4444-4444-4444-4445.com" group_orcid="4444-4444-4444-4446" persistent_tokens_enabled="true"/>
     <client_details client_type="PREMIUM_CREATOR" client_details_id="4444-4444-4444-4498" client_secret="DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx" date_created="2014-07-14" last_modified="2014-07-14" client_name="U. Test" client_description="Client used to test the public OAuth process." client_website="www.4444-4444-4444-4498.com" persistent_tokens_enabled="false" group_orcid="4444-4444-4444-4446" />
@@ -64,10 +64,10 @@
     <client_redirect_uri client_details_id="4444-4444-4444-4441" redirect_uri="http://www.4444-4444-4444-4441.com/redirect/oauth" 
     predefined_client_redirect_scope ="/orcid-profile/create" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4442" redirect_uri="http://www.4444-4444-4444-4442.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="http://www.4444-4444-4444-4443.com/redirect/oauth" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4443" redirect_uri="https://localhost:8443/orcid-web/oauth/playground" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4444" redirect_uri="http://www.4444-4444-4444-4444.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http://www.4444-4444-4444-4445.com/redirect/oauth" redirect_uri_type="default"/>
-    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="http://localhost:8080/orcid-web/oauth/playground" redirect_uri_type="default"/>
+    <client_redirect_uri client_details_id="4444-4444-4444-4445" redirect_uri="https://localhost:8443/orcid-web/oauth/playground" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http://www.4444-4444-4444-4498.com/redirect/oauth" redirect_uri_type="default"/>
     <client_redirect_uri client_details_id="4444-4444-4444-4498" redirect_uri="http://www.4444-4444-4444-4498.com/redirect/oauth/grant_read_wizard" predefined_client_redirect_scope="/funding/read-limited" redirect_uri_type="grant-read-wizard"/>
 
@@ -76,11 +76,13 @@
     <client_resource_id client_details_id="4444-4444-4444-4442" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4443" resource_id="orcid"/>
     <client_resource_id client_details_id="4444-4444-4444-4444" resource_id="orcid"/>
-    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/>    
+    <client_resource_id client_details_id="4444-4444-4444-4445" resource_id="orcid"/> 
+    <client_resource_id client_details_id="4444-4444-4444-4498" resource_id="orcid"/>    
     
     <client_scope client_details_id="4444-4444-4444-4441" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4442" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4443" scope_type="/orcid-bio/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4443" scope_type="/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4444" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-bio/update"/>
@@ -93,12 +95,17 @@
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/funding/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/affiliations/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/premium-notification"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/webhook"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-profile/create"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/activities/update"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/activities/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/read-limited"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/person/read-limited"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/person/update"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/peer-review/create"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/group-id-record/read"/>
     <client_scope client_details_id="4444-4444-4444-4445" scope_type="/group-id-record/update"/>
+    <client_scope client_details_id="4444-4444-4444-4445" scope_type="/orcid-internal/person/last_modified"/>
     <client_scope client_details_id="4444-4444-4444-4498" scope_type="/authenticate"/>
     <client_scope client_details_id="APP-6666666666666666" scope_type="/orcid-bio/read-limited"/>
     <client_scope client_details_id="APP-6666666666666666" scope_type="/orcid-works/create"/>

@@ -16,7 +16,9 @@
  */
 package org.orcid.integration.blackbox.api.v2.rc2;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -233,6 +235,19 @@ public class ExternalIdentifiersTest extends BlackBoxBase {
         assertEquals("http://ext-id/A-0001", extId.getUrl().getValue());
         assertEquals(putCode, extId.getPutCode());
         
+    }
+    
+    @Test
+    public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        assertNotNull(accessToken);
+        
+        ExternalIdentifier extId = getExternalIdentifier();       
+        extId.setPutCode(1234567890L);
+        
+        ClientResponse response = memberV2ApiClient.updateExternalIdentifier(user1OrcidId, extId, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
     
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {

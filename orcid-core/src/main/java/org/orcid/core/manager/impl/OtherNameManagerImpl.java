@@ -26,7 +26,6 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.JpaJaxbOtherNameAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
-import org.orcid.core.exception.OtherNameNotFoundException;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -162,11 +161,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
        
-        OtherNameEntity updatedOtherNameEntity = otherNameDao.find(putCode);
-        if (updatedOtherNameEntity == null) {
-            throw new OtherNameNotFoundException();
-        }
-
+        OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());
         SourceEntity existingSource = updatedOtherNameEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
