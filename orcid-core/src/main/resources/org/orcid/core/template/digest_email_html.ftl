@@ -51,16 +51,44 @@
 					                <div><img src="${baseUri}/static/img/request.png">&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject}<#else><@emailMacros.msg "email.digest.requesttoadd" /></#if></div>
 					                <#assign itemsByType=notification.items.itemsByType>
 					                <#list itemsByType?keys?sort as itemType>
-					                	<div><@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})</div>
-					                	<ul>
-					                		<#list itemsByType[itemType] as item>                	
-					                    		<li>${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if></li>
-					                		</#list>
-					                	</ul>
-					                </#list>
-					                <div><a href="${baseUri}/inbox#${notification.putCode}" style="color: #338caf;">more info...</a> <a style="display: inline-block;margin-bottom: 0;font-weight: 400;text-align: center;vertical-align: middle;cursor: pointer;background-image: none;white-space: nowrap;padding: 6px 12px;font-size: 14px;line-height: 1.428571429;border-radius: 4px; color: #fff; background-color: #428bca;border-color: #357ebd;text-decoration: none;" href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action"><@emailMacros.msg "email.digest.addnow" /></a></div>
+						                <table width="100%" style="font-family: arial, helvetica, sans-serif;">
+											<thead>
+												<tr>
+													<td width="100%" style="padding: 10px 15px; color: #FFF;background: #939598; font-weight: bold;">					                
+					                					<@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})
+					                				</td>
+					                			</tr>
+					                		</thead>
+					                		<tbody>
+					                			<#list itemsByType[itemType] as item>
+					                			<tr>
+					                				<td width="100%" style="padding-top: 15px; padding-bottom: 10px; font-weight: bold; color: #494A4C">
+					                					${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if>			
+					                				</td>
+					                			</tr>
+						                		</#list>                	
+							                
+								                <tr>
+													<td width="100%">
+														<ul style="padding: 0; margin: 0; float: right;">
+															<li style="display: inline">						                
+									                			<a href="${baseUri}/inbox#${notification.putCode}" style="padding: 10px 15px; float: left; color: #494A4C; text-decoration: none;">more info...</a>
+									                		</li>
+									                		<li>
+									               				<a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action" style="padding: 10px 15px; background: #338caf; color: #FFF; text-decoration: none; float: right;"><@emailMacros.msg "email.digest.addnow" /></a> 
+								                			</li>
+								                		</ul>
+								                	</td>
+								                </tr>
+						                    </tbody>					                      
+							        	</table>
+						        	</#list> 
 					            </p>
+					            
 				            <#elseif notificationType == 'AMENDED'>
+					            
+					            
+					            
 					            <p>
 					                <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
 					                <div><img src="${baseUri}/static/img/update.png">&nbsp;<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" /></div>
@@ -72,20 +100,27 @@
 					                </ul>
 					                </#if>
 					            </p>
+					            
+					            
+					            
 				            <#else>
+				            	
+				            	
 				            	${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+				            	
 				            </#if>
+				            
+				            
+				            
 			            </#list>
 		            </#list>
 	            </#if>
             </#list>
-            <p>
-                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; text-align: center; color: #338caf;">
-                    <span style="padding-top: 10px; padding-bottom: 10px; padding-left: 15px; padding-right: 15px; background: #338caf; color: #FFF; display: block; width: 300px;">
-                        <#-- Use assign to prevent strange whitespace formatting in output -->
-                        <#assign viewyourinbox><@emailMacros.msg "email.digest.viewyourinbox" /></#assign>
-                        ${viewyourinbox}
-                    </span>
+            <p style="text-align: center;">
+                <a href="${baseUri}/inbox?lang=${locale}" style="text-decoration: none; color: #338caf;">                    
+                     <!-- Use assign to prevent strange whitespace formatting in output -->
+                     <#assign viewyourinbox><@emailMacros.msg "email.digest.viewyourinbox" /></#assign>
+                     ${viewyourinbox}                    
                 </a>
             </p>
             <p>
@@ -101,6 +136,7 @@
             <p>
                 <@emailMacros.msg "email.digest.youmayadjust_1" /><a href="${baseUri}/account?lang=${locale}" style="color: #338caf;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
             </p>
+            <hr />
             <p>
                <#include "email_footer_html.ftl"/>
             </p>
