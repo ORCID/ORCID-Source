@@ -9537,8 +9537,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                $scope.authorizationForm = data;
-                                
+                $scope.authorizationForm = data;                                
                 if($scope.requestInfoForm.userId) {
                 	$scope.authorizationForm.userName.value=$scope.requestInfoForm.userId;
                     $scope.isOrcidPresent = true;
@@ -9599,7 +9598,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                             //Fire GA authorize-deny
                             orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
                         }
-                        orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                        orcidGA.windowLocationHrefDelay(data.redirectUrl);
                     }
                 } else {
                     console.log("Error authenticating the user");
@@ -9614,7 +9613,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     //------------------------
     //-REGISTER AND AUTHORIZE-
     //------------------------
-    $scope.loadAndInitRegistrationForm = function(response_type) {
+    $scope.loadAndInitRegistrationForm = function() {
         $.ajax({
             url: getBaseUri() + '/oauth/custom/register/empty.json',
             type: 'GET',
@@ -9622,7 +9621,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             dataType: 'json',
             success: function(data) {
                 $scope.registrationForm = data;                            
-                $scope.registrationForm.responseType.value=response_type;                
                 if($scope.registrationForm.email.value && !$scope.isOrcidPresent)
                     $scope.showRegisterForm = true;
                 $scope.$apply();
