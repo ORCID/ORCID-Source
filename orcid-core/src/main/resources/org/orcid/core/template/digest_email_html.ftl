@@ -28,7 +28,7 @@
                 <@emailMacros.msg "email.common.hi" />${emailName}<@emailMacros.msg "email.common.dear.comma" />
             </span>
             <p>
-                <@emailMacros.msg "email.digest.youhave" />${totalMessageCount}<@emailMacros.msg "email.digest.new" /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.msg "email.digest.pleasevisit_1" /><a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.msg "email.digest.pleasevisit_4" />
+                <@emailMacros.msg "email.digest.youhave" />${totalMessageCount}<@emailMacros.msg "email.digest.new" /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.msg "email.digest.pleasevisit_1" /><a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.msg "email.digest.pleasevisit_4" />
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??> 
 	            <p>
@@ -51,11 +51,11 @@
 					                <div><img src="${baseUri}/static/img/request.png">&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject}<#else><@emailMacros.msg "email.digest.requesttoadd" /></#if></div>
 					                <#assign itemsByType=notification.items.itemsByType>
 					                <#list itemsByType?keys?sort as itemType>
-						                <table width="100%" style="font-family: arial, helvetica, sans-serif;">
+						                <table width="100%" style="font-family: arial, helvetica, sans-serif; padding-left: 20px; padding-top: 15px;">
 											<thead>
 												<tr>
-													<td width="100%" style="padding: 10px 15px; color: #FFF;background: #939598; font-weight: bold;">					                
-					                					<@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})
+													<td width="100%" style="padding: 5px 0 5px 10px; color: #FFF;background: #939598; font-weight: bold; font-size: 18px;">					                
+					                					<img src="${baseUri}/static/img/chevron-down.png">&nbsp;<@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})
 					                				</td>
 					                			</tr>
 					                		</thead>
@@ -63,7 +63,7 @@
 					                			<#list itemsByType[itemType] as item>
 					                			<tr>
 					                				<td width="100%" style="padding-top: 15px; padding-bottom: 10px; font-weight: bold; color: #494A4C">
-					                					${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf;">${item.externalIdentifier.externalIdentifierId}</a><#else>${item.externalIdentifier.externalIdentifierId}</#if>)</#if>			
+					                					${item.itemName?trim} <#if item.externalIdentifier??>(<span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.externalIdentifierType?lower_case}:</span> <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf; font-weight: normal; text-decoration: none;">${item.externalIdentifier.externalIdentifierId}</a><#else><span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.externalIdentifierId}</span></#if>)</#if>			
 					                				</td>
 					                			</tr>
 						                		</#list>                	
@@ -71,10 +71,10 @@
 								                <tr>
 													<td width="100%">
 														<ul style="padding: 0; margin: 0; float: right;">
-															<li style="display: inline">						                
+															<li style="display: inline;">						                
 									                			<a href="${baseUri}/inbox#${notification.putCode}" style="padding: 10px 15px; float: left; color: #494A4C; text-decoration: none;">more info...</a>
 									                		</li>
-									                		<li>
+									                		<li style="display: inline;">
 									               				<a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action" style="padding: 10px 15px; background: #338caf; color: #FFF; text-decoration: none; float: right;"><@emailMacros.msg "email.digest.addnow" /></a> 
 								                			</li>
 								                		</ul>
@@ -131,10 +131,10 @@
                      <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>
                 </#switch>
                 </#assign>
-                <@emailMacros.msg "email.digest.youhavereceived_1" />${frequency}<@emailMacros.msg "email.digest.youhavereceived_2" /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf;"><@emailMacros.msg "email.digest.learnmore" /></a>
+                <@emailMacros.msg "email.digest.youhavereceived_1" />${frequency}<@emailMacros.msg "email.digest.youhavereceived_2" /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
             </p>
             <p>
-                <@emailMacros.msg "email.digest.youmayadjust_1" /><a href="${baseUri}/account?lang=${locale}" style="color: #338caf;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
+                <@emailMacros.msg "email.digest.youmayadjust_1" /><a href="${baseUri}/account?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
             </p>
             <hr />
             <p>
