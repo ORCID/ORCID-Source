@@ -256,7 +256,7 @@ public class BlackBoxBase {
         lockProfileOrcidId.sendKeys(orcidToLock);
         WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
         lockButton.click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("btn-lock")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
         WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
         confirmLockButton.click();
         webDriver.quit();

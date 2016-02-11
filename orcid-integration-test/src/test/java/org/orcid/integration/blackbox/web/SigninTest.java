@@ -86,6 +86,10 @@ public class SigninTest {
 
 	// Make this available to other classes
     static public void signIn(WebDriver webDriver, String username, String password) {
+        System.out.println("signin: "+username+" "+password);
+        
+        System.out.println("should be: "+System.getProperty("org.orcid.web.testUser1.username")+" "+System.getProperty("org.orcid.web.testUser1.password"));
+        
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
         WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));

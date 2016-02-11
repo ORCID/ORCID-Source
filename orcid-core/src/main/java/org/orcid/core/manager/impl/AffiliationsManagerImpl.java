@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -43,6 +44,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
@@ -354,6 +356,20 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         item.setItemType(AffiliationType.EDUCATION.equals(orgAffiliationEntity.getAffiliationType()) ? ItemType.EDUCATION : ItemType.EMPLOYMENT);
         item.setPutCode(String.valueOf(orgAffiliationEntity.getId()));
         return item;
+    }
+    
+    @Override
+    public List<AffiliationForm> getAffiliations(String orcid) {
+        List<OrgAffiliationRelationEntity> affiliations = affiliationsDao.getByUser(orcid);        
+        List<AffiliationForm> result = new ArrayList<AffiliationForm>();
+        
+        if(affiliations != null) {
+            for (OrgAffiliationRelationEntity affiliation : affiliations) {
+                result.add(AffiliationForm.valueOf(affiliation));
+            }
+        }
+        
+        return result;
     }
 
 }

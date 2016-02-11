@@ -24,7 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-/** Represents a statistics sumamry
+/**
+ * Represents a statistics sumamry
  * 
  * 
  * 
@@ -34,11 +35,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @XmlRootElement(name = "statistics-summary")
 public class StatisticsSummary implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ'Z'",timezone="DEFAULT_TIMEZONE")
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ'Z'", timezone = "DEFAULT_TIMEZONE")
     protected Date date;
     protected Map<String, Long> statistics;
 

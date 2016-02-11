@@ -53,6 +53,15 @@ public class XPath {
         }
     }
 
+    public boolean isVisible(String xpath) {
+        try {
+            WebElement element = findElement(xpath);
+            return element != null && element.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
     List<WebElement> findElements(String xpath) {
         By by = By.xpath(xpath);
         return webDriver.findElements(by);

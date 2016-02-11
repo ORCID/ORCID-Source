@@ -251,7 +251,7 @@ public class BaseController {
     }
 
     @ModelAttribute("sendEmailFrequencies")
-    public Map<String, String> retrieveRolesAsMap() {
+    public Map<String, String> retrieveEmailFrequenciesAsMap() {
         Map<String, String> map = new LinkedHashMap<>();
         for (SendEmailFrequency freq : SendEmailFrequency.values()) {
             map.put(String.valueOf(freq.value()), getMessage(buildInternationalizationKey(SendEmailFrequency.class, freq.name())));
@@ -753,10 +753,11 @@ public class BaseController {
 
     @ModelAttribute("locked")
     public boolean isLocked() {
-        OrcidProfile profile = getEffectiveProfile();
-        if (profile == null)
+        String orcid = getCurrentUserOrcid();
+        if (PojoUtil.isEmpty(orcid)) {
             return false;
-        return profile.isLocked();
+        }            
+        return profileEntityManager.isLocked(orcid);
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {

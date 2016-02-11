@@ -22,7 +22,7 @@
 //
 
 
-package org.orcid.jaxb.model.error;
+package org.orcid.jaxb.model.error_rc2;
 
 import java.io.Serializable;
 
@@ -65,18 +65,22 @@ import javax.xml.bind.annotation.XmlType;
     "errorCode",
     "moreInfo"
 })
-@XmlRootElement(name = "error")
+@XmlRootElement(name = "error", namespace = "http://www.orcid.org/ns/error")
 public class OrcidError
     implements Serializable
 {
 
     private final static long serialVersionUID = 1L;
+    @XmlElement(name = "response-code", namespace = "http://www.orcid.org/ns/error")
     protected int responseCode;
-    @XmlElement(required = true)
+    @XmlElement(required = true, name = "developer-message", namespace = "http://www.orcid.org/ns/error")
     protected String developerMessage;
+    @XmlElement(name = "user-message", namespace = "http://www.orcid.org/ns/error")
     protected String userMessage;
+    @XmlElement(name = "error-code", namespace = "http://www.orcid.org/ns/error")
     protected Integer errorCode;
     @XmlSchemaType(name = "anyURI")
+    @XmlElement(name = "more-info", namespace = "http://www.orcid.org/ns/error")
     protected String moreInfo;
 
     /**

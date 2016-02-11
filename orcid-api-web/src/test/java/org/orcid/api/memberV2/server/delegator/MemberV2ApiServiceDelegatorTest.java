@@ -1592,12 +1592,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(otherNames.getOtherNames());
         assertEquals(3, otherNames.getOtherNames().size());
         for (OtherName otherName : otherNames.getOtherNames()) {
-            assertThat(otherName.getPutCode(), anyOf(is(4L), is(5L), is(7L)));
+            assertThat(otherName.getPutCode(), anyOf(is(5L), is(6L), is(8L)));
             assertThat(otherName.getContent(), anyOf(is("Other Name # 1"), is("Other Name # 2"), is("Other Name # 4")));
-            if (otherName.getPutCode() == 4L) {
+            if (otherName.getPutCode() == 5L) {
                 assertEquals(Visibility.PUBLIC, otherName.getVisibility());
                 assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
-            } else if (otherName.getPutCode() == 5L) {
+            } else if (otherName.getPutCode() == 6L) {
                 assertEquals(Visibility.LIMITED, otherName.getVisibility());
                 assertEquals("4444-4444-4444-4446", otherName.getSource().retrieveSourcePath());
             } else {
@@ -1610,7 +1610,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPublicOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 4L);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 5L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
@@ -1622,7 +1622,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewLimitedOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 5L);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 6L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
@@ -1634,7 +1634,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testViewPrivateOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 7L);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4446", 8L);
         assertNotNull(response);
         OtherName otherName = (OtherName) response.getEntity();
         assertNotNull(otherName);
@@ -1646,7 +1646,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test(expected = OrcidVisibilityException.class)
     public void testViewPrivateOtherNameWhereYouAreNotTheSource() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
-        serviceDelegator.viewOtherName("4444-4444-4444-4446", 6L);
+        serviceDelegator.viewOtherName("4444-4444-4444-4446", 7L);
         fail();
     }
 
@@ -1738,7 +1738,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
         assertEquals(1, otherNames.getOtherNames().size());
-        response = serviceDelegator.deleteOtherName("4444-4444-4444-4447", 8L);
+        response = serviceDelegator.deleteOtherName("4444-4444-4444-4447", 9L);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         response = serviceDelegator.viewOtherNames("4444-4444-4444-4447");
@@ -2130,7 +2130,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         Keyword keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
-        assertEquals("key 2", keyword.getContent());
+        assertEquals("keyword-2", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
 
         keyword.setContent("Updated keyword");
@@ -2489,11 +2489,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         boolean found9 = false, found10 = false;
 
         for (OtherName otherName : person.getOtherNames().getOtherNames()) {
-            assertThat(otherName.getPutCode(), anyOf(is(9L), is(10L)));
+            assertThat(otherName.getPutCode(), anyOf(is(10L), is(11L)));
             assertNotNull(otherName.getSource());
             assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
             assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", otherName.getSource().retriveSourceUri());
-            if (otherName.getPutCode() == 9L) {
+            if (otherName.getPutCode() == 10L) {
                 assertEquals("Other Name # 1", otherName.getContent());
                 assertEquals(Visibility.PUBLIC, otherName.getVisibility());
                 found9 = true;

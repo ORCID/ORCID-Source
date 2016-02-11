@@ -8,7 +8,7 @@
         <website>www.4444-4444-4444-4443.com</website>
         <short-description>Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer.</short-description>
         <redirect-uris>
-            <redirect-uri type="default">http://www.4444-4444-4444-4443.com/redirect/oauth</redirect-uri>
+            <redirect-uri type="default">https://localhost:8443/orcid-web/oauth/playground</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4443</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>
@@ -28,8 +28,8 @@
         <website>www.4444-4444-4444-4445.com</website>
         <short-description>Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show.</short-description>
         <redirect-uris>
-            <redirect-uri type="default">http://localhost:8080/orcid-web/oauth/playground</redirect-uri>
             <redirect-uri type="default">http://www.4444-4444-4444-4445.com/redirect/oauth</redirect-uri>
+            <redirect-uri type="default">https://localhost:8443/orcid-web/oauth/playground</redirect-uri>
         </redirect-uris>
         <client-id>4444-4444-4444-4445</client-id>
         <client-secret>DhkFj5EI0qp6GsUKi55Vja+h+bsaKpBx</client-secret>

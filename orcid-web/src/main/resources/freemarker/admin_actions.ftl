@@ -80,6 +80,21 @@
 	</div>
 </script>
 
+<script type="text/ng-template" id="lookup-email-ids-modal">
+	<div style="padding:20px">
+		<h1><@orcid.msg 'admin.lookup_id_email.results'/></h1>
+		<div ng-show="result">
+			<textarea style="height:100px; width: 500px; resize: none;" readonly="readonly">{{result}}</textarea>
+			<div class="controls save-btns pull-right bottom-margin-small">
+				<a href="" class="cancel-action" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+			</div>
+		</div>
+		<div ng-show="!result.length">
+			<span><@orcid.msg 'admin.lookup_id_email.no_results'/></span>
+		</div>
+	</div>
+</script>
+
 <script type="text/ng-template" id="confirm-deprecation-modal">
   <div style="padding:20px">
     <a id="cboxClose" class="btn pull-right close-button" ng-click="closeModal()">X</a>
@@ -531,8 +546,55 @@
 				<span id="bottom-confirm-unreview-profile" ng-click="checkProfileToUnreview()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
 			</div>
 		</div>
-	</div>	
-			
+	</div>
+	
+	<!-- Lookup id or email -->
+	<a name="lookup-id-email"></a>
+	<div ng-controller="lookupIdOrEmailCtrl" class="workspace-accordion-item" ng-cloak>
+		<p>
+			<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
+			<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
+		</p>			  	
+		<div class="collapsible bottom-margin-small admin-modal" id="lookup_ids_section" style="display:none;">
+			<div class="form-group">
+				<label for="idOrEmails"><@orcid.msg 'admin.lookup_id_email' /></label>
+				<input type="text" id="idOrEmails" ng-enter="lookupIdOrEmails()" ng-model="idOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+			</div>
+			<div class="controls save-btns pull-left">
+				<span id="lookup-ids" ng-click="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>						
+			</div>
+		</div>	
+	</div>
+	
+	<!-- Batch resend claim emails -->
+	<div ng-controller="ResendClaimCtrl" class="workspace-accordion-item" ng-cloak>
+        <p>
+			<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
+			<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
+		</p>			  	
+        
+	    <div class="collapsible bottom-margin-small admin-modal" id="batch_resend_section" style="display:none;">
+		    <div class="alert alert-success" ng-show="result.claimResendSuccessfulList.length || result.notFoundList.length || result.alreadyClaimedList.length" style="overflow-x:auto;">
+    			<div ng-show="result.claimResendSuccessfulList.length"><@spring.message "admin.resend_claim.sent_success"/>
+    				<br>{{result.claimResendSuccessfulList}}
+    			</div>
+    			<div ng-show="result.alreadyClaimedList.length"><br><@spring.message "admin.resend_claim.already_claimed"/>
+    				<br>{{result.alreadyClaimedList}}
+    			</div>
+    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.resend_claim.not_found"/>
+    				<br>{{result.notFoundList}}
+				</div>
+			</div>
+			<div class="control-group">
+    			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
+       			<div class="controls">                    	
+       				<input type="text" data-ng-model="emailIds" class="input-xlarge" />
+       				<span class="required">*</span>
+       			</div>
+       			<span class="btn btn-primary" data-ng-click="resendClaimEmails()"><@spring.message "resend_claim.resend_claim_button_text"/></span>
+			</div>
+		</div>
+    </div>
 </div>
 
 <script type="text/ng-template" id="confirm-modal">

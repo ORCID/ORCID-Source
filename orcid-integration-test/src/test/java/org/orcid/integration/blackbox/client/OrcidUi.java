@@ -19,8 +19,10 @@ package org.orcid.integration.blackbox.client;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 /**
  * 
@@ -32,11 +34,13 @@ public class OrcidUi {
     private String baseUri;
     private WebDriver webDriver;
     private XPath xpath;
+    private Utils utils;
 
     public OrcidUi(String baseUri, WebDriver webDriver) {
         this.baseUri = baseUri;
         this.webDriver = webDriver;
         this.xpath = new XPath(webDriver);
+        this.utils = new Utils(webDriver);
     }
 
     public SigninPage getSigninPage() {
@@ -77,11 +81,12 @@ public class OrcidUi {
 
         public void switchTo() {
             localXPath.click("a");
+            utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='delegation-mode-warning']")));
         }
 
         public String getAccountId() {
             return localXPath.findElement("a/ul/li[2]").getText().replaceFirst(".*/", "");
         }
     }
-    
+
 }

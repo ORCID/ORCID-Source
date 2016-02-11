@@ -28,8 +28,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -70,7 +70,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
-import org.orcid.jaxb.model.error.OrcidError;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.DeprecatedDate;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.Orcid;
@@ -119,6 +119,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     
     @Resource
     private OrcidSecurityManager securityManager;
+    
+    private static final String V2_RC1 = "2.0_rc1";
+    private static final String V2_RC2 = "2.0_rc2";
 
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
@@ -182,23 +185,31 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         		LOGGER.error("An exception has occured processing request from client " + clientId, t);
         	}
         }
-        
-        switch (getApiSection()) {
-        case NOTIFICATIONS:
-            return newStyleErrorResponse(t);
-        case V2:
-            return newStyleErrorResponse(t);
-        default:
-            return legacyErrorResponse(t);
-        }
+
+		switch (getApiVersion()) {
+		case V2_RC1:
+			return newStyleErrorResponse(t, V2_RC1);
+		case V2_RC2:
+			return newStyleErrorResponse(t, V2_RC2);
+		default:
+			switch (getApiSection()) {
+			case NOTIFICATIONS:
+				return newStyleErrorResponse(t, V2_RC1);
+			default:
+				return legacyErrorResponse(t);
+			}
+		}
     }
 
-    private Response legacyErrorResponse(Throwable t) {
+	private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return ((OrcidApiException) t).getResponse();
         } else if (OrcidValidationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Bad Request: ", t);
             return Response.status(Response.Status.BAD_REQUEST).entity(entity).build();
+        } else if (NotFoundException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("Please specify a version number (1.2 or higher) : ", t);
+            return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
         } else if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             WebApplicationException webException = (WebApplicationException) t;
@@ -259,7 +270,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();
-        }
+        } 
     }
 
     private OrcidMessage getLegacy500OrcidEntity(Throwable e) {
@@ -280,89 +291,130 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return entity;
     }
 
-    private Response newStyleErrorResponse(Throwable t) {
+    private Response newStyleErrorResponse(Throwable t, String version) {
         if (WebApplicationException.class.isAssignableFrom(t.getClass())) {
-            return getOrcidErrorResponse((WebApplicationException) t);
+            return getOrcidErrorResponse((WebApplicationException) t, version);
         } else {
-            return getOrcidErrorResponse(t);
+            return getOrcidErrorResponse(t, version);
         }
     }
 
-    private Response getOrcidErrorResponse(Throwable t) {
+    private Response getOrcidErrorResponse(Throwable t, String version) {
         Pair<Response.Status, Integer> pair = getHttpStatusAndErrorCode(t);
-        return getOrcidErrorResponse(pair.getRight(), pair.getLeft(), t);
+        return getOrcidErrorResponse(pair.getRight(), pair.getLeft().getStatusCode(), t, version);
     }
 
-    private Response getOrcidErrorResponse(WebApplicationException e) {
+    private Response getOrcidErrorResponse(WebApplicationException e, String version) {
         int status = e.getResponse().getStatus();
-        return getOrcidErrorResponse(9001, status, e);
+        return getOrcidErrorResponse(9001, status, e, version);
     }
 
-    private Response getOrcidErrorResponse(int errorCode, Response.Status status, Throwable t) {
-        return getOrcidErrorResponse(errorCode, status.getStatusCode(), t);
-    }
+	private Response getOrcidErrorResponse(int errorCode, int status,
+			Throwable t, String version) {
+		Object orcidError;
+		if (V2_RC2.equals(version)) {
+			orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(
+					errorCode, status, t);
+		} else {
+			orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
+		}
 
-    private Response getOrcidErrorResponse(int errorCode, int status, Throwable t) {
-        OrcidError orcidError = getOrcidError(errorCode, status, t);        
-        if(OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
-            OrcidDeprecatedException exception = (OrcidDeprecatedException) t;
-            Map<String, String> params = exception.getParams();
-            String location = null;
-            if(params != null) {
-                if(params.containsKey(OrcidDeprecatedException.ORCID)) {
-                    String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(uriInfo.getAbsolutePath().toString());
-                    String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
-                    location = uriInfo.getAbsolutePath().toString().replace(deprecatedOrcid, primaryOrcid);
-                }
-            }                                    
-            
-            Response response = null;
-            if(location != null) {
-                response = Response.status(status).header(LOCATION_HEADER, location).entity(orcidError).build();
-            } else {
-                response = Response.status(status).entity(orcidError).build();
-            }
-            return response;
-        }                
-        return Response.status(status).entity(orcidError).build();
-    }
+		if (OrcidDeprecatedException.class.isAssignableFrom(t.getClass())) {
+			OrcidDeprecatedException exception = (OrcidDeprecatedException) t;
+			Map<String, String> params = exception.getParams();
+			String location = null;
+			if (params != null) {
+				if (params.containsKey(OrcidDeprecatedException.ORCID)) {
+					String deprecatedOrcid = OrcidStringUtils
+							.getOrcidNumber(uriInfo.getAbsolutePath()
+									.toString());
+					String primaryOrcid = OrcidStringUtils
+							.getOrcidNumber(params
+									.get(OrcidDeprecatedException.ORCID));
+					location = uriInfo.getAbsolutePath().toString()
+							.replace(deprecatedOrcid, primaryOrcid);
+				}
+			}
 
-    private OrcidError getOrcidError(int errorCode, int status, Throwable t) {
-        Locale locale = localeManager.getLocale();
-        OrcidError orcidError = new OrcidError();
-        orcidError.setResponseCode(status);
-        orcidError.setErrorCode(errorCode);
-        orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
-        Map<String, String> params = null;
-        if (t instanceof ApplicationException) {
-            params = ((ApplicationException) t).getParams();
-        }
-        // Returns an empty message if the key is not found
-        String devMessage = messageSource.getMessage("apiError." + errorCode + ".developerMessage", null, "", locale);
+			Response response = null;
+			if (location != null) {
+				response = Response.status(status)
+						.header(LOCATION_HEADER, location).entity(orcidError)
+						.build();
+			} else {
+				response = Response.status(status).entity(orcidError).build();
+			}
+			return response;
+		}
+		return Response.status(status).entity(orcidError).build();
+	}
 
-        // Assign message from the exception
-        if ("".equals(devMessage)) {
-            devMessage = t.getClass().getCanonicalName();
-            Throwable cause = t.getCause();
-            String exceptionMessage = t.getLocalizedMessage();
-            if (exceptionMessage != null) {
-                devMessage += ": " + exceptionMessage;
-            }
+	private OrcidError getOrcidErrorV2Rc1(int errorCode, int status, Throwable t) {
+		Locale locale = localeManager.getLocale();
+		OrcidError orcidError = new OrcidError();
+		orcidError.setResponseCode(status);
+		orcidError.setErrorCode(errorCode);
+		orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode
+				+ ".moreInfo", null, locale));
+		Map<String, String> params = null;
+		if (t instanceof ApplicationException) {
+			params = ((ApplicationException) t).getParams();
+		}
+		orcidError
+				.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
+		orcidError.setUserMessage(resolveMessage(
+				messageSource.getMessage("apiError." + errorCode
+						+ ".userMessage", null, locale), params));
+		return orcidError;
+	}
 
-            if (cause != null) {
-                String causeMessage = cause.getLocalizedMessage();
-                if (causeMessage != null) {
-                    devMessage += " (" + causeMessage + ")";
-                }
-            }
-            orcidError.setDeveloperMessage(devMessage);
-        } else {
-            orcidError.setDeveloperMessage(resolveMessage(devMessage, params));
-        }
+	private org.orcid.jaxb.model.error_rc2.OrcidError getOrcidErrorV2Rc2(
+			int errorCode, int status, Throwable t) {
+		Locale locale = localeManager.getLocale();
+		org.orcid.jaxb.model.error_rc2.OrcidError orcidError = new org.orcid.jaxb.model.error_rc2.OrcidError();
+		orcidError.setResponseCode(status);
+		orcidError.setErrorCode(errorCode);
+		orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode
+				+ ".moreInfo", null, locale));
+		Map<String, String> params = null;
+		if (t instanceof ApplicationException) {
+			params = ((ApplicationException) t).getParams();
+		}
+		orcidError
+				.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
+		orcidError.setUserMessage(resolveMessage(
+				messageSource.getMessage("apiError." + errorCode
+						+ ".userMessage", null, locale), params));
+		return orcidError;
+	}
 
-        orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
-        return orcidError;
-    }
+	private String getDeveloperMessage(int errorCode, Throwable t,
+			Map<String, String> params) {
+		Locale locale = localeManager.getLocale();
+
+		// Returns an empty message if the key is not found
+		String devMessage = messageSource.getMessage("apiError." + errorCode
+				+ ".developerMessage", null, "", locale);
+
+		// Assign message from the exception
+		if ("".equals(devMessage)) {
+			devMessage = t.getClass().getCanonicalName();
+			Throwable cause = t.getCause();
+			String exceptionMessage = t.getLocalizedMessage();
+			if (exceptionMessage != null) {
+				devMessage += ": " + exceptionMessage;
+			}
+
+			if (cause != null) {
+				String causeMessage = cause.getLocalizedMessage();
+				if (causeMessage != null) {
+					devMessage += " (" + causeMessage + ")";
+				}
+			}
+			return devMessage;
+		}
+		return resolveMessage(devMessage, params);
+	}
 
     private String resolveMessage(String errorMessg, Map<String, String> params) {
         if (params == null) {
@@ -372,11 +424,23 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return sub.replace(errorMessg);
     }
 
-    private ApiSection getApiSection() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME, RequestAttributes.SCOPE_REQUEST);
-        return apiSection != null ? apiSection : ApiSection.V1;
-    }
+	private ApiSection getApiSection() {
+		RequestAttributes requestAttributes = RequestContextHolder
+				.getRequestAttributes();
+		ApiSection apiSection = (ApiSection) requestAttributes.getAttribute(
+				ApiVersionFilter.API_SECTION_REQUEST_ATTRIBUTE_NAME,
+				RequestAttributes.SCOPE_REQUEST);
+		return apiSection != null ? apiSection : ApiSection.V1;
+	}
+
+	private String getApiVersion() {
+		RequestAttributes requestAttributes = RequestContextHolder
+				.getRequestAttributes();
+		String apiVersion = (String) requestAttributes.getAttribute(
+				ApiVersionFilter.API_VERSION_REQUEST_ATTRIBUTE_NAME,
+				RequestAttributes.SCOPE_REQUEST);
+		return apiVersion;
+	}
 
     private Pair<Status, Integer> getHttpStatusAndErrorCode(Throwable t) {
         Pair<Response.Status, Integer> pair = HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.get(t.getClass());
@@ -387,5 +451,4 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         pair = HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.get(t.getClass().getSuperclass());
         return pair != null ? pair : new ImmutablePair<>(Response.Status.INTERNAL_SERVER_ERROR, 9008);
     }
-
 }

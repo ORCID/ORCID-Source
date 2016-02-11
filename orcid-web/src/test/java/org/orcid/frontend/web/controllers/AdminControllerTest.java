@@ -156,18 +156,18 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNull(toDeprecate.getOrcidDeprecated());
         assertNotNull(toDeprecate.getOrcidBio());
         assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails());
-        assertEquals("Spike", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        assertEquals("Milligan", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        assertEquals("S. Milligan", toDeprecate.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertEquals("One", toDeprecate.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("User", toDeprecate.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        assertEquals("Credit Name", toDeprecate.getOrcidBio().getPersonalDetails().getCreditName().getContent());
         assertNotNull(toDeprecate.getOrcidBio().getKeywords());
         assertNotNull(toDeprecate.getOrcidBio().getKeywords().getKeyword());
         assertEquals(2, toDeprecate.getOrcidBio().getKeywords().getKeyword().size());
         assertNotNull(toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName());
-        assertEquals(1, toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals(2, toDeprecate.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
         
         List<Email> emails1 = toDeprecate.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails1);
-        assertEquals(3, emails1.size());
+        assertEquals(5, emails1.size());
 
         for (Email email : emails1) {
             if (email.getValue().equals("1@deprecate.com")) {

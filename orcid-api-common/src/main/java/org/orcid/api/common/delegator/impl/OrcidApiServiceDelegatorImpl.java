@@ -30,8 +30,10 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotFoundException;
 import org.orcid.core.exception.OrcidSearchException;
@@ -75,10 +77,13 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
-    
-    @Resource LocaleManager localeManager;
+
+    @Resource
+    LocaleManager localeManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
+
+    private static final int MAX_SEARCH_ROWS = 1000;
 
     @Required
     public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
@@ -193,7 +198,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
         try {
-            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);            
+            OrcidMessage orcidMessage = orcidSearchManager.findPublicProfileById(orcid);
             return getOrcidMessageResponse(orcidMessage, orcid);
         } catch (OrcidSearchException e) {
             LOGGER.warn("Error searching, so falling back to DB", e);
@@ -332,7 +337,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     /**
      * See {@link OrcidApiServiceDelegator}{@link #publicSearchByQuery(Map)}
-     * */
+     */
     @Override
     @VisibilityControl
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
@@ -346,6 +351,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @Override
     @VisibilityControl
     public Response searchByQuery(Map<String, List<String>> queryMap) {
+        validateSearchParams(queryMap);
         OrcidMessage orcidMessage = orcidSearchManager.findOrcidsByQuery(queryMap);
         List<OrcidSearchResult> searchResults = orcidMessage.getOrcidSearchResults() != null ? orcidMessage.getOrcidSearchResults().getOrcidSearchResult() : null;
         List<OrcidSearchResult> filteredResults = new ArrayList<OrcidSearchResult>();
@@ -370,6 +376,21 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         return getOrcidSearchResultsResponse(orcidSearchResults, queryMap.toString());
     }
 
+    private void validateSearchParams(Map<String, List<String>> queryMap) {
+        List<String> rowsList = queryMap.get("rows");
+        if (rowsList != null && !rowsList.isEmpty()) {
+            try {
+                String rowsString = rowsList.get(0);
+                int rows = Integer.valueOf(rowsString);
+                if (rows < 0 || rows > MAX_SEARCH_ROWS) {
+                    throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+                }
+            } catch (NumberFormatException e) {
+                throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_invalid_search_rows.exception"));
+            }
+        }
+    }
+
     /**
      * Method to perform the mundane task of checking for null and returning the
      * response with an OrcidMessage entity
@@ -380,8 +401,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
      */
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
         if (profile == null) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", requestedOrcid);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", requestedOrcid);
             throw new OrcidNotFoundException(params);
         }
 
@@ -394,8 +415,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     private Response getOrcidMessageResponse(OrcidMessage orcidMessage, String requestedOrcid) {
         boolean isProfileDeprecated = false;
         if (orcidMessage == null) {
-        	Map<String, String> params = new HashMap<String, String>();
-        	params.put("orcid", requestedOrcid);
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("orcid", requestedOrcid);
             throw new OrcidNotFoundException(params);
         }
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
@@ -411,15 +432,15 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
         if (isProfileDeprecated) {
             Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri()); 
-            if(orcidProfile.getOrcidDeprecated().getDate() != null) {
+            params.put(OrcidDeprecatedException.ORCID, orcidProfile.getOrcidDeprecated().getPrimaryRecord().getOrcidIdentifier().getUri());
+            if (orcidProfile.getOrcidDeprecated().getDate() != null) {
                 XMLGregorianCalendar deprecatedDate = orcidProfile.getOrcidDeprecated().getDate().getValue();
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, deprecatedDate.toString());
-            }        	
+            }
             throw new OrcidDeprecatedException(params);
         } else {
             response = Response.ok(orcidMessage).build();
-        }        
+        }
         return response;
     }
 
@@ -431,7 +452,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
             return Response.ok(orcidMessage).build();
         } else {
-        	Object params[] = {query};
+            Object params[] = { query };
             throw new NoResultException(localeManager.resolveMessage("apiError.no_search_result.exception", params));
         }
     }

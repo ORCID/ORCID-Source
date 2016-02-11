@@ -78,7 +78,8 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         for (ClientDetailsEntity clientDetailsEntity : all) {
             ClientDetails clientDetails = clientDetailsManager.loadClientByClientId(clientDetailsEntity.getId());
             assertNotNull(clientDetails);
-            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) && !"APP-5555555555555556".equals(clientDetailsEntity.getId()) && !"APP-6666666666666666".equals(clientDetailsEntity.getId()) ) {
+            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) && !"APP-5555555555555556".equals(clientDetailsEntity.getId())
+                    && !"APP-6666666666666666".equals(clientDetailsEntity.getId())) {
                 checkClientDetails(clientDetails);
             }
         }
@@ -201,7 +202,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
             assertEquals(1, resourceIds.size());
         Set<String> scope = clientDetails.getScope();
         assertNotNull(scope);
-        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 17 : 1;
+        int expectedNumberOfScopes = "4444-4444-4444-4445".equals(clientDetails.getClientId()) ? 22 : "4444-4444-4444-4443".equals(clientDetails.getClientId()) ? 2 : 1;
         assertEquals(expectedNumberOfScopes, scope.size());
     }
 }

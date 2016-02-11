@@ -23,7 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.StatisticsDao;
@@ -31,6 +30,7 @@ import org.orcid.persistence.jpa.entities.StatisticKeyEntity;
 import org.orcid.persistence.jpa.entities.StatisticValuesEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 @PersistenceUnit(name = "statisticManagerFactory")
@@ -74,6 +74,24 @@ public class StatisticsDaoImpl implements StatisticsDao {
         return null;
     }
 
+    /**
+     * Get an statistics key
+     * 
+     * @return the statistics key associated with the given id
+     * */
+    @Cacheable(value = "statistics-key", key = "#id")
+    public StatisticKeyEntity getKey(Long id) {
+        try {
+            return (StatisticKeyEntity) entityManager
+                    .createNativeQuery("SELECT * FROM statistic_key WHERE id=:id",
+                            StatisticKeyEntity.class).setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
+            LOG.warn("Couldnt find any statistics key, the cron job needs to run for the first time.");
+        }
+        return null;
+    }
+    
     /**
      * Save an statistics record on database
      * 

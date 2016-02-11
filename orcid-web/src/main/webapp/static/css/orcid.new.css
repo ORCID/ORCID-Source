@@ -931,6 +931,7 @@ select {
 	background: #a6ce39;
 }
 
+
 .header .navigation>.menu>li.active-trail>a:hover {
 	color: #fff !important;
 }
@@ -6259,10 +6260,17 @@ a:hover .mozilla-badge{
 	padding: 15px 0 15px 15px;
 }
 
+.edit-record-emails{	
+	width: 600px;
+	padding: 15px 0 15px 15px;
+	min-height: 678px; 
+}
+
 .fixed-area .scroll-area input[type="textbox"],
 .fixed-area .scroll-area input[type="text"],
 .fixed-area .scroll-area select{
 	width: 100%;
+	margin-bottom: 0;
 }
 
 .fixed-area .col-md-12{
@@ -6271,6 +6279,8 @@ a:hover .mozilla-badge{
 
 .aka-row{
 	margin-bottom: 25px;
+	min-height:55px;
+	height: auto;
 }
 
 .fixed-area .aka{
@@ -6279,7 +6289,7 @@ a:hover .mozilla-badge{
 }
 
 .fixed-area .created-date{
-	margin-right: 15px;
+	margin-right: 15px;	
 	font-size: 12px;
 }
 
@@ -6287,7 +6297,6 @@ a:hover .mozilla-badge{
 	margin-right: 15px;
 	padding-left: 0;
 }
-
 
 .fixed-area ul.record-settings .privacyToggle{
 	height: 29px;
@@ -6352,8 +6361,62 @@ a:hover .mozilla-badge{
 .not-allowed{
 	cursor:not-allowed;
 }
-	
 
+/* New Public menu */
+.container .header .navigation.public,
+.header .navigation > .menu.public,
+.header .navigation >.menu.public >li{
+	height: 30px;
+	background: #FFF;	
+}
+
+.header .navigation>.menu.public>li>a{
+	height: 30px;
+	padding: 5px 17px 5px;
+	font-weight: normal;
+	background: #FFF;
+	color: #338caf;	
+}
+
+.header .navigation >.menu.public >li{
+	border-left: 1px solid #C9CACB;	
+}
+
+.header .navigation >.menu.public >li.active-trail,
+.header .navigation>.menu.public>li.active-trail>a{
+	background: #338caf;
+	color: #FFF;	
+}
+
+.header .navigation>.menu.public>li>a:hover{
+	background: #338caf;
+	color: #FFF;	
+}
+
+.delete-email-box{
+	height: 100px;
+}
+
+.confirm-password-box{
+	height: 140px;
+}
+
+.delete-email-box li,
+.confirm-password-box li{
+	margin-left: 10px;	
+}
+
+.verify-email-box{
+	height: 80px;
+}
+
+.revoke-social .form-social-sign-in #ajax-loader{
+	margin-left: 5px;
+}
+
+.revoke-social{
+	min-height: 195px; 
+}
 
 
 /* Media Queries */
@@ -7566,7 +7629,36 @@ a:hover .mozilla-badge{
 	#old-login #loginForm #ajax-loader{
 		width:  auto;
 		margin-top: 22px;
-	} 
+	}
+
+	.container .header .navigation.public,
+	.header .navigation > .menu.public{	
+		height: 50px;
+		background: #338caf;	
+	}
+	
+	.header .navigation >.menu.public >li{
+		height: 60px;
+	}
+	
+	.header .navigation>.menu.public>li>a{
+		height: 58px;
+		padding: 20px 17px 30px;
+		font-weight: normal;
+		background: #FFF;
+	}
+	
+	.header .navigation >.menu.public >li{
+		border-bottom: 1px solid #C9CACB;
+		border-right: 1px solid #C9CACB;
+	}
+	
+
+	.edit-record,
+	.edit-record-emails{
+		width: 100%;
+	}	
+
 }
 
 @media (min-width : 768px) and (max-width : 991px) { /* Tablet */

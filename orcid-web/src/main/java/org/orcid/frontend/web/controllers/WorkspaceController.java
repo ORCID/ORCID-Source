@@ -53,20 +53,18 @@ import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
-import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -351,7 +349,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         if(!StringUtil.isBlank(countryName))
             mav.addObject("countryName", countryName);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
-        //mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
+        mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));
         return mav;
     }
@@ -550,12 +548,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
-
-        OrcidProfile currentProfile = getEffectiveProfile();
-        if (currentProfile.getOrcidHistory().getSource() == null)
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());        
+        if(profile.getSource() == null || profile.getSource().getSourceId() == null) {
             return tpr;
-        Source source = currentProfile.getOrcidHistory().getSource();
-        String sourcStr = source.retrieveSourcePath();        
+        }        
+        String sourcStr = profile.getSource().getSourceId();     
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

@@ -87,10 +87,13 @@ public class MemberV2Test extends BlackBoxBase {
     
     static List<GroupIdRecord> groupRecords = null;
         
+    
     @BeforeClass
-    public static void beforeClass() {
+    public void beforeClass() {
+        
         String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
         String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        
         if(PojoUtil.isEmpty(clientId2)) {
             revokeApplicationsAccess(clientId1);
         } else {
@@ -99,9 +102,10 @@ public class MemberV2Test extends BlackBoxBase {
     }
     
     @AfterClass
-    public static void afterClass() {
+    public void afterClass() {
         String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
         String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        
         if(PojoUtil.isEmpty(clientId2)) {
             revokeApplicationsAccess(clientId1);
         } else {

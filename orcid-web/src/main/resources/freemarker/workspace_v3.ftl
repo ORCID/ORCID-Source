@@ -38,6 +38,10 @@
     </div>
 </#if>
 
+<script type="text/javascript">
+	orcidVar.notificationsEnabled = ${profile.orcidInternal.preferences.notificationsEnabled?string};
+</script>
+
 <div class="row workspace-top public-profile">
 
 	<#-- hidden divs that trigger angular -->
@@ -305,35 +309,45 @@
 		       	</div>
 	       	</#if>
 	       	<!-- Emails  -->
-	       	<div ng-controller="EmailsController" class="workspace-section">
-	        	<div class="workspace-section-header">
-	        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>
-	        	   <span ng-hide="showEdit == true">
-	        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
-	        	   </span>
-	        	   <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
-	        	   		<div ng-bind="email.value"></div>
-	        	   		<div ng-show="showEdit == true" ng-cloak>
-		        	   		<@orcid.privacyToggle3
-	                            angularModel="email.visibility"
-								questionClick="toggleClickPrivacyHelp($index)"
-								clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
-								publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
-			                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
-			                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
-			                  	elementId="$index" />
-	        	   		</div>
-	        	   </div>
-	        	   <div ng-show="showEdit == true" ng-cloak>
-	        	   		<a href="account"><@orcid.msg 'workspace.EditMoreEmailSettings'/></a>
-	        	   </div>
-	        	   <div ng-show="showEdit == true" ng-cloak>
-	        	   		<a class="cancel-option pull-right" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
-	        	   </div>
-	        	   
-	        	</div>
-	       	</div>
-	       	
+	       	<#if RequestParameters['v2modal']??>
+	       		<div ng-controller="EmailsCtrl" class="workspace-section">
+		        	<div class="workspace-section-header">
+		        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>		        	   
+		        	   <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
+		        	</div> 
+		        	<div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
+		        	   <span ng-bind="email.value"></span>
+		        	</div>
+		       	</div>
+	       	<#else>
+		       	<div ng-controller="EmailsCtrl" class="workspace-section">
+		        	<div class="workspace-section-header">
+		        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>
+		        	   <span ng-hide="showEdit == true">
+		        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
+		        	   </span>
+		        	   <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
+		        	   		<div ng-bind="email.value"></div>
+		        	   		<div ng-show="showEdit == true" ng-cloak>
+			        	   		<@orcid.privacyToggle3
+		                            angularModel="email.visibility"
+									questionClick="toggleClickPrivacyHelp($index)"
+									clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+									publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
+				                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
+				                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
+				                  	elementId="$index" />
+		        	   		</div>
+		        	   </div>
+		        	   <div ng-show="showEdit == true" ng-cloak>
+		        	   		<a href="account"><@orcid.msg 'workspace.EditMoreEmailSettings'/></a>
+		        	   </div>
+		        	   <div ng-show="showEdit == true" ng-cloak>
+		        	   		<a class="cancel-option pull-right" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
+		        	   </div>	        	   
+		        	</div>	        	
+		       	</div>
+	       	</#if>
 	       	<!--  Pending to apply style -->
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak  class="workspace-section">
        			<div class="workspace-section-header">	       			
@@ -803,8 +817,6 @@
 </script>
 
 <#include "/includes/record/record_modals.ftl">
-
-
-
+<#include "/includes/record/email_settings.ftl">
 
 </@protected>  

@@ -24,6 +24,7 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class BiographyForm implements ErrorsInterface, Serializable {
 
@@ -34,6 +35,23 @@ public class BiographyForm implements ErrorsInterface, Serializable {
 
     private List<String> errors = new ArrayList<String>();
 
+    public static BiographyForm valueOf(ProfileEntity profile) {
+        BiographyForm bf = new BiographyForm();
+
+        if(profile != null) {
+            if (!PojoUtil.isEmpty(profile.getBiography())) {
+                bf.setBiography(Text.valueOf(profile.getBiography()));
+            }               
+            if(profile.getBiographyVisibility() == null) {
+                bf.setVisiblity(Visibility.valueOf(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
+            } else {
+                bf.setVisiblity(Visibility.valueOf(profile.getBiographyVisibility()));
+            }            
+        }
+        
+        return bf;
+    }
+    
     public static BiographyForm valueOf(OrcidProfile op) {
         BiographyForm bf = new BiographyForm();
 

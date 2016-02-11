@@ -113,18 +113,18 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
         assertTrue(profile.getClaimed());
-        assertEquals("Spike", profile.getGivenNames());
-        assertEquals("Milligan", profile.getFamilyName());
+        assertEquals("One", profile.getGivenNames());
+        assertEquals("User", profile.getFamilyName());
         assertEquals("Spike Milligan", profile.getVocativeName());
     }
     
     @Test
     public void testFindByCreditName() {
-        String orcid = profileDao.findOrcidByCreditName("S. Milligan");
+        String orcid = profileDao.findOrcidByCreditName("Credit Name");
         assertEquals("4444-4444-4444-4441", orcid);
         try {
             //Multiple profiles with the same credit name
-            profileDao.findOrcidByCreditName("Credit Name");
+            profileDao.findOrcidByCreditName("Multi Cred Name");
             fail();
         } catch(Exception e) {
             
@@ -361,12 +361,12 @@ public class ProfileDaoTest extends DBUnitTest {
         List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
         assertNotNull(results);
         assertEquals(5, results.size());
-        assertEquals("Admin User", results.get(0).getVocativeName());
+        assertEquals("Admin Admin", results.get(0).getVocativeName());
     }
 
     @Test
     public void testFindOrcidsByName() {
-        List<String> results = profileDao.findOrcidsByName("Milligan");
+        List<String> results = profileDao.findOrcidsByName("User");
         assertNotNull(results);
         assertEquals(1, results.size());
         assertEquals("4444-4444-4444-4441", results.get(0));

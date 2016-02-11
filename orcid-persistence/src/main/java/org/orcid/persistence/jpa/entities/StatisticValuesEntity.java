@@ -64,7 +64,7 @@ public class StatisticValuesEntity implements Serializable {
         this.id = id;
     }
         
-    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = { CascadeType.REFRESH }, fetch = FetchType.LAZY)
     @JoinColumn(name = "key_id", nullable = false)
     public StatisticKeyEntity getKey(){
         return key;
