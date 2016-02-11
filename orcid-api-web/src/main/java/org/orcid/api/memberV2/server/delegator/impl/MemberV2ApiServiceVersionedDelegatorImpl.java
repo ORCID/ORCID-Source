@@ -60,136 +60,161 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response viewActivities(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewActivities(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewActivities(orcid));
     }
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewWork(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewWork(orcid, putCode));
     }
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewWorkSummary(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewWorkSummary(orcid, putCode));
     }
 
     @Override
     public Response createWork(String orcid, Object work) {
+    	checkProfileStatus(orcid);
         work = upgradeObject(work);
         return memberV2ApiServiceDelegator.createWork(orcid, work);
     }
 
     @Override
     public Response updateWork(String orcid, Long putCode, Object work) {
+    	checkProfileStatus(orcid);
         work = upgradeObject(work);
         return downgradeResponse(memberV2ApiServiceDelegator.updateWork(orcid, putCode, work));
     }
 
     @Override
     public Response deleteWork(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteWork(orcid, putCode);
     }
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewFunding(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewFunding(orcid, putCode));
     }
 
     @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewFundingSummary(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewFundingSummary(orcid, putCode));
     }
 
     @Override
     public Response createFunding(String orcid, Object funding) {
+    	checkProfileStatus(orcid);
         funding = upgradeObject(funding);
         return memberV2ApiServiceDelegator.createFunding(orcid, funding);
     }
 
     @Override
     public Response updateFunding(String orcid, Long putCode, Object funding) {
+    	checkProfileStatus(orcid);
         funding = upgradeObject(funding);
         return downgradeResponse(memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding));
     }
 
     @Override
     public Response deleteFunding(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteFunding(orcid, putCode);
     }
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewEducation(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEducation(orcid, putCode));
     }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewEducationSummary(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEducationSummary(orcid, putCode));
     }
 
     @Override
     public Response createEducation(String orcid, Object education) {
+    	checkProfileStatus(orcid);
         education = upgradeObject(education);
         return memberV2ApiServiceDelegator.createEducation(orcid, education);
     }
 
     @Override
     public Response updateEducation(String orcid, Long putCode, Object education) {
+    	checkProfileStatus(orcid);
         education = upgradeObject(education);
         return downgradeResponse(memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education));
     }
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewEmployment(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEmployment(orcid, putCode));
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEmploymentSummary(orcid, putCode));
     }
 
     @Override
     public Response createEmployment(String orcid, Object employment) {
+    	checkProfileStatus(orcid);
         employment = upgradeObject(employment);
         return memberV2ApiServiceDelegator.createEmployment(orcid, employment);
     }
 
     @Override
     public Response updateEmployment(String orcid, Long putCode, Object employment) {
+    	checkProfileStatus(orcid);
         employment = upgradeObject(employment);
         return downgradeResponse(memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment));
     }
 
     @Override
     public Response deleteAffiliation(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteAffiliation(orcid, putCode);
     }
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewPeerReview(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewPeerReview(orcid, putCode));
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewPeerReviewSummary(orcid, putCode));
     }
 
     @Override
     public Response createPeerReview(String orcid, Object peerReview) {
+    	checkProfileStatus(orcid);
         peerReview = upgradeObject(peerReview);
         return memberV2ApiServiceDelegator.createPeerReview(orcid, peerReview);
     }
 
     @Override
     public Response updatePeerReview(String orcid, Long putCode, Object peerReview) {
+    	checkProfileStatus(orcid);
         peerReview = upgradeObject(peerReview);
         return downgradeResponse(memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview));
     }
 
     @Override
     public Response deletePeerReview(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deletePeerReview(orcid, putCode);
     }
 
@@ -222,86 +247,103 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response viewResearcherUrls(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewResearcherUrls(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewResearcherUrls(orcid));
     }
 
     @Override
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewResearcherUrl(orcid, putCode));
     }
 
     @Override
     public Response updateResearcherUrl(String orcid, Long putCode, Object researcherUrl) {
+    	checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl));
     }
 
     @Override
     public Response createResearcherUrl(String orcid, Object researcherUrl) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
 
     @Override
     public Response deleteResearcherUrl(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteResearcherUrl(orcid, putCode);
     }
 
     @Override
     public Response viewEmails(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewEmails(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEmails(orcid));
     }
 
     @Override
     public Response viewOtherNames(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewOtherNames(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewOtherNames(orcid));
     }
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewOtherName(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewOtherName(orcid, putCode));
     }
 
     @Override
     public Response createOtherName(String orcid, Object otherName) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.createOtherName(orcid, otherName);
     }
 
     @Override
     public Response updateOtherName(String orcid, Long putCode, Object otherName) {
+    	checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName));
     }
 
     @Override
     public Response deleteOtherName(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteOtherName(orcid, putCode);
     }
 
     @Override
     public Response viewPersonalDetails(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewPersonalDetails(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewPersonalDetails(orcid));
     }
 
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewExternalIdentifiers(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewExternalIdentifiers(orcid));
     }
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewExternalIdentifier(orcid, putCode));
     }
 
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, Object externalIdentifier) {
+    	checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier));
     }
 
     @Override
     public Response createExternalIdentifier(String orcid, Object externalIdentifier) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
 
     @Override
     public Response deleteExternalIdentifier(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteExternalIdentifier(orcid, putCode);
     }
 
@@ -320,72 +362,78 @@ public class MemberV2ApiServiceVersionedDelegatorImpl
 
     @Override
     public Response viewBiography(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewBiography(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewBiography(orcid));
     }
 
     @Override
     public Response viewKeywords(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewKeywords(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewKeywords(orcid));
     }
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewKeyword(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewKeyword(orcid, putCode));
     }
 
     @Override
     public Response createKeyword(String orcid, Object keyword) {
+    	checkProfileStatus(orcid);
         keyword = upgradeObject(keyword);
         return memberV2ApiServiceDelegator.createKeyword(orcid, keyword);
     }
 
     @Override
     public Response updateKeyword(String orcid, Long putCode, Object keyword) {
+    	checkProfileStatus(orcid);
         keyword = upgradeObject(keyword);
         return downgradeResponse(memberV2ApiServiceDelegator.updateKeyword(orcid, putCode, keyword));
     }
 
     @Override
     public Response deleteKeyword(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteKeyword(orcid, putCode);
     }
 
     @Override
     public Response viewAddresses(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewAddresses(orcid), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewAddresses(orcid));
     }
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewAddress(orcid, putCode), orcid);
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewAddress(orcid, putCode));
     }
 
     @Override
     public Response createAddress(String orcid, Object address) {
+    	checkProfileStatus(orcid);
         address = upgradeObject(address);
         return memberV2ApiServiceDelegator.createAddress(orcid, address);
     }
 
     @Override
     public Response updateAddress(String orcid, Long putCode, Object address) {
+    	checkProfileStatus(orcid);
         address = upgradeObject(address);
         return downgradeResponse(memberV2ApiServiceDelegator.updateAddress(orcid, putCode, address));
     }
 
     @Override
     public Response deleteAddress(String orcid, Long putCode) {
+    	checkProfileStatus(orcid);
         return memberV2ApiServiceDelegator.deleteAddress(orcid, putCode);
     }
 
     @Override
     public Response viewPerson(String orcid) {
-        return downgradeAndValidateResponse(memberV2ApiServiceDelegator.viewPerson(orcid), orcid);
-    }
-
-    private Response downgradeAndValidateResponse(Response response, String orcid) {
-        checkProfileStatus(orcid);
-        Response downgradedResponse = downgradeResponse(response);
-        return downgradedResponse;
+    	checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewPerson(orcid));
     }
 
     private Response downgradeResponse(Response response) {
