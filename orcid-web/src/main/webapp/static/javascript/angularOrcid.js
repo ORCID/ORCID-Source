@@ -9825,7 +9825,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                         orcidGA.gaPush(['send', 'event', 'RegGrowth', auth_scope_prefix + $scope.requestInfoForm.scopes[i].name, 'OAuth ' + $scope.gaString]);
                     }
                 }
-                orcidGA.windowLocationHrefDelay($scope.requestInfoForm.redirectUrl);
+                orcidGA.windowLocationHrefDelay(data.redirectUrl);
             }
         }).fail(function() {
             console.log("An error occured authorizing the user.");
