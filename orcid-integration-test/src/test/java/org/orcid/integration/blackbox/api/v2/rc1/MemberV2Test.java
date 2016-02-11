@@ -89,7 +89,7 @@ public class MemberV2Test extends BlackBoxBase {
         
     
     @BeforeClass
-    public void beforeClass() {
+    public static void beforeClass() {
         
         String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
         String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
@@ -102,7 +102,7 @@ public class MemberV2Test extends BlackBoxBase {
     }
     
     @AfterClass
-    public void afterClass() {
+    public static void afterClass() {
         String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
         String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
         
@@ -415,11 +415,17 @@ public class MemberV2Test extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PeerReview gotPeerReview = getResponse.getEntity(PeerReview.class);
+        
+        //TODO: response does not contain full external identifier or disambig org.
+        //Issue is that upgrading makes subject external identifier fail
+        //https://www.diffchecker.com/g5laoiou
+        //Note that this test does not hit disambiguated orgs (which are optional and also not being upgraded)
+        
         assertEquals("peer-review:url", gotPeerReview.getUrl().getValue());
         assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
         assertEquals(groupRecords.get(0).getGroupId(), gotPeerReview.getGroupId());
         gotPeerReview.getSubjectName().getTitle().setContent("updated title");
-
+        
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);

@@ -323,7 +323,7 @@ public class MemberV2Test extends BlackBoxBase {
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID fExtId = new ExternalID();
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.name());
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
@@ -362,7 +362,7 @@ public class MemberV2Test extends BlackBoxBase {
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID fExtId = new ExternalID();
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.name());
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
@@ -489,7 +489,7 @@ public class MemberV2Test extends BlackBoxBase {
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID fExtId = new ExternalID();
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.name());
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
@@ -534,7 +534,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         funding.getTitle().getTitle().setContent("Funding # 2");
         ExternalID fExtId3 = new ExternalID();
-        fExtId3.setType(ExternalIDType.GRANT_NUMBER.name());
+        fExtId3.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId3.setValue("extId3Value" + time);
         fExtId3.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
@@ -546,7 +546,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         funding.getTitle().getTitle().setContent("Funding # 3");
         ExternalID fExtId4 = new ExternalID();
-        fExtId4.setType(ExternalIDType.GRANT_NUMBER.name());
+        fExtId4.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId4.setValue("extId4Value" + time);
         fExtId4.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -567,7 +567,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         work.getWorkTitle().getTitle().setContent("Work # 2");
         ExternalID wExtId2 = new ExternalID();
-        wExtId2.setType(ExternalIDType.DOI.name());
+        wExtId2.setType(ExternalIDType.DOI.value());
         wExtId2.setValue("doi-ext-id" + time);
         wExtId2.setRelationship(Relationship.SELF);
         work.getExternalIdentifiers().getExternalIdentifier().add(wExtId2);
@@ -578,7 +578,7 @@ public class MemberV2Test extends BlackBoxBase {
         
         work.getWorkTitle().getTitle().setContent("Work # 3");
         ExternalID wExtId3 = new ExternalID();
-        wExtId3.setType(ExternalIDType.EID.name());
+        wExtId3.setType(ExternalIDType.EID.value());
         wExtId3.setValue("eid-ext-id" + time);
         wExtId3.setRelationship(Relationship.SELF);
         work.getWorkExternalIdentifiers().getExternalIdentifier().clear();
@@ -604,7 +604,7 @@ public class MemberV2Test extends BlackBoxBase {
         peerReview.getCompletionDate().setYear(new Year(2016));
         peerReview.setUrl(new Url("http://peer_review/2"));
         ExternalID pExtId2 = new ExternalID();
-        pExtId2.setType(ExternalIDType.DOI.name());
+        pExtId2.setType(ExternalIDType.DOI.value());
         pExtId2.setValue("doi-ext-id" + System.currentTimeMillis());
         pExtId2.setRelationship(Relationship.SELF);
         
@@ -912,7 +912,7 @@ public class MemberV2Test extends BlackBoxBase {
         funding.setVisibility(Visibility.PUBLIC);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID fExtId = new ExternalID();
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.name());
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
