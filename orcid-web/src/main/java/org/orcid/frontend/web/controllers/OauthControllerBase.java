@@ -165,6 +165,8 @@ public class OauthControllerBase extends BaseController {
         //If the user is logged in 
         String loggedUserOrcid = getEffectiveUserOrcid();
         if(!PojoUtil.isEmpty(loggedUserOrcid)) {
+            infoForm.setUserOrcid(loggedUserOrcid);
+            
             ProfileEntity profile = profileEntityCacheManager.retrieve(loggedUserOrcid);
             String creditName = "";
             

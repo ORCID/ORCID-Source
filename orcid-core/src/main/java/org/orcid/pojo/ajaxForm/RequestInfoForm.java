@@ -35,6 +35,7 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String stateParam;
     private String userId;
     private String userName;
+    private String userOrcid;
     private boolean clientHavePersistentTokens = false;
 
     public List<String> getErrors() {
@@ -131,6 +132,14 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }    
+    
+    public String getUserOrcid() {
+        return userOrcid;
+    }
+
+    public void setUserOrcid(String userOrcid) {
+        this.userOrcid = userOrcid;
     }
 
     public String getScopesAsString() {

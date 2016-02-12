@@ -18,7 +18,7 @@
 -->
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
 	<div class="full-name">
-		{{requestInfoForm.userName}}
+		{{requestInfoForm.userName}}		
 	</div>
 	<div class="oid">
 		<#if (locked)?? && !locked>
@@ -27,7 +27,7 @@
 					ng-cloak>
 					<a ng-click="openMenu($event)" class="id-banner-switch">
 						<div class="orcid-id-container">
-							${baseUriHttp}/${(profile.orcidIdentifier.path)!} 
+							${baseUriHttp}/{{requestInfoForm.userOrcid}}
 							<span class="glyphicon glyphicon-chevron-down"></span>
 						</div>
 					</a>
@@ -58,7 +58,7 @@
 				</div>
 				<div ng-hide="me || unfilteredLength > 0" ng-cloak>
 					<div class="pull-right">
-						${baseUriHttp}/${(profile.orcidIdentifier.path)!}
+						${baseUriHttp}/{{requestInfoForm.userOrcid}}
 					</div>
 				</div>
 			</div>

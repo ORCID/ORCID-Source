@@ -9462,8 +9462,6 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
     $scope.isOrcidPresent = false;
     $scope.authorizationForm = {};
     $scope.registrationForm = {};
-    $scope.clientName = "";
-    $scope.clientGroupName = "";
     $scope.emailTrustAsHtmlErrors = [];
     $scope.enablePersistentToken = true;
     $scope.showLongDescription = {};
