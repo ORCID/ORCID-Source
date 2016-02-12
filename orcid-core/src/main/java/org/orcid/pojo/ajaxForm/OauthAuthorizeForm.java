@@ -20,20 +20,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializable {
-
+public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
-
     private List<String> errors = new ArrayList<String>();
     Text userName;
-    Text password;
-    Text clientId;
-    Text clientName;
-    Text memberName;
-    Text redirectUri;
-    Text scope;
-    Text responseType;
-    Text stateParam;
+    Text password;    
     boolean approved = false;
     boolean persistentTokenEnabled = false;
 
@@ -63,54 +54,6 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
         this.password = password;
     }
 
-    public Text getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Text clientId) {
-        this.clientId = clientId;
-    }
-    
-    public Text getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(Text clientName) {
-        this.clientName = clientName;
-    }
-
-    public Text getMemberName() {
-        return memberName;
-    }
-
-    public void setMemberName(Text memberName) {
-        this.memberName = memberName;
-    }
-
-    public Text getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(Text redirectUri) {
-        this.redirectUri = redirectUri;
-    }
-
-    public Text getScope() {
-        return scope;
-    }
-
-    public void setScope(Text scope) {
-        this.scope = scope;
-    }
-
-    public Text getResponseType() {
-        return responseType;
-    }
-
-    public void setResponseType(Text responseType) {
-        this.responseType = responseType;
-    }
-
     public boolean getApproved() {
         return approved;
     }
@@ -126,12 +69,4 @@ public class OauthAuthorizeForm implements OauthForm, ErrorsInterface, Serializa
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
     }
-
-    public Text getStateParam() {
-        return stateParam;
-    }
-
-    public void setStateParam(Text stateParam) {
-        this.stateParam = stateParam;
-    }        
 }
