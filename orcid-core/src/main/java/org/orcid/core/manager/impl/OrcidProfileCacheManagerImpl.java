@@ -37,8 +37,11 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
 
     @Resource(name = "publicProfileCache")
     private Cache publicProfileCache;
-
     LockerObjectsManager pubLocks = new LockerObjectsManager();
+    
+    @Resource(name = "publicBioCache")
+    private Cache publicBioCache;
+    LockerObjectsManager pubBioLocks = new LockerObjectsManager();
 
     @Resource(name = "profileCache")
     private Cache profileCache;
@@ -72,6 +75,26 @@ public class OrcidProfileCacheManagerImpl implements OrcidProfileCacheManager {
                 }
             } finally {
                 pubLocks.releaseLock(orcid);
+            }
+        return op;
+    }
+    
+    @Override
+    public OrcidProfile retrievePublicBio(String orcid) {
+        Object key = new OrcidCacheKey(orcid, releaseName);
+        Date dbDate = retrieveLastModifiedDate(orcid);
+        OrcidProfile op = toOrcidProfile(publicBioCache.get(key));
+        if (needsFresh(dbDate, op))
+            try {
+                synchronized (pubBioLocks.obtainLock(orcid)) {
+                    op = toOrcidProfile(publicBioCache.get(orcid));
+                    if (needsFresh(dbDate, op)) {
+                        op = orcidProfileManager.retrievePublicOrcidProfile(orcid, LoadOptions.BIO_ONLY);
+                        publicBioCache.put(new Element(key, op));
+                    }
+                }
+            } finally {
+                pubBioLocks.releaseLock(orcid);
             }
         return op;
     }
