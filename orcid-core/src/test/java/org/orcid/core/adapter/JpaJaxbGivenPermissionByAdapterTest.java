@@ -18,6 +18,7 @@ package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.Calendar;
@@ -28,6 +29,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -104,8 +106,10 @@ public class JpaJaxbGivenPermissionByAdapterTest {
         assertEquals(2016, details.getDelegateSummary().getLastModifiedDate().getValue().getYear());                
         assertNotNull(details.getDelegateSummary().getOrcidIdentifier());
         assertEquals("9999-9999-9999-9999", details.getDelegateSummary().getOrcidIdentifier().getPath());
-        assertEquals("testserver.orcid.org", details.getDelegateSummary().getOrcidIdentifier().getHost());
-        assertEquals("http://testserver.orcid.org/9999-9999-9999-9999", details.getDelegateSummary().getOrcidIdentifier().getUri());
+        assertTrue(details.getDelegateSummary().getOrcidIdentifier().getHost().equals("localhost") || details.getDelegateSummary().getOrcidIdentifier().getHost().equals("testserver.orcid.org"));
+        assertTrue(details.getDelegateSummary().getOrcidIdentifier().getUri().equals("http://localhost:8080/orcid-web/9999-9999-9999-9999") || details.getDelegateSummary().getOrcidIdentifier().getUri().equals("http://testserver.orcid.org/9999-9999-9999-9999"));
+        //assertEquals("testserver.orcid.org", details.getDelegateSummary().getOrcidIdentifier().getHost());
+        //assertEquals("http://testserver.orcid.org/9999-9999-9999-9999", details.getDelegateSummary().getOrcidIdentifier().getUri());
         assertEquals(Long.valueOf(1), details.getPutCode());
     }
     
