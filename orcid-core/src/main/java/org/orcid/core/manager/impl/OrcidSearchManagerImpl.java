@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidSearchException;
+import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
@@ -116,7 +117,7 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
             OrcidProfile orcidProfile = null;
             if (orcidMessage == null) {
                 // Fall back to DB
-                orcidProfile = orcidProfileManager.retrievePublicOrcidProfile(orcid);
+                orcidProfile = orcidProfileCacheManager.retrievePublicBio(orcid);
             } else {
                 orcidProfile = orcidMessage.getOrcidProfile();
             }
