@@ -55,8 +55,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 public class OauthControllerBase extends BaseController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);    
     protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     protected Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
@@ -159,8 +158,7 @@ public class OauthControllerBase extends BaseController {
                 if (orcidProfileManager.exists(tempOrcid))
                     orcid = tempOrcid;
             }
-        }
-        
+        }        
         return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid);
     }
     
@@ -252,60 +250,6 @@ public class OauthControllerBase extends BaseController {
         return infoForm;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
     protected void fillOauthParams(RequestInfoForm requestInfoForm, Map<String, String> params, Map<String, String> approvalParams, boolean userEnabledPersistentTokens) {
         if (!PojoUtil.isEmpty(requestInfoForm.getScopesAsString())) {
             params.put(OrcidOauth2Constants.SCOPE_PARAM, requestInfoForm.getScopesAsString());
