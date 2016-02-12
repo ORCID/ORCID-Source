@@ -39,7 +39,7 @@
 	</div>
 </div>
 <span class="dotted-green-bar"></span>
-<div class="row" ng-show="requestInfoForm.userPersistentTokens">
+<div class="row" ng-show="requestInfoForm.clientHavePersistentTokens">
 	<div class="col-md-1 col-sm-1 col-xs-1">
 		<input type="checkbox" name="enablePersistentToken" id="enablePersistentToken" ng-model="enablePersistentToken"/>
 	</div>

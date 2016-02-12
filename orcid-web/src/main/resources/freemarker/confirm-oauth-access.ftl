@@ -56,7 +56,6 @@
 			<div id="login-buttons" ng-init="loadAndInitAuthorizationForm()">
 				<div class="row">
 		            <div class="col-md-12">
-						<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/><!-- Hidden -->
 						<button id="authorize" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="authorize()">
 							<@orcid.msg 'confirm-oauth-access.Authorize' />
 						</button>

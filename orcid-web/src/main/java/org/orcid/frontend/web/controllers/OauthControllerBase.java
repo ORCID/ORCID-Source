@@ -41,6 +41,9 @@ import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.ScopeInfoForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -52,6 +55,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 public class OauthControllerBase extends BaseController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthControllerBase.class);
+    
     protected Pattern clientIdPattern = Pattern.compile("client_id=([^&]*)");
     protected Pattern scopesPattern = Pattern.compile("scope=([^&]*)");
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
@@ -203,8 +208,12 @@ public class OauthControllerBase extends BaseController {
             ScopeInfoForm scopeInfoForm = new ScopeInfoForm();
             scopeInfoForm.setValue(theScope.value());
             scopeInfoForm.setName(theScope.name());
-            scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
-            scopeInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
+            try {
+                scopeInfoForm.setDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name()));
+                scopeInfoForm.setLongDescription(getMessage(ScopePathType.class.getName() + '.' + theScope.name() + ".longDesc"));
+            } catch(NoSuchMessageException e) {
+                LOGGER.warn("Unable to find key message for scope: " + theScope.name() + " " + theScope.value());
+            }
             infoForm.getScopes().add(scopeInfoForm);
         }
 
