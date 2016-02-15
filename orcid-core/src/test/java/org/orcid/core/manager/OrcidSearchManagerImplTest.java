@@ -86,19 +86,19 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     private SolrDao solrDao;
 
     @Mock
-    private OrcidProfileManager orcidProfileManager;
+    private OrcidProfileCacheManager orcidProfileCacheManager;
 
     @Before
     public void initMocks() {
         orcidSearchManager.setSolrDao(solrDao);
-        orcidSearchManager.setOrcidProfileManager(orcidProfileManager);
+        orcidSearchManager.setOrcidProfileCacheManager(orcidProfileCacheManager);
     }
 
     @Test
     @Rollback
     public void orcidRetrievalAllDataPresentInDb() throws Exception {
         when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileManager.retrievePublicOrcidProfile("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
+        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfileAllIndexFieldsPopulated());
 
         String orcid = "1434";
 
@@ -135,7 +135,6 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         assertEquals("work2-doi1", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
         assertEquals("work2-doi2", orcidWork2.getWorkExternalIdentifiers().getWorkExternalIdentifier().get(1).getWorkExternalIdentifierId().getContent());
 
-        
         List<Funding> fundings = retrievedProfile.retrieveFundings().getFundings();
         Funding funding1 = fundings.get(0);
         Funding funding2 = fundings.get(1);
@@ -160,7 +159,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void orcidRetrievalMandatoryFieldsOnly() {
 
         when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileManager.retrievePublicOrcidProfile("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
@@ -178,7 +177,7 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void orcidInIndexButNotinDb() {
 
         when(solrDao.findByOrcid("1434")).thenReturn(getSolrRes5678());
-        when(orcidProfileManager.retrieveClaimedOrcidProfile("5678")).thenReturn(null);
+        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(null);
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidSearchResultsById("1434");
         assertNotNull(retrievedOrcidMessage);
         assertNotNull(retrievedOrcidMessage.getOrcidSearchResults());
@@ -190,8 +189,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void oneOrcidInDbOtherMissing() {
 
         when(solrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
-        when(orcidProfileManager.retrievePublicOrcidProfile("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        when(orcidProfileManager.retrievePublicOrcidProfile("6789")).thenReturn(null);
+        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(orcidProfileCacheManager.retrievePublicBio("6789")).thenReturn(null);
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults() != null && retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 1);
@@ -242,8 +241,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
     public void orcidMultipleOrcidsIndexed() {
 
         when(solrDao.findByDocumentCriteria("rndQuery", null, null)).thenReturn(multipleResultsForQuery());
-        when(orcidProfileManager.retrievePublicOrcidProfile("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
-        when(orcidProfileManager.retrievePublicOrcidProfile("6789")).thenReturn(getOrcidProfile6789MandatoryOnly());
+        when(orcidProfileCacheManager.retrievePublicBio("5678")).thenReturn(getOrcidProfile5678MandatoryOnly());
+        when(orcidProfileCacheManager.retrievePublicBio("6789")).thenReturn(getOrcidProfile6789MandatoryOnly());
         OrcidMessage retrievedOrcidMessage = orcidSearchManager.findOrcidsByQuery("rndQuery");
         assertNotNull(retrievedOrcidMessage);
         assertTrue(retrievedOrcidMessage.getOrcidSearchResults().getOrcidSearchResult().size() == 2);
