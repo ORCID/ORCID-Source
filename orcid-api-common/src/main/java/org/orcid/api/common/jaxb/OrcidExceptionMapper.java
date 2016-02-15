@@ -186,22 +186,28 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         	}
         }
 
-		switch (getApiVersion()) {
-		case V2_RC1:
-			return newStyleErrorResponse(t, V2_RC1);
-		case V2_RC2:
-			return newStyleErrorResponse(t, V2_RC2);
-		default:
-			switch (getApiSection()) {
-			case NOTIFICATIONS:
-				return newStyleErrorResponse(t, V2_RC1);
-			default:
-				return legacyErrorResponse(t);
-			}
-		}
+        String apiVersion = getApiVersion();
+        
+        if(!PojoUtil.isEmpty(apiVersion)) {
+            switch (apiVersion) {
+            case V2_RC1:
+                return newStyleErrorResponse(t, V2_RC1);
+            case V2_RC2:
+                return newStyleErrorResponse(t, V2_RC2);      
+            }
+        } 
+        
+        //If there was no api version, check if it is notifications or a 1.2 error type
+        switch (getApiSection()) {
+        case NOTIFICATIONS:
+            return newStyleErrorResponse(t, V2_RC1);
+        default:
+            return legacyErrorResponse(t);
+        }
+                       
     }
 
-	private Response legacyErrorResponse(Throwable t) {
+    private Response legacyErrorResponse(Throwable t) {
         if (OrcidApiException.class.isAssignableFrom(t.getClass())) {
             return ((OrcidApiException) t).getResponse();
         } else if (OrcidValidationException.class.isAssignableFrom(t.getClass())) {

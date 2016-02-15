@@ -112,7 +112,6 @@ public class T2OrcidApiServiceVersionedDelegatorImpl implements T2OrcidApiServic
         if (outgoingValidationManager == null) {
             ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
             outgoingValidationManagerImpl.setVersion(externalVersion);
-            outgoingValidationManagerImpl.setValidateBibtex(false);
             setOutgoingValidationManager(outgoingValidationManagerImpl);
         }
     }
