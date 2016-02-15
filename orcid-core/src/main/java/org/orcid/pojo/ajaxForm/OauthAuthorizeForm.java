@@ -23,10 +23,11 @@ import java.util.List;
 public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
     private List<String> errors = new ArrayList<String>();
-    Text userName;
-    Text password;    
-    boolean approved = false;
-    boolean persistentTokenEnabled = false;
+    private Text userName;
+    private Text password;    
+    private boolean approved = false;
+    private boolean persistentTokenEnabled = false;
+    private String redirectUrl;
 
     @Override
     public List<String> getErrors() {
@@ -69,4 +70,12 @@ public class OauthAuthorizeForm implements ErrorsInterface, Serializable {
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
     }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }        
 }
