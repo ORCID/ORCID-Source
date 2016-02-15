@@ -94,7 +94,7 @@ public class OauthLoginController extends OauthControllerBase {
     }
 
     @RequestMapping(value = { "/oauth/custom/signin.json", "/oauth/custom/login.json" }, method = RequestMethod.POST)
-    public @ResponseBody RequestInfoForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
+    public @ResponseBody OauthAuthorizeForm authenticateAndAuthorize(HttpServletRequest request, HttpServletResponse response, @RequestBody OauthAuthorizeForm form) {
         // Clean form errors
         form.setErrors(new ArrayList<String>());
         RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(REQUEST_INFO_FORM);
@@ -134,20 +134,20 @@ public class OauthLoginController extends OauthControllerBase {
                         // Copy the state param if present
                         if (!PojoUtil.isEmpty(requestInfoForm.getStateParam()))
                             redirectUri += "&state=" + requestInfoForm.getStateParam();
-                        requestInfoForm.setRedirectUrl(redirectUri);
-                        LOGGER.info("OauthLoginController being sent to client browser: " + requestInfoForm.getRedirectUrl());
-                        return requestInfoForm;
+                        form.setRedirectUrl(redirectUri);
+                        LOGGER.info("OauthLoginController being sent to client browser: " + form.getRedirectUrl());
+                        return form;
                     }
                     // Approve
                     RedirectView view = (RedirectView) authorizationEndpoint.approveOrDeny(approvalParams, model, status, auth);
-                    requestInfoForm.setRedirectUrl(view.getUrl());
+                    form.setRedirectUrl(view.getUrl());
                     willBeRedirected = true;
                 } catch (AuthenticationException ae) {
-                    requestInfoForm.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+                    form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
                 }
             }
         } else {
-            requestInfoForm.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), requestInfoForm.getStateParam()));
+            form.setRedirectUrl(buildDenyRedirectUri(requestInfoForm.getRedirectUrl(), requestInfoForm.getStateParam()));
             willBeRedirected = true;
         }
 
@@ -158,7 +158,7 @@ public class OauthLoginController extends OauthControllerBase {
                 new HttpSessionRequestCache().removeRequest(request, response);
             LOGGER.info("OauthConfirmAccessController form.getRedirectUri being sent to client browser: " + requestInfoForm.getRedirectUrl());
         }
-        return requestInfoForm;
+        return form;
     }
 
     private void validateUserNameAndPassword(OauthAuthorizeForm form) {
