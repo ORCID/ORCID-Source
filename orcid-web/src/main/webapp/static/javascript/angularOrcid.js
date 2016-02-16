@@ -9988,10 +9988,10 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
 	    	if ( typeof location.search.split('client_id=')[1] == 'undefined' ){ //There is no clientID information		    	
 	    		if ($scope.showRegisterForm == true){
 		    		$scope.registerAndAuthorize();		    		
-		    	}else{
+		    	} else{
 		    		$scope.loginAndAuthorize();		    		
 		    	}		    	
-			}else{
+			} else{
 	    		$scope.authorize();
 	    	}
 	    }

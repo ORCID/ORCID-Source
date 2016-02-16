@@ -61,8 +61,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
 
     private OrcidProfileCacheManager orcidProfileCacheManager;
 
-    private OrcidProfileManagerReadOnly orcidProfileManager;
-
     public SolrDao getSolrDao() {
         return solrDao;
     }
@@ -74,11 +72,6 @@ public class OrcidSearchManagerImpl implements OrcidSearchManager {
     @Required
     public void setOrcidProfileCacheManager(OrcidProfileCacheManager orcidProfileCacheManager) {
         this.orcidProfileCacheManager = orcidProfileCacheManager;
-    }
-
-    @Required
-    public void setOrcidProfileManager(OrcidProfileManagerReadOnly orcidProfileManager) {
-        this.orcidProfileManager = orcidProfileManager;
     }
 
     @Override

@@ -45,8 +45,8 @@ import org.springframework.web.bind.support.SimpleSessionStatus;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("oauthRegisterController")
-public class OauthRegisterController extends OauthControllerBase {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OauthRegisterController.class);        
+public class OauthRegistrationController extends OauthControllerBase {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OauthRegistrationController.class);        
     @Resource
     private RegistrationController registrationController;        
     
