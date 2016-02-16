@@ -9676,6 +9676,12 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
         $scope.submitLogin();
     };
+    
+    $scope.loginSocial = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
+        return false;
+    };
 
     $scope.loginAndDeny = function() {
         $scope.authorizationForm.approved = false;
@@ -10072,6 +10078,20 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
             }
         };
         head.appendChild(script); //Inject the script
+    };
+    
+    $scope.loginSocial = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp]);
+        return false;
+    };
+    
+}]);
+
+orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
+    
+    $scope.linkAccount = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'Sign-In-Link-Social', 'Sign-In-Link-Social', idp]);
+        return false;
     };
     
 }]);
