@@ -37,9 +37,7 @@
             </div>
         </div>
 
-        <div class="row">
-			
-
+        <div class="row">		
 			<!-- Left Column -->
             <div class="col-md-6 col-sm-6 col-xs-12">
 				<div class="form-group" ng-show="editAffiliation.disambiguatedAffiliationSourceId">
@@ -76,7 +74,7 @@
 					   <span class="required" ng-class="isValidClass(editAffiliation.affiliationName)">*</span>
                     </span>
                     <div>							
-                        <input id="affiliationName" class="form-control" name="affiliationName" type="text" ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="serverValidate('affiliations/affiliation/affiliationNameValidate.json')" ng-model-onblur/>
+                        <input id="affiliationName" class="form-control" name="affiliationName" type="text" ng-model="editAffiliation.affiliationName.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_name'/>" ng-change="clearDisambiguatedOrgAndServerValidate('affiliations/affiliation/affiliationNameValidate.json');" ng-model-onblur/>
                         <span class="orcid-error" ng-show="editAffiliation.affiliationName.errors.length > 0">
                             <div ng-repeat='error in editAffiliation.affiliationName.errors' ng-bind-html="error"></div>
                         </span>
@@ -89,7 +87,7 @@
                     <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycity'/></label>
 					<span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
                     <div>
-                        <input name="city" class="form-control" type="text" ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>                        
+                        <input name="city" class="form-control" type="text" ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json');" ng-model-onblur/>                        
                         <span class="orcid-error" ng-show="editAffiliation.city.errors.length > 0">
                             <div ng-repeat='error in editAffiliation.city.errors' ng-bind-html="error"></div>
                         </span>
@@ -114,7 +112,7 @@
                     <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycountry'/></label>
  					<span class="required" ng-class="isValidClass(editAffiliation.country)">*</span>
                     <div>
-                        <select id="country" name="country" ng-model="editAffiliation.country.value" ng-change="serverValidate('affiliations/affiliation/countryValidate.json')" class="form-control">
+                        <select id="country" name="country" ng-model="editAffiliation.country.value" ng-change="serverValidate('affiliations/affiliation/countryValidate.json');" class="form-control">
                             <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
                             <#list isoCountries?keys as key>
                                 	<option value="${key}">${isoCountries[key]}</option>
@@ -128,7 +126,6 @@
                 </div>
             </div>
             
-
 			<!-- Right Column -->
 			<div class="col-md-6 col-sm-6 col-xs-12">
 				<!-- Department -->
