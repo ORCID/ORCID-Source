@@ -7675,8 +7675,8 @@ a:hover .mozilla-badge{
 		width: 100%;
 	}	
 	
-	.email-pop-up .editTablePadCell35{
-		margin-right: 0 !important;	
+	.email-pop-up .editTablePadCell35{ 
+		margin-right: 0 !important;	 /* Overwriting main global class */
 		margin-left: 15px !important;	
 	}
 	
