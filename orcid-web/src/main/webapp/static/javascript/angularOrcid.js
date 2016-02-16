@@ -3947,17 +3947,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
 
     $scope.showDetailsMouseClick = function(key, $event) {
         $event.stopPropagation();
-        $scope.moreInfo[key]=!$scope.moreInfo[key];
-        /*
-        if (document.documentElement.className.contains('no-touch')) {
-            if ($scope.moreInfoCurKey != null
-                    && $scope.moreInfoCurKey != key) {
-                $scope.privacyHelp[$scope.moreInfoCurKey]=false;
-            }
-            $scope.moreInfoCurKey = key;
-            $scope.moreInfo[key]=true;
-        }
-        */
+        $scope.moreInfo[key]=!$scope.moreInfo[key];        
     };
 
     $scope.closeMoreInfo = function(key) {
@@ -3980,8 +3970,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     };
 
     $scope.bindTypeahead = function () {
-        var numOfResults = 100;
-
+    	var numOfResults = 100;
         $("#affiliationName").typeahead({
             name: 'affiliationName',
             limit: numOfResults,
@@ -4003,12 +3992,12 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
             }
         });
         $("#affiliationName").bind("typeahead:selected", function(obj, datum) {
-            $scope.selectAffiliation(datum);
+        	$scope.selectAffiliation(datum);
             $scope.$apply();
         });
     };
 
-    $scope.unbindTypeahead = function () {
+    $scope.unbindTypeahead = function () {    	
         $('#affiliationName').typeahead('destroy');
     };
 
@@ -4028,7 +4017,6 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
 
             if (datum.disambiguatedAffiliationIdentifier != undefined && datum.disambiguatedAffiliationIdentifier != null) {
                 $scope.getDisambiguatedAffiliation(datum.disambiguatedAffiliationIdentifier);
-                $scope.unbindTypeahead();
             }
         }
     };
@@ -4052,11 +4040,12 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
         });
     };
 
-    $scope.removeDisambiguatedAffiliation = function() {
-        $scope.bindTypeahead();
-        if ($scope.disambiguatedAffiliation != undefined) delete $scope.disambiguatedAffiliation;
-        if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) delete $scope.editAffiliation.disambiguatedAffiliationSourceId;
-        if ($scope.editAffiliation != undefined && $scope.editAffiliation.orgDisambiguatedId != undefined) delete $scope.editAffiliation.orgDisambiguatedId;
+    $scope.removeDisambiguatedAffiliation = function() {    	
+    	if($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId) {
+    		if ($scope.disambiguatedAffiliation != undefined) delete $scope.disambiguatedAffiliation;
+        	if ($scope.editAffiliation != undefined && $scope.editAffiliation.disambiguatedAffiliationSourceId != undefined) $scope.editAffiliation.disambiguatedAffiliationSourceId = "";
+        	if ($scope.editAffiliation != undefined && $scope.editAffiliation.orgDisambiguatedId != undefined) $scope.editAffiliation.orgDisambiguatedId = "";        	        
+    	}
     };
 
     $scope.addAffiliationModal = function(type, affiliation){
@@ -4173,7 +4162,12 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
             console.log("RegistrationCtrl.serverValidate() error");
         });
     };
-
+    
+    $scope.clearDisambiguatedOrgAndServerValidate = function(relativePath) {
+    	$scope.removeDisambiguatedAffiliation();
+    	$scope.serverValidate(relativePath);
+    };            
+    
     $scope.isValidClass = function (cur) {
         if (cur === undefined) return '';
         var valid = true;
@@ -4456,8 +4450,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         if (subtype != undefined && subtype != null) {
             $scope.editFunding.organizationDefinedFundingSubType.subtype.value = subtype.value;
             $scope.editFunding.organizationDefinedFundingSubType.alreadyIndexed = true;
-            $scope.lastIndexedTerm = subtype.value;
-            $scope.unbindTypeaheadForSubTypes();
+            $scope.lastIndexedTerm = subtype.value;           
         }
     };
 
@@ -4478,7 +4471,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
 
             if (datum.disambiguatedFundingIdentifier != undefined && datum.disambiguatedFundingIdentifier != null) {
                 $scope.getDisambiguatedFunding(datum.disambiguatedFundingIdentifier);
-                $scope.unbindTypeaheadForOrgs();
             }
         }
     };
@@ -4500,17 +4492,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
             console.log("error getDisambiguatedFunding(id)");
         });
     };
-
-    /*
-    $scope.deleteFundingConfirm = function(funding) {
-        $scope.delFunding = funding;
-
-        $.colorbox({
-            html : $compile($('#delete-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-    };
-    */
 
     $scope.deleteFundingConfirm = function(putCode, deleteGroup) {
         $scope.deletePutCode = putCode;
@@ -4558,9 +4539,8 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     };
 
     $scope.removeDisambiguatedFunding = function() {
-        $scope.bindTypeaheadForOrgs();
         if ($scope.disambiguatedFunding != undefined) delete $scope.disambiguatedFunding;
-        if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) delete $scope.editFunding.disambiguatedFundingSourceId;
+        if ($scope.editFunding != undefined && $scope.editFunding.disambiguatedFundingSourceId != undefined) $scope.editFunding.disambiguatedFundingSourceId.value = "";
     };
 
     $scope.isValidClass = function (cur) {
@@ -4589,6 +4569,11 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         });
     };
 
+    $scope.clearDisambiguatedOrgAndServerValidate = function(relativePath) {
+    	$scope.removeDisambiguatedFunding();
+    	$scope.serverValidate(relativePath);
+    };
+    
     $scope.unbindTypeaheadForOrgs = function () {
         $('#fundingName').typeahead('destroy');
     };
