@@ -18,7 +18,7 @@
 -->
 <@public classes=['home'] nav="signin">
 <#include "sandbox_warning.ftl"/>
-    <form class="form-social-sign-in shibboleth" id="loginForm" ng-enter-submit ng-controller="LinkAccountController" ng-submit="linkAccount('${providerId}')" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
+    <form class="form-social-sign-in shibboleth" id="loginForm" ng-enter-submit ng-controller="LinkAccountController" ng-submit="linkAccount('${providerId}', '${linkType}')" action="<@orcid.rootPath '/shibboleth/signin/auth'/>" method="post">
         
         <div class="row">
         	<div class="col-md-offset-3 col-md-8 col-sm-offset-3 col-sm-9 col-xs-12 bottomBuffer">

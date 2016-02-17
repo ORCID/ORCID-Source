@@ -10089,8 +10089,9 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
 
 orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
     
-    $scope.linkAccount = function(idp) {
-        orcidGA.gaPush(['send', 'event', 'Sign-In-Link-Social', 'Sign-In-Link-Social', idp]);
+    $scope.linkAccount = function(idp, linkType) {
+        var eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
+        orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
         return false;
     };
     
