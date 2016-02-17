@@ -266,7 +266,8 @@ public class OauthControllerBase extends BaseController {
         }  
         
         infoForm.setUserEmail(email);
-        infoForm.setUserOrcid(orcid);
+        if(PojoUtil.isEmpty(loggedUserOrcid))
+            infoForm.setUserOrcid(orcid);
         infoForm.setUserGivenNames(givenNames);
         infoForm.setUserFamilyNames(familyNames);
         infoForm.setClientId(clientId);
