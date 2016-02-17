@@ -63,7 +63,6 @@ public class OrcidApiServiceVersionedDelegatorImpl implements OrcidApiServiceDel
         if (outgoingValidationManager == null) {
             ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
             outgoingValidationManagerImpl.setVersion(externalVersion);
-            outgoingValidationManagerImpl.setValidateBibtex(false);
             setOutgoingValidationManager(outgoingValidationManagerImpl);
         }
     }
