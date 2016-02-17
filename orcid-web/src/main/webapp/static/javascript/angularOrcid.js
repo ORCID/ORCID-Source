@@ -10029,6 +10029,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
                 $scope.scriptsInjected = true;
                 $scope.$apply();
+                addShibbolethGa($scope.gaString);
             }
         };
         head.appendChild(script); //Inject the script
@@ -10069,6 +10070,7 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
             if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
                 $scope.scriptsInjected = true;
                 $scope.$apply();
+                addShibbolethGa();
             }
         };
         head.appendChild(script); //Inject the script

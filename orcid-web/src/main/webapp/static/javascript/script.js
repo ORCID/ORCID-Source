@@ -284,6 +284,25 @@ function logOffReload(reload_param) {
     });
 };
 
+function addShibbolethGa(oauthGaString){
+    $('#idpSelectSelectButton').click(
+        function() {
+            if(typeof oauthGaString !== 'undefined') orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + oauthGaString]);
+            var entityId = $(this).prev()[0].value;
+            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Federated', entityId]);
+            return true;
+        }
+    );
+    $('#idpSelectPreferredIdPTile a').click(
+        function() {
+            if(typeof oauthGaString !== 'undefined') orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + oauthGaString]);
+            var encodedEntityId = this.href.substring(this.href.lastIndexOf('=') + 1);
+            var entityId = decodeURIComponent(encodedEntityId);
+            orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Federated', entityId]);
+        }
+    );
+}
+
 // jquery ready
 $(function() {
     
@@ -500,7 +519,7 @@ $(function() {
                                 });
                         return false;
                     });
-
+    
     $('.delete-url').live('click', function(e) {
         e.preventDefault();
         $(this).closest('p').fadeOut(300, function() {
