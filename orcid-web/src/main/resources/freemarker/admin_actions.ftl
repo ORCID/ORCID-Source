@@ -417,27 +417,35 @@
 				</div>
 			</div>
 		</div>
-				
+
 		<!-- Deactivate Profile -->
-		<a name="deactivate-profile"></a>			  
-		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<a  ng-show="showDeactivateModal" ng-click="toggleDeactivationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
-				<a  ng-hide="showDeactivateModal" ng-click="toggleDeactivationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
+		<div ng-controller="DeactivateProfileCtrl" class="workspace-accordion-item" ng-cloak>
+	        <p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
 			</p>			  	
-			<div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">					    		
-	    		<div class="form-group">
-					<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-					<input type="text" id="orcid_to_deactivate" ng-enter="confirmDeactivateAccount()" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
-					<div ng-show="deactivatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html="error"></span><br />
-					</div>		
+	        
+		    <div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">
+			    <div class="alert alert-success" ng-show="result.deactivateSuccessfulList.length || result.notFoundList.length || result.alreadyDeactivatedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.deactivateSuccessfulList.length"><@spring.message "admin.profile_deactivation.deactivation_success"/>
+	    				<br>{{result.deactivateSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyDeactivatedList.length"><br><@spring.message "admin.profile_deactivation.already_deactivated"/>
+	    				<br>{{result.alreadyDeactivatedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_deactivation.not_found"/>
+	    				<br>{{result.notFoundList}}
+					</div>
 				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
+				<div class="control-group">
+	    			<label for="orcid_to_deactivate" class="control-label"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+					<div class="controls">
+						<input type="text" id="orcid_to_deactivate" class="input-xlarge" ng-model="orcidsToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" />
+	       			</div>
+	       			<span class="btn btn-primary" data-ng-click="deactivateOrcids()"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
 				</div>
 			</div>
-		</div>
+	    </div>
 		
 		<!-- Reactivate Profile -->
 		<a name="reactivate-profile"></a>
@@ -586,10 +594,9 @@
 				</div>
 			</div>
 			<div class="control-group">
-    			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
+    			<label for="emailIds" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
        			<div class="controls">                    	
-       				<input type="text" data-ng-model="emailIds" class="input-xlarge" />
-       				<span class="required">*</span>
+       				<input type="text" data-ng-model="emailIds" class="input-xlarge" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" />
        			</div>
        			<span class="btn btn-primary" data-ng-click="resendClaimEmails()"><@spring.message "resend_claim.resend_claim_button_text"/></span>
 			</div>

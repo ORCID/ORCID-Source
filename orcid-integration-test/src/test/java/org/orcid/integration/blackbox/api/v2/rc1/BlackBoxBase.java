@@ -165,9 +165,7 @@ public class BlackBoxBase {
         menuItem.click();
 
         try {
-
             boolean lookAgain = false;
-
             do {
                 // Look for each revoke app button
                 By revokeAppBtn = By.id("revokeAppBtn");
@@ -197,7 +195,6 @@ public class BlackBoxBase {
                 } else {
                     lookAgain = false;
                 }
-
             } while (lookAgain);
 
         } catch (Exception e) {

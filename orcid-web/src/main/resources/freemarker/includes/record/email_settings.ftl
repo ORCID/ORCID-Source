@@ -20,7 +20,7 @@
 <script type="text/ng-template" id="edit-emails">
 
 	<!-- Email edit -->
-	<td colspan="2" ng-show="showEditEmail || emailSrvc.popUp" ng-cloak>
+	<td colspan="2" ng-show="showEditEmail || emailSrvc.popUp" ng-class="{'email-pop-up' : emailSrvc.popUp}" ng-cloak>
 	    <div class="editTablePadCell35" ng-controller="EmailEditCtrl">
 	        <!-- we should never see errors here, but just to be safe -->
 	        <div class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
@@ -180,7 +180,7 @@
             			<small class="green" ng-show="prefsSrvc.saved">${springMacroRequestContext.getMessage("manage.send_email_frequency_saved")}</small>    
         			</form>
     			</div>
-				<div>
+				<div class="control-group">
 					<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_4")} {{emailSrvc.primaryEmail.value}}${springMacroRequestContext.getMessage("manage.send_email_to_primary_5")}</p>
             		<p>${springMacroRequestContext.getMessage("manage.service_announcements")}</p>
 	          		<p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
