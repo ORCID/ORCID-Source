@@ -358,7 +358,7 @@ public class AdminController extends BaseController {
     }
     
     @RequestMapping(value = "/deactivate-profiles.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> resendClaimEmail(
+    public @ResponseBody Map<String, Set<String>> deactivateOrcidAccount(
                     @RequestBody String orcidIds) {
             Set<String> deactivatedIds = new HashSet<String>();
             Set<String> successIds = new HashSet<String>();
