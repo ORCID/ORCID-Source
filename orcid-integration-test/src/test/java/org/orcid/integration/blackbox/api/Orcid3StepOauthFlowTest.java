@@ -34,7 +34,6 @@ import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -53,8 +52,7 @@ public class Orcid3StepOauthFlowTest extends BlackBoxBase {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
 
-    @Before
-    @Transactional
+    @Before    
     public void before() {
         webDriver = new FirefoxDriver();
     }
