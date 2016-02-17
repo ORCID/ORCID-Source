@@ -22,6 +22,8 @@ public interface OrcidProfileCacheManager {
 
     public OrcidProfile retrievePublic(String orcid);
     
+    public OrcidProfile retrievePublicBio(String orcid);
+    
     public OrcidProfile retrieve(String orcid);
     
     public OrcidProfile retrieveProfileBioAndInternal(String orcid);

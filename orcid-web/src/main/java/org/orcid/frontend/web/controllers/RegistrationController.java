@@ -235,17 +235,9 @@ public class RegistrationController extends BaseController {
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
-
         reg.getEmailConfirm().setRequired(true);
-
-        reg.getPassword();
-        reg.getPasswordConfirm();
-        reg.getEmail();
-
         reg.getFamilyNames().setRequired(false);
-
         reg.getGivenNames().setRequired(true);
-
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);

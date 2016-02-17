@@ -16,27 +16,14 @@
  */
 package org.orcid.pojo.ajaxForm;
 
-public class OauthRegistrationForm extends Registration implements OauthForm {
-    /**
-     * 
-     */
+public class OauthRegistrationForm extends Registration {
     private static final long serialVersionUID = 1L;
-    Text clientId;
-    Text clientName;
-    Text memberName;
-    Text redirectUri;
-    Text scope;
-    Text responseType;
-    Text stateParam;
     boolean approved = false;
     boolean persistentTokenEnabled = false;
+    private String redirectUrl;
 
     public OauthRegistrationForm() {
         super();
-        this.clientId = new Text();
-        this.redirectUri = new Text();
-        this.scope = new Text();
-        this.responseType = new Text();
     }
 
     public OauthRegistrationForm(Registration reg) {
@@ -54,58 +41,6 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
         this.setCreationType(reg.getCreationType());
         this.setReferredBy(reg.getReferredBy());
         this.setSendEmailFrequencyDays(reg.getSendEmailFrequencyDays());
-        this.clientId = new Text();
-        this.redirectUri = new Text();
-        this.scope = new Text();
-        this.responseType = new Text();
-    }
-
-    public Text getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Text clientId) {
-        this.clientId = clientId;
-    }
-
-    public Text getClientName() {
-        return clientName;
-    }
-
-    public void setClientName(Text clientName) {
-        this.clientName = clientName;
-    }
-
-    public Text getMemberName() {
-        return memberName;
-    }
-
-    public void setMemberName(Text memberName) {
-        this.memberName = memberName;
-    }
-    
-    public Text getRedirectUri() {
-        return redirectUri;
-    }
-
-    public void setRedirectUri(Text redirectUri) {
-        this.redirectUri = redirectUri;
-    }
-
-    public Text getScope() {
-        return scope;
-    }
-
-    public void setScope(Text scope) {
-        this.scope = scope;
-    }
-
-    public Text getResponseType() {
-        return responseType;
-    }
-
-    public void setResponseType(Text responseType) {
-        this.responseType = responseType;
     }
 
     public boolean getApproved() {
@@ -123,12 +58,12 @@ public class OauthRegistrationForm extends Registration implements OauthForm {
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
     }
-    
-    public Text getStateParam() {
-        return stateParam;
+
+    public String getRedirectUrl() {
+        return redirectUrl;
     }
 
-    public void setStateParam(Text stateParam) {
-        this.stateParam = stateParam;
-    }
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }       
 }

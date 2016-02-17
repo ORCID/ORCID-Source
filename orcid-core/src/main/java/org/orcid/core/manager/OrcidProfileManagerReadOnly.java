@@ -83,9 +83,13 @@ public interface OrcidProfileManagerReadOnly {
 
     OrcidProfile retrieveClaimedOrcidProfile(String orcid);
     
+    OrcidProfile retrieveClaimedOrcidProfile(String orcid, LoadOptions loadOptions);
+    
     OrcidProfile retrieveFreshOrcidProfile(String orcid, LoadOptions loadOptions);
     
     OrcidProfile retrievePublicOrcidProfile(String orcid);
+    
+    OrcidProfile retrievePublicOrcidProfile(String orcid, LoadOptions loadOptions);
     
     Date retrieveLastModifiedDate(String orcid);
     
