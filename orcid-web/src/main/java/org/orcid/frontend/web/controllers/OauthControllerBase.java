@@ -247,17 +247,17 @@ public class OauthControllerBase extends BaseController {
             memberName = clientName;
         }
 
-        if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {
-            email = email.trim();
-            orcid = orcid.trim();
+        if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {                        
             // Check if orcid exists, if so, show login screen
             if(!PojoUtil.isEmpty(orcid)) {
+                orcid = orcid.trim();
                 if(orcidProfileManager.exists(orcid)) {
                     infoForm.setUserId(orcid);
                 }
             } else {
                 // Check if email exists, if so, show login screen
                 if(!PojoUtil.isEmpty(email)) {
+                    email = email.trim();
                     if(emailManager.emailExists(email)) {
                         infoForm.setUserId(email);
                     }
