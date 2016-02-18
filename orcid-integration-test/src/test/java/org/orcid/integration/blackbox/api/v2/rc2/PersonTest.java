@@ -121,9 +121,17 @@ public class PersonTest extends BlackBoxBase {
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(this.user1OrcidId, accessToken);
         assertNotNull(response);
+        //Occasionaly gives 500 when run as Suite.  Passes on it's own...?
+        /*
+            <error xmlns="http://www.orcid.org/ns/error">
+                <response-code>500</response-code>
+                <developer-message>org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.orcid.persistence.jpa.entities.ProfileEntity.givenPermissionTo, could not initialize proxy - no Session</developer-message>
+                <user-message>Something went wrong in ORCID.</user-message>
+                <error-code>9008</error-code>
+                <more-info>http://members.orcid.org/api/api-error-codes</more-info>
+            </error>
+         */
         assertEquals("invalid "+response,200,response.getStatus());
-        //I think there is a bug that is causing this to intermittently fail.
-        //It's as if it's not waiting for the entire response before attempting to parse the XML.
         Thread.sleep(100);
         Person person = response.getEntity(Person.class);
         assertNotNull(person);

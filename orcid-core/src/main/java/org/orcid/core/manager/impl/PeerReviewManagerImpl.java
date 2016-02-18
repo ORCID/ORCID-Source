@@ -32,6 +32,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
@@ -136,6 +137,10 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                                 sourceEntity);
                     }
                 }
+            }else{
+                //check vocab of external identifiers
+                ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+                ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
             }
 
             validateGroupId(peerReview);
@@ -170,6 +175,10 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                             sourceManager.retrieveSourceEntity());
                 }
             }
+        }else{
+            //check vocab of external identifiers
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
         PeerReviewEntity updatedEntity = new PeerReviewEntity();

@@ -37,7 +37,7 @@ public class ExternalIDValidator {
     
     public void validateWorkOrPeerReview(ExternalID id){
         try{
-            WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType());
+            WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
         }catch (IllegalArgumentException e){
             checkAndThrow(Lists.newArrayList(id.getType()));
         }
@@ -49,7 +49,7 @@ public class ExternalIDValidator {
         List<String> errors = Lists.newArrayList();        
         for (ExternalID id : ids.getExternalIdentifier()){
             try{
-                WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType());
+                WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
             }catch (IllegalArgumentException e){
                 errors.add(id.getType());
             }
@@ -63,7 +63,7 @@ public class ExternalIDValidator {
         List<String> errors = Lists.newArrayList();        
         for (ExternalID id : ids.getExternalIdentifier()){
             try{
-                FundingExternalIdentifierType t = FundingExternalIdentifierType.fromValue(id.getType());
+                FundingExternalIdentifierType t = FundingExternalIdentifierType.fromValue(id.getType().toLowerCase());
             }catch (IllegalArgumentException e){
                 errors.add(id.getType());
             }
