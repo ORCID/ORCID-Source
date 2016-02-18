@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.NameEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -113,8 +114,8 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
         assertTrue(profile.getClaimed());
-        assertEquals("One", profile.getGivenNames());
-        assertEquals("User", profile.getFamilyName());
+        assertEquals("One", profile.getNameEntity().getGivenName());
+        assertEquals("User", profile.getNameEntity().getFamilyName());
         assertEquals("Spike Milligan", profile.getVocativeName());
     }
     
@@ -463,10 +464,11 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
-        profile.setCreditName("Updated Credit Name");
-        profile.setNamesVisibility(Visibility.PRIVATE);
-        profile.setGivenNames("Updated Give Name");
-        profile.setFamilyName("Updated Last Name");
+        profile.setNameEntity(new NameEntity());
+        profile.getNameEntity().setCreditName("Updated Credit Name");
+        profile.getNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+        profile.getNameEntity().setGivenName("Updated Give Name");
+        profile.getNameEntity().setFamilyName("Updated Last Name");
         profile.setIso2Country(Iso3166Country.US);
         profile.setKeywordsVisibility(Visibility.PRIVATE);
         profile.setResearcherUrlsVisibility(Visibility.PRIVATE);
@@ -477,10 +479,10 @@ public class ProfileDaoTest extends DBUnitTest {
         profile = profileDao.find("4444-4444-4444-4441");
         assertEquals("Updated Biography", profile.getBiography());
         assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
-        assertEquals("Updated Credit Name", profile.getCreditName());
-        assertEquals(Visibility.PRIVATE.value(), profile.getNamesVisibility().value());
-        assertEquals("Updated Give Name", profile.getGivenNames());
-        assertEquals("Updated Last Name", profile.getFamilyName());
+        assertEquals("Updated Credit Name", profile.getNameEntity().getCreditName());
+        assertEquals(Visibility.PRIVATE.value(), profile.getNameEntity().getVisibility().value());
+        assertEquals("Updated Give Name", profile.getNameEntity().getGivenName());
+        assertEquals("Updated Last Name", profile.getNameEntity().getFamilyName());
         assertEquals(Iso3166Country.US, profile.getIso2Country());
         assertEquals(Visibility.PRIVATE.value(), profile.getKeywordsVisibility().value());
         assertEquals(Visibility.PRIVATE.value(), profile.getResearcherUrlsVisibility().value());

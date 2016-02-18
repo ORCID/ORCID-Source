@@ -70,8 +70,8 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         String harrysOrcid = "4444-4444-4444-4444";
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(harrysOrcid);
         assertNotNull(profileEntity);
-        assertEquals("Harry", profileEntity.getGivenNames());
-        assertEquals("Secombe", profileEntity.getFamilyName());
+        assertEquals("Harry", profileEntity.getNameEntity().getGivenName());
+        assertEquals("Secombe", profileEntity.getNameEntity().getFamilyName());
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 

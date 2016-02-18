@@ -85,6 +85,7 @@ import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.NameEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
@@ -218,16 +219,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      */
     private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
         ProfileEntity profile = new ProfileEntity();
-        profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-        profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        profile.setNameEntity(new NameEntity());
+        profile.getNameEntity().setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        profile.getNameEntity().setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
+        profile.getNameEntity().setGivenName(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
         profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
         profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
         profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
         profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
         profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
-        profile.setNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
+        profile.getNameEntity().setVisibility(Visibility.fromValue(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility().value()));
         profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         profile.setId(orcidProfile.getOrcidIdentifier().getPath());
         return profile;
@@ -597,14 +599,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         String publicName = "";
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile != null) {
-            Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
+            Visibility namesVisibility = (profile.getNameEntity().getVisibility() != null) ? Visibility.fromValue(profile.getNameEntity().getVisibility().value())
                     : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
             if (Visibility.PUBLIC.equals(namesVisibility)) {
-                if (!PojoUtil.isEmpty(profile.getCreditName())) {
-                    publicName = profile.getCreditName();
+                if (!PojoUtil.isEmpty(profile.getNameEntity().getCreditName())) {
+                    publicName = profile.getNameEntity().getCreditName();
                 } else {
-                    publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
-                    publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
+                    publicName = PojoUtil.isEmpty(profile.getNameEntity().getGivenName()) ? "" : profile.getNameEntity().getGivenName();
+                    publicName += PojoUtil.isEmpty(profile.getNameEntity().getFamilyName()) ? "" : " " + profile.getNameEntity().getFamilyName();
                 }
             }
         }

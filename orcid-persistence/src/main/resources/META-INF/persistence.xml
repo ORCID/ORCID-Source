@@ -63,7 +63,8 @@
         <class>org.orcid.persistence.jpa.entities.UserconnectionEntity</class>
 		<class>org.orcid.persistence.jpa.entities.UserconnectionPK</class>
         <class>org.orcid.persistence.jpa.entities.InternalSSOEntity</class>
-        <class>org.orcid.persistence.jpa.entities.AddressEntity</class>        
+        <class>org.orcid.persistence.jpa.entities.AddressEntity</class>
+        <class>org.orcid.persistence.jpa.entities.NameEntity</class>        
 
         <!-- OAuth entities -->
         <class>org.orcid.persistence.jpa.entities.ClientDetailsEntity</class>

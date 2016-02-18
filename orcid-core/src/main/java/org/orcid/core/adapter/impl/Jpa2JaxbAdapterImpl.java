@@ -288,7 +288,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
-        group.setGroupName(profileEntity.getCreditName());
+        group.setGroupName(profileEntity.getNameEntity().getCreditName());
         group.setType(profileEntity.getGroupType());
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {
@@ -893,20 +893,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
-        String creditName = groupProfile.getCreditName();
+        String creditName = groupProfile.getNameEntity().getCreditName();
         if (creditName != null) {
             if (groupProfile.getGroupType() != null) {
                 // It's a member so, it will definitely have a credit name. Use
                 // it regardless of privacy.
                 return creditName;
             }
-            Visibility namesVisibilty = groupProfile.getNamesVisibility();
+            org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = groupProfile.getNameEntity().getVisibility();
             if (Visibility.PUBLIC.equals(namesVisibilty)) {
                 return creditName;
             }
         }
-        String displayName = groupProfile.getGivenNames();
-        String familyName = groupProfile.getFamilyName();
+        String displayName = groupProfile.getNameEntity().getGivenName();
+        String familyName = groupProfile.getNameEntity().getFamilyName();
         if (StringUtils.isNotBlank(familyName)) {
             displayName += " " + familyName;
         }
@@ -1055,12 +1055,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private GivenNames getGivenNames(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getGivenNames())) {
+        if (StringUtils.isNotBlank(profileEntity.getNameEntity().getGivenName())) {
             GivenNames names = new GivenNames();
-            names.setContent(profileEntity.getGivenNames());
+            names.setContent(profileEntity.getNameEntity().getGivenName());
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNamesVisibility() != null) {
-            	visibility = profileEntity.getNamesVisibility();
+            if(profileEntity.getNameEntity().getVisibility() != null) {
+            	visibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
             } 
             names.setVisibility(visibility);
             return names;
@@ -1069,12 +1069,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private FamilyName getFamilyName(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getFamilyName())) {
+        if (StringUtils.isNotBlank(profileEntity.getNameEntity().getFamilyName())) {
             FamilyName name = new FamilyName();
-            name.setContent(profileEntity.getFamilyName());
+            name.setContent(profileEntity.getNameEntity().getFamilyName());
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNamesVisibility() != null) {
-            	visibility = profileEntity.getNamesVisibility();
+            if(profileEntity.getNameEntity().getVisibility() != null) {
+                visibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
             } 
             name.setVisibility(visibility);
             return name;
@@ -1083,13 +1083,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private CreditName getCreditName(ProfileEntity profileEntity) {
-        String creditName = profileEntity.getCreditName();
+        String creditName = profileEntity.getNameEntity().getCreditName();
         if (StringUtils.isNotBlank(creditName)) {
             CreditName name = new CreditName();
             name.setContent(creditName);
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNamesVisibility() != null) {
-            	visibility = profileEntity.getNamesVisibility();
+            if(profileEntity.getNameEntity().getVisibility() != null) {
+                visibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
             } 
             name.setVisibility(visibility);
             return name;

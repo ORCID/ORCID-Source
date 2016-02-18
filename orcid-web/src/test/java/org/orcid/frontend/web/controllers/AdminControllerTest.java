@@ -214,8 +214,8 @@ public class AdminControllerTest extends BaseControllerTest {
                 
         ProfileEntity deprecated = adminController.getProfileEntityManager().findByOrcid("4444-4444-4444-4441");
                 
-        assertEquals("Given Names Deactivated", deprecated.getGivenNames());
-        assertEquals("Family Name Deactivated", deprecated.getFamilyName());                            
+        assertEquals("Given Names Deactivated", deprecated.getNameEntity().getGivenName());
+        assertEquals("Family Name Deactivated", deprecated.getNameEntity().getFamilyName());                            
     }
 
     @Test         
@@ -270,8 +270,8 @@ public class AdminControllerTest extends BaseControllerTest {
         profileDao.refresh(profileDao.find("4444-4444-4444-4445"));
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
         assertNotNull(deactivated.getDeactivationDate());
-        assertEquals(deactivated.getFamilyName(), "Family Name Deactivated");
-        assertEquals(deactivated.getGivenNames(), "Given Names Deactivated");
+        assertEquals(deactivated.getNameEntity().getFamilyName(), "Family Name Deactivated");
+        assertEquals(deactivated.getNameEntity().getGivenName(), "Given Names Deactivated");
 
         // Test try to deactivate an already deactive account
         result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");

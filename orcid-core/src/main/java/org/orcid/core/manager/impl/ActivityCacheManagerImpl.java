@@ -105,11 +105,11 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Cacheable(value = "credit-name", key = "#profile.getCacheKey()")
     public String getCreditName(ProfileEntity profile) {
         if (profile != null) {            
-            if (StringUtils.isNotBlank(profile.getCreditName())) {
-                return profile.getCreditName();
+            if (StringUtils.isNotBlank(profile.getNameEntity().getCreditName())) {
+                return profile.getNameEntity().getCreditName();
             } else {
-                String givenName = profile.getGivenNames();
-                String familyName = profile.getFamilyName();
+                String givenName = profile.getNameEntity().getGivenName();
+                String familyName = profile.getNameEntity().getFamilyName();
                 String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
                 return composedCreditName;
             }
@@ -122,13 +122,13 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Cacheable(value = "pub-credit-name", key = "#profile.getCacheKey()")
     public String getPublicCreditName(ProfileEntity profile) {
         if(profile != null) {
-            if (Visibility.PUBLIC.equals(profile.getNamesVisibility()) && StringUtils.isNotBlank(profile.getCreditName())) {
+            if (Visibility.PUBLIC.equals(profile.getNameEntity().getVisibility()) && StringUtils.isNotBlank(profile.getNameEntity().getCreditName())) {
                 String publicCreditName = null;
-                if(!PojoUtil.isEmpty(profile.getCreditName())) {
-                    publicCreditName = profile.getCreditName();
+                if(!PojoUtil.isEmpty(profile.getNameEntity().getCreditName())) {
+                    publicCreditName = profile.getNameEntity().getCreditName();
                 } else {
-                    String givenName = profile.getGivenNames();
-                    String familyName = profile.getFamilyName();
+                    String givenName = profile.getNameEntity().getGivenName();
+                    String familyName = profile.getNameEntity().getFamilyName();
                     publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
                 }
                 return publicCreditName;

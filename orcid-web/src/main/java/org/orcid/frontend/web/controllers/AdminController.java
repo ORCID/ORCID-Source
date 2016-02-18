@@ -199,13 +199,13 @@ public class AdminController extends BaseController {
                     ProfileDetails deprecatedDetails = new ProfileDetails();
                     deprecatedDetails.setOrcid(deprecatedOrcid);
 
-                    deprecatedDetails.setFamilyName(deprecated.getFamilyName());
-                    deprecatedDetails.setGivenNames(deprecated.getGivenNames());
+                    deprecatedDetails.setFamilyName(deprecated.getNameEntity().getFamilyName());
+                    deprecatedDetails.setGivenNames(deprecated.getNameEntity().getGivenName());
 
                     ProfileDetails primaryDetails = new ProfileDetails();
                     primaryDetails.setOrcid(primaryOrcid);
-                    primaryDetails.setFamilyName(primary.getFamilyName());
-                    primaryDetails.setGivenNames(primary.getGivenNames());
+                    primaryDetails.setFamilyName(primary.getNameEntity().getFamilyName());
+                    primaryDetails.setGivenNames(primary.getNameEntity().getGivenName());
 
                     result.setDeprecatedAccount(deprecatedDetails);
                     result.setPrimaryAccount(primaryDetails);

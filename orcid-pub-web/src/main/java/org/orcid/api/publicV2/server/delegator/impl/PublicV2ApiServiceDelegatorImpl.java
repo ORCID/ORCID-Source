@@ -223,8 +223,8 @@ public class PublicV2ApiServiceDelegatorImpl
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if (!entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)){
-            creditName = entity.getCreditName();
+        if (!entity.getNameEntity().getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+            creditName = entity.getNameEntity().getCreditName();
         }
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName ,true);

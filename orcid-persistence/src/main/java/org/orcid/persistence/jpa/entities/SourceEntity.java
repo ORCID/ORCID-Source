@@ -89,12 +89,12 @@ public class SourceEntity implements Serializable {
         if (sourceProfile != null) {
             // Set the source name
             // If it is a user, check if it have a credit name and is visible
-            if(Visibility.PUBLIC.equals(sourceProfile.getNamesVisibility())) {
-                if (!StringUtils.isEmpty(sourceProfile.getCreditName())) {
-                    return sourceProfile.getCreditName();
+            if(Visibility.PUBLIC.equals(sourceProfile.getNameEntity().getVisibility())) {
+                if (!StringUtils.isEmpty(sourceProfile.getNameEntity().getCreditName())) {
+                    return sourceProfile.getNameEntity().getCreditName();
                 } else {
                     //If credit name is empty
-                    return sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
+                    return sourceProfile.getNameEntity().getGivenName() + (StringUtils.isEmpty(sourceProfile.getNameEntity().getFamilyName()) ? "" : " " + sourceProfile.getNameEntity().getFamilyName());
                 }                
             } else {
                 return null;

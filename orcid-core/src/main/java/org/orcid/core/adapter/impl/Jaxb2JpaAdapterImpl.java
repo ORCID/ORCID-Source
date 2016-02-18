@@ -458,20 +458,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setGivenNames(ProfileEntity profileEntity, GivenNames givenNames) {
         if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
-            profileEntity.setGivenNames(givenNames.getContent());
+            profileEntity.getNameEntity().setGivenName(givenNames.getContent());
         }
     }
 
     private void setFamilyName(ProfileEntity profileEntity, FamilyName familyName) {
         if (familyName != null) {
-            profileEntity.setFamilyName(familyName.getContent());
+            profileEntity.getNameEntity().setFamilyName(familyName.getContent());
         }
     }
 
     private void setCreditNameDetails(ProfileEntity profileEntity, CreditName creditName) {
         if (creditName != null) {
-            profileEntity.setNamesVisibility(creditName.getVisibility());
-            profileEntity.setCreditName(creditName.getContent());
+            profileEntity.getNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(creditName.getVisibility().value()));
+            profileEntity.getNameEntity().setCreditName(creditName.getContent());
         }
     }
 

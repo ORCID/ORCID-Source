@@ -25,7 +25,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.CreditName;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.common_rc2.VisibilityType;
 
@@ -35,7 +38,7 @@ import org.orcid.jaxb.model.common_rc2.VisibilityType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "givenNames", "familyName", "creditName" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "givenNames", "familyName", "creditName", "source" })
 @XmlRootElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")
 public class Name implements Serializable, VisibilityType {
     private static final long serialVersionUID = -7946486981092688675L;
@@ -50,6 +53,12 @@ public class Name implements Serializable, VisibilityType {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common")
+    protected Source source;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "created-date")
+    protected CreatedDate createdDate;
 
     public GivenNames getGivenNames() {
         return givenNames;
@@ -135,5 +144,29 @@ public class Name implements Serializable, VisibilityType {
         if (visibility != other.visibility)
             return false;
         return true;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public CreatedDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(CreatedDate createdDate) {
+        this.createdDate = createdDate;
     }
 }

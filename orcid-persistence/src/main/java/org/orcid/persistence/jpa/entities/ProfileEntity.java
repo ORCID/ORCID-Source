@@ -80,9 +80,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String orcid;
     private OrcidType orcidType;
     private MemberType groupType;
-    private String givenNames;
-    private String familyName;
-    private String creditName;
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
     private String biography;
@@ -140,7 +137,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Boolean enableNotifications = Boolean.TRUE;
 
     // Visibility settings
-    private Visibility namesVisibility;
     private Visibility otherNamesVisibility;
     private Visibility biographyVisibility;
     private Visibility keywordsVisibility;
@@ -160,6 +156,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String userLastIp;
     private boolean reviewed = Boolean.FALSE;
 
+    private NameEntity nameEntity;
+    
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -190,33 +188,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setGroupType(MemberType groupType) {
         this.groupType = groupType;
-    }
-
-    @Column(name = "given_names", length = 150)
-    public String getGivenNames() {
-        return givenNames;
-    }
-
-    public void setGivenNames(String givenNames) {
-        this.givenNames = givenNames;
-    }
-
-    @Column(name = "family_name", length = 150)
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-
-    @Column(name = "credit_name", length = 150)
-    public String getCreditName() {
-        return creditName;
-    }
-
-    public void setCreditName(String creditName) {
-        this.creditName = creditName;
     }
 
     @Column(name = "biography", length = 5000)
@@ -825,17 +796,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     @Basic
     @Enumerated(EnumType.STRING)
-    @Column(name = "names_visibility")
-    public Visibility getNamesVisibility() {
-        return namesVisibility;
-    }
-
-    public void setNamesVisibility(Visibility namesVisibility) {
-        this.namesVisibility = namesVisibility;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
     @Column(name = "other_names_visibility")
     public Visibility getOtherNamesVisibility() {
         return otherNamesVisibility;
@@ -1056,5 +1016,13 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         Date lastModified = this.getLastModified() == null ? new Date() : this.getLastModified();
         String lastModifiedString = DateUtils.convertToXMLGregorianCalendar(lastModified).toXMLFormat();
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
+    }
+
+    public NameEntity getNameEntity() {
+        return nameEntity;
+    }
+
+    public void setNameEntity(NameEntity nameEntity) {
+        this.nameEntity = nameEntity;
     }
 }
