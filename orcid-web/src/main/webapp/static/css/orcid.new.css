@@ -4732,6 +4732,7 @@ ul.toggle-menu li:hover ul{
 .bibtex-box,
 .work-import-wizard,
 .funding-import-wizard{
+	min-height: 75px;
 	height: auto;
 	display: inline-block;	
 	width: 100%;

@@ -51,6 +51,19 @@ function formatDate(oldDate) {
 }
 
 
+function getScripts(scripts, callback) {
+    var progress = 0;
+    var internalCallback = function () {        
+        if (++progress == scripts.length - 1) {
+            callback();
+        }
+    };    
+    scripts.forEach(function(script) {        
+        $.getScript(script, internalCallback);        
+    });
+};
+
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -4993,6 +5006,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.geoArea = ['All'];
     $scope.badgesRequested = {};
     $scope.noLinkFlag = true;
+    $scope.showBibtexExport = false;
+    $scope.generatingBibtex = false;
+    $scope.scriptsLoaded = false;
+    $scope.bibtexGenerated = false;
+    $scope.bibtexURL = "";
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5009,6 +5027,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.bulkEditShow = !$scope.bulkEditShow;
         $scope.showBibtexImportWizard = false;
         $scope.workImportWizard = false;
+        $scope.showBibtexExport = false;
     };
 
     $scope.bulkApply = function(func) {
@@ -5153,6 +5172,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.bulkEditShow = false;
         $scope.worksFromBibtex = null;
         $scope.workImportWizard = false;
+        $scope.showBibtexExport = false;
     };
 
     $scope.bibtextCancel = function(){
@@ -5682,7 +5702,68 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 	    	}
 	    	$scope.badgesRequested[putCode] = true;
     	}
-    }        
+    }
+    
+    $scope.toggleBibtexExport = function(){
+        $scope.bibtexParsingError = false;
+        $scope.showBibtexImportWizard = false;
+        $scope.bulkEditShow = false;        
+        $scope.workImportWizard = false;
+        $scope.showBibtexExport  = !$scope.showBibtexExport;        
+    }
+    
+    $scope.openBibtexExportDialog = function(){
+        $scope.loadingScripts = true;
+        
+        /* List of dependencies */
+        var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
+        var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
+        var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
+        var citeproc = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/citeproc.js";
+        var orcidx   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/orcid.js";
+        var styles   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/styles.js";
+        
+        var scripts = [swagger, xmle4x, xmldom, citeproc, orcidx, styles];
+        
+        getScripts(scripts, function(){
+            $scope.$apply(function() {
+                $scope.loadingScripts = false;
+                $scope.scriptsLoaded = true;
+                orcid.init(function(){
+                    orcid.resolveCitations(orcidVar.orcidId, $scope.downloadBibtexExport, orcid.styleBibtex);
+                });
+            });            
+        });
+    }
+    
+    $scope.downloadBibtexExport = function(citations){
+        
+        var text = "";
+        for (c in citations){
+            text += citations[c] +"\n"; 
+        }
+        text = text.replace(/<div class="csl-entry">/g, '');
+        text = text.replace(/<\/div>/g, '');
+        
+        if(window.navigator.msSaveOrOpenBlob) {
+            var fileData = [text];
+            blobObject = new Blob(fileData, {type: 'text/plain'});
+            
+            $("#downloadlink").click(function(){
+                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");
+            });            
+            $("#downloadlink").click();
+            
+            
+            
+        } else {
+            $scope.bibtexGenerated = true;
+            $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
+        }
+        
+    }
+    
+    
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){

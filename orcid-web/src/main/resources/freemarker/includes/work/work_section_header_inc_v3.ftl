@@ -37,6 +37,13 @@
                             <span class="glyphicon glyphicon-pencil"></span><@orcid.msg 'groups.common.bulk_edit'/>
                         </a>
                     </li>
+                    <#if RequestParameters['bibtexExport']??>
+	                    <li>
+	                    	<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexExport}" ng-click="toggleBibtexExport()">
+	                            <span class="glyphicon glyphicon-save-file"></span>Export
+	                        </a>
+	                    </li>
+                    </#if>
                     <li class="hidden-xs"><!-- Workaround for mobile view -->
                         <div class="menu-container">
                             <ul class="toggle-menu">
