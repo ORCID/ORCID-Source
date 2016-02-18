@@ -195,7 +195,7 @@ public class WorkManagerImpl implements WorkManager {
                 if (works != null) {
                     List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
                     for (Work existing : workEntities) {
-                        ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                        ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                     }
                 }
             }
@@ -222,7 +222,7 @@ public class WorkManagerImpl implements WorkManager {
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
-                    ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
         }

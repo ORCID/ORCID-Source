@@ -59,6 +59,8 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
+        
+        ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
     }
 
     public static void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest) {
@@ -81,6 +83,8 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
+        
+        ExternalIDValidator.getInstance().validateFunding(funding.getExternalIdentifiers());
     }
 
     public static void validateEmployment(Employment employment, SourceEntity sourceEntity) {
@@ -117,6 +121,9 @@ public class ActivityValidator {
         if (peerReview.getType() == null) {
             throw new ActivityTypeValidationException();
         }
+        
+        ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+        ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
     }
 
     public static void validateCreateGroupRecord(GroupIdRecord groupIdRecord, SourceEntity sourceEntity) {
@@ -129,7 +136,7 @@ public class ActivityValidator {
         }
     }
 
-    public static void checkExternalIdentifiers(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
+    public static void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
@@ -161,7 +168,7 @@ public class ActivityValidator {
                 && newId.getType().equalsIgnoreCase(existingId.getType());
     }
 
-    public static void checkFundingExternalIdentifiers(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
+    public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {

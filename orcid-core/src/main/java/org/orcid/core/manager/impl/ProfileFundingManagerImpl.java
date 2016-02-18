@@ -271,7 +271,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null) {
             for(Funding exstingFunding : fundings) {
-            	ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            	ActivityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
             			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
             }
         }
@@ -324,7 +324,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             for(ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
                 if(!existing.getPutCode().equals(funding.getPutCode())) {
-                     ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+                     ActivityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
                                      existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }

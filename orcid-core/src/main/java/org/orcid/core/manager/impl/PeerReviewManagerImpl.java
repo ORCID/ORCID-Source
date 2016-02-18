@@ -132,7 +132,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                        ActivityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
                     }
                 }
@@ -166,7 +166,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {
-                    ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                    ActivityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                             sourceManager.retrieveSourceEntity());
                 }
             }
