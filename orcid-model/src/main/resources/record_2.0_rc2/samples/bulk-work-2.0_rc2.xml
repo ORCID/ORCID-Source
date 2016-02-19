@@ -5,16 +5,14 @@
 	xsi:schemaLocation="http://www.orcid.org/ns/work ../work-2.0_rc2.xsd">
 	<error:error>
 		<error:response-code>0</error:response-code>
-		<error:developer-message>error:developer-message
-		</error:developer-message>
-		<error:user-message>error:user-message</error:user-message>
+		<error:developer-message>error:developer-message0</error:developer-message>
+		<error:user-message>error:user-message0</error:user-message>
 		<error:error-code>0</error:error-code>
-		<error:more-info>http://tempuri.org</error:more-info>
+		<error:more-info>http://tempuri.org/0</error:more-info>
 	</error:error>
 	<work:work>
 		<work:title>
-			<common:title>Current treatment of left main coronary artery disease
-			</common:title>
+			<common:title>Current treatment of left main coronary artery disease # 1</common:title>
 		</work:title>
 		<work:journal-title>Cor et Vasa</work:journal-title>
 		<work:type>journal-article</work:type>
@@ -25,18 +23,16 @@
 		</common:publication-date>
 		<work:external-identifiers>
 			<work:work-external-identifier>
-				<common:external-identifier-url></common:external-identifier-url>
+				<common:external-identifier-url>http://extId/1</common:external-identifier-url>
 				<common:relationship>self</common:relationship>
 				<work:external-identifier-type>doi</work:external-identifier-type>
-				<work:external-identifier-id>10.1016/j.crvasa.2015.05.007
-				</work:external-identifier-id>
+				<work:external-identifier-id>10.1016/j.crvasa.2015.05.007</work:external-identifier-id>
 			</work:work-external-identifier>
 		</work:external-identifiers>
 	</work:work>
 	<work:work>
 		<work:title>
-			<common:title>Current treatment of left main coronary artery disease
-			</common:title>
+			<common:title>Current treatment of left main coronary artery disease # 2</common:title>
 		</work:title>
 		<work:journal-title>Cor et Vasa</work:journal-title>
 		<work:type>journal-article</work:type>
@@ -47,20 +43,18 @@
 		</common:publication-date>
 		<work:external-identifiers>
 			<work:work-external-identifier>
-				<common:external-identifier-url></common:external-identifier-url>
+				<common:external-identifier-url>http://extId/2</common:external-identifier-url>
 				<common:relationship>self</common:relationship>
 				<work:external-identifier-type>doi</work:external-identifier-type>
-				<work:external-identifier-id>10.1016/j.crvasa.2015.05.007
-				</work:external-identifier-id>
+				<work:external-identifier-id>10.1016/j.crvasa.2015.05.008</work:external-identifier-id>
 			</work:work-external-identifier>
 		</work:external-identifiers>
 	</work:work>
 	<error:error>
-		<error:response-code>0</error:response-code>
-		<error:developer-message>error:developer-message
-		</error:developer-message>
-		<error:user-message>error:user-message</error:user-message>
-		<error:error-code>0</error:error-code>
-		<error:more-info>http://tempuri.org</error:more-info>
+		<error:response-code>1</error:response-code>
+		<error:developer-message>error:developer-message1</error:developer-message>
+		<error:user-message>error:user-message1</error:user-message>
+		<error:error-code>1</error:error-code>
+		<error:more-info>http://tempuri.org/1</error:more-info>
 	</error:error>
 </work:bulk>
