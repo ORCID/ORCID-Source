@@ -520,7 +520,7 @@
 							   <div class="row full-height-row">
 							   	   <div class="col-md-9 col-sm-9 col-xs-8">
 									   <p>
-									   		Export your works to a 	BibTeX file. For more information see <a href="">exporting works</a>.
+									   		Export your works to a BibTeX file. For more information see <a href="">exporting works</a>.
 									   </p> 
 								   </div>
 								   <div class="col-md-3 col-sm-3 col-xs-4">
@@ -530,26 +530,26 @@
 										</span>								    
 								   </div>
 							   </div>
-							</div>						
-							<div class="alert alert-block" ng-show="bibtexParsingError">
-								<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
 							</div>
 							<div ng-show="loadingScripts == true" class="text-center ng-hide" ng-cloak>
-							    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>							    
+							    <i id="" class="glyphicon glyphicon-refresh spin x2 green"></i>
 							</div>
 							<span class="dotted-bar" ng-show="scriptsLoaded"></span>
-							<div class="bottomBuffer" ng-show="scriptsLoaded && bibtexGenerated == false" ng-cloak>
+							<div class="bottomBuffer" ng-show="scriptsLoaded && !bibtexGenerated && !bibtexExportError" ng-cloak>
 								<ul class="inline-list">
 									<li>
 										Generating BibTeX, please wait...
 									</li>
 									<li>
-										&nbsp;<span id="ajax-loader"><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>		
+										&nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>		
 									</li>
 								</ul>
 								 
 							</div>
-							<div ng-show="bibtexGenerated" class="bottomBuffer">
+							<div class="alert alert-block" ng-show="bibtexExportError">
+								<strong>Something went wrong, please try again...</strong>
+							</div>
+							<div ng-show="bibtexGenerated && !bibtexExportError" class="bottomBuffer">							
 									<a download="orcid.bib" href="{{bibtexURL}}" id="downloadlink">Click to Download</a>
 							</div>
 						</div>		

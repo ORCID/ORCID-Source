@@ -5011,6 +5011,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.scriptsLoaded = false;
     $scope.bibtexGenerated = false;
     $scope.bibtexURL = "";
+    $scope.bibtexExportError = false;
+    $scope.bibtexURL = '';
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5709,13 +5711,19 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.showBibtexImportWizard = false;
         $scope.bulkEditShow = false;        
         $scope.workImportWizard = false;
-        $scope.showBibtexExport  = !$scope.showBibtexExport;        
+        $scope.showBibtexExport  = !$scope.showBibtexExport;
+        $scope.bibtexExportError = false;
+        $scope.bibtexGenerated = false;
+        $scope.loadingScripts = false;
+        $scope.scriptsLoaded = false;
     }
     
     $scope.openBibtexExportDialog = function(){
-        $scope.loadingScripts = true;
         
-        /* List of dependencies */
+        $scope.loadingScripts = true;
+        $scope.bibtexExportError = false; 
+        $scope.scriptsLoaded = false;
+        
         var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
         var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
         var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
@@ -5734,34 +5742,32 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                 });
             });            
         });
-    }
+    };
     
     $scope.downloadBibtexExport = function(citations){
-        
-        var text = "";
-        for (c in citations){
-            text += citations[c] +"\n"; 
+        $scope.bibtexGenerated = false;
+        if (citations.length > 0){
+            var text = "";
+            for (c in citations){
+                text += citations[c] +"\n"; 
+            }
+            text = text.replace(/<div class="csl-entry">/g, '');
+            text = text.replace(/<\/div>/g, '');
+            
+            if(window.navigator.msSaveOrOpenBlob) {
+                var fileData = [text];
+                blobObject = new Blob(fileData, {type: 'text/plain'});
+                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+            } else {
+                $scope.bibtexGenerated = true;
+                $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
+            }
+        }else{
+            $scope.$apply(function() {
+                $scope.bibtexExportError = true;
+            });   
         }
-        text = text.replace(/<div class="csl-entry">/g, '');
-        text = text.replace(/<\/div>/g, '');
-        
-        if(window.navigator.msSaveOrOpenBlob) {
-            var fileData = [text];
-            blobObject = new Blob(fileData, {type: 'text/plain'});
-            
-            $("#downloadlink").click(function(){
-                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");
-            });            
-            $("#downloadlink").click();
-            
-            
-            
-        } else {
-            $scope.bibtexGenerated = true;
-            $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
-        }
-        
-    }
+    };
     
     
 }]);

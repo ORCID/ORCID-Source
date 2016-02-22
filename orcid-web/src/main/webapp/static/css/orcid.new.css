@@ -6419,6 +6419,10 @@ a:hover .mozilla-badge{
 	min-height: 195px; 
 }
 
+.bibtex-box #downloadlink{
+	font-size: 12px;
+} 
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

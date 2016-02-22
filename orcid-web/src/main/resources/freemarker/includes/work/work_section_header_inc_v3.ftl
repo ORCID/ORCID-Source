@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <#if RequestParameters['bibtexExport']??>
-	                    <li>
+	                    <li ng-show="worksSrvc.groups.length > 0" ng-cloak>
 	                    	<a class="action-option works manage-button" ng-class="{'green-bg' : showBibtexExport}" ng-click="toggleBibtexExport()">
 	                            <span class="glyphicon glyphicon-save-file"></span>Export
 	                        </a>
