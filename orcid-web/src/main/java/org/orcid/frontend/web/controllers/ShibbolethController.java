@@ -90,7 +90,7 @@ public class ShibbolethController extends BaseController {
         } else {
             // To avoid confusion, force the user to login to ORCID again
             mav.setViewName("social_link_signin");
-            mav.addObject("providerId", "shibboleth");
+            mav.addObject("providerId", shibIdentityProvider);
             mav.addObject("accountId", displayName);
             mav.addObject("linkType", "shibboleth");
 

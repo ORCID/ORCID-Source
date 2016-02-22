@@ -63,8 +63,13 @@ public class OauthLoginController extends OauthControllerBase {
 
             if (url.toLowerCase().contains("show_login=true")) {
                 showLogin = true;
-            }            
+            }   
             
+            //Check if userId is set so we should show the login screen
+            if(!PojoUtil.isEmpty(requestInfoForm.getUserId())) {
+                showLogin = true;
+            }
+                                                            
             // Check that the client have the required permissions
             // Get client name
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());

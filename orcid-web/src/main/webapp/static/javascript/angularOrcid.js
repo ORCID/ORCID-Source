@@ -7327,6 +7327,35 @@ orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$c
     };
 }]);
 
+orcidNgModule.controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
+	$scope.orcidsToDeactivate = "";
+	$scope.showSection = false;
+
+    $scope.toggleSection = function(){
+        $scope.showSection = !$scope.showSection;
+        $('#deactivation_modal').toggle();
+    };
+
+	
+	$scope.deactivateOrcids = function() {
+		$.ajax({
+            url: getBaseUri()+'/admin-actions/deactivate-profiles.json',
+            type: 'POST',
+            dataType: 'json',
+            data: $scope.orcidsToDeactivate,
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data){
+            	$scope.$apply(function(){
+            		$scope.result = data;
+                });
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error re-sending claim emails");
+        });
+	}
+}]);
+
 orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
     $scope.deprecated_verified = false;
     $scope.primary_verified = false;
@@ -9763,6 +9792,12 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
         $scope.submitLogin();
     };
+    
+    $scope.loginSocial = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
+        return false;
+    };
 
     $scope.loginAndDeny = function() {
         $scope.authorizationForm.approved = false;
@@ -10116,6 +10151,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
                 $scope.scriptsInjected = true;
                 $scope.$apply();
+                addShibbolethGa($scope.gaString);
             }
         };
         head.appendChild(script); //Inject the script
@@ -10156,9 +10192,25 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
             if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
                 $scope.scriptsInjected = true;
                 $scope.$apply();
+                addShibbolethGa();
             }
         };
         head.appendChild(script); //Inject the script
+    };
+    
+    $scope.loginSocial = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp]);
+        return false;
+    };
+    
+}]);
+
+orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
+    
+    $scope.linkAccount = function(idp, linkType) {
+        var eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
+        orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
+        return false;
     };
     
 }]);

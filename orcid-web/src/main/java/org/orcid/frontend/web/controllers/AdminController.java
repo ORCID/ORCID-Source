@@ -19,8 +19,10 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -225,7 +227,7 @@ public class AdminController extends BaseController {
      * @return a ProfileDetails object with the details of the profile or an
      *         error message.
      * */
-    @RequestMapping(value = { "/deprecate-profile/check-orcid.json", "/deactivate-profile/check-orcid.json" }, method = RequestMethod.GET)
+    @RequestMapping(value = {"/deprecate-profile/check-orcid.json"}, method = RequestMethod.GET)
     public @ResponseBody ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
         ProfileDetails profileDetails = new ProfileDetails();
         try {
@@ -269,22 +271,6 @@ public class AdminController extends BaseController {
         }
 
         return profileDetails;
-    }
-
-    @RequestMapping(value = "/deactivate-profile", method = RequestMethod.GET)
-    public @ResponseBody ProfileDetails deactivateOrcidAccount(@RequestParam("orcid") String orcid) {
-        OrcidProfile toDeactivate = orcidProfileManager.retrieveOrcidProfile(orcid);
-        ProfileDetails result = new ProfileDetails();
-        if (toDeactivate == null)
-            result.getErrors().add(getMessage("admin.errors.unexisting_orcid"));
-        else if (toDeactivate.isDeactivated())
-            result.getErrors().add(getMessage("admin.profile_deactivation.errors.already_deactivated"));
-        else if (toDeactivate.getOrcidDeprecated() != null)
-            result.getErrors().add(getMessage("admin.errors.deprecated_account"));
-
-        if (result.getErrors() == null || result.getErrors().size() == 0)
-            orcidProfileManager.deactivateOrcidProfile(toDeactivate);
-        return result;
     }
 
     @RequestMapping(value = "/reactivate-profile", method = RequestMethod.GET)
@@ -369,6 +355,38 @@ public class AdminController extends BaseController {
     	}
     	
         return builder.toString();
+    }
+    
+    @RequestMapping(value = "/deactivate-profiles.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, Set<String>> deactivateOrcidAccount(
+                    @RequestBody String orcidIds) {
+            Set<String> deactivatedIds = new HashSet<String>();
+            Set<String> successIds = new HashSet<String>();
+            Set<String> notFoundIds = new HashSet<String>();
+            if (StringUtils.isNotBlank(orcidIds)) {
+                StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
+                while (tokenizer.hasMoreTokens()) {
+                    String orcid = tokenizer.nextToken();
+                    OrcidProfile profile = orcidProfileManager
+                            .retrieveOrcidProfile(orcid);
+                    if (profile == null) {
+                            notFoundIds.add(orcid);
+                    } else {
+                            if (profile.isDeactivated()) {
+                                deactivatedIds.add(orcid);
+                            } else {
+                                orcidProfileManager.deactivateOrcidProfile(profile);
+                                successIds.add(orcid);
+                            }
+                    }
+                }
+            }
+            
+            Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
+            resendIdMap.put("notFoundList", notFoundIds);
+            resendIdMap.put("deactivateSuccessfulList", successIds);
+            resendIdMap.put("alreadyDeactivatedList", deactivatedIds);
+            return resendIdMap;
     }
 
     public Map<String, String> findIdByEmailHelper(String csvEmails) {

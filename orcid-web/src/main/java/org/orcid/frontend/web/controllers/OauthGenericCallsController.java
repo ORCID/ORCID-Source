@@ -98,8 +98,8 @@ public class OauthGenericCallsController extends OauthControllerBase {
         
         RequestInfoForm requestInfoForm = getRequestInfoForm(request);
         if(requestInfoForm != null) {
-            if(!PojoUtil.isEmpty(requestInfoForm.getUserName())) {
-                empty.setUserName(Text.valueOf(requestInfoForm.getUserName()));
+            if(!PojoUtil.isEmpty(requestInfoForm.getUserId())) {
+                empty.setUserName(Text.valueOf(requestInfoForm.getUserId()));
             }
         }
         

@@ -57,8 +57,6 @@ public class ValidationManagerImpl implements ValidationManager {
 
     private boolean requireOrcidProfile;
 
-    private boolean validateBibtex = true;
-
     private boolean validateTitle = false;
 
     private boolean validateOnlyOnePrimaryEmail = false;
@@ -82,10 +80,6 @@ public class ValidationManagerImpl implements ValidationManager {
 
     public void setRequireOrcidProfile(boolean requireOrcidProfile) {
         this.requireOrcidProfile = requireOrcidProfile;
-    }
-
-    public void setValidateBibtex(boolean validateBibtex) {
-        this.validateBibtex = validateBibtex;
     }
 
     public void setValidateTitle(boolean validateTitle) {
