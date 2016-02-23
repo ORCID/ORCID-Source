@@ -201,8 +201,6 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      */
     @Override
     public ClientDetailsEntity createClientDetails(ClientDetailsEntity clientDetailsEntity) {
-        clientDetailsEntity.getClientRegisteredRedirectUris().iterator().next().setUriActType(null);
-        clientDetailsEntity.getClientRegisteredRedirectUris().iterator().next().setUriGeoArea(null);
         persist(clientDetailsEntity);
         return findByClientId(clientDetailsEntity.getId());
     }
