@@ -4732,6 +4732,7 @@ ul.toggle-menu li:hover ul{
 .bibtex-box,
 .work-import-wizard,
 .funding-import-wizard{
+	min-height: 75px;
 	height: auto;
 	display: inline-block;	
 	width: 100%;
@@ -6418,6 +6419,26 @@ a:hover .mozilla-badge{
 	min-height: 195px; 
 }
 
+.bibtex-box #downloadlink{
+	font-size: 12px;
+} 
+
+.email-pop-up .editTablePadCell35{
+	margin-right: 15px;	
+	margin-left: 15px;	
+}
+
+.email-pop-up .table-responsive{
+	margin-right: -20px;	
+	margin-left: -20px;
+}
+
+.email-pop-up .col-md-12,
+.email-pop-up .control-group{
+	margin-right: -15px;	
+	margin-left: -15px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -7658,6 +7679,23 @@ a:hover .mozilla-badge{
 	.edit-record-emails{
 		width: 100%;
 	}	
+	
+	.email-pop-up .editTablePadCell35{ 
+		margin-right: 0 !important;	 /* Overwriting main global class */
+		margin-left: 15px !important;	
+	}
+	
+	.email-pop-up .table-responsive{
+		margin-right: 0;	
+		margin-left: -15px;
+	}
+	
+	.email-pop-up .col-md-12,
+	.email-pop-up .control-group{
+		margin-right: 0;	
+		margin-left: -15px;
+	}
+	
 
 }
 

@@ -36,6 +36,10 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
     private String userId;
     private String userName;
     private String userOrcid;
+    private String userEmail;
+    private String userGivenNames;
+    private String userFamilyNames; 
+    
     private boolean clientHavePersistentTokens = false;
 
     public List<String> getErrors() {
@@ -140,6 +144,30 @@ public class RequestInfoForm implements ErrorsInterface, Serializable {
 
     public void setUserOrcid(String userOrcid) {
         this.userOrcid = userOrcid;
+    }
+    
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserGivenNames() {
+        return userGivenNames;
+    }
+
+    public void setUserGivenNames(String userGivenNames) {
+        this.userGivenNames = userGivenNames;
+    }
+
+    public String getUserFamilyNames() {
+        return userFamilyNames;
+    }
+
+    public void setUserFamilyNames(String userFamilyNames) {
+        this.userFamilyNames = userFamilyNames;
     }
 
     public String getScopesAsString() {

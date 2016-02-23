@@ -128,7 +128,6 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
             orcidApiServiceDelegatorPrototype.setExternalVersion(externalVersion);
             ValidationManagerImpl outgoingValidationManagerImpl = new ValidationManagerImpl();
             outgoingValidationManagerImpl.setVersion(externalVersion);
-            outgoingValidationManagerImpl.setValidateBibtex(false);
             orcidApiServiceDelegatorPrototype.setOutgoingValidationManager(outgoingValidationManagerImpl);
             orcidApiServiceDelegator = orcidApiServiceDelegatorPrototype;
         }

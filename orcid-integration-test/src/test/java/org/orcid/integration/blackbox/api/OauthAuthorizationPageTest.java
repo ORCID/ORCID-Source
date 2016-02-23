@@ -83,6 +83,8 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
         webDriver.quit();
     }
 
+    
+    
     @Test
     public void stateParamIsPersistentAndReturnedOnLoginTest() throws JSONException, InterruptedException, URISyntaxException {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", webBaseUrl, client1ClientId, SCOPES,

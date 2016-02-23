@@ -136,7 +136,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             @RequestParam(value = "v", defaultValue = "0") int v, @RequestParam(value = "maxResults", defaultValue = "15") int maxResults,
             @PathVariable("orcid") String orcid) {
 
-        OrcidProfile profile = orcidProfileCacheManager.retrieveProfileBioAndInternal(orcid);
+        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
 
         if (profile == null) {
             return new ModelAndView("error-404");

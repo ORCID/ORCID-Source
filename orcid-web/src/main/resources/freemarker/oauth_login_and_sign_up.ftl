@@ -89,7 +89,7 @@
 			                    <p class="title">Sign in with a social account <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
 			                    <ul class="social-icons">
 			                        <li>
-			                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+			                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
 			                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
 			                                <input type="hidden" name="scope" value="email" />
 			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -97,7 +97,7 @@
 			                        </li>
 			                        <!-- 
 			                        <li>
-			                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+			                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST" ng-submit="loginSocial('twitter')">
 			                                <button type="submit" class="btn btn-social-icon btn-twitter"></button>
 			                                <input type="hidden" name="scope" value="email" />
 			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -105,7 +105,7 @@
 			                        </li>
 			                         -->
 			                         <li>
-			                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+			                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST" ng-submit="loginSocial('google')">
 			                                <button type="submit" class="btn btn-social-icon btn-google"></button>
 			                                <input type="hidden" name="scope" value="email" />
 			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

@@ -51,6 +51,19 @@ function formatDate(oldDate) {
 }
 
 
+function getScripts(scripts, callback) {
+    var progress = 0;
+    var internalCallback = function () {        
+        if (++progress == scripts.length - 1) {
+            callback();
+        }
+    };    
+    scripts.forEach(function(script) {        
+        $.getScript(script, internalCallback);        
+    });
+};
+
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -4993,6 +5006,13 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.geoArea = ['All'];
     $scope.badgesRequested = {};
     $scope.noLinkFlag = true;
+    $scope.showBibtexExport = false;
+    $scope.generatingBibtex = false;
+    $scope.scriptsLoaded = false;
+    $scope.bibtexGenerated = false;
+    $scope.bibtexURL = "";
+    $scope.bibtexExportError = false;
+    $scope.bibtexURL = '';
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5009,6 +5029,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.bulkEditShow = !$scope.bulkEditShow;
         $scope.showBibtexImportWizard = false;
         $scope.workImportWizard = false;
+        $scope.showBibtexExport = false;
     };
 
     $scope.bulkApply = function(func) {
@@ -5153,6 +5174,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.bulkEditShow = false;
         $scope.worksFromBibtex = null;
         $scope.workImportWizard = false;
+        $scope.showBibtexExport = false;
     };
 
     $scope.bibtextCancel = function(){
@@ -5682,7 +5704,72 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 	    	}
 	    	$scope.badgesRequested[putCode] = true;
     	}
-    }        
+    }
+    
+    $scope.toggleBibtexExport = function(){
+        $scope.bibtexParsingError = false;
+        $scope.showBibtexImportWizard = false;
+        $scope.bulkEditShow = false;        
+        $scope.workImportWizard = false;
+        $scope.showBibtexExport  = !$scope.showBibtexExport;
+        $scope.bibtexExportError = false;
+        $scope.bibtexGenerated = false;
+        $scope.loadingScripts = false;
+        $scope.scriptsLoaded = false;
+    }
+    
+    $scope.openBibtexExportDialog = function(){
+        
+        $scope.loadingScripts = true;
+        $scope.bibtexExportError = false; 
+        $scope.scriptsLoaded = false;
+        
+        var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
+        var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
+        var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
+        var citeproc = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/citeproc.js";
+        var orcidx   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/orcid.js";
+        var styles   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/styles.js";
+        
+        var scripts = [swagger, xmle4x, xmldom, citeproc, orcidx, styles];
+        
+        getScripts(scripts, function(){
+            $scope.$apply(function() {
+                $scope.loadingScripts = false;
+                $scope.scriptsLoaded = true;
+                orcid.init(function(){
+                    orcid.resolveCitations(orcidVar.orcidId, $scope.downloadBibtexExport, orcid.styleBibtex);
+                });
+            });            
+        });
+    };
+    
+    $scope.downloadBibtexExport = function(citations){
+        $scope.bibtexGenerated = false;
+        if (citations.length > 0){
+            var text = "";
+            for (c in citations){
+                text += citations[c] +"\n"; 
+            }
+            text = text.replace(/<div class="csl-entry">/g, '');
+            text = text.replace(/<\/div>/g, '');
+            
+            if(window.navigator.msSaveOrOpenBlob) {
+                var fileData = [text];
+                blobObject = new Blob(fileData, {type: 'text/plain'});
+                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+            } else {
+                $scope.bibtexGenerated = true;
+                $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
+            }
+        }else{
+            $scope.$apply(function() {
+                $scope.bibtexExportError = true;
+            });   
+        }
+    };
+    
+    
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
@@ -7238,6 +7325,35 @@ orcidNgModule.controller('profileDeactivationAndReactivationCtrl',['$scope', '$c
     $scope.closeModal = function() {
         $.colorbox.close();
     };
+}]);
+
+orcidNgModule.controller('DeactivateProfileCtrl', ['$scope', function ($scope) {
+	$scope.orcidsToDeactivate = "";
+	$scope.showSection = false;
+
+    $scope.toggleSection = function(){
+        $scope.showSection = !$scope.showSection;
+        $('#deactivation_modal').toggle();
+    };
+
+	
+	$scope.deactivateOrcids = function() {
+		$.ajax({
+            url: getBaseUri()+'/admin-actions/deactivate-profiles.json',
+            type: 'POST',
+            dataType: 'json',
+            data: $scope.orcidsToDeactivate,
+            contentType: 'application/json;charset=UTF-8',
+            success: function(data){
+            	$scope.$apply(function(){
+            		$scope.result = data;
+                });
+            }
+        }).fail(function(error) {
+            // something bad is happening!
+            console.log("Error re-sending claim emails");
+        });
+	}
 }]);
 
 orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function profileDeprecationCtrl($scope,$compile){
@@ -9676,6 +9792,12 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
         $scope.submitLogin();
     };
+    
+    $scope.loginSocial = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit' , 'OAuth ' + $scope.gaString]);
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp ]);
+        return false;
+    };
 
     $scope.loginAndDeny = function() {
         $scope.authorizationForm.approved = false;
@@ -10029,6 +10151,7 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
             if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
                 $scope.scriptsInjected = true;
                 $scope.$apply();
+                addShibbolethGa($scope.gaString);
             }
         };
         head.appendChild(script); //Inject the script
@@ -10069,9 +10192,25 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
             if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
                 $scope.scriptsInjected = true;
                 $scope.$apply();
+                addShibbolethGa();
             }
         };
         head.appendChild(script); //Inject the script
+    };
+    
+    $scope.loginSocial = function(idp) {
+        orcidGA.gaPush(['send', 'event', 'RegGrowth', 'Sign-In-Submit-Social', idp]);
+        return false;
+    };
+    
+}]);
+
+orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
+    
+    $scope.linkAccount = function(idp, linkType) {
+        var eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
+        orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
+        return false;
     };
     
 }]);

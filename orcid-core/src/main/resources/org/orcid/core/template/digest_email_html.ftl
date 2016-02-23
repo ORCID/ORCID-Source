@@ -71,7 +71,7 @@
 							<td width="100%">
 								<ul style="padding: 0; margin: 0; float: right;">
 									<li style="display: inline;">						                
-			                			<a href="${baseUri}/inbox#${notification.putCode}" style="padding: 10px 15px; float: left; color: #494A4C; text-decoration: none;">more info...</a>
+			                			<a href="${baseUri}/inbox#${notification.putCode}" style="padding: 10px 15px; float: left; color: #338caf; text-decoration: none;">more info...</a>
 			                		</li>
 			                		<li style="display: inline;">
 			               				<a href="${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action" style="padding: 10px 15px; background: #338caf; color: #FFF; text-decoration: none; float: right;"><@emailMacros.msg "email.digest.addnow" /></a> 

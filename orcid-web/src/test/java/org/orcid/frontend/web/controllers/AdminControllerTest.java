@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -263,8 +264,8 @@ public class AdminControllerTest extends BaseControllerTest {
     @Test
     public void deactivateAndReactivateProfileTest() throws Exception {
         // Test deactivate
-        ProfileDetails result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
-        assertEquals(0, result.getErrors().size());
+        Map<String, Set<String>> result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
+        assertEquals(1, result.get("deactivateSuccessfulList").size());
 
         profileDao.refresh(profileDao.find("4444-4444-4444-4445"));
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
@@ -274,21 +275,20 @@ public class AdminControllerTest extends BaseControllerTest {
 
         // Test try to deactivate an already deactive account
         result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");
-        assertEquals(1, result.getErrors().size());
-        assertEquals(adminController.getMessage("admin.profile_deactivation.errors.already_deactivated", new ArrayList<String>()), result.getErrors().get(0));
+        assertEquals(1, result.get("alreadyDeactivatedList").size());
 
         // Test reactivate
-        result = adminController.reactivateOrcidAccount("4444-4444-4444-4445");
-        assertEquals(0, result.getErrors().size());
+        ProfileDetails proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445");
+        assertEquals(0, proDetails.getErrors().size());
 
         profileDao.refresh(profileDao.find("4444-4444-4444-4445"));
         deactivated = profileDao.find("4444-4444-4444-4445");
         assertNull(deactivated.getDeactivationDate());
 
         // Try to reactivate an already active account
-        result = adminController.reactivateOrcidAccount("4444-4444-4444-4445");
-        assertEquals(1, result.getErrors().size());
-        assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), result.getErrors().get(0));
+        proDetails = adminController.reactivateOrcidAccount("4444-4444-4444-4445");
+        assertEquals(1, proDetails.getErrors().size());
+        assertEquals(adminController.getMessage("admin.profile_reactivation.errors.already_active", new ArrayList<String>()), proDetails.getErrors().get(0));
     }    
     
     @Test

@@ -61,7 +61,7 @@ public class OauthControllerBase extends BaseController {
     private Pattern redirectUriPattern = Pattern.compile("redirect_uri=([^&]*)");
     private Pattern responseTypePattern = Pattern.compile("response_type=([^&]*)");
     private Pattern stateParamPattern = Pattern.compile("state=([^&]*)");
-    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");
+    private Pattern orcidPattern = Pattern.compile("(&|\\?)orcid=([^&]*)");    
     protected static String PUBLIC_MEMBER_NAME = "PubApp";
     protected static String REDIRECT_URI_ERROR = "/oauth/error/redirect-uri-mismatch?client_id={0}";
     protected static String REQUEST_INFO_FORM = "requestInfoForm";
@@ -89,8 +89,10 @@ public class OauthControllerBase extends BaseController {
         String stateParam = request.getParameter("state");
         String email = request.getParameter("email");
         String orcid = request.getParameter("orcid");
+        String givenNames = request.getParameter("given_names");
+        String familyNames = request.getParameter("family_names");
         
-        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid);
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames);
     }
     
     protected @ResponseBody RequestInfoForm generateRequestInfoForm(String requestUrl) throws UnsupportedEncodingException {
@@ -101,6 +103,8 @@ public class OauthControllerBase extends BaseController {
         String stateParam = "";
         String email = "";
         String orcid = "";
+        String givenNames = "";
+        String familyNames = "";
 
         if (!PojoUtil.isEmpty(requestUrl)) {
             Matcher matcher = clientIdPattern.matcher(requestUrl);
@@ -133,8 +137,7 @@ public class OauthControllerBase extends BaseController {
             if (stateParamMatcher.find()) {
                 try {
                     stateParam = URLDecoder.decode(stateParamMatcher.group(1), "UTF-8").trim();
-                } catch (UnsupportedEncodingException e) {
-                }
+                } catch (UnsupportedEncodingException e) {}
             }
             
             Matcher emailMatcher = RegistrationController.emailPattern.matcher(requestUrl);
@@ -144,8 +147,9 @@ public class OauthControllerBase extends BaseController {
                     tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
-                if (emailManager.emailExists(tempEmail))
+                if (emailManager.emailExists(tempEmail)) {
                     email = tempEmail;
+                }
             }
 
             Matcher orcidMatcher = orcidPattern.matcher(requestUrl);
@@ -155,14 +159,26 @@ public class OauthControllerBase extends BaseController {
                     tempOrcid = URLDecoder.decode(tempOrcid, "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
-                if (orcidProfileManager.exists(tempOrcid))
+                if (orcidProfileManager.exists(tempOrcid)) {
                     orcid = tempOrcid;
+                }
             }
+            
+            Matcher givenNamesMatcher = RegistrationController.givenNamesPattern.matcher(requestUrl);
+            if(givenNamesMatcher.find()) {
+                givenNames = URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8").trim();
+            }
+            
+            Matcher familyNamesMatcher = RegistrationController.familyNamesPattern.matcher(requestUrl);
+            if(familyNamesMatcher.find()) {
+                familyNames = URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8").trim();
+            }
+            
         }        
-        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid);
+        return generateRequestInfoForm(clientId, scopesString, redirectUri, responseType, stateParam, email, orcid, givenNames, familyNames);
     }
     
-    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid) throws UnsupportedEncodingException {
+    private RequestInfoForm generateRequestInfoForm(String clientId, String scopesString, String redirectUri, String responseType, String stateParam, String email, String orcid, String givenNames, String familyNames) throws UnsupportedEncodingException {
         RequestInfoForm infoForm = new RequestInfoForm();
         
         //If the user is logged in 
@@ -182,14 +198,6 @@ public class OauthControllerBase extends BaseController {
             if(!PojoUtil.isEmpty(creditName)) {
                 infoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());
             }                        
-        }        
-        
-        if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {
-            if(!PojoUtil.isEmpty(email)) {
-                infoForm.setUserId(email);
-            } else {
-                infoForm.setUserId(orcid);
-            }
         }        
         
         Set<ScopePathType> scopes = new HashSet<ScopePathType>();
@@ -239,6 +247,29 @@ public class OauthControllerBase extends BaseController {
             memberName = clientName;
         }
 
+        if(!PojoUtil.isEmpty(email) || !PojoUtil.isEmpty(orcid)) {                        
+            // Check if orcid exists, if so, show login screen
+            if(!PojoUtil.isEmpty(orcid)) {
+                orcid = orcid.trim();
+                if(orcidProfileManager.exists(orcid)) {
+                    infoForm.setUserId(orcid);
+                }
+            } else {
+                // Check if email exists, if so, show login screen
+                if(!PojoUtil.isEmpty(email)) {
+                    email = email.trim();
+                    if(emailManager.emailExists(email)) {
+                        infoForm.setUserId(email);
+                    }
+                }
+            }
+        }  
+        
+        infoForm.setUserEmail(email);
+        if(PojoUtil.isEmpty(loggedUserOrcid))
+            infoForm.setUserOrcid(orcid);
+        infoForm.setUserGivenNames(givenNames);
+        infoForm.setUserFamilyNames(familyNames);
         infoForm.setClientId(clientId);
         infoForm.setClientDescription(clientDescription);
         infoForm.setClientName(clientName);
