@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 
 public interface ClientDetailsManager extends ClientDetailsService {
@@ -168,4 +169,11 @@ public interface ClientDetailsManager extends ClientDetailsService {
     String getMemberName(String clientId);
 
     OrcidClient toOrcidClient(ClientDetailsEntity clientEntity);
+    
+    /**
+     * Utility function that will help us to create and persist a clientDetailsEntity giving all the details
+     * */
+    ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website,
+            String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
+            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 }

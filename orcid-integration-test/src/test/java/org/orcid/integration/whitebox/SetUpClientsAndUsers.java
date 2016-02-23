@@ -22,8 +22,10 @@ import static org.junit.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -33,18 +35,24 @@ import org.junit.runner.RunWith;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.clientgroup.RedirectUri;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
@@ -75,9 +83,11 @@ import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -91,6 +101,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-setup-context.xml" })
 public class SetUpClientsAndUsers {
+    // User variables
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
     private static final String ORCID = "orcid";
@@ -100,6 +111,15 @@ public class SetUpClientsAndUsers {
     private static final String BIO = "bio";
     private static final String ORCID_TYPE = "orcidType";
     private static final String MEMBER_TYPE = "memberType";
+    private static final String LOCKED = "locked";
+    // Client variables
+    private static final String MEMBER_ID = "memberId";
+    private static final String CLIENT_ID = "clientId";
+    private static final String CLIENT_NAME = "clientName";
+    private static final String CLIENT_DESCRIPTION = "clientDescription";
+    private static final String REDIRECT_URI = "clientRedirectUri";
+    private static final String CLIENT_SECRET = "clientSecret";
+    private static final String CLIENT_WEBSITE = "clientWebsite";
 
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
@@ -156,6 +176,12 @@ public class SetUpClientsAndUsers {
     protected String publicClientSecret;
     @Value("${org.orcid.web.publicClient1.name}")
     protected String publicClientName;
+    @Value("${org.orcid.web.publicClient1.redirectUri}")
+    protected String publicClientRedirectUri;
+    @Value("${org.orcid.web.publicClient1.description}")
+    protected String publicClientDescription;
+    @Value("${org.orcid.web.publicClient1.website}")
+    protected String publicClientWebsite;
     // Lets assume testUser1 is also the owner of the public client
     @Value("${org.orcid.web.testUser1.orcidId}")
     protected String publicClientUserOwner;
@@ -181,6 +207,10 @@ public class SetUpClientsAndUsers {
     protected String client1RedirectUri;
     @Value("${org.orcid.web.testClient1.name}")
     protected String client1Name;
+    @Value("${org.orcid.web.testClient1.description}")
+    protected String client1Description;
+    @Value("${org.orcid.web.testClient1.website}")
+    protected String client1Website;
 
     // Client # 2
     @Value("${org.orcid.web.testClient2.clientId}")
@@ -191,6 +221,10 @@ public class SetUpClientsAndUsers {
     protected String client2RedirectUri;
     @Value("${org.orcid.web.testClient2.name}")
     protected String client2Name;
+    @Value("${org.orcid.web.testClient2.description}")
+    protected String client2Description;
+    @Value("${org.orcid.web.testClient2.website}")
+    protected String client2Website;
 
     // Member # 2 - Locked
     @Value("${org.orcid.web.locked.member.id}")
@@ -213,6 +247,10 @@ public class SetUpClientsAndUsers {
     protected String lockedMemberClient1RedirectUri;
     @Value("${org.orcid.web.locked.member.client.name}")
     protected String lockedMemberClient1Name;
+    @Value("${org.orcid.web.locked.member.client.description}")
+    protected String lockedMemberClient1Description;
+    @Value("${org.orcid.web.locked.member.client.website}")
+    protected String lockedMemberClient1Website;
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -246,53 +284,92 @@ public class SetUpClientsAndUsers {
     protected OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     @Resource
     protected ResearcherUrlManager researcherUrlManager;
+    @Resource
+    protected ClientDetailsManager clientDetailsManager;
+    @Resource
+    protected OrcidClientGroupManager orcidClientGroupManager;
+    @Resource
+    protected ProfileEntityManager profileEntityManager;
     
     @Before
     public void before() throws Exception {
-        Map<String, String> adminParams = getUserParams(adminOrcidId);
-        OrcidProfile adminProfile = orcidProfileManager.retrieveOrcidProfile(adminParams.get(ORCID));
+        // Create admin user
+        Map<String, String> adminParams = getParams(adminOrcidId);
+        OrcidProfile adminProfile = orcidProfileManager.retrieveOrcidProfile(adminOrcidId);
         if (adminProfile == null) {
             createUser(adminParams);
         } else {
             clearRegistry(adminProfile, adminParams);
         }
 
-        Map<String, String> user1Params = getUserParams(user1OrcidId);
-        OrcidProfile user1Profile = orcidProfileManager.retrieveOrcidProfile(user1Params.get(ORCID));
+        // Create user 1
+        Map<String, String> user1Params = getParams(user1OrcidId);
+        OrcidProfile user1Profile = orcidProfileManager.retrieveOrcidProfile(user1OrcidId);
         if (user1Profile == null) {
             createUser(user1Params);
         } else {
             clearRegistry(user1Profile, user1Params);
         }
-        
-        Map<String, String> user2Params = getUserParams(user2OrcidId);
-        OrcidProfile user2Profile = orcidProfileManager.retrieveOrcidProfile(user2Params.get(ORCID));
-        if(user2Profile == null) {
+
+        // Create user 2
+        Map<String, String> user2Params = getParams(user2OrcidId);
+        OrcidProfile user2Profile = orcidProfileManager.retrieveOrcidProfile(user2OrcidId);
+        if (user2Profile == null) {
             createUser(user2Params);
         } else {
             clearRegistry(user2Profile, user2Params);
         }
-        
-        Map<String, String> member1Params = getUserParams(member1Orcid);
-        OrcidProfile member1Profile = orcidProfileManager.retrieveOrcidProfile(member1Params.get(ORCID));
-        if(member1Profile == null) {
+
+        // Create member 1
+        Map<String, String> member1Params = getParams(member1Orcid);
+        OrcidProfile member1Profile = orcidProfileManager.retrieveOrcidProfile(member1Orcid);
+        if (member1Profile == null) {
             createUser(member1Params);
         } else {
             clearRegistry(member1Profile, member1Params);
         }
-        
-        Map<String, String> lockedMemberParams = getUserParams(lockedMemberOrcid);
-        OrcidProfile lockedMemberProfile = orcidProfileManager.retrieveOrcidProfile(lockedMemberParams.get(ORCID));
-        if(lockedMemberProfile == null) {
+
+        // Create locked member
+        Map<String, String> lockedMemberParams = getParams(lockedMemberOrcid);
+        OrcidProfile lockedMemberProfile = orcidProfileManager.retrieveOrcidProfile(lockedMemberOrcid);
+        if (lockedMemberProfile == null) {
             createUser(lockedMemberParams);
         } else {
             clearRegistry(lockedMemberProfile, lockedMemberParams);
-        }        
+        }
+
+        // Create public client
+        Map<String, String> publicClientParams = getParams(publicClientId);
+        ClientDetailsEntity publicClient = clientDetailsManager.findByClientId(publicClientId);
+        if (publicClient == null) {
+            createClient(publicClientParams);
+        } 
+
+        // Create client 1
+        Map<String, String> client1Params = getParams(client1ClientId);
+        ClientDetailsEntity client1 = clientDetailsManager.findByClientId(client1ClientId);
+        if (client1 == null) {
+            createClient(client1Params);
+        } 
+
+        // Create client 2
+        Map<String, String> client2Params = getParams(client2ClientId);
+        ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
+        if (client2 == null) {
+            createClient(client2Params);
+        } 
+
+        // Create locked client
+        Map<String, String> lockedClientParams = getParams(lockedMemberClient1ClientId);
+        ClientDetailsEntity lockedClient = clientDetailsManager.findByClientId(lockedMemberClient1ClientId);
+        if (lockedClient == null) {
+            createClient(lockedClientParams);
+        } 
     }
 
-    private Map<String, String> getUserParams(String userOrcid) {
+    private Map<String, String> getParams(String userId) {
         Map<String, String> params = new HashMap<String, String>();
-        if (userOrcid.equals(adminOrcidId)) {
+        if (userId.equals(adminOrcidId)) {
             params.put(EMAIL, adminUserName);
             params.put(PASSWORD, adminPassword);
             params.put(ORCID, adminOrcidId);
@@ -301,7 +378,7 @@ public class SetUpClientsAndUsers {
             params.put(CREDIT_NAME, adminCreditName);
             params.put(BIO, adminBio);
             params.put(ORCID_TYPE, OrcidType.ADMIN.value());
-        } else if (userOrcid.equals(user1OrcidId)) {
+        } else if (userId.equals(user1OrcidId)) {
             params.put(EMAIL, user1UserName);
             params.put(PASSWORD, user1Password);
             params.put(ORCID, user1OrcidId);
@@ -310,7 +387,7 @@ public class SetUpClientsAndUsers {
             params.put(CREDIT_NAME, user1CreditName);
             params.put(BIO, user1Bio);
             params.put(ORCID_TYPE, OrcidType.USER.value());
-        } else if (userOrcid.equals(user2OrcidId)) {
+        } else if (userId.equals(user2OrcidId)) {
             params.put(EMAIL, user2UserName);
             params.put(PASSWORD, user2Password);
             params.put(ORCID, user2OrcidId);
@@ -319,22 +396,55 @@ public class SetUpClientsAndUsers {
             params.put(CREDIT_NAME, user2CreditName);
             params.put(BIO, user2Bio);
             params.put(ORCID_TYPE, OrcidType.USER.value());
-        } else if (userOrcid.equals(member1Orcid)) {
+        } else if (userId.equals(member1Orcid)) {
             params.put(EMAIL, member1Email);
             params.put(PASSWORD, member1Password);
             params.put(ORCID, member1Orcid);
             params.put(CREDIT_NAME, member1Name);
             params.put(ORCID_TYPE, OrcidType.GROUP.value());
             params.put(MEMBER_TYPE, member1Type);
-        } else if (userOrcid.equals(lockedMemberOrcid)) {
+        } else if (userId.equals(lockedMemberOrcid)) {
             params.put(EMAIL, lockedMemberEmail);
             params.put(PASSWORD, lockedMemberPassword);
             params.put(ORCID, lockedMemberOrcid);
             params.put(CREDIT_NAME, lockedMemberName);
             params.put(ORCID_TYPE, OrcidType.GROUP.value());
             params.put(MEMBER_TYPE, lockedMemberType);
+            params.put(LOCKED, "true");
+        } else if (userId.equals(publicClientId)) {
+            params.put(MEMBER_ID, publicClientUserOwner);
+            params.put(CLIENT_ID, publicClientId);
+            params.put(CLIENT_NAME, publicClientName);
+            params.put(CLIENT_DESCRIPTION, publicClientDescription);
+            params.put(REDIRECT_URI, publicClientRedirectUri);
+            params.put(CLIENT_SECRET, publicClientSecret);
+            params.put(CLIENT_WEBSITE, publicClientWebsite);
+        } else if (userId.equals(client1ClientId)) {
+            params.put(MEMBER_ID, member1Orcid);
+            params.put(CLIENT_ID, client1ClientId);
+            params.put(CLIENT_NAME, client1Name);
+            params.put(CLIENT_DESCRIPTION, client1Description);
+            params.put(REDIRECT_URI, client1RedirectUri);
+            params.put(CLIENT_SECRET, client1ClientSecret);
+            params.put(CLIENT_WEBSITE, client1Website);
+        } else if (userId.equals(client2ClientId)) {
+            params.put(MEMBER_ID, member1Orcid);
+            params.put(CLIENT_ID, client2ClientId);
+            params.put(CLIENT_NAME, client2Name);
+            params.put(CLIENT_DESCRIPTION, client2Description);
+            params.put(REDIRECT_URI, client2RedirectUri);
+            params.put(CLIENT_SECRET, client2ClientSecret);
+            params.put(CLIENT_WEBSITE, client2Website);
+        } else if (userId.equals(lockedMemberClient1ClientId)) {
+            params.put(MEMBER_ID, lockedMemberOrcid);
+            params.put(CLIENT_ID, lockedMemberClient1ClientId);
+            params.put(CLIENT_NAME, lockedMemberClient1Name);
+            params.put(CLIENT_DESCRIPTION, lockedMemberClient1Description);
+            params.put(REDIRECT_URI, lockedMemberClient1RedirectUri);
+            params.put(CLIENT_SECRET, lockedMemberClient1ClientSecret);
+            params.put(CLIENT_WEBSITE, lockedMemberClient1Website);
         } else {
-            throw new ApplicationException("Unable to find params for orcid: " + userOrcid);
+            throw new ApplicationException("Unable to find params for orcid: " + userId);
         }
         return params;
     }
@@ -344,7 +454,7 @@ public class SetUpClientsAndUsers {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setOrcidIdentifier(new OrcidIdentifier(params.get(ORCID)));
         orcidProfile.setType(OrcidType.fromValue(params.get(ORCID_TYPE)));
-        if(params.get(MEMBER_TYPE) != null) {
+        if (params.get(MEMBER_TYPE) != null) {
             orcidProfile.setGroupType(MemberType.fromValue(params.get(MEMBER_TYPE)));
         }
         orcidProfile.setPassword(params.get(PASSWORD));
@@ -357,26 +467,30 @@ public class SetUpClientsAndUsers {
         emails.add(email);
         ContactDetails contactDetails = new ContactDetails();
         contactDetails.setEmail(emails);
-        
+
         org.orcid.jaxb.model.message.PersonalDetails personalDetails = new org.orcid.jaxb.model.message.PersonalDetails();
         org.orcid.jaxb.model.message.CreditName creditName = new org.orcid.jaxb.model.message.CreditName(params.get(CREDIT_NAME));
         creditName.setVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
         personalDetails.setCreditName(creditName);
         personalDetails.setFamilyName(new org.orcid.jaxb.model.message.FamilyName(params.get(FAMILY_NAMES)));
         personalDetails.setGivenNames(new org.orcid.jaxb.model.message.GivenNames(params.get(GIVEN_NAMES)));
-                        
+
         OrcidBio bio = new OrcidBio();
-        bio.setContactDetails(contactDetails);        
+        bio.setContactDetails(contactDetails);
         bio.setPersonalDetails(personalDetails);
         bio.setBiography(new Biography(params.get(BIO), OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
-        orcidProfile.setOrcidBio(bio);       
-        
+        orcidProfile.setOrcidBio(bio);
+
         OrcidHistory history = new OrcidHistory();
         history.setClaimed(new Claimed(true));
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        
+
         orcidProfile.setOrcidHistory(history);
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
+        
+        if(params.containsKey(LOCKED)) {
+            profileEntityManager.lockProfile(params.get(ORCID));    
+        }        
     }
 
     private boolean clearRegistry(OrcidProfile existingProfile, Map<String, String> params) {
@@ -424,8 +538,9 @@ public class SetUpClientsAndUsers {
             profileKeywordManager.updateKeywords(orcid, new Keywords(),
                     org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
 
-            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls(), org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
-            
+            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls(),
+                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
+
             // Remove external ids
             ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
 
@@ -465,7 +580,7 @@ public class SetUpClientsAndUsers {
                     workIds.add(work.getPutCode());
                 }
                 workManager.removeWorks(orcid, workIds);
-            }            
+            }
 
             // Remove affiliations
             List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);
@@ -490,7 +605,7 @@ public class SetUpClientsAndUsers {
                     peerReviewManager.removePeerReview(orcid, peerReview.getPutCode());
                 }
             }
-            // Remove 3d party links            
+            // Remove 3d party links
             List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDao.findByUserName(orcid);
             if (tokenDetails != null && !tokenDetails.isEmpty()) {
                 for (OrcidOauth2TokenDetail token : tokenDetails) {
@@ -501,7 +616,35 @@ public class SetUpClientsAndUsers {
             return true;
         }
         return false;
-    }    
+    }
+
+    private void createClient(Map<String, String> params) {
+        Set<String> clientResourceIds = new HashSet<String>();
+        clientResourceIds.add("orcid");
+        Set<String> clientAuthorizedGrantTypes = new HashSet<String>();
+        clientAuthorizedGrantTypes.add("client_credentials");
+        clientAuthorizedGrantTypes.add("authorization_code");
+        clientAuthorizedGrantTypes.add("refresh_token");
+        Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
+        RedirectUri redirectUri = new RedirectUri(params.get(REDIRECT_URI));
+        redirectUri.setType(RedirectUriType.DEFAULT);
+        redirectUrisToAdd.add(redirectUri);
+
+        List<String> clientGrantedAuthorities = new ArrayList<String>();
+        clientGrantedAuthorities.add("ROLE_CLIENT");
+
+        String name = params.get(CLIENT_NAME);
+        String description = params.get(CLIENT_DESCRIPTION);
+        String website = params.get(CLIENT_WEBSITE);
+        String clientId = params.get(CLIENT_ID);
+        ProfileEntity memberEntity = new ProfileEntity(params.get(MEMBER_ID));
+        String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
+
+        Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
+
+        clientDetailsManager.populateClientDetailsEntity(clientId, memberEntity, name, description, website, clientSecret, ClientType.PREMIUM_UPDATER, scopes,
+                clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
+    }
     
     @Test
     public void testSetupIsDone() {
@@ -512,6 +655,33 @@ public class SetUpClientsAndUsers {
         assertNotNull(existingProfile.getOrcidBio());
         assertNotNull(existingProfile.getOrcidBio().getContactDetails());
         assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
-        assertEquals(adminUserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());        
-    }   
+        assertEquals(adminUserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        
+        existingProfile = orcidProfileManager.retrieveOrcidProfile(user1OrcidId);
+        assertNotNull(existingProfile);
+        assertNotNull(existingProfile.getOrcidIdentifier());
+        assertEquals(user1OrcidId, existingProfile.getOrcidIdentifier().getPath());
+        assertNotNull(existingProfile.getOrcidBio());
+        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
+        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
+        assertEquals(user1UserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        
+        existingProfile = orcidProfileManager.retrieveOrcidProfile(user2OrcidId);
+        assertNotNull(existingProfile);
+        assertNotNull(existingProfile.getOrcidIdentifier());
+        assertEquals(user2OrcidId, existingProfile.getOrcidIdentifier().getPath());
+        assertNotNull(existingProfile.getOrcidBio());
+        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
+        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
+        assertEquals(user2UserName, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        
+        existingProfile = orcidProfileManager.retrieveOrcidProfile(member1Orcid);
+        assertNotNull(existingProfile);
+        assertNotNull(existingProfile.getOrcidIdentifier());
+        assertEquals(member1Orcid, existingProfile.getOrcidIdentifier().getPath());
+        assertNotNull(existingProfile.getOrcidBio());
+        assertNotNull(existingProfile.getOrcidBio().getContactDetails());
+        assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
+        assertEquals(member1Email, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+    }
 }
