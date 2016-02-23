@@ -217,7 +217,7 @@
                     <label ng-hide="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_city'/></label>
                     <label ng-show="disambiguatedFunding"><@orcid.msg 'manual_funding_form_contents.label_display_city'/></label>
 					<span class="required" ng-class="isValidClass(editFunding.city)">*</span>                    
-                    <input name="city" type="text" class="form-control"  ng-model="editFunding.city.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_city'/>" ng-change="serverValidate('fundings/funding/cityValidate.json')" ng-model-onblur/>                        
+                    <input id="city" name="city" type="text" class="form-control"  ng-model="editFunding.city.value" placeholder="<@orcid.msg 'manual_funding_form_contents.add_city'/>" ng-change="serverValidate('fundings/funding/cityValidate.json')" ng-model-onblur/>                        
                     <span class="orcid-error" ng-show="editFunding.city.errors.length > 0">
                         <div ng-repeat='error in editFunding.city.errors' ng-bind-html="error"></div>
                     </span>                    
@@ -309,7 +309,7 @@
                         <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
                     </div>
                     <div ng-show="editFunding.putCode.value == null">
-                        <button class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
+                        <button id="save-funding" class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
                             <@orcid.msg 'manual_funding_form_contents.btnaddtolist'/>
                         </button>
                         <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel'/></button>

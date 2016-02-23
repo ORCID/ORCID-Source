@@ -259,12 +259,12 @@ kind of variable. This temp value is only used in this macro lib -->
 
 
 
-<#macro privacyToggle2 angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
+<#macro privacyToggle2 angularModel publicClick limitedClick privateClick publicId="" limitedId="" privateId=""  popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle" ng-mouseenter="showTooltip(group.groupId+'-privacy')" ng-mouseleave="hideTooltip(group.groupId+'-privacy')">
-			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}"></a></li>
-			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}"></a></li>
-			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"></a></li>
+			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}" id="${publicId}"></a></li>
+			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}" id="${limitedId}"></a></li>
+			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}" id="${privateId}"></a></li>
 		</ul>
 	</div>
 	<div class="popover-help-container">
@@ -283,12 +283,12 @@ kind of variable. This temp value is only used in this macro lib -->
  	</div>
 </#macro>
 
-<#macro privacyToggle3 angularModel publicClick limitedClick privateClick elementId popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
+<#macro privacyToggle3 angularModel publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle" ng-mouseenter="showTooltip(${elementId} +'-privacy')" ng-mouseleave="hideTooltip(${elementId} +'-privacy')">
-			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}"></a></li>
-			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}"></a></li>
-			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"></a></li>
+			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}" id="${publicId}"></a></li>
+			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}" id="${limitedId}"></a></li>
+			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}" id="${privateId}"></a></li>
 		</ul>
 	</div>
 	<div class="popover-help-container">

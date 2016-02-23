@@ -120,7 +120,9 @@
                                               clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
                                               publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
                                               limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
-                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"
+                                              publicId="work-{{work.title.value}}-public-id" limitedId="work-{{work.title.value}}-limited-id"
+	                                          privateId="work-{{work.title.value}}-private-id" />
                                       </li>
                                   </#if>
                               </ul>

@@ -105,10 +105,10 @@
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			 <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span>
-		            			 <div class="emails-box">
+		            			 <div class="emails-box" >
 			            			 <#list profile.orcidBio.contactDetails.email as email>
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
-			            					<div>${email.value}</div>
+			            					<div id="email_${email.value}">${email.value}</div>
 			        					</#if>    					 		
 			            			 </#list>
 		            			 </div>		            			

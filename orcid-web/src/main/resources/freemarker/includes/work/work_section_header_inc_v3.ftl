@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li class="hidden-xs"><!-- Workaround for mobile view -->
-                        <div class="menu-container">
+                        <div class="menu-container" id="add-work-container">
                             <ul class="toggle-menu">
                                 <li ng-class="{'green-bg' : showBibtexImportWizard == true || workImportWizard == true}"> 
                                     <span class="glyphicon glyphicon-plus"></span>
@@ -62,7 +62,7 @@
                                         <![endif]>            
                                         <!-- Add Manually -->
                                         <li>
-                                            <a class="action-option manage-button" ng-click="addWorkModal()">
+                                            <a id="add-work" class="action-option manage-button" ng-click="addWorkModal()">
                                                 <span class="glyphicon glyphicon-plus"></span>
                                                 <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
                                             </a>
