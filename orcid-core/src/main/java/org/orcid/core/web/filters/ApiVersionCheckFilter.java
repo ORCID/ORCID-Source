@@ -52,7 +52,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
             throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.exception"));
         } else if(version != null && version.startsWith("2.0")) {
             String headerVal = request.getHeaderValue("X-Forwarded-Proto");
-            if(!"HTTPS".equals(headerVal) && !request.isSecure()) {
+            if(!"HTTPS".equalsIgnoreCase(headerVal) && !request.isSecure()) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));
             }
         }
