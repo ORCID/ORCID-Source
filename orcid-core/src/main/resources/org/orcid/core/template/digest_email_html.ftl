@@ -82,7 +82,6 @@
                     </tbody>					                      
 	        	</table>
 	        	</#list> 
->>>>>>> master
             </p>
 			<#elseif notificationType == 'AMENDED'>
             <p>
