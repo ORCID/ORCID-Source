@@ -222,9 +222,9 @@ http://www.springsource.org/downloads/sts-ggts
 
 # Testing
 ##Automated Testing
-See [TESTAUTO.md](https://github.com/ORCID/ORCID-Source/blob/TESTAUTO.md)
+See [TESTAUTO.md](TESTAUTO.md)
 ##Manual Testing
-See [TESTMANUAL.md](https://github.com/ORCID/ORCID-Source/blob/TESTMANUAL.md)
+See [TESTMANUAL.md](TESTMANUAL.md)
 
 
 * Finally help out by improving these instructions!    
