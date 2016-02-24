@@ -106,6 +106,9 @@
 
 	<xs:element name="source" type="common:source-type" />
 
+	<xs:element name="external-ids" type="common:external-ids" />
+	<xs:element name="external-id" type="common:external-id" />
+
 	<xs:complexType name="source-type">
 		<xs:annotation>
 			<xs:documentation>The client application (Member organization's
@@ -1593,6 +1596,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<!-- 
 	<xs:complexType name="external-identifier">
 		<xs:annotation>
 			<xs:documentation>External references common to each activity</xs:documentation>
@@ -1602,7 +1606,28 @@
 			<xs:element name="relationship" minOccurs="1" maxOccurs="1" type="common:relationship-type" />			
 		</xs:sequence>
 	</xs:complexType>
-	
+	 -->
+	 
+	<xs:complexType name="external-id">
+		<xs:annotation>
+			<xs:documentation>A reference to an external identifier, suitable for works, people and funding</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />		
+			<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
+			<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
+		</xs:sequence>
+	</xs:complexType>
+	 
+	 <xs:complexType name="external-ids">
+		<xs:annotation>
+			<xs:documentation>Container for storing external ids</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="external-id" type="common:external-id" />
+		</xs:sequence>
+	</xs:complexType>
 	
 	<xs:simpleType name="group-id">
 		<xs:annotation>

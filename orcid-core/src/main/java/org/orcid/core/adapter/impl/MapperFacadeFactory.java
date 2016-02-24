@@ -48,11 +48,9 @@ import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingContributors;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkContributors;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -146,8 +144,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             }
                         })).register();
         mapCommonFields(mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class)).register();
-        mapperFactory.classMap(NotificationItemEntity.class, Item.class).fieldMap("externalIdType", "externalIdentifier.externalIdentifierType")
-                .converter("externalIdentifierIdConverter").add().field("externalIdValue", "externalIdentifier.externalIdentifierId").byDefault().register();
+        mapperFactory.classMap(NotificationItemEntity.class, Item.class)
+            .fieldMap("externalIdType", "externalIdentifier.type")
+            .converter("externalIdentifierIdConverter")
+            .add()
+            .field("externalIdValue", "externalIdentifier.value")
+            .byDefault()
+            .register();
         
         // All notifications
         addV2SourceMapping(mapperFactory);
@@ -181,14 +184,15 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<ExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(ExternalIdentifier.class, ExternalIdentifierEntity.class);
+        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);
         externalIdentifierClassMap.byDefault();
         addV2DateFields(externalIdentifierClassMap);
         addV2SourceMapping(mapperFactory);
         externalIdentifierClassMap.field("putCode", "id");
-        externalIdentifierClassMap.field("commonName", "externalIdCommonName");
-        externalIdentifierClassMap.field("reference", "externalIdReference");
+        externalIdentifierClassMap.field("type", "externalIdCommonName");
+        externalIdentifierClassMap.field("value", "externalIdReference");
         externalIdentifierClassMap.field("url.value", "externalIdUrl");
+        //TODO: add relationship to database schema for people.
         externalIdentifierClassMap.register();
         return mapperFactory.getMapperFacade();
     }
@@ -306,9 +310,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
 
+        //create BidirectionalConverter for WorkExternalIdentifiers in same way as FundingExternalIdentifiers
+        
+        //work external ids are JSON in the db.
+        //could simply change class above but will break existing conversions.
+        //option 1: keep it the same in the db and change convertors
+        //      a) for some I'm adding possible fields (e.g. relationship) - because it's JSON I can handle that using optional fields
+        //option 2: change the database format (and migrate) - there would be a period where we'd have both. 
+        //      a) would mean we have to convert both and use the one that parses
+        //      b) could have two different DB fields
+        //      c) requires a script that reads and converts all
+        
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.byDefault();
         workClassMap.field("putCode", "id");
@@ -322,7 +337,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         workClassMap.field("workCitation.workCitationType", "citationType");
         workClassMap.field("workCitation.citation", "citation");
         workClassMap.field("workType", "workType");
-        workClassMap.field("publicationDate", "publicationDate");
+        workClassMap.field("publicationDate", "publicationDate");        
         workClassMap.fieldMap("workExternalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
         workClassMap.field("url.value", "workUrl");
         workClassMap.fieldMap("workContributors", "contributorsJson").converter("workContributorsConverterId").add();
@@ -381,7 +396,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     public MapperFacade getFundingMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIdentifiersConverter());
+        converterFactory.registerConverter("fundingExternalIdentifiersConverterId", new FundingExternalIDsConverter());
         converterFactory.registerConverter("fundingContributorsConverterId", new JsonOrikaConverter<FundingContributors>());
 
         ClassMapBuilder<Funding, ProfileFundingEntity> fundingClassMap = mapperFactory.classMap(Funding.class, ProfileFundingEntity.class);
@@ -490,9 +505,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
-        converterFactory.registerConverter("workExternalIdentifiersConverterId", new JsonOrikaConverter<WorkExternalIdentifiers>());
-        converterFactory.registerConverter("workExternalIdentifierConverterId", new JsonOrikaConverter<WorkExternalIdentifier>());
-
+        converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
+        converterFactory.registerConverter("workExternalIdentifierConverterId", new WorkExternalIDConverter());
+        //do same as work
+        
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
         addV2CommonFields(classMap);
         classMap.field("url.value", "url");

@@ -89,7 +89,7 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -117,12 +117,12 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    protected MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
 
     private NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator;
 
     public void setServiceDelegator(
-            MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator) {
+            MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
@@ -685,7 +685,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
     @Path(EXTERNAL_IDENTIFIERS)
     @ApiOperation(value = "Add external identifier", hidden = true, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
-    public Response createExternalIdentifier(@PathParam("orcid") String orcid, ExternalIdentifier externalIdentifier) {
+    public Response createExternalIdentifier(@PathParam("orcid") String orcid, PersonExternalIdentifier externalIdentifier) {
         return serviceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
 
@@ -694,7 +694,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
     @ApiOperation(value = "Edit external identifier", hidden = true, authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_UPDATE, description = "you need this") }) })
-    public Response editExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, ExternalIdentifier externalIdentifier) {
+    public Response editExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode, PersonExternalIdentifier externalIdentifier) {
         return serviceDelegator.updateExternalIdentifier(orcid, getPutCode(putCode), externalIdentifier);
     }
 

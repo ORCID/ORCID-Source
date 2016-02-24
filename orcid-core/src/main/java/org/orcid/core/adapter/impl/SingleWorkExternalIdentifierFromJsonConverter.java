@@ -26,36 +26,41 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.notification.permission_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public final class SingleWorkExternalIdentifierFromJsonConverter extends BidirectionalConverter<ExternalIdentifier, String> {
+public final class SingleWorkExternalIdentifierFromJsonConverter extends BidirectionalConverter<ExternalID, String> {
 
     @Override
-    public String convertTo(ExternalIdentifier source, Type<String> destinationType) {
+    public String convertTo(ExternalID source, Type<String> destinationType) {
         WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
         WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
         workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
-        workExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(source.getExternalIdentifierId()));
-        workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(source.getExternalIdentifierType()));
+        workExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(source.getValue()));
+        //TODO: work with non-schema types
+        try{
+            workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(source.getType()));
+        }catch (IllegalArgumentException e){
+            workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
+        }
         return JsonUtils.convertToJsonString(workExternalIdentifiers);
     }
 
     @Override
-    public ExternalIdentifier convertFrom(String source, Type<ExternalIdentifier> destinationType) {
+    public ExternalID convertFrom(String source, Type<ExternalID> destinationType) {
         WorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, WorkExternalIdentifiers.class);
         List<WorkExternalIdentifier> workExternalIdentifierList = workExternalIdentifiers.getWorkExternalIdentifier();
         if (workExternalIdentifierList.isEmpty()) {
             return null;
         }
         WorkExternalIdentifier workExternalIdentifier = workExternalIdentifierList.get(0);
-        ExternalIdentifier extId = new ExternalIdentifier();
-        extId.setExternalIdentifierId(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
-        extId.setExternalIdentifierType(workExternalIdentifier.getWorkExternalIdentifierType().value());
+        ExternalID extId = new ExternalID();
+        extId.setValue(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+        extId.setType(workExternalIdentifier.getWorkExternalIdentifierType().value()); //should this be name?
         return extId;
     }
 

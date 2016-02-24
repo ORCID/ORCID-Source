@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 
 public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
     private static final long serialVersionUID = 1L;
@@ -29,12 +29,12 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
     private List<String> errors = new ArrayList<String>();
     private List<ExternalIdentifierForm> externalIdentifiers = new ArrayList<ExternalIdentifierForm>();
 
-    public static ExternalIdentifiersForm valueOf(ExternalIdentifiers extIds) {
+    public static ExternalIdentifiersForm valueOf(PersonExternalIdentifiers extIds) {
         if(extIds == null) {
             return null;
         }
         ExternalIdentifiersForm form = new ExternalIdentifiersForm();
-        for(ExternalIdentifier extId : extIds.getExternalIdentifier()) {
+        for(PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
             form.getExternalIdentifiers().add(ExternalIdentifierForm.valueOf(extId));
         }
             

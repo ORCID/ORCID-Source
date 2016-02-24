@@ -69,7 +69,7 @@ import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,7 +91,7 @@ import io.swagger.annotations.ExternalDocs;
 @Path("/v2.0_rc2")
 public class PublicV2ApiServiceImplV2_0_rc2 {
 
-    protected PublicV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
+    protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
@@ -100,7 +100,7 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     protected String pubBaseUri;
 
     public void setServiceDelegator(
-            PublicV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
+            PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 

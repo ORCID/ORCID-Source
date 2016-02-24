@@ -39,7 +39,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -136,11 +137,11 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(w.getWorkExternalIdentifiers());
         assertNotNull(w.getWorkExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, w.getWorkExternalIdentifiers().getExternalIdentifier().size());
-        org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier workExtId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
-        assertNotNull(workExtId.getWorkExternalIdentifierId());
-        assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
-        assertNotNull(workExtId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
+        ExternalID workExtId = w.getWorkExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId.getValue());
+        assertEquals("123", workExtId.getValue());
+        assertNotNull(workExtId.getType());
+        assertEquals(ExternalIDType.AGR.value(), workExtId.getType());
         String sourcePath = w.getSource().retrieveSourcePath();
         assertNotNull(sourcePath);
         assertEquals("APP-5555555555555555", sourcePath);
@@ -160,19 +161,19 @@ public class JpaJaxbWorkAdapterTest {
         assertNotNull(ws.getExternalIdentifiers());
         assertNotNull(ws.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, ws.getExternalIdentifiers().getExternalIdentifier().size());
-        org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier workExtId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
-        assertNotNull(workExtId.getWorkExternalIdentifierId());
-        assertEquals("123", workExtId.getWorkExternalIdentifierId().getContent());
-        assertNotNull(workExtId.getWorkExternalIdentifierType());
-        assertEquals(WorkExternalIdentifierType.AGR.value(), workExtId.getWorkExternalIdentifierType().value());
+        ExternalID workExtId = ws.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(workExtId.getValue());
+        assertEquals("123", workExtId.getValue());
+        assertNotNull(workExtId.getType());
+        assertEquals(ExternalIDType.AGR.value(), workExtId.getType());
     }
 
     private Work getWork(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Work.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc1/samples/work-2.0_rc1.xml";
+        String name = "/record_2.0_rc2/samples/work-2.0_rc2.xml";
         if (full) {
-            name = "/record_2.0_rc1/samples/work-full-2.0_rc1.xml";
+            name = "/record_2.0_rc2/samples/work-full-2.0_rc2.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Work) unmarshaller.unmarshal(inputStream);

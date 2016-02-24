@@ -45,8 +45,8 @@ import org.orcid.jaxb.model.record_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -165,15 +165,15 @@ public class ValidateV2RC2SamplesTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallExternalIdentifiers() {
-        ExternalIdentifiers externalIdentifiers = (ExternalIdentifiers) unmarshallFromPath("/record_2.0_rc2/samples/external-identifiers-2.0_rc2.xml",
-                ExternalIdentifiers.class);
+        PersonExternalIdentifiers externalIdentifiers = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0_rc2/samples/external-identifiers-2.0_rc2.xml",
+                PersonExternalIdentifiers.class);
         assertNotNull(externalIdentifiers);
         assertNotNull(externalIdentifiers.getExternalIdentifier());
         assertEquals(2, externalIdentifiers.getExternalIdentifier().size());
-        for (ExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
+        for (PersonExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
             assertThat(extId.getPutCode(), anyOf(is(1L), is(2L)));
-            assertThat(extId.getCommonName(), anyOf(is("common-name-1"), is("common-name-2")));
-            assertThat(extId.getReference(), anyOf(is("id-reference-1"), is("id-reference-2")));
+            assertThat(extId.getType(), anyOf(is("common-name-1"), is("common-name-2")));
+            assertThat(extId.getValue(), anyOf(is("id-reference-1"), is("id-reference-2")));
             assertNotNull(extId.getUrl());
             assertThat(extId.getUrl().getValue(), anyOf(is("http://url/1"), is("http://url/2")));
             assertNotNull(extId.getCreatedDate());
@@ -182,11 +182,11 @@ public class ValidateV2RC2SamplesTest {
             assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
         }
 
-        ExternalIdentifier extId = (ExternalIdentifier) unmarshallFromPath("/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml", ExternalIdentifier.class);
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) unmarshallFromPath("/record_2.0_rc2/samples/external-identifier-2.0_rc2.xml", PersonExternalIdentifier.class);
         assertNotNull(extId);
-        assertEquals("A-0003", extId.getCommonName());
+        assertEquals("A-0003", extId.getType());
         assertEquals(Long.valueOf(1), extId.getPutCode());
-        assertEquals("A-0003", extId.getReference());
+        assertEquals("A-0003", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://ext-id/A-0003", extId.getUrl().getValue());
         assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
@@ -476,11 +476,11 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        ExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
         assertEquals(Visibility.PUBLIC, extId.getVisibility());
         assertEquals(Long.valueOf(1), extId.getPutCode());
-        assertEquals("common-name-1", extId.getCommonName());
-        assertEquals("id-reference-1", extId.getReference());
+        assertEquals("type-1", extId.getType());
+        assertEquals("value-1", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://url.com/1", extId.getUrl().getValue());
         assertNotNull(extId.getCreatedDate());
@@ -629,10 +629,10 @@ public class ValidateV2RC2SamplesTest {
                 result = (ResearcherUrl) obj;
             } else if (PersonalDetails.class.equals(type)) {
                 result = (PersonalDetails) obj;
-            } else if (ExternalIdentifier.class.equals(type)) {
-                result = (ExternalIdentifier) obj;
-            } else if (ExternalIdentifiers.class.equals(type)) {
-                result = (ExternalIdentifiers) obj;
+            } else if (PersonExternalIdentifier.class.equals(type)) {
+                result = (PersonExternalIdentifier) obj;
+            } else if (PersonExternalIdentifiers.class.equals(type)) {
+                result = (PersonExternalIdentifiers) obj;
             } else if (Biography.class.equals(type)) {
                 result = (Biography) obj;
             } else if (Name.class.equals(type)) {

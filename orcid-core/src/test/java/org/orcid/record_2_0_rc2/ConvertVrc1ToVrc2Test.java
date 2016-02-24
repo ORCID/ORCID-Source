@@ -47,20 +47,22 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(ActivitiesSummary.class);
         JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
+        Unmarshaller jaxbUnmarshaller1 = jaxbContext1.createUnmarshaller();
+        Unmarshaller jaxbUnmarshaller2 = jaxbContext2.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-activities-2.0_rc1.xml");
         InputStream rc2Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-activities-2.0_rc2.xml");
 
-        ActivitiesSummary rc1Activities = (ActivitiesSummary) jaxbUnmarshaller.unmarshal(rc1Stream);
+        ActivitiesSummary rc1Activities = (ActivitiesSummary) jaxbUnmarshaller1.unmarshal(rc1Stream);
 
-        jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities1 = (org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) jaxbUnmarshaller
-                .unmarshal(rc2Stream);
+        org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities1 = 
+                (org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) jaxbUnmarshaller2.unmarshal(rc2Stream);
 
         V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Activities, "v2_rc1"));
         org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary rc2Activities2 = (org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary) result
                 .getObjectToConvert();
+        //assertEquals(1,rc2Activities2.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        //assertEquals("common:external-id-value",rc2Activities2.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(rc2Activities1.toString(), rc2Activities2.toString()); 
     }
 
