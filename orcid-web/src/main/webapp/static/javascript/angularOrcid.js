@@ -8859,7 +8859,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     }
     
     $scope.getClientUrl = function(userCredentials) {
-        if(userCredentials.clientWebsite != null && userCredentials.clientWebsite.value != null) {
+        if(typeof userCredentials != undefined && userCredentials != null && userCredentials.clientWebsite != null && userCredentials.clientWebsite.value != null) {
             if(userCredentials.clientWebsite.value.lastIndexOf('http://') === -1 && userCredentials.clientWebsite.value.lastIndexOf('https://') === -1) {
                 return '//' + userCredentials.clientWebsite.value;
             } else {
