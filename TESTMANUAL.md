@@ -23,8 +23,8 @@ Steps to be completed before each release
 2. Ensure email ma_test_[DD][month][YYYY]@mailinator.com is marked as private
 3. Add new email ma_test_[DD][month][YYYY]_01@mailinator.com and mark as public
 4. Visit public page (http://qa.orcid.org/[XXXX-XXXX-XXXX-XXXX])
-      * Verify ma_test_email[highest n+1]@mailinoator.com is not visible
-      * Verify ma_test_email[highest n]@mailinoator.org is not visible
+      * Verify ma_test_[DD][month][YYYY]@mailinator.com is not visible
+      * Verify ma_test_[DD][month][YYYY]_01@mailinator.com is visible
 5. Visit https://qa.orcid.org/signout
 
 ###Reset password
