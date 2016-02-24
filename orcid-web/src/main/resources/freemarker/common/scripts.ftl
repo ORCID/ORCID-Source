@@ -16,10 +16,10 @@
     =============================================================================
 
 -->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
 if (typeof jQuery == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/1.8.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/1.9.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
 
@@ -29,6 +29,14 @@ if (typeof jQuery.ui == 'undefined') {
     document.write(unescape("%3Cscript src='${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.3.0/jquery-migrate.min.js"></script>
+<script type="text/javascript">
+if (typeof jQuery == 'undefined') {
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate.min.js' type='text/javascript'%3E%3C/script%3E"));
+}
+</script>
+
 <script type="text/javascript" >
     // CSRF
     var token = $("meta[name='_csrf']").attr("content");
