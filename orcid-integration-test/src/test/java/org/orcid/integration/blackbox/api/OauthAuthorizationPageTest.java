@@ -80,10 +80,10 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
 
     @After
     public void after() {
+        webDriver.close();
         webDriver.quit();
-    }
-
-    
+        revokeApplicationsAccess(client1ClientId);
+    }    
     
     @Test
     public void stateParamIsPersistentAndReturnedOnLoginTest() throws JSONException, InterruptedException, URISyntaxException {
@@ -338,7 +338,6 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
      * */
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
-        revokeApplicationsAccess(client1ClientId);
         // First get the authorization code
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId,
                 ScopePathType.FUNDING_CREATE.getContent(), client1RedirectUri));

@@ -17,10 +17,12 @@
 package org.orcid.integration.blackbox.api.v2.rc1;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -46,6 +48,8 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -60,26 +64,139 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class BlackBoxBase {
 
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    protected String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    protected String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    protected String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    protected String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    protected String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    protected String client2ClientSecret;    
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;    
+ // Admin user
+    @Value("${org.orcid.web.adminUser.username}")
+    protected String adminUserName;
+    @Value("${org.orcid.web.adminUser.password}")
+    protected String adminPassword;
+    @Value("${org.orcid.web.adminUser.orcidId}")
+    protected String adminOrcidId;
+    @Value("${org.orcid.web.adminUser.names.given_name}")
+    protected String adminGivenName;
+    @Value("${org.orcid.web.adminUser.names.family_names}")
+    protected String adminFamilyNames;
+    @Value("${org.orcid.web.adminUser.names.credit_name}")
+    protected String adminCreditName;
+    @Value("${org.orcid.web.adminUser.bio}")
+    protected String adminBio;
+
+    // User # 1
     @Value("${org.orcid.web.testUser1.username}")
     protected String user1UserName;
     @Value("${org.orcid.web.testUser1.password}")
     protected String user1Password;
     @Value("${org.orcid.web.testUser1.orcidId}")
     protected String user1OrcidId;
+    @Value("${org.orcid.web.testUser1.names.given_name}")
+    protected String user1GivenName;
+    @Value("${org.orcid.web.testUser1.names.family_names}")
+    protected String user1FamilyNames;
+    @Value("${org.orcid.web.testUser1.names.credit_name}")
+    protected String user1CreditName;
+    @Value("${org.orcid.web.testUser1.bio}")
+    protected String user1Bio;
+
+    // User # 2
+    @Value("${org.orcid.web.testUser2.username}")
+    protected String user2UserName;
+    @Value("${org.orcid.web.testUser2.password}")
+    protected String user2Password;
+    @Value("${org.orcid.web.testUser2.orcidId}")
+    protected String user2OrcidId;
+    @Value("${org.orcid.web.testUser2.names.given_name}")
+    protected String user2GivenName;
+    @Value("${org.orcid.web.testUser2.names.family_names}")
+    protected String user2FamilyNames;
+    @Value("${org.orcid.web.testUser2.names.credit_name}")
+    protected String user2CreditName;
+    @Value("${org.orcid.web.testUser2.bio}")
+    protected String user2Bio;
+
+    // Public client
+    @Value("${org.orcid.web.publicClient1.clientId}")
+    protected String publicClientId;
+    @Value("${org.orcid.web.publicClient1.clientSecret}")
+    protected String publicClientSecret;
+    @Value("${org.orcid.web.publicClient1.name}")
+    protected String publicClientName;
+    @Value("${org.orcid.web.publicClient1.redirectUri}")
+    protected String publicClientRedirectUri;
+    @Value("${org.orcid.web.publicClient1.description}")
+    protected String publicClientDescription;
+    @Value("${org.orcid.web.publicClient1.website}")
+    protected String publicClientWebsite;
+    // Lets assume testUser1 is also the owner of the public client
+    @Value("${org.orcid.web.testUser1.orcidId}")
+    protected String publicClientUserOwner;
+
+    // Member # 1
+    @Value("${org.orcid.web.member.id}")
+    protected String member1Orcid;
+    @Value("${org.orcid.web.member.email}")
+    protected String member1Email;
+    @Value("${org.orcid.web.member.password}")
+    protected String member1Password;
+    @Value("${org.orcid.web.member.type}")
+    protected String member1Type;
+    @Value("${org.orcid.web.member.name}")
+    protected String member1Name;
+
+    // Client # 1
+    @Value("${org.orcid.web.testClient1.clientId}")
+    protected String client1ClientId;
+    @Value("${org.orcid.web.testClient1.clientSecret}")
+    protected String client1ClientSecret;
+    @Value("${org.orcid.web.testClient1.redirectUri}")
+    protected String client1RedirectUri;
+    @Value("${org.orcid.web.testClient1.name}")
+    protected String client1Name;
+    @Value("${org.orcid.web.testClient1.description}")
+    protected String client1Description;
+    @Value("${org.orcid.web.testClient1.website}")
+    protected String client1Website;
+
+    // Client # 2
+    @Value("${org.orcid.web.testClient2.clientId}")
+    protected String client2ClientId;
+    @Value("${org.orcid.web.testClient2.clientSecret}")
+    protected String client2ClientSecret;
+    @Value("${org.orcid.web.testClient2.redirectUri}")
+    protected String client2RedirectUri;
+    @Value("${org.orcid.web.testClient2.name}")
+    protected String client2Name;
+    @Value("${org.orcid.web.testClient2.description}")
+    protected String client2Description;
+    @Value("${org.orcid.web.testClient2.website}")
+    protected String client2Website;
+
+    // Member # 2 - Locked
+    @Value("${org.orcid.web.locked.member.id}")
+    protected String lockedMemberOrcid;
+    @Value("${org.orcid.web.locked.member.email}")
+    protected String lockedMemberEmail;
+    @Value("${org.orcid.web.locked.member.password}")
+    protected String lockedMemberPassword;
+    @Value("${org.orcid.web.locked.member.name}")
+    protected String lockedMemberName;
+    @Value("${org.orcid.web.locked.member.type}")
+    protected String lockedMemberType;
+
+    // Member # 2 - Client
+    @Value("${org.orcid.web.locked.member.client.id}")
+    protected String lockedMemberClient1ClientId;
+    @Value("${org.orcid.web.locked.member.client.secret}")
+    protected String lockedMemberClient1ClientSecret;
+    @Value("${org.orcid.web.locked.member.client.ruri}")
+    protected String lockedMemberClient1RedirectUri;
+    @Value("${org.orcid.web.locked.member.client.name}")
+    protected String lockedMemberClient1Name;
+    @Value("${org.orcid.web.locked.member.client.description}")
+    protected String lockedMemberClient1Description;
+    @Value("${org.orcid.web.locked.member.client.website}")
+    protected String lockedMemberClient1Website;
+    
+    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
+    protected String webBaseUrl;    
     @Resource(name = "t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource(name = "memberV2ApiClient_rc1")
@@ -144,11 +261,34 @@ public class BlackBoxBase {
             }
         }
 
-        String userName = System.getProperty("org.orcid.web.testUser1.username");
-        String password = System.getProperty("org.orcid.web.testUser1.password");
+        Properties prop = new Properties();
+        
+
+        try {
+            //Read the names of the property files
+            String propertyFiles = System.getProperty("org.orcid.config.file");
+            //XXX: for each one, iterate and load the properties
+          InputStream inputStream = 
+            BlackBoxBase.class.getClassLoader().getResourceAsStream("config.properties");
+                                
+          prop.load(inputStream);
+          //TODO then check the properties we need
+                
+        } catch (IOException e) {
+                e.printStackTrace();
+        }
+
+        return filePath;
+
+  }
+
+        
+        ApplicationContext context = new ClassPathXmlApplicationContext("test-memberV2-context.xml");
+        String userName = context.getEnvironment().getProperty("org.orcid.web.testUser1.username");
+        String password = context.getEnvironment().getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(System.getProperty("org.orcid.web.base.url"))) {
-            baseUrl = System.getProperty("org.orcid.web.base.url");
+        if (!PojoUtil.isEmpty(context.getEnvironment().getProperty("org.orcid.web.base.url"))) {
+            baseUrl = context.getEnvironment().getProperty("org.orcid.web.base.url");
         }
 
         WebDriver webDriver = new FirefoxDriver();

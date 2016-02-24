@@ -18,6 +18,7 @@ package org.orcid.integration.whitebox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,6 +64,7 @@ import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
@@ -112,6 +114,8 @@ public class SetUpClientsAndUsers {
     private static final String ORCID_TYPE = "orcidType";
     private static final String MEMBER_TYPE = "memberType";
     private static final String LOCKED = "locked";
+    private static final String DEVELOPER_TOOLS = "developerTools";
+    
     // Client variables
     private static final String MEMBER_ID = "memberId";
     private static final String CLIENT_ID = "clientId";
@@ -120,6 +124,8 @@ public class SetUpClientsAndUsers {
     private static final String REDIRECT_URI = "clientRedirectUri";
     private static final String CLIENT_SECRET = "clientSecret";
     private static final String CLIENT_WEBSITE = "clientWebsite";
+    private static final String CLIENT_TYPE = "clientType";
+    private static final String ADD_ORCID_INTERNAL_SCOPES = "addInternalScopes";
 
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
@@ -387,6 +393,7 @@ public class SetUpClientsAndUsers {
             params.put(CREDIT_NAME, user1CreditName);
             params.put(BIO, user1Bio);
             params.put(ORCID_TYPE, OrcidType.USER.value());
+            params.put(DEVELOPER_TOOLS, "true");
         } else if (userId.equals(user2OrcidId)) {
             params.put(EMAIL, user2UserName);
             params.put(PASSWORD, user2Password);
@@ -419,6 +426,7 @@ public class SetUpClientsAndUsers {
             params.put(REDIRECT_URI, publicClientRedirectUri);
             params.put(CLIENT_SECRET, publicClientSecret);
             params.put(CLIENT_WEBSITE, publicClientWebsite);
+            params.put(CLIENT_TYPE, ClientType.PUBLIC_CLIENT.value());            
         } else if (userId.equals(client1ClientId)) {
             params.put(MEMBER_ID, member1Orcid);
             params.put(CLIENT_ID, client1ClientId);
@@ -427,6 +435,8 @@ public class SetUpClientsAndUsers {
             params.put(REDIRECT_URI, client1RedirectUri);
             params.put(CLIENT_SECRET, client1ClientSecret);
             params.put(CLIENT_WEBSITE, client1Website);
+            params.put(CLIENT_TYPE, ClientType.PREMIUM_CREATOR.value());
+            params.put(ADD_ORCID_INTERNAL_SCOPES, "true");
         } else if (userId.equals(client2ClientId)) {
             params.put(MEMBER_ID, member1Orcid);
             params.put(CLIENT_ID, client2ClientId);
@@ -435,6 +445,7 @@ public class SetUpClientsAndUsers {
             params.put(REDIRECT_URI, client2RedirectUri);
             params.put(CLIENT_SECRET, client2ClientSecret);
             params.put(CLIENT_WEBSITE, client2Website);
+            params.put(CLIENT_TYPE, ClientType.PREMIUM_CREATOR.value());
         } else if (userId.equals(lockedMemberClient1ClientId)) {
             params.put(MEMBER_ID, lockedMemberOrcid);
             params.put(CLIENT_ID, lockedMemberClient1ClientId);
@@ -443,6 +454,7 @@ public class SetUpClientsAndUsers {
             params.put(REDIRECT_URI, lockedMemberClient1RedirectUri);
             params.put(CLIENT_SECRET, lockedMemberClient1ClientSecret);
             params.put(CLIENT_WEBSITE, lockedMemberClient1Website);
+            params.put(CLIENT_TYPE, ClientType.PREMIUM_CREATOR.value());
         } else {
             throw new ApplicationException("Unable to find params for orcid: " + userId);
         }
@@ -489,8 +501,12 @@ public class SetUpClientsAndUsers {
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         
         if(params.containsKey(LOCKED)) {
-            profileEntityManager.lockProfile(params.get(ORCID));    
+            profileEntityManager.lockProfile(params.get(ORCID));               
         }        
+        
+        if(params.containsKey(DEVELOPER_TOOLS)) {
+            profileEntityManager.enableDeveloperTools(orcidProfile);
+        }
     }
 
     private boolean clearRegistry(OrcidProfile existingProfile, Map<String, String> params) {
@@ -625,11 +641,24 @@ public class SetUpClientsAndUsers {
         clientAuthorizedGrantTypes.add("client_credentials");
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("refresh_token");
+        
+        ClientType clientType = ClientType.PREMIUM_CREATOR;
+        
+        if(params.containsKey(CLIENT_TYPE)) {
+            clientType = ClientType.fromValue(params.get(CLIENT_TYPE));
+        }
+        
         Set<RedirectUri> redirectUrisToAdd = new HashSet<RedirectUri>();
         RedirectUri redirectUri = new RedirectUri(params.get(REDIRECT_URI));
-        redirectUri.setType(RedirectUriType.DEFAULT);
+                        
+        if(clientType.equals(ClientType.PUBLIC_CLIENT)) {
+            redirectUri.setType(RedirectUriType.SSO_AUTHENTICATION);
+        } else {
+            redirectUri.setType(RedirectUriType.DEFAULT);    
+        }
         redirectUrisToAdd.add(redirectUri);
-
+        
+        
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_CLIENT");
 
@@ -641,8 +670,11 @@ public class SetUpClientsAndUsers {
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
 
         Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
-
-        clientDetailsManager.populateClientDetailsEntity(clientId, memberEntity, name, description, website, clientSecret, ClientType.PREMIUM_UPDATER, scopes,
+        if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
+            scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
+        }
+                
+        clientDetailsManager.populateClientDetailsEntity(clientId, memberEntity, name, description, website, clientSecret, clientType, scopes,
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
     }
     
@@ -683,5 +715,41 @@ public class SetUpClientsAndUsers {
         assertNotNull(existingProfile.getOrcidBio().getContactDetails());
         assertNotNull(existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail());
         assertEquals(member1Email, existingProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+        
+        ClientDetailsEntity existingClient = clientDetailsManager.findByClientId(publicClientId);
+        assertNotNull(existingClient);
+        assertEquals(user1OrcidId, existingClient.getGroupProfileId());
+        assertNotNull(existingClient.getRegisteredRedirectUri());
+        assertEquals(1, existingClient.getRegisteredRedirectUri().size());
+        assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
+        assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
+        assertEquals(publicClientRedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
+                
+        existingClient = clientDetailsManager.findByClientId(client1ClientId);
+        assertNotNull(existingClient);
+        assertEquals(member1Orcid, existingClient.getGroupProfileId());
+        assertNotNull(existingClient.getRegisteredRedirectUri());
+        assertEquals(1, existingClient.getRegisteredRedirectUri().size());
+        assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
+        assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
+        assertEquals(client1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
+        
+        existingClient = clientDetailsManager.findByClientId(client2ClientId);
+        assertNotNull(existingClient);
+        assertEquals(member1Orcid, existingClient.getGroupProfileId());
+        assertNotNull(existingClient.getRegisteredRedirectUri());
+        assertEquals(1, existingClient.getRegisteredRedirectUri().size());
+        assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
+        assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
+        assertEquals(client2RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
+                
+        existingClient = clientDetailsManager.findByClientId(lockedMemberClient1ClientId);
+        assertNotNull(existingClient);
+        assertEquals(lockedMemberOrcid, existingClient.getGroupProfileId());
+        assertNotNull(existingClient.getRegisteredRedirectUri());
+        assertEquals(1, existingClient.getRegisteredRedirectUri().size());
+        assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
+        assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
+        assertEquals(lockedMemberClient1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
     }
 }
