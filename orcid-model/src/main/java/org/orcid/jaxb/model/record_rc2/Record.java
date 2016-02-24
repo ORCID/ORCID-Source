@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "orcidIdentifier", "deprecated", "preferences", "history", "person", "ActivitiesSummary" })
+@XmlType(propOrder = { "lastModifiedDate", "orcidIdentifier", "deprecated", "preferences", "history", "person", "activitiesSummary" })
 @XmlRootElement(name = "record", namespace = "http://www.orcid.org/ns/record")
 public class Record implements Serializable {
     private static final long serialVersionUID = 1086932594400451295L;

@@ -81,7 +81,7 @@
 								<xs:documentation>End date for the funding.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="external-identifiers" type="funding:external-identifiers"
+						<xs:element ref="common:external-ids"
 							minOccurs="0" />
 						<xs:element name="contributors" type="funding:contributors"
 							minOccurs="0" />
@@ -100,7 +100,7 @@
 					<xs:sequence>
 						<xs:element name="title" type="funding:funding-title"
 							minOccurs="1" />
-						<xs:element name="external-identifiers" type="funding:external-identifiers"
+						<xs:element ref="common:external-ids"
 							minOccurs="0" />
 						<xs:element name="type" type="funding:funding-type"
 							minOccurs="1" maxOccurs="1" />
@@ -152,7 +152,7 @@
 			<xs:enumeration value="salary-award" />
 		</xs:restriction>
 	</xs:simpleType>
-
+<!--
 	<xs:complexType name="external-identifiers">
 		<xs:annotation>
 			<xs:documentation>Container for storing the external references to
@@ -164,7 +164,7 @@
 				name="externalIdentifier" type="funding:external-identifier" />
 		</xs:sequence>
 	</xs:complexType>
-
+ 
 	<xs:complexType name="external-identifier">
 		<xs:annotation>
 			<xs:documentation>An external identifier that uniquely represents the
@@ -198,7 +198,7 @@
 			<xs:enumeration value="grant_number" />
 		</xs:restriction>
 	</xs:simpleType>
-
+ -->
 	<xs:complexType name="contributors">
 		<xs:annotation>
 			<xs:documentation>Container for the contributors of a funding.

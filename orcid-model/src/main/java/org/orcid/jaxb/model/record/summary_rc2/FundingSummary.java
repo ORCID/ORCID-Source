@@ -32,7 +32,7 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.common_rc2.VisibilityType;
 import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
@@ -47,8 +47,8 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
     protected FundingType type;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/funding")
     protected FundingTitle title;
-    @XmlElement(name="external-identifiers", namespace = "http://www.orcid.org/ns/funding")
-    protected FundingExternalIdentifiers externalIdentifiers;
+    @XmlElement(name="external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(name="start-date", namespace = "http://www.orcid.org/ns/common")
     protected FuzzyDate startDate;
     @XmlElement(name="end-date", namespace = "http://www.orcid.org/ns/common")
@@ -85,11 +85,11 @@ public class FundingSummary implements VisibilityType, Activity, GroupableActivi
         this.title = title;
     }
 
-    public FundingExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(FundingExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 

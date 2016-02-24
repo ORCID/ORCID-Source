@@ -30,8 +30,8 @@ import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -55,11 +55,11 @@ public class ElementUtils {
         personalDetails.setPath(PERSONAL_DETAILS.replace("{orcid}", orcid));
     }
 
-    public static void setPathToExternalIdentifiers(ExternalIdentifiers extIds, String orcid) {
+    public static void setPathToExternalIdentifiers(PersonExternalIdentifiers extIds, String orcid) {
         extIds.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid));
     }
 
-    public static void setPathToExternalIdentifier(ExternalIdentifier extId, String orcid) {
+    public static void setPathToExternalIdentifier(PersonExternalIdentifier extId, String orcid) {
         extId.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid) + '/' + extId.getPutCode());
     }
 

@@ -251,8 +251,7 @@ public class RegistrationControllerTest {
         ModelAndView successView = registrationController
                 .confirmPasswordOneTimeResetView(servletRequest, servletResponse, "encrypted link", passwordTypeAndConfirmForm, bindingResult, redirectAttributes);
         verify(orcidProfileManager, times(1)).updatePasswordInformation(orcidWithSecurityQuestion());
-        assertEquals("redirect:http://testserver.orcid.org/my-orcid", successView.getViewName());
-
+        assertTrue(successView.getViewName().equals("redirect:http://testserver.orcid.org/my-orcid") || successView.getViewName().equals("redirect:https://localhost:8443/orcid-web/my-orcid"));
     }
 
     @Test
@@ -278,7 +277,7 @@ public class RegistrationControllerTest {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(eq("any@orcid.org"), Matchers.<LoadOptions> any())).thenReturn(orcidWithSecurityQuestion());
         ModelAndView successView = registrationController
                 .submitPasswordReset(servletRequest, servletResponse, "encrypted string not expired", oneTimeResetPasswordForm, bindingResult, redirectAttributes);
-        assertEquals("redirect:http://testserver.orcid.org/my-orcid", successView.getViewName());
+        assertTrue(successView.getViewName().equals("redirect:http://testserver.orcid.org/my-orcid") || successView.getViewName().equals("redirect:https://localhost:8443/orcid-web/my-orcid"));
         verify(redirectAttributes, never()).addFlashAttribute("passwordResetLinkExpired", true);
         // finally check expiry works
 

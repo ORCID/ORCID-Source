@@ -82,6 +82,7 @@ public class DBUnitTest {
         dataSet.addTable("profile_event");
         dataSet.addTable("researcher_url");
         dataSet.addTable("email");
+        dataSet.addTable("email_event");
         dataSet.addTable("external_identifier");
         dataSet.addTable("org");
         dataSet.addTable("org_affiliation_relation");
