@@ -1,4 +1,6 @@
 # Automated Testing
+Before running these tests, ensure that your development environment is set up correctly per [DEVSETUP.md](https://github.com/ORCID/ORCID-Source/DEVSETUP.md)
+
 ## Maven test
 
 1. cd to [ORCID-Source]
