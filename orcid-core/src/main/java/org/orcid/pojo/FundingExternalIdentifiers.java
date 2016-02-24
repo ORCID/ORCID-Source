@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+
 public class FundingExternalIdentifiers implements Serializable {
     private static final long serialVersionUID = 1L;
     protected List<FundingExternalIdentifier> fundingExternalIdentifier;
@@ -71,8 +74,8 @@ public class FundingExternalIdentifiers implements Serializable {
         return result;
     }
 
-    public org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers toRecordPojo() {
-        org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers result = new org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers();
+    public ExternalIDs toRecordPojo() {
+        ExternalIDs result = new ExternalIDs();
         if (!this.getFundingExternalIdentifier().isEmpty()) {
             for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
                 result.getExternalIdentifier().add(fei.toRecordPojo());
@@ -94,12 +97,12 @@ public class FundingExternalIdentifiers implements Serializable {
         return result;
     }
 
-    public static FundingExternalIdentifiers fromRecordPojo(org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers recordPojo) {
+    public static FundingExternalIdentifiers fromRecordPojo(ExternalIDs recordPojo) {
         if (recordPojo == null)
             return null;
         FundingExternalIdentifiers result = new FundingExternalIdentifiers();
         if (!recordPojo.getExternalIdentifier().isEmpty()) {
-            for (org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier recordEi : recordPojo.getExternalIdentifier()) {                               
+            for (ExternalID recordEi : recordPojo.getExternalIdentifier()) {                               
                 result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromRecordPojo(recordEi));
             }
         }

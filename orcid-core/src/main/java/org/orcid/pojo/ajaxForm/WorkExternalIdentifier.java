@@ -23,6 +23,7 @@ import java.util.List;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 
 public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
@@ -51,13 +52,13 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
 
     }
     
-    public static WorkExternalIdentifier valueOf(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier workExternalIdentifier) {
+    public static WorkExternalIdentifier valueOf(org.orcid.jaxb.model.record_rc2.ExternalID workExternalIdentifier) {
         WorkExternalIdentifier wi = new WorkExternalIdentifier();
         if (workExternalIdentifier != null) {
-            if (workExternalIdentifier.getWorkExternalIdentifierId() != null)
-                wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierId().getContent()));
-            if (workExternalIdentifier.getWorkExternalIdentifierType() != null)
-                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getWorkExternalIdentifierType().value()));
+            if (workExternalIdentifier.getValue() != null)
+                wi.setWorkExternalIdentifierId(Text.valueOf(workExternalIdentifier.getValue()));
+            if (workExternalIdentifier.getType() != null)
+                wi.setWorkExternalIdentifierType(Text.valueOf(workExternalIdentifier.getType()));
             if(workExternalIdentifier.getRelationship() != null)
                 wi.setRelationship(Text.valueOf(workExternalIdentifier.getRelationship().value()));
             if(workExternalIdentifier.getUrl() != null)
@@ -76,12 +77,12 @@ public class WorkExternalIdentifier implements ErrorsInterface, Serializable {
         return we;
     }
     
-    public org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier toRecordWorkExternalIdentifier() {
-        org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier we = new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier();
+    public org.orcid.jaxb.model.record_rc2.ExternalID toRecordWorkExternalIdentifier() {
+        ExternalID we = new ExternalID();
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierId())) 
-            we.setWorkExternalIdentifierId(new org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId(this.getWorkExternalIdentifierId().getValue()));
+            we.setValue(this.getWorkExternalIdentifierId().getValue());
         if (!PojoUtil.isEmpty(this.getWorkExternalIdentifierType()))
-            we.setWorkExternalIdentifierType(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType.fromValue(this.getWorkExternalIdentifierType().getValue()));
+            we.setType(this.getWorkExternalIdentifierType().getValue());
         if(!PojoUtil.isEmpty(this.getRelationship())) 
             we.setRelationship(Relationship.fromValue(this.getRelationship().getValue()));
         if(!PojoUtil.isEmpty(this.getUrl()))

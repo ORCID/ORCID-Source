@@ -53,18 +53,18 @@ import org.orcid.jaxb.model.message.FundingContributorRole;
 import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -265,6 +265,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     public Map<String, String> retrieveIdTypesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
 
+        //For now we will just use rc1 work types.
+        //TODO: move to an identifier service
         for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
             map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type.value()).toString()), type.value());
         }
@@ -526,7 +528,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.GET)
     public @ResponseBody
     ExternalIdentifiersForm getExternalIdentifiersJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));        
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));        
         return ExternalIdentifiersForm.valueOf(extIds);
     }
 

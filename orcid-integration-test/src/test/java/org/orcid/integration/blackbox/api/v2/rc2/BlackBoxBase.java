@@ -39,11 +39,12 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
@@ -125,8 +126,8 @@ public class BlackBoxBase {
                 result = (PersonalDetails) obj;
             } else if(OtherName.class.equals(type)) {
                 result = (OtherName) obj;
-            } else if(ExternalIdentifier.class.equals(type)) {
-                result = (ExternalIdentifier) obj;
+            } else if(PersonExternalIdentifier.class.equals(type)) {
+                result = (PersonExternalIdentifier) obj;
             }
             return result;
         } catch (IOException e) {

@@ -1082,7 +1082,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidProfile profile2 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         Date profile2LastModified = profile2.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        assertTrue(profile2LastModified.after(profile1LastModified));
+        assertTrue(profile2LastModified.getTime() > profile1LastModified.getTime());
     }
 
     @Test

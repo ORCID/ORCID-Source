@@ -39,13 +39,14 @@ import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBase;
 import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * 
@@ -120,6 +121,18 @@ public class PersonTest extends BlackBoxBase {
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(this.user1OrcidId, accessToken);
         assertNotNull(response);
+        //Occasionaly gives 500 when run as Suite.  Passes on it's own...?
+        /*
+            <error xmlns="http://www.orcid.org/ns/error">
+                <response-code>500</response-code>
+                <developer-message>org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.orcid.persistence.jpa.entities.ProfileEntity.givenPermissionTo, could not initialize proxy - no Session</developer-message>
+                <user-message>Something went wrong in ORCID.</user-message>
+                <error-code>9008</error-code>
+                <more-info>http://members.orcid.org/api/api-error-codes</more-info>
+            </error>
+         */
+        assertEquals("invalid "+response,200,response.getStatus());
+        Thread.sleep(100);
         Person person = response.getEntity(Person.class);
         assertNotNull(person);
         assertNotNull(person.getAddresses());
@@ -144,13 +157,13 @@ public class PersonTest extends BlackBoxBase {
         boolean foundPublic = false;
         boolean foundLimited = false;
 
-        for (ExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifier()) {
-            if ("A-0001".equals(e.getCommonName())) {
-                assertEquals("A-0001", e.getReference());
+        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifier()) {
+            if ("A-0001".equals(e.getType())) {
+                assertEquals("A-0001", e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
                 foundPublic = true;
             } else {
-                assertEquals("A-0002", e.getReference());
+                assertEquals("A-0002", e.getValue());
                 assertEquals(Visibility.LIMITED, e.getVisibility());
                 foundLimited = true;
             }
@@ -207,8 +220,8 @@ public class PersonTest extends BlackBoxBase {
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getCommonName());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getReference());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
 
         assertNotNull(person.getKeywords());

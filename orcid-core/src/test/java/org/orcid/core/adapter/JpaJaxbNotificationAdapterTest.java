@@ -31,13 +31,13 @@ import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
@@ -113,10 +113,10 @@ public class JpaJaxbNotificationAdapterTest {
         activities.getItems().add(activity);
         activity.setItemType(ItemType.WORK);
         activity.setItemName("Latest Research Article");
-        ExternalIdentifier extId = new ExternalIdentifier();
+        ExternalID extId = new ExternalID();
         activity.setExternalIdentifier(extId);
-        extId.setExternalIdentifierType("doi");
-        extId.setExternalIdentifierId("1234/abc123");
+        extId.setType("doi");
+        extId.setValue("1234/abc123");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
@@ -156,10 +156,10 @@ public class JpaJaxbNotificationAdapterTest {
         activities.getItems().add(activity);
         activity.setItemType(ItemType.WORK);
         activity.setItemName("Latest Research Article");
-        ExternalIdentifier extId = new ExternalIdentifier();
+        ExternalID extId = new ExternalID();
         activity.setExternalIdentifier(extId);
-        extId.setExternalIdentifierType("doi");
-        extId.setExternalIdentifierId("1234/abc123");
+        extId.setType("doi");
+        extId.setValue("1234/abc123");
 
         NotificationEntity notificationEntity = jpaJaxbNotificationAdapter.toNotificationEntity(notification);
 
