@@ -147,9 +147,9 @@
 				</keyword:keywords>
 				<external-identifier:external-identifiers>
 					<external-identifier:external-identifier visibility="public" put-code="1">
-						<external-identifier:external-id-common-name>common-name-1</external-identifier:external-id-common-name>
-						<external-identifier:external-id-reference>id-reference-1</external-identifier:external-id-reference>
-						<external-identifier:url>http://url.com/1</external-identifier:url>
+						<common:external-id-type>common-name-1</common:external-id-type>
+						<common:external-id-value>id-reference-1</common:external-id-value>
+						<common:external-id-url>http://url.com/1</common:external-id-url>
 						<common:created-date>2001-12-31T12:00:00</common:created-date>
 						<common:last-modified-date>2001-12-31T12:00:00
 						</common:last-modified-date>
@@ -304,12 +304,12 @@
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<activities:group>
 						<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-						<activities:identifiers>
-							<activities:identifier>
-								<activities:external-identifier-type>agr</activities:external-identifier-type>
-								<activities:external-identifier-id>funding:external-identifier-value</activities:external-identifier-id>
-							</activities:identifier>
-						</activities:identifiers>
+						<common:external-ids>
+							<common:external-id>
+								<common:external-id-type>agr</common:external-id-type>
+								<common:external-id-value>funding:external-identifier-value</common:external-id-value>
+							</common:external-id>
+						</common:external-ids>
 						<funding:summary put-code="0" visibility="private">
 							<common:created-date>2001-12-31T12:00:00</common:created-date>
 							<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
@@ -326,14 +326,14 @@
 								<common:title>common:title</common:title>
 								<common:translated-title language-code="en">common:translated-title</common:translated-title>
 							</funding:title>
-							<funding:external-identifiers>
-								<funding:externalIdentifier>
-									<common:external-identifier-url>http://tempuri.org</common:external-identifier-url>
-									<common:relationship>self</common:relationship>
-									<funding:external-identifier-type>grant_number</funding:external-identifier-type>
-									<funding:external-identifier-value>funding:external-identifier-value</funding:external-identifier-value>									
-								</funding:externalIdentifier>
-							</funding:external-identifiers>
+							<common:external-ids>
+								<common:external-id>
+									<common:external-id-type>grant_number</common:external-id-type>
+									<common:external-id-value>funding:external-identifier-value</common:external-id-value>
+									<common:external-id-url>http://tempuri.org</common:external-id-url>
+									<common:external-id-relationship>self</common:external-id-relationship>
+								</common:external-id>
+							</common:external-ids>								
 							<funding:type>grant</funding:type>
 							<common:start-date>
 								<common:year>1848</common:year>
@@ -352,12 +352,12 @@
 					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 					<activities:group>
 						<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-						<activities:identifiers>
-							<activities:identifier>
-								<activities:external-identifier-type>agr</activities:external-identifier-type>
-								<activities:external-identifier-id>work:external-identifier-id</activities:external-identifier-id>
-							</activities:identifier>
-						</activities:identifiers>
+							<common:external-ids>
+								<common:external-id>
+									<common:external-id-type>agr</common:external-id-type>
+									<common:external-id-value>work:external-identifier-id</common:external-id-value>
+								</common:external-id>
+							</common:external-ids>
 						<work:work-summary put-code="0" visibility="private">
 							<common:created-date>2001-12-31T12:00:00</common:created-date>
 							<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
@@ -374,13 +374,13 @@
 								<common:subtitle />
 								<common:translated-title language-code="en">common:translated-title</common:translated-title>
 							</work:title>
-							<work:external-identifiers>
-								<work:work-external-identifier>
-									<common:relationship>self</common:relationship>
-									<work:external-identifier-type>agr</work:external-identifier-type>
-									<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
-								</work:work-external-identifier>
-							</work:external-identifiers>
+							<common:external-ids>
+								<common:external-id>
+									<common:external-id-type>agr</common:external-id-type>
+									<common:external-id-value>work:external-identifier-id</common:external-id-value>
+									<common:external-id-relationship>self</common:external-id-relationship>
+								</common:external-id>
+							</common:external-ids>
 							<work:type>artistic-performance</work:type>
 							<common:publication-date>
 								<common:year>1848</common:year>

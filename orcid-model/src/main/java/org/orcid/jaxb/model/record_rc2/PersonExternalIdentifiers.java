@@ -31,21 +31,21 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "externalIdentifiers" })
 @XmlRootElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/external-identifier")
-public class ExternalIdentifiers implements Serializable {
+public class PersonExternalIdentifiers implements Serializable {
     private static final long serialVersionUID = -9182106466010694574L;
     
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
-    List<ExternalIdentifier> externalIdentifiers;
+    List<PersonExternalIdentifier> externalIdentifiers;
     @XmlAttribute
     protected String path;
 
-    public List<ExternalIdentifier> getExternalIdentifier() {
+    public List<PersonExternalIdentifier> getExternalIdentifier() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(List<ExternalIdentifier> externalIdentifier) {
+    public void setExternalIdentifiers(List<PersonExternalIdentifier> externalIdentifier) {
         this.externalIdentifiers = externalIdentifier;
     }
 
@@ -74,7 +74,7 @@ public class ExternalIdentifiers implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ExternalIdentifiers other = (ExternalIdentifiers) obj;
+        PersonExternalIdentifiers other = (PersonExternalIdentifiers) obj;
         if (externalIdentifiers == null) {
             if (other.externalIdentifiers != null)
                 return false;
@@ -88,12 +88,12 @@ public class ExternalIdentifiers implements Serializable {
         return true;
     }
     
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+    
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+            this.lastModifiedDate = lastModifiedDate;
+    }
 
 }

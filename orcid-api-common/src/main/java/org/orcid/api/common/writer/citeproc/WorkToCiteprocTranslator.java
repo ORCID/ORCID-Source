@@ -30,8 +30,8 @@ import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.common_rc2.Contributor;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;
@@ -103,22 +103,22 @@ public class WorkToCiteprocTranslator {
                     }
                 }
                 if (item.getDOI() == null) {
-                    String doi = extractID(work, WorkExternalIdentifierType.DOI);
+                    String doi = extractID(work, ExternalIDType.DOI);
                     if (doi != null) {
                         ReflectionUtils.makeAccessible(doiField);
                         ReflectionUtils.setField(doiField, item, doi);
                     }
                 }
                 if (item.getURL() == null) {
-                    if (extractID(work, WorkExternalIdentifierType.URI) != null) {
+                    if (extractID(work, ExternalIDType.URI) != null) {
                         ReflectionUtils.makeAccessible(urlField);
-                        ReflectionUtils.setField(urlField, item, extractID(work, WorkExternalIdentifierType.URI));
+                        ReflectionUtils.setField(urlField, item, extractID(work, ExternalIDType.URI));
                     } else if (item.getDOI() != null) {
                         ReflectionUtils.makeAccessible(urlField);
                         ReflectionUtils.setField(urlField, item, item.getDOI());
-                    } else if (extractID(work, WorkExternalIdentifierType.HANDLE) != null) {
+                    } else if (extractID(work, ExternalIDType.HANDLE) != null) {
                         ReflectionUtils.makeAccessible(urlField);
-                        ReflectionUtils.setField(urlField, item, extractID(work, WorkExternalIdentifierType.HANDLE));
+                        ReflectionUtils.setField(urlField, item, extractID(work, ExternalIDType.HANDLE));
                     }
                 }
                 return item;
@@ -154,8 +154,8 @@ public class WorkToCiteprocTranslator {
     private CSLItemData translateFromWorkMetadata(Work work, String creditName) {
         CSLItemDataBuilder builder = new CSLItemDataBuilder();
         builder.title((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title");
-        String doi = extractID(work, WorkExternalIdentifierType.DOI);
-        String url = extractID(work, WorkExternalIdentifierType.URI);
+        String doi = extractID(work, ExternalIDType.DOI);
+        String url = extractID(work, ExternalIDType.URI);
         if (doi != null) {
             builder.DOI(doi);
         }
@@ -164,7 +164,7 @@ public class WorkToCiteprocTranslator {
         } else if (doi != null) {
             builder.URL("http://doi.org/" + doi);
         } else {
-            url = extractID(work, WorkExternalIdentifierType.HANDLE);
+            url = extractID(work, ExternalIDType.HANDLE);
             if (url != null) {
                 builder.URL(url);
             }
@@ -299,12 +299,12 @@ public class WorkToCiteprocTranslator {
      * @param work
      * @param item
      */
-    private String extractID(Work work, WorkExternalIdentifierType type) {
+    private String extractID(Work work, ExternalIDType type) {
         if (work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null
                 && work.getExternalIdentifiers().getExternalIdentifier().size() > 0) {
-            for (WorkExternalIdentifier id : work.getExternalIdentifiers().getExternalIdentifier()) {
-                if (id.getWorkExternalIdentifierType().equals(type)) {
-                    return id.getWorkExternalIdentifierId().getContent();
+            for (ExternalID id : work.getExternalIdentifiers().getExternalIdentifier()) {
+                if (id.getType().equalsIgnoreCase(type.value())) {
+                    return id.getValue();
                 }
             }
         }

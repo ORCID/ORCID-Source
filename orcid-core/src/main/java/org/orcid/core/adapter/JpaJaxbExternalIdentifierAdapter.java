@@ -18,16 +18,16 @@ package org.orcid.core.adapter;
 
 import java.util.Collection;
 
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 public interface JpaJaxbExternalIdentifierAdapter {
-    ExternalIdentifierEntity toExternalIdentifierEntity(ExternalIdentifier externalIdentifier);
+    ExternalIdentifierEntity toExternalIdentifierEntity(PersonExternalIdentifier externalIdentifier);
 
-    ExternalIdentifier toExternalIdentifier(ExternalIdentifierEntity entity);
+    PersonExternalIdentifier toExternalIdentifier(ExternalIdentifierEntity entity);
     
-    ExternalIdentifiers toExternalIdentifierList(Collection<ExternalIdentifierEntity> entities);
+    PersonExternalIdentifiers toExternalIdentifierList(Collection<ExternalIdentifierEntity> entities);
     
-    ExternalIdentifierEntity toExternalIdentifierEntity(ExternalIdentifier externalIdentifier, ExternalIdentifierEntity existing);
+    ExternalIdentifierEntity toExternalIdentifierEntity(PersonExternalIdentifier externalIdentifier, ExternalIdentifierEntity existing);
 }

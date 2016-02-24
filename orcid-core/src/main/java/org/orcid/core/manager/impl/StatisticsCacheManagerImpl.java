@@ -100,10 +100,12 @@ public class StatisticsCacheManagerImpl implements StatisticsCacheManager {
     @Override
     public String retrieveLiveIds(Locale locale) {
         StatisticsSummary statisticsSummary = retrieve();
-        if (statisticsSummary == null) {
+        if (statisticsSummary == null 
+                || statisticsSummary.getStatistics() == null 
+                || statisticsSummary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value()) == null) {
             return "0";
         }
-        long amount = statisticsSummary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value());
+        Long amount = statisticsSummary.getStatistics().get(StatisticsEnum.KEY_LIVE_IDS.value());
         NumberFormat nf = NumberFormat.getInstance(locale);
         return nf.format(amount);
     }

@@ -66,33 +66,38 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
         XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, activitiesSummary.toString());               
+        Diff diff = new Diff(expected, activitiesSummary.toString()); 
         assertTrue(diff.identical());
     }
 
     @Test
-    public void testFilterActivities() throws JAXBException {
+    public void testFilterActivities() throws JAXBException, SAXException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         visibilityFilter.filter(activitiesSummary);
-        assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        //assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString()); 
+        assertTrue(diff.identical());
     }
 
     @Test
-    public void testFilterActivitiesOnPublicAPI() throws JAXBException {
+    public void testFilterActivitiesOnPublicAPI() throws JAXBException, SAXException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         visibilityFilter.filter(activitiesSummary);
-        assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString()); 
+        assertTrue(diff.identical());
+        //assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 
     @Test
-    public void testFilterPersonalDetails() throws JAXBException {
+    public void testFilterPersonalDetails() throws JAXBException, SAXException, IOException {
         PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
         PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
         visibilityFilter.filter(personalDetailsWithLimited);
-        assertEquals(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
+        Diff diff = new Diff(personalDetailsPublic.toString(), personalDetailsWithLimited.toString()); 
+        assertTrue(diff.identical());
     }
     
     private ActivitiesSummary getActivitiesSummary(String path) throws JAXBException {

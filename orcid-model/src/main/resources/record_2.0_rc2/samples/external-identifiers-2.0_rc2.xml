@@ -4,9 +4,9 @@
 	xmlns:common="http://www.orcid.org/ns/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.orcid.org/ns/external-identifier ../external-identifier-2.0_rc2.xsd ">
 	<external-identifier:external-identifier visibility="public" put-code="1">
-		<external-identifier:external-id-common-name>common-name-1</external-identifier:external-id-common-name>
-		<external-identifier:external-id-reference>id-reference-1</external-identifier:external-id-reference>
-		<external-identifier:url>http://url/1</external-identifier:url>
+		<common:external-id-type>common-name-1</common:external-id-type>
+		<common:external-id-value>id-reference-1</common:external-id-value>
+		<common:external-id-url>http://url/1</common:external-id-url>	
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>
@@ -20,9 +20,9 @@
 		</common:source>
 	</external-identifier:external-identifier>
 	<external-identifier:external-identifier visibility="public" put-code="2">
-		<external-identifier:external-id-common-name>common-name-2</external-identifier:external-id-common-name>
-		<external-identifier:external-id-reference>id-reference-2</external-identifier:external-id-reference>
-		<external-identifier:url>http://url/2</external-identifier:url>
+		<common:external-id-type>common-name-2</common:external-id-type>
+		<common:external-id-value>id-reference-2</common:external-id-value>
+		<common:external-id-url>http://url/2</common:external-id-url>	
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00
 		</common:last-modified-date>

@@ -16,9 +16,9 @@
  */
 package org.orcid.api.common.cerif;
 
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.WorkType;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 
 /**
  * Maps ORCID-CERIF work/identifier types and distinguishes between Publications
@@ -52,27 +52,33 @@ public class CerifTypeTranslator {
      * @param type
      * @return
      */
-    public CerifClassEnum translate(WorkExternalIdentifierType type) {
-        switch (type) {
-        case DOI:
-            return CerifClassEnum.DOI;
-        case HANDLE:
-            return CerifClassEnum.HANDLE;
-        case PMC:
-            return CerifClassEnum.PMCID;
-        case URI:
-            return CerifClassEnum.URL;
-        case URN:
-            return CerifClassEnum.URI;
-        case ISSN: {
-            return CerifClassEnum.ISSN;
-        }
-        case ISBN: {
-            return CerifClassEnum.ISBN;
-        }
-        default:
+    public CerifClassEnum translate(String type) {
+        try{
+        ExternalIDType t = ExternalIDType.valueOf(type);
+        switch (t) {
+            case DOI:
+                return CerifClassEnum.DOI;
+            case HANDLE:
+                return CerifClassEnum.HANDLE;
+            case PMC:
+                return CerifClassEnum.PMCID;
+            case URI:
+                return CerifClassEnum.URL;
+            case URN:
+                return CerifClassEnum.URI;
+            case ISSN: {
+                return CerifClassEnum.ISSN;
+            }
+            case ISBN: {
+                return CerifClassEnum.ISBN;
+            }
+            default:
+                return CerifClassEnum.OTHER;
+            }
+        }catch(IllegalArgumentException e){
             return CerifClassEnum.OTHER;
         }
+
     }
 
     /**
@@ -87,12 +93,12 @@ public class CerifTypeTranslator {
      * @param id
      * @return
      */
-    public CerifClassEnum translate(ExternalIdentifier id) {
-        if ("ISNI".equals(id.getCommonName())) {
+    public CerifClassEnum translate(PersonExternalIdentifier id) {
+        if ("ISNI".equals(id.getValue())) {
             return CerifClassEnum.ISNI;
-        } else if ("Scopus Author ID".equals(id.getCommonName())) {
+        } else if ("Scopus Author ID".equals(id.getValue())) {
             return CerifClassEnum.SCOPUSAUTHORID;
-        } else if ("ResearcherID".equals(id.getCommonName())) {
+        } else if ("ResearcherID".equals(id.getValue())) {
             return CerifClassEnum.RESEARCHERID;
         }
         return CerifClassEnum.OTHER;

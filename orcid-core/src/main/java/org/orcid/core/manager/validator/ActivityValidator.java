@@ -29,15 +29,13 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
@@ -49,8 +47,8 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
-        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getWorkExternalIdentifier() == null
-                || work.getWorkExternalIdentifiers().getWorkExternalIdentifier().isEmpty()) {
+        if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
+                || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
 
@@ -61,6 +59,8 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
+        
+        ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
     }
 
     public static void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest) {
@@ -83,6 +83,8 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
+        
+        ExternalIDValidator.getInstance().validateFunding(funding.getExternalIdentifiers());
     }
 
     public static void validateEmployment(Employment employment, SourceEntity sourceEntity) {
@@ -119,6 +121,9 @@ public class ActivityValidator {
         if (peerReview.getType() == null) {
             throw new ActivityTypeValidationException();
         }
+        
+        ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+        ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
     }
 
     public static void validateCreateGroupRecord(GroupIdRecord groupIdRecord, SourceEntity sourceEntity) {
@@ -131,11 +136,11 @@ public class ActivityValidator {
         }
     }
 
-    public static void checkExternalIdentifiers(WorkExternalIdentifiers newExtIds, WorkExternalIdentifiers existingExtIds, Source existingSource,
+    public static void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
-            for (WorkExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
-                for (WorkExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
+            for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
+                for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (isDupRelationship(newId, existingId) && isDupValue(newId, existingId) && isDupType(newId, existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
@@ -147,27 +152,27 @@ public class ActivityValidator {
         }
     }
 
-    private static boolean isDupRelationship(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
+    private static boolean isDupRelationship(ExternalID newId, ExternalID existingId) {
         return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null
                 && newId.getRelationship().equals(Relationship.SELF);
     }
 
-    private static boolean isDupValue(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
-        return existingId.getWorkExternalIdentifierId() != null && existingId.getWorkExternalIdentifierId().getContent() != null
-                && newId.getWorkExternalIdentifierId() != null && newId.getWorkExternalIdentifierId().getContent() != null
-                && newId.getWorkExternalIdentifierId().getContent().equals(existingId.getWorkExternalIdentifierId().getContent());
+    private static boolean isDupValue(ExternalID newId, ExternalID existingId) {
+        return existingId.getValue() != null && existingId.getValue() != null
+                && newId.getValue() != null && newId.getValue() != null
+                && newId.getValue().equals(existingId.getValue());
     }
 
-    private static boolean isDupType(WorkExternalIdentifier newId, WorkExternalIdentifier existingId) {
-        return existingId.getWorkExternalIdentifierType() != null && newId.getWorkExternalIdentifierType() != null
-                && newId.getWorkExternalIdentifierType().equals(existingId.getWorkExternalIdentifierType());
+    private static boolean isDupType(ExternalID newId, ExternalID existingId) {
+        return existingId.getType() != null && newId.getType() != null
+                && newId.getType().equalsIgnoreCase(existingId.getType());
     }
 
-    public static void checkFundingExternalIdentifiers(FundingExternalIdentifiers newExtIds, FundingExternalIdentifiers existingExtIds, Source existingSource,
+    public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
-            for (FundingExternalIdentifier existingId : existingExtIds.getExternalIdentifier()) {
-                for (FundingExternalIdentifier newId : newExtIds.getExternalIdentifier()) {
+            for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
+                for (ExternalID newId : newExtIds.getExternalIdentifier()) {
                     if (existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF)
                             && newId.getValue().equals(existingId.getValue()) && newId.getType().equals(existingId.getType())
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
