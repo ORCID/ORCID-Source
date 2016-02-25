@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.ws.rs.core.Response;
 
@@ -86,13 +87,12 @@ public class MemberV2Test extends BlackBoxBase {
     protected static Map<String,String> accessTokens = new HashMap<String, String>();
     
     static List<GroupIdRecord> groupRecords = null;
-        
-    
+            
     @BeforeClass
     public static void beforeClass() {
-        
-        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
-        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        Properties prop = getProperties();
+        String clientId1 = prop.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = prop.getProperty("org.orcid.web.testClient2.clientId");
         
         if(PojoUtil.isEmpty(clientId2)) {
             revokeApplicationsAccess(clientId1);
@@ -103,8 +103,9 @@ public class MemberV2Test extends BlackBoxBase {
     
     @AfterClass
     public static void afterClass() {
-        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
-        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
+        Properties prop = getProperties();
+        String clientId1 = prop.getProperty("org.orcid.web.testClient1.clientId");        
+        String clientId2 = prop.getProperty("org.orcid.web.testClient2.clientId");
         
         if(PojoUtil.isEmpty(clientId2)) {
             revokeApplicationsAccess(clientId1);
@@ -546,8 +547,7 @@ public class MemberV2Test extends BlackBoxBase {
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, accessTokenForClient2);
         assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-        
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());        
         
         funding.getTitle().getTitle().setContent("Funding # 3");
         FundingExternalIdentifier fExtId4 = new FundingExternalIdentifier();

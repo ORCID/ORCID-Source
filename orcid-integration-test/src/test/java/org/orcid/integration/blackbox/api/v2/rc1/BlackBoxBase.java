@@ -255,26 +255,9 @@ public class BlackBoxBase {
             if (!PojoUtil.isEmpty(clientId)) {
                 clientIds.add(clientId);
             }
-        }
+        }        
 
-        Properties prop = new Properties();
-
-        try {
-            // Read the names of the property files
-            String propertyFiles = System.getProperty("org.orcid.config.file");
-            String[] files = propertyFiles.split(",");
-
-            for (String file : files) {
-                file = file.replace("classpath:", "");
-                // For each config file, iterate and load the properties
-                InputStream inputStream = BlackBoxBase.class.getClassLoader().getResourceAsStream(file);
-                prop.load(inputStream);
-                inputStream.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Properties prop = getProperties();
         String userName = prop.getProperty("org.orcid.web.testUser1.username");
         String password = prop.getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "https://localhost:8443/orcid-web";
@@ -374,5 +357,26 @@ public class BlackBoxBase {
         WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
         confirmLockButton.click();
         webDriver.quit();
+    }
+    
+    protected static Properties getProperties() {
+        Properties prop = new Properties();
+
+        try {
+            // Read the names of the property files
+            String propertyFiles = System.getProperty("org.orcid.config.file");
+            String[] files = propertyFiles.split(",");
+
+            for (String file : files) {
+                file = file.replace("classpath:", "");
+                // For each config file, iterate and load the properties
+                InputStream inputStream = BlackBoxBase.class.getClassLoader().getResourceAsStream(file);
+                prop.load(inputStream);
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return prop;
     }
 }
