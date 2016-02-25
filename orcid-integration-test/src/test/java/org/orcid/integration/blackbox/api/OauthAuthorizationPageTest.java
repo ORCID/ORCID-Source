@@ -61,7 +61,6 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
-
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /read-limited";
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;

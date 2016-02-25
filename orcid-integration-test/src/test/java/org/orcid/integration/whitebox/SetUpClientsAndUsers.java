@@ -54,7 +54,11 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
+import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.CreditName;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -69,12 +73,15 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.FamilyName;
 import org.orcid.jaxb.model.record_rc2.GivenNames;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
@@ -316,6 +323,9 @@ public class SetUpClientsAndUsers {
         } else {
             clearRegistry(user1Profile, user1Params);
         }
+        setUpAddresses(user1OrcidId);
+        setUpKeywords(user1OrcidId);
+        setUpOtherNames(user1OrcidId);
 
         // Create user 2
         Map<String, String> user2Params = getParams(user2OrcidId);
@@ -758,5 +768,63 @@ public class SetUpClientsAndUsers {
         assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
         assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
         assertEquals(lockedMemberClient1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
+    }
+    
+    //------------------------------------------------------------------------------
+    
+    /**
+     * Set up default addresses 
+     * Please see tests:
+     *  AddressTest.testGetAddressWithMembersAPI
+     * */
+    public void setUpAddresses(String orcid) {
+        Address a1 = new Address();
+        a1.setCountry(new Country(Iso3166Country.US));
+        a1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        a1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        addressManager.createAddress(orcid, a1);
+    }
+    
+    /**
+     * Setup default other names
+     * Please see tests: 
+     *  OtherNamesTest.testGetOtherNamesWihtMembersAPI
+     * */
+    public void setUpOtherNames(String orcid) {
+        OtherName o1 = new OtherName();
+        o1.setContent("other-name-1");
+        o1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        o1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));        
+        o1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        otherNameManager.createOtherName(orcid, o1);
+        
+        OtherName o2 = new OtherName();
+        o2.setContent("other-name-2");
+        o2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        o2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        o2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        otherNameManager.createOtherName(orcid, o2);
+    }
+    
+    /**
+     * Setup default keywords
+     * Please see tests:
+     *  KeywordsTest.testGetKeywordsWihtMembersAPI
+     * */
+    public void setUpKeywords(String orcid) {
+        Keyword k1 = new Keyword();
+        k1.setContent("keyword-1");
+        k1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        k1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        k1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        profileKeywordManager.createKeyword(orcid, k1);
+        
+        Keyword k2 = new Keyword();
+        k2.setContent("keyword-2");
+        k2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        k2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        profileKeywordManager.createKeyword(orcid, k2);
     }
 }

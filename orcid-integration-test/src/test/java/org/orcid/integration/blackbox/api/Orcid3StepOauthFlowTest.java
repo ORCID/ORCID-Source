@@ -28,7 +28,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
@@ -40,14 +39,9 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class Orcid3StepOauthFlowTest extends BlackBoxBaseRC1 {
-
     private static final Pattern ERROR_PATTERN = Pattern.compile("error=(.+)&");
-
     private static final Pattern ERROR_DESCRIPTION_PATTERN = Pattern.compile("error_description=(.+)");
-
     private static final String ERROR_NAME = "invalid_scope";
-
-    private WebDriver webDriver;
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;

@@ -183,7 +183,7 @@ public class BlackBoxBase {
         webDriver = new FirefoxDriver();
         webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, this.getUser1UserName(), this.getUser1Password(), clientRedirectUri);
+        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, getUser1UserName(), getUser1Password(), clientRedirectUri);
         webDriver.quit();
         return accessToken;
     }

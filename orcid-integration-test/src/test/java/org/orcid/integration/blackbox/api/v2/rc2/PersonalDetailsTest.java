@@ -36,15 +36,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
-import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -59,47 +55,16 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
     private static int WAIT = 10;
-    
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;            
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;    
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.publicClient1.clientId}")
-    public String publicClientId;
-    @Value("${org.orcid.web.publicClient1.clientSecret}")
-    public String publicClientSecret;
-    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-
-    @Resource
-    private OauthHelper oauthHelper;
     
     @SuppressWarnings("unchecked")
     @Test
     public void testGetWithPublicAPI() {
-        ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -130,14 +95,14 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     @Test
     public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
         webDriver = new FirefoxDriver();
-        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
-        webDriver.get(webBaseUrl + "/signin");
-        SigninTest.signIn(webDriver, user1OrcidId, user1Password);
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        webDriver.get(getWebBaseUrl() + "/signin");
+        SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
         SigninTest.dismissVerifyEmailModal(webDriver);    
         //Change names to limited
         changeNamesVisibility(Visibility.LIMITED);
         
-        ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -153,7 +118,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Change other names to limited
         changeOtherNamesVisibility(Visibility.LIMITED);
         
-        getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -165,7 +130,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Change bio to limited
         changeBioVisibility(Visibility.LIMITED);
         
-        getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(user1OrcidId);
+        getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
@@ -188,9 +153,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetWithMemberAPI() throws Exception {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(this.user1OrcidId, accessToken);        
+        ClientResponse getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);
         PersonalDetails personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);        
@@ -217,9 +182,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         
         webDriver = new FirefoxDriver();
-        webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
-        webDriver.get(webBaseUrl + "/signin");
-        SigninTest.signIn(webDriver, user1OrcidId, user1Password);
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        webDriver.get(getWebBaseUrl() + "/signin");
+        SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
         SigninTest.dismissVerifyEmailModal(webDriver);
         
         //Change all to LIMITED
@@ -228,7 +193,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         changeBioVisibility(Visibility.LIMITED);
         
         //Verify they are still visible
-        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(this.user1OrcidId, accessToken);        
+        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);        
         personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);        
@@ -260,7 +225,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         changeBioVisibility(Visibility.PRIVATE);
         
         //Check nothing is visible
-        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(this.user1OrcidId, accessToken);        
+        getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);
         personalDetails = getPersonalDetailsResponse.getEntity(PersonalDetails.class);
         assertNotNull(personalDetails);
