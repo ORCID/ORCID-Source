@@ -37,7 +37,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class Orcid2StepOauthFlowTest extends BlackBoxBase {
 
     @Resource(name = "t2OAuthClient")

@@ -76,6 +76,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBase {
     @Before
     public void before() {
         webDriver = new FirefoxDriver();
+        revokeApplicationsAccess(client1ClientId);
     }
 
     @After

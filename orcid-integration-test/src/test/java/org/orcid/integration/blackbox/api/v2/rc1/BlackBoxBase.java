@@ -48,9 +48,6 @@ import org.orcid.jaxb.model.record_rc1.PeerReview;
 import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -61,10 +58,9 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class BlackBoxBase {
 
- // Admin user
+    // Admin user
     @Value("${org.orcid.web.adminUser.username}")
     protected String adminUserName;
     @Value("${org.orcid.web.adminUser.password}")
@@ -194,9 +190,9 @@ public class BlackBoxBase {
     protected String lockedMemberClient1Description;
     @Value("${org.orcid.web.locked.member.client.website}")
     protected String lockedMemberClient1Website;
-    
+
     @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    protected String webBaseUrl;    
+    protected String webBaseUrl;
     @Resource(name = "t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource(name = "memberV2ApiClient_rc1")
@@ -208,7 +204,7 @@ public class BlackBoxBase {
 
     @Resource
     protected OauthHelper oauthHelper;
-           
+
     public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
         webDriver = new FirefoxDriver();
         webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, clientRedirectUri);
@@ -232,7 +228,7 @@ public class BlackBoxBase {
                 result = (Work) obj;
             } else if (PeerReview.class.equals(type)) {
                 result = (PeerReview) obj;
-            } 
+            }
             return result;
         } catch (IOException e) {
             throw new RuntimeException("Error reading notification from classpath", e);
@@ -262,33 +258,28 @@ public class BlackBoxBase {
         }
 
         Properties prop = new Properties();
-        
 
         try {
-            //Read the names of the property files
+            // Read the names of the property files
             String propertyFiles = System.getProperty("org.orcid.config.file");
-            //XXX: for each one, iterate and load the properties
-          InputStream inputStream = 
-            BlackBoxBase.class.getClassLoader().getResourceAsStream("config.properties");
-                                
-          prop.load(inputStream);
-          //TODO then check the properties we need
-                
+            String[] files = propertyFiles.split(",");
+
+            for (String file : files) {
+                file = file.replace("classpath:", "");
+                // For each config file, iterate and load the properties
+                InputStream inputStream = BlackBoxBase.class.getClassLoader().getResourceAsStream(file);
+                prop.load(inputStream);
+                inputStream.close();
+            }
         } catch (IOException e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
 
-        return filePath;
-
-  }
-
-        
-        ApplicationContext context = new ClassPathXmlApplicationContext("test-memberV2-context.xml");
-        String userName = context.getEnvironment().getProperty("org.orcid.web.testUser1.username");
-        String password = context.getEnvironment().getProperty("org.orcid.web.testUser1.password");
+        String userName = prop.getProperty("org.orcid.web.testUser1.username");
+        String password = prop.getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(context.getEnvironment().getProperty("org.orcid.web.base.url"))) {
-            baseUrl = context.getEnvironment().getProperty("org.orcid.web.base.url");
+        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.base.url"))) {
+            baseUrl = prop.getProperty("org.orcid.web.base.url");
         }
 
         WebDriver webDriver = new FirefoxDriver();
@@ -329,22 +320,21 @@ public class BlackBoxBase {
                         break;
                     }
                 }
-
                 if (elementFound) {
                     lookAgain = true;
                 } else {
                     lookAgain = false;
                 }
             } while (lookAgain);
-
-        } catch (Exception e) {
+        } catch (Exception e){
             // If it fail is because it couldnt find any other application
         } finally {
             webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
             webDriver.quit();
         }
+
     }
-    
+
     public void adminSignIn(String adminUserName, String adminPassword) {
         webDriver = new FirefoxDriver();
         webDriver.get(webBaseUrl + "/userStatus.json?logUserOut=true");
@@ -352,7 +342,7 @@ public class BlackBoxBase {
         SigninTest.signIn(webDriver, adminUserName, adminPassword);
         SigninTest.dismissVerifyEmailModal(webDriver);
     }
-    
+
     public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
         // Login Admin
         adminSignIn(adminUserName, adminPassword);
@@ -369,7 +359,7 @@ public class BlackBoxBase {
         confirmUnLockButton.click();
         webDriver.quit();
     }
-    
+
     public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
         adminSignIn(adminUserName, adminPassword);
         // Lock the account

@@ -38,7 +38,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class Orcid3StepOauthFlowTest extends BlackBoxBase {
 
     private static final Pattern ERROR_PATTERN = Pattern.compile("error=(.+)&");

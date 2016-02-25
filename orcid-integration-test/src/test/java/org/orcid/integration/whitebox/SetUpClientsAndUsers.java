@@ -71,14 +71,14 @@ import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.FamilyName;
 import org.orcid.jaxb.model.record_rc2.GivenNames;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.dao.NotificationDao;
@@ -558,10 +558,10 @@ public class SetUpClientsAndUsers {
                     org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
 
             // Remove external ids
-            ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
+            PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
 
             if (extIds != null && extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
-                for (ExternalIdentifier extId : extIds.getExternalIdentifier()) {
+                for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
                     externalIdentifierManager.deleteExternalIdentifier(orcid, extId.getPutCode(), false);
                 }
             }
@@ -673,7 +673,11 @@ public class SetUpClientsAndUsers {
         if(params.containsKey(ADD_ORCID_INTERNAL_SCOPES)) {
             scopes.add(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED.value());
         }
-                
+               
+        //Add scopes to allow group read and update
+        scopes.add(ScopePathType.GROUP_ID_RECORD_READ.value());
+        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+        
         clientDetailsManager.populateClientDetailsEntity(clientId, memberEntity, name, description, website, clientSecret, clientType, scopes,
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
     }

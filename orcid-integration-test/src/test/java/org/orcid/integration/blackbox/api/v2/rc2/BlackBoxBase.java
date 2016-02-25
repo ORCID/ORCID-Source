@@ -17,10 +17,12 @@
 package org.orcid.integration.blackbox.api.v2.rc2;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -39,19 +41,17 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -62,7 +62,6 @@ import com.sun.jersey.api.client.ClientResponse;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class BlackBoxBase {
 
     @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
@@ -157,11 +156,29 @@ public class BlackBoxBase {
             }
         }
 
-        String userName = System.getProperty("org.orcid.web.testUser1.username");
-        String password = System.getProperty("org.orcid.web.testUser1.password");
+        Properties prop = new Properties();
+
+        try {
+            // Read the names of the property files
+            String propertyFiles = System.getProperty("org.orcid.config.file");
+            String[] files = propertyFiles.split(",");
+
+            for (String file : files) {
+                file = file.replace("classpath:", "");
+                // For each config file, iterate and load the properties
+                InputStream inputStream = BlackBoxBase.class.getClassLoader().getResourceAsStream(file);
+                prop.load(inputStream);
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String userName = prop.getProperty("org.orcid.web.testUser1.username");
+        String password = prop.getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(System.getProperty("org.orcid.web.base.url"))) {
-            baseUrl = System.getProperty("org.orcid.web.base.url");
+        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.base.url"))) {
+            baseUrl = prop.getProperty("org.orcid.web.base.url");
         }
 
         WebDriver webDriver = new FirefoxDriver();
