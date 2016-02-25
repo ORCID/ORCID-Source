@@ -52,7 +52,6 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -66,7 +65,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
+public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
 
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
@@ -118,13 +117,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
     
     @AfterClass
     public static void afterClass() {
-        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");
-        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
-        if (PojoUtil.isEmpty(clientId2)) {
-            revokeApplicationsAccess(clientId1);
-        } else {
-            revokeApplicationsAccess(clientId1, clientId2);
-        }
+        revokeApplicationsAccess();
     }
 
     @Test

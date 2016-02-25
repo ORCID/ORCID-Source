@@ -49,7 +49,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class EmailTest extends BlackBoxBase {
+public class EmailTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 
     @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")

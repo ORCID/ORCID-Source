@@ -30,7 +30,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -40,7 +40,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml", "classpath:orcid-api-client-context.xml" })
-public class LockUnlockRecordTest extends BlackBoxBase {
+public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
 
     private WebDriver webDriver;
 
@@ -84,7 +84,7 @@ public class LockUnlockRecordTest extends BlackBoxBase {
 
     private boolean checkIfLockedUI() {
         webDriver = new FirefoxDriver();
-        webDriver.get(webBaseUrl + "/" + user1OrcidId);
+        webDriver.get(this.getWebBaseUrl() + "/" + user1OrcidId);
         if (webDriver.findElements(By.id("error_locked")).size() != 0) {
             webDriver.quit();
             return true;

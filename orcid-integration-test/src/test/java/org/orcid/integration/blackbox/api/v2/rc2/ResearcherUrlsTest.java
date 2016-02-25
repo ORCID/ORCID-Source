@@ -51,7 +51,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class ResearcherUrlsTest extends BlackBoxBase {
+public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
 
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
 

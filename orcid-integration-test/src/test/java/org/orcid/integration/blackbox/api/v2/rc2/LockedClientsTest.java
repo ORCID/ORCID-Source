@@ -30,7 +30,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,38 +42,15 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class LockedClientsTest extends BlackBoxBase {
-
-    // ADMIN USER DATA
-    @Value("${org.orcid.web.adminUser.username}")
-    public String adminUserName;
-    @Value("${org.orcid.web.adminUser.password}")
-    public String adminPassword;
-
-    // USER DATA
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1Username;
-
-    // MEMBER DATA
-    @Value("${org.orcid.web.locked.member.id}")
-    public String memberId;
-    // CLIENT DATA
-    @Value("${org.orcid.web.locked.member.client.id}")
-    public String lockedClientId;
-    @Value("${org.orcid.web.locked.member.client.secret}")
-    public String lockedClientSecret;
-    @Value("${org.orcid.web.locked.member.client.ruri}")
-    public String lockedClientRedirectUri;
+public class LockedClientsTest extends BlackBoxBaseRC2 {    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
     @Test
     public void testMember() throws InterruptedException, JSONException {
         // The member must be unlocked to begin the test
-        String accessToken = getAccessTokenWithScopePath(ScopePathType.READ_LIMITED, lockedClientId, lockedClientSecret, lockedClientRedirectUri);
-        ClientResponse getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
+        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), this.getLockedMemberClient1ClientId(), this.getLockedMemberClient1ClientSecret(), this.getLockedMemberClient1RedirectUri());
+        ClientResponse getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
         assertNotNull(emails);
@@ -82,25 +58,20 @@ public class LockedClientsTest extends BlackBoxBase {
         assertFalse(emails.getEmails().isEmpty());
 
         // Lock and try to get authorization code
-        adminLockAccount(adminUserName, adminPassword, memberId);
-        lookForErrorsOnAuthorizationCodePage(lockedClientId, ScopePathType.READ_LIMITED.value(), lockedClientRedirectUri);
+        adminLockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getLockedMemberOrcid());
+        lookForErrorsOnAuthorizationCodePage(this.getLockedMemberClient1ClientId(), ScopePathType.READ_LIMITED.value(), this.getLockedMemberClient1RedirectUri());
 
         // Try to use access token while the client is locked
-        getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
+        getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
 
         // unlock to finish
-        adminUnlockAccount(adminUserName, adminPassword, memberId);
-    }
-
-    private String getAccessTokenWithScopePath(ScopePathType scope, String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        String accessToken = super.getAccessToken(scope.value(), clientId, clientSecret, redirectUri);
-        return accessToken;
+        adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getLockedMemberOrcid());
     }
 
     private void lookForErrorsOnAuthorizationCodePage(String clientId, String scopes, String redirectUri) {
         webDriver = new FirefoxDriver();
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, clientId, scopes, redirectUri));
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), clientId, scopes, redirectUri));
         (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.urlContains("error"));
         String currentUrl = webDriver.getCurrentUrl();
         if (currentUrl.contains("error=client_locked")) {

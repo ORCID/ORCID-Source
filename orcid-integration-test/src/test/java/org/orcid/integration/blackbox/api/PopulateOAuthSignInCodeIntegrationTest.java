@@ -28,7 +28,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {   
+public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC1 {   
 
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     
@@ -48,7 +48,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
     @Before    
     public void before() {
         webDriver = new FirefoxDriver();
-        authorizeScreen = webBaseUrl + "/oauth/authorize?client_id=" + client1ClientId + "&response_type=code&redirect_uri=" + client1RedirectUri + "&scope=/activities/read-limited";
+        authorizeScreen = this.getWebBaseUrl() + "/oauth/authorize?client_id=" + this.getClient1ClientId() + "&response_type=code&redirect_uri=" + this.getClient1RedirectUri() + "&scope=/activities/read-limited";
     }
 
     @After
@@ -84,25 +84,25 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals(""));
 
         // test existing email
-        url = authorizeScreen + "&email=" + user1UserName + "&family_names=test_family_names&given_names=test_given_name";
+        url = authorizeScreen + "&email=" + this.getUser1UserName() + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1UserName));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1UserName()));
         // make sure register
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
 
         // populating check populating orcid
-        url = authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + user1OrcidId;
+        url = authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                        
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1OrcidId));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }
         
     @Test
     public void emailPrePopulateWithHtmlEncodedEmail() throws JSONException, InterruptedException {        
-        String scapedEmail = StringEscapeUtils.escapeHtml4(user1UserName);
+        String scapedEmail = StringEscapeUtils.escapeHtml4(this.getUser1UserName());
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent%40test.com&family_names=test_family_names&given_names=test_given_name";                
         webDriver.get(url);    
@@ -125,44 +125,44 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBase {
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
 
         // populating check populating orcid
-        url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name&orcid=" + user1OrcidId;
+        url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1OrcidId));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }       
 
     @Test
     public void orcidIdPrePopulate() throws JSONException, InterruptedException {
         // populating check populating orcid
-        String url = authorizeScreen + "&orcid=" + user1OrcidId;
+        String url = authorizeScreen + "&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
         By element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                                
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1OrcidId));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
 
         // populating check populating orcid overwrites populating email
-        webDriver.get(authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + user1OrcidId);
+        webDriver.get(authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId());
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                                
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1OrcidId));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }
 
     @Test
     public void orcidIdPreopulateWithHtmlEncodedOrcid() throws JSONException, InterruptedException {
         // populating check populating orcid
-        String encodedOrcid = StringEscapeUtils.escapeHtml4(user1OrcidId);
+        String encodedOrcid = StringEscapeUtils.escapeHtml4(this.getUser1OrcidId());
         String url = authorizeScreen + "&orcid=" + encodedOrcid;        
         webDriver.get(url);        
         By element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));        
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1OrcidId));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
 
         // populating check populating orcid overwrites populating email
-        webDriver.get(authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + user1OrcidId);
+        webDriver.get(authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId());
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(user1OrcidId));
+        assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }
     
     @Test
