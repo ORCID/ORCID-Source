@@ -63,7 +63,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertNotNull(response);
         Biography bio = response.getEntity(Biography.class);
         assertNotNull(bio);
-        assertEquals("This is my bio", bio.getContent());
+        assertEquals(getUser1Bio(), bio.getContent());
         assertEquals(Visibility.PUBLIC, bio.getVisibility());
     }
 
@@ -75,7 +75,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertNotNull(response);
         Biography bio = response.getEntity(Biography.class);
         assertNotNull(bio);
-        assertEquals("This is my bio", bio.getContent());
+        assertEquals(getUser1Bio(), bio.getContent());
         assertEquals(Visibility.PUBLIC, bio.getVisibility());
     }
 
@@ -85,17 +85,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), accessToken);
-        assertNotNull(response);
-        //Occasionaly gives 500 when run as Suite.  Passes on it's own...?
-        /*
-            <error xmlns="http://www.orcid.org/ns/error">
-                <response-code>500</response-code>
-                <developer-message>org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.orcid.persistence.jpa.entities.ProfileEntity.givenPermissionTo, could not initialize proxy - no Session</developer-message>
-                <user-message>Something went wrong in ORCID.</user-message>
-                <error-code>9008</error-code>
-                <more-info>http://members.orcid.org/api/api-error-codes</more-info>
-            </error>
-         */
+        assertNotNull(response);        
         assertEquals("invalid "+response,200,response.getStatus());
         Thread.sleep(100);
         Person person = response.getEntity(Person.class);
@@ -108,12 +98,12 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
-        assertEquals("This is my bio", person.getBiography().getContent());
+        assertEquals(getUser1Bio(), person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        EmailTest.assertListContainsEmail("public@email.com", Visibility.PUBLIC, person.getEmails());
-        EmailTest.assertListContainsEmail("limited@email.com", Visibility.LIMITED, person.getEmails());
+        EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
+        EmailTest.assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
@@ -153,11 +143,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getName());
-        assertEquals("One", person.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
-        assertEquals("User", person.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
         assertNotNull(person.getName().getCreditName());
-        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 
@@ -176,11 +166,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
-        assertEquals("This is my bio", person.getBiography().getContent());
+        assertEquals(getUser1Bio(), person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        EmailTest.assertListContainsEmail("public@email.com", Visibility.PUBLIC, person.getEmails());
+        EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
@@ -205,11 +195,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getName());
-        assertEquals("One", person.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
-        assertEquals("User", person.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
         assertNotNull(person.getName().getCreditName());
-        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 

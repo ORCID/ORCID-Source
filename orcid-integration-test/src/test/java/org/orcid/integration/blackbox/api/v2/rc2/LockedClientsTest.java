@@ -48,8 +48,10 @@ public class LockedClientsTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testMember() throws InterruptedException, JSONException {
+        // unlock to start
+        adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getLockedMemberOrcid());
         // The member must be unlocked to begin the test
-        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), this.getLockedMemberClient1ClientId(), this.getLockedMemberClient1ClientSecret(), this.getLockedMemberClient1RedirectUri());
+        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), getLockedMemberClient1ClientId(), getLockedMemberClient1ClientSecret(), getLockedMemberClient1RedirectUri());
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
@@ -71,7 +73,7 @@ public class LockedClientsTest extends BlackBoxBaseRC2 {
 
     private void lookForErrorsOnAuthorizationCodePage(String clientId, String scopes, String redirectUri) {
         webDriver = new FirefoxDriver();
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), clientId, scopes, redirectUri));
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", getWebBaseUrl(), clientId, scopes, redirectUri));
         (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.urlContains("error"));
         String currentUrl = webDriver.getCurrentUrl();
         if (currentUrl.contains("error=client_locked")) {

@@ -25,6 +25,8 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -205,11 +207,16 @@ public class BlackBoxBase {
         unLockProfileLink.click();
         WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
         unLockProfileOrcidId.sendKeys(orcidToUnlock);
-        WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
-        unLockButton.click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));
-        WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
-        confirmUnLockButton.click();
+        
+        try {
+            WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
+            unLockButton.click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));
+            WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
+            confirmUnLockButton.click();
+        } catch(NoSuchElementException | TimeoutException e) {
+            //The profile has been unlocked already
+        }
         webDriver.quit();
     }
 
