@@ -30,14 +30,14 @@
 		<common:month>02</common:month>
 		<common:day>02</common:day>
 	</common:publication-date>
-	<work:external-identifiers>
-		<work:work-external-identifier>
-			<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
-			<common:relationship>self</common:relationship>
-			<work:external-identifier-type>agr</work:external-identifier-type>
-			<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
-		</work:work-external-identifier>
-	</work:external-identifiers>
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>agr</common:external-id-type>
+			<common:external-id-value>work:external-identifier-id</common:external-id-value>			
+			<common:external-id-url>http://orcid.org</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
 	<work:url>http://tempuri.org</work:url>
 	<work:contributors>
 		<work:contributor>

@@ -4732,6 +4732,7 @@ ul.toggle-menu li:hover ul{
 .bibtex-box,
 .work-import-wizard,
 .funding-import-wizard{
+	min-height: 75px;
 	height: auto;
 	display: inline-block;	
 	width: 100%;
@@ -6417,6 +6418,10 @@ a:hover .mozilla-badge{
 .revoke-social{
 	min-height: 195px; 
 }
+
+.bibtex-box #downloadlink{
+	font-size: 12px;
+} 
 
 .email-pop-up .editTablePadCell35{
 	margin-right: 15px;	

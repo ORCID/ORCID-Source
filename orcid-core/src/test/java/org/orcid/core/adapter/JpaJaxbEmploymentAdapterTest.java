@@ -139,9 +139,9 @@ public class JpaJaxbEmploymentAdapterTest {
     private Employment getEmployment(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { Employment.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc1/samples/employment-2.0_rc1.xml";
+        String name = "/record_2.0_rc2/samples/employment-2.0_rc2.xml";
         if(full) {
-            name = "/record_2.0_rc1/samples/employment-full-2.0_rc1.xml";
+            name = "/record_2.0_rc2/samples/employment-full-2.0_rc2.xml";
         }            
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (Employment) unmarshaller.unmarshal(inputStream);

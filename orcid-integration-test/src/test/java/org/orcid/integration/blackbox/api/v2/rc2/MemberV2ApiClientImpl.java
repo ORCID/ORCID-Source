@@ -46,10 +46,10 @@ import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -243,12 +243,12 @@ public class MemberV2ApiClientImpl {
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
     
-    public ClientResponse createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier, String accessToken) {
+    public ClientResponse createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, String accessToken) {
         URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS).build(orcid);
         return orcidClientHelper.postClientResponseWithToken(uri, VND_ORCID_XML, externalIdentifier, accessToken);      
     }
     
-    public ClientResponse updateExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier, String accessToken) {
+    public ClientResponse updateExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, String accessToken) {
         URI uri = UriBuilder.fromPath(EXTERNAL_IDENTIFIERS + PUTCODE).build(orcid, externalIdentifier.getPutCode());
         return orcidClientHelper.putClientResponseWithToken(uri, VND_ORCID_XML, externalIdentifier, accessToken);      
     }

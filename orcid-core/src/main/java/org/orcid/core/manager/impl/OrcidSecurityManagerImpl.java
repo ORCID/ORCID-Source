@@ -50,13 +50,13 @@ import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -223,7 +223,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             readLimitedScopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
         } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Emails || filterable instanceof Address
-                || filterable instanceof ExternalIdentifier || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person
+                || filterable instanceof PersonExternalIdentifier || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person
                 || filterable instanceof Name || filterable instanceof Biography) {
             readLimitedScopes.add(ScopePathType.PERSON_READ_LIMITED.value());
             readLimitedScopes.add(ScopePathType.ORCID_BIO_READ_LIMITED.value());
@@ -246,12 +246,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             updateScopes.add(ScopePathType.AFFILIATIONS_UPDATE.value());
         } else if (filterable instanceof PeerReview || filterable instanceof PeerReviewSummary) {
             updateScopes.add(ScopePathType.PEER_REVIEW_UPDATE.value());
-        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Address || filterable instanceof ExternalIdentifier
+        } else if (filterable instanceof ResearcherUrl || filterable instanceof Email || filterable instanceof Address || filterable instanceof PersonExternalIdentifier
                 || filterable instanceof Keyword || filterable instanceof OtherName || filterable instanceof Person || filterable instanceof Name
                 || filterable instanceof Biography) {
             updateScopes.add(ScopePathType.PERSON_UPDATE.value());
             updateScopes.add(ScopePathType.ORCID_BIO_UPDATE.value());
-            if(filterable instanceof ExternalIdentifier) {
+            if(filterable instanceof PersonExternalIdentifier) {
                 updateScopes.add(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value());
             }
         }

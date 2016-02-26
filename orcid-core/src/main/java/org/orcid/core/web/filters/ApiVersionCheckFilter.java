@@ -19,10 +19,13 @@ package org.orcid.core.web.filters;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 
 import com.sun.jersey.api.core.InjectParam;
 import com.sun.jersey.spi.container.ContainerRequest;
@@ -36,6 +39,8 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
     
     @InjectParam("localeManager")
     private LocaleManager localeManager;
+    
+    @Context private HttpServletRequest httpRequest;
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
@@ -51,8 +56,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
         if (version != null && version.startsWith("1.1") && v1xDisabled) {
             throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_version_disabled.exception"));
         } else if(version != null && version.startsWith("2.0")) {
-            String headerVal = request.getHeaderValue("X-Forwarded-Proto");
-            if(!"HTTPS".equals(headerVal) && !request.isSecure()) {
+            if(!OrcidUrlManager.isSecure(httpRequest)) {
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_secure_only.exception"));
             }
         }

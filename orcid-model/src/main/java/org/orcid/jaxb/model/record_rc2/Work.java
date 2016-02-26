@@ -75,8 +75,8 @@ public class Work implements VisibilityType, Activity, Serializable {
     protected WorkType type;
     @XmlElement(name = "publication-date", namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
-    protected WorkExternalIdentifiers externalIdentifiers;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
     protected Url url;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")
@@ -249,14 +249,14 @@ public class Work implements VisibilityType, Activity, Serializable {
     /**
      * Gets the value of the workExternalIdentifiers property.
      * 
-     * @return possible object is {@link WorkExternalIdentifiers }
+     * @return possible object is {@link ExternalIDs }
      * 
      */
-    public WorkExternalIdentifiers getWorkExternalIdentifiers() {
+    public ExternalIDs getWorkExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public WorkExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
@@ -264,10 +264,10 @@ public class Work implements VisibilityType, Activity, Serializable {
      * Sets the value of the workExternalIdentifiers property.
      * 
      * @param value
-     *            allowed object is {@link WorkExternalIdentifiers }
+     *            allowed object is {@link ExternalIDs }
      * 
      */
-    public void setWorkExternalIdentifiers(WorkExternalIdentifiers value) {
+    public void setWorkExternalIdentifiers(ExternalIDs value) {
         this.externalIdentifiers = value;
     }
 

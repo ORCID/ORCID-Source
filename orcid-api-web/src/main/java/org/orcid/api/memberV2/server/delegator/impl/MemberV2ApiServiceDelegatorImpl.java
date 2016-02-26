@@ -68,8 +68,8 @@ import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -99,7 +99,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl
-        implements MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> {
+        implements MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> {
 
     @Resource
     private WorkManager workManager;
@@ -621,9 +621,9 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewExternalIdentifiers(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
         long lastModifiedTime = getLastModifiedTime(orcid);
-        ExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime);
-        List<ExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
-        List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime);
+        List<PersonExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
+        List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds);
         extIds.setExternalIdentifiers(filteredExtIds);
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         return Response.ok(extIds).build();
@@ -632,14 +632,14 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        ExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
+        PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
         orcidSecurityManager.checkVisibility(extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
 
     @Override
-    public Response updateExternalIdentifier(String orcid, Long putCode, ExternalIdentifier externalIdentifier) {
+    public Response updateExternalIdentifier(String orcid, Long putCode, PersonExternalIdentifier externalIdentifier) {
         if (!putCode.equals(externalIdentifier.getPutCode())) {
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
             Map<String, String> params = new HashMap<String, String>();
@@ -647,13 +647,13 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        ExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier);
+        PersonExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
 
     @Override
-    public Response createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+    public Response createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
         externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier);
         try {

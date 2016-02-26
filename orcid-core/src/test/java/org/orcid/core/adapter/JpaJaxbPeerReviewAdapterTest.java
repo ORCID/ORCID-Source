@@ -109,8 +109,8 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals("orcid-generated:12345", peerReview.getGroupId());
         //Subject
         assertNotNull(peerReview.getSubjectExternalIdentifier());
-        assertEquals("peer-review:subject-external-identifier-id", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent());
-        assertEquals("source-work-id", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
+        assertEquals("peer-review:subject-external-identifier-id", peerReview.getSubjectExternalIdentifier().getValue());
+        assertEquals("source-work-id", peerReview.getSubjectExternalIdentifier().getType());
         assertEquals("peer-review:subject-container-name", peerReview.getSubjectContainerName().getContent());
         assertEquals("peer-review:subject-name", peerReview.getSubjectName().getTitle().getContent());
         assertEquals("peer-review:subject-translated-name", peerReview.getSubjectName().getTranslatedTitle().getContent());
@@ -121,8 +121,8 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReview.getExternalIdentifiers());
         assertNotNull(peerReview.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("peer-review:external-identifier-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("source-work-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());
+        assertEquals("peer-review:external-identifier-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("source-work-id", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals(Role.MEMBER.value(), peerReview.getRole().value());
         assertEquals(PeerReviewType.EVALUATION.value(), peerReview.getType().value());
         assertEquals("peer-review:url", peerReview.getUrl().getValue());
@@ -154,8 +154,8 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertNotNull(peerReviewSummary.getExternalIdentifiers());
         assertNotNull(peerReviewSummary.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierType().value());        
+        assertEquals("peer-review:external-identifier-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("source-work-id", peerReviewSummary.getExternalIdentifiers().getExternalIdentifier().get(0).getType());        
         assertNotNull(peerReviewSummary.getSource());
         assertEquals("APP-000000001", peerReviewSummary.getSource().retrieveSourcePath());
     }
@@ -163,9 +163,9 @@ public class JpaJaxbPeerReviewAdapterTest {
     private PeerReview getPeerReview(boolean full) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(new Class[] { PeerReview.class });
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        String name = "/record_2.0_rc1/samples/peer-review-2.0_rc1.xml";
+        String name = "/record_2.0_rc2/samples/peer-review-2.0_rc2.xml";
         if(full) {
-            name = "/record_2.0_rc1/samples/peer-review-full-2.0_rc1.xml";
+            name = "/record_2.0_rc2/samples/peer-review-full-2.0_rc2.xml";
         }
         InputStream inputStream = getClass().getResourceAsStream(name);
         return (PeerReview) unmarshaller.unmarshal(inputStream);

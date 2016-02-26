@@ -63,7 +63,7 @@
                			<#list itemsByType[itemType] as item>
                			<tr>
                				<td width="100%" style="padding-top: 15px; padding-bottom: 10px; font-weight: bold; color: #494A4C">
-               					${item.itemName?trim} <#if item.externalIdentifier??>(<span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.externalIdentifierType?lower_case}:</span> <#if item.externalIdentifier.externalIdentifierId?starts_with("http")><a href="${item.externalIdentifier.externalIdentifierId}" style="color: #338caf; font-weight: normal; text-decoration: none;">${item.externalIdentifier.externalIdentifierId}</a><#else><span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.externalIdentifierId}</span></#if>)</#if>			
+               					${item.itemName?trim} <#if item.externalIdentifier??>(<span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.type?lower_case}:</span> <#if item.externalIdentifier.value?starts_with("http")><a href="${item.externalIdentifier.value}" style="color: #338caf; font-weight: normal; text-decoration: none;">${item.externalIdentifier.value}</a><#else><span style="color: #338caf; font-weight: normal;">${item.externalIdentifier.value}</span></#if>)</#if>			
                				</td>
                			</tr>
                 		</#list>
@@ -90,7 +90,7 @@
                 <#if notification.items??>
                 <ul>
                 <#list notification.items.items as item>
-                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if></li>
+                    <li>${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if></li>
                 </#list>
                 </ul>
                 </#if>

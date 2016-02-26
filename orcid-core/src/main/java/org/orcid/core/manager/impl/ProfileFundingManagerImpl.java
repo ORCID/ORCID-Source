@@ -32,6 +32,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -266,12 +267,13 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
     	ActivityValidator.validateFunding(funding, sourceEntity, true, isApiRequest);
+
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null) {
             for(Funding exstingFunding : fundings) {
-            	ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+            	ActivityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
             			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
             }
         }
@@ -324,7 +326,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             for(ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
                 if(!existing.getPutCode().equals(funding.getPutCode())) {
-                     ActivityValidator.checkFundingExternalIdentifiers(funding.getExternalIdentifiers(),
+                     ActivityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
                                      existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
