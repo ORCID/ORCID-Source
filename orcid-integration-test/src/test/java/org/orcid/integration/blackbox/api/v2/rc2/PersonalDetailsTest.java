@@ -70,16 +70,16 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(personalDetails);
         //Check bio
         assertNotNull(personalDetails.getBiography());
-        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, personalDetails.getBiography().getVisibility());
         //Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
-        assertEquals("One", personalDetails.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
         assertNotNull(personalDetails.getName().getFamilyName());
-        assertEquals("User", personalDetails.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), personalDetails.getName().getFamilyName().getContent());
         assertNotNull(personalDetails.getName().getCreditName());
-        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         //Check other names
         assertNotNull(personalDetails.getOtherNames());
@@ -108,7 +108,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(personalDetails);
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
-        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
         assertEquals(2, personalDetails.getOtherNames().getOtherNames().size());
@@ -124,7 +124,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(personalDetails);
         assertNull(personalDetails.getName());
         assertNotNull(personalDetails.getBiography());
-        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertNull(personalDetails.getOtherNames());        
         
         //Change bio to limited
@@ -161,7 +161,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(personalDetails);        
         //Check bio
         assertNotNull(personalDetails.getBiography());
-        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
         //Check other names
         assertNotNull(personalDetails.getOtherNames());
@@ -174,11 +174,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
-        assertEquals("One", personalDetails.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
         assertNotNull(personalDetails.getName().getFamilyName());
-        assertEquals("User", personalDetails.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), personalDetails.getName().getFamilyName().getContent());
         assertNotNull(personalDetails.getName().getCreditName());
-        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         
         webDriver = new FirefoxDriver();
@@ -199,7 +199,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(personalDetails);        
         //Check bio
         assertNotNull(personalDetails.getBiography());
-        assertEquals("This is my bio", personalDetails.getBiography().getContent());
+        assertEquals(getUser1Bio(), personalDetails.getBiography().getContent());
         assertEquals(Visibility.LIMITED.value(), personalDetails.getBiography().getVisibility().value());
         //Check other names
         assertNotNull(personalDetails.getOtherNames());
@@ -212,11 +212,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Check names
         assertNotNull(personalDetails.getName());
         assertNotNull(personalDetails.getName().getGivenNames());
-        assertEquals("One", personalDetails.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), personalDetails.getName().getGivenNames().getContent());
         assertNotNull(personalDetails.getName().getFamilyName());
-        assertEquals("User", personalDetails.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), personalDetails.getName().getFamilyName().getContent());
         assertNotNull(personalDetails.getName().getCreditName());
-        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(Visibility.LIMITED, personalDetails.getName().getVisibility());
         
         //Change all to PRIVATE

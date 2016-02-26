@@ -93,15 +93,18 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -308,6 +311,8 @@ public class SetUpClientsAndUsers {
     protected OrcidClientGroupManager orcidClientGroupManager;
     @Resource
     protected ProfileEntityManager profileEntityManager;
+    @Resource
+    protected GivenPermissionToDao givenPermissionToDao;
     
     @Before
     public void before() throws Exception {
@@ -333,7 +338,7 @@ public class SetUpClientsAndUsers {
         setUpOtherNames(user1OrcidId);
         setUpEmails(user1OrcidId);
         setUpExternalIdentifiers(user1OrcidId);
-
+        
         // Create user 2
         Map<String, String> user2Params = getParams(user2OrcidId);
         OrcidProfile user2Profile = orcidProfileManager.retrieveOrcidProfile(user2OrcidId);
@@ -388,6 +393,8 @@ public class SetUpClientsAndUsers {
         if (lockedClient == null) {
             createClient(lockedClientParams);
         } 
+        
+        setUpDelegates(user1OrcidId, user2OrcidId);
     }
 
     private Map<String, String> getParams(String userId) {
@@ -887,5 +894,21 @@ public class SetUpClientsAndUsers {
         e2.setSource(new Source(client1ClientId));
         e2.setType("A-0002");
         externalIdentifierManager.createExternalIdentifier(orcid, e2);
-    }    
+    }   
+    
+    /**
+     * Set up delegates
+     * Please see tests: 
+     * */
+    public void setUpDelegates(String giver, String receiver) {
+        GivenPermissionToEntity permission = new GivenPermissionToEntity();
+        permission.setGiver(giver);
+        ProfileSummaryEntity r = new ProfileSummaryEntity(receiver);
+        r.setLastModified(new Date());
+        permission.setReceiver(r);
+        permission.setApprovalDate(new Date());
+        givenPermissionToDao.merge(permission);
+        givenPermissionToDao.flush();
+    }
+    
 }
