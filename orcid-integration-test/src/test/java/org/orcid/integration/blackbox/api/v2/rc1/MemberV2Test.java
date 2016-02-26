@@ -526,6 +526,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         fExtId3.setValue("extId3Value" + time);
         fExtId3.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId3);
+        funding.setVisibility(Visibility.PUBLIC);
         // Add 2, with the same ext ids +1
         postResponse = memberV2ApiClient.createFundingXml(this.getUser1OrcidId(), funding, accessTokenForClient2);
         assertNotNull(postResponse);
@@ -538,6 +539,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         fExtId4.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().clear();
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId4);
+        funding.setVisibility(Visibility.PUBLIC);
         // Add 3, with different ext ids
         postResponse = memberV2ApiClient.createFundingXml(this.getUser1OrcidId(), funding, accessTokenForClient1);
         assertNotNull(postResponse);
@@ -863,7 +865,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
             }            
         }
         
-        assertTrue(work1found && work2found && work3found);
+        assertTrue("Work1: " + work1found + " work2 " + work2found + " work3 " + work3found, work1found && work2found && work3found);
         //Check that work # 1 and Work # 3 are in the same work
         assertEquals(work1Group, work3Group);
         //Check that work # 2 is not in the same group than group # 1

@@ -67,19 +67,19 @@ public class EmailTest extends BlackBoxBaseRC2 {
     
     /**
      * PRECONDITIONS: 
-     *          The user must have a public email public@email.com
+     *          The primary email must be public
      * */
     @Test
     public void testGetWithPublicAPI() {
         ClientResponse getAllResponse = publicV2ApiClient.viewEmailXML(getUser1OrcidId());
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
-        assertListContainsEmail("public@email.com", Visibility.PUBLIC, emails);
+        assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, emails);
     }
     
     /**
      * PRECONDITIONS: 
-     *          The user must have a public email public@email.com
+     *          The primary email must be public
      *          The user must have a limited email limited@email.com
      * @throws JSONException 
      * @throws InterruptedException 
@@ -90,8 +90,8 @@ public class EmailTest extends BlackBoxBaseRC2 {
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
-        assertListContainsEmail("public@email.com", Visibility.PUBLIC, emails);
-        assertListContainsEmail("limited@email.com", Visibility.LIMITED, emails);
+        assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, emails);
+        assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, emails);
     }
     
     public static void assertListContainsEmail(String emailString, Visibility visibility, Emails emails) {

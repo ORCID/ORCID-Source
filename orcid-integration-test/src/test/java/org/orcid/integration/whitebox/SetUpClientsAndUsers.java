@@ -59,6 +59,9 @@ import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
@@ -66,8 +69,10 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
+import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
@@ -326,6 +331,8 @@ public class SetUpClientsAndUsers {
         setUpAddresses(user1OrcidId);
         setUpKeywords(user1OrcidId);
         setUpOtherNames(user1OrcidId);
+        setUpEmails(user1OrcidId);
+        setUpExternalIdentifiers(user1OrcidId);
 
         // Create user 2
         Map<String, String> user2Params = getParams(user2OrcidId);
@@ -480,6 +487,15 @@ public class SetUpClientsAndUsers {
             orcidProfile.setGroupType(MemberType.fromValue(params.get(MEMBER_TYPE)));
         }
         orcidProfile.setPassword(params.get(PASSWORD));
+        
+        OrcidInternal internal = new OrcidInternal();
+        Preferences preferences = new Preferences();
+        ActivitiesVisibilityDefault visibilityDefaults = new ActivitiesVisibilityDefault();
+        visibilityDefaults.setValue(Visibility.PUBLIC);
+        preferences.setActivitiesVisibilityDefault(visibilityDefaults);
+        internal.setPreferences(preferences);
+        orcidProfile.setOrcidInternal(internal);
+        
         Email email = new Email(params.get(EMAIL));
         email.setCurrent(true);
         email.setPrimary(true);
@@ -696,7 +712,7 @@ public class SetUpClientsAndUsers {
     }
     
     @Test
-    public void testSetupIsDone() {
+    public void testSetUpIsDone() {
         OrcidProfile existingProfile = orcidProfileManager.retrieveOrcidProfile(adminOrcidId);
         assertNotNull(existingProfile);
         assertNotNull(existingProfile.getOrcidIdentifier());
@@ -787,7 +803,7 @@ public class SetUpClientsAndUsers {
     }
     
     /**
-     * Setup default other names
+     * Set up default other names
      * Please see tests: 
      *  OtherNamesTest.testGetOtherNamesWihtMembersAPI
      * */
@@ -808,7 +824,7 @@ public class SetUpClientsAndUsers {
     }
     
     /**
-     * Setup default keywords
+     * Set up default keywords
      * Please see tests:
      *  KeywordsTest.testGetKeywordsWihtMembersAPI
      * */
@@ -827,4 +843,49 @@ public class SetUpClientsAndUsers {
         k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         profileKeywordManager.createKeyword(orcid, k2);
     }
+    
+    /**
+     * Set up defaut email info
+     * Please see tests: 
+     *  EmailTest.testGetWithMembersAPI
+     * */
+    public void setUpEmails(String orcid) {
+        Email email = new Email();
+        email.setValue("limited@test.orcid.org");
+        email.setVisibility(Visibility.LIMITED);
+        email.setCurrent(false);
+        email.setPrimary(false);
+        email.setVerified(true);
+        email.setSource(orcid);
+        emailManager.addEmail(orcid, email);
+    }
+    
+    /**
+     * Set up external identifiers
+     * Please see tests: 
+     *  ExternalIdentifiersTest.testGetExternalIdentifiersWihtMembersAPI
+     *  ExternalIdentifiersTest.testCreateGetUpdateAndDeleteExternalIdentifier
+     *  ExternalIdentifiersTest.testGetExternalIdentifiersWihtPublicAPI
+     * */
+    public void setUpExternalIdentifiers(String orcid) {
+        PersonExternalIdentifier e1 = new PersonExternalIdentifier();
+        e1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        e1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        e1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+        e1.setUrl(new Url("http://ext-id/A-0001"));
+        e1.setValue("A-0001");
+        e1.setSource(new Source(client1ClientId));  
+        e1.setType("A-0001");
+        externalIdentifierManager.createExternalIdentifier(orcid, e1);
+        
+        PersonExternalIdentifier e2 = new PersonExternalIdentifier();
+        e2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        e2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        e2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
+        e2.setUrl(new Url("http://ext-id/A-0002"));
+        e2.setValue("A-0002");
+        e2.setSource(new Source(client1ClientId));
+        e2.setType("A-0002");
+        externalIdentifierManager.createExternalIdentifier(orcid, e2);
+    }    
 }
