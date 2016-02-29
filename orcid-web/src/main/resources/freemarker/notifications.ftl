@@ -26,10 +26,21 @@
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >
         <!-- <h2>${springMacroRequestContext.getMessage("notifications.title")}</h2> -->
         <div class="notification-top-bar">
-            <label class="checkbox pull-right">
-                <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>
-                ${springMacroRequestContext.getMessage("notifications.show_archived")}
-            </label>
+        	<ul class="inline-list pull-right">
+        		<li>
+        			<button class="btn btn-primary">Archive Selected</button>
+        			<!-- <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>Archive selected -->
+        		</li>
+        		<li>&nbsp;</li>
+        		<li>
+        			<button class="btn btn-primary" ng-click="notificationsSrvc.toggleArchived()">
+        				<span ng-hide="notificationsSrvc.showArchived" ng-cloak>Show archived</span>
+        				<span ng-show="notificationsSrvc.showArchived" ng-cloak>Hide archived</span>
+        			</button>
+		            <!-- <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>${springMacroRequestContext.getMessage("notifications.show_archived")} -->
+        		</li>
+        	</ul>
+            
         </div>
         <div ng-show="notificationsSrvc.loading == true" class="text-center" id="notificationsSpinner">
             <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i><!-- Hidden with a CSS hack on IE 7 only -->
@@ -41,30 +52,38 @@
         <div ng-cloak ng-show="notificationsSrvc.loading == false && notifications.length &gt; 0">            
             <table class="table table-responsive table-condensed notifications">
            		<thead>					
-	                <tr>
+	                <tr>	                	
 	                    <th>${springMacroRequestContext.getMessage("notifications.from")}</th>
 	                    <th>${springMacroRequestContext.getMessage("notifications.subject")}</th>
 	                    <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
-	                    <th></th>
+	                    <th>
+		                    <td class="centered">
+			               		<input type="checkbox" name="" value="" ng-change="notificationsSrvc.swapbulkChangeAll()" ng-model="notificationsSrvc.bulkChecked">
+			               	</td>
+	                    </th>
+	                    
 	                </tr>
                 </thead>
                 <tbody>
-	                <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate, archived: notification.archivedDate}">
+	                <tr ng-repeat-start="notification in notifications" ng-class="{unread: !notification.readDate, archived: notification.archivedDate}">	                	
 	                    <td ng-click="toggleDisplayBody(notification.putCode)">
 	                        <i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':!displayBody[notification.putCode]}"></i>
 	                        <span ng-show="notification.source" ng-cloak>{{notification.source.sourceName.content}}</span><span ng-hide="notification.source" ng-cloak>ORCID</span>
 	                    </td>
 	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.subject}}</span></td>
 	                    <td ng-click="toggleDisplayBody(notification.putCode)"><span ng-cloak>{{notification.createdDate|humanDate}}</span></td>
-	                    <td>
+	                    <td class="centered">
 	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
+	                    <td class="centered">
+		               		<input type="checkbox" name="" value="" class="centered" ng-model="notificationsSrvc.bulkArchive[notification.putCode]">
+		               	</td>
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">
 	                    <td colspan="4">
 	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@orcid.rootPath '/inbox'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
-	                </tr>
+	                </tr>	                
                 </tbody>
 
             </table>
