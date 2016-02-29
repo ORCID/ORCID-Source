@@ -16,17 +16,29 @@ The default test data is in the following config files:
 * Setup the test data:
 
 	* Go to the main menu and select *Run* → *Run Configurations*
-	* Click on the New button
+	* Go to JUnit section (Treeview)
+	* Right Click, select New option
+    * In the Test tab, select Run a single test option
     * Select 'Browse' and choose the orcid-integration-test project
-    * Enter org.orcid.integration.whitebox.SetUpClientsAndUsers as the test class
+    * Type org.orcid.integration.whitebox.SetUpClientsAndUsers as the test class
     * Select Junit 4 as the test runner
-    * Go to the Arguments tab and enter the following in VM arguments, but *change the values to users and clients that exist in your database*.
+    * Go to the Arguments tab and enter the following in VM arguments.
       * "-Xmx2g"
       * "-Dorg.orcid.config.file=classpath:staging-persistence.properties"
-  	* Click the run button
+  	* Click Apply and Run buttons
 
 This should setup the default test data and then run a test that verifies the data was actually persisted in the database.
-If this process succeed, you can now run the blackbox test as follow:    	
+If this process succeed, you can now run the blackbox test as follow:
+
+* Add the following modules to Tomcat (Tomcat should be stopped before adding it):
+	* orcid-api-web
+	* orcid-internal-api
+	* orcid-pub-web
+	* orcid-scheduler-web
+	* orcid-solr-web
+	* orcid-web
+
+* Start Tomcat and wait for it to be up.
 
 * Run the tests:
 
@@ -35,7 +47,7 @@ If this process succeed, you can now run the blackbox test as follow:
     * Select JUnit
     * Click on the New button
     * Select 'Browse' and choose the orcid-integration-test project
-    * Enter org.orcid.integration.api.BlackBoxTestSuite as the test class
+    * Enter org.orcid.integration.blackbox.BlackBoxTestSuite as the test class
     * Select Junit 4 as the test runner
     * Go to the Arguments tab and enter the following in VM arguments, but *change the values to users and clients that exist in your database*.
       * "-Xmx2g"
