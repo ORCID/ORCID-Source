@@ -58,7 +58,7 @@
 	                    <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
 	                    <th>
 		                    <td class="centered">
-			               		<input type="checkbox" name="" value="" ng-change="notificationsSrvc.swapbulkChangeAll()" ng-model="notificationsSrvc.bulkChecked">
+			               		<input type="checkbox" ng-change="notificationsSrvc.swapbulkChangeAll()" ng-model="notificationsSrvc.bulkChecked">
 			               	</td>
 	                    </th>
 	                    
@@ -76,7 +76,7 @@
 	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
 	                    <td class="centered">
-		               		<input type="checkbox" name="" value="" class="centered" ng-model="notificationsSrvc.bulkArchive[notification.putCode]">
+		               		<input type="checkbox" class="centered" ng-model="notificationsSrvc.bulkArchive[notification.putCode]">
 		               	</td>
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">
