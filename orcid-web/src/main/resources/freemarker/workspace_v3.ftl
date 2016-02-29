@@ -205,8 +205,7 @@
 	       	<#else>
 	       		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 		        	<div class="workspace-section-header">
-		        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
-			        	   
+		        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>			        	   
 		        	   	<span ng-hide="showEdit == true">
 		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title="" id="open-edit-keywords"></span>	
 		        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
@@ -228,7 +227,7 @@
         	   		<div ng-show="showEdit == true" ng-cloak>
         	      		<div ng-repeat="keyword in keywordsForm.keywords">
         	      	  		<div class="icon-inside-input">
-	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()" id="keywords"></input>
+	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()" id="keyword{{keyword.content}}"></input>
 		        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          	</div>
 	        	          	<span class="orcid-error" ng-show="keyword.errors.length > 0">
@@ -288,9 +287,9 @@
 	
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
-	        	          <input id="website-desc" type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
-	        	          <input id="website-value" type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
-		        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>	        	              	          
+	        	          <input id="website-desc{{website.urlName}}" type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
+	        	          <input id="website-value{{website.urlName}}" type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
+		        	      <a id="delete-website_{{website.urlName}}" ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey icon-inside pull-right"></a>	        	              	          
 	        	          <span class="orcid-error" ng-show="website.errors.length > 0">
 						     <div ng-repeat='error in website.errors' ng-bind-html="error"></div>
 					      </span>        	          

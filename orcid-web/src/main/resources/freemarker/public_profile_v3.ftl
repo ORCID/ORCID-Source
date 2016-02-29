@@ -59,7 +59,7 @@
 		            		<div class="workspace-section-header">
 		                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span>
 		                	</div>
-		                	<div>
+		                	<div id="public-other-names-div">
 				                <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
 				                	${otherName.content}<#if otherName_has_next>,</#if>
 				                </#list>
@@ -70,7 +70,7 @@
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		                		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
-		                		<div>
+		                		<div id="public-country-div">
 		                			${(countryName)!}
 		                		</div>
 		                	</div>
@@ -80,7 +80,7 @@
 			            <div class="workspace-section">
 		            		<div class="workspace-section-header">
 		                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span>
-		                		<div> 
+		                		<div id="public-keywords-div"> 
 		                    		<#list profile.orcidBio.keywords.keyword as keyword>
 		                        		${keyword.content}<#if keyword_has_next>,</#if>	                    
 	                    			</#list>
@@ -92,7 +92,7 @@
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">            
 				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span>
-				                <div>
+				                <div id="public-researcher-urls-div">
 				                    <#list profile.orcidBio.researcherUrls.researcherUrl as url>
 				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
 				                    </#list>
@@ -105,7 +105,7 @@
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			 <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span>
-		            			 <div class="emails-box" >
+		            			 <div class="emails-box" id="public-emails-div">
 			            			 <#list profile.orcidBio.contactDetails.email as email>
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
 			            					<div id="email_${email.value}">${email.value}</div>
@@ -119,7 +119,7 @@
 						<div class="workspace-section">
 		            		<div class="workspace-section-header">            
 				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span>
-				                <div>
+				                <div  id="public-external-identifiers-div">
 				                    <#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
 				                        <#if (external.externalIdUrl.value)??>
 				                            <a href="${external.externalIdUrl.value}" target="_blank">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
