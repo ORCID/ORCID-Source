@@ -80,7 +80,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         assertNotNull("The added email should be there: " + emailValue, addedEmail);
         
         //Change Visibility
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        showMyOrcidPage();
         WebElement toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
         WebElement privateVisibility = webDriver.findElement(By.id("email-"+emailValue+"-public-id"));
@@ -91,7 +91,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         assertTrue(list.size() > 0);
         
         //Revert Visibility
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
         privateVisibility = webDriver.findElement(By.id("email-"+emailValue+"-private-id"));
@@ -111,8 +111,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
     
     @Test
     public void otherNamesPrivacyTest() {
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("orcid-id")));
+        showMyOrcidPage();
         WebElement toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
         WebElement textBox = webDriver.findElement(By.id("other-name"));
@@ -131,8 +130,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         assertEquals(0, list.size());
         
         //Set Public Visibility
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("orcid-id")));
+        showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
         privateVisibility = webDriver.findElement(By.id("other-names-public-id"));
@@ -146,8 +144,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         assertTrue(list.size() > 0);
         
         //Rollback changes
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("orcid-id")));
+        showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();    
         (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("other-name" + otherNameValue)));
@@ -160,11 +157,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
     
     @Test
     public void countryPrivacyTest() {
+        showMyOrcidPage();
+        String initialValue = "US";
         WebElement toggle = webDriver.findElement(By.id("open-edit-country"));
         toggle.click();
         Select selectBox = new Select(webDriver.findElement(By.id("country")));
+        WebElement selectedCountry = selectBox.getFirstSelectedOption();
+        if(selectedCountry != null) {
+            initialValue = selectedCountry.getAttribute("value");
+        }
         selectBox.selectByValue("IN");
-        
+                
         //Set Private Visibility
         WebElement privateVisibility = webDriver.findElement(By.id("country-private-id"));
         privateVisibility.click();
@@ -176,6 +179,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         assertEquals(0, list.size());
         
         //Set Public visibility
+        showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-country"));
         toggle.click();
         privateVisibility = webDriver.findElement(By.id("country-public-id"));
@@ -186,6 +190,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         //Verify
         list = checkPublicProfile("India");
         assertTrue(list.size() > 0);
+        
+        //Rollback changes
+        showMyOrcidPage();
+        toggle = webDriver.findElement(By.id("open-edit-country"));
+        toggle.click();
+        selectBox = new Select(webDriver.findElement(By.id("country")));
+        selectedCountry = selectBox.getFirstSelectedOption();
+        selectBox.selectByValue(initialValue);
+        saveButton = webDriver.findElement(By.id("save-country"));
+        saveButton.click();
     }
     
     @Test
@@ -409,6 +423,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
     
     private void signout() {
        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+    }
+    
+    private void showMyOrcidPage() {
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("orcid-id")));
     }
     
     private List<WebElement> checkPublicProfile(String value) {

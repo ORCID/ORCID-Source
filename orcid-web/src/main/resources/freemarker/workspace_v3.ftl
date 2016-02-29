@@ -154,7 +154,7 @@
 			            		<span ng-show="showEdit == false && country != null && country.countryName != null && country.primary == true" ng-bind="country.countryName" ></span>			            		
 			            	</span>			            	
 			            </span>
-			            <span class="pull-right" ng-hide="showEdit == true" ng-cloak>
+			            <span class="pull-right" ng-hide="showEdit == false" ng-cloak>
 			            	<@orcid.privacyToggle3 angularModel="countryForm.visibility.visibility"
 				         		questionClick="toggleClickPrivacyHelp($index)"
 				         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
