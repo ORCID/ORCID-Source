@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 import ma.glasnost.orika.MapperFacade;
@@ -35,7 +35,7 @@ public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIden
     }
 
     @Override
-    public ExternalIdentifierEntity toExternalIdentifierEntity(ExternalIdentifier externalIdentifier) {
+    public ExternalIdentifierEntity toExternalIdentifierEntity(PersonExternalIdentifier externalIdentifier) {
         if (externalIdentifier == null) {
             return null;
         }
@@ -49,27 +49,27 @@ public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIden
     }
 
     @Override
-    public ExternalIdentifier toExternalIdentifier(ExternalIdentifierEntity entity) {
+    public PersonExternalIdentifier toExternalIdentifier(ExternalIdentifierEntity entity) {
         if (entity == null) {
             return null;
         }
-        return mapperFacade.map(entity, ExternalIdentifier.class);
+        return mapperFacade.map(entity, PersonExternalIdentifier.class);
     }
 
     @Override
-    public ExternalIdentifiers toExternalIdentifierList(Collection<ExternalIdentifierEntity> entities) {
+    public PersonExternalIdentifiers toExternalIdentifierList(Collection<ExternalIdentifierEntity> entities) {
         if (entities == null) {
             return null;
         }
 
-        List<ExternalIdentifier> externalIdentifier = mapperFacade.mapAsList(entities, ExternalIdentifier.class);
-        ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
+        List<PersonExternalIdentifier> externalIdentifier = mapperFacade.mapAsList(entities, PersonExternalIdentifier.class);
+        PersonExternalIdentifiers externalIdentifiers = new PersonExternalIdentifiers();
         externalIdentifiers.setExternalIdentifiers(externalIdentifier);
         return externalIdentifiers;
     }
 
     @Override
-    public ExternalIdentifierEntity toExternalIdentifierEntity(ExternalIdentifier externalIdentifier, ExternalIdentifierEntity existing) {
+    public ExternalIdentifierEntity toExternalIdentifierEntity(PersonExternalIdentifier externalIdentifier, ExternalIdentifierEntity existing) {
         if (externalIdentifier == null) {
             return null;
         }

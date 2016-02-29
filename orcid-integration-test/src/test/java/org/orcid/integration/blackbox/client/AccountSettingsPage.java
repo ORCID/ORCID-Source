@@ -162,7 +162,14 @@ public class AccountSettingsPage {
         }
 
         public void add() {
-            final int numberOfDelegatesBefore = getDelegatesSection().getDelegates().size();
+            int numOfDelegates = 0;
+            try {
+                numOfDelegates = getDelegatesSection().getDelegates().size();
+            } catch(Exception e) {
+                //There are no 
+            }
+            
+            final int numberOfDelegatesBefore = numOfDelegates;
             localXPath.click("td[3]/span/span");
             xpath.click("//form[@ng-submit='addDelegate()']/button");
             utils.colorBoxIsClosed();

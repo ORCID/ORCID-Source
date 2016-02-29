@@ -23,10 +23,14 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class OrcidUrlManager {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidUrlManager.class);
 
     static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
 
@@ -166,8 +170,7 @@ public class OrcidUrlManager {
     }
 
     public String getServerStringWithContextPath(HttpServletRequest request) {
-        String forwardedProto = request.getHeader("X-Forwarded-Proto");
-        String scheme = forwardedProto != null ? forwardedProto : request.getScheme();
+        String scheme = getscheme(request);
 
         StringBuilder sb = new StringBuilder();
 
@@ -176,6 +179,21 @@ public class OrcidUrlManager {
         else
             sb.append(getBaseUriHttp());
         return sb.toString();
+    }
+
+    public static String getscheme(HttpServletRequest request) {
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        String scheme = forwardedProto != null ? forwardedProto : request.getScheme();
+        if (scheme == null) 
+            LOGGER.error("WHAT THE HELL is going on? Request scheme is null.", request);
+        return scheme.toLowerCase();
+    }
+    
+    public static boolean isSecure(HttpServletRequest request) {
+        if (OrcidUrlManager.getscheme(request).equals("https")) {
+          return true;  
+        }
+        return false;
     }
 
     public static String getPathWithoutContextPath(HttpServletRequest request) {

@@ -37,7 +37,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -50,33 +49,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class AddressTest extends BlackBoxBase {
+public class AddressTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
@@ -88,9 +64,9 @@ public class AddressTest extends BlackBoxBase {
      */
     @Test
     public void testGetAddressWithMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse response = memberV2ApiClient.viewAddresses(user1OrcidId, accessToken);
+        ClientResponse response = memberV2ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
@@ -103,14 +79,14 @@ public class AddressTest extends BlackBoxBase {
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
 
         Address address = new Address();       
         address.setCountry(new Country(Iso3166Country.CR));
         address.setVisibility(Visibility.PUBLIC);
         //Create
-        ClientResponse response = memberV2ApiClient.createAddress(user1OrcidId, address, accessToken);
+        ClientResponse response = memberV2ApiClient.createAddress(getUser1OrcidId(), address, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -121,7 +97,7 @@ public class AddressTest extends BlackBoxBase {
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         
         //Get all and verify
-        response = memberV2ApiClient.viewAddresses(user1OrcidId, accessToken);
+        response = memberV2ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
@@ -146,12 +122,12 @@ public class AddressTest extends BlackBoxBase {
         assertTrue(foundCR);
                
         //Get it
-        response = memberV2ApiClient.viewAddress(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewAddress(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         address = response.getEntity(Address.class);
         assertNotNull(address);
         assertNotNull(address.getSource());
-        assertEquals(client1ClientId, address.getSource().retrieveSourcePath());
+        assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
         assertNotNull(address.getCountry());
         assertNotNull(address.getCountry().getValue());        
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
@@ -159,10 +135,10 @@ public class AddressTest extends BlackBoxBase {
         
         //Update 
         address.getCountry().setValue(Iso3166Country.PA);
-        response = memberV2ApiClient.updateAddress(user1OrcidId, address, accessToken);
+        response = memberV2ApiClient.updateAddress(getUser1OrcidId(), address, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
-        response = memberV2ApiClient.viewAddress(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewAddress(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         Address updatedAddress = response.getEntity(Address.class);
         assertNotNull(updatedAddress);
@@ -171,7 +147,7 @@ public class AddressTest extends BlackBoxBase {
         assertEquals(address.getPutCode(), updatedAddress.getPutCode());
                 
         //Delete
-        response = memberV2ApiClient.deleteAddress(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.deleteAddress(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
@@ -187,7 +163,7 @@ public class AddressTest extends BlackBoxBase {
      */
     @Test
     public void testGetAddressWithPublicAPI() throws InterruptedException, JSONException {
-        ClientResponse response = publicV2ApiClient.viewAddressesXML(user1OrcidId);
+        ClientResponse response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
@@ -199,7 +175,7 @@ public class AddressTest extends BlackBoxBase {
     
     @Test
     public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         
         Address address = new Address();       
@@ -207,7 +183,7 @@ public class AddressTest extends BlackBoxBase {
         address.setVisibility(Visibility.PUBLIC);
         address.setPutCode(1234567890L);
         
-        ClientResponse response = memberV2ApiClient.updateAddress(user1OrcidId, address, accessToken);
+        ClientResponse response = memberV2ApiClient.updateAddress(getUser1OrcidId(), address, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }

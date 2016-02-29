@@ -15,13 +15,13 @@
 		<common:source-name />
 	</common:source>	
 	<peer-review:reviewer-role>reviewer</peer-review:reviewer-role>	
-	<peer-review:review-identifiers>		
-		<work:work-external-identifier>
-			<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
-			<common:relationship>self</common:relationship>
-			<work:external-identifier-type>source-work-id</work:external-identifier-type>
-			<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
-		</work:work-external-identifier>
+	<peer-review:review-identifiers>
+		<common:external-id>
+			<common:external-id-type>source-work-id</common:external-id-type>
+			<common:external-id-value>work:external-identifier-id</common:external-id-value>			
+			<common:external-id-url>http://orcid.org</common:external-id-url>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
 	</peer-review:review-identifiers>
 	<peer-review:review-url>peer-review:url</peer-review:review-url>
 	<peer-review:review-type>review</peer-review:review-type>	
@@ -32,10 +32,10 @@
 	</peer-review:review-completion-date>	
 	<peer-review:review-group-id>orcid-generated:12345</peer-review:review-group-id>		
 	<peer-review:subject-external-identifier>			
-		<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
-		<common:relationship>self</common:relationship>
-		<work:external-identifier-type>doi</work:external-identifier-type>
-		<work:external-identifier-id>peer-review:subject-external-identifier-id</work:external-identifier-id>			
+		<common:external-id-type>doi</common:external-id-type>
+		<common:external-id-value>peer-review:subject-external-identifier-id</common:external-id-value>			
+		<common:external-id-url>http://orcid.org</common:external-id-url>
+		<common:external-id-relationship>self</common:external-id-relationship>
 	</peer-review:subject-external-identifier>
 	<peer-review:subject-container-name>peer-review:subject-container-name</peer-review:subject-container-name>
 	<peer-review:subject-type>journal-article</peer-review:subject-type>

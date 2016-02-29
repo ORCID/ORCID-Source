@@ -517,7 +517,48 @@
 							</div>						  
 					   </div>
 					</div>
-					
+					<#if RequestParameters['bibtexExport']??>
+						<!-- BibTeX Export Layout -->					
+						<div ng-show="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
+							<div class=box-border" ng-show="canReadFiles" ng-cloak>
+							   <h4>Export BibTeX</h4><span ng-click="toggleBibtexExport()" class="hide-importer">Hide export BibTeX</span>
+							   <div class="row full-height-row">
+							   	   <div class="col-md-9 col-sm-9 col-xs-8">
+									   <p>
+									   		Export your works to a BibTeX file. For more information see <a href="">exporting works</a>.
+									   </p> 
+								   </div>
+								   <div class="col-md-3 col-sm-3 col-xs-4">
+								   		<span class="bibtext-options">							   									   		
+										    <a class="bibtex-cancel" ng-click="toggleBibtexExport()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
+										    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openBibtexExportDialog()">Export</span>										
+										</span>								    
+								   </div>
+							   </div>
+							</div>
+							<div ng-show="loadingScripts == true" class="text-center ng-hide" ng-cloak>
+							    <i id="" class="glyphicon glyphicon-refresh spin x2 green"></i>
+							</div>
+							<span class="dotted-bar" ng-show="scriptsLoaded"></span>
+							<div class="bottomBuffer" ng-show="scriptsLoaded && !bibtexGenerated && !bibtexExportError" ng-cloak>
+								<ul class="inline-list">
+									<li>
+										Generating BibTeX, please wait...
+									</li>
+									<li>
+										&nbsp;<span><i id="" class="glyphicon glyphicon-refresh spin x1 green"></i></span>		
+									</li>
+								</ul>
+								 
+							</div>
+							<div class="alert alert-block" ng-show="bibtexExportError">
+								<strong>Something went wrong, please try again...</strong>
+							</div>
+							<div ng-show="bibtexGenerated && !bibtexExportError" class="bottomBuffer">							
+									<a download="orcid.bib" href="{{bibtexURL}}" id="downloadlink">Click to Download</a>
+							</div>
+						</div>		
+					</#if>
 					<!-- Bibtex Importer Wizard -->
 					<div ng-show="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
 						<div class=box-border" ng-show="canReadFiles" ng-cloak>

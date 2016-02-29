@@ -23,9 +23,9 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -98,14 +98,14 @@ public class PersonValidator {
         }
     }
     
-    public static void validateExternalIdentifier(ExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag) {
+    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag) {
         //Validate common name not empty
-        if(PojoUtil.isEmpty(externalIdentifier.getCommonName())) {
+        if(PojoUtil.isEmpty(externalIdentifier.getType())) {
             String message = "Common name field must not be empty";
             LOGGER.error(message);
             throw new OrcidValidationException(message);
         } else {
-            if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getCommonName().length()) {
+            if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getType().length()) {
                 String message = "Common name field must not be longer than " + SiteConstants.MAX_LENGTH_255 + " characters";
                 LOGGER.error(message);
                 throw new OrcidValidationException(message);
@@ -113,12 +113,12 @@ public class PersonValidator {
         }
                 
         //Validate reference not empty
-        if(PojoUtil.isEmpty(externalIdentifier.getReference())) {
+        if(PojoUtil.isEmpty(externalIdentifier.getValue())) {
             String message = "Reference field must not be empty";
             LOGGER.error(message);
             throw new OrcidValidationException(message);
         } else {
-            if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getReference().length()) {
+            if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getValue().length()) {
                 String message = "Reference field must not be longer than " + SiteConstants.MAX_LENGTH_255 + " characters";
                 LOGGER.error(message);
                 throw new OrcidValidationException(message);

@@ -41,8 +41,8 @@ import io.swagger.annotations.ApiModelProperty;
 public class Subject implements Serializable {    
     private static final long serialVersionUID = -3011951615514804083L;
     
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
-    protected WorkExternalIdentifiers externalIdentifiers;
+    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
     protected WorkType type;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review")
@@ -63,11 +63,11 @@ public class Subject implements Serializable {
         this.putCode = putCode;
     }
     
-    public WorkExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(WorkExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 

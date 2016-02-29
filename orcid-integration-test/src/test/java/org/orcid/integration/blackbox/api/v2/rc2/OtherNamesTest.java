@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -51,35 +50,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class OtherNamesTest extends BlackBoxBase {
-    
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
-    
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;            
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;    
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    
-    
+public class OtherNamesTest extends BlackBoxBaseRC2 {
+    protected static Map<String, String> accessTokens = new HashMap<String, String>();    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
@@ -92,9 +66,9 @@ public class OtherNamesTest extends BlackBoxBase {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetOtherNamesWihtMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse getResponse = memberV2ApiClient.viewOtherNames(user1OrcidId, accessToken);
+        ClientResponse getResponse = memberV2ApiClient.viewOtherNames(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         OtherNames otherNames = getResponse.getEntity(OtherNames.class);
         assertNotNull(otherNames);
@@ -109,12 +83,12 @@ public class OtherNamesTest extends BlackBoxBase {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteOtherName() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);        
         OtherName otherName = getOtherName(); 
         
         //Create
-        ClientResponse response = memberV2ApiClient.createOtherName(this.user1OrcidId, otherName, accessToken);
+        ClientResponse response = memberV2ApiClient.createOtherName(getUser1OrcidId(), otherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -125,7 +99,7 @@ public class OtherNamesTest extends BlackBoxBase {
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         
         //Get and verify
-        response = memberV2ApiClient.viewOtherNames(user1OrcidId, accessToken);        
+        response = memberV2ApiClient.viewOtherNames(getUser1OrcidId(), accessToken);        
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         OtherNames otherNames = response.getEntity(OtherNames.class);
         assertNotNull(otherNames);
@@ -155,7 +129,7 @@ public class OtherNamesTest extends BlackBoxBase {
         assertTrue(haveNew);
         
         //Get it
-        response = memberV2ApiClient.viewOtherName(this.user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         otherName = response.getEntity(OtherName.class);
         assertNotNull(otherName);
@@ -165,10 +139,10 @@ public class OtherNamesTest extends BlackBoxBase {
         
         //Update it
         otherName.setContent("Other Name #1 - Updated");        
-        response = memberV2ApiClient.updateOtherName(this.user1OrcidId, otherName, accessToken);
+        response = memberV2ApiClient.updateOtherName(this.getUser1OrcidId(), otherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
-        response = memberV2ApiClient.viewOtherName(this.user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         otherName = response.getEntity(OtherName.class);
         assertNotNull(otherName);
@@ -177,7 +151,7 @@ public class OtherNamesTest extends BlackBoxBase {
         assertEquals(putCode, otherName.getPutCode());        
         
         //Delete
-        response = memberV2ApiClient.deleteOtherName(this.user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
@@ -194,7 +168,7 @@ public class OtherNamesTest extends BlackBoxBase {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
-        ClientResponse getResponse = publicV2ApiClient.viewOtherNamesXML(user1OrcidId);
+        ClientResponse getResponse = publicV2ApiClient.viewOtherNamesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         OtherNames otherNames = getResponse.getEntity(OtherNames.class);
         assertNotNull(otherNames);
@@ -207,7 +181,7 @@ public class OtherNamesTest extends BlackBoxBase {
         
         OtherName otherName1 = otherNames.getOtherNames().get(0);
         
-        getResponse = publicV2ApiClient.viewOtherNameXML(user1OrcidId, otherName1.getPutCode());
+        getResponse = publicV2ApiClient.viewOtherNameXML(getUser1OrcidId(), otherName1.getPutCode());
         assertNotNull(getResponse);
         
         OtherName otherName = getResponse.getEntity(OtherName.class);
@@ -219,13 +193,13 @@ public class OtherNamesTest extends BlackBoxBase {
         
     @Test
     public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         
         OtherName otherName = getOtherName();      
         otherName.setPutCode(1234567890L);
         
-        ClientResponse response = memberV2ApiClient.updateOtherName(user1OrcidId, otherName, accessToken);
+        ClientResponse response = memberV2ApiClient.updateOtherName(getUser1OrcidId(), otherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
