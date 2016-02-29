@@ -60,10 +60,10 @@
 							</span>
 	                    </td>
 	                    <td width="26">
-	                        <a href="" class="glyphicon glyphicon-trash grey"
+	                        <a id="delete-email_{{email.value}}" href="" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && !emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmail(email)"></a>
-							<a href="" class="glyphicon glyphicon-trash grey"
+							<a id="delete-email_{{email.value}}" href="" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmailInline(email)"></a>
 	                    </td>

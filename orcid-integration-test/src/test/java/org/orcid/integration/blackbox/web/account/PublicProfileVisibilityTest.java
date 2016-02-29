@@ -16,7 +16,9 @@
  */
 package org.orcid.integration.blackbox.web.account;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -25,17 +27,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.By.ById;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.client.SigninPage;
-import org.springframework.beans.factory.annotation.Value;
+import org.orcid.integration.blackbox.client.Utils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,35 +49,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Shobhit Tyagi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-web-context.xml" })
-public class PublicProfileVisibilityTest {
+@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
+public class PublicProfileVisibilityTest extends BlackBoxBase {
 
     private WebDriver webDriver;
     private OrcidUi orcidUi;
-
-    @Value("${org.orcid.web.baseUri}")
-    public String baseUri;
-
-    // User 1
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-
-    // User 2
-    @Value("${org.orcid.web.testUser2.username}")
-    public String user2UserName;
-    @Value("${org.orcid.web.testUser2.password}")
-    public String user2Password;
-    @Value("${org.orcid.web.testUser2.orcidId}")
-    public String user2OrcidId;
-
+    
     @Before
     public void before() {
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
     }
     
     @After
@@ -91,35 +78,35 @@ public class PublicProfileVisibilityTest {
         List<Email> emails = emailsSection.getEmails();
         Email addedEmail = emails.stream().filter(e -> e.getEmail().equals(emailValue)).findFirst().get();
         assertNotNull("The added email should be there: " + emailValue, addedEmail);
-        webDriver.quit();
         
         //Change Visibility
-        webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
-        signin();
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
         WebElement toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
         WebElement privateVisibility = webDriver.findElement(By.id("email-"+emailValue+"-public-id"));
         privateVisibility.click();
-        webDriver.quit();
         
         //Verify
         List<WebElement> list = checkPublicProfile(emailValue);
         assertTrue(list.size() > 0);
         
         //Revert Visibility
-        webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
-        signin();
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
         toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
         privateVisibility = webDriver.findElement(By.id("email-"+emailValue+"-private-id"));
-        privateVisibility.click();
-        webDriver.quit();
+        privateVisibility.click();        
         
         //Verify
         list = checkPublicProfile(emailValue);
         assertEquals(0, list.size());
+        
+        //Rollback changes
+        accountSettingsPage = orcidUi.getAccountSettingsPage();
+        accountSettingsPage.visit();
+        emailsSection = accountSettingsPage.getEmailsSection();
+        emailsSection.toggleEdit();
+        emailsSection.removeEmail(emailValue);        
     }
     
     @Test
@@ -145,7 +132,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
@@ -181,7 +168,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         toggle = webDriver.findElement(By.id("open-edit-country"));
         toggle.click();
@@ -219,7 +206,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
@@ -262,7 +249,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
@@ -309,7 +296,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         privateVisibility = webDriver.findElement(By.id("affiliation-"+educationName+"-public-id"));
         privateVisibility.click();
@@ -352,7 +339,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         privateVisibility = webDriver.findElement(By.id("affiliation-"+employmentName+"-public-id"));
         privateVisibility.click();
@@ -400,7 +387,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         privateVisibility = webDriver.findElement(By.id("funding-"+fundingName+"-public-id"));
         privateVisibility.click();
@@ -442,7 +429,7 @@ public class PublicProfileVisibilityTest {
         
         //Set Public Visibility
         webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
         privateVisibility = webDriver.findElement(By.id("work-"+workName+"-public-id"));
         privateVisibility.click();
@@ -456,14 +443,13 @@ public class PublicProfileVisibilityTest {
     private void signin() {
         SigninPage signinPage = orcidUi.getSigninPage();
         signinPage.visit();
-        signinPage.signIn(user1UserName, user1Password);
+        signinPage.signIn(getUser1UserName(), getUser1Password());
     }
     
     private List<WebElement> checkPublicProfile(String value) {
-        webDriver = new FirefoxDriver();
-        webDriver.get(baseUri + "/" + user1OrcidId);
+        webDriver.get(getWebBaseUrl() + "/" + getUser1OrcidId());
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.presenceOfElementLocated(ById.id("orcid-id")));        
         List<WebElement> list = webDriver.findElements(By.xpath("//*[contains(text(),'" + value + "')]"));
-        webDriver.quit();
         return list;
     }
 }
