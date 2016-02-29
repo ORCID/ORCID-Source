@@ -29,7 +29,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -37,8 +37,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-oauth-orcid-api-client-context.xml" })
-public class Orcid2StepOauthFlowTest extends BlackBoxBase {
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+public class Orcid2StepOauthFlowTest extends BlackBoxBaseRC1 {
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
@@ -143,8 +143,8 @@ public class Orcid2StepOauthFlowTest extends BlackBoxBase {
 
     private ClientResponse getClientResponse(String scope) {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", client1ClientId);
-        params.add("client_secret", client1ClientSecret);
+        params.add("client_id", this.getClient1ClientId());
+        params.add("client_secret", this.getClient1ClientSecret());
         params.add("grant_type", "client_credentials");
         params.add("scope", scope);
         return oauthT2Client.obtainOauth2TokenPost("client_credentials", params);

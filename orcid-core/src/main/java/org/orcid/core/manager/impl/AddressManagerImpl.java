@@ -229,12 +229,14 @@ public class AddressManagerImpl implements AddressManager {
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
             boolean deleteMe = true;            
-            for(Address updatedOrNew : addresses.getAddress()) {
-                if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
-                    deleteMe = false;
-                    break;
+            if(addresses.getAddress() != null) {
+                for(Address updatedOrNew : addresses.getAddress()) {
+                    if(existingAddress.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
                 }
-            }                                   
+            }
             if(deleteMe) {
                 try {
                     addressDao.deleteAddress(orcid, existingAddress.getId());

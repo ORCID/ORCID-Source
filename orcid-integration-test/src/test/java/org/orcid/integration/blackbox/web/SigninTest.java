@@ -51,7 +51,7 @@ public class SigninTest {
     @Before
     public void before() {
         webDriver = new FirefoxDriver();
-        // webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        webDriver.get(baseUri + "/userStatus.json?logUserOut=true");
     }
 
     @After
