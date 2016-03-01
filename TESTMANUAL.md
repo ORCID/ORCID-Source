@@ -35,6 +35,33 @@ Steps to be completed before each release
 5. Reset password with random value generated using [LastPass generator](https://lastpass.com/generatepassword.php) or similar
 6. Visit https://qa.orcid.org/signin and sign in using the new password created in the previous steps
 
+###Create Public API Client
+1. Visit https://qa.orcid.org/developer-tools
+2. Create a new public client app:
+    * Name: ma_test_03mar2016
+    * Website: http://qa.orcid.org
+    * Description: ma_test_03mar2016
+    * Redirect URI: https://developers.google.com/oauthplayground
+
+Use this public client ID/secret for the Public API tests below.
+
+###Manage Members
+1. Visit https://qa.orcid.org/manage-members and sign in with admin account:
+    * adminemail@domain.org
+    * XXXXXXXX
+2. Create a new client group:
+    * Member name: ma_test_group_[DD][month][YYYY] (ex: ma_test_group_24feb2016)
+    * Client group email: ma_test_group_[DD][month][YYYY]@mailinator.com (ex: ma_test_group_24feb2016@mailinator.com)
+    * Salesforce ID: XXXXXXXXXXXXXXX (15 characters)
+    * Member type: Premium institution
+3. Switch accounts to the group that you just created
+4. Add a new member API client to the group
+    * Display name: ma_test_client_[DD][month][YYYY] (ex: ma_test_client24feb2016)
+    * Website: http://qa.orcid.org/
+    * Description: ma_test_client
+    * Redirect URI: https://developers.google.com/oauthplayground
+
+Use this member client ID/secret for the Member API tests below.
 
 ##API
 ###Public
