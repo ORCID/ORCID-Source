@@ -18,9 +18,9 @@
 -->
 <#include "/common/browser-checks.ftl" />
 <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
-	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName}', '${RequestParameters.lastName}', '${RequestParameters.emailId}')">
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName}', '${RequestParameters.lastName}', '${RequestParameters.emailId}', '${RequestParameters.linkRequest}')">
 <#else>
-	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '')">
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '', '')">
 </#if>
 <fn-form update-fn="postRegister()">
 	<!-- span class="orcid-error" ng-show="register.errors.length > 0">

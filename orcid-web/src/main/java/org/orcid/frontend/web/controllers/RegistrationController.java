@@ -525,11 +525,24 @@ public class RegistrationController extends BaseController {
         validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
+            Object[] arguments = oe.getArguments();
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 // XXX
-                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", oe.getArguments()));
+                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
             } else {
-                reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
+                Object email = "";
+                if(arguments != null && arguments.length > 0){
+                   email = arguments[0]; 
+                }
+                String link = "/signin";
+                String linkType = reg.getLinkType();
+                if("social".equals(linkType)){
+                    link = "/social/access";
+                }
+                else if("shibboleth".equals(linkType)){
+                    link = "/shibboleth/signin";
+                }
+                reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
             }
         }
 

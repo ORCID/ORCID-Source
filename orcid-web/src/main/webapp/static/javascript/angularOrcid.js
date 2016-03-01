@@ -3378,7 +3378,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
     };
 
-    $scope.getRegister = function(givenName, familyName, email){
+    $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
             dataType: 'json',
@@ -3387,6 +3387,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                $scope.register.givenNames.value=givenName;
                $scope.register.familyNames.value=familyName;
                $scope.register.email.value=email;
+               $scope.register.linkType=linkFlag;
                $scope.$apply();
 
                if(email !== ''){
