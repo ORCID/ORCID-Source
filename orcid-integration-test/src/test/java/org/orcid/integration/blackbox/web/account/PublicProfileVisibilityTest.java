@@ -177,9 +177,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();    
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@test='" + otherNameValue + "']")));
-        WebElement otherNameToDelete = webDriver.findElement(By.xpath("//input[text() = '" + otherNameValue + "']"));
-        otherNameToDelete.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='other-name']")));
+        List<WebElement> otherNames = webDriver.findElements(By.xpath("//input[@name='other-name']"));
+        WebElement toClick = null;
+        for(WebElement element : otherNames) {
+            if(otherNameValue.equals(element.getAttribute("value"))) {
+                toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
+                toClick.click();
+                break;
+            }
+        }        
         saveButton = webDriver.findElement(By.id("save-other-names"));
         saveButton.click();
         new WebDriverWait(webDriver, 1);
