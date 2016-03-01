@@ -33,7 +33,7 @@
 	        <!-- Email table -->
 	        <div class="table-responsive bottomBuffer">
 	            <table class="table">
-	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" id="email_{{email.value}}">
+	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" name="email">
 	                    <!-- Primary Email -->
 	                    <td ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-3 col-xs-12 email">
 	                    </td>

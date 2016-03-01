@@ -54,10 +54,7 @@
 					clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}" 
 					publicClick="setPrivacy(group.getActive(), 'PUBLIC', $event)" 
 	                  	limitedClick="setPrivacy(group.getActive(), 'LIMITED', $event)" 
-	                  	privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" 
-	                  	publicId="affiliation-{{group.getActive().affiliationName.value}}-public-id"
-	                  	limitedId="affiliation-{{group.getActive().affiliationName.value}}-limited-id"
-	                  	privateId="affiliation-{{group.getActive().affiliationName.value}}-private-id" />
+	                  	privateClick="setPrivacy(group.getActive(), 'PRIVATE', $event)" />
                 </li>			        
         	</ul>
         </#if>

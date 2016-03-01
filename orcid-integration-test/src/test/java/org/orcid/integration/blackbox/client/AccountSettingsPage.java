@@ -86,7 +86,7 @@ public class AccountSettingsPage {
             });
         }
         public void removeEmail(String emailValue) {
-            String xpathEmailId = "//tr[@id='email_" + emailValue + "']/td[5]/a[@name='delete-email']";
+            String xpathEmailId = "//tr[@name = 'email' and descendant::td[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
             if(xpath.isPresent(xpathEmailId)) {                
                 xpath.click(xpathEmailId);
                 String xpathConfirmDeleteEmail = "id('confirm-delete-email_" + emailValue + "')";

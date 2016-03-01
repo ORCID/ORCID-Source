@@ -128,10 +128,7 @@
                                                 clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
                                                 publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
                                                 limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"
-                                                publicId="funding-{{group.getActive().fundingTitle.title.value}}-public-id"
-                                                limitedId="funding-{{group.getActive().fundingTitle.title.value}}-limited-id"
-                                                privateId="funding-{{group.getActive().fundingTitle.title.value}}-private-id" />
+                                                privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
                                         </li>
                                     </#if>
                                 </ul>

@@ -108,7 +108,7 @@
 		            			 <div class="emails-box" id="public-emails-div">
 			            			 <#list profile.orcidBio.contactDetails.email as email>
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
-			            					<div id="email_${email.value}">${email.value}</div>
+			            					<div name="email">${email.value}</div>
 			        					</#if>    					 		
 			            			 </#list>
 		            			 </div>		            			

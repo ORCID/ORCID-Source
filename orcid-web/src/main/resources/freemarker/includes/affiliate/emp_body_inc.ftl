@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<ul ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small workspace-border-box affiliation-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" orcid-put-code="{{group.getActive().putCode.value}}">  
+<ul id="employments-list" ng-hide="!affiliationsSrvc.employments.length" class="workspace-affiliations workspace-body-list bottom-margin-medium" ng-cloak>
+	<li class="bottom-margin-small workspace-border-box affiliation-box card" ng-repeat="group in affiliationsSrvc.employments | orderBy:sortState.predicate:sortState.reverse" employment-put-code="{{group.getActive().putCode.value}}">  
 	    <#include "aff_row_inc_v3.ftl" />
 	</li>
 </ul>
