@@ -117,6 +117,17 @@ public class Orcid3StepOauthFlowTest extends BlackBoxBaseRC1 {
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), scopes, this.getClient1RedirectUri()));
         url = webDriver.getCurrentUrl();
         evaluateUrl(url, "/premium-notification");
+        
+        scopes = "/group-id-record/read /orcid-works/create";
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), scopes, this.getClient1RedirectUri()));
+        url = webDriver.getCurrentUrl();
+        evaluateUrl(url, "/group-id-record/read");
+        
+        scopes = "/group-id-record/update /orcid-works/create";
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), scopes, this.getClient1RedirectUri()));
+        url = webDriver.getCurrentUrl();
+        evaluateUrl(url, "/group-id-record/update");
+        
     }
 
     private void evaluateUrl(String currentUrl, String invalidScope) {
