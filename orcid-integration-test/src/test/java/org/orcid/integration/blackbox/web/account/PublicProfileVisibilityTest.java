@@ -16,7 +16,6 @@
  */
 package org.orcid.integration.blackbox.web.account;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -601,6 +600,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
         
         //Rollback changes
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));        
+        String putCode = fundingElement.getAttribute("funding-put-code");
+        WebElement deleteButton = webDriver.findElement(By.id("delete-funding_" + putCode));
+        deleteButton.click();
+        
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")));
+        WebElement confirmDeleteButton = webDriver.findElement(ById.id("confirm-delete-funding"));
+        confirmDeleteButton.click();
+        
     }
     
     

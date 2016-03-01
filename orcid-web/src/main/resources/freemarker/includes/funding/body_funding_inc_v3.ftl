@@ -310,7 +310,7 @@
 	                                    </div>	
 	                                </li>
 									<li ng-show="group.activitiesCount == 1">
-									   <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
+									   <a id="delete-funding_{{group.getActive().putCode.value}}" ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
 									      <span class="glyphicon glyphicon-trash"></span>
 									   </a>									
 									  <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true">
