@@ -33,7 +33,7 @@
 	        <!-- Email table -->
 	        <div class="table-responsive bottomBuffer">
 	            <table class="table">
-	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group">
+	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" id="email_{{email.value}}">
 	                    <!-- Primary Email -->
 	                    <td ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-3 col-xs-12 email">
 	                    </td>
@@ -60,10 +60,10 @@
 							</span>
 	                    </td>
 	                    <td width="26">
-	                        <a id="delete-email_{{email.value}}" href="" class="glyphicon glyphicon-trash grey"
+	                        <a name="delete-email" href="" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && !emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmail(email)"></a>
-							<a id="delete-email_{{email.value}}" href="" class="glyphicon glyphicon-trash grey"
+							<a name="delete-email-inline" href="" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmailInline(email)"></a>
 	                    </td>

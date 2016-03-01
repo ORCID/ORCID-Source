@@ -33,6 +33,7 @@ import org.openqa.selenium.By.ById;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -124,8 +125,14 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         showMyOrcidPage();
         WebElement toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
-        WebElement textBox = webDriver.findElement(By.id("other-name"));
-        textBox.clear();
+        List<WebElement> otherNameTextBoxList = webDriver.findElements(By.xpath("//input[@name='other-name']"));
+        WebElement textBox = null;
+        for(WebElement element : otherNameTextBoxList) {
+            if(PojoUtil.isEmpty(element.getAttribute("value"))) {
+                textBox = element;
+                break;
+            }
+        }
         String otherNameValue = "OtherName" + System.currentTimeMillis();
         textBox.sendKeys(otherNameValue);
         
@@ -170,8 +177,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();    
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("other-name" + otherNameValue)));
-        WebElement otherNameToDelete = webDriver.findElement(By.xpath("//input[@id = 'other-name" + otherNameValue + "']/following-sibling::a[1]"));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@test='" + otherNameValue + "']")));
+        WebElement otherNameToDelete = webDriver.findElement(By.xpath("//input[text() = '" + otherNameValue + "']"));
         otherNameToDelete.click();
         saveButton = webDriver.findElement(By.id("save-other-names"));
         saveButton.click();
@@ -358,6 +365,79 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         saveButton.click();
         new WebDriverWait(webDriver, 1);
     }        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @Test
+    public void educationPrivacyTest() throws InterruptedException {
+        Actions action = new Actions(webDriver);
+        WebElement container = webDriver.findElement(By.id("add-education-container"));
+        action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-education"))).click().build().perform();
+        
+        WebElement textBox = webDriver.findElement(By.id("affiliationName"));
+        String educationName = "Education" + System.currentTimeMillis();
+        textBox.sendKeys(educationName);
+        textBox = webDriver.findElement(By.id("city"));
+        textBox.sendKeys("New Delhi");
+        
+        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
+        selectBox.selectByVisibleText("India");
+        WebElement saveButton = webDriver.findElement(By.id("save-education"));
+        saveButton.click();
+                
+        //Set Private Visibility
+        WebElement privateVisibility = webDriver.findElement(By.id("affiliation-"+educationName+"-private-id"));
+        privateVisibility.click();
+        webDriver.quit();
+        
+        //Verify
+        showPublicProfilePage();
+        try {
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
+            fail();
+        } catch(Exception e) {
+            
+        }                        
+        
+        //Set Public Visibility
+        showMyOrcidPage();
+        privateVisibility = webDriver.findElement(By.id("affiliation-"+educationName+"-public-id"));
+        privateVisibility.click();
+        
+        //Verify
+        showPublicProfilePage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
+        
+        //Rollback changes
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + educationName + "']]")));
+        WebElement educationToDelete = webDriver.findElement(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + educationName + "']]"));
+        String putCode = educationToDelete.getAttribute("orcid-put-code");
+        WebElement deleteButton = webDriver.findElement(ById.id("delete-affiliation_" + putCode));
+        deleteButton.click();
+        
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
+        WebElement confirmDeleteButton = webDriver.findElement(ById.id("confirm_delete_affiliation"));
+        confirmDeleteButton.click();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     private void signin() {
         SigninPage signinPage = orcidUi.getSigninPage();

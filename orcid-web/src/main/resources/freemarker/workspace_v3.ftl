@@ -111,7 +111,7 @@
 	        	   <!-- Edit -->
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
-	        	          <input id="other-name{{otherName.content}}" type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
+	        	          <input name="other-name" type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()" test="{{otherName.content}}">
 	        	          <a ng-click="deleteOtherName(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
 						     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
