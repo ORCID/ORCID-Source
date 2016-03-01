@@ -227,7 +227,7 @@
         	   		<div ng-show="showEdit == true" ng-cloak>
         	      		<div ng-repeat="keyword in keywordsForm.keywords">
         	      	  		<div class="icon-inside-input">
-	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()" id="keyword{{keyword.content}}"></input>
+	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()" name="keyword"></input>
 		        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          	</div>
 	        	          	<span class="orcid-error" ng-show="keyword.errors.length > 0">

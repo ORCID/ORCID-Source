@@ -125,9 +125,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         showMyOrcidPage();
         WebElement toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
-        List<WebElement> otherNameTextBoxList = webDriver.findElements(By.xpath("//input[@name='other-name']"));
+        List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='other-name']"));
         WebElement textBox = null;
-        for(WebElement element : otherNameTextBoxList) {
+        for(WebElement element : elements) {
             if(PojoUtil.isEmpty(element.getAttribute("value"))) {
                 textBox = element;
                 break;
@@ -255,8 +255,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         showMyOrcidPage();
         WebElement toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
-        WebElement textBox = webDriver.findElement(By.id("keyword"));
-        textBox.clear();
+        
+        List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='keyword']"));
+        WebElement textBox = null;
+        for(WebElement element : elements) {
+            if(PojoUtil.isEmpty(element.getAttribute("value"))) {
+                textBox = element;
+                break;
+            }
+        }
+                
         String keywordValue = "keyword" + System.currentTimeMillis();
         textBox.sendKeys(keywordValue);
         
@@ -299,10 +307,19 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         //Rollback changes                
         showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
-        toggle.click();    
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("keyword" + keywordValue)));
-        WebElement otherNameToDelete = webDriver.findElement(By.xpath("//input[@id = 'keyword" + keywordValue + "']/following-sibling::a[1]"));
-        otherNameToDelete.click();
+        toggle.click();  
+        
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")));
+        List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));
+        WebElement toClick = null;
+        for(WebElement element : keywords) {
+            if(keywordValue.equals(element.getAttribute("value"))) {
+                toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
+                toClick.click();
+                break;
+            }
+        }        
+        
         saveButton = webDriver.findElement(By.id("save-keywords"));
         saveButton.click();
         new WebDriverWait(webDriver, 1);
