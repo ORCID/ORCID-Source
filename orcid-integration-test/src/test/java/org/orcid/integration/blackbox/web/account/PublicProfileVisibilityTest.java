@@ -310,11 +310,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         toggle.click();  
         
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")));
-        List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));
-        WebElement toClick = null;
+        List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));       
         for(WebElement element : keywords) {
             if(keywordValue.equals(element.getAttribute("value"))) {
-                toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
+                WebElement toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
                 toClick.click();
                 break;
             }
@@ -330,17 +329,24 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
     public void websitesPrivacyTest() {
         WebElement toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
-        WebElement textBox1 = webDriver.findElement(By.id("website-desc"));
-        WebElement textBox2 = webDriver.findElement(By.id("website-value"));
+        List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='website-url']"));
+        WebElement websiteUrl = null;
+        WebElement websiteName = null;
+        for(WebElement element : elements) {
+            if(PojoUtil.isEmpty(element.getAttribute("value"))) {
+                websiteUrl = element;
+                websiteName = element.findElement(By.xpath(".//preceding-sibling::input[@name='website-name']"));
+            }
+        }
         
         long timestamp = System.currentTimeMillis();
         String websiteDesc = "Website" + timestamp;
-        textBox1.clear();
-        textBox1.sendKeys(websiteDesc);
+        websiteName.clear();
+        websiteName.sendKeys(websiteDesc);
         
         String websiteValue = "http://orcid.org/" + timestamp;
-        textBox2.clear();
-        textBox2.sendKeys(websiteValue);
+        websiteUrl.clear();
+        websiteUrl.sendKeys(websiteValue);
         
         //Set Private Visibility
         WebElement privateVisibility = webDriver.findElement(By.id("websites-private-id"));
@@ -381,10 +387,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         //Rollback changes
         showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-websites"));
-        toggle.click();    
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("delete-website_" + websiteDesc)));
-        WebElement otherNameToDelete = webDriver.findElement(ById.id("delete-website_" + websiteDesc));
-        otherNameToDelete.click();
+        toggle.click();                 
+        
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='website-url']")));
+        List<WebElement> websites = webDriver.findElements(By.xpath("//input[@name='website-url']"));
+        for(WebElement element : websites) {
+            if(websiteValue.equals(element.getAttribute("value"))) {
+                WebElement toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
+                toClick.click();
+                break; 
+            }
+        }
+        
         saveButton = webDriver.findElement(By.id("save-websites"));
         saveButton.click();
         new WebDriverWait(webDriver, 1);

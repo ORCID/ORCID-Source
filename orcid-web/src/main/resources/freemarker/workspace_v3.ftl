@@ -287,9 +287,9 @@
 	
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
-	        	          <input id="website-desc{{website.urlName}}" type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
-	        	          <input id="website-value{{website.urlName}}" type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
-		        	      <a id="delete-website_{{website.urlName}}" ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey icon-inside pull-right"></a>	        	              	          
+	        	          <input name="website-name" type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
+	        	          <input name="website-url" type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
+		        	      <a name="delete-website" ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey icon-inside pull-right"></a>	        	              	          
 	        	          <span class="orcid-error" ng-show="website.errors.length > 0">
 						     <div ng-repeat='error in website.errors' ng-bind-html="error"></div>
 					      </span>        	          
