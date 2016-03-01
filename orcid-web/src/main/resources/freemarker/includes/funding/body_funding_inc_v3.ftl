@@ -66,7 +66,7 @@
                 </li><!--  End of header -->
 
 
-                <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true">
+                <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true" funding-put-code="{{funding.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">

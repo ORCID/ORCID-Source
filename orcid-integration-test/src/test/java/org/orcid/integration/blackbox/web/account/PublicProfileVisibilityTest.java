@@ -408,16 +408,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         new WebDriverWait(webDriver, 1);
     }        
     
-    
-    
-    
-    
-    
-    
-    
-    
     @Test
-    public void educationPrivacyTest() throws InterruptedException {
+    public void educationPrivacyTest() {
         Actions action = new Actions(webDriver);
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")));
         WebElement container = webDriver.findElement(By.id("add-education-container"));
@@ -477,12 +469,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         confirmDeleteButton.click();
     }
     
-    
-    
-    
-    
     @Test
-    public void employmentPrivacyTest() throws InterruptedException {
+    public void employmentPrivacyTest() {
         Actions action = new Actions(webDriver);
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-employment-container")));
         WebElement container = webDriver.findElement(By.id("add-employment-container"));
@@ -541,6 +529,81 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         WebElement confirmDeleteButton = webDriver.findElement(ById.id("confirm_delete_affiliation"));
         confirmDeleteButton.click();
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    @Test
+    public void fundingPrivacyTest() throws InterruptedException {
+        Actions action = new Actions(webDriver);
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding-container")));
+        WebElement container = webDriver.findElement(By.id("add-funding-container"));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding")));
+        action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-funding"))).click().build().perform();        
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")));
+        
+        long time = System.currentTimeMillis();
+        
+        WebElement type = webDriver.findElement(By.id("fundingType"));
+        type.sendKeys("Award");
+        
+        String fundingTitle = "Funding Title " + time;
+        WebElement title = webDriver.findElement(By.id("fundingTitle"));
+        title.sendKeys(fundingTitle);
+        
+        WebElement name = webDriver.findElement(By.id("fundingName"));
+        name.sendKeys("Name " + time);
+        
+        WebElement city = webDriver.findElement(By.id("city"));
+        city.sendKeys("San Jose");
+        
+        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
+        selectBox.selectByVisibleText("United States");
+        
+        WebElement saveButton = webDriver.findElement(By.id("save-funding"));
+        saveButton.click();
+        
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        
+        //Change to private
+        WebElement fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
+        WebElement privateVisibilityIcon = fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
+        privateVisibilityIcon.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        
+        //Check public page
+        showPublicProfilePage();
+        try {
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
+            fail();
+        } catch(Exception e) {
+            
+        }                        
+        
+        //Change to public
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
+        WebElement publicVisibilityIcon = fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
+        publicVisibilityIcon.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        
+        //Check public page
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
+        
+        //Rollback changes
+    }
+    
+    
     
     
     
