@@ -56,26 +56,9 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
     @Override
     public String convertTo(ExternalIDs externalIDs, Type<String> arg1) {
         WorkExternalIdentifiers ids = new WorkExternalIdentifiers();
+        WorkExternalIDConverter conv = new WorkExternalIDConverter();
         for (ExternalID externalID : externalIDs.getExternalIdentifier()){
-            WorkExternalIdentifier id = new WorkExternalIdentifier();
-            try{
-                id.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(externalID.getType()));            
-            }catch(IllegalArgumentException e){
-                id.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID); 
-            }
-            
-            id.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
-            
-            if (externalID.getUrl() != null){
-                id.setUrl(new Url(externalID.getUrl().getValue()));                
-            }
-            if (externalID.getRelationship() != null)
-                try{
-                    id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
-                }catch (IllegalArgumentException e){
-                }
-            
-            ids.getExternalIdentifier().add(id);
+            ids.getExternalIdentifier().add(conv.convertToRC1(externalID));
         }        
         return JsonUtils.convertToJsonString(ids);
     }

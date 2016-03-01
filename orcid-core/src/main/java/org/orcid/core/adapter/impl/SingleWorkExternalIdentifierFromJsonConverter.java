@@ -45,7 +45,7 @@ public final class SingleWorkExternalIdentifierFromJsonConverter extends Bidirec
         try{
             workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(source.getType()));
         }catch (IllegalArgumentException e){
-            workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
+            throw e;
         }
         return JsonUtils.convertToJsonString(workExternalIdentifiers);
     }
