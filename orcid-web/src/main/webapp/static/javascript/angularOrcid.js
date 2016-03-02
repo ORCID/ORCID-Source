@@ -3378,7 +3378,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
     };
 
-    $scope.getRegister = function(givenName, familyName, email){
+    $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
             dataType: 'json',
@@ -3387,18 +3387,28 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                $scope.register.givenNames.value=givenName;
                $scope.register.familyNames.value=familyName;
                $scope.register.email.value=email;
+               $scope.register.linkType=linkFlag;
                $scope.$apply();
+
+               if(email !== ''){
+                   // Validate the email as soon as the user arrives at the screen, if it has been pre-populated.
+                   $scope.serverValidate('Email');
+               }
     
                 // make sure inputs stayed trimmed
-                $scope.$watch('register.email.value', function() {
-                    trimAjaxFormText($scope.register.email);
-                    $scope.serverValidate('Email');
+                $scope.$watch('register.email.value', function(newValue, oldValue) {
+                    if(newValue !== oldValue) {
+                        trimAjaxFormText($scope.register.email);
+                        $scope.serverValidate('Email');
+                    }
                 }); // initialize the watch
     
                 // make sure email is trimmed
-                $scope.$watch('register.emailConfirm.value', function() {
-                     trimAjaxFormText($scope.register.emailConfirm);
-                     $scope.serverValidate('EmailConfirm');
+                $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
+                    if(newValue !== oldValue){
+                        trimAjaxFormText($scope.register.emailConfirm);
+                        $scope.serverValidate('EmailConfirm');
+                    }
                 }); // initialize the watch
     
                 $scope.$watch('register.givenNames.value', function() {
