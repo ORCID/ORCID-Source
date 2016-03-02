@@ -5490,6 +5490,10 @@ ul.oauth-icons li {
 	cursor: pointer;
 }
 
+.notifications .archive-checkbox{
+	vertical-align: top;
+} 
+
 .notification-top-bar{
 	display: block;
     height: 40px;

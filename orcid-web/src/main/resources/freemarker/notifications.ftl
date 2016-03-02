@@ -28,7 +28,7 @@
         <div class="notification-top-bar">
         	<ul class="inline-list pull-right">
         		<li>
-        			<button class="btn btn-primary">Archive Selected</button>
+        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()"><i class="glyphicon glyphicon-download-alt"></i> Archive Selected</button>
         			<!-- <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>Archive selected -->
         		</li>
         		<li>&nbsp;</li>
@@ -58,7 +58,7 @@
 	                    <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
 	                    <th>
 		                    <td class="centered">
-			               		<input type="checkbox" ng-change="notificationsSrvc.swapbulkChangeAll()" ng-model="notificationsSrvc.bulkChecked">
+			               		<input type="checkbox" value="" ng-change="notificationsSrvc.swapbulkChangeAll()" ng-model="bulkChecked">
 			               	</td>
 	                    </th>
 	                    
@@ -76,11 +76,11 @@
 	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
 	                    <td class="centered">
-		               		<input type="checkbox" class="centered" ng-model="notificationsSrvc.bulkArchive[notification.putCode]">
+		               		<input type="checkbox" class="centered archive-checkbox" ng-model="notificationsSrvc.bulkArchiveMap[notification.putCode]" ng-hide="notification.archivedDate">
 		               	</td>
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">
-	                    <td colspan="4">
+	                    <td colspan="5">
 	                        <iframe id="{{notification.putCode}}" ng-src="{{ '<@orcid.rootPath '/inbox'/>/' + notification.notificationType + '/' + notification.putCode + '/notification.html'}}" class="notification-iframe" frameborder="0" width="100%" scrolling="no"></iframe>
 	                    </td>
 	                </tr>	                

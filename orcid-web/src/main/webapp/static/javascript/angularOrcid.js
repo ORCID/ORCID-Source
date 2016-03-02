@@ -1492,10 +1492,14 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             serv.reloadNotifications();
         },
         swapbulkChangeAll: function(){
-            serv.bulkChecked = !serv.bulkChecked;            
-            for (var idx in serv.notifications)                
-                serv.bulkEditMap[serv.notifications[idx]] = serv.bulkChecked;
-            //serv.bulkDisplayToggle = false;
+            serv.bulkChecked = !serv.bulkChecked;           
+            for (var idx in serv.notifications)
+                serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;
+        },
+        bulkArchive: function(){
+            for (putCode in serv.bulkArchiveMap)
+                if(serv.bulkArchiveMap[putCode])                    
+                    serv.archive(putCode);            
         }
     };
     serv.getNotifications();
@@ -6929,6 +6933,8 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     $scope.getNotifications = notificationsSrvc.getNotifications;
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
     $scope.notificationsSrvc = notificationsSrvc;
+    $scope.bulkChecked = notificationsSrvc.bulkChecked;
+    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
     
 
     $scope.toggleDisplayBody = function (notificationId) {
