@@ -6483,6 +6483,7 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
     $scope.input = {};
     $scope.input.start = 0;
     $scope.input.rows = 10;
+    $scope.showInitLoader = true;
     $scope.showLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
     $scope.realUserOrcid = orcidVar.realOrcidId;
@@ -6752,9 +6753,11 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
                         $scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
                     }
                 }
+                $scope.showInitLoader = false;
                 $scope.$apply();
             }
         }).fail(function() {
+            $scope.showInitLoader = false;
             // something bad is happening!
             console.log("error with delegates");
         });
