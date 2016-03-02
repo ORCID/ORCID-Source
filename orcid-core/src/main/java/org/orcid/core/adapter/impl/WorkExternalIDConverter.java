@@ -46,17 +46,20 @@ public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, 
     }
 
     /** Currently transforms into rc1 format
-     * TODO: make local class to use JSONUtils on.
      * 
      */
     @Override
     public String convertTo(ExternalID externalID, Type<String> arg1) {
-        //tranform to rc1 WorkExternalIdentifier
+        return JsonUtils.convertToJsonString(convertToRC1(externalID));
+    }
+    
+    protected WorkExternalIdentifier convertToRC1(ExternalID externalID){
         WorkExternalIdentifier id = new WorkExternalIdentifier();
         try{
             id.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(externalID.getType()));            
         }catch(IllegalArgumentException e){
-            id.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID); 
+            //not in the enum (case sensitive - must be lower case
+            throw e;
         }
         id.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
         if (externalID.getUrl()!=null)
@@ -66,7 +69,7 @@ public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, 
                 id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
             }catch (IllegalArgumentException e){
             }
-        return JsonUtils.convertToJsonString(id);
+        return id;
     }
 
 }
