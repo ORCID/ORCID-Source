@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.By.ById;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -542,19 +543,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
         Actions action = new Actions(webDriver);
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")));
-        WebElement container = webDriver.findElement(By.id("add-work-container"));
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")));
-        action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-work"))).click().build().perform();
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding-container")));
+        WebElement container = webDriver.findElement(By.id("add-funding-container"));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding")));
+        action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-funding"))).click().build().perform();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")));
 
         long time = System.currentTimeMillis();
 
-        WebElement category = webDriver.findElement(By.id("workCategory"));
-        category.sendKeys("Publication");
+        WebElement type = webDriver.findElement(By.id("fundingType"));
+        type.sendKeys("Award");
 
-        /////TODO!
-        
         String fundingTitle = "Funding Title " + time;
         WebElement title = webDriver.findElement(By.id("fundingTitle"));
         title.sendKeys(fundingTitle);
@@ -620,7 +619,67 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
 
     @Test
     public void workPrivacyTest() throws InterruptedException {
+        Actions action = new Actions(webDriver);
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")));
+        WebElement container = webDriver.findElement(By.id("add-work-container"));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")));
+        action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-work"))).click().build().perform();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")));
 
+        WebElement category = webDriver.findElement(By.id("workCategory"));
+        category.sendKeys("Publication");
+
+        String workTitle = "Work " + System.currentTimeMillis();
+        WebElement title = webDriver.findElement(By.id("work-title"));
+        title.sendKeys(workTitle);
+
+        WebElement save = webDriver.findElement(By.id("save-new-work"));
+        save.click();
+
+        // Set private
+        (new WebDriverWait(webDriver, FIVE))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+
+        WebElement workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
+        WebElement privateVisibilityIcon = workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
+        privateVisibilityIcon.click();
+        (new WebDriverWait(webDriver, FIVE))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+
+        // Check public page
+        showPublicProfilePage();
+        try {
+            (new WebDriverWait(webDriver, FIVE))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+            fail();
+        } catch (Exception e) {
+
+        }
+
+        // Set public
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+
+        workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
+        WebElement publicVisibilityIcon = workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
+        publicVisibilityIcon.click();
+        (new WebDriverWait(webDriver, FIVE))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+
+        // Check public page
+        showPublicProfilePage();
+        (new WebDriverWait(webDriver, FIVE))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+
+        // Rollback
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
+        String putCode = workElement.getAttribute("orcid-put-code");
+        String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
+        ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
     }
 
     private void signin() {
