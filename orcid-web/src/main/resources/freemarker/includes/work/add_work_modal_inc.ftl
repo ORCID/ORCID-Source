@@ -70,7 +70,7 @@
 					<label><@orcid.msg 'manual_work_form_contents.labeltitle'/></label>
 					<span class="required" ng-class="isValidClass(editWork.title)">*</span>
 				    <div class="relative">
-						<input name="familyNames" type="text" class="form-control"  ng-model="editWork.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/titleValidate.json')" ng-model-onblur/>
+						<input id="work-title" name="familyNames" type="text" class="form-control"  ng-model="editWork.title.value" placeholder="<@orcid.msg 'manual_work_form_contents.add_title'/>" ng-change="serverValidate('works/work/titleValidate.json')" ng-model-onblur/>
 						<span class="orcid-error" ng-show="editWork.title.errors.length > 0">
 							<div ng-repeat='error in editWork.title.errors' ng-bind-html="error"></div>
 						</span>

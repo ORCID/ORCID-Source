@@ -103,14 +103,15 @@
 				             publicClick="setPrivacy('PUBLIC', $event)" 
 		                	     limitedClick="setPrivacy('LIMITED', $event)" 
 		                	     privateClick="setPrivacy('PRIVATE', $event)"
-		                	     elementId="$index" />
+		                	     elementId="$index" publicId="other-names-public-id"
+		                	     limitedId="other-names-limited-id" privateId="other-names-private-id" />
 	                   </span>
 	        	   </div>
 	        	   
 	        	   <!-- Edit -->
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
-	        	          <input type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
+	        	          <input name="other-name" type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
 	        	          <a ng-click="deleteOtherName(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
 						     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
@@ -121,7 +122,7 @@
 	        	      		<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
 	        	      	</li>
 	        	      	<li class="pull-right">
-	        	      		<button class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	      		<button id="save-other-names" class="btn btn-primary" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 	        	      	</li>
 	        	      	<li class="pull-right">
 	        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
@@ -147,20 +148,21 @@
             	<div ng-controller="CountryCtrl" class="workspace-section country"> 
 	            	<div class="workspace-section-header">
 			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
-			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true"></span>
+			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true" id="open-edit-country"></span>
 			            <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 			            	<span ng-repeat="country in countryForm.addresses">			            				            	
 			            		<span ng-show="showEdit == false && country != null && country.countryName != null && country.primary == true" ng-bind="country.countryName" ></span>			            		
 			            	</span>			            	
 			            </span>
-			            <span class="pull-right" ng-show="showEdit == true" ng-cloak>
+			            <span class="pull-right" ng-hide="showEdit == false" ng-cloak>
 			            	<@orcid.privacyToggle3 angularModel="countryForm.visibility.visibility"
 				         		questionClick="toggleClickPrivacyHelp($index)"
 				         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				         		publicClick="setPrivacy('PUBLIC', $event)" 
 	                 	     	limitedClick="setPrivacy('LIMITED', $event)" 
 	                 	     	privateClick="setPrivacy('PRIVATE', $event)"
-	                 	      	elementId="$index"/>
+	                 	      	elementId="$index" publicId="country-public-id"
+		                	    limitedId="country-limited-id" privateId="country-private-id" />
 			            </span>
 		            </div>
 	                <!-- Edit -->
@@ -175,7 +177,7 @@
 						 </div>
 						 <ul class="workspace-section-toolbar">
 	        	      		<li class="pull-right">
-			             		<button class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+			             		<button id="save-country" class="btn btn-primary" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 			             	</li>
 			             	<li class="pull-right">
 				         		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
@@ -203,10 +205,9 @@
 	       	<#else>
 	       		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 		        	<div class="workspace-section-header">
-		        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
-			        	   
+		        	   	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>			        	   
 		        	   	<span ng-hide="showEdit == true">
-		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title=""></span>	
+		        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEdit()" title="" id="open-edit-keywords"></span>	
 		        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 		        	         	{{ $last?keyword.content:keyword.content+ ", "}}
 		        	      	</span>
@@ -218,14 +219,15 @@
 			             	  	publicClick="setPrivacy('PUBLIC', $event)" 
 	                	      	limitedClick="setPrivacy('LIMITED', $event)" 
 	                	      	privateClick="setPrivacy('PRIVATE', $event)"
-	                	      	elementId="$index"/>
+	                	      	elementId="$index" publicId="keywords-public-id"
+		                	    limitedId="keywords-limited-id" privateId="keywords-private-id" />
 		        	   	</span>
 	        	 	</div>
 	        	   
         	   		<div ng-show="showEdit == true" ng-cloak>
         	      		<div ng-repeat="keyword in keywordsForm.keywords">
         	      	  		<div class="icon-inside-input">
-	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()"></input>
+	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()" name="keyword"></input>
 		        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          	</div>
 	        	          	<span class="orcid-error" ng-show="keyword.errors.length > 0">
@@ -237,7 +239,7 @@
 	        	      			<a ng-click="addNew()"><span class="glyphicon glyphicon-plus"></span></a>
 	        	      		</li>
 	        	      		<li class="pull-right">
-	        	      			<button class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
+	        	      			<button id="save-keywords" class="btn btn-primary" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 	        	      		</li>
 	        	      		<li class="pull-right">
 		        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
@@ -265,7 +267,7 @@
 		        	<div class="workspace-section-header">
 		        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
 		        	   <span ng-hide="showEdit == true">
-		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title=""></span><br />
+		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" title="" id="open-edit-websites"></span><br />
 		        	      <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
 		        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
 		        	      </div>
@@ -278,15 +280,16 @@
 				             	publicClick="setPrivacy('PUBLIC', $event)" 
 		                	    limitedClick="setPrivacy('LIMITED', $event)" 
 		                	    privateClick="setPrivacy('PRIVATE', $event)" 
-		                	    elementId="$index"/>
+		                	    elementId="$index" publicId="websites-public-id"
+		                	    limitedId="websites-limited-id" privateId="websites-private-id" />
 		        	   </span>
 		        	</div>
 	
 	        	   <div ng-show="showEdit == true" ng-cloak>
 	        	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
-	        	          <input type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
-	        	          <input type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
-		        	      <a ng-click="deleteWebsite(website)"><span class="glyphicon glyphicon-trash grey pull-right"></span></a>	        	              	          
+	        	          <input name="website-name" type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
+	        	          <input name="website-url" type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
+		        	      <a name="delete-website" ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey icon-inside pull-right"></a>	        	              	          
 	        	          <span class="orcid-error" ng-show="website.errors.length > 0">
 						     <div ng-repeat='error in website.errors' ng-bind-html="error"></div>
 					      </span>        	          
@@ -299,7 +302,7 @@
 	        	      		</a>
 	        	      	</li>
 	        	      	<li class="pull-right">
-	        	      		<button class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>		
+	        	      		<button id="save-websites" class="btn btn-primary" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>		
 	        	      	</li>
 	        	      	<li class="pull-right">
 	        	      		<a class="cancel-option" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
@@ -324,9 +327,9 @@
 		        	<div class="workspace-section-header">
 		        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>
 		        	   <span ng-hide="showEdit == true">
-		        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()"></span>
+		        	      	<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEdit()" id="open-edit-emails"></span>
 		        	   </span>
-		        	   <div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
+		        	   <div id="emailSectionId" ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
 		        	   		<div ng-bind="email.value"></div>
 		        	   		<div ng-show="showEdit == true" ng-cloak>
 			        	   		<@orcid.privacyToggle3
@@ -336,7 +339,8 @@
 									publicClick="emailSrvc.setPrivacy(email, 'PUBLIC', $event)" 
 				                  	limitedClick="emailSrvc.setPrivacy(email, 'LIMITED', $event)" 
 				                  	privateClick="emailSrvc.setPrivacy(email, 'PRIVATE', $event)" 
-				                  	elementId="$index" />
+				                  	elementId="$index" publicId="email-{{email.value}}-public-id"
+		                	    	limitedId="email-{{email.value}}-limited-id" privateId="email-{{email.value}}-private-id" />
 		        	   		</div>
 		        	   </div>
 		        	   <div ng-show="showEdit == true" ng-cloak>

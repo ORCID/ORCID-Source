@@ -2539,7 +2539,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
-                //console.log(angular.toJson(data));
                 $scope.$apply();
             }
         }).fail(function(){
@@ -3062,7 +3061,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;                
+                $scope.countryForm = data;  
                 $scope.$apply();                
             }
         }).fail(function(){

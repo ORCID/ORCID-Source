@@ -85,6 +85,15 @@ public class AccountSettingsPage {
                 }
             });
         }
+        public void removeEmail(String emailValue) {
+            String xpathEmailId = "//tr[@name = 'email' and descendant::td[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
+            if(xpath.isPresent(xpathEmailId)) {                
+                xpath.click(xpathEmailId);
+                String xpathConfirmDeleteEmail = "id('confirm-delete-email_" + emailValue + "')";
+                utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathConfirmDeleteEmail)));
+                xpath.click(xpathConfirmDeleteEmail);
+            }            
+        }
     }
 
     public class Email {
