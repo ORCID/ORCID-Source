@@ -70,14 +70,14 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.GroupAble;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
 import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
+import org.orcid.jaxb.model.record_rc2.GroupAble;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
@@ -666,6 +666,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
         Delegation delegation = null;
+        
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
         Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
         
@@ -733,10 +734,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             person.setName(name);
         }
 		
-		Date lastModified = getLastModified(orcid);
-		long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-
-		person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
+        Date lastModified = getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
@@ -762,6 +762,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
         Delegation delegation = null;
+        
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
         Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
         LastModifiedDate delLastModified = null;

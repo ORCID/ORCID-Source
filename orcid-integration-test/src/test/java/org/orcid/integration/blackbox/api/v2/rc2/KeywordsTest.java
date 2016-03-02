@@ -38,7 +38,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -51,33 +50,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class KeywordsTest extends BlackBoxBase {
+public class KeywordsTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
@@ -91,9 +67,9 @@ public class KeywordsTest extends BlackBoxBase {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetKeywordsWihtMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse response = memberV2ApiClient.viewKeywords(user1OrcidId, accessToken);
+        ClientResponse response = memberV2ApiClient.viewKeywords(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
@@ -108,13 +84,13 @@ public class KeywordsTest extends BlackBoxBase {
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         Keyword keyword = new Keyword();
         keyword.setContent("keyword-3");
         keyword.setVisibility(Visibility.PUBLIC);
         //Create
-        ClientResponse response = memberV2ApiClient.createKeyword(user1OrcidId, keyword, accessToken);
+        ClientResponse response = memberV2ApiClient.createKeyword(getUser1OrcidId(), keyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -125,7 +101,7 @@ public class KeywordsTest extends BlackBoxBase {
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         
         //Get all and verify
-        response = memberV2ApiClient.viewKeywords(user1OrcidId, accessToken);
+        response = memberV2ApiClient.viewKeywords(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
@@ -145,7 +121,7 @@ public class KeywordsTest extends BlackBoxBase {
                 found2 = true;
             } else {
                 assertEquals("keyword-3", existingKeyword.getContent());
-                assertEquals(client1ClientId, existingKeyword.getSource().retrieveSourcePath());
+                assertEquals(getClient1ClientId(), existingKeyword.getSource().retrieveSourcePath());
                 found3 = true;
             }
         }
@@ -155,21 +131,21 @@ public class KeywordsTest extends BlackBoxBase {
         assertTrue(found3);
                
         //Get it
-        response = memberV2ApiClient.viewKeyword(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         keyword = response.getEntity(Keyword.class);
         assertNotNull(keyword);
         assertNotNull(keyword.getSource());
-        assertEquals(client1ClientId, keyword.getSource().retrieveSourcePath());
+        assertEquals(getClient1ClientId(), keyword.getSource().retrieveSourcePath());
         assertEquals("keyword-3", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
         
         //Update 
         keyword.setContent("keyword-3-updated");
-        response = memberV2ApiClient.updateKeyword(user1OrcidId, keyword, accessToken);
+        response = memberV2ApiClient.updateKeyword(getUser1OrcidId(), keyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
-        response = memberV2ApiClient.viewKeyword(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         Keyword updatedKeyword = response.getEntity(Keyword.class);
         assertNotNull(updatedKeyword);
@@ -177,7 +153,7 @@ public class KeywordsTest extends BlackBoxBase {
         assertEquals(keyword.getPutCode(), updatedKeyword.getPutCode());
                 
         //Delete
-        response = memberV2ApiClient.deleteKeyword(user1OrcidId, putCode, accessToken);
+        response = memberV2ApiClient.deleteKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
@@ -195,7 +171,7 @@ public class KeywordsTest extends BlackBoxBase {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetKeywordWithPublicAPI() throws InterruptedException, JSONException {
-        ClientResponse response = publicV2ApiClient.viewKeywordsXML(user1OrcidId);
+        ClientResponse response = publicV2ApiClient.viewKeywordsXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
@@ -209,7 +185,7 @@ public class KeywordsTest extends BlackBoxBase {
 
     @Test
     public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         
         Keyword keyword = new Keyword();
@@ -217,7 +193,7 @@ public class KeywordsTest extends BlackBoxBase {
         keyword.setVisibility(Visibility.PUBLIC);       
         keyword.setPutCode(1234567890L);
         
-        ClientResponse response = memberV2ApiClient.updateKeyword(user1OrcidId, keyword, accessToken);
+        ClientResponse response = memberV2ApiClient.updateKeyword(getUser1OrcidId(), keyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
