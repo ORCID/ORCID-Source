@@ -26,8 +26,8 @@
     <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >        
         <div class="notification-top-bar">
         	<ul class="inline-list pull-right">
-        		<li ng-show="notificationsSrvc.bulkArchiveMap.length > 0" ng-cloak>
-        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()"><i class="glyphicon glyphicon-download-alt"></i> Archive Selected</button>        			
+        		<li ng-show="notificationsSrvc.bulkArchiveMap.length > 0 && notificationsSrvc.selectionActive" ng-cloak>
+        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()" ng-hide=""><i class="glyphicon glyphicon-download-alt"></i> Archive Selected</button>        			
         		</li>
         		<li>&nbsp;</li>
         		<li>
@@ -53,12 +53,10 @@
 	                    <th>${springMacroRequestContext.getMessage("notifications.from")}</th>
 	                    <th>${springMacroRequestContext.getMessage("notifications.subject")}</th>
 	                    <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
-	                    <th>
-		                    <td class="centered">
-			               		<input type="checkbox" value="" ng-change="notificationsSrvc.swapbulkChangeAll()" ng-model="bulkChecked">
-			               	</td>
+	                    <th></th>		
+	                    <th class="centered">		                    
+			            	<input type="checkbox" value="" ng-click="notificationsSrvc.swapbulkChangeAll()" ng-model="notificationsSrvc.bulkChecked">
 	                    </th>
-	                    
 	                </tr>
                 </thead>
                 <tbody>
@@ -73,7 +71,7 @@
 	                        <span ng-hide="notification.archivedDate"><a href="" ng-click="archive(notification.putCode)" class="glyphicon glyphicon-download-alt dark-grey" title="${springMacroRequestContext.getMessage("notifications.archive")}"></a></span>
 	                    </td>
 	                    <td class="centered">
-		               		<input type="checkbox" class="centered archive-checkbox" ng-model="notificationsSrvc.bulkArchiveMap[notification.putCode]" ng-hide="notification.archivedDate">
+		               		<input type="checkbox" class="centered archive-checkbox" ng-model="notificationsSrvc.bulkArchiveMap[notification.putCode]" ng-hide="notification.archivedDate" ng-change="notificationsSrvc.checkSelection()">
 		               	</td>
 	                </tr>
 	                <tr ng-repeat-end ng-show="displayBody[notification.putCode]" onclick="return false;">

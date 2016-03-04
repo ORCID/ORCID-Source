@@ -1374,6 +1374,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         showArchived: false,
         bulkChecked: false,
         bulkArchiveMap: [],
+        selectionActive: false,
         getNotifications: function() {
             var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;             
             if(serv.showArchived){
@@ -1492,16 +1493,31 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             serv.reloadNotifications();
         },
         swapbulkChangeAll: function(){
-            serv.bulkChecked = !serv.bulkChecked;
-            if(!serv.bulkChecked)
+            serv.bulkChecked = !serv.bulkChecked; 
+            console.log(serv.bulkChecked);
+            if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
-            for (var idx in serv.notifications)
-                serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;            
+            else
+                for (var idx in serv.notifications)
+                    serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;            
+            
         },
         bulkArchive: function(){
             for (putCode in serv.bulkArchiveMap)
                 if(serv.bulkArchiveMap[putCode])                    
                     serv.archive(putCode);            
+        },
+        checkSelection: function(){
+            serv.selectionActive = false;
+            var count = 0;
+            for (putCode in serv.bulkArchiveMap){                
+                if(serv.bulkArchiveMap[putCode]){
+                    serv.selectionActive = true;
+                    count++;
+                }
+            }                      
+            serv.notifications.length == count ? serv.bulkChecked = true : serv.bulkChecked = false;
+            console.log(serv.bulkChecked);
         }
     };
     serv.getNotifications();
@@ -6948,7 +6964,7 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
     $scope.notificationsSrvc = notificationsSrvc;
     $scope.bulkChecked = notificationsSrvc.bulkChecked;
-    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
+    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;    
     
 
     $scope.toggleDisplayBody = function (notificationId) {
