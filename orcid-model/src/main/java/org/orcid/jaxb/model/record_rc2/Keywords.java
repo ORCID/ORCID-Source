@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "keywords" })
 @XmlRootElement(name = "keywords", namespace = "http://www.orcid.org/ns/keyword")
-public class Keywords implements Serializable {
+public class Keywords implements LastModifiedAware, Serializable {
     private static final long serialVersionUID = 8977681069375479763L;
 
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
@@ -101,32 +101,40 @@ public class Keywords implements Serializable {
             List<Keyword> sorted = new ArrayList<Keyword>();
             List<Keyword> unsorted = new ArrayList<Keyword>();
             Long maxDisplayIndex = 0L;
-            for(Keyword k : this.getKeywords()) {
-                if(k.getDisplayIndex() == null || Long.valueOf(-1).equals(k.getDisplayIndex())) {
+            for (Keyword k : this.getKeywords()) {
+                if (k.getDisplayIndex() == null || Long.valueOf(-1).equals(k.getDisplayIndex())) {
                     unsorted.add(k);
                 } else {
-                    if(k.getDisplayIndex() > maxDisplayIndex) {
+                    if (k.getDisplayIndex() > maxDisplayIndex) {
                         maxDisplayIndex = k.getDisplayIndex();
                     }
                     sorted.add(k);
-                }                
-            }      
-            
-            if(!unsorted.isEmpty()) {
+                }
+            }
+
+            if (!unsorted.isEmpty()) {
                 Collections.sort(unsorted);
-                for(Keyword k : unsorted) {
+                for (Keyword k : unsorted) {
                     k.setDisplayIndex((maxDisplayIndex++) + 1);
                     sorted.add(k);
                 }
             }
         }
     }
-    
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public boolean shouldSetLastModified() {
+        if (keywords != null && !keywords.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 }

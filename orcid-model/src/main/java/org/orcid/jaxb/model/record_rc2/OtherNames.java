@@ -30,18 +30,17 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 
-
 /**
  * 
  * @author Angel Montenegro
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType( propOrder = { "lastModifiedDate", "otherNames" })
+@XmlType(propOrder = { "lastModifiedDate", "otherNames" })
 @XmlRootElement(name = "other-names", namespace = "http://www.orcid.org/ns/other-name")
-public class OtherNames implements Serializable {        
+public class OtherNames implements LastModifiedAware, Serializable {
     private static final long serialVersionUID = 6312730308815255894L;
-    
+
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
@@ -49,7 +48,7 @@ public class OtherNames implements Serializable {
 
     @XmlAttribute
     protected String path;
-    
+
     public List<OtherName> getOtherNames() {
         return otherNames;
     }
@@ -95,39 +94,47 @@ public class OtherNames implements Serializable {
         } else if (!path.equals(other.path))
             return false;
         return true;
-    }	 
-    
+    }
+
     public void updateIndexingStatusOnChilds() {
         if (this.getOtherNames() != null && !this.getOtherNames().isEmpty()) {
             List<OtherName> sorted = new ArrayList<OtherName>();
             List<OtherName> unsorted = new ArrayList<OtherName>();
             Long maxDisplayIndex = 0L;
-            for(OtherName o : this.getOtherNames()) {
-                if(o.getDisplayIndex() == null || Long.valueOf(-1).equals(o.getDisplayIndex())) {
+            for (OtherName o : this.getOtherNames()) {
+                if (o.getDisplayIndex() == null || Long.valueOf(-1).equals(o.getDisplayIndex())) {
                     unsorted.add(o);
                 } else {
-                    if(o.getDisplayIndex() > maxDisplayIndex) {
+                    if (o.getDisplayIndex() > maxDisplayIndex) {
                         maxDisplayIndex = o.getDisplayIndex();
                     }
                     sorted.add(o);
-                }                
-            }      
-            
-            if(!unsorted.isEmpty()) {
+                }
+            }
+
+            if (!unsorted.isEmpty()) {
                 Collections.sort(unsorted);
-                for(OtherName o : unsorted) {
+                for (OtherName o : unsorted) {
                     o.setDisplayIndex((maxDisplayIndex++) + 1);
                     sorted.add(o);
                 }
             }
         }
     }
-    
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public boolean shouldSetLastModified() {
+        if(otherNames != null && !otherNames.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 }

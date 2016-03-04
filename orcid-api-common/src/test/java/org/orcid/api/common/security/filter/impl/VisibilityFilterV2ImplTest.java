@@ -16,7 +16,6 @@
  */
 package org.orcid.api.common.security.filter.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -57,7 +56,7 @@ public class VisibilityFilterV2ImplTest {
 
     @Before
     public void before() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);        
+        JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);
         unmarshaller = context.createUnmarshaller();
     }
 
@@ -66,7 +65,7 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
         XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, activitiesSummary.toString()); 
+        Diff diff = new Diff(expected, activitiesSummary.toString());
         assertTrue(diff.identical());
     }
 
@@ -76,8 +75,7 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         visibilityFilter.filter(activitiesSummary);
-        //assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
-        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString()); 
+        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
         assertTrue(diff.identical());
     }
 
@@ -86,9 +84,8 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         visibilityFilter.filter(activitiesSummary);
-        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString()); 
+        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
         assertTrue(diff.identical());
-        //assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 
     @Test
@@ -96,18 +93,17 @@ public class VisibilityFilterV2ImplTest {
         PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
         PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
         visibilityFilter.filter(personalDetailsWithLimited);
-        Diff diff = new Diff(personalDetailsPublic.toString(), personalDetailsWithLimited.toString()); 
+        Diff diff = new Diff(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
         assertTrue(diff.identical());
     }
-    
+
     private ActivitiesSummary getActivitiesSummary(String path) throws JAXBException {
         return (ActivitiesSummary) unmarshaller.unmarshal(getClass().getResourceAsStream(path));
     }
-    
+
     private PersonalDetails getPersonalDetails(String path) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(PersonalDetails.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         return (PersonalDetails) unmarshaller.unmarshal(getClass().getResourceAsStream(path));
     }
-
 }

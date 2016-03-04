@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "address" })
 @XmlRootElement(name = "addresses", namespace = "http://www.orcid.org/ns/address")
-public class Addresses implements Serializable {
+public class Addresses implements LastModifiedAware, Serializable {
     private static final long serialVersionUID = -128015751933210030L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
@@ -93,38 +93,46 @@ public class Addresses implements Serializable {
             return false;
         return true;
     }
-    
+
     public void updateIndexingStatusOnChilds() {
         if (this.getAddress() != null && !this.getAddress().isEmpty()) {
             List<Address> sorted = new ArrayList<Address>();
             List<Address> unsorted = new ArrayList<Address>();
             Long maxDisplayIndex = 0L;
-            for(Address a : this.getAddress()) {
-                if(a.getDisplayIndex() == null || Long.valueOf(-1).equals(a.getDisplayIndex())) {
+            for (Address a : this.getAddress()) {
+                if (a.getDisplayIndex() == null || Long.valueOf(-1).equals(a.getDisplayIndex())) {
                     unsorted.add(a);
                 } else {
-                    if(a.getDisplayIndex() > maxDisplayIndex) {
+                    if (a.getDisplayIndex() > maxDisplayIndex) {
                         maxDisplayIndex = a.getDisplayIndex();
                     }
                     sorted.add(a);
-                }                
-            }      
-            
-            if(!unsorted.isEmpty()) {
+                }
+            }
+
+            if (!unsorted.isEmpty()) {
                 Collections.sort(unsorted);
-                for(Address a : unsorted) {
+                for (Address a : unsorted) {
                     a.setDisplayIndex((maxDisplayIndex++) + 1);
                     sorted.add(a);
                 }
             }
         }
     }
-    
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public boolean shouldSetLastModified() {
+        if(address != null && !address.isEmpty()) {
+            return true;
+        }
+        return false;
+    }        
 }

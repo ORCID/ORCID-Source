@@ -793,6 +793,7 @@ public class MemberV2ApiServiceDelegatorImpl
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
         Person person = profileEntityManager.getPersonDetails(orcid);
         person = visibilityFilter.filter(person);
+        ElementUtils.cleanLastModifiedElement(person);
         ElementUtils.setPathToPerson(person, orcid);
         return Response.ok(person).build();
     }

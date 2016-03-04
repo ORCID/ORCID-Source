@@ -638,7 +638,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
         person.setBiography(getBiography(orcid));
-		person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
+	person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
