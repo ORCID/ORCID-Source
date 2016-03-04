@@ -54,7 +54,12 @@ public class AccountSettingsPage {
     }
 
     public DelegatesSection getDelegatesSection() {
-        utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table[@ng-show='delegation.givenPermissionTo.delegationDetails']")));
+        utils.getWait().until(new Predicate<WebDriver>() {
+            @Override
+            public boolean apply(WebDriver driver) {
+                return !xpath.isVisible("id('delegates-spinner')");
+            }
+        });
         return new DelegatesSection();
     }
 
@@ -84,6 +89,15 @@ public class AccountSettingsPage {
                     return getEmails().size() > numberOfEmailsBefore;
                 }
             });
+        }
+        public void removeEmail(String emailValue) {
+            String xpathEmailId = "//tr[@name = 'email' and descendant::td[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
+            if(xpath.isPresent(xpathEmailId)) {                
+                xpath.click(xpathEmailId);
+                String xpathConfirmDeleteEmail = "id('confirm-delete-email_" + emailValue + "')";
+                utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathConfirmDeleteEmail)));
+                xpath.click(xpathConfirmDeleteEmail);
+            }            
         }
     }
 
@@ -165,10 +179,10 @@ public class AccountSettingsPage {
             int numOfDelegates = 0;
             try {
                 numOfDelegates = getDelegatesSection().getDelegates().size();
-            } catch(Exception e) {
-                //There are no 
+            } catch (Exception e) {
+                // There are no
             }
-            
+
             final int numberOfDelegatesBefore = numOfDelegates;
             localXPath.click("td[3]/span/span");
             xpath.click("//form[@ng-submit='addDelegate()']/button");

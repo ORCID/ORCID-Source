@@ -405,6 +405,12 @@
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}">
+            <div class="ng-hide" ng-show="showInitLoader == true;">
+                <i id="delegates-spinner" class="glyphicon glyphicon-refresh spin x4 green"></i>
+                <!--[if lt IE 8]>    
+                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                <![endif]-->
+            </div>
             <table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
                 <thead>
                     <tr>
@@ -535,7 +541,7 @@
 
 <script type="text/ng-template" id="delete-email-modal">
     <div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}</h3>
-    <button class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button>
+    <button id="confirm-delete-email_{{emailSrvc.delEmail.value}}" class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button>
     <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a></div>
 </script>
 

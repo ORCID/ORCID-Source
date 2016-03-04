@@ -19,14 +19,12 @@
 <div class="row">        
   	<!-- Information -->
 	<div class="col-md-10 col-sm-10 col-xs-8 bottomBuffer">
-	    <h3 class="workspace-title">
-	    	
+	    <h3 class="workspace-title">	    	
         	<span ng-bind-html="group.getActive().affiliationName.value"></span>:
         	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
         </h3>
         <div class="info-detail">
-        	<div class="info-date">
-        	        	
+        	<div class="info-date">        	        	
 	        	<span class="affiliation-date" ng-show="group.getActive().startDate">
 	        	    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
 	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
@@ -36,11 +34,8 @@
 	            <span class="affiliation-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
 	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	        	</span>
-	        	        	
         	</div>
-        	        	
-        	<span class="divisor" ng-show="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>
-        	
+        	<span class="divisor" ng-show="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
         	<div class="role" ng-show="group.getActive().roleTitle.value">
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
@@ -90,7 +85,7 @@
 								</div>	
 							</li>   
 					        <li>
-					            <a href ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
+					            <a id="delete-affiliation_{{group.getActive().putCode.value}}" href ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
 					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-delete'] == true"> 
 								 	<div class="arrow"></div>
 								    <div class="popover-content">

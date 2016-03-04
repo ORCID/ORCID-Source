@@ -18,9 +18,9 @@
 -->
 <#include "/common/browser-checks.ftl" />
 <#if ((RequestParameters['linkRequest'])?? && (RequestParameters['firstName'])?? && (RequestParameters['lastName'])?? && (RequestParameters['emailId'])??)>
-	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName}', '${RequestParameters.lastName}', '${RequestParameters.emailId}')">
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('${RequestParameters.firstName}', '${RequestParameters.lastName}', '${RequestParameters.emailId}', '${RequestParameters.linkRequest}')">
 <#else>
-	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '')">
+	<div ng-controller="RegistrationCtrl" id="RegistrationCtr" ng-init="getRegister('', '', '', '')">
 </#if>
 <fn-form update-fn="postRegister()">
 	<!-- span class="orcid-error" ng-show="register.errors.length > 0">
@@ -68,7 +68,7 @@
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemail")}</label>
         <div class="relative">
-            <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-change="serverValidate('Email')" />
+            <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" />
             <span class="required" ng-class="isValidClass(register.email)">*</span>
             <span class="orcid-error" ng-show="register.email.errors.length > 0">
 				<div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>
@@ -78,7 +78,7 @@
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelreenteremail")}</label>
         <div class="relative">
-            <input name="confirmedEmail234" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
+            <input name="confirmedEmail234" type="email" tabindex="4" class="input-xlarge" ng-model="register.emailConfirm.value" ng-model-onblur />
             <span class="required" ng-class="isValidClass(register.emailConfirm)">*</span>
             <span class="orcid-error" ng-show="register.emailConfirm.errors.length > 0">
 				<div ng-repeat='error in register.emailConfirm.errors' ng-bind-html="error"></div>

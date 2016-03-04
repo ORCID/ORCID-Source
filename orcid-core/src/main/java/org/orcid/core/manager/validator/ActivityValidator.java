@@ -123,7 +123,10 @@ public class ActivityValidator {
         }
         
         ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
-        ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
+        
+        if (peerReview.getSubjectExternalIdentifier() != null){
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());            
+        }
     }
 
     public static void validateCreateGroupRecord(GroupIdRecord groupIdRecord, SourceEntity sourceEntity) {
