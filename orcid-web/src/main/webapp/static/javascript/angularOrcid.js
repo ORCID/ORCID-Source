@@ -1499,7 +1499,8 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 serv.bulkArchiveMap.length = 0;
             else
                 for (var idx in serv.notifications)
-                    serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;            
+                    serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;
+                serv.selectionActive = true;
             
         },
         bulkArchive: function(){
@@ -1508,16 +1509,24 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                     serv.archive(putCode);            
         },
         checkSelection: function(){
-            serv.selectionActive = false;
+            
             var count = 0;
+            var totalNotifications = 0;
+            
+            serv.selectionActive = false;
+            
             for (putCode in serv.bulkArchiveMap){                
                 if(serv.bulkArchiveMap[putCode]){
                     serv.selectionActive = true;
                     count++;
                 }
             }                      
-            serv.notifications.length == count ? serv.bulkChecked = true : serv.bulkChecked = false;
-            console.log(serv.bulkChecked);
+            
+            for (i = 0; i < serv.notifications.length; i++)                
+                if (serv.notifications[i].archivedDate == null)
+                    totalNotifications++;            
+            
+            totalNotifications == count ? serv.bulkChecked = true : serv.bulkChecked = false;            
         }
     };
     serv.getNotifications();
