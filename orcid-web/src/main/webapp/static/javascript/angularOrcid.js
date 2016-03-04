@@ -1492,9 +1492,11 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             serv.reloadNotifications();
         },
         swapbulkChangeAll: function(){
-            serv.bulkChecked = !serv.bulkChecked;           
+            serv.bulkChecked = !serv.bulkChecked;
+            if(!serv.bulkChecked)
+                serv.bulkArchiveMap.length = 0;
             for (var idx in serv.notifications)
-                serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;
+                serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;            
         },
         bulkArchive: function(){
             for (putCode in serv.bulkArchiveMap)

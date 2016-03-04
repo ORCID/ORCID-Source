@@ -23,21 +23,18 @@
     <div class="col-md-3 col-sm-12 col-xs-12 padding-fix">
         <#include "admin_menu.ftl"/>
     </div>
-    <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >
-        <!-- <h2>${springMacroRequestContext.getMessage("notifications.title")}</h2> -->
+    <div class="col-md-9 col-sm-12 col-xs-12" ng-controller="NotificationsCtrl" >        
         <div class="notification-top-bar">
         	<ul class="inline-list pull-right">
-        		<li>
-        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()"><i class="glyphicon glyphicon-download-alt"></i> Archive Selected</button>
-        			<!-- <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>Archive selected -->
+        		<li ng-show="notificationsSrvc.bulkArchiveMap.length > 0" ng-cloak>
+        			<button class="btn btn-primary" ng-click="notificationsSrvc.bulkArchive()"><i class="glyphicon glyphicon-download-alt"></i> Archive Selected</button>        			
         		</li>
         		<li>&nbsp;</li>
         		<li>
         			<button class="btn btn-primary" ng-click="notificationsSrvc.toggleArchived()">
         				<span ng-hide="notificationsSrvc.showArchived" ng-cloak>Show archived</span>
         				<span ng-show="notificationsSrvc.showArchived" ng-cloak>Hide archived</span>
-        			</button>
-		            <!-- <input type="checkbox" ng-model="notificationsSrvc.showArchived" ng-change="reloadNotifications()"></input>${springMacroRequestContext.getMessage("notifications.show_archived")} -->
+        			</button>		            
         		</li>
         	</ul>
             
