@@ -98,4 +98,30 @@ public class ElementUtils {
     public static void setPathToEmail(Emails emails, String orcid) {
         emails.setPath(EMAIL.replace("{orcid}", orcid) );
     }
+    
+    public static void cleanLastModifiedElement(Person person) {
+        if (person.getAddresses() != null && !person.getAddresses().shouldSetLastModified()) {
+            person.getAddresses().setLastModifiedDate(null);
+        } 
+        
+        if (person.getEmails() != null && !person.getEmails().shouldSetLastModified()) {
+            person.getEmails().setLastModifiedDate(null);
+        }
+        
+        if (person.getExternalIdentifiers() != null && !person.getExternalIdentifiers().shouldSetLastModified()) {
+            person.getExternalIdentifiers().setLastModifiedDate(null);
+        }
+        
+        if (person.getKeywords() != null && !person.getKeywords().shouldSetLastModified()) {
+            person.getKeywords().setLastModifiedDate(null);
+        }
+        
+        if (person.getOtherNames() != null && !person.getOtherNames().shouldSetLastModified()) {
+            person.getOtherNames().setLastModifiedDate(null);
+        }
+        
+        if (person.getResearcherUrls() != null && !person.getResearcherUrls().shouldSetLastModified()) {
+            person.getResearcherUrls().setLastModifiedDate(null);
+        }                
+    }
 }

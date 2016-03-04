@@ -94,16 +94,16 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
                 activitiesSummary.setWorks(null);
             }
         }
-        
+
         PeerReviews peerReviews = activitiesSummary.getPeerReviews();
-        if(peerReviews != null) {
+        if (peerReviews != null) {
             List<PeerReviewGroup> peerReviewGroups = peerReviews.getPeerReviewGroup();
             filterGroups(peerReviewGroups);
-            if(peerReviewGroups.isEmpty()) {
+            if (peerReviewGroups.isEmpty()) {
                 activitiesSummary.setPeerReviews(null);
             }
         }
-        
+
         return activitiesSummary;
     }
 
@@ -140,66 +140,64 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
     @Override
     public PersonalDetails filter(PersonalDetails personalDetails) {
-        if(personalDetails.getName() != null) {
+        if (personalDetails.getName() != null) {
             try {
                 orcidSecurityManager.checkVisibility(personalDetails.getName());
-            } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
+            } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setName(null);
             }
         }
-        
-        if(personalDetails.getBiography() != null) {
+
+        if (personalDetails.getBiography() != null) {
             try {
                 orcidSecurityManager.checkVisibility(personalDetails.getBiography());
-            } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
+            } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setBiography(null);
             }
         }
-        
-        if(personalDetails.getOtherNames() != null) {
-            if(personalDetails.getOtherNames().getOtherNames() != null) {
+
+        if (personalDetails.getOtherNames() != null) {
+            if (personalDetails.getOtherNames().getOtherNames() != null) {
                 List<OtherName> filteredOtherNames = new ArrayList<OtherName>();
-                for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+                for (OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
                     try {
                         orcidSecurityManager.checkVisibility(otherName);
                         filteredOtherNames.add(otherName);
-                    } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
+                    } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
                         // Client dont have permissions to see this other name
                     }
                 }
-                if(filteredOtherNames.isEmpty()) {
+                if (filteredOtherNames.isEmpty()) {
                     personalDetails.setOtherNames(null);
                 } else {
                     personalDetails.getOtherNames().setOtherNames(filteredOtherNames);
-                }                
+                }
             }
         }
-        
+
         return personalDetails;
     }
 
     @Override
     public Person filter(Person person) {
-        if(person.getAddresses() != null) {
-            filter(person.getAddresses().getAddress());
+        if (person.getAddresses() != null) {
+            filter(person.getAddresses().getAddress());            
         }
-        if(person.getEmails() != null) {
-            filter(person.getEmails().getEmails());
+        if (person.getEmails() != null) {
+            filter(person.getEmails().getEmails());            
         }
-        if(person.getExternalIdentifiers() != null) {
-            filter(person.getExternalIdentifiers().getExternalIdentifier());
+        if (person.getExternalIdentifiers() != null) {
+            filter(person.getExternalIdentifiers().getExternalIdentifier());            
         }
-        if(person.getKeywords() != null) {
-            filter(person.getKeywords().getKeywords());
+        if (person.getKeywords() != null) {
+            filter(person.getKeywords().getKeywords());            
         }
-        
-        if(person.getOtherNames() != null) {
-            filter(person.getOtherNames().getOtherNames());
+        if (person.getOtherNames() != null) {
+            filter(person.getOtherNames().getOtherNames());            
         }
-        
-        if(person.getResearcherUrls() != null) {
-            filter(person.getResearcherUrls().getResearcherUrls());
-        }        
+        if (person.getResearcherUrls() != null) {
+            filter(person.getResearcherUrls().getResearcherUrls());            
+        }
 
         // If it is private
         try {

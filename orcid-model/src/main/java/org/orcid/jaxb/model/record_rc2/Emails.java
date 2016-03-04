@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "emails" })
 @XmlRootElement(name = "emails", namespace = "http://www.orcid.org/ns/email")
-public class Emails implements Serializable {
+public class Emails implements LastModifiedAware, Serializable {
 
     private static final long serialVersionUID = -4412096758081316953L;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
@@ -92,13 +92,21 @@ public class Emails implements Serializable {
             return false;
         return true;
     }
-    
-	public LastModifiedDate getLastModifiedDate() {
-		return lastModifiedDate;
-	}
 
-	public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public boolean shouldSetLastModified() {
+        if (emails != null && !emails.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
 
 }

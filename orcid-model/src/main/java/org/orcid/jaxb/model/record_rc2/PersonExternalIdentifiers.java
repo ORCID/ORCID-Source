@@ -31,7 +31,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "externalIdentifiers" })
 @XmlRootElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/external-identifier")
-public class PersonExternalIdentifiers implements Serializable {
+public class PersonExternalIdentifiers implements LastModifiedAware, Serializable {
     private static final long serialVersionUID = -9182106466010694574L;
     
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
@@ -94,6 +94,14 @@ public class PersonExternalIdentifiers implements Serializable {
     
     public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
             this.lastModifiedDate = lastModifiedDate;
+    }
+
+    @Override
+    public boolean shouldSetLastModified() {
+        if(externalIdentifiers != null && !externalIdentifiers.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
 }
