@@ -1372,10 +1372,13 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         displayBody: {},
         unreadCount: 0,
         showArchived: false,
+        bulkChecked: false,
+        bulkArchiveMap: [],
+        selectionActive: false,
         getNotifications: function() {
-            var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
+            var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;             
             if(serv.showArchived){
-                url += "&includeArchived=true";                
+                url += "&includeArchived=true";
             }
             $.ajax({
                 url: url,
@@ -1484,6 +1487,46 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 // something bad is happening!
                 console.log("error flagging notification as archived");
             });
+        },
+        toggleArchived: function(){
+            serv.showArchived = !serv.showArchived;
+            serv.reloadNotifications();
+        },
+        swapbulkChangeAll: function(){
+            serv.bulkChecked = !serv.bulkChecked; 
+            console.log(serv.bulkChecked);
+            if(serv.bulkChecked == false)
+                serv.bulkArchiveMap.length = 0;
+            else
+                for (var idx in serv.notifications)
+                    serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;
+                serv.selectionActive = true;
+            
+        },
+        bulkArchive: function(){
+            for (putCode in serv.bulkArchiveMap)
+                if(serv.bulkArchiveMap[putCode])                    
+                    serv.archive(putCode);            
+        },
+        checkSelection: function(){
+            
+            var count = 0;
+            var totalNotifications = 0;
+            
+            serv.selectionActive = false;
+            
+            for (putCode in serv.bulkArchiveMap){                
+                if(serv.bulkArchiveMap[putCode]){
+                    serv.selectionActive = true;
+                    count++;
+                }
+            }                      
+            
+            for (i = 0; i < serv.notifications.length; i++)                
+                if (serv.notifications[i].archivedDate == null)
+                    totalNotifications++;            
+            
+            totalNotifications == count ? serv.bulkChecked = true : serv.bulkChecked = false;            
         }
     };
     serv.getNotifications();
@@ -6921,22 +6964,30 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
-    notificationsSrvc.displayBody = {};
-
-    $scope.toggleDisplayBody = function (notificationId) {
-        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
-        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
-        notificationsSrvc.flagAsRead(notificationId);
-        iframeResize(notificationId);
-    };
-
+    notificationsSrvc.displayBody = {};    
     $scope.notifications = notificationsSrvc.notifications;
     $scope.showMore = notificationsSrvc.showMore;
     $scope.areMore = notificationsSrvc.areMore;
     $scope.archive = notificationsSrvc.archive;
     $scope.getNotifications = notificationsSrvc.getNotifications;
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
-    $scope.notificationsSrvc = notificationsSrvc;    
+    $scope.notificationsSrvc = notificationsSrvc;
+    $scope.bulkChecked = notificationsSrvc.bulkChecked;
+    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;    
+    
+
+    $scope.toggleDisplayBody = function (notificationId) {
+        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
+        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
+        notificationsSrvc.flagAsRead(notificationId);
+        iframeResize(notificationId);
+    };    
+    
+    $scope.selectAllNotifications = function(){
+        
+    }
+
+        
 }]);
 
 // Controller to show alert for unread notifications
