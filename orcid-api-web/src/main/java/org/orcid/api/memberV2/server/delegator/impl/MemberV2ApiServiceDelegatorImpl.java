@@ -546,7 +546,8 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewEmails(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED);
-        Emails emails = emailManager.getEmails(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Emails emails = emailManager.getEmails(orcid, lastModifiedTime);
         emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails()));
         ElementUtils.setPathToEmail(emails, orcid);
         return Response.ok(emails).build();

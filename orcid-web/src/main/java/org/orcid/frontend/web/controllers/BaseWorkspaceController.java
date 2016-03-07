@@ -148,4 +148,9 @@ public class BaseWorkspaceController extends BaseController {
         return null;
     }
 
+    public String getcountryName(String Iso3166Country) {
+        Map<String, String> countries = retrieveIsoCountries();
+        return countries.get(Iso3166Country);
+    }
+    
 }

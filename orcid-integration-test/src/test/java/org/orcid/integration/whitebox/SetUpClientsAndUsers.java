@@ -604,7 +604,7 @@ public class SetUpClientsAndUsers {
                     org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
 
             // Remove emails
-            Emails emails = emailManager.getEmails(orcid);
+            Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
             if (emails != null && emails.getEmails() != null) {
                 for (org.orcid.jaxb.model.record_rc2.Email rc2Email : emails.getEmails()) {
                     if (!params.get(EMAIL).equals(rc2Email.getEmail())) {

@@ -422,7 +422,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
         OrcidBio orcidBio = new OrcidBio();
-
         orcidBio.setContactDetails(getContactDetails(profileEntity));
         orcidBio.setExternalIdentifiers(getExternalIdentifiers(profileEntity));
         orcidBio.setDelegation(getDelegation(profileEntity));

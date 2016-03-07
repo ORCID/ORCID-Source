@@ -67,7 +67,8 @@ public class AddressManagerImpl implements AddressManager {
     }
     
     @Override
-    public Address getPrimaryAddress(String orcid) {        
+    @Cacheable(value = "primary-address", key = "#orcid.concat('-').concat(#lastModified)")
+    public Address getPrimaryAddress(String orcid, long lastModified) {        
         List<AddressEntity> addresses = addressDao.findByOrcid(orcid, getLastModified(orcid));
         Address address = null;
         if(addresses != null) {

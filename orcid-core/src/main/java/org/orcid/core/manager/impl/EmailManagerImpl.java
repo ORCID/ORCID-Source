@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -153,7 +154,8 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
-    public Emails getEmails(String orcid) {
+    @Cacheable(value = "emails", key = "#orcid.concat('-').concat(#lastModified)")
+    public Emails getEmails(String orcid, long lastModified) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid);
         if(entities != null) {
             List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
@@ -166,7 +168,8 @@ public class EmailManagerImpl implements EmailManager {
     }
     
     @Override
-    public Emails getPublicEmails(String orcid) {
+    @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
+    public Emails getPublicEmails(String orcid, long lastModified) {
         List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
         if(entities != null) {            
             List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);

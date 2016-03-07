@@ -659,7 +659,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getResearcherUrls().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setEmails(emailManager.getEmails(orcid));
+        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
@@ -755,7 +755,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getResearcherUrls().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
 
-        person.setEmails(emailManager.getPublicEmails(orcid));
+        person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
