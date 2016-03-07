@@ -36,6 +36,8 @@ public class ExternalIDValidator {
     }
     
     public void validateWorkOrPeerReview(ExternalID id){
+        if (id == null)
+            return;
         try{
             WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
         }catch (IllegalArgumentException e){
