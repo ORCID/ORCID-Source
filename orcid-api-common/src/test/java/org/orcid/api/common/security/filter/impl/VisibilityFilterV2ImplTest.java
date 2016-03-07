@@ -29,6 +29,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +62,11 @@ public class VisibilityFilterV2ImplTest {
         unmarshaller = context.createUnmarshaller();
     }
 
+    @After
+    public void after() {
+        SecurityContextTestUtils.clearSecurityContext();
+    }
+
     @Test
     public void testUnmarshall() throws JAXBException, IOException, SAXException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
@@ -86,6 +92,7 @@ public class VisibilityFilterV2ImplTest {
     public void testFilterActivitiesOnPublicAPI() throws JAXBException, SAXException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
         visibilityFilter.filter(activitiesSummary);
         Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
         assertTrue(diff.identical());
@@ -97,7 +104,10 @@ public class VisibilityFilterV2ImplTest {
     public void testFilterPersonalDetails() throws JAXBException, SAXException, IOException {
         PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
         PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         visibilityFilter.filter(personalDetailsWithLimited);
+        // assertEquals(personalDetailsPublic.toString(),
+        // personalDetailsWithLimited.toString());
         Diff diff = new Diff(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
         assertTrue(diff.identical());
     }
