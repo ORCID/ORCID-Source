@@ -282,6 +282,25 @@
             end_day="07"
             visibility="LIMITED"
             client_source_id="APP-5555555555555555"
-            />                               
+            />
+                                           
+    <org_affiliation_relation
+            id="15"
+            org_id="3"
+            orcid="4444-4444-4444-4446"
+            org_affiliation_relation_role="EDUCATION"
+            org_affiliation_relation_title="Researcher"
+            department="Education Dept # 4"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2011"
+            start_month="09"
+            start_day="22"
+            end_year="2012"
+            end_month="11"
+            end_day="07"
+            visibility="PRIVATE"
+            source_id="4444-4444-4444-4446"
+            />
                                                                                     
 </dataset>
