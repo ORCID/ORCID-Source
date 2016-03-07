@@ -37,17 +37,10 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
     @Override
     public ExternalIDs convertFrom(String externalIdentifiersAsString, Type<ExternalIDs> arg1) {
         ExternalIDs result = new ExternalIDs();
+        WorkExternalIDConverter conv = new WorkExternalIDConverter();
         WorkExternalIdentifiers ids = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, WorkExternalIdentifiers.class);        
         for (WorkExternalIdentifier id : ids.getWorkExternalIdentifier()){
-            ExternalID exid = new ExternalID();
-            exid.setType(id.getWorkExternalIdentifierType().value());
-            if (id.getRelationship() != null){
-                exid.setRelationship(org.orcid.jaxb.model.record_rc2.Relationship.fromValue(id.getRelationship().value()));                
-            }
-            if (id.getUrl() != null){
-                exid.setUrl(new org.orcid.jaxb.model.common_rc2.Url(id.getUrl().getValue()));                
-            }
-            exid.setValue(id.getWorkExternalIdentifierId().getContent());
+            ExternalID exid = conv.convertRC1toRC2(id);
             result.getExternalIdentifier().add(exid);
         }
         return result;
@@ -56,25 +49,9 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
     @Override
     public String convertTo(ExternalIDs externalIDs, Type<String> arg1) {
         WorkExternalIdentifiers ids = new WorkExternalIdentifiers();
+        WorkExternalIDConverter conv = new WorkExternalIDConverter();
         for (ExternalID externalID : externalIDs.getExternalIdentifier()){
-            WorkExternalIdentifier id = new WorkExternalIdentifier();
-            try{
-                id.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(externalID.getType()));            
-            }catch(IllegalArgumentException e){
-                id.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID); 
-            }
-            
-            id.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));
-            
-            if (externalID.getUrl() != null){
-                id.setUrl(new Url(externalID.getUrl().getValue()));                
-            }
-            if (externalID.getRelationship() != null)
-                try{
-                    id.setRelationship(Relationship.fromValue(externalID.getRelationship().value()));
-                }catch (IllegalArgumentException e){
-                }
-            
+            WorkExternalIdentifier id = conv.convertRC2toRC1(externalID);
             ids.getExternalIdentifier().add(id);
         }        
         return JsonUtils.convertToJsonString(ids);
