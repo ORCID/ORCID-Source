@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -57,6 +58,47 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
+    @After
+    public void after() throws InterruptedException, JSONException {
+        String client1accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
+        //Get all researcher urls created by client # 1
+        ClientResponse getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), client1accessToken);
+        assertNotNull(getAllResponse);
+        ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
+        assertNotNull(researcherUrls);
+        if(researcherUrls.getResearcherUrls() != null && !researcherUrls.getResearcherUrls().isEmpty()) {
+            // And delete them
+            for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+                if(rUrl.getSource() != null) {
+                    if(rUrl.getSource().retrieveSourcePath().equals(getClient1ClientId())) {
+                        ClientResponse deletedResponse = memberV2ApiClient.deleteResearcherUrl(getUser1OrcidId(), rUrl.getPutCode(), client1accessToken);
+                        assertNotNull(deletedResponse);
+                        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
+                    } 
+                }            
+            }
+        }
+        
+        String client2accessToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        //Get all researcher urls created by client # 2
+        getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), client2accessToken);
+        assertNotNull(getAllResponse);
+        researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
+        assertNotNull(researcherUrls);
+        if(researcherUrls.getResearcherUrls() != null && !researcherUrls.getResearcherUrls().isEmpty()) {
+            // And delete them
+            for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+                if(rUrl.getSource() != null) {
+                    if(rUrl.getSource().retrieveSourcePath().equals(getClient2ClientId())) {
+                        ClientResponse deletedResponse = memberV2ApiClient.deleteResearcherUrl(getUser1OrcidId(), rUrl.getPutCode(), client2accessToken);
+                        assertNotNull(deletedResponse);
+                        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
+                    } 
+                }            
+            }
+        }
+    }
+    
     @Test
     public void testResearcherUrl() throws InterruptedException, JSONException, URISyntaxException {
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
@@ -181,21 +223,38 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
             }
         }
 
-        assertTrue(found1 && found2 && found3);
-
-        // Clean
-        for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
-            memberV2ApiClient.deletePeerReviewXml(getUser1OrcidId(), rUrl.getPutCode(), accessToken);
-        }
+        assertTrue(found1 && found2 && found3);        
     }
     
     @Test
-    public void testGetWithPublicAPI() {
-        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(getUser1OrcidId());
+    public void testGetWithPublicAPI() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
+        //Create some researcher urls
+        ResearcherUrl rUrlToCreate = new ResearcherUrl();        
+        Long now = System.currentTimeMillis();
+        for (int i = 0; i < 5; i++) {
+            // Change the name
+            rUrlToCreate.setUrlName("url-name-" + now + "-" + i);
+            rUrlToCreate.setUrl(new Url("http://newurl.com/" + now + "/" + i));
+            if(i == 3) {
+                rUrlToCreate.setVisibility(Visibility.LIMITED);
+            } else if(i == 4) {
+                rUrlToCreate.setVisibility(Visibility.PRIVATE);
+            } else {
+                rUrlToCreate.setVisibility(Visibility.PUBLIC);
+            }
+            // Create it
+            ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
+        
+        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(getUser1OrcidId()); 
         assertNotNull(getAllResponse);
         ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getResearcherUrls());
+        assertEquals(3, researcherUrls.getResearcherUrls().size());
         for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
             assertNotNull(rUrl);
             assertEquals(Visibility.PUBLIC, rUrl.getVisibility());

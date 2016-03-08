@@ -803,6 +803,7 @@ public class SetUpClientsAndUsers {
     public void setUpAddresses(String orcid) {
         Address a1 = new Address();
         a1.setCountry(new Country(Iso3166Country.US));
+        a1.setPrimary(true);
         a1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         a1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
