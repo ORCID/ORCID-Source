@@ -144,7 +144,7 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (isDupRelationship(newId, existingId) && isDupValue(newId, existingId) && isDupType(newId, existingId)
+                    if (newId.equals(existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
@@ -153,22 +153,6 @@ public class ActivityValidator {
                 }
             }
         }
-    }
-
-    private static boolean isDupRelationship(ExternalID newId, ExternalID existingId) {
-        return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null
-                && newId.getRelationship().equals(Relationship.SELF);
-    }
-
-    private static boolean isDupValue(ExternalID newId, ExternalID existingId) {
-        return existingId.getValue() != null && existingId.getValue() != null
-                && newId.getValue() != null && newId.getValue() != null
-                && newId.getValue().equals(existingId.getValue());
-    }
-
-    private static boolean isDupType(ExternalID newId, ExternalID existingId) {
-        return existingId.getType() != null && newId.getType() != null
-                && newId.getType().equalsIgnoreCase(existingId.getType());
     }
 
     public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
