@@ -54,7 +54,8 @@ curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&cl
 1. Generate a read-public token with 
 ```
 curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
-```2. Search for the new record you created with 
+```
+2. Search for the new record you created with 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://api.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'
 ```
