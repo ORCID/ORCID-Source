@@ -54,8 +54,7 @@ curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&cl
 1. Generate a read-public token with 
 ```
 curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
-```
-2. Search for the new record you created with 
+```2. Search for the new record you created with 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://api.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'
 ```
@@ -79,27 +78,31 @@ curl -H 'Content-Type: application/xml' 'http://api.qa.orcid.org/v1.2/[ma id 2]/
 ```
 curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token'
 ```
-
 3. Post the ma test work: 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i
 ```
 4. Update the works with: 
-```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_work2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_work2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i
 ```
 5. Check that the work is updated and the manually added work is not affected
 6. Post the ma test funding: 
-```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_fund.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/funding' -L -i
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_fund.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/funding' -L -i
 ```
 7. Update funding with: 
-```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_fund2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/funding' -L -i
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_fund2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/funding' -L -i
 ```
 8. Check that the funding item is updated and the manually added funding is not affected
 9. Post the ma test education: 
-```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_edu.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/affiliations' -L -i
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_edu.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/affiliations' -L -i
 ```
 7. Update education with: 
-```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_edu2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/affiliations' -L -i
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_edu2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/affiliations' -L -i
 ```
 8. Check that the education is updated and the manually added education is not affected
 9. Attempt to access the wrong record with:
