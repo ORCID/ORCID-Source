@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
@@ -1201,7 +1202,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // Update the info
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-
+        
         // Try to update it
         try {
             response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 2L, peerReview);
@@ -1283,6 +1284,38 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         assertTrue(haveOld);
         assertTrue(haveNew);
+    }
+    
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testAddPeerReviewDuplicateFails() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        PeerReview peerReview = new PeerReview();
+        ExternalIDs weis = new ExternalIDs();
+        ExternalID wei1 = new ExternalID();
+        wei1.setRelationship(Relationship.SELF);
+        wei1.setUrl(new Url("http://1.com"));
+        wei1.setValue("1");
+        wei1.setType(ExternalIDType.DOI.value());
+        weis.getExternalIdentifier().add(wei1);
+        peerReview.setExternalIdentifiers(weis);
+        peerReview.setGroupId("issn:0000003");
+        peerReview.setOrganization(getOrganization());
+        peerReview.setRole(Role.CHAIR);
+        peerReview.setSubjectContainerName(new Title("subject-container-name"));
+        peerReview.setSubjectExternalIdentifier(wei1);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("work-title"));
+        peerReview.setSubjectName(workTitle);
+        peerReview.setSubjectType(WorkType.DATA_SET);
+        peerReview.setType(PeerReviewType.EVALUATION);
+
+        Response response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+
     }
 
     @Test
