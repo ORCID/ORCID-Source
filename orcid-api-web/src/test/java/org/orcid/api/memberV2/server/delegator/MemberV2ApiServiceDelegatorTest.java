@@ -61,6 +61,7 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
@@ -130,66 +131,109 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        
         // Check works
         assertNotNull(summary.getWorks());
         assertEquals(3, summary.getWorks().getWorkGroup().size());
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-
+        boolean foundPrivateWork = false;
+        for(WorkGroup group : summary.getWorks().getWorkGroup()) {
+            assertNotNull(group.getWorkSummary());
+            assertEquals(1, group.getWorkSummary().size());
+            WorkSummary work = group.getWorkSummary().get(0);
+            assertThat(work.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
+            assertThat(work.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
+            assertThat(work.getTitle().getTitle().getContent(),
+                    anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
+            if(work.getPutCode().equals(Long.valueOf(7))) {
+                assertEquals(Visibility.PRIVATE, work.getVisibility());
+                foundPrivateWork = true;
+            } 
+        }
+        
+        assertTrue(foundPrivateWork);
+        
         // Check fundings
         assertNotNull(summary.getFundings());
-        assertEquals(2, summary.getFundings().getFundingGroup().size());
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
-
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Private Funding"), is("Public Funding")));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Private Funding"), is("Public Funding")));
-
+        assertEquals(3, summary.getFundings().getFundingGroup().size());
+        boolean foundPrivateFunding = false;
+        for (FundingGroup group : summary.getFundings().getFundingGroup()) {
+            assertNotNull(group.getFundingSummary());
+            assertEquals(1, group.getFundingSummary().size());
+            FundingSummary funding = group.getFundingSummary().get(0);
+            assertThat(funding.getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5)), is(Long.valueOf(8))));
+            assertThat(funding.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5"), is("/4444-4444-4444-4446/funding/8")));
+            assertThat(funding.getTitle().getTitle().getContent(),
+                    anyOf(is("Private Funding"), is("Public Funding"), is("Limited Funding")));
+            if(funding.getPutCode().equals(4L)) {
+                assertEquals(Visibility.PRIVATE, funding.getVisibility());                
+                foundPrivateFunding = true;
+            }
+        }
+        
+        assertTrue(foundPrivateFunding);
+        
         // Check Educations
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(3, summary.getEducations().getSummaries().size());
-        assertThat(summary.getEducations().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getEducations().getSummaries().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
-        assertThat(summary.getEducations().getSummaries().get(0).getDepartmentName(),
-                anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
+        
+        boolean foundPrivateEducation = false;
+        for(EducationSummary education : summary.getEducations().getSummaries()) {
+            assertThat(education.getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7)), is(Long.valueOf(9))));
+            assertThat(education.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
+            assertThat(education.getDepartmentName(),
+                    anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
 
+            if(education.getPutCode().equals(6L)) {
+                assertEquals(Visibility.PRIVATE, education.getVisibility());
+                foundPrivateEducation = true;
+            }
+        }
+        
+        assertTrue(foundPrivateEducation);
+        
         // Check Employments
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(3, summary.getEmployments().getSummaries().size());
-        assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8))));
-        assertThat(summary.getEmployments().getSummaries().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
-        assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(),
-                anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
-
+        
+        boolean foundPrivateEmployment = false;
+        
+        for(EmploymentSummary employment : summary.getEmployments().getSummaries()) {
+            assertThat(employment.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8)), is(Long.valueOf(11))));
+            assertThat(employment.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
+            assertThat(employment.getDepartmentName(),
+                    anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
+            if(employment.getPutCode().equals(5L)) {
+                assertEquals(Visibility.PRIVATE, employment.getVisibility());
+                foundPrivateEmployment = true;
+            }
+        }       
+        
+        assertTrue(foundPrivateEmployment);
+        
         // Check Peer reviews
         assertNotNull(summary.getPeerReviews());
-        assertEquals(4, summary.getPeerReviews().getPeerReviewGroup().size());
-        PeerReviewSummary peerReviewSummary = summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
-
-        assertThat(peerReviewSummary.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(6))));
+        assertEquals(3, summary.getPeerReviews().getPeerReviewGroup().size());
+        
+        boolean foundPrivatePeerReview = false;
+        for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+            assertNotNull(group.getPeerReviewSummary());
+            assertEquals(1, group.getPeerReviewSummary().size());
+            PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
+            assertThat(peerReview.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(4))));
+            assertThat(peerReview.getGroupId(), anyOf(is("issn:0000001"), is("issn:0000002"), is("issn:0000003")));
+            if(peerReview.getPutCode().equals(4L)) {
+                assertEquals(Visibility.PRIVATE, peerReview.getVisibility());
+                foundPrivatePeerReview = true;
+            }
+        }
+        
+        assertTrue(foundPrivatePeerReview);
     }
 
     @Test
@@ -1092,7 +1136,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
         assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals("limited", peerReview.getVisibility().value());
+        assertEquals("private", peerReview.getVisibility().value());
         assertEquals("issn:0000003", peerReview.getGroupId());
     }
 

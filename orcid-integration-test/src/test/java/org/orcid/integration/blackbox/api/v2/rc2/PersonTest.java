@@ -31,22 +31,17 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBase;
-import org.orcid.integration.blackbox.api.v2.rc2.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * 
@@ -55,82 +50,42 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class PersonTest extends BlackBoxBase {
+public class PersonTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.publicClient1.clientId}")
-    public String publicClientId;
-    @Value("${org.orcid.web.publicClient1.clientSecret}")
-    public String publicClientSecret;
-
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
-    @Resource
-    private OauthHelper oauthHelper;
-
     @Test
     public void testGetBioFromPublicAPI() {
-        ClientResponse response = publicV2ApiClient.viewBiographyXML(this.user1OrcidId);
+        ClientResponse response = publicV2ApiClient.viewBiographyXML(getUser1OrcidId());
         assertNotNull(response);
         Biography bio = response.getEntity(Biography.class);
         assertNotNull(bio);
-        assertEquals("This is my bio", bio.getContent());
+        assertEquals(getUser1Bio(), bio.getContent());
         assertEquals(Visibility.PUBLIC, bio.getVisibility());
     }
 
     @Test
     public void testGetBioFromMemberAPI() throws Exception {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse response = memberV2ApiClient.viewBiography(this.user1OrcidId, accessToken);
+        ClientResponse response = memberV2ApiClient.viewBiography(getUser1OrcidId(), accessToken);
         assertNotNull(response);
         Biography bio = response.getEntity(Biography.class);
         assertNotNull(bio);
-        assertEquals("This is my bio", bio.getContent());
+        assertEquals(getUser1Bio(), bio.getContent());
         assertEquals(Visibility.PUBLIC, bio.getVisibility());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testViewPersonFromMemberAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
-        ClientResponse response = memberV2ApiClient.viewPerson(this.user1OrcidId, accessToken);
-        assertNotNull(response);
-        //Occasionaly gives 500 when run as Suite.  Passes on it's own...?
-        /*
-            <error xmlns="http://www.orcid.org/ns/error">
-                <response-code>500</response-code>
-                <developer-message>org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: org.orcid.persistence.jpa.entities.ProfileEntity.givenPermissionTo, could not initialize proxy - no Session</developer-message>
-                <user-message>Something went wrong in ORCID.</user-message>
-                <error-code>9008</error-code>
-                <more-info>http://members.orcid.org/api/api-error-codes</more-info>
-            </error>
-         */
+        ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), accessToken);
+        assertNotNull(response);        
         assertEquals("invalid "+response,200,response.getStatus());
         Thread.sleep(100);
         Person person = response.getEntity(Person.class);
@@ -143,12 +98,12 @@ public class PersonTest extends BlackBoxBase {
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
-        assertEquals("This is my bio", person.getBiography().getContent());
+        assertEquals(getUser1Bio(), person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        EmailTest.assertListContainsEmail("public@email.com", Visibility.PUBLIC, person.getEmails());
-        EmailTest.assertListContainsEmail("limited@email.com", Visibility.LIMITED, person.getEmails());
+        EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
+        EmailTest.assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
@@ -188,18 +143,18 @@ public class PersonTest extends BlackBoxBase {
         assertEquals(Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getName());
-        assertEquals("One", person.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
-        assertEquals("User", person.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
         assertNotNull(person.getName().getCreditName());
-        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testViewPersonFromPublicAPI() {
-        ClientResponse response = publicV2ApiClient.viewPersonXML(this.user1OrcidId);
+        ClientResponse response = publicV2ApiClient.viewPersonXML(getUser1OrcidId());
         assertNotNull(response);
         Person person = response.getEntity(Person.class);
         assertNotNull(person);
@@ -211,11 +166,11 @@ public class PersonTest extends BlackBoxBase {
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
-        assertEquals("This is my bio", person.getBiography().getContent());
+        assertEquals(getUser1Bio(), person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
 
         assertNotNull(person.getEmails());
-        EmailTest.assertListContainsEmail("public@email.com", Visibility.PUBLIC, person.getEmails());
+        EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
@@ -240,11 +195,11 @@ public class PersonTest extends BlackBoxBase {
         assertEquals(Visibility.PUBLIC, person.getOtherNames().getOtherNames().get(1).getVisibility());
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getName());
-        assertEquals("One", person.getName().getGivenNames().getContent());
+        assertEquals(getUser1GivenName(), person.getName().getGivenNames().getContent());
         assertNotNull(person.getName().getFamilyName());
-        assertEquals("User", person.getName().getFamilyName().getContent());
+        assertEquals(getUser1FamilyNames(), person.getName().getFamilyName().getContent());
         assertNotNull(person.getName().getCreditName());
-        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals(getUser1CreditName(), person.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 

@@ -44,6 +44,18 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
+    public ApiVersionCheckFilter() {
+    }
+    
+    public ApiVersionCheckFilter(HttpServletRequest req) {
+        this.httpRequest = req;
+    }
+    
+    public ApiVersionCheckFilter(LocaleManager locale, HttpServletRequest req) {
+        this.httpRequest = req;
+        this.localeManager = locale;
+    }
+    
     @Override
     public ContainerRequest filter(ContainerRequest request) {
         String path = request.getPath();

@@ -119,6 +119,8 @@ public class PersonExternalIdentifier implements Serializable, Filterable {
         this.putCode = putCode;
     }
     public Visibility getVisibility() {
+        if (visibility == null)
+            return Visibility.PUBLIC;
         return visibility;
     }
     public void setVisibility(Visibility visibility) {

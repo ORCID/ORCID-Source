@@ -89,7 +89,7 @@
                     <label ng-show="disambiguatedAffiliation"><@orcid.msg 'manual_affiliation_form_contents.labeldisplaycity'/></label>
 					<span class="required" ng-class="isValidClass(editAffiliation.city)">*</span>
                     <div>
-                        <input name="city" class="form-control" type="text" ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>                        
+                        <input id="city" name="city" class="form-control" type="text" ng-model="editAffiliation.city.value" placeholder="<@orcid.msg 'manual_affiliation_form_contents.add_city'/>" ng-change="serverValidate('affiliations/affiliation/cityValidate.json')" ng-model-onblur/>                        
                         <span class="orcid-error" ng-show="editAffiliation.city.errors.length > 0">
                             <div ng-repeat='error in editAffiliation.city.errors' ng-bind-html="error"></div>
                         </span>
@@ -207,7 +207,7 @@
                     </span>
                 </div>
                 <div class="control-group">
-                    <button class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
+                    <button id="save-education" class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
                         <span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
                         <span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
                     </button>

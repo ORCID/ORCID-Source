@@ -51,8 +51,12 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
         WorkExternalIdentifiers ids = new WorkExternalIdentifiers();
         WorkExternalIDConverter conv = new WorkExternalIDConverter();
         for (ExternalID externalID : externalIDs.getExternalIdentifier()){
+<<<<<<< HEAD
             WorkExternalIdentifier id = conv.convertRC2toRC1(externalID);
             ids.getExternalIdentifier().add(id);
+=======
+            ids.getExternalIdentifier().add(conv.convertToRC1(externalID));
+>>>>>>> master
         }        
         return JsonUtils.convertToJsonString(ids);
     }

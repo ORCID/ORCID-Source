@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc1.Work;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -39,35 +38,23 @@ import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
+public class MultipleTokensPerUserAndScopeTest extends BlackBoxBaseRC1 {
 
     @BeforeClass
     public static void beforeClass() {
-        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
-        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
-        if(PojoUtil.isEmpty(clientId2)) {
-            revokeApplicationsAccess(clientId1);
-        } else {
-            revokeApplicationsAccess(clientId1, clientId2);
-        }
+        revokeApplicationsAccess();
     }
     
     @AfterClass
     public static void afterClass() {
-        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");        
-        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
-        if(PojoUtil.isEmpty(clientId2)) {
-            revokeApplicationsAccess(clientId1);
-        } else {
-            revokeApplicationsAccess(clientId1, clientId2);
-        }
+        revokeApplicationsAccess();
     }
     
     @Test
     public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
         String scopes = ScopePathType.READ_LIMITED.value();
-        String token1 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
-        String token2 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String token1 = getAccessToken(scopes, this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+        String token2 = getAccessToken(scopes, this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
 
         // Check the scopes are not null
         assertNotNull(token1);
@@ -75,14 +62,14 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         assertFalse(token1.equals(token2));
 
         // Check token 1 is working
-        ClientResponse token1Response = memberV2ApiClient.viewActivities(user1OrcidId, token1);
+        ClientResponse token1Response = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token1);
         assertNotNull(token1Response);
         assertEquals(Response.Status.OK.getStatusCode(), token1Response.getStatus());
         ActivitiesSummary token1Activities = token1Response.getEntity(ActivitiesSummary.class);
         assertNotNull(token1Activities);
 
         // Check token 2 is working
-        ClientResponse token2Response = memberV2ApiClient.viewActivities(user1OrcidId, token2);
+        ClientResponse token2Response = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token2);
         assertNotNull(token2Response);
         assertEquals(Response.Status.OK.getStatusCode(), token2Response.getStatus());
         ActivitiesSummary token2Activities = token2Response.getEntity(ActivitiesSummary.class);
@@ -95,22 +82,22 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         workToCreate.setPutCode(null);
         workToCreate.getWorkTitle().getTitle().setContent("Title " + System.currentTimeMillis());
         
-        ClientResponse token1AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token1);
+        ClientResponse token1AddWorkresponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, token1);
         assertNotNull(token1AddWorkresponse);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), token1AddWorkresponse.getStatus());
                 
-        ClientResponse token2AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token2);
+        ClientResponse token2AddWorkresponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, token2);
         assertNotNull(token2AddWorkresponse);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), token2AddWorkresponse.getStatus());  
         
         // Check a new token with other scope can add the work
         scopes += " " + ScopePathType.ACTIVITIES_UPDATE.value();
-        String token3 = getAccessToken(scopes, this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String token3 = getAccessToken(scopes, this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
         assertNotNull(token3);
         assertFalse(token1.equals(token3));
         
         // Check token 3 is working
-        ClientResponse token3Response = memberV2ApiClient.viewActivities(user1OrcidId, token3);
+        ClientResponse token3Response = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token3);
         assertNotNull(token3Response);
         assertEquals(Response.Status.OK.getStatusCode(), token3Response.getStatus());
         ActivitiesSummary token3Activities = token3Response.getEntity(ActivitiesSummary.class);
@@ -119,7 +106,7 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBase {
         assertTrue(token1Activities.equals(token3Activities));
         
         //Check that token 3 can add works
-        ClientResponse token3AddWorkresponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, token3);
+        ClientResponse token3AddWorkresponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, token3);
         assertNotNull(token3AddWorkresponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), token3AddWorkresponse.getStatus());
     }          
