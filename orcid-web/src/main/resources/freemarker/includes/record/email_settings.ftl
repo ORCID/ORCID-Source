@@ -18,7 +18,6 @@
 -->
 
 <script type="text/ng-template" id="edit-emails">
-
 	<!-- Email edit -->
 	<td colspan="2" ng-show="showEditEmail || emailSrvc.popUp" ng-class="{'email-pop-up' : emailSrvc.popUp}" ng-cloak>
 	    <div class="editTablePadCell35" ng-controller="EmailEditCtrl">
@@ -81,8 +80,6 @@
 	                    </td>
 	                </tr>
 	            </table>
-				
-
 				<!-- Delete Email Box -->
 				<div ng-show="emailSrvc.popUp && showDeleteBox" class="delete-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
@@ -95,8 +92,6 @@
 						</ul>
 					</div>
 				</div>
-
-
 				<!-- Email confirmation -->
 				<div ng-show="emailSrvc.popUp && showEmailVerifBox" class="verify-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
@@ -107,18 +102,8 @@
 							<li><a href="" ng-click="closeVerificationBox()">${springMacroRequestContext.getMessage("manage.email.verificationEmail.close")}</a></li>
 						</ul>
 					</div>
-				</div>
-
-
-
-
-
-
-
-			
-    			
+				</div>    			
 			</div>
-	        
 			<div id="addEmailNotAllowed" ng-show="isPassConfReq" ng-cloak>
 				${springMacroRequestContext.getMessage("manage.add_another_email.not_allowed")}
 			</div>	        
@@ -158,8 +143,7 @@
 						</ul>	
 	       			</div>
 				</div>
-			</div>			
-
+			</div>
 			<div ng-controller="EmailFrequencyCtrl" ng-show="notificationsEnabled" ng-cloak>
 				<div class="row bottomBuffer">
     				<strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
