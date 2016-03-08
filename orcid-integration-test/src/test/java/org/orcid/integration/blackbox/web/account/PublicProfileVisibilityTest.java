@@ -16,20 +16,25 @@
  */
 package org.orcid.integration.blackbox.web.account;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
+import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.By.ById;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -37,22 +42,30 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.client.SigninPage;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.sun.jersey.api.client.ClientResponse;
 
 /**
  * @author Shobhit Tyagi
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class PublicProfileVisibilityTest extends BlackBoxBase { 
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     private static final int TEN = 10;
     private WebDriver webDriver;
     private OrcidUi orcidUi;
@@ -292,8 +305,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
 
         // Set Public Visibility
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
+        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("keywords-public-id")));
         privateVisibility = webDriver.findElement(By.id("keywords-public-id"));
         privateVisibility.click();
         saveButton = webDriver.findElement(By.id("save-keywords"));
@@ -372,8 +387,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
 
         // Set Public Visibility
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
         toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
+        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("websites-public-id")));
         privateVisibility = webDriver.findElement(By.id("websites-public-id"));
         privateVisibility.click();
         saveButton = webDriver.findElement(By.id("save-websites"));
@@ -680,6 +697,70 @@ public class PublicProfileVisibilityTest extends BlackBoxBase {
         String putCode = workElement.getAttribute("orcid-put-code");
         String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
         ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+    }
+
+    @Test
+    public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
+        //Create peer review group 
+        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value(), this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());        
+        GroupIdRecord g1 = super.createGroupIdRecord();
+        
+        // Create peer review
+        long time = System.currentTimeMillis();
+        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
+        peerReview.setPutCode(null);
+        peerReview.setGroupId(g1.getGroupId());
+        peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
+        ExternalID wExtId = new ExternalID();
+        wExtId.setValue("Work Id " + time);
+        wExtId.setType(ExternalIDType.AGR.value());
+        wExtId.setRelationship(Relationship.SELF);
+        peerReview.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
+        
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(this.getUser1OrcidId(), peerReview, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        peerReview = getResponse.getEntity(PeerReview.class);
+        
+        // Set it private   
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        WebElement peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
+        WebElement privateVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
+        privateVisibilityIcon.click();
+        (new WebDriverWait(webDriver, TEN))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        
+        // Check the public page
+        showPublicProfilePage();
+        try {
+            (new WebDriverWait(webDriver, TEN))
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+            fail();
+        } catch (Exception e) {
+
+        }
+                
+        // Set it public
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
+        WebElement publicVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
+        publicVisibilityIcon.click();
+        (new WebDriverWait(webDriver, TEN))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        
+        // Check the public page
+        showPublicProfilePage();
+        (new WebDriverWait(webDriver, TEN))
+        .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        
+        // Rollback
+        ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), peerReview.getPutCode(), accessToken);
+        assertNotNull(deleteResponse);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
     private void signin() {

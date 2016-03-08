@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
@@ -82,10 +81,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
 
     protected static Map<String,String> accessTokens = new HashMap<String, String>();
     
-    static List<GroupIdRecord> groupRecords = null;
-    
-    @Resource(name = "memberV2ApiClient_rc2")
-    protected MemberV2ApiClientImpl memberV2ApiClient;
+    static List<GroupIdRecord> groupRecords = null;   
     
     @BeforeClass
     public static void beforeClass() {
