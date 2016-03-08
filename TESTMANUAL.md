@@ -160,7 +160,7 @@ This should fail
     curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token'
     ```
 
-4 Read the biography:
+4. Read the biography:
  
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [bio 1.2 token]' 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-bio' -L -i
@@ -260,7 +260,6 @@ Check that the activities section is returned with affiliations, funding, peer-r
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/activities' -L -i
     ```
-
 Check that affiliation, funding, peer-review and works are returned
 
 6. Call 
@@ -268,7 +267,6 @@ Check that affiliation, funding, peer-review and works are returned
     ```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 0658713c-5b6d-4fa4-a3da-73db9c7ab16c' -X GET 'https://api.qa.orcid.org/v1.2/0000-0002-3874-7658/orcid-profile' -L -i
     ```
-
 Check that the bio section is returned
 Check that affiliations, funding, peer-review and work sections are returned
 
@@ -296,7 +294,6 @@ Check that affiliations, funding, peer-review and work summaries are returned
     ```
     curl -H 'Accept: application/orcid+xml' 'http://pub.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-works' -L -i
     ```
-
 Check that the bio and activities section are not returned
 
 4. Call:
@@ -345,7 +342,6 @@ Check that the bio and activities section are not returned
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/activities' -L -i
     ```
-
 Check that nothing is returned
 
 5. Call:
@@ -353,7 +349,6 @@ Check that nothing is returned
     ```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v1.2/0000-0003-2366-2712/orcid-profile' -L -i
     ```
-
 Check that nothing is returned
 
 6. Call:
@@ -361,7 +356,6 @@ Check that nothing is returned
     ```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/person' -L -i
     ```
-
 Check that nothing is returned
 
 7. Call:
@@ -369,7 +363,6 @@ Check that nothing is returned
     ```
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/activities' -L -i
     ```
-
 Check that nothing is returned in the affiliations, funding, peer-review, and works sections
 
 
