@@ -1202,19 +1202,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // Update the info
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-        
-        // Try to update it
-        
-        // this is failing due to test setup or something?
-        // PeerReviewManagerImpl.updatePeerReview checks for duplicate ids before changed source, but should only identify dupes with the same source..
-        // however, when it get there, it checks 6 against this one (2)
-        // 6 & 2 are identical, but have different sources in the XML
-        // However, 6 & 2 are both from APP-555 as far as code is concerned...?
-        // sourceManager.retrieveSourceEntity() is returning APP-5555555555555555
-        // existing.getSource() is returning APP-5555555555555555
-        // For some reason the security context has APP-5555555555555555 in it.
-        // if you comment out the dupe check, then it will hit the expected WrongSourceException
-        // confused and it's 6:30pm here.
+        peerReview.getExternalIdentifiers().getExternalIdentifier().iterator().next().setValue("different");
         
         try {
             response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 2L, peerReview);
