@@ -1204,6 +1204,15 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
         
         // Try to update it
+        
+        // this is failing due to test setup or something?
+        // during testing, it checks for duplicates before source, but should skip the dupe test.
+        // however, when it get there, it checks 6 against this one (2)
+        // 6 & 2 are identical.
+        // 6 & 2 are both from APP-555 as far as code is concerned...?
+        // sourceManager.retrieveSourceEntity() is returning APP-5555555555555555
+        // if you comment out the dupe check, then it will hit the expected WrongSourceException
+        
         try {
             response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 2L, peerReview);
             fail();

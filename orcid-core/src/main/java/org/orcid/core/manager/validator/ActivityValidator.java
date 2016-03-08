@@ -144,11 +144,13 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                   if (!areRelationshipsDifferentButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
+                   if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
                             && newId.equals(existingId)  
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
+                        System.out.println("source "+sourceEntity.getSourceId());
+                        System.out.println("existing source "+getExistingSource(existingSource));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
@@ -156,10 +158,12 @@ public class ActivityValidator {
         }
     }
     
-    private static boolean areRelationshipsDifferentButNotBothPartOf(Relationship r1, Relationship r2){
-        if (r1 == null || !r1.equals(r2))
-            return false;
-        return !r1.equals(Relationship.PART_OF);        
+    private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2){
+        if (r1 == null && r2 == null)
+            return true;
+        if (r1 != null && r1.equals(r2) && !r1.equals(Relationship.PART_OF))
+            return true;
+        return false;
     }
 
     public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
@@ -167,7 +171,7 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (!areRelationshipsDifferentButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
+                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
                             && newId.equals(existingId) 
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
