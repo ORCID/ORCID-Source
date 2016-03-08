@@ -65,6 +65,7 @@ import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -529,6 +530,7 @@ public class SetUpClientsAndUsers {
         OrcidHistory history = new OrcidHistory();
         history.setClaimed(new Claimed(true));
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        history.setCreationMethod(CreationMethod.INTEGRATION_TEST);
 
         orcidProfile.setOrcidHistory(history);
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);

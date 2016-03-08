@@ -178,8 +178,8 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         if (!profileEntManager.orcidExists(orcid)) {
             return new ModelAndView("error-404");
-        }
-
+        }        
+        
         Date lastModified = profileEntManager.getLastModified(orcid);
         long lastModifiedTime = 0;
         if(lastModified != null) {
@@ -190,6 +190,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav = new ModelAndView("public_profile_v3");
         mav.addObject("isPublicProfile", true);
         mav.addObject("orcidId", orcid);
+        
+        OrcidProfile orcidProfile = orcidProfileCacheManager.retrievePublic(orcid);
+        mav.addObject("profile", orcidProfile);
         
         boolean isProfileEmtpy = true;
 
