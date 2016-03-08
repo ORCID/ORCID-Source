@@ -52,12 +52,8 @@ curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&cl
 
 ### Public Read/Search 1.2
 1. Generate a read-public token with ```curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
-```
-2. Search for the new record you created with 
-	```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://api.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'```
-3. Read the record with: 
-```
-curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://api.qa.orcid.org/v1.2/[ma id 2]/orcid-profile' -L -i
+2. Search for the new record you created with ```curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://api.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'
+3. Read the record with: ```curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://api.qa.orcid.org/v1.2/[ma id 2]/orcid-profile' -L -i
 ```
 4. Read the record without a version: curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://api.qa.orcid.org/[ma id 2]/orcid-profile' -L -i
 5. Read the record without an access token: curl -H 'Content-Type: application/xml' 'http://api.qa.orcid.org/v1.2/[ma id 2]/orcid-profile' -L -i
