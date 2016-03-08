@@ -149,8 +149,6 @@ public class ActivityValidator {
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
-                        System.out.println("source "+sourceEntity.getSourceId());
-                        System.out.println("existing source "+getExistingSource(existingSource));
                         throw new OrcidDuplicatedActivityException(params);
                     }
                 }
