@@ -173,7 +173,7 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.locked.member.client.website}")
     private String lockedMemberClient1Website;
 
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
+    @Value("${org.orcid.web.baseUri:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
     @Resource
     protected OauthHelper oauthHelper;
