@@ -122,12 +122,12 @@
 	                    </div>
 		            </#if>          	            
 		            <!-- External Identifiers -->
-		            <#if (publicPersonExternalIdentifiers)?? && (publicPersonExternalIdentifiers.externalIdentifiers?size != 0)>
+		            <#if (publicPersonExternalIdentifiers)?? && (publicPersonExternalIdentifiers.externalIdentifier?size != 0)>
 						<div class="workspace-section">
 		            		<div class="workspace-section-header">            
 				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span>
 				                <div  id="public-external-identifiers-div">
-				                    <#list publicPersonExternalIdentifiers.externalIdentifiers as external>
+				                    <#list publicPersonExternalIdentifiers.externalIdentifier as external>
 				                        <#if (external.url.value)??>
 				                            <a href="${external.url.value}" target="_blank">${(external.type)!}: ${(external.value)!}</a><#if external_has_next><br/></#if>
 				                        <#else>

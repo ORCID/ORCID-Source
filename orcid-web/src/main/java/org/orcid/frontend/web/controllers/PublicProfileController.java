@@ -334,7 +334,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         if (!profile.isReviewed()) {
             if (isProfileValidForIndex(profile)) {
-                int countTokens = orcidOauth2TokenService.findCountByUserName(orcid);
+                int countTokens = orcidOauth2TokenService.findCountByUserName(orcid, lastModifiedTime);
                 if (!profile.isAccountNonLocked() || countTokens == 0 || (!CreationMethod.WEBSITE.value().equals(profile.getCreationMethod())
                         && !CreationMethod.DIRECT.value().equals(profile.getCreationMethod()))) {
                     mav.addObject("noIndex", true);

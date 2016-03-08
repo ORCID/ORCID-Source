@@ -348,6 +348,12 @@
 		eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
+			
+	<cache name="count-tokens" maxElementsInMemory="2000" timeToLiveSeconds="86400"
+		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
+		eternal="false">
+		<persistence strategy="localTempSwap" />
+	</cache>			
 									
 	<cache name="statistics-key" maxElementsInMemory="1000" timeToLiveSeconds="604800"
 		maxElementsOnDisk="5000" copyOnRead="false" copyOnWrite="false"
