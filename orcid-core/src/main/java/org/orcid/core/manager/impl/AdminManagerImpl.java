@@ -201,12 +201,12 @@ public class AdminManagerImpl implements AdminManager {
                         deprecated.setCreditName(null);
                         deprecated.setGivenNames("Given Names Deactivated");
                         deprecated.setFamilyName("Family Name Deactivated");
-                        deprecated.setOtherNamesVisibility(Visibility.PRIVATE);
+                        //deprecated.setOtherNamesVisibility(Visibility.PRIVATE);
                         deprecated.setNamesVisibility(Visibility.PRIVATE);
-                        deprecated.setExternalIdentifiersVisibility(Visibility.PRIVATE);
+                        //deprecated.setExternalIdentifiersVisibility(Visibility.PRIVATE);
                         deprecated.setBiographyVisibility(Visibility.PRIVATE);
-                        deprecated.setKeywordsVisibility(Visibility.PRIVATE);
-                        deprecated.setResearcherUrlsVisibility(Visibility.PRIVATE);
+                        //deprecated.setKeywordsVisibility(Visibility.PRIVATE);
+                        //deprecated.setResearcherUrlsVisibility(Visibility.PRIVATE);
                         deprecated.setProfileAddressVisibility(Visibility.PRIVATE);
                         deprecated.setPrimaryRecord(primary);
                         deprecated.setBiography(new String());

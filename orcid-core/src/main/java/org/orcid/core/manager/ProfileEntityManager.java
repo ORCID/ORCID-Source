@@ -88,7 +88,7 @@ public interface ProfileEntityManager {
 
     boolean reviewProfile(String orcid);
     
-    Visibility getResearcherUrlDefaultVisibility(String orcid);
+    //Visibility getResearcherUrlDefaultVisibility(String orcid);
 
     List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
     

@@ -141,13 +141,15 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     // Visibility settings
     private Visibility namesVisibility;
-    private Visibility otherNamesVisibility;
     private Visibility biographyVisibility;
-    private Visibility keywordsVisibility;
-    private Visibility externalIdentifiersVisibility;
-    private Visibility researcherUrlsVisibility;
     private Visibility profileAddressVisibility;
     private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
+
+    //depreciate visibilities
+    //private Visibility otherNamesVisibility;
+    //private Visibility keywordsVisibility;
+    //private Visibility externalIdentifiersVisibility;
+    //private Visibility researcherUrlsVisibility;
 
     // Salesfore ID
     private String salesforeId;
@@ -834,6 +836,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.namesVisibility = namesVisibility;
     }
 
+    /*
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "other_names_visibility")
@@ -843,7 +846,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setOtherNamesVisibility(Visibility otherNamesVisibility) {
         this.otherNamesVisibility = otherNamesVisibility;
-    }
+    }*/
 
     @Basic
     @Enumerated(EnumType.STRING)
@@ -856,6 +859,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.biographyVisibility = biographyVisibility;
     }
 
+    /*
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "keywords_visibility")
@@ -887,7 +891,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setResearcherUrlsVisibility(Visibility researcherUrlsVisibility) {
         this.researcherUrlsVisibility = researcherUrlsVisibility;
-    }
+    }*/
 
     @Basic
     @Enumerated(EnumType.STRING)

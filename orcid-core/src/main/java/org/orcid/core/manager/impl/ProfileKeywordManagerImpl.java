@@ -266,9 +266,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = profile.getKeywordsVisibility() == null
-                ? org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getKeywordsVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultKeywordVisibility.isMoreRestrictiveThan(incomingKeywordVisibility)) {
                 entity.setVisibility(defaultKeywordVisibility);

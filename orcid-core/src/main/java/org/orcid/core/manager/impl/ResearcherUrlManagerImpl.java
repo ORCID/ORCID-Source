@@ -31,6 +31,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -99,7 +100,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * */
     @Override
     @Transactional
-    public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility) {
+    public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls) {
         List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(ResearcherUrlEntity existingEntity : existingEntities) {
@@ -153,9 +154,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             }
         }
         
-        if(defaultVisibility != null) {
-            profileDao.updateResearcherUrlsVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
-        }
+//        if(defaultVisibility != null) {
+//            profileDao.updateResearcherUrlsVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
+//        }
         return researcherUrls;
     }
 
@@ -282,8 +283,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultResearcherUrlsVisibility = profile.getResearcherUrlsVisibility() == null ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getResearcherUrlsVisibility()
-                .value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultResearcherUrlsVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultResearcherUrlsVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
                 entity.setVisibility(defaultResearcherUrlsVisibility);

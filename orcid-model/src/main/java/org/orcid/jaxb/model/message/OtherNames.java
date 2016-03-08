@@ -127,11 +127,11 @@ public class OtherNames implements Serializable, VisibilityType {
         this.visibility = value;
     }
 
-    public void addOtherName(String value) {
+    public void addOtherName(String value, Visibility vis) {
         if (getOtherName() == null) {
             setOtherName(new ArrayList<OtherName>());
         }
-        getOtherName().add(new OtherName(value));
+        getOtherName().add(new OtherName(value, vis));
     }
 
     @Override

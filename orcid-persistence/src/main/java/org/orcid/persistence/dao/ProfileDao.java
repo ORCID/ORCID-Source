@@ -120,7 +120,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
-    public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
+    //public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
     public boolean getClaimedStatus(String orcid);
 

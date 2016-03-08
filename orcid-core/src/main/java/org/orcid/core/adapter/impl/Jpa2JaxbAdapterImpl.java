@@ -644,9 +644,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
         if (profileEntityKeywords != null && !profileEntityKeywords.isEmpty()) {
             Keywords keywords = new Keywords();
-            keywords.setVisibility(profileEntity.getKeywordsVisibility());
+            //keywords.setVisibility(profileEntity.getKeywordsVisibility());
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
-                keywords.getKeyword().add(new Keyword(keywordEntity.getKeywordName()));
+                keywords.getKeyword().add(new Keyword(keywordEntity.getKeywordName(),Visibility.fromValue(keywordEntity.getVisibility().value())));
             }
             return keywords;
         }
@@ -663,9 +663,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ResearcherUrlEntity> researcherUrlEntities = profileEntity.getResearcherUrls();
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
-            researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
+            //researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
-                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
+                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()),Visibility.fromValue(researcherUrl.getVisibility().value()));
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 researcherUrls.getResearcherUrl().add(url);
@@ -678,10 +678,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private ExternalIdentifiers getExternalIdentifiers(ProfileEntity profileEntity) {
         Set<ExternalIdentifierEntity> externalIdentifierEntities = profileEntity.getExternalIdentifiers();
         ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
-        externalIdentifiers.setVisibility(profileEntity.getExternalIdentifiersVisibility());
+        //externalIdentifiers.setVisibility(profileEntity.getExternalIdentifiersVisibility());
         if (externalIdentifierEntities != null) {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
-                ExternalIdentifier externalIdentifier = new ExternalIdentifier();
+                ExternalIdentifier externalIdentifier = new ExternalIdentifier(Visibility.valueOf(externalIdentifierEntity.getVisibility().value()));
                 SourceEntity sourceEntity = externalIdentifierEntity.getSource();
                 if (sourceEntity != null) {
                     Source source = new Source();
@@ -699,6 +699,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         externalIdentifierEntity.getExternalIdCommonName()) : null);
                 externalIdentifier.setExternalIdUrl(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdUrl()) ? new ExternalIdUrl(externalIdentifierEntity
                         .getExternalIdUrl()) : null);
+                
+                
                 externalIdentifiers.getExternalIdentifier().add(externalIdentifier);
             }
         }
@@ -1044,11 +1046,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OtherNames getOtherNames(ProfileEntity profile) {
         OtherNames otherNames = new OtherNames();
-        otherNames.setVisibility(profile.getOtherNamesVisibility());
+        //otherNames.setVisibility(profile.getOtherNamesVisibility());
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
             for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
-                otherNames.addOtherName(otherNameEntity.getDisplayName());
+                otherNames.addOtherName(otherNameEntity.getDisplayName(), Visibility.fromValue(otherNameEntity.getVisibility().value()));
             }
         }
         return otherNames;

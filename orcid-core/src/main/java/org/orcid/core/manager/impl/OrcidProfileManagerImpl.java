@@ -1882,6 +1882,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         : OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
             }
 
+            /*
             if (profileEntity.getExternalIdentifiersVisibility() == null) {
                 profileEntity.setExternalIdentifiersVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
@@ -1896,16 +1897,17 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 profileEntity.setResearcherUrlsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
             }
-
+*/
             if (profileEntity.getNamesVisibility() == null) {
                 profileEntity.setNamesVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
             }
 
+            /*
             if (profileEntity.getOtherNamesVisibility() == null) {
                 profileEntity.setOtherNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility());
             }
-
+*/
             if (profileEntity.getProfileAddressVisibility() == null) {
                 profileEntity.setProfileAddressVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());

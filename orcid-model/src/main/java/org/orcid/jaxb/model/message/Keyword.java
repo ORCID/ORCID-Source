@@ -26,8 +26,12 @@ package org.orcid.jaxb.model.message;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -60,12 +64,17 @@ public class Keyword implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
+    
+    @XmlTransient
+    @JsonIgnore
+    protected Visibility visibility;
 
     public Keyword() {
     }
 
-    public Keyword(String content) {
+    public Keyword(String content, Visibility vis) {
         this.content = content;
+        this.visibility = vis;
     }
 
     /**
@@ -87,6 +96,14 @@ public class Keyword implements Serializable {
      */
     public void setContent(String value) {
         this.content = value;
+    }
+    
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     @Override

@@ -444,7 +444,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
-        profileEntity.setResearcherUrlsVisibility(researcherUrls != null ? researcherUrls.getVisibility() : null);
+        //profileEntity.setResearcherUrlsVisibility(researcherUrls != null ? researcherUrls.getVisibility() : null);
         if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {
             List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
             SortedSet<ResearcherUrlEntity> researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
@@ -470,7 +470,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setOtherNames(ProfileEntity profileEntity, OtherNames otherNames) {
         if (otherNames != null) {
-            profileEntity.setOtherNamesVisibility(otherNames.getVisibility());
+            //profileEntity.setOtherNamesVisibility(otherNames.getVisibility());
             List<OtherName> otherNameList = otherNames.getOtherName();
             if (otherNameList != null && !otherNameList.isEmpty()) {
                 SortedSet<OtherNameEntity> otherNameEntities = new TreeSet<OtherNameEntity>();
@@ -516,7 +516,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileKeywordEntities = existingProfileKeywordEntities;
         }
         if (keywords != null) {
-            profileEntity.setKeywordsVisibility(keywords.getVisibility());
+            //profileEntity.setKeywordsVisibility(keywords.getVisibility());
             List<Keyword> keywordList = keywords.getKeyword();
             if (keywordList != null && !keywordList.isEmpty()) {
                 for (Keyword keyword : keywordList) {
@@ -557,7 +557,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
         if (externalIdentifiers != null) {
-            profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
+            //profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
 
             Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
             Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
