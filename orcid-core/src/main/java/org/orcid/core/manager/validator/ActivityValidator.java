@@ -144,7 +144,7 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF)
+                   if (!areRelationshipsDifferentButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
                             && newId.equals(existingId)  
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
@@ -155,14 +155,20 @@ public class ActivityValidator {
             }
         }
     }
+    
+    private static boolean areRelationshipsDifferentButNotBothPartOf(Relationship r1, Relationship r2){
+        if (r1 == null || !r1.equals(r2))
+            return false;
+        return !r1.equals(Relationship.PART_OF);        
+    }
 
     public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
             SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF)
-                            && newId.getValue().equals(existingId.getValue()) && newId.getType().equals(existingId.getType())
+                    if (!areRelationshipsDifferentButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
+                            && newId.equals(existingId) 
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());

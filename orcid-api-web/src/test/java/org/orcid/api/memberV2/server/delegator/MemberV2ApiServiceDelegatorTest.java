@@ -1293,8 +1293,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PeerReview peerReview = new PeerReview();
         ExternalIDs weis = new ExternalIDs();
         ExternalID wei1 = new ExternalID();
-        wei1.setRelationship(Relationship.SELF);
-        wei1.setUrl(new Url("http://1.com"));
+        wei1.setRelationship(null);
         wei1.setValue("1");
         wei1.setType(ExternalIDType.DOI.value());
         weis.getExternalIdentifier().add(wei1);
