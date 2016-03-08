@@ -37,9 +37,9 @@ Steps to be completed before each release
 
 ##API
 ###Public Authenticate
-1 Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
+1. Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 
-2 Register for a new account and grant authorization
+2. Register for a new account and grant authorization
     * First name: ma_public_test
     * Last name: [DD][month][YYYY] (ex: 24feb2016)
     * Email: ma_public_test_[DD][month][YYYY]@mailinator.com (ex: ma_test_24feb2016@mailinator.com)
@@ -47,18 +47,20 @@ Steps to be completed before each release
     * Default privacy for new activities: Private
     * Email frequency: Never
 
-3 Exchange the authorization code with 
-```
-curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&client_secret=[public client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
-```
+3. Exchange the authorization code with 
+
+    ```
+    curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&client_secret=[public client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
+    ```
 
 ### Public Read/Search 1.2
-1 Generate a read-public token with 
-```
-curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
-```
+1. Generate a read-public token with 
 
-2 Search for the new record you created with 
+    ```
+    curl -i -L -H 'Accept: application/json' -d 'client_id=[public client id]' -d 'client_secret=[public client secret]' -d 'scope=/read-public' -d 'grant_type=client_credentials' 'http://pub.qa.orcid.org/oauth/token'
+    ```
+
+2. Search for the new record you created with 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://api.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'
 ```
