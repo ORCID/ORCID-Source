@@ -144,8 +144,12 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (isDupRelationship(newId, existingId) && isDupValue(newId, existingId) && isDupType(newId, existingId)
+                   if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
+                            && newId.equals(existingId)  
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
+                       System.out.println("sorcid "+existingSource.getSourceOrcid());
+                       System.out.println("sid "+existingSource.getSourceClientId().getPath());
+                       System.out.println("sorcid2 "+sourceEntity.getSourceId());
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
@@ -154,21 +158,13 @@ public class ActivityValidator {
             }
         }
     }
-
-    private static boolean isDupRelationship(ExternalID newId, ExternalID existingId) {
-        return existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null
-                && newId.getRelationship().equals(Relationship.SELF);
-    }
-
-    private static boolean isDupValue(ExternalID newId, ExternalID existingId) {
-        return existingId.getValue() != null && existingId.getValue() != null
-                && newId.getValue() != null && newId.getValue() != null
-                && newId.getValue().equals(existingId.getValue());
-    }
-
-    private static boolean isDupType(ExternalID newId, ExternalID existingId) {
-        return existingId.getType() != null && newId.getType() != null
-                && newId.getType().equalsIgnoreCase(existingId.getType());
+    
+    private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2){
+        if (r1 == null && r2 == null)
+            return true;
+        if (r1 != null && r1.equals(r2) && !r1.equals(Relationship.PART_OF))
+            return true;
+        return false;
     }
 
     public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
@@ -176,8 +172,8 @@ public class ActivityValidator {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (existingId.getRelationship() != null && existingId.getRelationship().equals(Relationship.SELF) && newId.getRelationship() != null && newId.getRelationship().equals(Relationship.SELF)
-                            && newId.getValue().equals(existingId.getValue()) && newId.getType().equals(existingId.getType())
+                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
+                            && newId.equals(existingId) 
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
