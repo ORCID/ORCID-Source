@@ -156,29 +156,27 @@ public class EmailManagerImpl implements EmailManager {
     @Override
     @Cacheable(value = "emails", key = "#orcid.concat('-').concat(#lastModified)")
     public Emails getEmails(String orcid, long lastModified) {
-        List<EmailEntity> entities = emailDao.findByOrcid(orcid);
-        if(entities != null) {
-            List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
-            Emails emails = new Emails();
-            emails.setEmails(emailList);
-            LastModifiedDatesHelper.calculateLatest(emails);
-            return emails;
-        }
-        return null;
+        return getEmails(orcid, null);
     }
     
     @Override
     @Cacheable(value = "public-emails", key = "#orcid.concat('-').concat(#lastModified)")
     public Emails getPublicEmails(String orcid, long lastModified) {
-        List<EmailEntity> entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
-        if(entities != null) {            
-            List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
-            Emails emails = new Emails();
-            emails.setEmails(emailList);
-            LastModifiedDatesHelper.calculateLatest(emails);
-            return emails;
+        return getEmails(orcid, Visibility.PUBLIC);
+    }
+    
+    private Emails getEmails(String orcid, Visibility visibility) {
+        List<EmailEntity> entities = new ArrayList<EmailEntity>();
+        if(visibility == null) {
+            entities = emailDao.findByOrcid(orcid);
+        } else {
+            entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
         }
-        return new Emails();
+        List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        Emails emails = new Emails();
+        emails.setEmails(emailList);
+        LastModifiedDatesHelper.calculateLatest(emails);
+        return emails;
     }
     
     @Override

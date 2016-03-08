@@ -66,7 +66,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
-    private static final int TEN = 10;
+    private static final int FIVE = 5;
     private WebDriver webDriver;
     private OrcidUi orcidUi;
 
@@ -97,7 +97,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Change Visibility to public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")));
         WebElement toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
         WebElement privateVisibility = webDriver.findElement(By.id("email-" + emailValue + "-public-id"));
@@ -106,13 +106,14 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email' and text() = '" + emailValue + "']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email' and text() = '" + emailValue + "']")));
 
         // Revert Visibility to private
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")));
         toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-private-id")));
         privateVisibility = webDriver.findElement(By.id("email-" + emailValue + "-private-id"));
         privateVisibility.click();
         Thread.sleep(500);
@@ -120,7 +121,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Verify
         try {
             showPublicProfilePage();
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email' and text() = '" + emailValue + "']")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email' and text() = '" + emailValue + "']")));
             fail("Just found email '" + emailValue + "' that should be private");
         } catch (Exception e) {
 
@@ -137,8 +138,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void otherNamesPrivacyTest() {
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")));
         WebElement toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-other-names")));
         List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='other-name']"));
         WebElement textBox = null;
         for (WebElement element : elements) {
@@ -159,7 +162,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Verify
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
             WebElement otherNamesDiv = webDriver.findElement(By.xpath("//div[@id='public-other-names-div']"));
             assertNotNull(otherNamesDiv);
             assertFalse(PojoUtil.isEmpty(otherNamesDiv.getText()));
@@ -177,11 +180,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         saveButton = webDriver.findElement(By.id("save-other-names"));
         saveButton.click();
         new WebDriverWait(webDriver, 1);
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")));
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
         WebElement otherNamesDiv = webDriver.findElement(By.xpath("//div[@id='public-other-names-div']"));
         assertNotNull(otherNamesDiv);
         assertFalse(PojoUtil.isEmpty(otherNamesDiv.getText()));
@@ -191,7 +194,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='other-name']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='other-name']")));
         List<WebElement> otherNames = webDriver.findElements(By.xpath("//input[@name='other-name']"));
         WebElement toClick = null;
         for (WebElement element : otherNames) {
@@ -210,9 +213,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     public void countryPrivacyTest() {
         showMyOrcidPage();
         String initialValue = "US";
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
         WebElement toggle = webDriver.findElement(By.id("open-edit-country"));
         toggle.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-country")));
         Select selectBox = new Select(webDriver.findElement(By.id("country")));
         WebElement selectedCountry = selectBox.getFirstSelectedOption();
         if (selectedCountry != null) {
@@ -225,12 +229,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         privateVisibility.click();
         WebElement saveButton = webDriver.findElement(By.id("save-country"));
         saveButton.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
 
         // Verify
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
             webDriver.findElement(By.xpath("//div[@id='public-country-div']"));
             fail("Just found country 'India' which should be private");
         } catch (Exception e) {
@@ -239,18 +243,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
         toggle = webDriver.findElement(By.id("open-edit-country"));
         toggle.click();
         privateVisibility = webDriver.findElement(By.id("country-public-id"));
         privateVisibility.click();
         saveButton = webDriver.findElement(By.id("save-country"));
         saveButton.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
         WebElement countryDiv = webDriver.findElement(By.xpath("//div[@id='public-country-div']"));
         assertNotNull(countryDiv);
         assertFalse(PojoUtil.isEmpty(countryDiv.getText()));
@@ -258,6 +262,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Rollback changes
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));        
         toggle = webDriver.findElement(By.id("open-edit-country"));
         toggle.click();
         selectBox = new Select(webDriver.findElement(By.id("country")));
@@ -268,11 +273,13 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     }
 
     @Test
-    public void keyWordPrivacyTest() {
+    public void keyWordPrivacyTest() throws InterruptedException {
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
         WebElement toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
 
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")));
         List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='keyword']"));
         WebElement textBox = null;
         for (WebElement element : elements) {
@@ -288,13 +295,15 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set Private Visibility
         WebElement privateVisibility = webDriver.findElement(By.id("keywords-private-id"));
         privateVisibility.click();
+        Thread.sleep(150);
         WebElement saveButton = webDriver.findElement(By.id("save-keywords"));
         saveButton.click();
-
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        
         // Verify
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-keywords-div']")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-keywords-div']")));
             WebElement keywordsDiv = webDriver.findElement(By.xpath("//div[@id='public-keywords-div']"));
             assertNotNull(keywordsDiv);
             assertFalse(PojoUtil.isEmpty(keywordsDiv.getText()));
@@ -305,19 +314,20 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("keywords-public-id")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("keywords-public-id")));
         privateVisibility = webDriver.findElement(By.id("keywords-public-id"));
         privateVisibility.click();
+        Thread.sleep(150);
         saveButton = webDriver.findElement(By.id("save-keywords"));
         saveButton.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-keywords-div']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-keywords-div']")));
         WebElement keywordsDiv = webDriver.findElement(By.xpath("//div[@id='public-keywords-div']"));
         assertNotNull(keywordsDiv);
         assertFalse(PojoUtil.isEmpty(keywordsDiv.getText()));
@@ -328,7 +338,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
 
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")));
         List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));
         for (WebElement element : keywords) {
             if (keywordValue.equals(element.getAttribute("value"))) {
@@ -341,13 +351,15 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         saveButton = webDriver.findElement(By.id("save-keywords"));
         saveButton.click();
         new WebDriverWait(webDriver, 1);
-
     }
 
     @Test
     public void websitesPrivacyTest() {
+        showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
         WebElement toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-websites")));
         List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='website-url']"));
         WebElement websiteUrl = null;
         WebElement websiteName = null;
@@ -372,11 +384,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         privateVisibility.click();
         WebElement saveButton = webDriver.findElement(By.id("save-websites"));
         saveButton.click();
-
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        
         // Verify
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-researcher-urls-div']")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-researcher-urls-div']")));
             WebElement researcherUrlsDiv = webDriver.findElement(By.xpath("//div[@id='public-researcher-urls-div']"));
             assertNotNull(researcherUrlsDiv);
             assertFalse(PojoUtil.isEmpty(researcherUrlsDiv.getText()));
@@ -387,19 +400,19 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
         toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("websites-public-id")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("websites-public-id")));
         privateVisibility = webDriver.findElement(By.id("websites-public-id"));
         privateVisibility.click();
         saveButton = webDriver.findElement(By.id("save-websites"));
         saveButton.click();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-researcher-urls-div']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-researcher-urls-div']")));
         WebElement researcherUrlsDiv = webDriver.findElement(By.xpath("//div[@id='public-researcher-urls-div']"));
         assertNotNull(researcherUrlsDiv);
         assertFalse(PojoUtil.isEmpty(researcherUrlsDiv.getText()));
@@ -407,10 +420,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Rollback changes
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
         toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
 
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='website-url']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='website-url']")));
         List<WebElement> websites = webDriver.findElements(By.xpath("//input[@name='website-url']"));
         for (WebElement element : websites) {
             if (websiteValue.equals(element.getAttribute("value"))) {
@@ -428,11 +442,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void educationPrivacyTest() {
         Actions action = new Actions(webDriver);
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")));
         WebElement container = webDriver.findElement(By.id("add-education-container"));
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")));
         action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-education"))).click().build().perform();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")));
 
         WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String educationName = "Education" + System.currentTimeMillis();
@@ -446,18 +460,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         saveButton.click();
 
         // Set Private Visibility
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
         WebElement educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
         WebElement privateVisibilityIcon = educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
         privateVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
 
         // Verify
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
             fail();
         } catch (Exception e) {
 
@@ -465,28 +479,28 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
         educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
         WebElement publicVisibilityIcon = educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
         educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
         String putCode = educationElement.getAttribute("education-put-code");
         WebElement deleteButton = webDriver.findElement(By.id("delete-affiliation_" + putCode));
         deleteButton.click();
 
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
         WebElement confirmDeleteButton = webDriver.findElement(ById.id("confirm_delete_affiliation"));
         confirmDeleteButton.click();
     }
@@ -494,11 +508,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void employmentPrivacyTest() {
         Actions action = new Actions(webDriver);
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-employment-container")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-employment-container")));
         WebElement container = webDriver.findElement(By.id("add-employment-container"));
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-employment")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-employment")));
         action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-employment"))).click().build().perform();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")));
 
         WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String employmentName = "Employment" + System.currentTimeMillis();
@@ -512,18 +526,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         saveButton.click();
 
         // Set Private Visibility
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
         WebElement educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         WebElement privateVisibilityIcon = educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
         privateVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
 
         // Verify
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
             fail();
         } catch (Exception e) {
 
@@ -531,28 +545,28 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
         educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         WebElement publicVisibilityIcon = educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
         educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         String putCode = educationElement.getAttribute("employment-put-code");
         WebElement deleteButton = webDriver.findElement(By.id("delete-affiliation_" + putCode));
         deleteButton.click();
 
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
         WebElement confirmDeleteButton = webDriver.findElement(ById.id("confirm_delete_affiliation"));
         confirmDeleteButton.click();
     }
@@ -560,11 +574,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
         Actions action = new Actions(webDriver);
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding-container")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding-container")));
         WebElement container = webDriver.findElement(By.id("add-funding-container"));
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding")));
         action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-funding"))).click().build().perform();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")));
 
         long time = System.currentTimeMillis();
 
@@ -587,20 +601,20 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         WebElement saveButton = webDriver.findElement(By.id("save-funding"));
         saveButton.click();
 
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
 
         // Change to private
         WebElement fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         WebElement privateVisibilityIcon = fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
         privateVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
 
         // Check public page
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
+            (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
             fail();
         } catch (Exception e) {
 
@@ -608,40 +622,39 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Change to public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
         fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         WebElement publicVisibilityIcon = fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
 
         // Check public page
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
         fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         String putCode = fundingElement.getAttribute("funding-put-code");
         WebElement deleteButton = webDriver.findElement(By.id("delete-funding_" + putCode));
         deleteButton.click();
 
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")));
         WebElement confirmDeleteButton = webDriver.findElement(ById.id("confirm-delete-funding"));
         confirmDeleteButton.click();
-
     }
 
     @Test
     public void workPrivacyTest() throws InterruptedException {
         Actions action = new Actions(webDriver);
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")));
         WebElement container = webDriver.findElement(By.id("add-work-container"));
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")));
         action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-work"))).click().build().perform();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")));
 
         WebElement category = webDriver.findElement(By.id("workCategory"));
         category.sendKeys("Publication");
@@ -654,19 +667,19 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         save.click();
 
         // Set private
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
 
         WebElement workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
         WebElement privateVisibilityIcon = workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
         privateVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
 
         // Check public page
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN))
+            (new WebDriverWait(webDriver, FIVE))
                     .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
             fail();
         } catch (Exception e) {
@@ -675,23 +688,23 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
 
         workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
         WebElement publicVisibilityIcon = workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
 
         // Check public page
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
 
         // Rollback
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
         workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
         String putCode = workElement.getAttribute("orcid-put-code");
@@ -726,17 +739,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         
         // Set it private   
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
         WebElement peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
         WebElement privateVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]"));
         privateVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
         
         // Check the public page
         showPublicProfilePage();
         try {
-            (new WebDriverWait(webDriver, TEN))
+            (new WebDriverWait(webDriver, FIVE))
                     .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
             fail();
         } catch (Exception e) {
@@ -745,16 +758,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
                 
         // Set it public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
         peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
         WebElement publicVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
         
         // Check the public page
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TEN))
+        (new WebDriverWait(webDriver, FIVE))
         .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
         
         // Rollback
@@ -775,12 +788,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     private void showMyOrcidPage() {
         webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("orcid-id")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("orcid-id")));
     }
 
     private void showPublicProfilePage() {
         webDriver.get(getWebBaseUrl() + "/" + getUser1OrcidId());
-        (new WebDriverWait(webDriver, TEN)).until(ExpectedConditions.presenceOfElementLocated(By.id("orcid-id")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.presenceOfElementLocated(By.id("orcid-id")));
     }
 
 }

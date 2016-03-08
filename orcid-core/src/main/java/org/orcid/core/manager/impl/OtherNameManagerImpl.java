@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,17 +70,23 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Override
     @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public OtherNames getOtherNames(String orcid, long lastModified) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, lastModified);
-        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        result.updateIndexingStatusOnChilds();
-        LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return getOtherNames(orcid, null);
     }
     
     @Override
     @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public OtherNames getPublicOtherNames(String orcid, long lastModified) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
+        return getOtherNames(orcid, Visibility.PUBLIC);        
+    }
+    
+    private OtherNames getOtherNames(String orcid, Visibility visibility) {
+        List<OtherNameEntity> otherNameEntityList = new ArrayList<OtherNameEntity>();
+        if(visibility == null) {
+            otherNameEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
+        } else {
+            otherNameEntityList = otherNameDao.getOtherNames(orcid, visibility);
+        }
+        
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
         result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);

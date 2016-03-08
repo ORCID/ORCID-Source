@@ -107,7 +107,7 @@
 	                    </div>
 		            </#if>	  
 		            <!-- Email -->
-		            <#if (publicEmails)?? && (publicEmails.emails?size != 0)>
+		            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			 <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span>
