@@ -38,6 +38,7 @@ Steps to be completed before each release
 ##API
 ###Public Authenticate
 1 Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
+
 2 Register for a new account and grant authorization
     * First name: ma_public_test
     * Last name: [DD][month][YYYY] (ex: 24feb2016)
@@ -45,6 +46,7 @@ Steps to be completed before each release
     * Password: generate random password using [LastPass generator](https://lastpass.com/generatepassword.php) or similar
     * Default privacy for new activities: Private
     * Email frequency: Never
+
 3 Exchange the authorization code with 
 ```
 curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&client_secret=[public client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
