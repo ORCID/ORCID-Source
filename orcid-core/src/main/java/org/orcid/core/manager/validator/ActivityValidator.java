@@ -147,9 +147,6 @@ public class ActivityValidator {
                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
                             && newId.equals(existingId)  
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
-                       System.out.println("sorcid "+existingSource.getSourceOrcid());
-                       System.out.println("sid "+existingSource.getSourceClientId().getPath());
-                       System.out.println("sorcid2 "+sourceEntity.getSourceId());
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
                         throw new OrcidDuplicatedActivityException(params);
