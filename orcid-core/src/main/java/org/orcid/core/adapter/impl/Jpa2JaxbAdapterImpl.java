@@ -249,7 +249,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         profile.setLocked(profileEntity.getRecordLocked());
         profile.setReviewed(profileEntity.isReviewed());
 
-        int countTokens = orcidOauth2TokenService.findCountByUserName(profileEntity.getId());
+        Date lastModified = profileEntity.getLastModified() == null? new Date() : profileEntity.getLastModified();
+        
+        int countTokens = orcidOauth2TokenService.findCountByUserName(profileEntity.getId(), lastModified.getTime());
         profile.setCountTokens(countTokens);
         return profile;
     }
@@ -422,7 +424,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
         OrcidBio orcidBio = new OrcidBio();
-
         orcidBio.setContactDetails(getContactDetails(profileEntity));
         orcidBio.setExternalIdentifiers(getExternalIdentifiers(profileEntity));
         orcidBio.setDelegation(getDelegation(profileEntity));

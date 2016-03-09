@@ -75,5 +75,5 @@ public interface OrcidOauth2TokenDetailService {
     
     boolean checkIfScopeIsAvailableForMember(String clientId, String userName, List<String> scope);
 
-	int findCountByUserName(String userName);
+    int findCountByUserName(String userName, long lastModified);
 }

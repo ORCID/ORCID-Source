@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.record_rc2.Addresses;
  * 
  */
 public interface AddressManager {
-    Address getPrimaryAddress(String orcid);
+    Address getPrimaryAddress(String orcid, long lastModified);
     
     Addresses getAddresses(String orcid, long lastModified);
     

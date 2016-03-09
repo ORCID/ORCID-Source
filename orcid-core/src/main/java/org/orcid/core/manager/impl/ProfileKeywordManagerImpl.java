@@ -16,9 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +61,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
-
+    
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
@@ -70,38 +70,29 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Override
     @Cacheable(value = "keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public Keywords getKeywords(String orcid, long lastModified) {
-        List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, null);
-        Keywords result = adapter.toKeywords(entities);
-        result.updateIndexingStatusOnChilds();
-        LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return getKeywords(orcid, null);
     }
 
     @Override
     @Cacheable(value = "public-keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public Keywords getPublicKeywords(String orcid, long lastModified) {
-        List<ProfileKeywordEntity> entities = getProfileKeywordEntitys(orcid, Visibility.PUBLIC);
+        return getKeywords(orcid, Visibility.PUBLIC);
+    }
+
+    private Keywords getKeywords(String orcid, Visibility visibility) {
+        List<ProfileKeywordEntity> entities = new ArrayList<ProfileKeywordEntity>();
+        if(visibility == null) {
+            entities = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
+        } else {
+            entities = profileKeywordDao.getProfileKeywors(orcid, Visibility.PUBLIC);
+        }
+        
         Keywords result = adapter.toKeywords(entities);
         result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
-
-    private List<ProfileKeywordEntity> getProfileKeywordEntitys(String orcid, Visibility visibility) {
-        List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
-        if (visibility != null) {
-            Iterator<ProfileKeywordEntity> it = keywords.iterator();
-            while (it.hasNext()) {
-                ProfileKeywordEntity keywordEntity = it.next();
-                if (!visibility.equals(keywordEntity.getVisibility())) {
-                    it.remove();
-                }
-            }
-        }
-
-        return keywords;
-    }
-
+    
     @Override
     public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
         Visibility v = (defaultVisiblity == null)

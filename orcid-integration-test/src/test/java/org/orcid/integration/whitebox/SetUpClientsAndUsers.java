@@ -65,6 +65,7 @@ import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -529,6 +530,7 @@ public class SetUpClientsAndUsers {
         OrcidHistory history = new OrcidHistory();
         history.setClaimed(new Claimed(true));
         history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        history.setCreationMethod(CreationMethod.INTEGRATION_TEST);
 
         orcidProfile.setOrcidHistory(history);
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
@@ -604,7 +606,7 @@ public class SetUpClientsAndUsers {
                     org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
 
             // Remove emails
-            Emails emails = emailManager.getEmails(orcid);
+            Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
             if (emails != null && emails.getEmails() != null) {
                 for (org.orcid.jaxb.model.record_rc2.Email rc2Email : emails.getEmails()) {
                     if (!params.get(EMAIL).equals(rc2Email.getEmail())) {
@@ -803,6 +805,7 @@ public class SetUpClientsAndUsers {
     public void setUpAddresses(String orcid) {
         Address a1 = new Address();
         a1.setCountry(new Country(Iso3166Country.US));
+        a1.setPrimary(true);
         a1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         a1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);

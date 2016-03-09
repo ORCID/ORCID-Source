@@ -57,12 +57,21 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @SuppressWarnings("unchecked")
     @Override
     @Cacheable(value = "dao-address", key = "#orcid.concat('-').concat(#lastModified)")
-    public List<AddressEntity> findByOrcid(String orcid, long lastModified) {
+    public List<AddressEntity> getAddresses(String orcid, long lastModified) {
         Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and visibility = :visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
+    
     @Override
     @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {

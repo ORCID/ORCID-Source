@@ -252,8 +252,8 @@ public class BlackBoxBase {
         String userName = prop.getProperty("org.orcid.web.testUser1.username");
         String password = prop.getProperty("org.orcid.web.testUser1.password");
         String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.base.url"))) {
-            baseUrl = prop.getProperty("org.orcid.web.base.url");
+        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
+            baseUrl = prop.getProperty("org.orcid.web.baseUri");
         }
 
         WebDriver webDriver = new FirefoxDriver();

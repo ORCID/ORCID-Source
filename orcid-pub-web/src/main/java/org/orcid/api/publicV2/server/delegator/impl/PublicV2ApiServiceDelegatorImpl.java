@@ -348,7 +348,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmails(String orcid) {
-        Emails emails = emailManager.getPublicEmails(orcid);
+        long lastModifiedTime = getLastModifiedTime(orcid);
+        Emails emails = emailManager.getPublicEmails(orcid, lastModifiedTime);
         ElementUtils.setPathToEmail(emails, orcid);
         return Response.ok(emails).build();
     }
