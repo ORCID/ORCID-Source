@@ -6443,6 +6443,10 @@ a:hover .mozilla-badge{
 	margin-left: -15px;
 }
 
+.settings-table .table-responsive{
+	overflow-x: initial;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
