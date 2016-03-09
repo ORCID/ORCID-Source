@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.common_rc2.VisibilityType;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 
@@ -67,8 +67,8 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
     protected WorkType type;
     @XmlElement(name = "publication-date", namespace = "http://www.orcid.org/ns/common")
     protected PublicationDate publicationDate;
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/work")
-    protected WorkExternalIdentifiers externalIdentifiers;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;
     @XmlElement(name = "last-modified-date", namespace = "http://www.orcid.org/ns/common")
@@ -109,11 +109,11 @@ public class WorkSummary implements VisibilityType, Activity, GroupableActivity,
         this.publicationDate = publicationDate;
     }
 
-    public WorkExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(WorkExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 

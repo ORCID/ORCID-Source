@@ -288,6 +288,11 @@ public class WorksControllerTest extends BaseControllerTest {
         work.getPublicationDate().setMonth("3");
         work.getPublicationDate().setYear("2014");
 
+        worksController.validateWork(work);
+        if (!work.getErrors().isEmpty()){
+            work.getErrors().forEach(n -> System.out.println(n));
+            fail("invalid work update");
+        }
         worksController.postWork(null, work);
 
         WorkForm updatedWork = worksController.getWorkInfo(Long.valueOf("6"));

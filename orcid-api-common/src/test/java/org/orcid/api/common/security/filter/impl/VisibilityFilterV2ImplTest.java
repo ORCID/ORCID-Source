@@ -29,6 +29,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,8 +58,13 @@ public class VisibilityFilterV2ImplTest {
 
     @Before
     public void before() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);        
+        JAXBContext context = JAXBContext.newInstance(ActivitiesSummary.class);
         unmarshaller = context.createUnmarshaller();
+    }
+
+    @After
+    public void after() {
+        SecurityContextTestUtils.clearSecurityContext();
     }
 
     @Test
@@ -66,39 +72,50 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         String expected = IOUtils.toString(getClass().getResourceAsStream("/activities-protected-full-latest.xml"), "UTF-8").replaceAll("(?s)<!--.*?-->\n*", "");
         XMLUnit.setIgnoreWhitespace(true);
-        Diff diff = new Diff(expected, activitiesSummary.toString());               
+        Diff diff = new Diff(expected, activitiesSummary.toString());
         assertTrue(diff.identical());
     }
 
     @Test
-    public void testFilterActivities() throws JAXBException {
+    public void testFilterActivities() throws JAXBException, SAXException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         visibilityFilter.filter(activitiesSummary);
-        assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        // assertEquals(expectedActivitiesSummary.toString(),
+        // activitiesSummary.toString());
+        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        assertTrue(diff.identical());
     }
 
     @Test
-    public void testFilterActivitiesOnPublicAPI() throws JAXBException {
+    public void testFilterActivitiesOnPublicAPI() throws JAXBException, SAXException, IOException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
         visibilityFilter.filter(activitiesSummary);
-        assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
+        assertTrue(diff.identical());
+        // assertEquals(expectedActivitiesSummary.toString(),
+        // activitiesSummary.toString());
     }
 
     @Test
-    public void testFilterPersonalDetails() throws JAXBException {
+    public void testFilterPersonalDetails() throws JAXBException, SAXException, IOException {
         PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
         PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
+        SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         visibilityFilter.filter(personalDetailsWithLimited);
-        assertEquals(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
+        // assertEquals(personalDetailsPublic.toString(),
+        // personalDetailsWithLimited.toString());
+        Diff diff = new Diff(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
+        assertTrue(diff.identical());
     }
-    
+
     private ActivitiesSummary getActivitiesSummary(String path) throws JAXBException {
         return (ActivitiesSummary) unmarshaller.unmarshal(getClass().getResourceAsStream(path));
     }
-    
+
     private PersonalDetails getPersonalDetails(String path) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(PersonalDetails.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();

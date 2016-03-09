@@ -47,14 +47,14 @@
 				<common:subtitle />
 				<common:translated-title language-code="en">common:translated-title</common:translated-title>
 			</work:title>
-			<work:external-identifiers>
-				<work:work-external-identifier>
-					<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
-					<common:relationship>self</common:relationship>
-					<work:external-identifier-type>agr</work:external-identifier-type>
-					<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
-				</work:work-external-identifier>
-			</work:external-identifiers>
+			<common:external-ids>
+				<common:external-id>
+					<work:external-id-type>agr</work:external-id-type>
+					<work:external-id-value>work:external-identifier-id</work:external-id-value>
+					<common:external-id-url>http://orcid.org</common:external-id-url>
+					<common:external-id-relationship>self</common:external-id-relationship>
+				</common:external-id>
+			</common:external-ids>
 			<work:type>artistic-performance</work:type>
 			<common:publication-date>
 				<common:year>1848</common:year>
@@ -78,14 +78,14 @@
 				<common:subtitle />
 				<common:translated-title language-code="en">common:translated-title</common:translated-title>
 			</work:title>
-			<work:external-identifiers>
-				<work:work-external-identifier>
-					<common:external-identifier-url>http://orcid.org</common:external-identifier-url>
-					<common:relationship>self</common:relationship>
-					<work:external-identifier-type>agr</work:external-identifier-type>
-					<work:external-identifier-id>work:external-identifier-id</work:external-identifier-id>
-				</work:work-external-identifier>
-			</work:external-identifiers>
+			<common:external-ids>
+				<common:external-id>
+					<work:external-id-type>agr</work:external-id-type>
+					<work:external-id-value>work:external-identifier-id</work:external-id-value>
+					<common:external-id-url>http://orcid.org</common:external-id-url>
+					<common:external-id-relationship>self</common:external-id-relationship>
+				</common:external-id>
+			</common:external-ids>
 			<work:type>artistic-performance</work:type>
 			<common:publication-date>
 				<common:year>1848</common:year>

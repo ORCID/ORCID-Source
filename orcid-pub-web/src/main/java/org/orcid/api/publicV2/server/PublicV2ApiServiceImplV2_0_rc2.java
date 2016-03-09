@@ -69,7 +69,7 @@ import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,7 +91,7 @@ import io.swagger.annotations.ExternalDocs;
 @Path("/v2.0_rc2")
 public class PublicV2ApiServiceImplV2_0_rc2 {
 
-    protected PublicV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
+    protected PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator;
 
     @Value("${org.orcid.core.baseUri}")
     protected String baseUri;
@@ -100,7 +100,7 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     protected String pubBaseUri;
 
     public void setServiceDelegator(
-            PublicV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
+            PublicV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
@@ -232,8 +232,7 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS)
-    @ApiOperation(value = "Fetch all researcher urls for an ORCID ID", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch all researcher urls for an ORCID ID")
     public Response viewResearcherUrls(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewResearcherUrls(orcid);
     }
@@ -241,8 +240,7 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(RESEARCHER_URLS + PUTCODE)
-    @ApiOperation(value = "Fetch one researcher url for an ORCID ID", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch one researcher url for an ORCID ID")
     public Response viewResearcherUrl(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewResearcherUrl(orcid, Long.valueOf(putCode));
     }
@@ -250,8 +248,7 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMAIL)
-    @ApiOperation(value = "Fetch all emails for an ORCID ID", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch all emails for an ORCID ID")
     public Response viewEmails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmails(orcid);
     }
@@ -259,31 +256,28 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PERSONAL_DETAILS)
-    @ApiOperation(value = "Fetch personal details for an ORCID ID", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch personal details for an ORCID ID")
     public Response viewPersonalDetails(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPersonalDetails(orcid);
     }
 
     @GET
     @Path(OTHER_NAMES)
-    @ApiOperation(value = "Fetch Other names", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch Other names")
     public Response viewOtherNames(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewOtherNames(orcid);
     }
 
     @GET
     @Path(OTHER_NAMES + PUTCODE)
-    @ApiOperation(value = "Fetch Other name", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch Other name")
     public Response viewOtherName(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewOtherName(orcid, Long.valueOf(putCode));
     }
 
     @GET
     @Path(EXTERNAL_IDENTIFIERS)
-    @ApiOperation(value = "Fetch external identifiers", hidden = true, authorizations = {
+    @ApiOperation(value = "Fetch external identifiers", authorizations = {
             @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewExternalIdentifiers(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewExternalIdentifiers(orcid);
@@ -291,40 +285,35 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
 
     @GET
     @Path(EXTERNAL_IDENTIFIERS + PUTCODE)
-    @ApiOperation(value = "Fetch external identifier", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch external identifier")
     public Response viewExternalIdentifier(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewExternalIdentifier(orcid, Long.valueOf(putCode));
     }
 
     @GET
     @Path(KEYWORDS)
-    @ApiOperation(value = "Fetch keywords", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch keywords")
     public Response viewKeywords(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewKeywords(orcid);
     }
 
     @GET
     @Path(KEYWORDS + PUTCODE)
-    @ApiOperation(value = "Fetch keyword", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch keyword")
     public Response viewKeyword(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewKeyword(orcid, Long.valueOf(putCode));
     }
            
     @GET
     @Path(ADDRESS)
-    @ApiOperation(value = "Fetch all addresses", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch all addresses")
     public Response viewAddresses(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewAddresses(orcid);
     }
             
     @GET
     @Path(ADDRESS + PUTCODE)
-    @ApiOperation(value = "Fetch an address", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch an address")
     public Response viewAddress(@PathParam("orcid") String orcid, @PathParam("putCode") String putCode) {
         return serviceDelegator.viewAddress(orcid, Long.valueOf(putCode));
     }
@@ -332,16 +321,14 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(BIOGRAPHY)
-    @ApiOperation(value = "Get biography details", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Get biography details")
     public Response viewBiography(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewBiography(orcid);
     }
 
     @GET
     @Path(PERSON)
-    @ApiOperation(value = "Fetch person details", hidden = true, authorizations = {
-            @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
+    @ApiOperation(value = "Fetch person details")
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
     }

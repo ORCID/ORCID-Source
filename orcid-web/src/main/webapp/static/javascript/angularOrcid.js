@@ -51,6 +51,19 @@ function formatDate(oldDate) {
 }
 
 
+function getScripts(scripts, callback) {
+    var progress = 0;
+    var internalCallback = function () {        
+        if (++progress == scripts.length - 1) {
+            callback();
+        }
+    };    
+    scripts.forEach(function(script) {        
+        $.getScript(script, internalCallback);        
+    });
+};
+
+
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -1359,10 +1372,13 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
         displayBody: {},
         unreadCount: 0,
         showArchived: false,
+        bulkChecked: false,
+        bulkArchiveMap: [],
+        selectionActive: false,
         getNotifications: function() {
-            var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;
+            var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;             
             if(serv.showArchived){
-                url += "&includeArchived=true";                
+                url += "&includeArchived=true";
             }
             $.ajax({
                 url: url,
@@ -1471,6 +1487,46 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 // something bad is happening!
                 console.log("error flagging notification as archived");
             });
+        },
+        toggleArchived: function(){
+            serv.showArchived = !serv.showArchived;
+            serv.reloadNotifications();
+        },
+        swapbulkChangeAll: function(){
+            serv.bulkChecked = !serv.bulkChecked; 
+            console.log(serv.bulkChecked);
+            if(serv.bulkChecked == false)
+                serv.bulkArchiveMap.length = 0;
+            else
+                for (var idx in serv.notifications)
+                    serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;
+                serv.selectionActive = true;
+            
+        },
+        bulkArchive: function(){
+            for (putCode in serv.bulkArchiveMap)
+                if(serv.bulkArchiveMap[putCode])                    
+                    serv.archive(putCode);            
+        },
+        checkSelection: function(){
+            
+            var count = 0;
+            var totalNotifications = 0;
+            
+            serv.selectionActive = false;
+            
+            for (putCode in serv.bulkArchiveMap){                
+                if(serv.bulkArchiveMap[putCode]){
+                    serv.selectionActive = true;
+                    count++;
+                }
+            }                      
+            
+            for (i = 0; i < serv.notifications.length; i++)                
+                if (serv.notifications[i].archivedDate == null)
+                    totalNotifications++;            
+            
+            totalNotifications == count ? serv.bulkChecked = true : serv.bulkChecked = false;            
         }
     };
     serv.getNotifications();
@@ -2526,7 +2582,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
-                //console.log(angular.toJson(data));
                 $scope.$apply();
             }
         }).fail(function(){
@@ -3049,7 +3104,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;                
+                $scope.countryForm = data;  
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -3365,7 +3420,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
     };
 
-    $scope.getRegister = function(givenName, familyName, email){
+    $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
             dataType: 'json',
@@ -3374,18 +3429,28 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                $scope.register.givenNames.value=givenName;
                $scope.register.familyNames.value=familyName;
                $scope.register.email.value=email;
+               $scope.register.linkType=linkFlag;
                $scope.$apply();
+
+               if(email !== ''){
+                   // Validate the email as soon as the user arrives at the screen, if it has been pre-populated.
+                   $scope.serverValidate('Email');
+               }
     
                 // make sure inputs stayed trimmed
-                $scope.$watch('register.email.value', function() {
-                    trimAjaxFormText($scope.register.email);
-                    $scope.serverValidate('Email');
+                $scope.$watch('register.email.value', function(newValue, oldValue) {
+                    if(newValue !== oldValue) {
+                        trimAjaxFormText($scope.register.email);
+                        $scope.serverValidate('Email');
+                    }
                 }); // initialize the watch
     
                 // make sure email is trimmed
-                $scope.$watch('register.emailConfirm.value', function() {
-                     trimAjaxFormText($scope.register.emailConfirm);
-                     $scope.serverValidate('EmailConfirm');
+                $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
+                    if(newValue !== oldValue){
+                        trimAjaxFormText($scope.register.emailConfirm);
+                        $scope.serverValidate('EmailConfirm');
+                    }
                 }); // initialize the watch
     
                 $scope.$watch('register.givenNames.value', function() {
@@ -4993,6 +5058,13 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.geoArea = ['All'];
     $scope.badgesRequested = {};
     $scope.noLinkFlag = true;
+    $scope.showBibtexExport = false;
+    $scope.generatingBibtex = false;
+    $scope.scriptsLoaded = false;
+    $scope.bibtexGenerated = false;
+    $scope.bibtexURL = "";
+    $scope.bibtexExportError = false;
+    $scope.bibtexURL = '';
     
     $scope.sortState = new ActSortState(GroupedActivities.ABBR_WORK);
     $scope.sort = function(key) {
@@ -5009,6 +5081,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.bulkEditShow = !$scope.bulkEditShow;
         $scope.showBibtexImportWizard = false;
         $scope.workImportWizard = false;
+        $scope.showBibtexExport = false;
     };
 
     $scope.bulkApply = function(func) {
@@ -5153,6 +5226,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         $scope.bulkEditShow = false;
         $scope.worksFromBibtex = null;
         $scope.workImportWizard = false;
+        $scope.showBibtexExport = false;
     };
 
     $scope.bibtextCancel = function(){
@@ -5682,7 +5756,72 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 	    	}
 	    	$scope.badgesRequested[putCode] = true;
     	}
-    }        
+    }
+    
+    $scope.toggleBibtexExport = function(){
+        $scope.bibtexParsingError = false;
+        $scope.showBibtexImportWizard = false;
+        $scope.bulkEditShow = false;        
+        $scope.workImportWizard = false;
+        $scope.showBibtexExport  = !$scope.showBibtexExport;
+        $scope.bibtexExportError = false;
+        $scope.bibtexGenerated = false;
+        $scope.loadingScripts = false;
+        $scope.scriptsLoaded = false;
+    }
+    
+    $scope.openBibtexExportDialog = function(){
+        
+        $scope.loadingScripts = true;
+        $scope.bibtexExportError = false; 
+        $scope.scriptsLoaded = false;
+        
+        var swagger  = orcidVar.baseUri + "/static/javascript/orcid-js/swagger-js/browser/swagger-client.min.js";
+        var xmle4x   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmle4x.js";                
+        var xmldom   = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/xmldom.js";
+        var citeproc = orcidVar.baseUri + "/static/javascript/orcid-js/citeproc-js/citeproc.js";
+        var orcidx   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/orcid.js";
+        var styles   = orcidVar.baseUri + "/static/javascript/orcid-js/lib/styles.js";
+        
+        var scripts = [swagger, xmle4x, xmldom, citeproc, orcidx, styles];
+        
+        getScripts(scripts, function(){
+            $scope.$apply(function() {
+                $scope.loadingScripts = false;
+                $scope.scriptsLoaded = true;
+                orcid.init(function(){
+                    orcid.resolveCitations(orcidVar.orcidId, $scope.downloadBibtexExport, orcid.styleBibtex);
+                });
+            });            
+        });
+    };
+    
+    $scope.downloadBibtexExport = function(citations){
+        $scope.bibtexGenerated = false;
+        if (citations.length > 0){
+            var text = "";
+            for (c in citations){
+                text += citations[c] +"\n"; 
+            }
+            text = text.replace(/<div class="csl-entry">/g, '');
+            text = text.replace(/<\/div>/g, '');
+            
+            if(window.navigator.msSaveOrOpenBlob) {
+                var fileData = [text];
+                blobObject = new Blob(fileData, {type: 'text/plain'});
+                window.navigator.msSaveOrOpenBlob(blobObject, "orcid.bib");                
+            } else {
+                $scope.bibtexGenerated = true;
+                $scope.bibtexURL = "data:text/plain;charset=utf-8," + encodeURIComponent(text);   
+            }
+        }else{
+            $scope.$apply(function() {
+                $scope.bibtexExportError = true;
+            });   
+        }
+    };
+    
+    
 }]);
 
 orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'workspaceSrvc', 'commonSrvc', 'peerReviewSrvc', function ($scope, $compile, $filter, workspaceSrvc, commonSrvc, peerReviewSrvc){
@@ -6386,6 +6525,7 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
     $scope.input = {};
     $scope.input.start = 0;
     $scope.input.rows = 10;
+    $scope.showInitLoader = true;
     $scope.showLoader = false;
     $scope.effectiveUserOrcid = orcidVar.orcidId;
     $scope.realUserOrcid = orcidVar.realOrcidId;
@@ -6655,9 +6795,11 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
                         $scope.delegatesByOrcid[delegate.delegateSummary.orcidIdentifier.path] = delegate;
                     }
                 }
+                $scope.showInitLoader = false;
                 $scope.$apply();
             }
         }).fail(function() {
+            $scope.showInitLoader = false;
             // something bad is happening!
             console.log("error with delegates");
         });
@@ -6822,22 +6964,30 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
-    notificationsSrvc.displayBody = {};
-
-    $scope.toggleDisplayBody = function (notificationId) {
-        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
-        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
-        notificationsSrvc.flagAsRead(notificationId);
-        iframeResize(notificationId);
-    };
-
+    notificationsSrvc.displayBody = {};    
     $scope.notifications = notificationsSrvc.notifications;
     $scope.showMore = notificationsSrvc.showMore;
     $scope.areMore = notificationsSrvc.areMore;
     $scope.archive = notificationsSrvc.archive;
     $scope.getNotifications = notificationsSrvc.getNotifications;
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
-    $scope.notificationsSrvc = notificationsSrvc;    
+    $scope.notificationsSrvc = notificationsSrvc;
+    $scope.bulkChecked = notificationsSrvc.bulkChecked;
+    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;    
+    
+
+    $scope.toggleDisplayBody = function (notificationId) {
+        $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
+        notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
+        notificationsSrvc.flagAsRead(notificationId);
+        iframeResize(notificationId);
+    };    
+    
+    $scope.selectAllNotifications = function(){
+        
+    }
+
+        
 }]);
 
 // Controller to show alert for unread notifications
@@ -8772,7 +8922,7 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
     }
     
     $scope.getClientUrl = function(userCredentials) {
-        if(userCredentials.clientWebsite != null && userCredentials.clientWebsite.value != null) {
+        if(typeof userCredentials != undefined && userCredentials != null && userCredentials.clientWebsite != null && userCredentials.clientWebsite.value != null) {
             if(userCredentials.clientWebsite.value.lastIndexOf('http://') === -1 && userCredentials.clientWebsite.value.lastIndexOf('https://') === -1) {
                 return '//' + userCredentials.clientWebsite.value;
             } else {

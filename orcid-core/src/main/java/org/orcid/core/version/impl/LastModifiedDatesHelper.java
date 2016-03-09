@@ -33,8 +33,6 @@ import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.GroupsContainer;
@@ -42,6 +40,8 @@ import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.utils.DateUtils;
@@ -158,11 +158,11 @@ public class LastModifiedDatesHelper {
         return latest;
 	}
 	
-	public static Date calculateLatest(ExternalIdentifiers extIds) {
+	public static Date calculateLatest(PersonExternalIdentifiers extIds) {
 		Date latestAct = null;
         if (extIds != null && extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
             XMLGregorianCalendar latest = extIds.getExternalIdentifier().get(0).getLastModifiedDate().getValue();
-            for(ExternalIdentifier extId : extIds.getExternalIdentifier()) {
+            for(PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
                 if (latest.compare(extId.getLastModifiedDate().getValue()) == -1) {
                     latest = extId.getLastModifiedDate().getValue();
                 }

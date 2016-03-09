@@ -179,11 +179,11 @@ public class NotificationsTest {
 
     @Test
     public void createPermissionNotificationWithAbsentAuthorizationUriElement() throws JSONException {
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
         NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc1/samples/notification-permission-2.0_rc1.xml");
         notification.setPutCode(null);
         AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-        authUrl.setUri("");
-        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+        authUrl.setUri("");        
 
         ClientResponse postResponse = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
         assertNotNull(postResponse);

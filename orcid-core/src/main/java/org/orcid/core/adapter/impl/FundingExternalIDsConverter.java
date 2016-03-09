@@ -17,17 +17,17 @@
 package org.orcid.core.adapter.impl;
 
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
-public class FundingExternalIdentifiersConverter extends BidirectionalConverter<FundingExternalIdentifiers, String> {
+public class FundingExternalIDsConverter extends BidirectionalConverter<ExternalIDs, String> {
 
     @Override
-    public FundingExternalIdentifiers convertFrom(String externalIdentifiersAsString, Type<FundingExternalIdentifiers> type) {
+    public ExternalIDs convertFrom(String externalIdentifiersAsString, Type<ExternalIDs> type) {
         org.orcid.pojo.FundingExternalIdentifiers jpaExtIds = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, org.orcid.pojo.FundingExternalIdentifiers.class);
-        FundingExternalIdentifiers result = new FundingExternalIdentifiers();
+        ExternalIDs result = new ExternalIDs();
         for(org.orcid.pojo.FundingExternalIdentifier jpaExtId : jpaExtIds.getFundingExternalIdentifier()) {
             result.getExternalIdentifier().add(jpaExtId.toRecordPojo());
         }
@@ -35,9 +35,9 @@ public class FundingExternalIdentifiersConverter extends BidirectionalConverter<
     }
 
     @Override
-    public String convertTo(FundingExternalIdentifiers fundingExternalIdentifiers, Type<String> arg1) {
+    public String convertTo(ExternalIDs fundingExternalIdentifiers, Type<String> arg1) {
         org.orcid.pojo.FundingExternalIdentifiers jpaExternalIdentifiers = org.orcid.pojo.FundingExternalIdentifiers.fromRecordPojo(fundingExternalIdentifiers);
         return JsonUtils.convertToJsonString(jpaExternalIdentifiers);
     }
-
+    
 }

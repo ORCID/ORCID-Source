@@ -19,11 +19,10 @@ package org.orcid.api.common.writer.citeproc;
 import org.junit.Test;
 import org.orcid.jaxb.model.record_rc2.Citation;
 import org.orcid.jaxb.model.record_rc2.CitationType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 import de.undercouch.citeproc.csl.CSLItemData;
 import junit.framework.Assert;
@@ -55,12 +54,11 @@ public class WorkToCiteprocTranslatorTest {
     @Test
     public void testBibtexWorkTranslationHyperAuthorLiteralAndMissingDOI(){
         Work w = makeWork(bibtexHyperLiteral);
-        WorkExternalIdentifiers wei = new WorkExternalIdentifiers();
-        WorkExternalIdentifier eid = new WorkExternalIdentifier();
-        eid.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
-        WorkExternalIdentifierId id = new WorkExternalIdentifierId();
-        id.setContent("10.1234/1234");
-        eid.setWorkExternalIdentifierId(id);
+        ExternalIDs wei = new ExternalIDs();
+        ExternalID eid = new ExternalID();
+        eid.setType(ExternalIDType.DOI.name());
+        //WorkExternalIdentifierId id = new WorkExternalIdentifierId();
+        eid.setValue("10.1234/1234");
         wei.getExternalIdentifier().add(eid);
         w.setWorkExternalIdentifiers(wei);
         

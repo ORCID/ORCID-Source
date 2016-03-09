@@ -6,7 +6,39 @@ There are two types of test in the project.
 
 The new style blackbox tests are under ```[ORCID-Source]/orcid-integration-test/src/test/java/org/orcid/integration/blackbox```.
 
-The new style blackbox are different from the old style integration tests, because they do not require the database to be populated with a known set of test data. Instead you configure the test suite with user and client details that you have set up by hand in your own database. The advantage is that existing data in the database are *not* removed when the tests run.
+The new style blackbox are different from the old style integration tests, because they have to configure a set of test data just once and any existing data in the database is *not* removed when the tests run.
+
+The default test data is in the following config files:
+
+* test-web.properties: Contains a set of default users 
+* test-client.properties: Contains a set of default members and clients  
+
+* Setup the test data:
+
+	* Go to the main menu and select *Run* → *Run Configurations*
+	* Go to JUnit section (Treeview)
+	* Right Click, select New option
+    * In the Test tab, select Run a single test option
+    * Select 'Browse' and choose the orcid-integration-test project
+    * Type org.orcid.integration.whitebox.SetUpClientsAndUsers as the test class
+    * Select Junit 4 as the test runner
+    * Go to the Arguments tab and enter the following in VM arguments.
+      * "-Xmx2g"
+      * "-Dorg.orcid.config.file=classpath:staging-persistence.properties"
+  	* Click Apply and Run buttons
+
+This should setup the default test data and then run a test that verifies the data was actually persisted in the database.
+If this process succeed, you can now run the blackbox test as follow:
+
+* Add the following modules to Tomcat (Tomcat should be stopped before adding it):
+	* orcid-api-web
+	* orcid-internal-api
+	* orcid-pub-web
+	* orcid-scheduler-web
+	* orcid-solr-web
+	* orcid-web
+
+* Start Tomcat and wait for it to be up.
 
 * Run the tests:
 
@@ -15,32 +47,16 @@ The new style blackbox are different from the old style integration tests, becau
     * Select JUnit
     * Click on the New button
     * Select 'Browse' and choose the orcid-integration-test project
-    * Enter org.orcid.integration.api.BlackBoxTestSuite as the test class
+    * Enter org.orcid.integration.blackbox.BlackBoxTestSuite as the test class
     * Select Junit 4 as the test runner
     * Go to the Arguments tab and enter the following in VM arguments, but *change the values to users and clients that exist in your database*.
-      * "-Dorg.orcid.config.file=classpath:staging-persistence.properties"
-      * "-Dorg.orcid.persistence.db.url=db connection URL e.g. jdbc:postgresql://localhost:5432/orcid"
-      * "-Dorg.orcid.persistence.db.dataSource=simpleDataSource" 
+      * "-Xmx2g"
+      * "-Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid"
+      * "-Dorg.orcid.config.file=classpath:test-web.properties,classpath:test-client.properties"
+      * "-Dorg.orcid.persistence.db.dataSource=simpleDataSource"
       * "-Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource"
-      * "-Dorg.orcid.web.testUser1.username=Test user's email id"
-      * "-Dorg.orcid.web.testUser1.password=Test user's password"
-      * "-Dorg.orcid.web.testUser1.orcidId=Test user's orcid id"
-      * "-Dorg.orcid.web.testUser2.username=Test user #2 email id"
-      * "-Dorg.orcid.web.testUser2.password=Test user #2 password"
-      * "-Dorg.orcid.web.testUser2.orcidId=Test user #2 orcid id"
-      * "-Dorg.orcid.web.testClient1.redirectUri=1st test client's redirect uri"
-      * "-Dorg.orcid.web.testClient1.clientId=1st test client's Id"
-      * "-Dorg.orcid.web.testClient1.clientSecret=1st test client's secret"
-      * "-Dorg.orcid.web.testClient2.redirectUri=2nd test client's redirect uri"
-      * "-Dorg.orcid.web.testClient2.clientId=2nd test client's Id"
-      * "-Dorg.orcid.web.testClient2.clientSecret=2nd test client's secret"
-      * "-Dorg.orcid.web.adminUser.username=Test admin user's email id"
-      * "-Dorg.orcid.web.adminUser.password=Test admin user's password"
-      * "-Dorg.orcid.web.locked.member.id=Member id to lock"
-      * "-Dorg.orcid.web.locked.member.client.id=Client id that must belong to the member defined in the previous param"
-      * "-Dorg.orcid.web.locked.member.client.secret=Client secret"
-      * "-Dorg.orcid.web.locked.member.client.ruri=Client redirect URI" 
-    
+      * "-Dwebdriver.firefox.bin="C:\Program Files (x86)\Mozilla Firefox\firefox.exe" - Change this path to where you have your FireFox executable.
+      
     For more details of the properties to override and their meanings see the following.
 
     [src/test/resources/test-web.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-web.properties)
@@ -94,7 +110,6 @@ But, before running the integration tests, there are some things that need to be
     ````
 
     * Click Run
-
     
 # License
 See [LICENSE.md](https://github.com/ORCID/ORCID-Source/blob/master/LICENSE.md)

@@ -36,7 +36,8 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 import com.google.common.base.Optional;
@@ -92,15 +93,18 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
 
-        List<ExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifier();
+        List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifier();
         @SuppressWarnings("unchecked")
-        List<ExternalIdentifier> filteredExtIds = (List<ExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds);
 
         ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
         visibilityFilter.filter(as);
 
-        return Response.ok(new Cerif16Builder().addPerson(orcid, given, family, creditname, filteredExtIds).concatPublications(as, orcid, false)
+        return Response.ok(
+                new Cerif16Builder()
+                .addPerson(orcid, given, family, creditname, filteredExtIds)
+                .concatPublications(as, orcid, false)
                 .concatProducts(as, orcid, false).build()).build();
     }
 

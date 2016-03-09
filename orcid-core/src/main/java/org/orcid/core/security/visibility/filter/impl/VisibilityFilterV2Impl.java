@@ -35,6 +35,8 @@ import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Employments;
 import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Group;
@@ -92,6 +94,16 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
                 activitiesSummary.setWorks(null);
             }
         }
+        
+        PeerReviews peerReviews = activitiesSummary.getPeerReviews();
+        if(peerReviews != null) {
+            List<PeerReviewGroup> peerReviewGroups = peerReviews.getPeerReviewGroup();
+            filterGroups(peerReviewGroups);
+            if(peerReviewGroups.isEmpty()) {
+                activitiesSummary.setPeerReviews(null);
+            }
+        }
+        
         return activitiesSummary;
     }
 

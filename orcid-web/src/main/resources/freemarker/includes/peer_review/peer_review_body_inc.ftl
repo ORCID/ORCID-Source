@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" ng-cloak>
-	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
+<ul ng-hide="!peerReviewSrvc.groups.length" class="workspace-peer-review workspace-body-list bottom-margin-medium" id="peer-review-header" ng-cloak>
+	<li class="bottom-margin-small workspace-border-box card" ng-repeat="group in peerReviewSrvc.groups | orderBy:sortState.predicate:sortState.reverse" >
 		<ul class="sources-edit-list">
 			 <li class="peer-review-group" ng-repeat="peerReview in group.activities | orderBy: ['groupName']" ng-show="group.activePutCode == peerReview.putCode.value" orcid-put-code="{{peerReview.putCode.value}}" class="group-details">
 			 	<!-- active row summary info -->

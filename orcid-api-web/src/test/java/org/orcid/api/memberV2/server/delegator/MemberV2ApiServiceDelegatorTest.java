@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
@@ -61,6 +62,7 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
@@ -73,10 +75,9 @@ import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
@@ -84,19 +85,16 @@ import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.WorkType;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -113,7 +111,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
-    private MemberV2ApiServiceDelegator<Education, Employment, ExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -134,66 +132,109 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
+        
         // Check works
         assertNotNull(summary.getWorks());
         assertEquals(3, summary.getWorks().getWorkGroup().size());
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-        assertThat(summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-        assertThat(summary.getWorks().getWorkGroup().get(1).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
-        assertThat(summary.getWorks().getWorkGroup().get(2).getWorkSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
-
+        boolean foundPrivateWork = false;
+        for(WorkGroup group : summary.getWorks().getWorkGroup()) {
+            assertNotNull(group.getWorkSummary());
+            assertEquals(1, group.getWorkSummary().size());
+            WorkSummary work = group.getWorkSummary().get(0);
+            assertThat(work.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(6)), is(Long.valueOf(7))));
+            assertThat(work.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/work/5"), is("/4444-4444-4444-4446/work/6"), is("/4444-4444-4444-4446/work/7")));
+            assertThat(work.getTitle().getTitle().getContent(),
+                    anyOf(is("Journal article A"), is("Journal article B"), is("Journal article C")));
+            if(work.getPutCode().equals(Long.valueOf(7))) {
+                assertEquals(Visibility.PRIVATE, work.getVisibility());
+                foundPrivateWork = true;
+            } 
+        }
+        
+        assertTrue(foundPrivateWork);
+        
         // Check fundings
         assertNotNull(summary.getFundings());
-        assertEquals(2, summary.getFundings().getFundingGroup().size());
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
-
-        assertThat(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Private Funding"), is("Public Funding")));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5))));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5")));
-        assertThat(summary.getFundings().getFundingGroup().get(1).getFundingSummary().get(0).getTitle().getTitle().getContent(),
-                anyOf(is("Private Funding"), is("Public Funding")));
-
+        assertEquals(3, summary.getFundings().getFundingGroup().size());
+        boolean foundPrivateFunding = false;
+        for (FundingGroup group : summary.getFundings().getFundingGroup()) {
+            assertNotNull(group.getFundingSummary());
+            assertEquals(1, group.getFundingSummary().size());
+            FundingSummary funding = group.getFundingSummary().get(0);
+            assertThat(funding.getPutCode(), anyOf(is(Long.valueOf(4)), is(Long.valueOf(5)), is(Long.valueOf(8))));
+            assertThat(funding.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/funding/4"), is("/4444-4444-4444-4446/funding/5"), is("/4444-4444-4444-4446/funding/8")));
+            assertThat(funding.getTitle().getTitle().getContent(),
+                    anyOf(is("Private Funding"), is("Public Funding"), is("Limited Funding")));
+            if(funding.getPutCode().equals(4L)) {
+                assertEquals(Visibility.PRIVATE, funding.getVisibility());                
+                foundPrivateFunding = true;
+            }
+        }
+        
+        assertTrue(foundPrivateFunding);
+        
         // Check Educations
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(3, summary.getEducations().getSummaries().size());
-        assertThat(summary.getEducations().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7))));
-        assertThat(summary.getEducations().getSummaries().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
-        assertThat(summary.getEducations().getSummaries().get(0).getDepartmentName(),
-                anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
+        
+        boolean foundPrivateEducation = false;
+        for(EducationSummary education : summary.getEducations().getSummaries()) {
+            assertThat(education.getPutCode(), anyOf(is(Long.valueOf(6)), is(Long.valueOf(7)), is(Long.valueOf(9))));
+            assertThat(education.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/education/6"), is("/4444-4444-4444-4446/education/7"), is("/4444-4444-4444-4446/education/9")));
+            assertThat(education.getDepartmentName(),
+                    anyOf(is("Education Dept # 1"), is("Education Dept # 2"), is("Education Dept # 3")));
 
+            if(education.getPutCode().equals(6L)) {
+                assertEquals(Visibility.PRIVATE, education.getVisibility());
+                foundPrivateEducation = true;
+            }
+        }
+        
+        assertTrue(foundPrivateEducation);
+        
         // Check Employments
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(3, summary.getEmployments().getSummaries().size());
-        assertThat(summary.getEmployments().getSummaries().get(0).getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8))));
-        assertThat(summary.getEmployments().getSummaries().get(0).getPath(),
-                anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
-        assertThat(summary.getEmployments().getSummaries().get(0).getDepartmentName(),
-                anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
-
+        
+        boolean foundPrivateEmployment = false;
+        
+        for(EmploymentSummary employment : summary.getEmployments().getSummaries()) {
+            assertThat(employment.getPutCode(), anyOf(is(Long.valueOf(5)), is(Long.valueOf(8)), is(Long.valueOf(11))));
+            assertThat(employment.getPath(),
+                    anyOf(is("/4444-4444-4444-4446/employment/5"), is("/4444-4444-4444-4446/employment/8"), is("/4444-4444-4444-4446/employment/11")));
+            assertThat(employment.getDepartmentName(),
+                    anyOf(is("Employment Dept # 1"), is("Employment Dept # 2"), is("Employment Dept # 4")));
+            if(employment.getPutCode().equals(5L)) {
+                assertEquals(Visibility.PRIVATE, employment.getVisibility());
+                foundPrivateEmployment = true;
+            }
+        }       
+        
+        assertTrue(foundPrivateEmployment);
+        
         // Check Peer reviews
         assertNotNull(summary.getPeerReviews());
-        assertEquals(4, summary.getPeerReviews().getPeerReviewGroup().size());
-        PeerReviewSummary peerReviewSummary = summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0);
-
-        assertThat(peerReviewSummary.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(6))));
+        assertEquals(3, summary.getPeerReviews().getPeerReviewGroup().size());
+        
+        boolean foundPrivatePeerReview = false;
+        for(PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
+            assertNotNull(group.getPeerReviewSummary());
+            assertEquals(1, group.getPeerReviewSummary().size());
+            PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
+            assertThat(peerReview.getPutCode(), anyOf(is(Long.valueOf(1)), is(Long.valueOf(3)), is(Long.valueOf(4))));
+            assertThat(peerReview.getGroupId(), anyOf(is("issn:0000001"), is("issn:0000002"), is("issn:0000003")));
+            if(peerReview.getPutCode().equals(4L)) {
+                assertEquals(Visibility.PRIVATE, peerReview.getVisibility());
+                foundPrivatePeerReview = true;
+            }
+        }
+        
+        assertTrue(foundPrivatePeerReview);
     }
 
     @Test
@@ -338,11 +379,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         work.setWorkTitle(workTitle);
         work.setWorkType(WorkType.BOOK);
         work.setVisibility(Visibility.PUBLIC);
-        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
-        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
         extId.setRelationship(Relationship.PART_OF);
-        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
+        extId.setType(ExternalIDType.AGR.value());
+        extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
 
         extIds.getExternalIdentifier().add(extId);
@@ -433,11 +474,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         work.setWorkType(WorkType.EDITED_BOOK);
         work.getWorkTitle().getTitle().setContent("Updated work title");
 
-        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
-        WorkExternalIdentifier extId = new WorkExternalIdentifier();
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
         extId.setRelationship(Relationship.PART_OF);
-        extId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
-        extId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
+        extId.setType(ExternalIDType.AGR.value());
+        extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
         ;
         extIds.getExternalIdentifier().add(extId);
@@ -556,12 +597,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         title.setTitle(new Title("Public Funding # 2"));
         newFunding.setTitle(title);
         newFunding.setType(FundingType.AWARD);
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        ExternalID fExtId = new ExternalID();
         fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
-        FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
+        ExternalIDs fExtIds = new ExternalIDs();
         fExtIds.getExternalIdentifier().add(fExtId);
         newFunding.setExternalIdentifiers(fExtIds);
         newFunding.setOrganization(getOrganization());
@@ -609,12 +650,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         funding.getTitle().getTitle().setContent("Updated funding title");
         funding.setDescription("This is an updated description");
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        ExternalID fExtId = new ExternalID();
         fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
-        FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
+        ExternalIDs fExtIds = new ExternalIDs();
         fExtIds.getExternalIdentifier().add(fExtId);
         funding.setExternalIdentifiers(fExtIds);
 
@@ -645,12 +686,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(funding);
 
         funding.getTitle().getTitle().setContent("Updated funding title");
-        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        ExternalID fExtId = new ExternalID();
         fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
-        FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
+        ExternalIDs fExtIds = new ExternalIDs();
         fExtIds.getExternalIdentifier().add(fExtId);
         funding.setExternalIdentifiers(fExtIds);
 
@@ -1050,7 +1091,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("reviewer", peerReview.getRole().value());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());
@@ -1061,8 +1102,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("artistic-performance", peerReview.getSubjectType().value());
         assertEquals("http://work.com", peerReview.getSubjectUrl().getValue());
         assertEquals("Peer Review # 1 container name", peerReview.getSubjectContainerName().getContent());
-        assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierId().getContent());
-        assertEquals("agr", peerReview.getSubjectExternalIdentifier().getWorkExternalIdentifierType().value());
+        assertEquals("peer-review:subject-external-identifier-id#1", peerReview.getSubjectExternalIdentifier().getValue());
+        assertEquals("agr", peerReview.getSubjectExternalIdentifier().getType());
         assertEquals("issn:0000001", peerReview.getGroupId());
     }
 
@@ -1078,7 +1119,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("limited", peerReview.getVisibility().value());
         assertEquals("issn:0000002", peerReview.getGroupId());
     }
@@ -1095,8 +1136,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
-        assertEquals("limited", peerReview.getVisibility().value());
+        assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals("private", peerReview.getVisibility().value());
         assertEquals("issn:0000003", peerReview.getGroupId());
     }
 
@@ -1126,7 +1167,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("01", peerReview.getCompletionDate().getDay().getValue());
         assertEquals("01", peerReview.getCompletionDate().getMonth().getValue());
         assertEquals("2015", peerReview.getCompletionDate().getYear().getValue());
-        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getWorkExternalIdentifierId().getContent());
+        assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
         assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
         assertEquals("public", peerReview.getVisibility().value());
     }
@@ -1161,8 +1202,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // Update the info
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-
-        // Try to update it
+        peerReview.getExternalIdentifiers().getExternalIdentifier().iterator().next().setValue("different");
+        
         try {
             response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 2L, peerReview);
             fail();
@@ -1193,12 +1234,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
 
         PeerReview peerReview = new PeerReview();
-        WorkExternalIdentifiers weis = new WorkExternalIdentifiers();
-        WorkExternalIdentifier wei1 = new WorkExternalIdentifier();
+        ExternalIDs weis = new ExternalIDs();
+        ExternalID wei1 = new ExternalID();
         wei1.setRelationship(Relationship.PART_OF);
         wei1.setUrl(new Url("http://myUrl.com"));
-        wei1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work-external-identifier-id"));
-        wei1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        wei1.setValue("work-external-identifier-id");
+        wei1.setType(ExternalIDType.DOI.value());
         weis.getExternalIdentifier().add(wei1);
         peerReview.setExternalIdentifiers(weis);
         peerReview.setGroupId("issn:0000003");
@@ -1243,6 +1284,37 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         assertTrue(haveOld);
         assertTrue(haveNew);
+    }
+    
+    @Test(expected = OrcidDuplicatedActivityException.class)
+    public void testAddPeerReviewDuplicateFails() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        PeerReview peerReview = new PeerReview();
+        ExternalIDs weis = new ExternalIDs();
+        ExternalID wei1 = new ExternalID();
+        wei1.setRelationship(null);
+        wei1.setValue("1");
+        wei1.setType(ExternalIDType.DOI.value());
+        weis.getExternalIdentifier().add(wei1);
+        peerReview.setExternalIdentifiers(weis);
+        peerReview.setGroupId("issn:0000003");
+        peerReview.setOrganization(getOrganization());
+        peerReview.setRole(Role.CHAIR);
+        peerReview.setSubjectContainerName(new Title("subject-container-name"));
+        peerReview.setSubjectExternalIdentifier(wei1);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("work-title"));
+        peerReview.setSubjectName(workTitle);
+        peerReview.setSubjectType(WorkType.DATA_SET);
+        peerReview.setType(PeerReviewType.EVALUATION);
+
+        Response response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+
+        response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+
     }
 
     @Test
@@ -1769,19 +1841,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4442");
         assertNotNull(response);
-        ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        List<ExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
+        List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
         assertNotNull(extIdsList);
         assertEquals(3, extIdsList.size());
 
-        for (ExternalIdentifier extId : extIdsList) {
+        for (PersonExternalIdentifier extId : extIdsList) {
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
-            assertThat(extId.getReference(), anyOf(is("abc123"), is("abc456"), is("abc012")));
+            assertThat(extId.getValue(), anyOf(is("abc123"), is("abc456"), is("abc012")));
             assertNotNull(extId.getUrl());
             assertThat(extId.getUrl().getValue(),
                     anyOf(is("http://www.facebook.com/abc123"), is("http://www.facebook.com/abc456"), is("http://www.facebook.com/abc012")));
-            assertEquals("Facebook", extId.getCommonName());
+            assertEquals("Facebook", extId.getType());
             assertNotNull(extId.getSource());
             if (extId.getPutCode().equals(2L)) {
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
@@ -1801,11 +1873,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
         assertNotNull(response);
-        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("Facebook", extId.getCommonName());
+        assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(2), extId.getPutCode());
-        assertEquals("abc123", extId.getReference());
+        assertEquals("abc123", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
         assertEquals(Visibility.PUBLIC, extId.getVisibility());
@@ -1821,11 +1893,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
         assertNotNull(response);
-        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("Facebook", extId.getCommonName());
+        assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(3), extId.getPutCode());
-        assertEquals("abc456", extId.getReference());
+        assertEquals("abc456", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
         assertEquals(Visibility.LIMITED, extId.getVisibility());
@@ -1841,11 +1913,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 5L);
         assertNotNull(response);
-        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("Facebook", extId.getCommonName());
+        assertEquals("Facebook", extId.getType());
         assertEquals(Long.valueOf(5), extId.getPutCode());
-        assertEquals("abc012", extId.getReference());
+        assertEquals("abc012", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
         assertEquals(Visibility.PRIVATE, extId.getVisibility());
@@ -1876,19 +1948,19 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
         assertNotNull(response);
-        ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
         assertNotNull(extIds.getExternalIdentifier());
         assertEquals(1, extIds.getExternalIdentifier().size());
         assertEquals(Long.valueOf(1), extIds.getExternalIdentifier().get(0).getPutCode());
         assertNotNull(extIds.getExternalIdentifier().get(0).getUrl());
         assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifier().get(0).getUrl().getValue());
-        assertEquals("d3clan", extIds.getExternalIdentifier().get(0).getReference());
+        assertEquals("d3clan", extIds.getExternalIdentifier().get(0).getValue());
         assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
 
-        ExternalIdentifier newExtId = new ExternalIdentifier();
-        newExtId.setCommonName("new-common-name");
-        newExtId.setReference("new-reference");
+        PersonExternalIdentifier newExtId = new PersonExternalIdentifier();
+        newExtId.setType("new-common-name");
+        newExtId.setValue("new-reference");
         newExtId.setUrl(new Url("http://newUrl.com"));
         newExtId.setVisibility(Visibility.LIMITED);
 
@@ -1904,23 +1976,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
         assertNotNull(response);
-        extIds = (ExternalIdentifiers) response.getEntity();
+        extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
         assertNotNull(extIds.getExternalIdentifier());
         assertEquals(2, extIds.getExternalIdentifier().size());
 
-        for (ExternalIdentifier extId : extIds.getExternalIdentifier()) {
+        for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
             assertNotNull(extId.getUrl());
             if (extId.getPutCode() != 1L) {
                 assertEquals(Visibility.LIMITED, extId.getVisibility());
-                assertEquals("new-common-name", extId.getCommonName());
-                assertEquals("new-reference", extId.getReference());
+                assertEquals("new-common-name", extId.getType());
+                assertEquals("new-reference", extId.getValue());
                 assertEquals("http://newUrl.com", extId.getUrl().getValue());
                 assertEquals(putCode, extId.getPutCode());
             } else {
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
-                assertEquals("Facebook", extId.getCommonName());
-                assertEquals("d3clan", extId.getReference());
+                assertEquals("Facebook", extId.getType());
+                assertEquals("d3clan", extId.getValue());
                 assertEquals("http://www.facebook.com/d3clan", extId.getUrl().getValue());
             }
         }
@@ -1931,30 +2003,30 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
         assertNotNull(response);
-        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("Facebook", extId.getCommonName());
-        assertEquals("abc123", extId.getReference());
+        assertEquals("Facebook", extId.getType());
+        assertEquals("abc123", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
-        extId.setCommonName("updated-common-name");
-        extId.setReference("updated-reference");
+        extId.setType("updated-common-name");
+        extId.setValue("updated-reference");
         extId.setUrl(new Url("http://updatedUrl.com"));
         response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
         assertNotNull(response);
-        ExternalIdentifier updatedExtId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier updatedExtId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(updatedExtId);
-        assertEquals("updated-common-name", updatedExtId.getCommonName());
-        assertEquals("updated-reference", updatedExtId.getReference());
+        assertEquals("updated-common-name", updatedExtId.getType());
+        assertEquals("updated-reference", updatedExtId.getValue());
         assertNotNull(updatedExtId.getUrl());
         assertEquals("http://updatedUrl.com", updatedExtId.getUrl().getValue());
 
         // Revert changes so other tests still works
-        extId.setCommonName("Facebook");
-        extId.setReference("abc123");
+        extId.setType("Facebook");
+        extId.setValue("abc123");
         extId.setUrl(new Url("http://www.facebook.com/abc123"));
         response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
         assertNotNull(response);
@@ -1966,14 +2038,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
         assertNotNull(response);
-        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("Facebook", extId.getCommonName());
-        assertEquals("abc456", extId.getReference());
+        assertEquals("Facebook", extId.getType());
+        assertEquals("abc456", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
-        extId.setCommonName("other-common-name");
-        extId.setReference("other-reference");
+        extId.setType("other-common-name");
+        extId.setValue("other-reference");
         extId.setUrl(new Url("http://otherUrl.com"));
         serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 3L, extId);
         fail();
@@ -1984,7 +2056,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
         assertNotNull(response);
-        ExternalIdentifiers extIds = (ExternalIdentifiers) response.getEntity();
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
         assertNotNull(extIds.getExternalIdentifier());
         assertEquals(1, extIds.getExternalIdentifier().size());
@@ -1996,7 +2068,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
         assertNotNull(response);
-        extIds = (ExternalIdentifiers) response.getEntity();
+        extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
         assertNotNull(extIds.getExternalIdentifier());
         assertTrue(extIds.getExternalIdentifier().isEmpty());
@@ -2007,10 +2079,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 3L);
         assertNotNull(response);
-        ExternalIdentifier extId = (ExternalIdentifier) response.getEntity();
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
         assertNotNull(extId);
-        assertEquals("Facebook", extId.getCommonName());
-        assertEquals("abc456", extId.getReference());
+        assertEquals("Facebook", extId.getType());
+        assertEquals("abc456", extId.getValue());
         assertNotNull(extId.getUrl());
         assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
 
@@ -2440,31 +2512,31 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         boolean found2 = false, found3 = false, found5 = false;
 
-        List<ExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifier();
-        for (ExternalIdentifier extId : extIds) {
+        List<PersonExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifier();
+        for (PersonExternalIdentifier extId : extIds) {
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertNotNull(extId.getCreatedDate());
             assertNotNull(extId.getLastModifiedDate());
             assertNotNull(extId.getSource());
             if (extId.getPutCode() == 2L) {
-                assertEquals("Facebook", extId.getCommonName());
-                assertEquals("abc123", extId.getReference());
+                assertEquals("Facebook", extId.getType());
+                assertEquals("abc123", extId.getValue());
                 assertEquals("http://www.facebook.com/abc123", extId.getUrl().getValue());
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
                 assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
                 assertEquals("http://testserver.orcid.org/client/APP-5555555555555555", extId.getSource().retriveSourceUri());
                 found2 = true;
             } else if (extId.getPutCode() == 3L) {
-                assertEquals("Facebook", extId.getCommonName());
-                assertEquals("abc456", extId.getReference());
+                assertEquals("Facebook", extId.getType());
+                assertEquals("abc456", extId.getValue());
                 assertEquals("http://www.facebook.com/abc456", extId.getUrl().getValue());
                 assertEquals(Visibility.LIMITED, extId.getVisibility());
                 assertEquals("4444-4444-4444-4442", extId.getSource().retrieveSourcePath());
                 assertEquals("http://testserver.orcid.org/4444-4444-4444-4442", extId.getSource().retriveSourceUri());
                 found3 = true;
             } else {
-                assertEquals("Facebook", extId.getCommonName());
-                assertEquals("abc012", extId.getReference());
+                assertEquals("Facebook", extId.getType());
+                assertEquals("abc012", extId.getValue());
                 assertEquals("http://www.facebook.com/abc012", extId.getUrl().getValue());
                 assertEquals(Visibility.PRIVATE, extId.getVisibility());
                 assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());

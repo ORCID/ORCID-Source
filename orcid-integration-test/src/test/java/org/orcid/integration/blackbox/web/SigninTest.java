@@ -51,7 +51,7 @@ public class SigninTest {
     @Before
     public void before() {
         webDriver = new FirefoxDriver();
-        // webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        webDriver.get(baseUri + "/userStatus.json?logUserOut=true");
     }
 
     @After
@@ -85,7 +85,7 @@ public class SigninTest {
     }
 
 	// Make this available to other classes
-    static public void signIn(WebDriver webDriver, String username, String password) {
+    static public void signIn(WebDriver webDriver, String username, String password) {        
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
         WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));

@@ -36,7 +36,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,34 +48,8 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class EmailTest extends BlackBoxBase {
+public class EmailTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;    
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    public String client2RedirectUri;    
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.publicClient1.clientId}")
-    public String publicClientId;
-    @Value("${org.orcid.web.publicClient1.clientSecret}")
-    public String publicClientSecret;
-
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
@@ -94,31 +67,31 @@ public class EmailTest extends BlackBoxBase {
     
     /**
      * PRECONDITIONS: 
-     *          The user must have a public email public@email.com
+     *          The primary email must be public
      * */
     @Test
     public void testGetWithPublicAPI() {
-        ClientResponse getAllResponse = publicV2ApiClient.viewEmailXML(user1OrcidId);
+        ClientResponse getAllResponse = publicV2ApiClient.viewEmailXML(getUser1OrcidId());
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
-        assertListContainsEmail("public@email.com", Visibility.PUBLIC, emails);
+        assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, emails);
     }
     
     /**
      * PRECONDITIONS: 
-     *          The user must have a public email public@email.com
+     *          The primary email must be public
      *          The user must have a limited email limited@email.com
      * @throws JSONException 
      * @throws InterruptedException 
      * */
     @Test
     public void testGetWithMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
-        ClientResponse getAllResponse = memberV2ApiClient.getEmails(user1OrcidId, accessToken);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        ClientResponse getAllResponse = memberV2ApiClient.getEmails(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
-        assertListContainsEmail("public@email.com", Visibility.PUBLIC, emails);
-        assertListContainsEmail("limited@email.com", Visibility.LIMITED, emails);
+        assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, emails);
+        assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, emails);
     }
     
     public static void assertListContainsEmail(String emailString, Visibility visibility, Emails emails) {

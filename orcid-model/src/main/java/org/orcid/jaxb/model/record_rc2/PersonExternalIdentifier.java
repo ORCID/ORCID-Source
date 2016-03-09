@@ -40,16 +40,20 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "commonName", "reference", "url", "createdDate", "lastModifiedDate", "source" })
+@XmlType(propOrder = { "type", "value", "url", "relationship",  "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
-public class ExternalIdentifier implements Serializable, Filterable {
+public class PersonExternalIdentifier implements Serializable, Filterable {
     private static final long serialVersionUID = 8340033850223164314L;
-    @XmlElement(name="external-id-common-name", namespace = "http://www.orcid.org/ns/external-identifier")
-    protected String commonName;
-    @XmlElement(name="external-id-reference", namespace = "http://www.orcid.org/ns/external-identifier")
-    protected String reference;
-    @XmlElement(namespace = "http://www.orcid.org/ns/external-identifier")
+    
+    @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/common", required = true)
+    protected String type;
+    @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
+    protected String value;
+    @XmlElement(name="external-id-relationship", namespace = "http://www.orcid.org/ns/common")
+    protected Relationship relationship;
+    @XmlElement(name="external-id-url", namespace = "http://www.orcid.org/ns/common")
     protected Url url;
+    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;        
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
@@ -66,17 +70,23 @@ public class ExternalIdentifier implements Serializable, Filterable {
     @XmlAttribute(name = "display-index")
     protected Long displayIndex;
     
-    public String getCommonName() {
-        return commonName;
+    public String getType() {
+        return type;
     }
-    public void setCommonName(String commonName) {
-        this.commonName = commonName;
+    public void setType(String type) {
+        this.type = type;
     }
-    public String getReference() {
-        return reference;
+    public String getValue() {
+        return value;
     }
-    public void setReference(String reference) {
-        this.reference = reference;
+    public void setValue(String value) {
+        this.value = value;
+    }
+    public Relationship getRelationship() {
+        return relationship;
+    }
+    public void setRelationship(Relationship relationship) {
+        this.relationship = relationship;
     }
     public Url getUrl() {
         return url;
@@ -109,6 +119,8 @@ public class ExternalIdentifier implements Serializable, Filterable {
         this.putCode = putCode;
     }
     public Visibility getVisibility() {
+        if (visibility == null)
+            return Visibility.PUBLIC;
         return visibility;
     }
     public void setVisibility(Visibility visibility) {
@@ -133,12 +145,13 @@ public class ExternalIdentifier implements Serializable, Filterable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((commonName == null) ? 0 : commonName.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((putCode == null) ? 0 : putCode.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((relationship == null) ? 0 : relationship.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -152,11 +165,11 @@ public class ExternalIdentifier implements Serializable, Filterable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ExternalIdentifier other = (ExternalIdentifier) obj;
-        if (commonName == null) {
-            if (other.commonName != null)
+        PersonExternalIdentifier other = (PersonExternalIdentifier) obj;
+        if (type == null) {
+            if (other.type != null)
                 return false;
-        } else if (!commonName.equals(other.commonName))
+        } else if (!type.equals(other.type))
             return false;
         if (createdDate == null) {
             if (other.createdDate != null)
@@ -178,10 +191,15 @@ public class ExternalIdentifier implements Serializable, Filterable {
                 return false;
         } else if (!putCode.equals(other.putCode))
             return false;
-        if (reference == null) {
-            if (other.reference != null)
+        if (value == null) {
+            if (other.value != null)
                 return false;
-        } else if (!reference.equals(other.reference))
+        } else if (!value.equals(other.value))
+            return false;
+        if (relationship == null) {
+            if (other.relationship != null)
+                return false;
+        } else if (!relationship.equals(other.relationship))
             return false;
         if (source == null) {
             if (other.source != null)

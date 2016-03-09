@@ -68,11 +68,11 @@
         $(".template-darken").fadeOut(1);
         $(".template-box").fadeOut(1);
         var closables = $(".close-template-popup, .template-darken");
-        $(closables).live("click", function(e) {
+        $(closables).on("click", function(e) {
             e.preventDefault();
             closePopup();
         });
-        $(".open-template-popup").live("click", function(e) {
+        $(".open-template-popup").on("click", function(e) {
             e.preventDefault();
             openPopup();
         });

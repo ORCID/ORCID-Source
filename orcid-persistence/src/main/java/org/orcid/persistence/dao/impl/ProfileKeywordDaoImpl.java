@@ -48,6 +48,14 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         return query.getResultList();
     }
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ProfileKeywordEntity> getProfileKeywors(String orcid, org.orcid.jaxb.model.common_rc2.Visibility visibility) {
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid AND visibility=:visibility");
+        query.setParameter("orcid", orcid);
+        query.setParameter("visibility", visibility);
+        return query.getResultList();
+    }
     
     /**
      * Deleted a keyword from database

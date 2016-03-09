@@ -52,8 +52,6 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -66,43 +64,10 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
-
+public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
     private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value();
     
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.publicClient1.clientId}")
-    public String publicClientId;
-    @Value("${org.orcid.web.publicClient1.clientSecret}")
-    public String publicClientSecret;
-    @Value("${org.orcid.web.testUser2.username}")
-    public String user2UserName;
-    @Value("${org.orcid.web.testUser2.orcidId}")
-    public String user2OrcidId;
-    @Value("${org.orcid.web.testUser2.password}")
-    public String user2Password;
-
     @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
@@ -118,13 +83,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
     
     @AfterClass
     public static void afterClass() {
-        String clientId1 = System.getProperty("org.orcid.web.testClient1.clientId");
-        String clientId2 = System.getProperty("org.orcid.web.testClient2.clientId");
-        if (PojoUtil.isEmpty(clientId2)) {
-            revokeApplicationsAccess(clientId1);
-        } else {
-            revokeApplicationsAccess(clientId1, clientId2);
-        }
+        revokeApplicationsAccess();
     }
 
     @Test
@@ -138,36 +97,36 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.PART_OF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String user1AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user1UserName, this.user1Password);
+        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
         // Create a work
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.user1OrcidId, workToCreate, user1AccessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(getUser1OrcidId(), workToCreate, user1AccessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/work/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + getUser1OrcidId() + "/work/\\d+"));
         // Fetch it with the owner
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), user1AccessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
         assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
+        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
         // Try to fetch it with other user orcid
         // Using the members API        
-        ClientResponse user2GetResponse = memberV2ApiClient.viewWorkXml(this.user2OrcidId, gotWork.getPutCode(), user2AccessToken);
+        ClientResponse user2GetResponse = memberV2ApiClient.viewWorkXml(getUser2OrcidId(), gotWork.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Using the public API        
-        user2GetResponse = publicV2ApiClient.viewWorkXml(this.user2OrcidId, String.valueOf(gotWork.getPutCode()));
+        user2GetResponse = publicV2ApiClient.viewWorkXml(getUser2OrcidId(), String.valueOf(gotWork.getPutCode()));
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Delete it
-        ClientResponse deletedResponse = memberV2ApiClient.deleteWorkXml(this.user1OrcidId, gotWork.getPutCode(), user1AccessToken);
+        ClientResponse deletedResponse = memberV2ApiClient.deleteWorkXml(getUser1OrcidId(), gotWork.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
     }
@@ -177,37 +136,37 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
-        String user1AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user1UserName, this.user1Password);
+        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
         // Create an education
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, education, user1AccessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(getUser1OrcidId(), education, user1AccessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/education/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + getUser1OrcidId() + "/education/\\d+"));
         // Fetch it with the owner
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), user1AccessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Education gotEducation = getResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());                
-        String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
+        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
         // Try to fetch it with other user orcid
         // Using the members API        
-        ClientResponse user2GetResponse = memberV2ApiClient.viewEducationXml(this.user2OrcidId, gotEducation.getPutCode(), user2AccessToken);
+        ClientResponse user2GetResponse = memberV2ApiClient.viewEducationXml(getUser2OrcidId(), gotEducation.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Using the public API
-        user2GetResponse = publicV2ApiClient.viewEducationXml(this.user2OrcidId, String.valueOf(gotEducation.getPutCode()));
+        user2GetResponse = publicV2ApiClient.viewEducationXml(getUser2OrcidId(), String.valueOf(gotEducation.getPutCode()));
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Delete it
-        ClientResponse deletedResponse = memberV2ApiClient.deleteEducationXml(this.user1OrcidId, gotEducation.getPutCode(), user1AccessToken);
+        ClientResponse deletedResponse = memberV2ApiClient.deleteEducationXml(getUser1OrcidId(), gotEducation.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
     }
@@ -217,13 +176,13 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
-        String user1AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user1UserName, this.user1Password);
+        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
         // Create an employment
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employment, user1AccessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(getUser1OrcidId(), employment, user1AccessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/employment/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + getUser1OrcidId() + "/employment/\\d+"));
         // Fetch it with the owner
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), user1AccessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
@@ -232,22 +191,22 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());        
         // Try to fetch it with other user orcid
         // Using the members API
-        String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
-        ClientResponse user2GetResponse = memberV2ApiClient.viewEmploymentXml(this.user2OrcidId, gotEmployment.getPutCode(), user2AccessToken);
+        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        ClientResponse user2GetResponse = memberV2ApiClient.viewEmploymentXml(getUser2OrcidId(), gotEmployment.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Using the public API
-        user2GetResponse = publicV2ApiClient.viewEmploymentXml(this.user2OrcidId, String.valueOf(gotEmployment.getPutCode()));
+        user2GetResponse = publicV2ApiClient.viewEmploymentXml(getUser2OrcidId(), String.valueOf(gotEmployment.getPutCode()));
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Delete it
-        ClientResponse deletedResponse = memberV2ApiClient.deleteEducationXml(this.user1OrcidId, gotEmployment.getPutCode(), user1AccessToken);
+        ClientResponse deletedResponse = memberV2ApiClient.deleteEducationXml(getUser1OrcidId(), gotEmployment.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
     }
@@ -264,13 +223,13 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
-        String user1AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user1UserName, this.user1Password);
+        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
         // Create an funding
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, funding, user1AccessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(getUser1OrcidId(), funding, user1AccessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/funding/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + getUser1OrcidId() + "/funding/\\d+"));
         // Fetch it with the owner
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), user1AccessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
@@ -279,22 +238,22 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
         // Try to fetch it with other user orcid
         // Using the members API
-        String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
-        ClientResponse user2GetResponse = memberV2ApiClient.viewFundingXml(this.user2OrcidId, gotFunding.getPutCode(), user2AccessToken);
+        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        ClientResponse user2GetResponse = memberV2ApiClient.viewFundingXml(getUser2OrcidId(), gotFunding.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Using the public API
-        user2GetResponse = publicV2ApiClient.viewFundingXml(this.user2OrcidId, String.valueOf(gotFunding.getPutCode()));
+        user2GetResponse = publicV2ApiClient.viewFundingXml(getUser2OrcidId(), String.valueOf(gotFunding.getPutCode()));
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());
         // Delete it
-        ClientResponse deletedResponse = memberV2ApiClient.deleteFundingXml(this.user1OrcidId, gotFunding.getPutCode(), user1AccessToken);
+        ClientResponse deletedResponse = memberV2ApiClient.deleteFundingXml(getUser1OrcidId(), gotFunding.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
     }
@@ -311,13 +270,13 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-        String user1AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user1UserName, this.user1Password);
+        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
         // Create an peer review
-        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, user1AccessToken);
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(getUser1OrcidId(), peerReviewToCreate, user1AccessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + user1OrcidId + "/peer-review/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc1/" + getUser1OrcidId() + "/peer-review/\\d+"));
         // Fetch it with the owner
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), user1AccessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
@@ -326,22 +285,22 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
          // Try to fetch it with other user orcid
         // Using the members API
-        String user2AccessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri, this.user2UserName, this.user2Password);
-        ClientResponse user2GetResponse = memberV2ApiClient.viewPeerReviewXml(this.user2OrcidId, gotPeerReview.getPutCode(), user2AccessToken);
+        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        ClientResponse user2GetResponse = memberV2ApiClient.viewPeerReviewXml(getUser2OrcidId(), gotPeerReview.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         OrcidError error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());          
         //Using the public API
-        user2GetResponse = publicV2ApiClient.viewPeerReviewXml(this.user2OrcidId, String.valueOf(gotPeerReview.getPutCode()));
+        user2GetResponse = publicV2ApiClient.viewPeerReviewXml(getUser2OrcidId(), String.valueOf(gotPeerReview.getPutCode()));
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
         error = user2GetResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9016), error.getErrorCode());                
         // Delete it
-        ClientResponse deletedResponse = memberV2ApiClient.deletePeerReviewXml(this.user1OrcidId, gotPeerReview.getPutCode(), user1AccessToken);
+        ClientResponse deletedResponse = memberV2ApiClient.deletePeerReviewXml(getUser1OrcidId(), gotPeerReview.getPutCode(), user1AccessToken);
         assertNotNull(deletedResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
     }
@@ -353,7 +312,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
         }
 
         webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, clientRedirectUri);
+        webDriverHelper = new WebDriverHelper(webDriver, getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
         String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret,
                 SCOPES, userName, userPassword, clientRedirectUri);
@@ -369,7 +328,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBase {
             return groupRecords;
         
         List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.GROUP_ID_RECORD_UPDATE);
+        String token = oauthHelper.getClientCredentialsAccessToken(getClient1ClientId(), getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());

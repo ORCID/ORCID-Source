@@ -34,7 +34,7 @@
                     <ul class="workspace-bar-menu">
                         <!-- Link Manually -->
                         <li class="hidden-xs">
-                        	<div class="menu-container">
+                        	<div class="menu-container" id="add-funding-container">
 		                    	<ul class="toggle-menu">
 		                    		<li ng-class="{'green-bg' : fundingImportWizard == true}">       
 				                    	<span class="glyphicon glyphicon-plus"></span>
@@ -51,7 +51,7 @@
 						                    </#if>                    	
 						                    <!-- Add Manually -->
 						                    <li>
-					                            <a class="action-option manage-button" ng-click="addFundingModal()">
+					                            <a id="add-funding" class="action-option manage-button" ng-click="addFundingModal()">
 					                                <span class="glyphicon glyphicon-plus"></span>
 					                                <@orcid.msg 'manual_orcid_record_contents.link_manually'/>
 					                            </a>

@@ -84,7 +84,7 @@
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
 	
 	<!-- Always remember to remove Glyphicons font reference when bootstrap is updated -->
-    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.3.6/css/bootstrap.min.css?v=${ver}"/>
     <!--[if lt IE 8]>
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->

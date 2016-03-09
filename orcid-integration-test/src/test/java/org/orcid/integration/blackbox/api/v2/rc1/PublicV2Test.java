@@ -22,9 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,20 +30,13 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
-import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.common_rc1.Day;
@@ -64,7 +54,6 @@ import org.orcid.jaxb.model.record.summary_rc1.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc1.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc1.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc1.WorkSummary;
-import org.orcid.jaxb.model.record_rc1.Activity;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
 import org.orcid.jaxb.model.record_rc1.Funding;
@@ -77,7 +66,6 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -90,45 +78,13 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class PublicV2Test {
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String redirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.publicClient1.clientId}")
-    public String publicClientId;
-    @Value("${org.orcid.web.publicClient1.clientSecret}")
-    public String publicClientSecret;
-        
+public class PublicV2Test extends BlackBoxBaseRC1 {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-
     @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
-
-    private WebDriver webDriver;
-
-    private WebDriverHelper webDriverHelper;
-
-    @Resource
-    private OauthHelper oauthHelper;
 
     static String accessToken = null;
     
@@ -151,19 +107,18 @@ public class PublicV2Test {
 
     @Test
     public void testCantGetTokenForInternalScopes() {
-        
+        //TODO
     }
-    
-    
+        
     @Test
     public void testPublicClientCanGetAccessToken() throws InterruptedException, JSONException {
-        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(publicClientId, publicClientSecret, ScopePathType.READ_PUBLIC, APIRequestType.PUBLIC);
+        String publicAccessToken = oauthHelper.getClientCredentialsAccessToken(getPublicClientId(), getPublicClientSecret(), ScopePathType.READ_PUBLIC, APIRequestType.PUBLIC);
         assertFalse(PojoUtil.isEmpty(publicAccessToken));
     }
     
     @Test
     public void testGetInfoWithEmptyToken() throws InterruptedException, JSONException {
-        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId, "");
+        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(getUser1OrcidId(), "");
         assertNotNull(activitiesResponse);
         assertEquals(Response.Status.OK.getStatusCode(), activitiesResponse.getStatus());
         ActivitiesSummary activities = activitiesResponse.getEntity(ActivitiesSummary.class);
@@ -180,7 +135,7 @@ public class PublicV2Test {
         
     @Test
     public void testViewWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkWorks(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
+        checkWorks(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
     
     private void checkWorks(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -188,16 +143,16 @@ public class PublicV2Test {
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(getUser1OrcidId(), workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
         ClientResponse getWorkResponse = null;
         if(readPublicToken != null) {
-            getWorkResponse = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode, readPublicToken);
+            getWorkResponse = publicV2ApiClient.viewWorkXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getWorkResponse = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode);
+            getWorkResponse = publicV2ApiClient.viewWorkXml(getUser1OrcidId(), putCode);
         }
         checkResponse(getWorkResponse);        
         assertNotNull(getWorkResponse);
@@ -208,9 +163,9 @@ public class PublicV2Test {
         ClientResponse getWorkSummaryResponse = null;
         
         if(readPublicToken != null) {
-            getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode, readPublicToken);
+            getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode);
+            getWorkSummaryResponse = publicV2ApiClient.viewWorkSummaryXml(getUser1OrcidId(), putCode);
         }
         
         assertNotNull(getWorkSummaryResponse);
@@ -227,7 +182,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewFundingAndFundingSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkFunding(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
+        checkFunding(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
     
     private void checkFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -236,7 +191,7 @@ public class PublicV2Test {
         fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(getUser1OrcidId(), fundingToCreate, accessToken);
         assertNotNull(postResponse);        
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
@@ -245,9 +200,9 @@ public class PublicV2Test {
         ClientResponse getFundingResponse = null;
         
         if(readPublicToken != null) {
-            getFundingResponse = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode, readPublicToken);
+            getFundingResponse = publicV2ApiClient.viewFundingXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getFundingResponse = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode);
+            getFundingResponse = publicV2ApiClient.viewFundingXml(getUser1OrcidId(), putCode);
         }
         
         assertNotNull(getFundingResponse);
@@ -259,9 +214,9 @@ public class PublicV2Test {
         ClientResponse getFundingSummaryResponse = null;
         
         if(readPublicToken != null) {
-            getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode, readPublicToken);
+            getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode);
+            getFundingSummaryResponse = publicV2ApiClient.viewFundingSummaryXml(getUser1OrcidId(), putCode);
         }
         
         assertNotNull(getFundingSummaryResponse);
@@ -278,7 +233,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewEmploymentAndEmploymentSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkEmployment(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
+        checkEmployment(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
         
     public void checkEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -287,7 +242,7 @@ public class PublicV2Test {
         employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(getUser1OrcidId(), employmentToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
@@ -296,9 +251,9 @@ public class PublicV2Test {
         ClientResponse getEmploymentResponse = null;
         
         if(readPublicToken != null) {
-            getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(user1OrcidId, putCode, readPublicToken);
+            getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(user1OrcidId, putCode);
+            getEmploymentResponse = publicV2ApiClient.viewEmploymentXml(getUser1OrcidId(), putCode);
         }
         
         assertNotNull(getEmploymentResponse);
@@ -310,9 +265,9 @@ public class PublicV2Test {
         ClientResponse getEmploymentSummaryResponse = null;
         
         if(readPublicToken != null) {
-            getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(user1OrcidId, putCode, readPublicToken);
+            getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(user1OrcidId, putCode);
+            getEmploymentSummaryResponse = publicV2ApiClient.viewEmploymentSummaryXml(getUser1OrcidId(), putCode);
         }
         
         assertNotNull(getEmploymentSummaryResponse);
@@ -329,7 +284,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewEducationAndEducationSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkEducation(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
+        checkEducation(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
         
     public void checkEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -338,7 +293,7 @@ public class PublicV2Test {
         educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(getUser1OrcidId(), educationToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
@@ -346,9 +301,9 @@ public class PublicV2Test {
 
         ClientResponse getEducationResponse = null;
         if(readPublicToken != null) {
-            getEducationResponse = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode, readPublicToken);
+            getEducationResponse = publicV2ApiClient.viewEducationXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getEducationResponse = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode);
+            getEducationResponse = publicV2ApiClient.viewEducationXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(getEducationResponse);
         checkResponse(getEducationResponse);
@@ -358,9 +313,9 @@ public class PublicV2Test {
 
         ClientResponse getEducationSummaryResponse = null;
         if(readPublicToken != null) {
-            getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode, readPublicToken);
+            getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode);
+            getEducationSummaryResponse = publicV2ApiClient.viewEducationSummaryXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(getEducationSummaryResponse);
         checkResponse(getEducationSummaryResponse);
@@ -376,7 +331,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewPeerReviewAndPeerReviewSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkPeerReview(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
+        checkPeerReview(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }    
     
     public void checkPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -386,7 +341,7 @@ public class PublicV2Test {
         peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PUBLIC);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(getUser1OrcidId(), peerReviewToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
@@ -394,9 +349,9 @@ public class PublicV2Test {
 
         ClientResponse getPeerReviewResponse = null;
         if(readPublicToken != null) {
-            getPeerReviewResponse = publicV2ApiClient.viewPeerReviewXml(user1OrcidId, putCode, readPublicToken);
+            getPeerReviewResponse = publicV2ApiClient.viewPeerReviewXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getPeerReviewResponse = publicV2ApiClient.viewPeerReviewXml(user1OrcidId, putCode);
+            getPeerReviewResponse = publicV2ApiClient.viewPeerReviewXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(getPeerReviewResponse);
         checkResponse(getPeerReviewResponse);
@@ -404,11 +359,11 @@ public class PublicV2Test {
         assertNotNull(peerReview);
         assertEquals("peer-review:url", peerReview.getUrl().getValue());
 
-        ClientResponse getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode);
+        ClientResponse getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(getUser1OrcidId(), putCode);
         if(readPublicToken != null) {
-            getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode, readPublicToken);
+            getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode);
+            getPeerReviewSummaryResponse = publicV2ApiClient.viewPeerReviewSummaryXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(getPeerReviewSummaryResponse);
         checkResponse(getPeerReviewSummaryResponse);
@@ -424,7 +379,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewPublicActivitiesUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkPublicActivities(getReadPublicAccessToken(client1ClientId, client1ClientSecret));
+        checkPublicActivities(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
     
     public void checkPublicActivities(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -432,9 +387,9 @@ public class PublicV2Test {
         ClientResponse activitiesResponse = null;
         
         if(readPublicToken != null) {
-            activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId, readPublicToken);
+            activitiesResponse = publicV2ApiClient.viewActivities(getUser1OrcidId(), readPublicToken);
         } else {
-            activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId);
+            activitiesResponse = publicV2ApiClient.viewActivities(getUser1OrcidId());
         }
         
         assertNotNull(activitiesResponse);
@@ -520,8 +475,8 @@ public class PublicV2Test {
     @Test
     public void testViewPublicActivitiesUsingInvalidToken() throws JSONException, InterruptedException, URISyntaxException {
         createActivities();                
-        String wrongToken = getReadPublicAccessToken(client1ClientId, client1ClientSecret) + "!";
-        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(user1OrcidId, wrongToken);
+        String wrongToken = getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()) + "!";
+        ClientResponse activitiesResponse = publicV2ApiClient.viewActivities(getUser1OrcidId(), wrongToken);
         assertNotNull(activitiesResponse);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), activitiesResponse.getStatus());
     }
@@ -536,7 +491,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedWork(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
+        checkLimitedWork(getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));
     }
          
     public void checkLimitedWork(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -544,7 +499,7 @@ public class PublicV2Test {
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorkXml(getUser1OrcidId(), workToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
 
@@ -553,9 +508,9 @@ public class PublicV2Test {
 
         ClientResponse response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewWorkXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewWorkXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewWorkXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
@@ -567,9 +522,9 @@ public class PublicV2Test {
 
         response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewWorkSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewWorkSummaryXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewWorkSummaryXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
@@ -587,7 +542,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedFundingAndFundingSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedFunding(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
+        checkLimitedFunding(getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));
     }
     
     public void checkLimitedFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -596,7 +551,7 @@ public class PublicV2Test {
         fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createFundingXml(getUser1OrcidId(), fundingToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
@@ -604,9 +559,9 @@ public class PublicV2Test {
 
         ClientResponse response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewFundingXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewFundingXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewFundingXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
@@ -618,9 +573,9 @@ public class PublicV2Test {
 
         response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewFundingSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewFundingSummaryXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewFundingSummaryXml(getUser1OrcidId(), putCode);
         }
         assertNotNull(response);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
@@ -638,7 +593,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedEmploymentAndEmploymentSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedEmployment(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
+        checkLimitedEmployment(getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));
     }
     
     public void checkLimitedEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -647,13 +602,13 @@ public class PublicV2Test {
         employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(getUser1OrcidId(), employmentToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
         String putCode = path.substring(path.lastIndexOf('/') + 1, path.length());
 
-        ClientResponse response = publicV2ApiClient.viewEmploymentXml(user1OrcidId, putCode);
+        ClientResponse response = publicV2ApiClient.viewEmploymentXml(getUser1OrcidId(), putCode);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
 
         OrcidError result = response.getEntity(OrcidError.class);
@@ -661,7 +616,7 @@ public class PublicV2Test {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
 
-        response = publicV2ApiClient.viewEmploymentSummaryXml(user1OrcidId, putCode);
+        response = publicV2ApiClient.viewEmploymentSummaryXml(getUser1OrcidId(), putCode);
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
 
         result = response.getEntity(OrcidError.class);
@@ -677,7 +632,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedEducationAndEducationSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedEducation(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
+        checkLimitedEducation(getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));
     }
     
     public void checkLimitedEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -686,7 +641,7 @@ public class PublicV2Test {
         educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createEducationXml(getUser1OrcidId(), educationToCreate, accessToken);
         
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -695,9 +650,9 @@ public class PublicV2Test {
 
         ClientResponse response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewEducationXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewEducationXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewEducationXml(getUser1OrcidId(), putCode);
         }
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         OrcidError result = response.getEntity(OrcidError.class);
@@ -707,9 +662,9 @@ public class PublicV2Test {
 
         response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewEducationSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewEducationSummaryXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewEducationSummaryXml(getUser1OrcidId(), putCode);
         }
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         result = response.getEntity(OrcidError.class);
@@ -725,7 +680,7 @@ public class PublicV2Test {
     
     @Test
     public void testViewLimitedPeerReviewAndPeerReviewSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
-        checkLimitedPeerReview(getReadPublicAccessToken(client2ClientId, client2ClientSecret));
+        checkLimitedPeerReview(getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));
     }
     
     public void checkLimitedPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
@@ -735,7 +690,7 @@ public class PublicV2Test {
         peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
-        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(getUser1OrcidId(), peerReviewToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String path = postResponse.getLocation().getPath();
@@ -743,9 +698,9 @@ public class PublicV2Test {
 
         ClientResponse response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewPeerReviewXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewPeerReviewXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewPeerReviewXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewPeerReviewXml(getUser1OrcidId(), putCode);
         }
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         OrcidError result = response.getEntity(OrcidError.class);
@@ -755,9 +710,9 @@ public class PublicV2Test {
 
         response = null;
         if(readPublicToken != null) {
-            response = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode, readPublicToken);
+            response = publicV2ApiClient.viewPeerReviewSummaryXml(getUser1OrcidId(), putCode, readPublicToken);
         } else {
-            response = publicV2ApiClient.viewPeerReviewSummaryXml(user1OrcidId, putCode);
+            response = publicV2ApiClient.viewPeerReviewSummaryXml(getUser1OrcidId(), putCode);
         }
         assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
         result = response.getEntity(OrcidError.class);
@@ -772,54 +727,19 @@ public class PublicV2Test {
         assertNotNull(response);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
         
-        response = publicV2ApiClient.viewActivities("0000-0000-0000-0000", getReadPublicAccessToken(client2ClientId, client2ClientSecret));     
+        response = publicV2ApiClient.viewActivities("0000-0000-0000-0000", getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));     
         assertNotNull(response);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());        
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {
         if (accessToken == null) {
-            webDriver = new FirefoxDriver();
-            webDriverHelper = new WebDriverHelper(webDriver, webBaseUrl, redirectUri);
-            oauthHelper.setWebDriverHelper(webDriverHelper);
-            accessToken = oauthHelper.obtainAccessToken(client1ClientId, client1ClientSecret, ScopePathType.ACTIVITIES_UPDATE.value() + ' ' + ScopePathType.ACTIVITIES_READ_LIMITED.value(), user1UserName, user1Password,
-                    redirectUri);
-            webDriver.quit();
+            String scopes = ScopePathType.ACTIVITIES_UPDATE.value() + ' ' + ScopePathType.ACTIVITIES_READ_LIMITED.value();
+            accessToken = super.getAccessToken(scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());            
         }
         return accessToken;
     }
-
-    public Activity unmarshallFromPath(String path, Class<? extends Activity> type) {
-        try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
-            Object obj = unmarshall(reader, type);
-            Activity result = null;
-            if (Education.class.equals(type)) {
-                result = (Education) obj;
-            } else if (Employment.class.equals(type)) {
-                result = (Employment) obj;
-            } else if (Funding.class.equals(type)) {
-                result = (Funding) obj;
-            } else if (Work.class.equals(type)) {
-                result = (Work) obj;
-            } else if (PeerReview.class.equals(type)) {
-                result = (PeerReview) obj;
-            }
-            return result;
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading notification from classpath", e);
-        }
-    }
-
-    public Object unmarshall(Reader reader, Class<? extends Activity> type) {
-        try {
-            JAXBContext context = JAXBContext.newInstance(type);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            return unmarshaller.unmarshal(reader);
-        } catch (JAXBException e) {
-            throw new RuntimeException("Unable to unmarshall orcid message" + e);
-        }
-    }
-
+   
     private void createActivities() throws JSONException, InterruptedException, URISyntaxException {
         String accessToken = getAccessToken();
         long time = System.currentTimeMillis();
@@ -841,7 +761,7 @@ public class PublicV2Test {
             else
                 workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
-            ClientResponse postResponse = memberV2ApiClient.createWorkXml(user1OrcidId, workToCreate, accessToken);
+            ClientResponse postResponse = memberV2ApiClient.createWorkXml(getUser1OrcidId(), workToCreate, accessToken);
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
@@ -863,7 +783,7 @@ public class PublicV2Test {
             else
                 fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
-            ClientResponse postResponse = memberV2ApiClient.createFundingXml(user1OrcidId, fundingToCreate, accessToken);
+            ClientResponse postResponse = memberV2ApiClient.createFundingXml(getUser1OrcidId(), fundingToCreate, accessToken);
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
@@ -879,7 +799,7 @@ public class PublicV2Test {
             else
                 employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
-            ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(user1OrcidId, employmentToCreate, accessToken);
+            ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(getUser1OrcidId(), employmentToCreate, accessToken);
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
@@ -895,7 +815,7 @@ public class PublicV2Test {
             else
                 educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
 
-            ClientResponse postResponse = memberV2ApiClient.createEducationXml(user1OrcidId, educationToCreate, accessToken);
+            ClientResponse postResponse = memberV2ApiClient.createEducationXml(getUser1OrcidId(), educationToCreate, accessToken);
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
@@ -918,7 +838,7 @@ public class PublicV2Test {
                 peerReviewToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.PRIVATE);
             }              
 
-            ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(user1OrcidId, peerReviewToCreate, accessToken);
+            ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(getUser1OrcidId(), peerReviewToCreate, accessToken);
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
@@ -927,26 +847,26 @@ public class PublicV2Test {
     public void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
         // Remove all activities
         String token = getAccessToken();
-        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(user1OrcidId, token);
+        ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(getUser1OrcidId(), token);
         assertNotNull(activitiesResponse);
         ActivitiesSummary summary = activitiesResponse.getEntity(ActivitiesSummary.class);
         assertNotNull(summary);
         if (summary.getEducations() != null && !summary.getEducations().getSummaries().isEmpty()) {
             for (EducationSummary education : summary.getEducations().getSummaries()) {
-                memberV2ApiClient.deleteEducationXml(user1OrcidId, education.getPutCode(), token);
+                memberV2ApiClient.deleteEducationXml(getUser1OrcidId(), education.getPutCode(), token);
             }
         }
 
         if (summary.getEmployments() != null && !summary.getEmployments().getSummaries().isEmpty()) {
             for (EmploymentSummary employment : summary.getEmployments().getSummaries()) {
-                memberV2ApiClient.deleteEmploymentXml(user1OrcidId, employment.getPutCode(), token);
+                memberV2ApiClient.deleteEmploymentXml(getUser1OrcidId(), employment.getPutCode(), token);
             }
         }
 
         if (summary.getFundings() != null && !summary.getFundings().getFundingGroup().isEmpty()) {
             for (FundingGroup group : summary.getFundings().getFundingGroup()) {
                 for (FundingSummary funding : group.getFundingSummary()) {
-                    memberV2ApiClient.deleteFundingXml(user1OrcidId, funding.getPutCode(), token);
+                    memberV2ApiClient.deleteFundingXml(getUser1OrcidId(), funding.getPutCode(), token);
                 }
             }
         }
@@ -954,7 +874,7 @@ public class PublicV2Test {
         if (summary.getWorks() != null && !summary.getWorks().getWorkGroup().isEmpty()) {
             for (WorkGroup group : summary.getWorks().getWorkGroup()) {
                 for (WorkSummary work : group.getWorkSummary()) {
-                    memberV2ApiClient.deleteWorkXml(user1OrcidId, work.getPutCode(), token);
+                    memberV2ApiClient.deleteWorkXml(getUser1OrcidId(), work.getPutCode(), token);
                 }
             }
         }
@@ -962,7 +882,7 @@ public class PublicV2Test {
         if (summary.getPeerReviews() != null && !summary.getPeerReviews().getPeerReviewGroup().isEmpty()) {
             for (PeerReviewGroup group : summary.getPeerReviews().getPeerReviewGroup()) {
                 for (PeerReviewSummary peerReview : group.getPeerReviewSummary()) {
-                    memberV2ApiClient.deletePeerReviewXml(user1OrcidId, peerReview.getPutCode(), token);
+                    memberV2ApiClient.deletePeerReviewXml(getUser1OrcidId(), peerReview.getPutCode(), token);
                 }
             }
         }
@@ -988,7 +908,7 @@ public class PublicV2Test {
             return groupRecords;
         
         List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.GROUP_ID_RECORD_UPDATE);
+        String token = oauthHelper.getClientCredentialsAccessToken(getClient1ClientId(), getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());
