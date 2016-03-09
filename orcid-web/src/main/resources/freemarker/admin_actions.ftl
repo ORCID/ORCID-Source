@@ -470,7 +470,7 @@
 			
 		<!-- Lock Profile -->			
 		<a name="lock-profile"></a>
-		<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+		<div id="lockProfileDiv" ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>				
 				<a ng-show="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lock_profile' /></a>
 				<a ng-hide="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
@@ -492,7 +492,7 @@
 							
 		<!-- Unlock Profile -->			
 		<a name="unlock-profile"></a>
-		<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+		<div id="unlockProfileDiv" ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
 			<p>				
 				<a ng-show="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
 				<a ng-hide="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>

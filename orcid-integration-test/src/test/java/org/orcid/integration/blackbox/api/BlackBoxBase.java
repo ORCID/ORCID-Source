@@ -25,8 +25,6 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -202,37 +200,36 @@ public class BlackBoxBase {
         // Login Admin
         adminSignIn(adminUserName, adminPassword);
         // Unlock the account
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        WebElement unLockProfileLink = webDriver.findElement(By.linkText("Unlock profile"));
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("unlockProfileDiv")));
+        WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
         unLockProfileLink.click();
         WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
         unLockProfileOrcidId.sendKeys(orcidToUnlock);
-        
-        try {
-            WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
-            unLockButton.click();
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));
-            WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
-            confirmUnLockButton.click();
-        } catch(NoSuchElementException | TimeoutException e) {
-            //The profile has been unlocked already
-        }
+                
+        WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
+        unLockButton.click();
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
+        WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
+        confirmUnLockButton.click();
+    
         webDriver.quit();
     }
 
     public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
         adminSignIn(adminUserName, adminPassword);
         // Lock the account
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        WebElement lockProfileLink = webDriver.findElement(By.linkText("Lock profile"));
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("lockProfileDiv")));
+        WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
         lockProfileLink.click();
         WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
         lockProfileOrcidId.sendKeys(orcidToLock);
         WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
         lockButton.click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
+        
+        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
         WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
         confirmLockButton.click();
+        
         webDriver.quit();
     }
     
