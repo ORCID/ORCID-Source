@@ -100,7 +100,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -166,7 +165,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     protected SourceManager sourceManager;
 
     @Override
-    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
+    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
         Assert.notNull(profile, "Cannot convert a null OrcidProfile");
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
 
@@ -453,6 +452,27 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 researcherUrlEntity.setUrl(researcherUrl.getUrl() != null ? researcherUrl.getUrl().getValue() : null);
                 researcherUrlEntity.setUrlName(researcherUrl.getUrlName() != null ? researcherUrl.getUrlName().getContent() : null);
                 researcherUrlEntity.setUser(profileEntity);
+                
+                Source source = researcherUrl.getSource();
+                if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                    if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                        if (OrcidStringUtils.isValidOrcid(source.retrieveSourcePath())) {
+                            researcherUrlEntity.setSource(new SourceEntity(new ProfileEntity(source.retrieveSourcePath())));
+                        } else {
+                            researcherUrlEntity.setSource(new SourceEntity(new ClientDetailsEntity(source.retrieveSourcePath())));
+                        }
+                    }
+                } else {
+                    String amenderOrcid = sourceManager.retrieveSourceOrcid();
+                    if (!PojoUtil.isEmpty(amenderOrcid)) {
+                        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                            researcherUrlEntity.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                        } else {
+                            researcherUrlEntity.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                        }
+                    }
+                }
+                                
                 researcherUrlEntities.add(researcherUrlEntity);
             }
             profileEntity.setResearcherUrls(researcherUrlEntities);
@@ -478,6 +498,27 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     OtherNameEntity otherNameEntity = new OtherNameEntity();
                     otherNameEntity.setDisplayName(otherName.getContent());
                     otherNameEntity.setProfile(profileEntity);
+                    
+                    Source source = otherName.getSource();
+                    if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                        if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                            if (OrcidStringUtils.isValidOrcid(source.retrieveSourcePath())) {
+                                otherNameEntity.setSource(new SourceEntity(new ProfileEntity(source.retrieveSourcePath())));
+                            } else {
+                                otherNameEntity.setSource(new SourceEntity(new ClientDetailsEntity(source.retrieveSourcePath())));
+                            }
+                        }
+                    } else {
+                        String amenderOrcid = sourceManager.retrieveSourceOrcid();
+                        if (!PojoUtil.isEmpty(amenderOrcid)) {
+                            if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                                otherNameEntity.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                            } else {
+                                otherNameEntity.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                            }
+                        }
+                    }
+                                        
                     otherNameEntities.add(otherNameEntity);
                 }
                 profileEntity.setOtherNames(otherNameEntities);
@@ -521,10 +562,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             if (keywordList != null && !keywordList.isEmpty()) {
                 for (Keyword keyword : keywordList) {
                     if (StringUtils.isNotBlank(keyword.getContent())) {
-                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap));
+                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap));                        
                     }
                 }
-
             }
         }
         profileEntity.setKeywords(profileKeywordEntities);
@@ -551,6 +591,26 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setProfile(profileEntity);
         entity.setKeywordName(keywordContent);
+        
+        Source source = keyword.getSource();
+        if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+            if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                if (OrcidStringUtils.isValidOrcid(source.retrieveSourcePath())) {
+                    entity.setSource(new SourceEntity(new ProfileEntity(source.retrieveSourcePath())));
+                } else {
+                    entity.setSource(new SourceEntity(new ClientDetailsEntity(source.retrieveSourcePath())));
+                }
+            }
+        } else {
+            String amenderOrcid = sourceManager.retrieveSourceOrcid();
+            if (!PojoUtil.isEmpty(amenderOrcid)) {
+                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                    entity.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                } else {
+                    entity.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                }
+            }
+        }        
         
         return entity;
     }
@@ -580,6 +640,27 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity.getId(), externalIdentifier, existingExternalIdentifiersMap);
                         if (externalIdentifierEntity != null) {
                             externalIdentifierEntity.setOwner(profileEntity);
+                            
+                            Source source = externalIdentifier.getSource();
+                            if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                                if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                                    if (OrcidStringUtils.isValidOrcid(source.retrieveSourcePath())) {
+                                        externalIdentifierEntity.setSource(new SourceEntity(new ProfileEntity(source.retrieveSourcePath())));
+                                    } else {
+                                        externalIdentifierEntity.setSource(new SourceEntity(new ClientDetailsEntity(source.retrieveSourcePath())));
+                                    }
+                                }
+                            } else {
+                                String amenderOrcid = sourceManager.retrieveSourceOrcid();
+                                if (!PojoUtil.isEmpty(amenderOrcid)) {
+                                    if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                                        externalIdentifierEntity.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                                    } else {
+                                        externalIdentifierEntity.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                                    }
+                                }
+                            }
+                            
                             externalIdentifierEntities.add(externalIdentifierEntity);
                         }
                     }
@@ -663,9 +744,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
+    private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {        
         Country contactCountry = contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null ? contactDetails.getAddress().getCountry()
                 : null;
+        
+        Source source = null;
+        if(contactDetails.getAddress() != null && contactDetails.getAddress().getSource() != null) {
+            source = contactDetails.getAddress().getSource();
+        }        
+        
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
         profileEntity.setIso2Country(country);
@@ -688,14 +775,22 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             address.setDisplayIndex(-1L);
             address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
             address.setUser(profileEntity);
-            String amenderOrcid = sourceManager.retrieveSourceOrcid();  
-            if(!PojoUtil.isEmpty(amenderOrcid)) {
-                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-                    address.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+            if(source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                if (OrcidStringUtils.isValidOrcid(source.retrieveSourcePath())) {
+                    address.setSource(new SourceEntity(new ProfileEntity(source.retrieveSourcePath())));
                 } else {
-                    address.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                    address.setSource(new SourceEntity(new ClientDetailsEntity(source.retrieveSourcePath())));
                 }
-            }
+            } else {
+                String amenderOrcid = sourceManager.retrieveSourceOrcid();  
+                if(!PojoUtil.isEmpty(amenderOrcid)) {
+                    if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+                        address.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
+                    } else {
+                        address.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
+                    }
+                }
+            }            
             
             HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();
             addresses.add(address);

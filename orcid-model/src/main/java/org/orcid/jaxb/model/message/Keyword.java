@@ -26,6 +26,7 @@ package org.orcid.jaxb.model.message;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import java.io.Serializable;
@@ -61,6 +62,9 @@ public class Keyword implements Serializable {
     @XmlValue
     protected String content;
 
+    @XmlTransient
+    protected Source source;
+    
     public Keyword() {
     }
 
@@ -87,6 +91,14 @@ public class Keyword implements Serializable {
      */
     public void setContent(String value) {
         this.content = value;
+    }    
+    
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     @Override
