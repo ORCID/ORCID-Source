@@ -1316,6 +1316,58 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
 
     }
+    
+    @Test
+    public void testAddPeerReviewWithSameExtIdValueButDifferentExtIdType() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        PeerReview peerReview1 = new PeerReview();
+        ExternalIDs weis1 = new ExternalIDs();
+        ExternalID wei1 = new ExternalID();
+        wei1.setRelationship(null);
+        wei1.setValue("same_but_different_type");
+        wei1.setType(ExternalIDType.DOI.value());
+        weis1.getExternalIdentifier().add(wei1);
+        peerReview1.setExternalIdentifiers(weis1);
+        peerReview1.setGroupId("issn:0000003");
+        peerReview1.setOrganization(getOrganization());
+        peerReview1.setRole(Role.CHAIR);
+        peerReview1.setSubjectContainerName(new Title("subject-container-name"));
+        peerReview1.setSubjectExternalIdentifier(wei1);
+        WorkTitle workTitle1 = new WorkTitle();
+        workTitle1.setTitle(new Title("work-title"));
+        peerReview1.setSubjectName(workTitle1);
+        peerReview1.setSubjectType(WorkType.DATA_SET);
+        peerReview1.setType(PeerReviewType.EVALUATION);
+
+        Response response1 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview1);
+        assertNotNull(response1);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
+
+        PeerReview peerReview2 = new PeerReview();
+        ExternalIDs weis2 = new ExternalIDs();
+        ExternalID wei2 = new ExternalID();
+        wei2.setRelationship(null);
+        wei2.setValue("same_but_different_type"); // Same value
+        wei2.setType(ExternalIDType.ARXIV.value()); // But different type
+        weis2.getExternalIdentifier().add(wei2);
+        peerReview2.setExternalIdentifiers(weis2);
+        peerReview2.setGroupId("issn:0000003");
+        peerReview2.setOrganization(getOrganization());
+        peerReview2.setRole(Role.CHAIR);
+        peerReview2.setSubjectContainerName(new Title("subject-container-name"));
+        peerReview2.setSubjectExternalIdentifier(wei2);
+        WorkTitle workTitle2 = new WorkTitle();
+        workTitle2.setTitle(new Title("work-title"));
+        peerReview2.setSubjectName(workTitle2);
+        peerReview2.setSubjectType(WorkType.DATA_SET);
+        peerReview2.setType(PeerReviewType.EVALUATION);
+
+        Response response2 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview2);
+        assertNotNull(response2);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response2.getStatus());
+
+    }
 
     @Test
     public void testDeletePeerReview() {
