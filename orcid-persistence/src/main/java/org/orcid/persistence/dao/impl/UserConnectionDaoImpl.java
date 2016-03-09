@@ -31,21 +31,21 @@ import org.orcid.persistence.jpa.entities.UserconnectionPK;
  */
 public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, UserconnectionPK> implements UserConnectionDao {
 
-	public UserConnectionDaoImpl() {
-		super(UserconnectionEntity.class);
-	}
-	
-	@Override
-	public void updateLoginInformation(UserconnectionPK pk) {
-		UserconnectionEntity entity = find(pk);
-		entity.setLastLogin(new Timestamp(new Date().getTime()));
-		merge(entity);
-	}
-	
-	@Override
+    public UserConnectionDaoImpl() {
+        super(UserconnectionEntity.class);
+    }
+
+    @Override
+    public void updateLoginInformation(UserconnectionPK pk) {
+        UserconnectionEntity entity = find(pk);
+        entity.setLastLogin(new Timestamp(new Date().getTime()));
+        merge(entity);
+    }
+
+    @Override
     public UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId) {
-        TypedQuery<UserconnectionEntity> query = entityManager.createQuery(
-                "from UserconnectionEntity where id.provideruserid = :providerUserId and providerid= :providerId", UserconnectionEntity.class);
+        TypedQuery<UserconnectionEntity> query = entityManager
+                .createQuery("from UserconnectionEntity where id.provideruserid = :providerUserId and providerid= :providerId", UserconnectionEntity.class);
         query.setParameter("providerUserId", providerUserId);
         query.setParameter("providerId", providerId);
         List<UserconnectionEntity> results = query.getResultList();
@@ -54,7 +54,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
 
     @Override
     public List<UserconnectionEntity> findByOrcid(String orcid) {
-    	TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid)", UserconnectionEntity.class);
+        TypedQuery<UserconnectionEntity> query = entityManager.createQuery("from UserconnectionEntity where orcid = :orcid)", UserconnectionEntity.class);
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
