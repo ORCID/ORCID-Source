@@ -185,4 +185,5 @@
     <include file="/db/updates/add_work_orcid_display_index_index_on_work_table.xml" />
     <include file="/db/updates/add_orcid_index_other_names.xml" />
     <include file="/db/updates/clean-address-table.xml" />
+    <include file="/db/updates/create_record_name_table.xml" />
 </databaseChangeLog>

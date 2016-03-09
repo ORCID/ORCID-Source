@@ -16,9 +16,9 @@
  */
 package org.orcid.persistence.dao;
 
-import org.orcid.persistence.jpa.entities.NameEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
-public interface NameDao extends GenericDao<NameEntity, Long> {
+public interface NameDao extends GenericDao<RecordNameEntity, Long> {
 
-    NameEntity getName(String orcid);
+    RecordNameEntity getName(String orcid);
 }

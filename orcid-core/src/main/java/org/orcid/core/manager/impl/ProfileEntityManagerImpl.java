@@ -83,7 +83,7 @@ import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.NameEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
@@ -217,7 +217,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      */
     private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
         ProfileEntity profile = new ProfileEntity();
-        profile.setNameEntity(new NameEntity());
+        profile.setNameEntity(new RecordNameEntity());
         profile.getNameEntity().setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
         profile.getNameEntity().setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         profile.getNameEntity().setGivenName(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());

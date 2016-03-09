@@ -19,18 +19,18 @@ package org.orcid.persistence.dao.impl;
 import javax.persistence.Query;
 
 import org.orcid.persistence.dao.NameDao;
-import org.orcid.persistence.jpa.entities.NameEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
-public class NameDaoImpl extends GenericDaoImpl<NameEntity, Long> implements NameDao {
+public class NameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> implements NameDao {
 
     public NameDaoImpl() {
-        super(NameEntity.class);
+        super(RecordNameEntity.class);
     }
 
     @Override
-    public NameEntity getName(String orcid) {
+    public RecordNameEntity getName(String orcid) {
         Query query = entityManager.createQuery("FROM NameEntity WHERE orcid=:orcid");
         query.setParameter("orcid", orcid);
-        return (NameEntity) query.getSingleResult();
+        return (RecordNameEntity) query.getSingleResult();
     }
 }

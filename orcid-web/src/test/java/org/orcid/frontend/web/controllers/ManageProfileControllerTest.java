@@ -60,7 +60,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.NameEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.pojo.ManageDelegate;
@@ -256,7 +256,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
     @Test
     public void testAddDelegateSendsEmailToOnlyNewDelegates() throws Exception {
         ProfileEntity delegateProfile = new ProfileEntity("5555-5555-5555-555X");
-        delegateProfile.setNameEntity(new NameEntity());
+        delegateProfile.setNameEntity(new RecordNameEntity());
         delegateProfile.getNameEntity().setCreditName("Test Delegate Credit Name");        
         when(profileEntityManager.findByOrcid("5555-5555-5555-555X")).thenReturn(delegateProfile);
         ManageDelegate addDelegate = new ManageDelegate();

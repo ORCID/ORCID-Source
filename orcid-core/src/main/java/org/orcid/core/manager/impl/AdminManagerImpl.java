@@ -49,7 +49,7 @@ import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.NameEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -199,7 +199,7 @@ public class AdminManagerImpl implements AdminManager {
                         Date deprecationDate = new Date();
                         deprecated.setDeactivationDate(deprecationDate);
                         deprecated.setDeprecatedDate(deprecationDate);
-                        deprecated.setNameEntity(new NameEntity());
+                        deprecated.setNameEntity(new RecordNameEntity());
                         deprecated.getNameEntity().setCreditName(null);
                         deprecated.getNameEntity().setGivenName("Given Names Deactivated");
                         deprecated.getNameEntity().setFamilyName("Family Name Deactivated");

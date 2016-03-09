@@ -13,35 +13,28 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * The persistent class for the name database table.
  * 
  */
 @Entity
-@Table(name = "name")
-public class NameEntity extends BaseEntity<Long> implements Comparable<NameEntity>, ProfileAware, SourceAware {
-
-    /**
-     * 
-     */
+@Table(name = "record_name")
+public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
     private static final long serialVersionUID = -219497844494612167L;
     private Long id;
     private String creditName;
     private String givenName;
     private String familyName;
     private ProfileEntity profile;
-    private SourceEntity source;
     private Visibility visibility;
-    private Long displayIndex;
-
+    
     /**
      * @return the id of the name
      */
     @Id
-    @Column(name = "name_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "name_seq")
     @SequenceGenerator(name = "name_seq", sequenceName = "name_seq")
     public Long getId() {
@@ -116,14 +109,6 @@ public class NameEntity extends BaseEntity<Long> implements Comparable<NameEntit
         this.profile = profile;
     }
     
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-
     @Basic
     @Enumerated(EnumType.STRING)
     public Visibility getVisibility() {
@@ -132,23 +117,5 @@ public class NameEntity extends BaseEntity<Long> implements Comparable<NameEntit
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    @Column(name = "display_index")
-    public Long getDisplayIndex() {
-        return displayIndex;
-    }
-
-    public void setDisplayIndex(Long displayIndex) {
-        this.displayIndex = displayIndex;
-    }
-    
-    @Override
-    public int compareTo(NameEntity nameEntity) {
-        if (creditName != null && nameEntity != null) {
-            return creditName.compareTo(nameEntity.getCreditName());
-        } else {
-            return 0;
-        }
     }
 }

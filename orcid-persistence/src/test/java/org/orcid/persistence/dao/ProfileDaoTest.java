@@ -47,7 +47,7 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.NameEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -464,7 +464,7 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
-        profile.setNameEntity(new NameEntity());
+        profile.setNameEntity(new RecordNameEntity());
         profile.getNameEntity().setCreditName("Updated Credit Name");
         profile.getNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         profile.getNameEntity().setGivenName("Updated Give Name");

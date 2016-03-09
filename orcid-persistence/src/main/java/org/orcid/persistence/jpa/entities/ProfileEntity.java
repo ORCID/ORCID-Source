@@ -156,7 +156,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String userLastIp;
     private boolean reviewed = Boolean.FALSE;
 
-    private NameEntity nameEntity;
+    private RecordNameEntity recordNameEntity;
     
     @Id
     @Column(name = "orcid", length = 19)
@@ -1018,11 +1018,11 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
     }
 
-    public NameEntity getNameEntity() {
-        return nameEntity;
+    public RecordNameEntity getRecordNameEntity() {
+        return recordNameEntity;
     }
 
-    public void setNameEntity(NameEntity nameEntity) {
-        this.nameEntity = nameEntity;
-    }
+    public void setRecordNameEntity(RecordNameEntity recordNameEntity) {
+        this.recordNameEntity = recordNameEntity;
+    }    
 }
