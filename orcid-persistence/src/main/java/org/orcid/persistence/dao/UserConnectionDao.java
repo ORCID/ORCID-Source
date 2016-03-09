@@ -31,4 +31,6 @@ public interface UserConnectionDao extends GenericDao<UserconnectionEntity, User
     UserconnectionEntity findByProviderIdAndProviderUserId(String providerUserId, String providerId);
 
     List<UserconnectionEntity> findByOrcid(String orcid);
+    
+    void deleteByOrcid(String orcid);
 }

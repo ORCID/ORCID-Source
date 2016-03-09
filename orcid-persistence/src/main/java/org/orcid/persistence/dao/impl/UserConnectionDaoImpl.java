@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -58,4 +59,12 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
+
+    @Override
+    public void deleteByOrcid(String orcid) {
+        Query query = entityManager.createQuery("delete from UserconnectionEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+
 }
