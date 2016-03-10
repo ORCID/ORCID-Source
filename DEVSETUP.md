@@ -104,18 +104,18 @@ Tip: use the same command for rebuilding.
 
 Intialize the database schema (runs as orcid the first time, but then you need to run it again as postgres because some tasks require superuser).
 
-    ```
-    cd ~/git/ORCID-Source/orcid-core
+```
+cd ~/git/ORCID-Source/orcid-core
+  
+mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
+   
+cd ..
     
-    mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
+sudo su - postgres
     
-    cd ..
+psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
     
-    sudo su - postgres
-    
-    psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
-    
-    ```
+```
 
 ## Eclipse Setup (Spring Tool Suite Eclipse)
 These instructions are for Spring Tool Suite for Eclipse. 
