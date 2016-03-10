@@ -2278,8 +2278,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
         $.colorbox.resize();
     };
     
-    $scope.confirmDeleteEmailInline = function(email, $event) {        
-        console.log('CLICK');
+    $scope.confirmDeleteEmailInline = function(email, $event) {
         $event.preventDefault();
         $scope.showDeleteBox = true;
         emailSrvc.delEmail = email;        
