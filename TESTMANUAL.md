@@ -22,9 +22,9 @@ Steps to be completed before each release
 1. Visit https://qa.orcid.org/my-orcid
 2. Add a published name: Published Name
 3. Add an also know as name: Other Name
-4. Add a keyword: keyword
-5. Add a URL: https://qa.orcid.org
-6. Add a country: US
+4. Add a country: US
+5. Add a keyword: keyword
+6. Add a URL: https://qa.orcid.org
 7. Add a biography: Bio
 8. Add an education item: Institution "ORCID" (select from dropdown list)
 9. Add a funding item: type "grant", title "ma fund test", funding agency "Wellcome Trust" (select from dropdown list)
@@ -75,29 +75,29 @@ Steps to be completed before each release
 2. Search for the new record you created:
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://api.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [public token]' 'Accept: application/xml' 'https://pub.qa.orcid.org/v1.2/search/orcid-bio/?q=family-name:[DD][month][YYYY]'
     ```
 
 3. Read the record:
  
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://api.qa.orcid.org/v1.2/[ma id 2]/orcid-profile' -L -i
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://pub.qa.orcid.org/v1.2/[ma id2]/orcid-profile' -L -i
     ```
 
 4. Read the record without a version: 
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://api.qa.orcid.org/[ma id 2]/orcid-profile' -L -i
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [public token]' -X GET 'http://pub.qa.orcid.org/[ma id2]/orcid-profile' -L -i
     ```
 
 5. Read the record without an access token: 
 
     ```
-    curl -H 'Content-Type: application/xml' 'http://api.qa.orcid.org/v1.2/[ma id 2]/orcid-profile' -L -i
+    curl -H 'Content-Type: application/xml' 'http://pub.qa.orcid.org/v1.2/[ma id2]/orcid-profile' -L -i
     ```
 
 ###Member Activities 1.2
-1. Go to https://qa.orcid.org/oauth/authorize?client_id=[member client id]&response_type=code&scope=/orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited&redirect_uri=https://developers.google.com/oauthplayground
+1. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited&redirect_uri=https://developers.google.com/oauthplayground
 
 2. Log into the account created for testing today and grant short lived authorization
 
@@ -116,7 +116,7 @@ Steps to be completed before each release
 5. Update the works with: 
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work2.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i
     ```
 
 6. Check that the work is updated and the manually added work is not affected
@@ -130,7 +130,7 @@ Steps to be completed before each release
 8. Update funding with: 
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_fund2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/funding' -L -i
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_fund2.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[ma id]/funding' -L -i
     ```
 
 9. Check that the funding item is updated and the manually added funding is not affected
@@ -144,7 +144,7 @@ Steps to be completed before each release
 11. Update education: 
 
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_edu2.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/affiliations' -L -i
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_edu2.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[ma id]/affiliations' -L -i
     ```
 
 12. Check that the education is updated and the manually added education is not affected
@@ -160,9 +160,10 @@ This should fail
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i
     ```
 This should fail
+15. Visit https://qa.orcid.org/signout
 
 ###Member Bio 1.2
-1. Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
+1. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
 
 2. Log into the account created for testing today and grant short lived authorization
 
@@ -181,13 +182,13 @@ This should fail
 5. Update the biography:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [bio 1.2 token]' -H 'Accept: application/xml' -d '@/ma_test_bio.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-bio' -L -i
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [bio 1.2 token]' -H 'Accept: application/xml' -d '@/ma_bio.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-bio' -L -i
     ```
 
 ###Member 2.0
 1. Log into the account created for testing today 
 
-2. Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/read-limited /activities/update /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
+2. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /activities/update /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
 
 3. Grant long lived authorization
 
