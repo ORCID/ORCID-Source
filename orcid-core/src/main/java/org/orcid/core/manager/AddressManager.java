@@ -34,9 +34,9 @@ public interface AddressManager {
     
     Address getAddress(String orcid, Long putCode);        
 
-    Address updateAddress(String orcid, Long putCode, Address address, boolean isApiCall);
+    Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest);
 
-    Address createAddress(String orcid, Address address);
+    Address createAddress(String orcid, Address address, boolean isApiRequest);
 
     boolean deleteAddress(String orcid, Long putCode);
     

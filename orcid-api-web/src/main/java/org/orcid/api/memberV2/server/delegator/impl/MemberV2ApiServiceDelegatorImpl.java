@@ -519,7 +519,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(researcherUrl.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrl(orcid, researcherUrl);
+        ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrl(orcid, researcherUrl, true);
         ElementUtils.setPathToResearcherUrl(updatedResearcherUrl, orcid);
         return Response.ok(updatedResearcherUrl).build();
     }
@@ -527,7 +527,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
-        researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl);
+        researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl, true);
         try {
             return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -578,7 +578,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createOtherName(String orcid, OtherName otherName) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
-        otherName = otherNameManager.createOtherName(orcid, otherName);
+        otherName = otherNameManager.createOtherName(orcid, otherName, true);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -596,7 +596,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
 
-        OtherName updatedOtherName = otherNameManager.updateOtherName(orcid, putCode, otherName);
+        OtherName updatedOtherName = otherNameManager.updateOtherName(orcid, putCode, otherName, true);
         ElementUtils.setPathToOtherName(updatedOtherName, orcid);
         return Response.ok(updatedOtherName).build();
     }
@@ -648,7 +648,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        PersonExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier);
+        PersonExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier, true);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
@@ -656,7 +656,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
-        externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier);
+        externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier, true);
         try {
             return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -705,7 +705,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override    
     public Response createKeyword(String orcid, Keyword keyword) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
-        keyword = keywordsManager.createKeyword(orcid, keyword);
+        keyword = keywordsManager.createKeyword(orcid, keyword, true);
         try {
             return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -723,7 +723,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
 
-        keyword = keywordsManager.updateKeyword(orcid, putCode, keyword);      
+        keyword = keywordsManager.updateKeyword(orcid, putCode, keyword, true);      
         ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
     }
@@ -759,7 +759,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createAddress(String orcid, Address address) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
-        address = addressManager.createAddress(orcid, address);
+        address = addressManager.createAddress(orcid, address, true);
         try {
             return Response.created(new URI(String.valueOf(address.getPutCode()))).build();
         } catch (URISyntaxException e) {

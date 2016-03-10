@@ -43,9 +43,9 @@ public interface ProfileKeywordManager {
     
     boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity);
 
-    Keyword createKeyword(String orcid, Keyword keyword);
+    Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest);
 
-    Keyword updateKeyword(String orcid, Long putCode, Keyword keyword);
+    Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest);
 
     Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisiblity);
 }

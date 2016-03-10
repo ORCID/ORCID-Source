@@ -211,10 +211,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     @Override
     @Transactional
-    public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+    public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
+        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
+        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);        
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false, isApiRequest, originalVisibility);        
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         
@@ -226,24 +228,21 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-                
-        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
-        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
+                               
         SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
         updatedResearcherUrlEntity.setLastModified(new Date());
-        updatedResearcherUrlEntity.setVisibility(originalVisibility);
         updatedResearcherUrlEntity.setSource(existingSource);
         researcherUrlDao.merge(updatedResearcherUrlEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
     }
 
     @Override
-    public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+    public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true);
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
