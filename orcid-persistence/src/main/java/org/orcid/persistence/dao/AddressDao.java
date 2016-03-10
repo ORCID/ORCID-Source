@@ -29,7 +29,9 @@ import org.orcid.persistence.jpa.entities.AddressEntity;
 public interface AddressDao extends GenericDao<AddressEntity, Long> {
     AddressEntity getAddress(String orcid, Long putCode);
 
-    List<AddressEntity> findByOrcid(String orcid, long lastModified);
+    List<AddressEntity> getAddresses(String orcid, long lastModified);
+    
+    List<AddressEntity> getAddresses(String orcid, Visibility visibility);
 
     List<Object[]> findAddressesToMigrate();
     

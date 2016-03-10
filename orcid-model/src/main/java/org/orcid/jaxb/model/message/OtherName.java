@@ -23,15 +23,15 @@
 
 package org.orcid.jaxb.model.message;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.io.Serializable;
 
 /**
@@ -69,6 +69,9 @@ public class OtherName implements Serializable {
     @JsonIgnore
     protected Visibility visibility;
 
+    @XmlTransient
+    protected Source source;
+    
     public OtherName() {
     }
 
@@ -104,6 +107,14 @@ public class OtherName implements Serializable {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     @Override

@@ -73,6 +73,8 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
     @XmlTransient
     @JsonIgnore
     protected Visibility visibility;
+
+    protected Source source;
     
     public ResearcherUrl() {
         super();
@@ -144,6 +146,14 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     @Override

@@ -16,9 +16,9 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,8 +67,9 @@ public class AddressManagerImpl implements AddressManager {
     }
     
     @Override
-    public Address getPrimaryAddress(String orcid) {        
-        List<AddressEntity> addresses = addressDao.findByOrcid(orcid, getLastModified(orcid));
+    @Cacheable(value = "primary-address", key = "#orcid.concat('-').concat(#lastModified)")
+    public Address getPrimaryAddress(String orcid, long lastModified) {        
+        List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         Address address = null;
         if(addresses != null) {
             for(AddressEntity entity : addresses) {
@@ -95,7 +96,7 @@ public class AddressManagerImpl implements AddressManager {
         // Validate the address
         PersonValidator.validateAddress(address, sourceEntity, false);
         // Validate it is not duplicated
-        List<AddressEntity> existingAddresses = addressDao.findByOrcid(orcid, getLastModified(orcid));
+        List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
             //If it is not the same element
             if(!existing.getId().equals(address.getPutCode())) {
@@ -130,7 +131,7 @@ public class AddressManagerImpl implements AddressManager {
         // Validate the address
         PersonValidator.validateAddress(address, sourceEntity, true);
         // Validate it is not duplicated
-        List<AddressEntity> existingAddresses = addressDao.findByOrcid(orcid, getLastModified(orcid));
+        List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
             if (isDuplicated(existing, address, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -192,40 +193,34 @@ public class AddressManagerImpl implements AddressManager {
     @Override
     @Cacheable(value = "address", key = "#orcid.concat('-').concat(#lastModified)")
     public Addresses getAddresses(String orcid, long lastModified) {
-        List<AddressEntity> addressList = getAddresses(orcid, null);        
-        Addresses result = adapter.toAddressList(addressList);
-        result.updateIndexingStatusOnChilds();
-        LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return getAddresses(orcid, null);        
     }
 
     @Override
     @Cacheable(value = "public-address", key = "#orcid.concat('-').concat(#lastModified)")
     public Addresses getPublicAddresses(String orcid, long lastModified) {
-        List<AddressEntity> addressList = getAddresses(orcid, null);
-        Addresses result = adapter.toAddressList(addressList);
-        result.updateIndexingStatusOnChilds();
-        LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return getAddresses(orcid, Visibility.PUBLIC);
     }
     
-    private List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
-        List<AddressEntity> addresses = addressDao.findByOrcid(orcid, getLastModified(orcid));
-        if(visibility != null) {
-            Iterator<AddressEntity> it = addresses.iterator();
-            while(it.hasNext()) {
-                AddressEntity entity = it.next();
-                if(!entity.getVisibility().equals(visibility)) {
-                    it.remove();
-                }
-            }
-        }
-        return addresses;
+    private Addresses getAddresses(String orcid, Visibility visibility) {
+        List<AddressEntity> addresses = new ArrayList<AddressEntity>();
+        
+        if (visibility == null) {
+            addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
+        } else {
+            addresses = addressDao.getAddresses(orcid, visibility);
+        }           
+        
+        Addresses result = adapter.toAddressList(addresses);
+        result.updateIndexingStatusOnChilds();
+        LastModifiedDatesHelper.calculateLatest(result);
+        
+        return result;
     }
     
     @Override
     public Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility) {
-        List<AddressEntity> existingAddressList = addressDao.findByOrcid(orcid, getLastModified(orcid));
+        List<AddressEntity> existingAddressList = addressDao.getAddresses(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
             boolean deleteMe = true;            

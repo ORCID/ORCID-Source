@@ -69,6 +69,9 @@ public class Keyword implements Serializable {
     @JsonIgnore
     protected Visibility visibility;
 
+    @XmlTransient
+    protected Source source;
+    
     public Keyword() {
     }
 
@@ -96,6 +99,14 @@ public class Keyword implements Serializable {
      */
     public void setContent(String value) {
         this.content = value;
+    }    
+    
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
     
     public Visibility getVisibility() {
