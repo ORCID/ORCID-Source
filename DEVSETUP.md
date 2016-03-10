@@ -230,7 +230,8 @@ Find the **service** element/tag and the following connector:
 ```
 
 Please notice that you should update the path on "*keystoreFile*" and "*truststoreFile*"; that path should point to the root path where you have the ORCID code. 
-	When this id done, restart the server.
+
+When this it is done, restart the server.
 
 # Testing
 ## Maven test
