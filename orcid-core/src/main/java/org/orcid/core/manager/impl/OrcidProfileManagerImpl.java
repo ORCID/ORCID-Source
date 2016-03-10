@@ -59,6 +59,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -77,6 +78,8 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -87,8 +90,12 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
@@ -343,6 +350,69 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
+    /**
+     * Add source to each element in the bio that doesnt comes with a source
+     * 
+     * @param orcidProfile
+     *            The profile
+     * @param amenderOrcid
+     *            The orcid of the user or client that add the email to the
+     *            profile user
+     * */
+    private void addSourceToBioElements(OrcidProfile orcidProfile, String amenderOrcid) {
+        Source source = createSource(amenderOrcid);
+        if(orcidProfile != null && orcidProfile.getOrcidBio() != null) {
+            OrcidBio bio = orcidProfile.getOrcidBio();
+            //Other names
+            if (bio.getPersonalDetails() != null && bio.getPersonalDetails().getOtherNames() != null && bio.getPersonalDetails().getOtherNames().getOtherName() != null
+                    && !bio.getPersonalDetails().getOtherNames().getOtherName().isEmpty()) {
+                for(OtherName otherName : bio.getPersonalDetails().getOtherNames().getOtherName()) {
+                    if(otherName.getSource() == null || PojoUtil.isEmpty(otherName.getSource().retrieveSourcePath())) {
+                        otherName.setSource(source);
+                    }
+                }
+            }
+                        
+            //Address
+            if(bio.getContactDetails() != null && bio.getContactDetails().getAddress() != null) {
+                Address address = bio.getContactDetails().getAddress(); 
+                if(address.getSource() == null || PojoUtil.isEmpty(address.getSource().retrieveSourcePath())) {
+                    address.setSource(source);
+                }
+            }            
+            
+            //Keywords
+            if(bio.getKeywords() != null && bio.getKeywords().getKeyword() != null && !bio.getKeywords().getKeyword().isEmpty()) {
+                Keywords keywords = bio.getKeywords();
+                for(Keyword keyword : keywords.getKeyword()) {
+                    if (keyword.getSource() == null || PojoUtil.isEmpty(keyword.getSource().retrieveSourcePath())) {
+                        keyword.setSource(source);
+                    }
+                }
+            }
+            
+            //Researcher urls
+            if(bio.getResearcherUrls() != null && bio.getResearcherUrls().getResearcherUrl() != null && !bio.getResearcherUrls().getResearcherUrl().isEmpty()) {
+                ResearcherUrls rUrls = bio.getResearcherUrls();
+                for(ResearcherUrl rUrl : rUrls.getResearcherUrl()) {
+                    if(rUrl.getSource() == null || PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath())) {
+                        rUrl.setSource(source);
+                    }
+                }                
+            }
+                        
+            //External identifiers
+            if (bio.getExternalIdentifiers() != null && bio.getExternalIdentifiers().getExternalIdentifier() != null
+                    && !bio.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                for (ExternalIdentifier extId : bio.getExternalIdentifiers().getExternalIdentifier()) {
+                    if (extId.getSource() == null || PojoUtil.isEmpty(extId.getSource().retrieveSourcePath())) {
+                        extId.setSource(source);
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Add source to the profile emails
      * 
@@ -599,7 +669,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
+    public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {        
+        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid());        
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
             return null;
