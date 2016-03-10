@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -157,6 +158,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private boolean reviewed = Boolean.FALSE;
 
     private RecordNameEntity recordNameEntity;
+    
+    //TODO: Remove this when the record name is fully populated
+    private String givenNames;
+    private String familyName;
+    private String creditName;
+    private Visibility namesVisibility;
     
     @Id
     @Column(name = "orcid", length = 19)
@@ -939,7 +946,47 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setUsedRecaptchaOnRegistration(Boolean usedRecaptchaOnRegistration) {
         this.usedRecaptchaOnRegistration = usedRecaptchaOnRegistration;
     }
+    
+    //TODO: Remove this when the record name is fully populated
+    @Column(name = "given_names", length = 150)
+    public String getGivenNames() {
+        return givenNames;
+    }
 
+    public void setGivenNames(String givenNames) {
+        this.givenNames = givenNames;
+    }
+
+    @Column(name = "family_name", length = 150)
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
+    @Column(name = "credit_name", length = 150)
+    public String getCreditName() {
+        return creditName;
+    }
+
+    public void setCreditName(String creditName) {
+        this.creditName = creditName;
+    }
+
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "names_visibility")
+    public Visibility getNamesVisibility() {
+        return namesVisibility;
+    }
+
+    public void setNamesVisibility(Visibility namesVisibility) {
+        this.namesVisibility = namesVisibility;
+    }
+    //END TODO
+        
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -1018,6 +1065,8 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
     }
 
+    @OneToOne(optional=false)
+    @JoinColumn(name="orcid", unique=true, nullable=false, updatable=false)
     public RecordNameEntity getRecordNameEntity() {
         return recordNameEntity;
     }

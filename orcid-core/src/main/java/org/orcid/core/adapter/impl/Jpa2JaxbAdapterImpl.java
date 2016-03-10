@@ -46,104 +46,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
-import org.orcid.jaxb.model.message.Address;
-import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.Affiliations;
-import org.orcid.jaxb.model.message.Amount;
-import org.orcid.jaxb.model.message.ApprovalDate;
-import org.orcid.jaxb.model.message.Biography;
-import org.orcid.jaxb.model.message.Citation;
-import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.CompletionDate;
-import org.orcid.jaxb.model.message.ContactDetails;
-import org.orcid.jaxb.model.message.Contributor;
-import org.orcid.jaxb.model.message.ContributorOrcid;
-import org.orcid.jaxb.model.message.Country;
-import org.orcid.jaxb.model.message.CreatedDate;
-import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.CreditName;
-import org.orcid.jaxb.model.message.Day;
-import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.Delegation;
-import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.DeprecatedDate;
-import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
-import org.orcid.jaxb.model.message.DisambiguatedOrganization;
-import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.EncryptedPassword;
-import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
-import org.orcid.jaxb.model.message.EncryptedVerificationCode;
-import org.orcid.jaxb.model.message.ExternalIdCommonName;
-import org.orcid.jaxb.model.message.ExternalIdReference;
-import org.orcid.jaxb.model.message.ExternalIdUrl;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
-import org.orcid.jaxb.model.message.ExternalIdentifiers;
-import org.orcid.jaxb.model.message.FamilyName;
-import org.orcid.jaxb.model.message.Funding;
-import org.orcid.jaxb.model.message.FundingContributor;
-import org.orcid.jaxb.model.message.FundingContributors;
-import org.orcid.jaxb.model.message.FundingList;
-import org.orcid.jaxb.model.message.FundingTitle;
-import org.orcid.jaxb.model.message.FuzzyDate;
-import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GivenPermissionBy;
-import org.orcid.jaxb.model.message.GivenPermissionTo;
-import org.orcid.jaxb.model.message.Iso3166Country;
-import org.orcid.jaxb.model.message.Keyword;
-import org.orcid.jaxb.model.message.Keywords;
-import org.orcid.jaxb.model.message.LastModifiedDate;
-import org.orcid.jaxb.model.message.Locale;
-import org.orcid.jaxb.model.message.Month;
-import org.orcid.jaxb.model.message.OrcidActivities;
-import org.orcid.jaxb.model.message.OrcidBio;
-import org.orcid.jaxb.model.message.OrcidDeprecated;
-import org.orcid.jaxb.model.message.OrcidHistory;
-import org.orcid.jaxb.model.message.OrcidIdBase;
-import org.orcid.jaxb.model.message.OrcidIdentifier;
-import org.orcid.jaxb.model.message.OrcidInternal;
-import org.orcid.jaxb.model.message.OrcidPreferences;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OrcidWorks;
-import org.orcid.jaxb.model.message.Organization;
-import org.orcid.jaxb.model.message.OrganizationAddress;
-import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.message.OtherNames;
-import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.PrimaryRecord;
-import org.orcid.jaxb.model.message.PublicationDate;
-import org.orcid.jaxb.model.message.ReferredBy;
-import org.orcid.jaxb.model.message.ResearcherUrl;
-import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.SalesforceId;
-import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.message.SecurityDetails;
-import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
-import org.orcid.jaxb.model.message.SendOrcidNews;
-import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.message.SourceClientId;
-import org.orcid.jaxb.model.message.SourceDate;
-import org.orcid.jaxb.model.message.SourceName;
-import org.orcid.jaxb.model.message.SourceOrcid;
-import org.orcid.jaxb.model.message.SubmissionDate;
-import org.orcid.jaxb.model.message.Subtitle;
-import org.orcid.jaxb.model.message.Title;
-import org.orcid.jaxb.model.message.TranslatedTitle;
-import org.orcid.jaxb.model.message.Url;
-import org.orcid.jaxb.model.message.UrlName;
-import org.orcid.jaxb.model.message.VerifiedEmail;
-import org.orcid.jaxb.model.message.VerifiedPrimaryEmail;
-import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.message.WorkTitle;
-import org.orcid.jaxb.model.message.Year;
+import org.orcid.jaxb.model.message.*;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -647,7 +550,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             Keywords keywords = new Keywords();
             keywords.setVisibility(profileEntity.getKeywordsVisibility());
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
-                keywords.getKeyword().add(new Keyword(keywordEntity.getKeywordName()));
+                Keyword keyword = new Keyword(keywordEntity.getKeywordName());
+                if(keywordEntity.getSource() != null) {
+                    Source source = createSource(keywordEntity.getSource().getSourceId());
+                    keyword.setSource(source);
+                }
+                keywords.getKeyword().add(keyword);
             }
             return keywords;
         }
@@ -669,6 +577,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
+                
+                if(researcherUrl.getSource() != null) {
+                    Source source = createSource(researcherUrl.getSource().getSourceId());
+                    url.setSource(source);
+                }
+                
                 researcherUrls.getResearcherUrl().add(url);
             }
             return researcherUrls;
@@ -755,6 +669,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
         Iso3166Country iso2Country = profileEntity.getIso2Country();
+        SourceEntity sourceEntity = null;
         
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
             for(AddressEntity address : profileEntity.getAddresses()) {
@@ -762,7 +677,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     if(address.getIso2Country() != null) {
                         iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
                         break;
-                    }                    
+                    }
+                    if(address.getSource() != null) {
+                        sourceEntity = address.getSource();
+                    }
                 }
             }
         }
@@ -772,12 +690,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             Country country = new Country(iso2Country);
             country.setVisibility(profileEntity.getProfileAddressVisibility());
             address.setCountry(country);
+            if(sourceEntity != null) {
+                Source source = createSource(sourceEntity.getSourceId());
+                address.setSource(source);
+            }            
             contactDetails.setAddress(address);
-
         }
-    }
-    
-    
+    }        
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         // The new way of doing emails.
@@ -1049,7 +968,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
             for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
-                otherNames.addOtherName(otherNameEntity.getDisplayName());
+                OtherName otherName = new OtherName(otherNameEntity.getDisplayName());
+                if(otherNameEntity.getSource() != null) {
+                    Source source = createSource(otherNameEntity.getSource().getSourceId());
+                    otherName.setSource(source);
+                }
+                otherNames.getOtherName().add(otherName);
             }
         }
         return otherNames;
@@ -1152,6 +1076,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
         return DateUtils.convertToXMLGregorianCalendar(date);
+    }
+    
+    private Source createSource(String amenderOrcid) {
+        Source source = new Source();
+        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
+            source.setSourceOrcid(new SourceOrcid(amenderOrcid));
+            source.setSourceClientId(null);
+        } else {
+            source.setSourceClientId(new SourceClientId(amenderOrcid));
+            source.setSourceOrcid(null);
+        }
+        return source;
     }
 
 }

@@ -104,18 +104,18 @@ Tip: use the same command for rebuilding.
 
 Intialize the database schema (runs as orcid the first time, but then you need to run it again as postgres because some tasks require superuser).
 
-    ```
-    cd ~/git/ORCID-Source/orcid-core
+```
+cd ~/git/ORCID-Source/orcid-core
+  
+mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
+   
+cd ..
     
-    mvn exec:java -Dexec.mainClass=org.orcid.core.cli.InitDb
+sudo su - postgres
     
-    cd ..
+psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
     
-    sudo su - postgres
-    
-    psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
-    
-    ```
+```
 
 ## Eclipse Setup (Spring Tool Suite Eclipse)
 These instructions are for Spring Tool Suite for Eclipse. 
@@ -219,6 +219,19 @@ http://www.springsource.org/downloads/sts-ggts
 * Uncheck the JPA validatior checkboxes
 
 * Click "Ok"
+
+### Enabling https
+
+We should enable our server to run over SSL/https using the ORCID configuration, so, in the **server.xml** add the following configuration.
+Find the **service** element/tag and the following connector: 
+
+```
+<Connector SSLEnabled="true" clientAuth="want" keystoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-keystore.jks" keystorePass="changeit" maxThreads="150" port="8443" protocol="HTTP/1.1" scheme="https" secure="true" sslProtocol="TLS" truststoreFile="[ROOT_PATH]/orcid-api-web/src/test/resources/orcid-server-truststore.jks" truststorePass="changeit"/> 
+```
+
+Please notice that you should update the path on "*keystoreFile*" and "*truststoreFile*"; that path should point to the root path where you have the ORCID code. 
+
+When this it is done, restart the server.
 
 # Testing
 ## Maven test

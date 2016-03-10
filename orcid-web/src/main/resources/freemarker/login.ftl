@@ -27,21 +27,21 @@
 		<#if (RequestParameters['newlogin'])??>
 			<div class="row">
 				<div class="col-md-12">
-					<p class="title">Sign in using your</p>
+					<p class="title">${springMacroRequestContext.getMessage("login.signinusingyour")}</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-offset-3 col-md-6">
 					<div class="btn-group btn-group-justified" role="group">
-		  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> Personal Account</a>
-		  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> Institution Account</a>
+		  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+		  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
 					</div>					
 					<div class="row personal-login" ng-hide="personalLogin == false" ng-cloak>
 						<div class="col-md-12">
 							<div class="login-box">
 								<!-- ORCID ACCOUNT LOGIN -->
 								<div class="personal-account-login">
-									<p class="title">Sign in with your ORCID account</p>
+									<p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
 						            <form class="form-sign-in" id="loginForm" action="<@orcid.rootPath '/signin/auth'/>" method="post">
 						                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						                <div class="form-group">
@@ -71,7 +71,7 @@
 								</div>
 					            <!-- SOCIAL LOGIN -->					            
 				                <div class="social-login">
-				                    <p class="title">Sign in with a social account <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+				                    <p class="title">${springMacroRequestContext.getMessage("login.signinwithasocialaccount")} <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
 				                    <ul class="social-icons">
 				                        <li>
 				                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
@@ -110,7 +110,7 @@
 						<div class="col-md-12">
 							<div class="login-box">
 								<div class="federate-login">
-									<p class="title">Sign in via your institution <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+									<p class="title">${springMacroRequestContext.getMessage('login.signinviayourinstitution')} <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
 					                <div id="idpSelectContainer">                  
 					                    <div id="idpSelectInner">
 					                    	<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
@@ -126,7 +126,7 @@
 					</div>
 					<div class="row">           
 				        <div class="title">
-							Don't have an ORCID iD yet? <a class="reg" href="<@orcid.rootPath '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
+							${springMacroRequestContext.getMessage("social.link.dont_have_orcid")} <a class="reg" href="<@orcid.rootPath '/register'/>">${springMacroRequestContext.getMessage("login.register")}</a>
 				        </div>
 				    </div>
 				</div>
