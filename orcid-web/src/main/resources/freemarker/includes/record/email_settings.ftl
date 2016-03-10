@@ -59,12 +59,12 @@
 							</span>
 	                    </td>
 	                    <td width="26">
-	                        <a name="delete-email" href="" class="glyphicon glyphicon-trash grey"
+	                        <a name="delete-email" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && !emailSrvc.popUp"
-	                            ng-click="confirmDeleteEmail(email)"></a>
-							<a name="delete-email-inline" href="" class="glyphicon glyphicon-trash grey"
+	                            ng-click="confirmDeleteEmail(email)" ng-cloak></a>
+							<a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && emailSrvc.popUp"
-	                            ng-click="confirmDeleteEmailInline(email)"></a>
+	                            ng-click="confirmDeleteEmailInline(email, $event)" ng-cloak></a>
 	                    </td>
 	                    <td width="100" style="padding-top: 0;">
 	                        <div class="emailVisibility" style="float: right;">

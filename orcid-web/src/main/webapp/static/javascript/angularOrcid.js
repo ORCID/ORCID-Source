@@ -2278,10 +2278,11 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
         $.colorbox.resize();
     };
     
-    $scope.confirmDeleteEmailInline = function(email) {
+    $scope.confirmDeleteEmailInline = function(email, $event) {        
+        console.log('CLICK');
+        $event.preventDefault();
         $scope.showDeleteBox = true;
-        emailSrvc.delEmail = email;
-        
+        emailSrvc.delEmail = email;        
     };
 
     $scope.deleteEmail = function () {
