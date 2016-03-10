@@ -327,7 +327,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createEducation(String orcid, Education education) {
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE);
-        Education e = affiliationsManager.createEducationAffiliation(orcid, education);
+        Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
         try {
             return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
         } catch (URISyntaxException ex) {
@@ -344,7 +344,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(education.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        Education e = affiliationsManager.updateEducationAffiliation(orcid, education);
+        Education e = affiliationsManager.updateEducationAffiliation(orcid, education, true);
         return Response.ok(e).build();
     }
 
@@ -369,7 +369,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response createEmployment(String orcid, Employment employment) {
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE);
-        Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment);
+        Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
         try {
             return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
         } catch (URISyntaxException ex) {
@@ -386,7 +386,7 @@ public class MemberV2ApiServiceDelegatorImpl
             params.put("bodyPutCode", String.valueOf(employment.getPutCode()));
             throw new MismatchedPutCodeException(params);
         }
-        Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment);
+        Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment, true);
         return Response.ok(e).build();
     }
 

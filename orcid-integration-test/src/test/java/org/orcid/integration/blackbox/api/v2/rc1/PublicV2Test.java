@@ -76,7 +76,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Angel Montenegro
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class) 
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PublicV2Test extends BlackBoxBaseRC1 {
     @Resource(name = "t2OAuthClient")
