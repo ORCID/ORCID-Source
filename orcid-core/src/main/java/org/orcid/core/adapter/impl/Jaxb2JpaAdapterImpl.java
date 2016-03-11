@@ -599,7 +599,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         entity.setProfile(profileEntity);
         entity.setKeywordName(keywordContent);
         if (keyword.getVisibility() != null){
-            keyword.setVisibility(keyword.getVisibility());
+            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(keyword.getVisibility().value()));
         }
         
         Source source = keyword.getSource();

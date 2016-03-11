@@ -550,7 +550,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             Keywords keywords = new Keywords();
             //keywords.setVisibility(profileEntity.getKeywordsVisibility());
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
-                Keyword keyword = new Keyword(keywordEntity.getKeywordName(), Visibility.fromValue(keywordEntity.getVisibility().value()));
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (keywordEntity.getVisibility() != null)?Visibility.fromValue(keywordEntity.getVisibility().value()):Visibility.PRIVATE;                
+
+                Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
                 if(keywordEntity.getSource() != null) {
                     Source source = createSource(keywordEntity.getSource().getSourceId());
                     keyword.setSource(source);
@@ -574,7 +578,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             ResearcherUrls researcherUrls = new ResearcherUrls();
             //researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
-                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()),Visibility.fromValue(researcherUrl.getVisibility().value()));
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (researcherUrl.getVisibility() != null)?Visibility.fromValue(researcherUrl.getVisibility().value()):Visibility.PRIVATE;                
+
+                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()),vis);
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 
@@ -596,7 +604,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         //externalIdentifiers.setVisibility(profileEntity.getExternalIdentifiersVisibility());
         if (externalIdentifierEntities != null) {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
-                ExternalIdentifier externalIdentifier = new ExternalIdentifier(Visibility.valueOf(externalIdentifierEntity.getVisibility().value()));
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (externalIdentifierEntity.getVisibility() != null)?Visibility.fromValue(externalIdentifierEntity.getVisibility().value()):Visibility.PRIVATE;
+                
+                ExternalIdentifier externalIdentifier = new ExternalIdentifier(vis);
+                
                 SourceEntity sourceEntity = externalIdentifierEntity.getSource();
                 if (sourceEntity != null) {
                     Source source = new Source();
@@ -970,7 +983,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
             for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
-                OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), Visibility.fromValue(otherNameEntity.getVisibility().value()));
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
+
+                OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
                 if(otherNameEntity.getSource() != null) {
                     Source source = createSource(otherNameEntity.getSource().getSourceId());
                     otherName.setSource(source);

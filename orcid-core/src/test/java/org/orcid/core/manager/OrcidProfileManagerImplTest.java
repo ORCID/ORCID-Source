@@ -584,7 +584,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         orcidWorks.getOrcidWork().add(orcidWork);
 
         orcidProfileManager.createOrcidProfile(profile, false, false);
-
         // now negate all fields that form part of a solr query, leaving only
         // the orcid itself
         // we do this by passing through an orcid missing the fields from an
