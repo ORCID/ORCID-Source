@@ -173,7 +173,9 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals(putCode, externalIdentifier.getPutCode());       
         
         //Delete
-        response = memberV2ApiClient.deleteExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
+        //Get access token to delete the external identifier
+        String deleteAccessToken = super.getAccessToken(ScopePathType.ORCID_BIO_UPDATE.value(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        response = memberV2ApiClient.deleteExternalIdentifier(getUser1OrcidId(), putCode, deleteAccessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
@@ -231,7 +233,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
             return accessTokens.get(clientId);
         }
 
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value() + " " + ScopePathType.READ_LIMITED.value(), clientId, clientSecret, redirectUri);
+        String accessToken = super.getAccessToken(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value() + " " + ScopePathType.READ_LIMITED.value(), clientId, clientSecret, redirectUri);
         accessTokens.put(clientId, accessToken);
         return accessToken;
     }
