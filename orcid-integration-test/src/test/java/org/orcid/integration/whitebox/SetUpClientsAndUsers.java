@@ -582,15 +582,12 @@ public class SetUpClientsAndUsers {
             orcidProfileManager.updateBiography(existingProfile);
 
             // Remove other names
-            otherNameManager.updateOtherNames(orcid, new OtherNames(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value()));
+            otherNameManager.updateOtherNames(orcid, new OtherNames());
 
             // Remove keywords
-            profileKeywordManager.updateKeywords(orcid, new Keywords(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
+            profileKeywordManager.updateKeywords(orcid, new Keywords());
 
-            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
+            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls());
 
             // Remove external ids
             PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());

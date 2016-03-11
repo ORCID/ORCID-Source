@@ -182,7 +182,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     
     @Override
     @Transactional
-    public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility) {
+    public OtherNames updateOtherNames(String orcid, OtherNames otherNames) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
@@ -234,8 +234,8 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
         
-        if (defaultVisibility != null)
-            otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
+        //if (defaultVisibility != null)
+        //    otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
         
         return otherNames;
     }

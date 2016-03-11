@@ -86,9 +86,10 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
         this.visibility = vis;
     }
 
-    public ResearcherUrl(Url url, UrlName urlName) {
+    public ResearcherUrl(Url url, UrlName urlName,Visibility vis) {
         super();
         this.url = url;
+        this.visibility = vis;
         this.urlName = urlName;
     }
 

@@ -381,8 +381,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         orcidBio.setContactDetails(contactDetails);
 
         Keywords bioKeywords = new Keywords();
-        bioKeywords.getKeyword().add(new Keyword("Pavement Studies"));
-        bioKeywords.getKeyword().add(new Keyword("Advanced Tea Making"));
+        bioKeywords.getKeyword().add(new Keyword("Pavement Studies",Visibility.PUBLIC));
+        bioKeywords.getKeyword().add(new Keyword("Advanced Tea Making",Visibility.PUBLIC));
         bioKeywords.setVisibility(Visibility.PUBLIC);
         orcidBio.setKeywords(bioKeywords);
 
@@ -396,8 +396,8 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         personalDetails.setFamilyName(familyName);
         OtherNames otherNames = new OtherNames();
         otherNames.setVisibility(Visibility.PUBLIC);
-        otherNames.getOtherName().add(new OtherName("Other 1"));
-        otherNames.getOtherName().add(new OtherName("Other 2"));
+        otherNames.getOtherName().add(new OtherName("Other 1",Visibility.PUBLIC));
+        otherNames.getOtherName().add(new OtherName("Other 2",Visibility.PUBLIC));
         personalDetails.setOtherNames(otherNames);
         GivenNames givenNames = new GivenNames("givenNames");
         givenNames.setVisibility(Visibility.PUBLIC);

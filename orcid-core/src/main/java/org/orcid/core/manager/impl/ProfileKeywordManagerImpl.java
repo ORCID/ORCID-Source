@@ -93,13 +93,14 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         return result;
     }
     
+    /*
     @Override
     public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
         Visibility v = (defaultVisiblity == null)
                 ? Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
                 : defaultVisiblity;
         return profileKeywordDao.updateKeywordsVisibility(orcid, v);
-    }
+    }*/
 
     @Override
     public Keyword getKeyword(String orcid, Long putCode) {
@@ -183,7 +184,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
+    public Keywords updateKeywords(String orcid, Keywords keywords) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));        
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
@@ -235,9 +236,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
             }
         }
 
-        if (defaultVisibility != null) {
-            updateKeywordsVisibility(orcid, defaultVisibility);
-        }
+//        if (defaultVisibility != null) {
+//            updateKeywordsVisibility(orcid, defaultVisibility);
+//        }
 
         return keywords;
     }

@@ -102,6 +102,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         return query.executeUpdate() > 0 ? true : false;
     }
     
+    /*
     @Override
     @Transactional
     public boolean updateOtherNamesVisibility(String orcid, Visibility visibility) {
@@ -112,7 +113,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         boolean result = query.executeUpdate() > 0 ? true : false;
         return result;
 
-    }
+    }*/
 
     @Override
     public OtherNameEntity getOtherName(String orcid, Long putCode) {

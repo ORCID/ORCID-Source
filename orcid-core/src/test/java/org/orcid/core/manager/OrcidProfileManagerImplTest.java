@@ -565,8 +565,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         // use our specific orcidAllSolrFieldsPopulatedForSave matcher
         OrcidProfile profile = createFullOrcidProfile();
         OtherNames otherNames = new OtherNames();
-        otherNames.getOtherName().add(new OtherName("Stan"));
-        otherNames.getOtherName().add(new OtherName("Willis"));
+        otherNames.getOtherName().add(new OtherName("Stan",null));
+        otherNames.getOtherName().add(new OtherName("Willis",null));
 
         profile.getOrcidBio().getPersonalDetails().setOtherNames(otherNames);
 
@@ -1099,8 +1099,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile1.getOrcidBio().setExternalIdentifiers(extIds);
         
         OtherNames otherNames = new OtherNames();
-        otherNames.addOtherName("OtherName 1");
-        otherNames.addOtherName("OtherName 2");
+        otherNames.addOtherName("OtherName 1",null);
+        otherNames.addOtherName("OtherName 2",null);
         
         profile1.getOrcidBio().getPersonalDetails().setOtherNames(otherNames);
         

@@ -120,8 +120,8 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         // check content and visibility update updates the content
         OtherNames updatedOtherNames = new OtherNames();
         updatedOtherNames.getOtherName().clear();
-        updatedOtherNames.addOtherName("Another 1");
-        updatedOtherNames.addOtherName("Another 2");
+        updatedOtherNames.addOtherName("Another 1",null);
+        updatedOtherNames.addOtherName("Another 2",null);
         updatedOtherNames.setVisibility(Visibility.PRIVATE);
         updatedOrcidPersonalDetails.setOtherNames(updatedOtherNames);
 
@@ -144,8 +144,8 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         // check content and visibility update of null
         updatedOtherNames = new OtherNames();
         updatedOtherNames.getOtherName().clear();
-        updatedOtherNames.addOtherName("Yet Another 1");
-        updatedOtherNames.addOtherName("Yet Another 2");
+        updatedOtherNames.addOtherName("Yet Another 1",null);
+        updatedOtherNames.addOtherName("Yet Another 2",null);
         updatedOtherNames.setVisibility(null);
         updatedOrcidPersonalDetails.setOtherNames(updatedOtherNames);
 
@@ -235,7 +235,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
                 .getUrl().getValue());
 
         ResearcherUrls updatedResearcherUrls = new ResearcherUrls();
-        ResearcherUrl onlyUrl = new ResearcherUrl(new Url("http://library.brown.edu/about/hay/carberry.html"));
+        ResearcherUrl onlyUrl = new ResearcherUrl(new Url("http://library.brown.edu/about/hay/carberry.html"),null);
         updatedResearcherUrls.getResearcherUrl().add(onlyUrl);
         updatedResearcherUrls.setVisibility(Visibility.LIMITED);
         updatedOrcidBioPublic.setResearcherUrls(updatedResearcherUrls);
@@ -247,7 +247,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, existingOrcidBioProtected.getResearcherUrls().getVisibility());
 
         updatedResearcherUrls = new ResearcherUrls();
-        onlyUrl = new ResearcherUrl(new Url("http://library.brown.edu/about/hay/carberry.jsp"));
+        onlyUrl = new ResearcherUrl(new Url("http://library.brown.edu/about/hay/carberry.jsp"),null);
         updatedResearcherUrls.getResearcherUrl().add(onlyUrl);
         updatedResearcherUrls.setVisibility(null);
         updatedOrcidBioPublic.setResearcherUrls(updatedResearcherUrls);
@@ -640,7 +640,7 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         OtherNames other = new OtherNames();
         other.setVisibility(visibility);
         for(int i = 0; i < max; i++) {
-            other.addOtherName(sufix + "Other" + i);
+            other.addOtherName(sufix + "Other" + i,null);
         }        
         personalDetails.setOtherNames(other);        
         orcidBio.setPersonalDetails(personalDetails);
