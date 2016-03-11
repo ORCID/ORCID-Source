@@ -1107,7 +1107,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile1 = orcidProfileManager.createOrcidProfile(profile1, false, false);
         assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals(2, profile1.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
-        assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());
+        assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());        
+        assertEquals("PUBLIC",profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility().value());
         
         orcidProfileManager.deactivateOrcidProfile(profile1);
 

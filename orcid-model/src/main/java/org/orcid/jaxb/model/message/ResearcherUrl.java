@@ -73,7 +73,9 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
     @XmlTransient
     @JsonIgnore
     protected Visibility visibility;
-
+    
+    @XmlTransient
+    @JsonIgnore
     protected Source source;
     
     public ResearcherUrl() {

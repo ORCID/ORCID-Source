@@ -262,6 +262,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToFundings(orcidProfile, amenderOrcid);
 
+        Visibility defaultActivityVis = OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility();
+        if (createdByMember){
+            defaultActivityVis = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();                                    
+        }else if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
+                defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();            
+        }
+        addVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -272,6 +280,32 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
         return updatedTranslatedOrcid;
+    }
+
+    private void addVisibilityToBioItems(OrcidProfile orcidProfile, Visibility defaultActivityVis) {
+        if (orcidProfile.getOrcidBio() != null){
+            if (orcidProfile.getOrcidBio().getExternalIdentifiers() != null)
+                for (ExternalIdentifier x : orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+            if (orcidProfile.getOrcidBio().getKeywords() !=null)
+                for (Keyword x : orcidProfile.getOrcidBio().getKeywords().getKeyword() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+            if (orcidProfile.getOrcidBio().getResearcherUrls() != null)
+                for (ResearcherUrl x : orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+            if (orcidProfile.getOrcidBio().getPersonalDetails() != null && orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames() != null)
+                for (OtherName x : orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+        }
+        
     }
 
     @Override
@@ -297,6 +331,13 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
+        
+        Visibility defaultActivityVis = existingProfileEntity.getActivitiesVisibilityDefault();
+        if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
+            defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
+        }
+        addVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -803,6 +844,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Transactional
     public void updateCountry(OrcidProfile orcidProfile) {
+        //TODO, apply default vis if not set
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }
