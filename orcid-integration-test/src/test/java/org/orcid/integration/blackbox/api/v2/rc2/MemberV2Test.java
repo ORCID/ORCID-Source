@@ -75,7 +75,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Will Simpson
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class) 
+@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MemberV2Test extends BlackBoxBaseRC2 {    
 
