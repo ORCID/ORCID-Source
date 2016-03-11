@@ -59,6 +59,8 @@ import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -73,6 +75,8 @@ import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.SendOrcidNews;
@@ -82,6 +86,7 @@ import org.orcid.jaxb.model.message.SourceOrcid;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
@@ -366,6 +371,117 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertTrue(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().isVerified());
     }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testUpdateProfileDefaultVisibilityForItemsAndUpdate() {
+        OrcidProfile profile = createBasicProfile();
+        
+        Keyword k = new Keyword("word",null);
+        Keywords kk = new Keywords();
+        kk.getKeyword().add(k);
+        
+        ResearcherUrl r = new ResearcherUrl(new Url("http://whatever.com"),null);
+        ResearcherUrls rr = new ResearcherUrls();
+        rr.getResearcherUrl().add(r);
+        
+        ExternalIdentifier i = new ExternalIdentifier(null);
+        i.setExternalIdReference(new ExternalIdReference("ref"));
+        i.setExternalIdCommonName(new ExternalIdCommonName("cn"));
+        ExternalIdentifiers ii = new ExternalIdentifiers();
+        ii.getExternalIdentifier().add(i);
+        
+        OtherNames oo = new OtherNames();
+        oo.addOtherName("other", null);
+        
+        profile.getOrcidBio().setKeywords(kk);
+        profile.getOrcidBio().setResearcherUrls(rr);
+        profile.getOrcidBio().setExternalIdentifiers(ii);
+        profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);
+        
+        profile = orcidProfileManager.createOrcidProfile(profile, false, false);
+
+        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
+        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
+        assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
+        assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
+        assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
+        
+        //profile.getOrcidBio().getKeywords().getKeyword().iterator().next().setContent("word");
+        profile.getOrcidBio().getKeywords().getKeyword().iterator().next().setVisibility(Visibility.PRIVATE);
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().setVisibility(Visibility.PRIVATE);
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().setVisibility(Visibility.PRIVATE);
+        profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().setVisibility(Visibility.PRIVATE);
+        profile = orcidProfileManager.updateOrcidProfile(profile);
+        
+        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
+        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
+        assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
+        assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
+        assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
+
+        OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
+        
+        assertEquals("word",resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
+        assertEquals(new Url("http://whatever.com"),resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
+        assertEquals("cn",resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
+        assertEquals("other",resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
+        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
+
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testDefaultVisibilityForItemsAppliedOnUpdate() {
+        OrcidProfile profile = createBasicProfile();
+        profile = orcidProfileManager.createOrcidProfile(profile, false, false);
+        profile.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));        
+       
+        Keyword k = new Keyword("word",null);
+        Keywords kk = new Keywords();
+        kk.getKeyword().add(k);
+        
+        ResearcherUrl r = new ResearcherUrl(new Url("http://whatever.com"),null);
+        ResearcherUrls rr = new ResearcherUrls();
+        rr.getResearcherUrl().add(r);
+        
+        ExternalIdentifier i = new ExternalIdentifier(null);
+        i.setExternalIdReference(new ExternalIdReference("ref"));
+        i.setExternalIdCommonName(new ExternalIdCommonName("cn"));
+        ExternalIdentifiers ii = new ExternalIdentifiers();
+        ii.getExternalIdentifier().add(i);
+        
+        OtherNames oo = new OtherNames();
+        oo.addOtherName("other", null);
+        
+        profile.getOrcidBio().setKeywords(kk);
+        profile.getOrcidBio().setResearcherUrls(rr);
+        profile.getOrcidBio().setExternalIdentifiers(ii);
+        profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);        
+
+        profile = orcidProfileManager.updateOrcidProfile(profile);
+        
+        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
+        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
+        assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
+        assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
+    }
+    
 
     @Test
     @Transactional

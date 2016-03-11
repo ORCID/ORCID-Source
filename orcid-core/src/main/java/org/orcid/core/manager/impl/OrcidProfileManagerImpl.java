@@ -250,8 +250,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Transactional
     public OrcidProfile createOrcidProfile(OrcidProfile orcidProfile, boolean createdByMember, boolean usedCaptcha) {
-        System.out.println("createOrcidProfile invoked");
-
         if (orcidProfile.getOrcidIdentifier() == null) {
             orcidProfile.setOrcidIdentifier(orcidGenerationManager.createNewOrcid());
         }
