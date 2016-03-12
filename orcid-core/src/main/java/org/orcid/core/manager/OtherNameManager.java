@@ -31,9 +31,9 @@ public interface OtherNameManager {
 
     boolean deleteOtherName(String orcid, Long putCode, boolean checkSource);
 
-    OtherName createOtherName(String orcid, OtherName otherName);
+    OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest);
 
-    OtherName updateOtherName(String orcid, Long putCode, OtherName otherName);
+    OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest);
     
     OtherNames updateOtherNames(String orcid, OtherNames otherNames, Visibility defaultVisiblity);
 }

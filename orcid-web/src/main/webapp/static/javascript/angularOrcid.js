@@ -2409,9 +2409,6 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                
-                console.table(data);
-                
                 $scope.websitesForm = data;
                 if(data.errors.length == 0) {
                     $scope.close();

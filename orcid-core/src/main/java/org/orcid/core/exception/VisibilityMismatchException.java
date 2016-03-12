@@ -16,35 +16,15 @@
  */
 package org.orcid.core.exception;
 
-import java.util.Map;
-
-public class ApplicationException extends RuntimeException {
-
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+public class VisibilityMismatchException extends ApplicationException {   
     private static final long serialVersionUID = 1L;
-    
-    private Map<String, String> params; 
 
-    public ApplicationException() {
+    public VisibilityMismatchException() {
         super();
-    }
-
-    public ApplicationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ApplicationException(String message) {
-        super(message);
-    }
-
-    public ApplicationException(Throwable cause) {
-        super(cause);
-    }
-
-    public ApplicationException(Map<String, String> params) {
-        this.params = params;
-    }
-
-    public Map<String, String> getParams() {
-        return params;
     }
 }
