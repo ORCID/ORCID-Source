@@ -464,9 +464,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
                 Source source = researcherUrl.getSource();
                 if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                    if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                        researcherUrlEntity.setSource(getSource(source));
-                    }
+                    researcherUrlEntity.setSource(getSource(source));
                 } else {
                     researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
                 }
@@ -507,9 +505,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     
                     Source source = otherName.getSource();
                     if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                        if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                            otherNameEntity.setSource(getSource(source));
-                        }
+                        otherNameEntity.setSource(getSource(source));
                     } else {
                         otherNameEntity.setSource(sourceManager.retrieveSourceEntity());
                     }
@@ -597,9 +593,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         
         Source source = keyword.getSource();
         if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-            if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                entity.setSource(getSource(source));
-            }
+            entity.setSource(getSource(source));
         } else {
             entity.setSource(sourceManager.retrieveSourceEntity());
         }
@@ -635,9 +629,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                             
                             Source source = externalIdentifier.getSource();
                             if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                                if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                                    externalIdentifierEntity.setSource(getSource(source));
-                                }
+                                externalIdentifierEntity.setSource(getSource(source));
                             } else {
                                 externalIdentifierEntity.setSource(sourceManager.retrieveSourceEntity());
                             }
@@ -772,9 +764,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             
             address.setUser(profileEntity);
             if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                if (!PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                    address.setSource(getSource(source));
-                }
+                address.setSource(getSource(source));
             } else {
                 address.setSource(sourceManager.retrieveSourceEntity());
             }
