@@ -30,6 +30,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 
 /**
@@ -129,8 +130,10 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         this.displayIndex = displayIndex;
     }
     
+    //TODO: this should include source.  To meet the Set contract it should include everything that equals does.
     @Override
     public int compareTo(ProfileKeywordEntity profileKeywordEntity) {
+        //return CompareToBuilder.reflectionCompare(this,  profileKeywordEntity);
         if (keywordName != null && profileKeywordEntity != null) {
             return keywordName.compareTo(profileKeywordEntity.getKeywordName());
         } else {

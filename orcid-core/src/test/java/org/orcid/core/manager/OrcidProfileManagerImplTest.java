@@ -411,7 +411,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
         
-        //profile.getOrcidBio().getKeywords().getKeyword().iterator().next().setContent("word");
         profile.getOrcidBio().getKeywords().getKeyword().iterator().next().setVisibility(Visibility.PRIVATE);
         profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().setVisibility(Visibility.PRIVATE);
         profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().setVisibility(Visibility.PRIVATE);
@@ -426,17 +425,19 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
         assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
-
+        
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         
-        assertEquals("word",resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
-        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
         assertEquals(new Url("http://whatever.com"),resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
         assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
         assertEquals("cn",resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
         assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
         assertEquals("other",resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
         assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
+
+        Keyword kw = resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next();
+        assertEquals("word",kw.getContent());
+        assertEquals(Visibility.PRIVATE,kw.getVisibility());        
 
     }
 
@@ -1223,7 +1224,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(1, profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals(2, profile1.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
         assertEquals("My Credit Name", profile1.getOrcidBio().getPersonalDetails().getCreditName().getContent());        
-        assertEquals("PUBLIC",profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility().value());
+        assertEquals("public",profile1.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility().value());
         
         orcidProfileManager.deactivateOrcidProfile(profile1);
 

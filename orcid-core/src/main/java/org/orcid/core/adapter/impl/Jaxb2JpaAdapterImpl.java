@@ -552,6 +552,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
+    //TODO: BROKEN
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
         SortedSet<ProfileKeywordEntity> profileKeywordEntities = null;
         SortedSet<ProfileKeywordEntity> existingProfileKeywordEntities = profileEntity.getKeywords();
@@ -590,10 +591,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private ProfileKeywordEntity getProfileKeywordEntity(Keyword keyword, ProfileEntity profileEntity, Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap) {
         String keywordContent = keyword.getContent();
-        ProfileKeywordEntity existingProfileKeywordEntity = existingProfileKeywordEntitiesMap.get(keywordContent);
+        /*ProfileKeywordEntity existingProfileKeywordEntity = existingProfileKeywordEntitiesMap.get(keywordContent);
         if (existingProfileKeywordEntity != null) {
             return existingProfileKeywordEntity;
-        }
+        }*/
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setProfile(profileEntity);
