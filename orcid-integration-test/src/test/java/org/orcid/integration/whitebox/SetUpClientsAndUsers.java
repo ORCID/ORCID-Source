@@ -599,8 +599,7 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove addresses
-            addressManager.updateAddresses(orcid, new Addresses(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            addressManager.updateAddresses(orcid, new Addresses());
 
             // Remove emails
             Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
