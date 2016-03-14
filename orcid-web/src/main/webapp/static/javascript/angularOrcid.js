@@ -1669,8 +1669,8 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         else link = workIdLinkJs.getLink(id,type); 
         	
         if (link != null){
-        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
-        		link = '//' + link;
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {        	    
+        		link = 'http://' + link;
         	}
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
         }else{
@@ -2278,10 +2278,10 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
         $.colorbox.resize();
     };
     
-    $scope.confirmDeleteEmailInline = function(email) {
+    $scope.confirmDeleteEmailInline = function(email, $event) {
+        $event.preventDefault();
         $scope.showDeleteBox = true;
-        emailSrvc.delEmail = email;
-        
+        emailSrvc.delEmail = email;        
     };
 
     $scope.deleteEmail = function () {
@@ -2409,9 +2409,6 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                
-                console.table(data);
-                
                 $scope.websitesForm = data;
                 if(data.errors.length == 0) {
                     $scope.close();

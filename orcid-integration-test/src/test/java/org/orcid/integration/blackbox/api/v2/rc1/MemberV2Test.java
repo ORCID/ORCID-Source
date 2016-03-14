@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.common_rc1.Title;
 import org.orcid.jaxb.model.common_rc1.Url;
 import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.common_rc1.Year;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
@@ -78,7 +79,7 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Will Simpson
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class) 
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MemberV2Test extends BlackBoxBaseRC1 {    
 
@@ -135,7 +136,22 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         Work gotWork = getResponse.getEntity(Work.class);
         assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
         gotWork.getWorkTitle().getTitle().setContent("updated title");
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotWork.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotWork.setVisibility(updatedVisibility);              
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotWork.setVisibility(originalVisibility);
+        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotWork);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
@@ -197,7 +213,22 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals("education:role-title", gotEducation.getRoleTitle());
         gotEducation.setDepartmentName("updated dept. name");
         gotEducation.setRoleTitle("updated role title");
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotEducation.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotEducation.setVisibility(updatedVisibility);              
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEducation);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotEducation.setVisibility(originalVisibility);
+        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEducation);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
@@ -256,7 +287,22 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
         gotEmployment.setDepartmentName("updated dept. name");
         gotEmployment.setRoleTitle("updated role title");
+        
+        //Save the original visibility
+        Visibility originalVisibility = gotEmployment.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotEmployment.setVisibility(updatedVisibility);              
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEmployment);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotEmployment.setVisibility(originalVisibility);
+        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotEmployment);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
@@ -324,7 +370,22 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         gotFunding.getTitle().getTitle().setContent("Updated title");
         gotFunding.getTitle().getTranslatedTitle().setContent("Updated translated title");
         gotFunding.getTitle().getTranslatedTitle().setLanguageCode("es");
+                
+        //Save the original visibility
+        Visibility originalVisibility = gotFunding.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotFunding.setVisibility(updatedVisibility);              
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotFunding);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotFunding.setVisibility(originalVisibility);
+        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotFunding);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
@@ -409,7 +470,21 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         assertEquals(groupRecords.get(0).getGroupId(), gotPeerReview.getGroupId());
         gotPeerReview.getSubjectName().getTitle().setContent("updated title");
         
+        //Save the original visibility
+        Visibility originalVisibility = gotPeerReview.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotPeerReview.setVisibility(updatedVisibility);              
         ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotPeerReview.setVisibility(originalVisibility);
+        putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotPeerReview);
         assertEquals(Response.Status.OK.getStatusCode(), putResponse.getStatus());
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());

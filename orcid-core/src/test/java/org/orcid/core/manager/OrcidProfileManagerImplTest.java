@@ -540,11 +540,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
         
     }
-
-    @Test
-    public void testAddExternalIdentifiersItemLevelPrivacy(){
-        
-    }
     
     @Test
     @Transactional

@@ -127,10 +127,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keyword createKeyword(String orcid, Keyword keyword) {
+    public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
-        PersonValidator.validateKeyword(keyword, sourceEntity, true);
+        PersonValidator.validateKeyword(keyword, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
@@ -154,11 +154,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword) {
+    public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-
+        ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
+        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
         // Validate the keyword
-        PersonValidator.validateKeyword(keyword, sourceEntity, false);
+        PersonValidator.validateKeyword(keyword, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
         List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
@@ -169,14 +170,11 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-
-        ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
+        
         SourceEntity existingSource = updatedEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
-        updatedEntity.setLastModified(new Date());
-        updatedEntity.setVisibility(originalVisibility);
+        updatedEntity.setLastModified(new Date());        
         updatedEntity.setSource(existingSource);
         profileKeywordDao.merge(updatedEntity);
         return adapter.toKeyword(updatedEntity);

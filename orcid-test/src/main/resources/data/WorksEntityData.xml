@@ -97,7 +97,7 @@
           orcid="4444-4444-4444-4446"
           client_source_id="APP-5555555555555555"
           added_to_profile_date="2013-10-22 11:09:28.636"
-          visibility="PUBLIC"
+          visibility="PUBLIC"          
             />
             
     <work work_id="6"
@@ -154,5 +154,20 @@
           added_to_profile_date="2013-10-22 11:09:28.636"
           visibility="PRIVATE"     
             />                            
+        
+	<work work_id="10"
+          publication_year="2011"
+          publication_month="2"
+          publication_day="1"
+          title="Journal article F"
+          work_type="JOURNAL_ARTICLE"
+          date_created="2011-07-02 15:31:00.00"
+          last_modified="2011-07-02 15:31:00.00"
+          orcid="4444-4444-4444-4447"
+          client_source_id="APP-5555555555555555"
+          added_to_profile_date="2013-10-22 11:09:28.636"
+          visibility="PUBLIC"     
+          external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;1&quot;}}],&quot;scope&quot;:null}"
+            />                             
                 
 </dataset>

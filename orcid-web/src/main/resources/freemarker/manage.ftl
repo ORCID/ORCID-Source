@@ -678,9 +678,8 @@
     <div class="lightbox-container revoke-social">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-	        	<h3>Revoke Social Account</h3>
+	        	<h3><@orcid.msg 'social.revoke'/></h3>
         		<p>{{socialRemoteUserToRevoke}}</p>
- 				<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
         		<form ng-submit="revoke()">
 		            <div ng-show="isPasswordConfirmationRequired">
                 		<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

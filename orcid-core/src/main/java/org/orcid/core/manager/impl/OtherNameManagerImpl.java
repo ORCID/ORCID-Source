@@ -125,10 +125,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
-    public OtherName createOtherName(String orcid, OtherName otherName) {
+    public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the otherName
-        PersonValidator.validateOtherName(otherName, sourceEntity, true);
+        PersonValidator.validateOtherName(otherName, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
@@ -151,11 +151,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
-    public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName) {
+    public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-
+        OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
+        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());
         // Validate the other name
-        PersonValidator.validateOtherName(otherName, sourceEntity, false);
+        PersonValidator.validateOtherName(otherName, sourceEntity, false, isApiRequest, originalVisibility);
 
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
@@ -168,13 +169,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
        
-        OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());
         SourceEntity existingSource = updatedOtherNameEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
-        updatedOtherNameEntity.setLastModified(new Date());
-        updatedOtherNameEntity.setVisibility(originalVisibility);
+        updatedOtherNameEntity.setLastModified(new Date());        
         updatedOtherNameEntity.setSource(existingSource);
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);

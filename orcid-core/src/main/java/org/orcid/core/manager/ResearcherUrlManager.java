@@ -61,7 +61,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return true if the researcher url was successfully created on database
      * */
-    ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl);  
+    ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest);  
     
     /**
      * Updates an existing researcher url
@@ -69,7 +69,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return the updated researcher url
      * */
-    ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl);        
+    ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest);        
     
     ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
 }

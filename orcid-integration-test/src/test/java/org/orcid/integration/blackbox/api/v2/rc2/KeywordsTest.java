@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -139,6 +140,21 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         assertEquals(getClient1ClientId(), keyword.getSource().retrieveSourcePath());
         assertEquals("keyword-3", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        
+        //Save the original visibility
+        Visibility originalVisibility = keyword.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        keyword.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateKeyword(getUser1OrcidId(), keyword, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        keyword.setVisibility(originalVisibility);
         
         //Update 
         keyword.setContent("keyword-3-updated");
