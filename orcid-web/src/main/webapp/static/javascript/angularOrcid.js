@@ -1669,8 +1669,12 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         else link = workIdLinkJs.getLink(id,type); 
         	
         if (link != null){
-        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {        	    
-        		link = 'http://' + link;
+        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
+        	    if (link.lastIndexOf('//') > -1){
+        	        link = 'http:' + link;
+            	} else {
+            	    link = 'http://' + link;    
+            	}
         	}
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
         }else{
