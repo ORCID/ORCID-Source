@@ -385,6 +385,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
 
             Keywords updatedKeywords = kf.toKeywords();
+            //TODO: Remove the default visibility from the element
             Visibility defaultVisibility = kf.getVisibility();
             
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
@@ -394,11 +395,7 @@ public class WorkspaceController extends BaseWorkspaceController {
                 }
             } 
                          
-            if(defaultVisibility != null) {
-                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            } else {
-                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, null);
-            }
+            profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
         }
         return kf;
     }
@@ -409,14 +406,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid(), lastModifiedTime);                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
-        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
-        if(entity.getOtherNamesVisibility() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getOtherNamesVisibility()));
-        } else {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility()));
-        }
-        
         return form;
     }
     
@@ -437,6 +426,7 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
                     
             OtherNames otherNames = onf.toOtherNames();                
+            //TODO: Remove the visibility from the section element
             Visibility defaultVisibility = onf.getVisibility();
             
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
@@ -445,12 +435,8 @@ public class WorkspaceController extends BaseWorkspaceController {
                     o.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             } 
-            
-            if(defaultVisibility != null) {
-                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            } else {
-                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
-            }
+                        
+            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
         }
 
         return onf;
@@ -464,14 +450,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
-        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
-        if(entity.getResearcherUrlsVisibility() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getResearcherUrlsVisibility()));
-        } else {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility()));
-        }
-        
         return form;
     }
     
@@ -503,6 +481,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             
             ResearcherUrls rUrls = ws.toResearcherUrls();
+            
+            //TODO: Remove the visibility from the section element
             Visibility defaultVisibility = ws.getVisibility();
             
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
@@ -511,12 +491,8 @@ public class WorkspaceController extends BaseWorkspaceController {
                     rUrl.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             }
-            
-            if(defaultVisibility != null) {
-                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            } else {
-                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
-            }
+                        
+            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);            
         }
         
         return ws;

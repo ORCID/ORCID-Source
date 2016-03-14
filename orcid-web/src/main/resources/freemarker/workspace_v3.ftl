@@ -362,15 +362,7 @@
 		        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
 			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
        			</div>
-			</div>
-			
-			
-																    
-	        <#if RequestParameters['OldPersonal']??>	        
-				<p class="hoover-white-fonts">	       
-		       		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-		        </p>
-	        </#if>
+			</div>																						    	        
 		</div>
     </div>
     
@@ -392,16 +384,7 @@
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-					<#if RequestParameters['OldPersonal']??>        			
-	       				<div class="row">
-	       					<div class="col-md-12 col-sm-12 col-xs-12">	 			   			
-	 			   					        
-	      			   		   		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
-	      			    	 			   			
-	 			   			</div>
-	  			   		</div>
-  			   		</#if>        			
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal_v3.ftl"/>
         			</div>

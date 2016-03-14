@@ -234,9 +234,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
         
-        //if (defaultVisibility != null)
-        //    otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
-        
         return otherNames;
     }
 
