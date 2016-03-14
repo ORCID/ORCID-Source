@@ -41,7 +41,6 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -360,10 +359,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        //Set the default visibility since we still need it in the front end
-        Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getActivitiesVisibilityDefault());
-        form.setVisibility(defaultVisibility);        
         return form;
     }
     

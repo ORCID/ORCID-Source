@@ -2799,6 +2799,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.privacyHelp = false;
     $scope.showElement = {};
     $scope.orcidId = orcidVar.orcidId; 
+    $scope.defaultVisibility = null;
 
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2831,7 +2832,49 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             dataType: 'json',
             success: function(data) {                
-                $scope.otherNamesForm = data;                
+                $scope.otherNamesForm = data;   
+                
+                console.log(angular.toJson($scope.otherNamesForm));
+                
+                //Iterate over all elements to see if they have the same visibility, to set the default  visibility element
+                if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null) {
+                	for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
+                		var itemVisibility = null;
+                		if($scope.otherNamesForm.otherNames[i].visibility != null && $scope.otherNamesForm.otherNames[i].visibility.visibility) {
+                			itemVisibility = $scope.otherNamesForm.otherNames[i].visibility.visibility;
+                		}
+                		
+                		console.log(itemVisibility + ' -> ' +  $scope.defaultVisibility);
+                		
+                		/**
+                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                		 * 
+                		 * Rules: 
+                		 * - If the default visibility is null:
+                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
+                		 * - If the default visibility is not null:
+                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                		 * */
+                		if($scope.defaultVisibility == null) {
+                			if(itemVisibility != null) {
+                				$scope.defaultVisibility = itemVisibility;
+                			}                			
+                		} else {
+                			if(itemVisibility != null) {
+                				if($scope.defaultVisibility != itemVisibility) {
+                					$scope.defaultVisibility = null;
+                    				break;
+                				}
+                			} else {
+                				$scope.defaultVisibility = null;
+                				break;
+                			}
+                		}                		
+                    }
+                }                
+                
+                console.log($scope.defaultVisibility);
+                
                 $scope.$apply();                                
             }
         }).fail(function(){
@@ -2852,9 +2895,24 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
 
     $scope.setOtherNamesForm = function(v2){        
         
-        if(v2) //Remove once V2 API functionality is live
-            $scope.otherNamesForm.visibility = null;        
-   
+    	//Remove once V2 API functionality is live
+        if(v2) {
+        	$scope.otherNamesForm.visibility = null;
+        } else {
+        	//Set the default visibility to each of the elements
+            if($scope.defaultVisibility != null) {
+            	if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null) {
+            		for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
+            			if($scope.otherNamesForm.otherNames[i].visibility == null) {
+            				$scope.otherNamesForm.otherNames[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
+            			}
+            			        			
+            			$scope.otherNamesForm.otherNames[i].visibility.visibility = $scope.defaultVisibility; 
+            		}
+            	}
+            }
+        }                               
+        
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
@@ -2884,7 +2942,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
-        $scope.otherNamesForm.visibility.visibility = priv;
+        $scope.defaultVisibility = priv;
     };
     
     $scope.setPrivacyModal = function(priv, $event, otherName) {
@@ -2900,8 +2958,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         }
     };
     
-    $scope.openEditModal = function(){        
-        
+    $scope.openEditModal = function(){                
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-aka').html())($scope),

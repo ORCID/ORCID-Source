@@ -821,14 +821,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         }        
         
-        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
-        if(entity.getProfileAddressVisibility() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getProfileAddressVisibility()));
-        } else {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
-        }
-
         //Return an empty country in case we dont have any
         if(form.getAddresses() == null){
            form.setAddresses(new ArrayList<AddressForm>()); 
@@ -838,7 +830,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(0L);
             address.setPrimary(true);
-            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
             form.getAddresses().add(address);
         }
         

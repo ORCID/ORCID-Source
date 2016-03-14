@@ -97,7 +97,7 @@
 		        	      </span>
 		        	   </span>
 		        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
-			        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+			        	   <@orcid.privacyToggle3  angularModel="defaultVisibility"
 				             questionClick="toggleClickPrivacyHelp($index)"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				             publicClick="setPrivacy('PUBLIC', $event)" 
