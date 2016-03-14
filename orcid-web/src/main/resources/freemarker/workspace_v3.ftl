@@ -155,7 +155,7 @@
 			            	</span>			            	
 			            </span>
 			            <span class="pull-right" ng-hide="showEdit == false" ng-cloak>
-			            	<@orcid.privacyToggle3 angularModel="countryForm.visibility.visibility"
+			            	<@orcid.privacyToggle3 angularModel="defaultVisibility"
 				         		questionClick="toggleClickPrivacyHelp($index)"
 				         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				         		publicClick="setPrivacy('PUBLIC', $event)" 

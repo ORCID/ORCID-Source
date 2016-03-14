@@ -2833,9 +2833,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             dataType: 'json',
             success: function(data) {                
                 $scope.otherNamesForm = data;   
-                
-                console.log(angular.toJson($scope.otherNamesForm));
-                
                 //Iterate over all elements to see if they have the same visibility, to set the default  visibility element
                 if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null) {
                 	for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
@@ -2843,9 +2840,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
                 		if($scope.otherNamesForm.otherNames[i].visibility != null && $scope.otherNamesForm.otherNames[i].visibility.visibility) {
                 			itemVisibility = $scope.otherNamesForm.otherNames[i].visibility.visibility;
                 		}
-                		
-                		console.log(itemVisibility + ' -> ' +  $scope.defaultVisibility);
-                		
                 		/**
                 		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
                 		 * 
@@ -2872,8 +2866,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
                 		}                		
                     }
                 }                
-                
-                console.log($scope.defaultVisibility);
                 
                 $scope.$apply();                                
             }
@@ -3144,6 +3136,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.orcidId = orcidVar.orcidId;
     $scope.newInput = false;
     $scope.primary = true;
+    $scope.defaultVisibility = null;
     
     $scope.openEdit = function() {
         $scope.showEdit = true;        
@@ -3159,6 +3152,39 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data;  
+                //Iterate over all elements to see if they have the same visibility, to set the default  visibility element
+                if($scope.countryForm != null && $scope.countryForm.addresses != null) {
+                	for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
+                		var itemVisibility = null;
+                		if($scope.countryForm.addresses[i].visibility != null && $scope.countryForm.addresses[i].visibility.visibility) {
+                			itemVisibility = $scope.countryForm.addresses[i].visibility.visibility;
+                		}
+                		/**
+                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                		 * 
+                		 * Rules: 
+                		 * - If the default visibility is null:
+                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
+                		 * - If the default visibility is not null:
+                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                		 * */
+                		if($scope.defaultVisibility == null) {
+                			if(itemVisibility != null) {
+                				$scope.defaultVisibility = itemVisibility;
+                			}                			
+                		} else {
+                			if(itemVisibility != null) {
+                				if($scope.defaultVisibility != itemVisibility) {
+                					$scope.defaultVisibility = null;
+                    				break;
+                				}
+                			} else {
+                				$scope.defaultVisibility = null;
+                				break;
+                			}
+                		}                		
+                    }
+                }      
                 $scope.$apply();                
             }
         }).fail(function(){
@@ -3173,8 +3199,22 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
 
     $scope.setCountryForm = function(v2){        
-        if(v2)
-            $scope.countryForm.visibility = null;         
+        if(v2) {
+        	$scope.countryForm.visibility = null;
+        } else {
+        	//Set the default visibility to each of the elements
+            if($scope.defaultVisibility != null) {            	
+            	if($scope.countryForm != null && $scope.countryForm.addresses != null) {
+            		for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
+            			if($scope.countryForm.addresses[i].visibility == null) {
+            				$scope.countryForm.addresses[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
+            			}
+            			        			
+            			$scope.countryForm.addresses[i].visibility.visibility = $scope.defaultVisibility; 
+            		}
+            	}
+            }
+        }                    
         
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
@@ -3210,16 +3250,13 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
-        $scope.countryForm.visibility.visibility = priv;
+        $scope.defaultVisibility = priv;
     };
     
-    $scope.setPrivacyModal = function(priv, $event, country) {
-        
+    $scope.setPrivacyModal = function(priv, $event, country) {        
         $event.preventDefault();
-        var countries = $scope.countryForm.addresses;
-        
-        var len = countries.length;
-        
+        var countries = $scope.countryForm.addresses;        
+        var len = countries.length;        
         while (len--) {
             if (countries[len] == country){            
                 countries[len].visibility.visibility = priv;

@@ -700,7 +700,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if(address.getPrimary() != null && address.getPrimary()) {
                     if(address.getIso2Country() != null) {
                         iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
-                        vis = Visibility.fromValue(address.getVisibility().value());
+                        if(address.getVisibility() != null) {
+                            vis = Visibility.fromValue(address.getVisibility().value());
+                        }
                         break;
                     }
                     if(address.getSource() != null) {
