@@ -781,8 +781,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }        
         
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
-        profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
-        profileEntity.setIso2Country(country);
+        //profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
+        //profileEntity.setIso2Country(country);
         
         //Set the info in the address table
         if(country != null) {
@@ -800,11 +800,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             address.setPrimary(true);
             address.setDisplayIndex(-1L);
-            if(profileEntity.getProfileAddressVisibility() != null) {
-                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getProfileAddressVisibility().value()));               
-            } else if(contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null && contactDetails.getAddress().getCountry().getVisibility() != null) {
-                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(contactDetails.getAddress().getCountry().getVisibility().value()));
-            } else {
+            if(profileEntity.getActivitiesVisibilityDefault() != null) {                
+                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+            }else{
                 address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
             }
             

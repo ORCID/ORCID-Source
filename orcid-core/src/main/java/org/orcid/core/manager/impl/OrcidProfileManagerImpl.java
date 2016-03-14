@@ -113,6 +113,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
+import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -845,12 +846,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
+    /*
     @Override
     @Transactional
     public void updateCountry(OrcidProfile orcidProfile) {
+        
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
-    }
+    }*/
 
     @Override
     @Transactional
@@ -2030,12 +2033,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 profileEntity.setOtherNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility());
             }
-*/
+
             if (profileEntity.getProfileAddressVisibility() == null) {
                 profileEntity.setProfileAddressVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
             }
-
+*/
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
                 profileEntity.setActivitiesVisibilityDefault(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility());
