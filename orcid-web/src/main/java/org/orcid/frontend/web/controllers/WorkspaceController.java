@@ -362,7 +362,7 @@ public class WorkspaceController extends BaseWorkspaceController {
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
         //Set the default visibility since we still need it in the front end
-        Visibility defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
+        Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getActivitiesVisibilityDefault());
         form.setVisibility(defaultVisibility);        
         return form;
     }

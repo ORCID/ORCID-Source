@@ -268,7 +268,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }else if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
                 defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();            
         }
-        addVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        addDefaultVisibilityToBioItems(orcidProfile, defaultActivityVis);
         
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
@@ -282,7 +282,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return updatedTranslatedOrcid;
     }
 
-    private void addVisibilityToBioItems(OrcidProfile orcidProfile, Visibility defaultActivityVis) {
+    private void addDefaultVisibilityToBioItems(OrcidProfile orcidProfile, Visibility defaultActivityVis) {
         if (orcidProfile.getOrcidBio() != null){
             if (orcidProfile.getOrcidBio().getExternalIdentifiers() != null)
                 for (ExternalIdentifier x : orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier() ){
@@ -336,7 +336,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
             defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         }
-        addVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        addDefaultVisibilityToBioItems(orcidProfile, defaultActivityVis);
         
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
@@ -673,7 +673,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {
+    //TODO: map visibilities
+    public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {        
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
 
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
@@ -710,12 +711,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
+    //TODO: map visibilities
+
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {        
-        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid());        
+        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid()); 
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
             return null;
         }
+        
         // preserve the visibility settings
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
@@ -844,7 +848,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     @Override
     @Transactional
     public void updateCountry(OrcidProfile orcidProfile) {
-        //TODO, apply default vis if not set
         profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
                 orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }

@@ -552,7 +552,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    //TODO: BROKEN
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
         SortedSet<ProfileKeywordEntity> profileKeywordEntities = null;
         SortedSet<ProfileKeywordEntity> existingProfileKeywordEntities = profileEntity.getKeywords();
