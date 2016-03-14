@@ -626,6 +626,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity, externalIdentifier, existingExternalIdentifiersMap, externalIdentifiers.getVisibility());
                         if (externalIdentifierEntity != null) {
                             externalIdentifierEntity.setOwner(profileEntity);
+                            externalIdentifierEntities.add(externalIdentifierEntity);
                         }
                     }
                 }
