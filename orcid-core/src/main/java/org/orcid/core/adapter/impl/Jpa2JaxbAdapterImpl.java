@@ -682,6 +682,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return delegation;
     }
 
+    
     private ContactDetails getContactDetails(ProfileEntity profileEntity) {
         ContactDetails contactDetails = new ContactDetails();
         setEmails(profileEntity, contactDetails);
@@ -689,15 +690,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return contactDetails;
     }
 
+    
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        Iso3166Country iso2Country = profileEntity.getIso2Country();
+        Iso3166Country iso2Country = null;
         SourceEntity sourceEntity = null;
-        
+        Visibility vis = null;
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
             for(AddressEntity address : profileEntity.getAddresses()) {
                 if(address.getPrimary() != null && address.getPrimary()) {
                     if(address.getIso2Country() != null) {
                         iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
+                        vis = Visibility.fromValue(address.getVisibility().value());
                         break;
                     }
                     if(address.getSource() != null) {
@@ -710,7 +713,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (iso2Country != null) {
             Address address = new Address();
             Country country = new Country(iso2Country);
-            country.setVisibility(profileEntity.getProfileAddressVisibility());
+            country.setVisibility(vis);
             address.setCountry(country);
             if(sourceEntity != null) {
                 Source source = createSource(sourceEntity.getSourceId());
@@ -718,7 +721,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             }            
             contactDetails.setAddress(address);
         }
-    }        
+    }       
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         // The new way of doing emails.

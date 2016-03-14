@@ -92,7 +92,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * * @param orcidProfile Profile containing the personal details, contact
      * details and identifiers to replace those in the DB.
      */
-    void updateCountry(OrcidProfile orcidProfile);
+    //void updateCountry(OrcidProfile orcidProfile);
 
     /**
      * Persist the biography

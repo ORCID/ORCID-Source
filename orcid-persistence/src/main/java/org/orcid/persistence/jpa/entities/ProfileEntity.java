@@ -86,7 +86,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
     private String biography;
-    private Iso3166Country iso2Country;
+    //private Iso3166Country iso2Country;
     private SortedSet<ProfileKeywordEntity> keywords;
     private Set<ExternalIdentifierEntity> externalIdentifiers;
     private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
@@ -142,7 +142,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     // Visibility settings
     private Visibility namesVisibility;
     private Visibility biographyVisibility;
-    private Visibility profileAddressVisibility;
+    //private Visibility profileAddressVisibility;
     private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
 
     //depreciate visibilities
@@ -608,6 +608,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return accountExpiry;
     }
 
+    /*
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "iso2_country", length = 2)
@@ -617,7 +618,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setIso2Country(Iso3166Country iso2Country) {
         this.iso2Country = iso2Country;
-    }
+    }*/
 
     /**
      * Returns the authorities granted to the user. Cannot return
@@ -893,6 +894,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.researcherUrlsVisibility = researcherUrlsVisibility;
     }*/
 
+    /*
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "profile_address_visibility")
@@ -902,7 +904,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setProfileAddressVisibility(Visibility profileAddressVisibility) {
         this.profileAddressVisibility = profileAddressVisibility;
-    }
+    }*/
 
     @Basic
     @Enumerated(EnumType.STRING)

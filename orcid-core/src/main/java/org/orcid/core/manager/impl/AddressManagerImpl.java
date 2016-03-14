@@ -177,9 +177,9 @@ public class AddressManagerImpl implements AddressManager {
     
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
         Visibility incomingCountryVisibility = entity.getVisibility();
-        Visibility defaultCountryVisibility = profile.getProfileAddressVisibility() == null
+        Visibility defaultCountryVisibility = profile.getActivitiesVisibilityDefault() == null
                 ? Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getProfileAddressVisibility().value());
+                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultCountryVisibility.isMoreRestrictiveThan(incomingCountryVisibility)) {
                 entity.setVisibility(defaultCountryVisibility);
