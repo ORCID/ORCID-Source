@@ -213,7 +213,7 @@
 		        	      	</span>
 		        	   	</span>
 		        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		        	   			<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+		        	   			<@orcid.privacyToggle3  angularModel="defaultVisibility"
 			             	  	questionClick="toggleClickPrivacyHelp($index)"
 			             	  	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 			             	  	publicClick="setPrivacy('PUBLIC', $event)" 
@@ -274,7 +274,7 @@
 		        	   </span>	
 		        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
 		        	   		<@orcid.privacyToggle3 
-			        	   		angularModel="websitesForm.visibility.visibility"
+			        	   		angularModel="defaultVisibility"
 				            	questionClick="toggleClickPrivacyHelp($index)"
 				             	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				             	publicClick="setPrivacy('PUBLIC', $event)" 
