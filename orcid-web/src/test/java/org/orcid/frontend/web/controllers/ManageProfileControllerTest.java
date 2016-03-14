@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Description;
@@ -45,17 +44,14 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidIndexManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
-import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.util.BaseControllerTest;
 import org.orcid.jaxb.model.message.DelegationDetails;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -71,7 +67,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
@@ -196,23 +191,7 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertEquals("ManagePersonalInfo", activeTab);
         assertNotNull(model.get("securityQuestions"));
     }
-
-    @Test
-    public void testUnchangedEmailDoesNotInvokeNotificationManager() throws Exception {
-        controller.setNotificationManager(mockNotificationManager);
-        controller.setProfileKeywordManager(mock(ProfileKeywordManager.class));
-        controller.setOtherNameManager(mock(OtherNameManager.class));
-        controller.setResearcherUrlManager(mock(ResearcherUrlManager.class));
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        HttpServletRequest request = mock(HttpServletRequest.class);
-
-        ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(getOrcidProfile());
-        ModelAndView successView = controller.saveEditedBio(request, changePersonalInfoForm, bindingResult, mock(RedirectAttributes.class));
-        verify(mockNotificationManager, times(0)).sendEmailAddressChangedNotification(any(OrcidProfile.class), any(Email.class));
-        assertEquals("redirect:/account/manage-bio-settings", successView.getViewName());
-    }
-
+    
     @Test
     public void testUpdatePastAffiliations() throws Exception {
 

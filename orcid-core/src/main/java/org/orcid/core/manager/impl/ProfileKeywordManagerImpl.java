@@ -91,16 +91,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
         return result;
-    }
-    
-    /*
-    @Override
-    public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
-        Visibility v = (defaultVisiblity == null)
-                ? Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : defaultVisiblity;
-        return profileKeywordDao.updateKeywordsVisibility(orcid, v);
-    }*/
+    }       
 
     @Override
     public Keyword getKeyword(String orcid, Long putCode) {
@@ -233,11 +224,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                 }
             }
         }
-
-//        if (defaultVisibility != null) {
-//            updateKeywordsVisibility(orcid, defaultVisibility);
-//        }
-
+        
         return keywords;
     }
 

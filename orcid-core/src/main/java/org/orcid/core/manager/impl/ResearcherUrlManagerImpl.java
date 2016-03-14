@@ -154,9 +154,6 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             }
         }
         
-//        if(defaultVisibility != null) {
-//            profileDao.updateResearcherUrlsVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
-//        }
         return researcherUrls;
     }
 

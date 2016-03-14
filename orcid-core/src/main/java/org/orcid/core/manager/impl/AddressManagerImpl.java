@@ -218,7 +218,7 @@ public class AddressManagerImpl implements AddressManager {
     }
     
     @Override
-    public Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility) {
+    public Addresses updateAddresses(String orcid, Addresses addresses) {
         List<AddressEntity> existingAddressList = addressDao.getAddresses(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
@@ -269,9 +269,6 @@ public class AddressManagerImpl implements AddressManager {
                 }
             }
         }
-        
-        if (defaultVisibility != null)
-            addressDao.updateAddressVisibility(orcid, defaultVisibility);
         
         return addresses;
     }
