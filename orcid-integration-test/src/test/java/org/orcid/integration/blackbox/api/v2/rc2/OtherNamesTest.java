@@ -35,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
@@ -136,6 +137,21 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         assertEquals("Other Name #1", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
         assertEquals(putCode, otherName.getPutCode());
+        
+        //Save the original visibility
+        Visibility originalVisibility = otherName.getVisibility();
+        Visibility updatedVisibility = Visibility.PUBLIC;
+        
+        //Verify you cant update the visibility
+        otherName.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateOtherName(this.getUser1OrcidId(), otherName, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        otherName.setVisibility(originalVisibility);
         
         //Update it
         otherName.setContent("Other Name #1 - Updated");        

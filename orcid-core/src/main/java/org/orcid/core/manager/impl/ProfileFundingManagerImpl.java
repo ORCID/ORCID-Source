@@ -32,7 +32,6 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
-import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -266,7 +265,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateFunding(funding, sourceEntity, true, isApiRequest);
+    	ActivityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
 
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
@@ -320,7 +319,10 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Override    
     public Funding updateFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateFunding(funding, sourceEntity, false, isApiRequest);
+    	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
+        Visibility originalVisibility = pfe.getVisibility();
+        
+    	ActivityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
     	if(!isApiRequest) {
     	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
             for(ProfileFundingEntity existingFunding : existingFundings) {
@@ -332,8 +334,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             }
     	}    	
     	
-        ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
-        Visibility originalVisibility = pfe.getVisibility();
         SourceEntity existingSource = pfe.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);

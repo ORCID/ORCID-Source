@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
@@ -155,6 +156,21 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals("http://ext-id/A-0003", externalIdentifier.getUrl().getValue());
         assertEquals(Visibility.LIMITED, externalIdentifier.getVisibility());
         assertEquals(putCode, externalIdentifier.getPutCode());
+        
+        //Save the original visibility
+        Visibility originalVisibility = externalIdentifier.getVisibility();
+        Visibility updatedVisibility = Visibility.PUBLIC;
+        
+        //Verify you cant update the visibility
+        externalIdentifier.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateExternalIdentifier(getUser1OrcidId(), externalIdentifier, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        externalIdentifier.setVisibility(originalVisibility);
         
         //Update it
         externalIdentifier.setType("A-0004");
