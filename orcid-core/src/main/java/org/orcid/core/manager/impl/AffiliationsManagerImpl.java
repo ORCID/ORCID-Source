@@ -142,9 +142,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the added education
      * */
     @Override
-    public Education createEducationAffiliation(String orcid, Education education) {
+    public Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        ActivityValidator.validateEducation(education, sourceEntity);
+        ActivityValidator.validateEducation(education, sourceEntity, true, isApiRequest, null);
         OrgAffiliationRelationEntity educationEntity = jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education);
 
         // Updates the give organization with the latest organization from
@@ -173,12 +173,14 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the updated education
      * */
     @Override
-    public Education updateEducationAffiliation(String orcid, Education education) {
+    public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
         Visibility originalVisibility = educationEntity.getVisibility();
         SourceEntity existingSource = educationEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
 
+        ActivityValidator.validateEducation(education, existingSource, false, isApiRequest, originalVisibility);
+        
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
         educationEntity.setVisibility(originalVisibility);
         educationEntity.setSource(existingSource);
@@ -235,9 +237,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the added employment
      * */
     @Override
-    public Employment createEmploymentAffiliation(String orcid, Employment employment) {
+    public Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        ActivityValidator.validateEmployment(employment, sourceEntity);
+        ActivityValidator.validateEmployment(employment, sourceEntity, true, isApiRequest, null);
         OrgAffiliationRelationEntity employmentEntity = jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment);
 
         // Updates the give organization with the latest organization from
@@ -266,12 +268,14 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
      * @return the updated employment
      * */
     @Override
-    public Employment updateEmploymentAffiliation(String orcid, Employment employment) {
+    public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         Visibility originalVisibility = employmentEntity.getVisibility();
         SourceEntity existingSource = employmentEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
 
+        ActivityValidator.validateEmployment(employment, existingSource, false, isApiRequest, originalVisibility);
+        
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
         employmentEntity.setVisibility(originalVisibility);
         employmentEntity.setSource(existingSource);

@@ -34,6 +34,7 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
@@ -131,7 +132,22 @@ public class AddressTest extends BlackBoxBaseRC2 {
         assertNotNull(address.getCountry());
         assertNotNull(address.getCountry().getValue());        
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());                
+        
+        //Save the original visibility
+        Visibility originalVisibility = address.getVisibility();
+        Visibility updatedVisibility = Visibility.LIMITED;
+        
+        //Verify you cant update the visibility
+        address.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateAddress(getUser1OrcidId(), address, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        address.setVisibility(originalVisibility);        
         
         //Update 
         address.getCountry().setValue(Iso3166Country.PA);

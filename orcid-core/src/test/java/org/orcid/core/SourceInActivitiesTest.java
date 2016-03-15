@@ -413,7 +413,7 @@ public class SourceInActivitiesTest extends BaseTest {
         Education education = new Education();
         education.setOrganization(getOrganization());
         education.setPutCode(Long.valueOf(111));
-        education = affiliationsManager.createEducationAffiliation(userOrcid, education);
+        education = affiliationsManager.createEducationAffiliation(userOrcid, education, true);
         return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
     }
 
@@ -523,7 +523,7 @@ public class SourceInActivitiesTest extends BaseTest {
     private Education getEducation(String userOrcid) {
         Education education = new Education();
         education.setOrganization(getOrganization());
-        education = affiliationsManager.createEducationAffiliation(userOrcid, education);
+        education = affiliationsManager.createEducationAffiliation(userOrcid, education, true);
         return affiliationsManager.getEducationAffiliation(userOrcid, education.getPutCode());
     }
     

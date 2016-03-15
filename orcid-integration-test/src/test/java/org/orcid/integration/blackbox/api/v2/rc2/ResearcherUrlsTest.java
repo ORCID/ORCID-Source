@@ -36,6 +36,7 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -135,12 +136,26 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertEquals(String.valueOf(time), gotResearcherUrl.getUrlName());
         assertEquals("public", gotResearcherUrl.getVisibility().value());
 
+        //Save the original visibility
+        Visibility originalVisibility = gotResearcherUrl.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotResearcherUrl.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotResearcherUrl);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotResearcherUrl.setVisibility(originalVisibility);
+        
         // Update
         LastModifiedDate initialLastModified = gotResearcherUrl.getLastModifiedDate();
         Long currentTime = System.currentTimeMillis();
         gotResearcherUrl.setUrlName(gotResearcherUrl.getUrlName() + " - " + currentTime);
         gotResearcherUrl.getUrl().setValue(gotResearcherUrl.getUrl().getValue() + currentTime);
-        gotResearcherUrl.setVisibility(Visibility.LIMITED);
         ClientResponse updatedResearcherUrlResponse = memberV2ApiClient.updateResearcherUrls(getUser1OrcidId(), gotResearcherUrl, accessToken);
         assertNotNull(updatedResearcherUrlResponse);
         assertEquals(Response.Status.OK.getStatusCode(), updatedResearcherUrlResponse.getStatus());
@@ -326,7 +341,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         ClientResponse response = memberV2ApiClient.updateResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
+    }       
     
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {

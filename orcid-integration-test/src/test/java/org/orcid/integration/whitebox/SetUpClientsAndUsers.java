@@ -809,7 +809,7 @@ public class SetUpClientsAndUsers {
         a1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         a1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        addressManager.createAddress(orcid, a1);
+        addressManager.createAddress(orcid, a1, true);
     }
     
     /**
@@ -823,14 +823,14 @@ public class SetUpClientsAndUsers {
         o1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         o1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));        
         o1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        otherNameManager.createOtherName(orcid, o1);
+        otherNameManager.createOtherName(orcid, o1, true);
         
         OtherName o2 = new OtherName();
         o2.setContent("other-name-2");
         o2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         o2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         o2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        otherNameManager.createOtherName(orcid, o2);
+        otherNameManager.createOtherName(orcid, o2, true);
     }
     
     /**
@@ -844,14 +844,14 @@ public class SetUpClientsAndUsers {
         k1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         k1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         k1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        profileKeywordManager.createKeyword(orcid, k1);
+        profileKeywordManager.createKeyword(orcid, k1, true);
         
         Keyword k2 = new Keyword();
         k2.setContent("keyword-2");
         k2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         k2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
         k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        profileKeywordManager.createKeyword(orcid, k2);
+        profileKeywordManager.createKeyword(orcid, k2, true);
     }
     
     /**
@@ -886,7 +886,7 @@ public class SetUpClientsAndUsers {
         e1.setValue("A-0001");
         e1.setSource(new Source(client1ClientId));  
         e1.setType("A-0001");
-        externalIdentifierManager.createExternalIdentifier(orcid, e1);
+        externalIdentifierManager.createExternalIdentifier(orcid, e1, true);
         
         PersonExternalIdentifier e2 = new PersonExternalIdentifier();
         e2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
@@ -896,7 +896,7 @@ public class SetUpClientsAndUsers {
         e2.setValue("A-0002");
         e2.setSource(new Source(client1ClientId));
         e2.setType("A-0002");
-        externalIdentifierManager.createExternalIdentifier(orcid, e2);
+        externalIdentifierManager.createExternalIdentifier(orcid, e2, true);
     }   
     
     /**
