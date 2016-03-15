@@ -655,7 +655,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
         externalIdentifier = externalIdentifierManager.createExternalIdentifier(orcid, externalIdentifier, true);
         try {
             return Response.created(new URI(String.valueOf(externalIdentifier.getPutCode()))).build();
