@@ -138,6 +138,8 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
                 assertNotNull(e.getUrl());
                 assertEquals("http://ext-id/A-0003", e.getUrl().getValue());
                 assertEquals(Visibility.LIMITED, e.getVisibility());
+                assertEquals("APP-9999999999999901", e.getSource().retrieveSourcePath());
+                assertEquals("Client APP-9999999999999901 - Fastest's Elephant", e.getSource().getSourceName().getContent());
                 haveNew = true;
             }
         }
