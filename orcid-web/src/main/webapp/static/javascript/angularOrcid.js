@@ -2743,7 +2743,10 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             html: $compile($('#edit-keyword').html())($scope),
             onLoad: function() {
                 $('#cboxClose').remove();
-                
+                if ($scope.keywordsForm.keywords.length == 0){
+                    $scope.addNewModal();
+                    $scope.newInput = true;
+                }
             },
             width: formColorBoxResize(),
             onComplete: function() {
@@ -3126,8 +3129,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         return last;
     }
     
-    
-
     $scope.getOtherNamesForm();
 }]);
 
@@ -3400,8 +3401,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     
     $scope.addNewModal = function() {
         var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
-        var idx = $scope.getLastDisplayIndex() + 1;        
-        tmpObj['displayIndex'] = idx;
+        var idx = $scope.getLastDisplayIndex();        
+        tmpObj['displayIndex'] = idx + 1;
         $scope.countryForm.addresses.push(tmpObj);        
         $scope.newInput = true;
     };

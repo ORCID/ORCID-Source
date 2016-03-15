@@ -830,6 +830,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(0L);
             address.setPrimary(true);
+            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
             form.getAddresses().add(address);
         }
         
