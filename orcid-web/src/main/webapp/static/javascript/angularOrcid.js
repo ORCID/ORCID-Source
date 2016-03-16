@@ -3321,7 +3321,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         });
     }
 
-    $scope.setExternalIdentifiersForm = function(){
+    $scope.setExternalIdentifiersForm = function(v2){
         if(v2)
             $scope.externalIdentifiersForm.visibility = null;         
         

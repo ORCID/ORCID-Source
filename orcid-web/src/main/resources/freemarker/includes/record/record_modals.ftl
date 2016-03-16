@@ -296,7 +296,7 @@
 
 <script type="text/ng-template" id="edit-external-identifiers">
 	<div class="lightbox-container">
-		<div class="edit-record edit-websites">
+		<div class="edit-record edit-external-identifiers">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -354,7 +354,7 @@
 						</div>
 					</div>
 					<div class="record-buttons">	
-		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<button class="btn btn-primary pull-right" ng-click="setExternalIdentifiersForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 				</div>
