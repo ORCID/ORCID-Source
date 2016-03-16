@@ -18,15 +18,13 @@
 -->
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-        
     <changeSet id="REMOVE-HEAR-ABOUT" author="rcpeters">
-        <sql>DROP TABLE hear_about;</sql>
+        <sql>DROP TABLE IF EXISTS  hear_about;</sql>
     </changeSet>
 
     <changeSet id="REMOVE-REG-ROLE" author="rcpeters">
-        <sql>DROP TABLE registration_role;</sql>
-        <sql>DROP SEQUENCE registration_seq;</sql>
+        <sql>DROP TABLE IF EXISTS registration_role;</sql>
+        <sql>DROP SEQUENCE IF EXISTS registration_seq;</sql>
     </changeSet>
-
 
 </databaseChangeLog>
