@@ -1360,7 +1360,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
     return serv; 
 });
 
-orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
+orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
     var defaultMaxResults = 10;
     var serv = {
         loading: true,
@@ -1417,7 +1417,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 url: getBaseUri() + '/inbox/unreadCount.json',
                 dataType: 'json',
                 success: function(data) {
-                    serv.unreadCount = data;
+                    serv.unreadCount = data;                   
                     $rootScope.$apply();
                 }
             }).fail(function() {
@@ -1493,8 +1493,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             serv.reloadNotifications();
         },
         swapbulkChangeAll: function(){
-            serv.bulkChecked = !serv.bulkChecked; 
-            console.log(serv.bulkChecked);
+            serv.bulkChecked = !serv.bulkChecked;
             if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
             else
@@ -1503,10 +1502,36 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 serv.selectionActive = true;
             
         },
-        bulkArchive: function(){
+        bulkArchive: function(){            
+            var promises = [];
+            var tmpNotifications = serv.notifications;
+            
+            function archive(notificationId){                
+                var defer = $q.defer(notificationId);                
+                $.ajax({
+                    url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data) {
+                        defer.resolve(notificationId);
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error flagging notification as archived");
+                });                
+                return defer.promise;
+            }
+            
             for (putCode in serv.bulkArchiveMap)
-                if(serv.bulkArchiveMap[putCode])                    
-                    serv.archive(putCode);            
+                if(serv.bulkArchiveMap[putCode])
+                    promises.push(archive(putCode));            
+            
+            $q.all(promises).then(function(){
+                serv.bulkArchiveMap.length = 0;
+                serv.bulkChecked = false;
+                serv.reloadNotifications();
+            });
+            
         },
         checkSelection: function(){
             
