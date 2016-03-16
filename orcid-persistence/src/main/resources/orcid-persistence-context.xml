@@ -54,18 +54,10 @@
     
     <bean id="emailDao" class="org.orcid.persistence.dao.impl.EmailDaoImpl" />
 
-    <bean id="hearAboutDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.HearAboutEntity" />
-    </bean>   
-
     <bean id="securityQuestionDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.SecurityQuestionEntity" />
     </bean>
-
-    <bean id="registrationRoleDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
-        <constructor-arg value="org.orcid.persistence.jpa.entities.RegistrationRoleEntity" />
-    </bean>
-
+    
     <bean id="refDataDao" class="org.orcid.persistence.dao.impl.GenericDaoImpl">
         <constructor-arg value="org.orcid.persistence.jpa.entities.RefDataEntity" />
     </bean>

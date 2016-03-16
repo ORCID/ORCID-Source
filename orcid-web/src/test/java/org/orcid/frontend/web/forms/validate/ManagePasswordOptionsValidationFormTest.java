@@ -58,8 +58,6 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         form.setSecurityQuestionId(1);
         form.setSecurityQuestionAnswer("stan");
         form.setVerificationNumber("9999");
-        Map<String, String> registrationRoles = new HashMap<String, String>();
-        registrationRoles.put("1", "Researcher");
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
@@ -72,8 +70,6 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         form.setSecurityQuestionId(1);
         form.setSecurityQuestionAnswer("stan");
         form.setVerificationNumber("9999");
-        Map<String, String> registrationRoles = new HashMap<String, String>();
-        registrationRoles.put("1", "Researcher");
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
     }
@@ -86,8 +82,6 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         form.setSecurityQuestionId(1);
         form.setSecurityQuestionAnswer("stan");
         form.setVerificationNumber("9999");
-        Map<String, String> registrationRoles = new HashMap<String, String>();
-        registrationRoles.put("1", "Researcher");
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
 
@@ -101,8 +95,6 @@ public class ManagePasswordOptionsValidationFormTest extends AbstractConstraintV
         form.setSecurityQuestionId(1);
         form.setSecurityQuestionAnswer("stan");
         form.setVerificationNumber("9999");
-        Map<String, String> registrationRoles = new HashMap<String, String>();
-        registrationRoles.put("1", "Researcher");
         Set<ConstraintViolation<ManagePasswordOptionsForm>> errors = validator.validate(form);
         assertEquals("Should be no errors", 0, errors.size());
 
