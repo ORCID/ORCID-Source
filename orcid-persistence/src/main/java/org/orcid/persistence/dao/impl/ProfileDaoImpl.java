@@ -31,7 +31,6 @@ import javax.persistence.TypedQuery;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -553,25 +552,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
         updateQuery.executeUpdate();
     }
-
-    /*
-    @Override
-    @Transactional
-    public void updateCountry(String orcid, Iso3166Country iso2Country, Visibility profileAddressVisibility) {
-        Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), iso2_country = :iso2Country,  profile_address_visibility = :profileAddressVisibility where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("iso2Country", iso2Country != null ? iso2Country.value() : null);
-        updateQuery.setParameter("profileAddressVisibility", StringUtils.upperCase(profileAddressVisibility.value()));
-        updateQuery.executeUpdate();
-    }
-
-    @Override
-    public Iso3166Country getCountry(String orcid) {
-        TypedQuery<Iso3166Country> query = entityManager.createQuery("select iso2_country from ProfileEntity where orcid = :orcid", Iso3166Country.class);
-        query.setParameter("orcid", orcid);
-        return query.getSingleResult();
-    }*/
 
     @Override
     @Transactional

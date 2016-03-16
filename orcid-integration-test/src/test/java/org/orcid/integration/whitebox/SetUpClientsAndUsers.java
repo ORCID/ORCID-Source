@@ -572,9 +572,11 @@ public class SetUpClientsAndUsers {
             name.setGivenNames(new GivenNames(params.get(GIVEN_NAMES)));
             name.setFamilyName(new FamilyName(params.get(FAMILY_NAMES)));
             name.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
-            personalDetails.setName(name);
+            personalDetails.setName(name);            
             orcidProfileManager.updateNames(orcid, personalDetails);
-
+                       
+            profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
+            
             // Set default bio
             OrcidBio bio = new OrcidBio();
             bio.setBiography(new Biography(params.get(BIO), OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
