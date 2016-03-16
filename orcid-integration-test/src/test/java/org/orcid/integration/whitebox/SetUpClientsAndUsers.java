@@ -313,7 +313,7 @@ public class SetUpClientsAndUsers {
     @Resource
     protected ProfileEntityManager profileEntityManager;
     @Resource
-    protected GivenPermissionToDao givenPermissionToDao;
+    protected GivenPermissionToDao givenPermissionToDao;    
     
     @Before
     public void before() throws Exception {
