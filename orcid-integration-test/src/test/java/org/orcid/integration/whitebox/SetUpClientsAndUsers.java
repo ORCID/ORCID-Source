@@ -617,7 +617,9 @@ public class SetUpClientsAndUsers {
             List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, true, 0, 10000);
             if (notifications != null && !notifications.isEmpty()) {
                 for (NotificationEntity notification : notifications) {
-                    notificationDao.remove(notification.getId());
+                    notificationDao.deleteNotificationItemByNotificationId(notification.getId());
+                    notificationDao.deleteNotificationWorkByNotificationId(notification.getId());
+                    notificationDao.deleteNotificationById(notification.getId());
                 }
             }
 
