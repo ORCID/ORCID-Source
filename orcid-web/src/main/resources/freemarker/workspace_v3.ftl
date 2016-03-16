@@ -73,7 +73,7 @@
                 </div>
             </div>            	       	
 	       	
-	       	<!-- Also known as -->
+	       	<!-- Other Names -->
 	       	<#if RequestParameters['v2modal']??>
 	       		<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
 	        	   <div class="workspace-section-header">
@@ -352,20 +352,37 @@
 		        	</div>	        	
 		       	</div>
 	       	</#if>
-	       	<!--  Pending to apply style -->
-       		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak  class="workspace-section">
-       			<div class="workspace-section-header">	       			
-       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
-       			</div>
-       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
-		        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
-			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
-       			</div>
-			</div>
+	       	
+	       	
+	       	
+	       	
+	       	
+	       	<!--  External Identifiers -->
+	       	<#if RequestParameters['v2modal']??>
+	       		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
+	       			<div class="workspace-section-header">
+	       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
+	       				<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
+	       			</div>
+	       			<div ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'>	       				
+			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
+			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>				   		
+	       			</div>
+				</div>
+			<#else>
+				<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
+	       			<div class="workspace-section-header">
+	       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
+	       			</div>
+	       			<div ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'>
+			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
+			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
+				   		<a ng-click="deleteExternalIdentifierConfirmation($index)" class="glyphicon glyphicon-trash grey"></a>
+	       			</div>
+				</div>
+			</#if>		
 			
-			
-																    
+														    
 	        <#if RequestParameters['OldPersonal']??>	        
 				<p class="hoover-white-fonts">	       
 		       		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
@@ -737,7 +754,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
 				<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				<a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>
 		<div>
 	<div>	

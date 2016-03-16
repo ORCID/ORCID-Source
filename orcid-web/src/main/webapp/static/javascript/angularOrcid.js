@@ -3146,10 +3146,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.closeModal = function(){
         $.colorbox.close();
     }
-    
-    $scope.changePriority = function(country){
-        console.log(angular.toJson(country));
-    }
 
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
@@ -3306,37 +3302,101 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
 
 orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', function ($scope, $compile){
-    $scope.getExternalIdentifiers = function(){
+    $scope.externalIdentifiersForm = null;
+    $scope.orcidId = orcidVar.orcidId;
+    $scope.primary = true;
+    
+    
+    $scope.getExternalIdentifiersForm = function(){
         $.ajax({
             url: getBaseUri() + '/my-orcid/externalIdentifiers.json',
             dataType: 'json',
             success: function(data) {
-                $scope.externalIdentifiersPojo = data;
+                $scope.externalIdentifiersForm = data;
                 $scope.$apply();
             }
         }).fail(function(){
             // something bad is happening!
             console.log("error fetching external identifiers");
         });
+    }
+
+    $scope.setExternalIdentifiersForm = function(){
+        if(v2)
+            $scope.externalIdentifiersForm.visibility = null;         
+        
+        $.ajax({
+            url: getBaseUri() + '/my-orcid/externalIdentifierForm.json',
+            type: 'POST',
+            data:  angular.toJson($scope.externalIdentifiersForm),
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            success: function(data) {
+                $scope.externalIdentifiersForm = data;
+                if ($scope.externalIdentifiersForm.errors.length == 0){
+                    $scope.close();
+                    $scope.getExternalIdentifiersForm();                
+                    $.colorbox.close();
+                }else{
+                    console.log($scope.externalIdentifiersForm.errors);
+                }
+                
+                $scope.$apply();
+            }
+        }).fail(function() {
+            // something bad is happening!
+            console.log("ExternalIdentifierCtrl.serverValidate() error");
+        });
+    }
+    
+    
+    $scope.setPrivacy = function(priv, $event) {
+        $event.preventDefault();
+        $scope.externalIdentifierForm.visibility.visibility = priv;
     };
-
-    //init
-    $scope.getExternalIdentifiers();
-
-    $scope.deleteExternalIdentifier = function(idx) {
-        $scope.removeExternalIdentifierIndex = idx;
-        $scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].reference;                        
-        if ($scope.externalIdentifiersPojo.externalIdentifiers[idx].commonName != null)        	
-            $scope.removeExternalModalText = $scope.externalIdentifiersPojo.externalIdentifiers[idx].commonName + ' ' + $scope.removeExternalModalText;
+    
+    $scope.setPrivacyModal = function(priv, $event, externalIdentifier) {        
+        $event.preventDefault();
+        var len = externalIdentifiers.length;
+        while (len--) {
+            if (externalIdentifiers[len] == externalIdentifier){            
+                externalIdentifiers[len].visibility.visibility = priv;                
+            }
+        }
+    };
+    
+    
+    $scope.openEditModal = function(){
         $.colorbox({
-            html: $compile($('#delete-external-id-modal').html())($scope)
+            scrolling: true,
+            html: $compile($('#edit-external-identifiers').html())($scope),
+            onLoad: function() {
+                $('#cboxClose').remove();
+            },
+            width: formColorBoxResize(),
+            onComplete: function() {
 
+            },
+            onClosed: function() {
+                $scope.getExternalIdentifiersForm();
+            }
         });
         $.colorbox.resize();
-    };
-
+    }
+    
+    $scope.deleteExternalIdentifierConfirmation = function(idx){
+        $scope.removeExternalIdentifierIndex = idx;
+        $scope.removeExternalModalText = $scope.externalIdentifiersForm.externalIdentifiers[idx].reference;
+        if ($scope.externalIdentifiersForm.externalIdentifiers[idx].commonName != null)
+            $scope.removeExternalModalText = $scope.externalIdentifiersForm.externalIdentifiers[idx].commonName + ' ' + $scope.removeExternalModalText;
+        $.colorbox({
+            html: $compile($('#delete-external-id-modal').html())($scope)
+        });
+        $.colorbox.resize();
+    }
+    
     $scope.removeExternalIdentifier = function() {
-        var externalIdentifier = $scope.externalIdentifiersPojo.externalIdentifiers[$scope.removeExternalIdentifierIndex];
+        var externalIdentifier = $scope.externalIdentifiersForm.externalIdentifiers[$scope.removeExternalIdentifierIndex];
         $.ajax({
             url: getBaseUri() + '/my-orcid/externalIdentifiers.json',
             type: 'DELETE',
@@ -3347,7 +3407,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
                 if(data.errors.length != 0){
                     console.log("Unable to delete external identifier.");
                 } else {
-                    $scope.externalIdentifiersPojo.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
+                    $scope.externalIdentifiersForm.externalIdentifiers.splice($scope.removeExternalIdentifierIndex, 1);
                     $scope.removeExternalIdentifierIndex = null;
                     $scope.$apply();
                 }
@@ -3357,10 +3417,32 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         });
         $scope.closeModal();
     };
-
-    $scope.closeModal = function() {
-        $.colorbox.close();
+    
+    
+    
+    
+    //Person 2
+    $scope.deleteExternalIdentifier = function(externalIdentifier){
+        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+        var len = externalIdentifiers.length;
+        while (len--) {
+            if (externalIdentifiers[len] == externalIdentifier){
+                externalIdentifiers.splice(len,1);
+                $scope.externalIdentifiersForm.externalIdentifiers = externalIdentifiers;
+            }       
+        }
     };
+    
+    
+    $scope.closeEditModal = function(){
+        $.colorbox.close();
+    }
+    
+    //init
+    $scope.getExternalIdentifiersForm();
+    
+    
+    
 
 }]);
 

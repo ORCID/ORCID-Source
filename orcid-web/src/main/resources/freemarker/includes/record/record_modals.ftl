@@ -294,3 +294,71 @@
 </script>
 
 
+<script type="text/ng-template" id="edit-external-identifiers">
+	<div class="lightbox-container">
+		<div class="edit-record edit-websites">
+			<!-- Title -->
+			<div class="row">			
+				<div class="col-md-12 col-sm-12 col-xs-12">	
+					<h1 class="lightbox-title pull-left">
+						<!-- <@orcid.msg ''/> -->
+						Edit External Identifiers
+					</h1>
+				</div>			
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-xs-12 col-sm-12">
+					<div class="fixed-area">
+						<div class="scroll-area">		
+							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers | orderBy:'displayIndex'">
+								<div class="col-md-6">
+									<div class="aka">										
+										<p>
+											<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
+			        						<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
+										</p>										
+									</div>
+									<div class="source" ng-show="externalIdentifier.sourceName">Source: {{externalIdentifier.sourceName}}</div>										
+								</div>
+								
+								<div class="col-md-6">
+									<ul class="record-settings pull-right">
+										<li>												
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(website.displayIndex)"></span>											
+										</li>
+										<li>																						
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(website.displayIndex)"></span>											
+										</li>
+										<li>										
+											<span class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)"></span>											
+										</li>
+										<li>
+											<@orcid.privacyToggle3  angularModel="externalIdentifier.visibility.visibility"
+		             	  						questionClick="toggleClickPrivacyHelp($index)"
+		             	  						clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+		             	  						publicClick="setPrivacyModal('PUBLIC', $event, website)" 
+                	      						limitedClick="setPrivacyModal('LIMITED', $event, website)" 
+                	      						privateClick="setPrivacyModal('PRIVATE', $event, website)"
+                	      						elementId="$index"/>	
+										</li>
+									</ul>
+									<span class="created-date pull-right" ng-show="externalIdentifier.createdDate" ng-class="{'hidden-xs' : externalIdentifier.createdDate}">Created: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="externalIdentifier.createdDate" ng-class="{'visible-xs' : externalIdentifier.createdDate}">Created: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
+								</div>								
+								<div ng-show="website.errors.length > 0" class="col-md-12">									
+									<div ng-repeat="error in externalIdentifier.errors">
+										<span ng-bind="error" class="red"></span>
+									</div>
+								</div>					 				
+							</div>																								
+						</div>
+					</div>
+					<div class="record-buttons">	
+		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
