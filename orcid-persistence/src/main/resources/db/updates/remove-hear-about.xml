@@ -23,4 +23,10 @@
         <sql>DROP TABLE hear_about;</sql>
     </changeSet>
 
+    <changeSet id="REMOVE-REG-ROLE" author="rcpeters">
+        <sql>DROP TABLE registration_role;</sql>
+        <sql>DROP SEQUENCE registration_seq;</sql>
+    </changeSet>
+
+
 </databaseChangeLog>
