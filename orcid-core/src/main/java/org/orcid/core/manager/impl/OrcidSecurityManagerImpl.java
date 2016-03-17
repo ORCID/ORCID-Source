@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,7 +89,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private int writeValiditySeconds;
 
     @Override
-    public void checkVisibility(Filterable filterable) {
+    public void checkVisibility(Filterable filterable, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         // If it is null, it might be a call from the public API
         Set<String> readLimitedScopes = new HashSet<String>();
@@ -100,8 +101,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (oAuth2Authentication != null) {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
             clientId = authorizationRequest.getClientId();
-            readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable);
-            updateScopes = getUpdateScopesThatTheClientHas(authorizationRequest, filterable);
+            readLimitedScopes = getReadLimitedScopesThatTheClientHas(authorizationRequest, filterable, orcid);
+            updateScopes = getUpdateScopesThatTheClientHas(authorizationRequest, filterable, orcid);
         }
 
         // If we are using a read-limited or update scope and the client is the
@@ -131,7 +132,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkVisibility(Name name) {
+    public void checkVisibility(Name name, String orcid) {
         if (Visibility.PRIVATE.equals(name.getVisibility())) {
             throw new OrcidVisibilityException();
         }
@@ -144,7 +145,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkVisibility(Biography biography) {
+    public void checkVisibility(Biography biography, String orcid) {
         if (Visibility.PRIVATE.equals(biography.getVisibility())) {
             throw new OrcidVisibilityException();
         }
@@ -157,7 +158,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkVisibility(OtherName otherName) {
+    public void checkVisibility(OtherName otherName, String orcid) {
         if (Visibility.PRIVATE.equals(otherName.getVisibility())) {
             OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
             String clientId = null;
@@ -207,9 +208,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
     }
 
-    private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
-        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+    private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
         Set<String> readLimitedScopes = new HashSet<>();
+        if(orcid != null && !isCorrectUser(orcid)){
+            return readLimitedScopes;
+        }
+        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         readLimitedScopes.add(ScopePathType.READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
@@ -232,9 +236,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return readLimitedScopes;
     }
 
-    private Set<String> getUpdateScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable) {
-        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
+    private Set<String> getUpdateScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
         Set<String> updateScopes = new HashSet<>();
+        if(orcid != null && !isCorrectUser(orcid)){
+            return updateScopes;
+        }
+        Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         updateScopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
         updateScopes.add(ScopePathType.PERSON_UPDATE.value());
         if (filterable instanceof Work || filterable instanceof WorkSummary) {
@@ -257,6 +264,23 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
         updateScopes.retainAll(requestedScopes);
         return updateScopes;
+    }
+    
+    private boolean isCorrectUser(String orcid) {
+        OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
+        if (oAuth2Authentication != null) {
+            Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+            if (userAuthentication != null) {
+                Object principal = userAuthentication.getPrincipal();
+                if (principal instanceof ProfileEntity) {
+                    ProfileEntity profileEntity = (ProfileEntity) principal;
+                    if (orcid.equals(profileEntity.getId())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -315,11 +339,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return false;
     }
 
-    public void checkPermissions(ScopePathType requiredScope) {
-        checkScopes(requiredScope);
+    public void checkPermissions(ScopePathType requiredScope, String orcid) {
+        checkScopes(requiredScope, orcid);
     }
 
-    private void checkScopes(ScopePathType requiredScope) {
+    private void checkScopes(ScopePathType requiredScope, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
         Set<String> requestedScopes = authorizationRequest.getScope();
