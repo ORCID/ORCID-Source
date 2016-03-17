@@ -100,7 +100,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
     @Test
     @Rollback
     public void fullyPopulatedOrcidPersistsAllSolrDocumentFields() throws Exception {
-
         orcidIndexManager.persistProfileInformationForIndexing(getStandardOrcid());
         verify(solrDao).persist(eq(fullyPopulatedSolrDocumentForPersistence()));
 
@@ -193,9 +192,14 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         OrcidProfile limitedOrcid = getStandardOrcid();
         // hide other names fields
         limitedOrcid.getOrcidBio().getPersonalDetails().getGivenNames().setVisibility(Visibility.LIMITED);
-        limitedOrcid.getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(Visibility.LIMITED);
-        limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.LIMITED);
+        limitedOrcid.getOrcidBio().getPersonalDetails().getFamilyName().setVisibility(Visibility.LIMITED);        
         limitedOrcid.getOrcidBio().getPersonalDetails().getCreditName().setVisibility(Visibility.LIMITED);
+        limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.LIMITED);
+        if(limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName() != null) {
+            for(OtherName o : limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName()) {
+                o.setVisibility(Visibility.LIMITED);
+            }
+        }
         return limitedOrcid;
     }
 
@@ -569,6 +573,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
         source.setSourceOrcid(new SourceOrcid(orcid));
         externalIdentifier1.setSource(source);
         externalIdentifier1.setExternalIdReference(new ExternalIdReference(reference));
+        externalIdentifier1.setVisibility(Visibility.PUBLIC);
         return externalIdentifier1;
     }
 

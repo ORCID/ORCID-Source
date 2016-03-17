@@ -730,13 +730,9 @@ public class OrcidSolrDocument {
     }
 
     private void generateCombinedGivenAndFamilyNames() {
-        if (givenNames == null) {
-            setGivenAndFamilyNames(familyName);
-        }
-        if (familyName == null) {
-            setGivenAndFamilyNames(givenNames);
-        }
-        setGivenAndFamilyNames(givenNames + " " + familyName);
+        String givenAndFamilyNames = 
+                (givenNames == null) ? ((familyName == null) ? null : familyName) : (givenNames + ((familyName == null) ? "" : " " + familyName));
+        setGivenAndFamilyNames(givenAndFamilyNames);
     }
 
     public List<String> getArxiv() {
