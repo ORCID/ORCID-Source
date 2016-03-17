@@ -3352,7 +3352,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     
     $scope.setPrivacy = function(priv, $event) {
         $event.preventDefault();
-        $scope.externalIdentifierForm.visibility.visibility = priv;
+        $scope.externalIdentifiersForm.visibility.visibility = priv;
     };
     
     $scope.setPrivacyModal = function(priv, $event, externalIdentifier) {        
