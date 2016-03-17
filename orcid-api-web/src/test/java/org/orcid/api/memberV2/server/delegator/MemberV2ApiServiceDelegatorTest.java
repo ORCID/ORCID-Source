@@ -1369,8 +1369,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddPeerReviewDuplicateFails() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
         assertNotNull(response);
         PeerReview peerReview = (PeerReview) response.getEntity();
@@ -1380,7 +1379,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         peerReview.setPutCode(null);
         
-        response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+        response = serviceDelegator.createPeerReview("4444-4444-4444-4447", peerReview);
     }
     
     @Test
