@@ -1393,12 +1393,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return profileToReturn;
     }
 
-    private void setVisibilityToPrivate(OtherName otherName) {
-        if (otherName != null) {
-            otherName.setVisibility(Visibility.PRIVATE);
-        }
-    }
-    
     private void setVisibilityToPrivate(VisibilityType visibilityType) {
         if (visibilityType != null) {
             visibilityType.setVisibility(Visibility.PRIVATE);

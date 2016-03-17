@@ -56,7 +56,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "other-name")
-public class OtherName implements Serializable {
+public class OtherName implements VisibilityType, Serializable {
 
     /**
      * 
