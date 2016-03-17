@@ -58,14 +58,14 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     private OrcidSecurityManager orcidSecurityManager;
 
     @Override
-    public ActivitiesSummary filter(ActivitiesSummary activitiesSummary) {
+    public ActivitiesSummary filter(ActivitiesSummary activitiesSummary, String orcid) {
         if (activitiesSummary == null) {
             return null;
         }
         Educations educations = activitiesSummary.getEducations();
         if (educations != null) {
             List<EducationSummary> summaries = educations.getSummaries();
-            filter(summaries);
+            filter(summaries, orcid);
             if (summaries.isEmpty()) {
                 activitiesSummary.setEducations(null);
             }
@@ -73,7 +73,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         Employments employments = activitiesSummary.getEmployments();
         if (employments != null) {
             List<EmploymentSummary> summaries = employments.getSummaries();
-            filter(summaries);
+            filter(summaries, orcid);
             if (summaries.isEmpty()) {
                 activitiesSummary.setEmployments(null);
             }
@@ -81,7 +81,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         Fundings fundings = activitiesSummary.getFundings();
         if (fundings != null) {
             List<FundingGroup> fundingGroups = fundings.getFundingGroup();
-            filterGroups(fundingGroups);
+            filterGroups(fundingGroups, orcid);
             if (fundingGroups.isEmpty()) {
                 activitiesSummary.setFundings(null);
             }
@@ -89,7 +89,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         Works works = activitiesSummary.getWorks();
         if (works != null) {
             List<WorkGroup> workGroups = works.getWorkGroup();
-            filterGroups(workGroups);
+            filterGroups(workGroups, orcid);
             if (workGroups.isEmpty()) {
                 activitiesSummary.setWorks(null);
             }
@@ -98,7 +98,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         PeerReviews peerReviews = activitiesSummary.getPeerReviews();
         if(peerReviews != null) {
             List<PeerReviewGroup> peerReviewGroups = peerReviews.getPeerReviewGroup();
-            filterGroups(peerReviewGroups);
+            filterGroups(peerReviewGroups, orcid);
             if(peerReviewGroups.isEmpty()) {
                 activitiesSummary.setPeerReviews(null);
             }
@@ -108,13 +108,13 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     }
 
     @Override
-    public Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables) {
+    public Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables, String orcid) {
         if (filterables == null) {
             return null;
         }
         for (Iterator<? extends Filterable> iterator = filterables.iterator(); iterator.hasNext();) {
             try {
-                orcidSecurityManager.checkVisibility(iterator.next());
+                orcidSecurityManager.checkVisibility(iterator.next(), orcid);
             } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
                 iterator.remove();
             }
@@ -123,14 +123,14 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     }
 
     @Override
-    public Collection<? extends Group> filterGroups(Collection<? extends Group> groups) {
+    public Collection<? extends Group> filterGroups(Collection<? extends Group> groups, String orcid) {
         if (groups == null) {
             return null;
         }
         for (Iterator<? extends Group> iterator = groups.iterator(); iterator.hasNext();) {
             Group group = iterator.next();
             Collection<? extends GroupableActivity> activities = group.getActivities();
-            filter(activities);
+            filter(activities, orcid);
             if (activities.isEmpty()) {
                 iterator.remove();
             }
@@ -139,10 +139,10 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     }
 
     @Override
-    public PersonalDetails filter(PersonalDetails personalDetails) {
+    public PersonalDetails filter(PersonalDetails personalDetails, String orcid) {
         if(personalDetails.getName() != null) {
             try {
-                orcidSecurityManager.checkVisibility(personalDetails.getName());
+                orcidSecurityManager.checkVisibility(personalDetails.getName(), orcid);
             } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setName(null);
             }
@@ -150,7 +150,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         
         if(personalDetails.getBiography() != null) {
             try {
-                orcidSecurityManager.checkVisibility(personalDetails.getBiography());
+                orcidSecurityManager.checkVisibility(personalDetails.getBiography(), orcid);
             } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                 personalDetails.setBiography(null);
             }
@@ -161,7 +161,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
                 List<OtherName> filteredOtherNames = new ArrayList<OtherName>();
                 for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
                     try {
-                        orcidSecurityManager.checkVisibility(otherName);
+                        orcidSecurityManager.checkVisibility(otherName, orcid);
                         filteredOtherNames.add(otherName);
                     } catch(OrcidVisibilityException | OrcidUnauthorizedException e) {
                         // Client dont have permissions to see this other name
@@ -179,32 +179,32 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     }
 
     @Override
-    public Person filter(Person person) {
+    public Person filter(Person person, String orcid) {
         if(person.getAddresses() != null) {
-            filter(person.getAddresses().getAddress());
+            filter(person.getAddresses().getAddress(), orcid);
         }
         if(person.getEmails() != null) {
-            filter(person.getEmails().getEmails());
+            filter(person.getEmails().getEmails(), orcid);
         }
         if(person.getExternalIdentifiers() != null) {
-            filter(person.getExternalIdentifiers().getExternalIdentifier());
+            filter(person.getExternalIdentifiers().getExternalIdentifier(), orcid);
         }
         if(person.getKeywords() != null) {
-            filter(person.getKeywords().getKeywords());
+            filter(person.getKeywords().getKeywords(), orcid);
         }
         
         if(person.getOtherNames() != null) {
-            filter(person.getOtherNames().getOtherNames());
+            filter(person.getOtherNames().getOtherNames(), orcid);
         }
         
         if(person.getResearcherUrls() != null) {
-            filter(person.getResearcherUrls().getResearcherUrls());
+            filter(person.getResearcherUrls().getResearcherUrls(), orcid);
         }        
 
         // If it is private
         try {
             if (person.getBiography() != null) {
-                orcidSecurityManager.checkVisibility(person.getBiography());
+                orcidSecurityManager.checkVisibility(person.getBiography(), orcid);
             }
         } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
             person.setBiography(null);
@@ -212,7 +212,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
         try {
             if (person.getName() != null) {
-                orcidSecurityManager.checkVisibility(person.getName());
+                orcidSecurityManager.checkVisibility(person.getName(), orcid);
             }
         } catch (OrcidVisibilityException | OrcidUnauthorizedException e) {
             person.setName(null);

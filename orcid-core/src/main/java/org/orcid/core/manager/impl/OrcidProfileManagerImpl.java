@@ -91,7 +91,6 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OtherName;
-import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -110,6 +109,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
@@ -1007,7 +1008,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                                     .getTitle();
                                             Title titleToCompare = (newWorkToCompare.getWorkTitle() == null || newWorkToCompare.getWorkTitle().getTitle() == null) ? null
                                                     : newWorkToCompare.getWorkTitle().getTitle();
-                                            if (!isTheSameTitle(title, titleToCompare)) {
+                                            if (!isTheSameTitle(title, titleToCompare) && !areBothExtIdsPartOf(newWork.getWorkType(), workExtId, workExtIdToCompare)) {
                                                 String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId
                                                         .getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent();
                                                 String title1 = (title == null) ? "" : title.getContent();
@@ -1104,7 +1105,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                                         .getWorkTitle().getTitle();
                                                 Title titleToCompare = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null
                                                         : existingWork.getWorkTitle().getTitle();
-                                                if (!isTheSameTitle(title, titleToCompare)) {
+                                                if (!isTheSameTitle(title, titleToCompare) && !areBothExtIdsPartOf(orcidWork.getWorkType(), existingExternalIdentifier, newExternalIdentifier)) {
                                                     String extIdContent = (existingExternalIdentifier.getWorkExternalIdentifierId() == null || PojoUtil
                                                             .isEmpty(existingExternalIdentifier.getWorkExternalIdentifierId().getContent())) ? ""
                                                             : existingExternalIdentifier.getWorkExternalIdentifierId().getContent();
@@ -1124,6 +1125,30 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         }
+    }
+    
+    private boolean areBothExtIdsPartOf(WorkType workType, WorkExternalIdentifier existing, WorkExternalIdentifier newer) {
+        boolean isExistingPartOf = false;
+        boolean isNewPartOf = false;
+        if(WorkType.BOOK_CHAPTER.equals(workType)) {
+            if(WorkExternalIdentifierType.ISBN.equals(existing.getWorkExternalIdentifierType())) {        
+                isExistingPartOf = true;
+            }
+            
+            if(WorkExternalIdentifierType.ISBN.equals(newer.getWorkExternalIdentifierType())) {
+                isNewPartOf = true;
+            }
+        } else if(WorkType.JOURNAL_ARTICLE.equals(workType)) {
+            if(WorkExternalIdentifierType.ISSN.equals(existing.getWorkExternalIdentifierType())) {
+                isExistingPartOf = true;
+            }
+            
+            if(WorkExternalIdentifierType.ISSN.equals(newer.getWorkExternalIdentifierType())) {
+                isNewPartOf = true;
+            }
+        }
+        
+        return (isExistingPartOf && isNewPartOf);
     }
 
     /**

@@ -84,7 +84,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
         if (personalDetails == null)
             return Response.status(404).build();
-        personalDetails = visibilityFilter.filter(personalDetails);
+        personalDetails = visibilityFilter.filter(personalDetails, orcid);
 
         Optional<String> creditname = (personalDetails.getName() != null && personalDetails.getName().getCreditName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getCreditName().getContent()) : Optional.absent();
@@ -95,11 +95,11 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
 
         List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifier();
         @SuppressWarnings("unchecked")
-        List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds);
+        List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
 
         ActivitiesSummary as = profileEntityManager.getActivitiesSummary(orcid);
         ActivityUtils.cleanEmptyFields(as);
-        visibilityFilter.filter(as);
+        visibilityFilter.filter(as, orcid);
 
         return Response.ok(
                 new Cerif16Builder()
@@ -113,7 +113,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         long lastModifiedTime = getLastModifiedTime(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws);
+        orcidSecurityManager.checkVisibility(ws, orcid);
         if (ws == null || !translator.isPublication(ws.getType()))
             return Response.status(404).build();
 
@@ -126,7 +126,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         WorkSummary ws = workManager.getWorkSummary(orcid, id, lastModifiedTime);
         ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws);
+        orcidSecurityManager.checkVisibility(ws, orcid);
         if (ws == null || !translator.isProduct(ws.getType()))
             return Response.status(404).build();
 

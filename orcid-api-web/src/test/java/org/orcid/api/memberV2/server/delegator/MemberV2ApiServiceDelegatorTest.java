@@ -43,6 +43,7 @@ import org.junit.runner.RunWith;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
@@ -2817,6 +2818,112 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // TODO: TEST APPLICATIONS AND DELEGATION
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testViewOtherProfileDontWork() {                
+        try {
+            SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+            serviceDelegator.viewActivities("4444-4444-4444-4442");
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+            serviceDelegator.viewPerson("4444-4444-4444-4442");
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_PROFILE_READ_LIMITED);
+            serviceDelegator.viewPerson("4444-4444-4444-4442");
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_PROFILE_READ_LIMITED);
+            serviceDelegator.viewBiography("4444-4444-4444-4442");
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Check that activities read limited dont work for reading any activity
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED);
+        try {
+            //Check activities
+            serviceDelegator.viewActivities("4444-4444-4444-4442");
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            //Check works
+            serviceDelegator.viewWork("4444-4444-4444-4443", 1L);            
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            //Check fundings
+            serviceDelegator.viewFunding("4444-4444-4444-4443", 2L);            
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            //Check employments
+            serviceDelegator.viewEmployment("4444-4444-4444-4442", 16L);            
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            //Check educations
+            serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);            
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            //Check peer reviews            
+            serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);            
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
     private Organization getOrganization() {
         Organization org = new Organization();
         org.setName("Org Name");
