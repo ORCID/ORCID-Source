@@ -114,7 +114,6 @@ import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
-import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -1394,6 +1393,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return profileToReturn;
     }
 
+    private void setVisibilityToPrivate(OtherName otherName) {
+        if (otherName != null) {
+            otherName.setVisibility(Visibility.PRIVATE);
+        }
+    }
+    
     private void setVisibilityToPrivate(VisibilityType visibilityType) {
         if (visibilityType != null) {
             visibilityType.setVisibility(Visibility.PRIVATE);

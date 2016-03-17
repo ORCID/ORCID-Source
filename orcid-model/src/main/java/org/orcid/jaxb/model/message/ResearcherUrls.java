@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "researcherUrl" })
 @XmlRootElement(name = "researcher-urls")
-public class ResearcherUrls implements Serializable {
+public class ResearcherUrls implements VisibilityType, Serializable {
 
     /**
      * 

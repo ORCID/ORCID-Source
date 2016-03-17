@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
 
 /**
  * <p>
@@ -56,7 +56,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "other-name")
-public class OtherName implements VisibilityType, Serializable {
+public class OtherName implements Serializable {
 
     /**
      * 
