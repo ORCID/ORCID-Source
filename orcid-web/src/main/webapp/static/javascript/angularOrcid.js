@@ -1757,8 +1757,6 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         	
         	link = $filter('urlProtocol')(link);
         	
-        	console.log(link);
-        	
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
         	} else {
