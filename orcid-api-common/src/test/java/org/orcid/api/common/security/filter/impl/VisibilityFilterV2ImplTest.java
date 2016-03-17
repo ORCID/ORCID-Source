@@ -75,7 +75,7 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        visibilityFilter.filter(activitiesSummary);
+        visibilityFilter.filter(activitiesSummary, null);
         assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 
@@ -83,7 +83,7 @@ public class VisibilityFilterV2ImplTest {
     public void testFilterActivitiesOnPublicAPI() throws JAXBException {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
-        visibilityFilter.filter(activitiesSummary);
+        visibilityFilter.filter(activitiesSummary, null);
         assertEquals(expectedActivitiesSummary.toString(), activitiesSummary.toString());
     }
 
@@ -91,7 +91,7 @@ public class VisibilityFilterV2ImplTest {
     public void testFilterPersonalDetails() throws JAXBException {
         PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
         PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
-        visibilityFilter.filter(personalDetailsWithLimited);
+        visibilityFilter.filter(personalDetailsWithLimited, null);
         assertEquals(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());
     }
     
