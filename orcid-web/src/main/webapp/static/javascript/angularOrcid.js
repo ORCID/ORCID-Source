@@ -1723,7 +1723,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
 });
 
 //Currently being used in Fundings only
-orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingSrvc){
+orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
     	
     	var ngclass = '';
