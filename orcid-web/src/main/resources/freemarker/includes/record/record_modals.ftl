@@ -324,10 +324,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(externalIdentifier.displayIndex)"></span>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(externalIdentifier.displayIndex)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)"></span>											
@@ -336,9 +336,9 @@
 											<@orcid.privacyToggle3  angularModel="externalIdentifier.visibility.visibility"
 		             	  						questionClick="toggleClickPrivacyHelp($index)"
 		             	  						clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-		             	  						publicClick="setPrivacyModal('PUBLIC', $event, website)" 
-                	      						limitedClick="setPrivacyModal('LIMITED', $event, website)" 
-                	      						privateClick="setPrivacyModal('PRIVATE', $event, website)"
+		             	  						publicClick="setPrivacyModal('PUBLIC', $event, externalIdentifier)" 
+                	      						limitedClick="setPrivacyModal('LIMITED', $event, externalIdentifier)" 
+                	      						privateClick="setPrivacyModal('PRIVATE', $event, externalIdentifier)"
                 	      						elementId="$index"/>	
 										</li>
 									</ul>

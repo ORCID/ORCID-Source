@@ -3364,7 +3364,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         while (len--)
             if (externalIdentifiers[len] == externalIdentifier)            
                 externalIdentifiers[len].visibility.visibility = priv;        
-    };
+    };  
     
     
     $scope.openEditModal = function(){
@@ -3419,9 +3419,6 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         $scope.closeModal();
     };
     
-    
-    
-    
     //Person 2
     $scope.deleteExternalIdentifier = function(externalIdentifier){
         var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
@@ -3434,6 +3431,70 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         }
     };
     
+    $scope.swap = function(idxA, valueA, idxB, valueB){
+        $scope.externalIdentifiersForm.externalIdentifiers[idxA].displayIndex = valueB;
+        $scope.externalIdentifiersForm.externalIdentifiers[idxB].displayIndex = valueA;
+    };
+    
+    
+    $scope.setPriorityUp = function(displayIndex){
+        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+        var len = externalIdentifiers.length;
+        var current = 0;
+        var valueB = 0;
+        var idxB = 0;
+        while (len--) {
+            if (externalIdentifiers[len].displayIndex == displayIndex){
+                var idxA = len;
+            }
+            if (externalIdentifiers[len].displayIndex < displayIndex){
+                current = externalIdentifiers[len].displayIndex;
+                if (current >= valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
+        }
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    };
+    
+    $scope.setPriorityDown = function(displayIndex){
+        
+        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+        var len = externalIdentifiers.length;
+        
+        var current = 0;
+        var valueB = $scope.getLastDisplayIndex();
+        var idxB = 0;
+        while (len--) {
+            if (externalIdentifiers[len].displayIndex == displayIndex){
+                var idxA = len;
+            }
+            if (externalIdentifiers[len].displayIndex > displayIndex){
+                current = externalIdentifiers[len].displayIndex;
+                if (current <= valueB){
+                    valueB = current;
+                    idxB = len;
+                }
+            }
+        }
+        $scope.swap(idxA, displayIndex, idxB, valueB);
+    };
+    
+    $scope.getLastDisplayIndex = function(){
+        var last = 0;
+        var current = 0;
+        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+        var len = externalIdentifiers.length;
+        while (len--) {
+            current = externalIdentifiers[len].displayIndex;
+            if (current > last){
+                last = externalIdentifiers[len].displayIndex;
+            }
+        }
+        return last;
+   };
+
     
     $scope.closeEditModal = function(){
         $.colorbox.close();
