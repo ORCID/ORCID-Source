@@ -1573,7 +1573,7 @@ orcidNgModule.filter('urlProtocol', function(){
     return function(url){
     	if (url == null) return url;
     	if(!url.startsWith('http')) {    			
-            if (url.startsWith('//') > -1){            	
+            if (url.startsWith('//')){            	
             	url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
           	} else {
           	    url = 'http://' + url;    
@@ -1702,7 +1702,9 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         	
         if (link != null){
         	link = $filter('urlProtocol')(link);
+        	
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+            
         }else{
             output = output + id;        
         }
@@ -1754,6 +1756,8 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         if(link != null) {
         	
         	link = $filter('urlProtocol')(link);
+        	
+        	console.log(link);
         	
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
