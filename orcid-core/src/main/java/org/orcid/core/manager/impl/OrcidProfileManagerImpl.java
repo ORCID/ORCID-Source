@@ -1355,10 +1355,18 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             setVisibilityToPrivate(email);
         }
         setVisibilityToPrivate(minimalPersonalDetails.getCreditName());
-        if (minimalPersonalDetails.getOtherNames().getVisibility() != null)
-            minimalPersonalDetails.getOtherNames().setVisibility(Visibility.PRIVATE);
-        for (OtherName name : minimalPersonalDetails.getOtherNames().getOtherName())
-            setVisibilityToPrivate(name);
+        
+        if (minimalPersonalDetails.getOtherNames() != null) {
+            if (minimalPersonalDetails.getOtherNames().getVisibility() != null) {
+                minimalPersonalDetails.getOtherNames().setVisibility(Visibility.PRIVATE);
+            }
+            if (minimalPersonalDetails.getOtherNames().getOtherName() != null) {
+                for (OtherName name : minimalPersonalDetails.getOtherNames().getOtherName()) {
+                    setVisibilityToPrivate(name);
+                }
+            }
+        }
+        
 
         minimalBio.setPersonalDetails(minimalPersonalDetails);
         minimalBio.setContactDetails(minimalContactDetails);
