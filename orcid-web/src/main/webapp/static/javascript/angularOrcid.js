@@ -3326,7 +3326,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
             $scope.externalIdentifiersForm.visibility = null;         
         
         $.ajax({
-            url: getBaseUri() + '/my-orcid/externalIdentifierForm.json',
+            url: getBaseUri() + '/my-orcid/externalIdentifiers.json',
             type: 'POST',
             data:  angular.toJson($scope.externalIdentifiersForm),
             contentType: 'application/json;charset=UTF-8',

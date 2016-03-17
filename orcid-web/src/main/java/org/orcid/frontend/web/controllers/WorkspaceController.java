@@ -533,7 +533,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
-     * Updates the list of external identifiers assigned to a user
+     * Delete an external identifier
      * */
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
@@ -542,6 +542,20 @@ public class WorkspaceController extends BaseWorkspaceController {
             externalIdentifierManager.deleteExternalIdentifier(getCurrentUserOrcid(), Long.valueOf(externalIdentifier.getPutCode()), false);
         }       
         return externalIdentifier;
+    }
+    
+    /**
+     * Update the visibility of the given external identifeirs
+     * */
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.POST)
+    public @ResponseBody
+    ExternalIdentifiersForm updateExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifiersForm externalIdentifiers) {
+        
+        
+        //TODO
+        
+        
+        return externalIdentifiers;
     }
     
     @RequestMapping(value = "/my-orcid/sourceGrantReadWizard.json", method = RequestMethod.GET)
