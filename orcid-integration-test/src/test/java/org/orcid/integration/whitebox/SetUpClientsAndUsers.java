@@ -313,7 +313,7 @@ public class SetUpClientsAndUsers {
     @Resource
     protected ProfileEntityManager profileEntityManager;
     @Resource
-    protected GivenPermissionToDao givenPermissionToDao;
+    protected GivenPermissionToDao givenPermissionToDao;    
     
     @Before
     public void before() throws Exception {
@@ -572,9 +572,11 @@ public class SetUpClientsAndUsers {
             name.setGivenNames(new GivenNames(params.get(GIVEN_NAMES)));
             name.setFamilyName(new FamilyName(params.get(FAMILY_NAMES)));
             name.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
-            personalDetails.setName(name);
+            personalDetails.setName(name);            
             orcidProfileManager.updateNames(orcid, personalDetails);
-
+                       
+            profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
+            
             // Set default bio
             OrcidBio bio = new OrcidBio();
             bio.setBiography(new Biography(params.get(BIO), OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
@@ -615,7 +617,9 @@ public class SetUpClientsAndUsers {
             List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, true, 0, 10000);
             if (notifications != null && !notifications.isEmpty()) {
                 for (NotificationEntity notification : notifications) {
-                    notificationDao.remove(notification.getId());
+                    notificationDao.deleteNotificationItemByNotificationId(notification.getId());
+                    notificationDao.deleteNotificationWorkByNotificationId(notification.getId());
+                    notificationDao.deleteNotificationById(notification.getId());
                 }
             }
 
