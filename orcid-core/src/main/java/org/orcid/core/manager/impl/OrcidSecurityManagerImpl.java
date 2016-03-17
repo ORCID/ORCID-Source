@@ -90,6 +90,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
+        checkIsCorrectUser(orcid);
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         // If it is null, it might be a call from the public API
         Set<String> readLimitedScopes = new HashSet<String>();
@@ -133,6 +134,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkVisibility(Name name, String orcid) {
+        checkIsCorrectUser(orcid);
         if (Visibility.PRIVATE.equals(name.getVisibility())) {
             throw new OrcidVisibilityException();
         }
@@ -146,6 +148,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkVisibility(Biography biography, String orcid) {
+        checkIsCorrectUser(orcid);
         if (Visibility.PRIVATE.equals(biography.getVisibility())) {
             throw new OrcidVisibilityException();
         }
@@ -159,6 +162,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkVisibility(OtherName otherName, String orcid) {
+        checkIsCorrectUser(orcid);
         if (Visibility.PRIVATE.equals(otherName.getVisibility())) {
             OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
             String clientId = null;
@@ -210,9 +214,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
         Set<String> readLimitedScopes = new HashSet<>();
-        if(orcid != null && !isCorrectUser(orcid)){
-            return readLimitedScopes;
-        }
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         readLimitedScopes.add(ScopePathType.READ_LIMITED.value());
         readLimitedScopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
@@ -238,9 +239,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     private Set<String> getUpdateScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
         Set<String> updateScopes = new HashSet<>();
-        if(orcid != null && !isCorrectUser(orcid)){
-            return updateScopes;
-        }
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
         updateScopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
         updateScopes.add(ScopePathType.PERSON_UPDATE.value());
@@ -266,7 +264,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return updateScopes;
     }
     
-    private boolean isCorrectUser(String orcid) {
+    private void checkIsCorrectUser(String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         if (oAuth2Authentication != null) {
             Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
@@ -274,13 +272,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 Object principal = userAuthentication.getPrincipal();
                 if (principal instanceof ProfileEntity) {
                     ProfileEntity profileEntity = (ProfileEntity) principal;
-                    if (orcid.equals(profileEntity.getId())) {
-                        return true;
+                    if (!orcid.equals(profileEntity.getId())) {
+                        throw new OrcidUnauthorizedException("Access token is for a different record");
                     }
                 }
             }
         }
-        return false;
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
@@ -340,6 +337,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     public void checkPermissions(ScopePathType requiredScope, String orcid) {
+        if (orcid != null) {
+            checkIsCorrectUser(orcid);
+        }
         checkScopes(requiredScope, orcid);
     }
 
