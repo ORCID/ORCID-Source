@@ -2817,6 +2817,82 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // TODO: TEST APPLICATIONS AND DELEGATION
     }
 
+    
+    
+    
+    
+    
+    
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testViewActitiviesOfOtherUser() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewActivities("4444-4444-4444-4442");
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
+        response = serviceDelegator.viewPerson("4444-4444-4444-4442");
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_PROFILE_READ_LIMITED);
+        response = serviceDelegator.viewPerson("4444-4444-4444-4442");
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ORCID_PROFILE_READ_LIMITED);
+        response = serviceDelegator.viewBiography("4444-4444-4444-4442");
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        //Check that activities read limited dont work for reading any activity
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED);
+        //Check activities
+        response = serviceDelegator.viewActivities("4444-4444-4444-4442");
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        //Check works
+        response = serviceDelegator.viewWork("4444-4444-4444-4443", 1L);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        //Check fundings
+        response = serviceDelegator.viewFunding("4444-4444-4444-4443", 2L);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        //Check employments
+        response = serviceDelegator.viewEmployment("4444-4444-4444-4442", 16L);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        
+        //Check educations
+        response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        
+        //Check peer reviews
+        response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 2L);
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private Organization getOrganization() {
         Organization org = new Organization();
         org.setName("Org Name");
