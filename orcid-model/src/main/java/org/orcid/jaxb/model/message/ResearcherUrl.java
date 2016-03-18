@@ -32,6 +32,8 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -58,7 +60,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "urlName", "url" })
 @XmlRootElement(name = "researcher-url")
-public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
+public class ResearcherUrl implements Comparable<ResearcherUrl>, VisibilityType, Serializable {
 
     /**
      * 
@@ -69,20 +71,27 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
     protected Url url;
 
     @XmlTransient
+    @JsonIgnore
+    protected Visibility visibility;
+    
+    @XmlTransient
+    @JsonIgnore
     protected Source source;
     
     public ResearcherUrl() {
         super();
     }
 
-    public ResearcherUrl(Url url) {
+    public ResearcherUrl(Url url, Visibility vis) {
         super();
         this.url = url;
+        this.visibility = vis;
     }
 
-    public ResearcherUrl(Url url, UrlName urlName) {
+    public ResearcherUrl(Url url, UrlName urlName,Visibility vis) {
         super();
         this.url = url;
+        this.visibility = vis;
         this.urlName = urlName;
     }
 
@@ -132,6 +141,14 @@ public class ResearcherUrl implements Comparable<ResearcherUrl>, Serializable {
      */
     public void setUrl(Url value) {
         this.url = value;
+    }
+    
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     public Source getSource() {

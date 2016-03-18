@@ -299,8 +299,8 @@ public class OrcidSearchManagerImplTest extends BaseTest {
         personalDetails.setGivenNames(new GivenNames("Donald Edward"));
         personalDetails.setCreditName(new CreditName("Stanley Higgins"));
         OtherNames otherNames = new OtherNames();
-        otherNames.getOtherName().add(new OtherName("Edward Bass"));
-        otherNames.getOtherName().add(new OtherName("Gareth Dove"));
+        otherNames.getOtherName().add(new OtherName("Edward Bass",null));
+        otherNames.getOtherName().add(new OtherName("Gareth Dove",null));
         personalDetails.setOtherNames(otherNames);
         orcidBio.setPersonalDetails(personalDetails);
         orcidProfile.setOrcidBio(orcidBio);

@@ -29,6 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
 public class TreeCleaner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TreeCleaner.class);
@@ -119,7 +121,7 @@ public class TreeCleaner {
         for (Method getter : getters) {
             try {
                 Object returned = getter.invoke(ob);
-                if (returned == null) {
+                if (returned == null || org.orcid.jaxb.model.message.Visibility.class.isAssignableFrom(returned.getClass())) {
                     inactiveCount++;
                 } else if (Collection.class.isAssignableFrom(returned.getClass())) {
                     Collection<?> coll = (Collection<?>) returned;

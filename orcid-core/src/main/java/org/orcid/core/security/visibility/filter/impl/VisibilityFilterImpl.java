@@ -83,29 +83,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, false, false, false, visibilities);
-    }
-
-    /**
-     * Remove the elements that are not present in the list of set of
-     * {@link org.orcid.jaxb.model.message .Visibility}s present in the array
-     * passed in By default the remaining visibility elements will not be
-     * removed from the object.
-     * 
-     * However, it will allow private activities where the source is the one passed by parameter
-     * 
-     * @param messageToBeFiltered
-     *            the {@link org.orcid.jaxb.model.message.OrcidMessage} that
-     *            will be traversed looking for
-     *            {@link org .orcid.jaxb.model.message.VisibilityType}
-     * @param visibilities
-     *            What {@link org.orcid.jaxb.model.message.Visibility} elements
-     *            should be allowed.
-     * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
-     */
-    @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final boolean removeAttribute, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, false, false, removeAttribute, visibilities);
+        return filter(messageToBeFiltered, null, false, false, false, visibilities);
     }
     
     /**
@@ -130,7 +108,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
      */
     @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, final boolean removeAttribute, Visibility... visibilities) {
+    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, Visibility... visibilities) {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
@@ -188,9 +166,6 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                 VisibilityType visibilityType = (VisibilityType) obj;
                                 if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
                                     decision = TreeCleaningDecision.CLEANING_REQUIRED;
-                                }
-                                if (removeAttribute) {
-                                    visibilityType.setVisibility(null);
                                 }
                             }
                         }

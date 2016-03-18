@@ -62,8 +62,6 @@ public interface ProfileEntityManager {
 
     boolean disableDeveloperTools(OrcidProfile profile);
 
-    Iso3166Country getCountry(String orcid);
-
     boolean isProfileClaimed(String orcid);
 
     ClientType getClientType(String orcid);
@@ -88,7 +86,7 @@ public interface ProfileEntityManager {
 
     boolean reviewProfile(String orcid);
     
-    Visibility getResearcherUrlDefaultVisibility(String orcid);
+    //Visibility getResearcherUrlDefaultVisibility(String orcid);
 
     List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
     

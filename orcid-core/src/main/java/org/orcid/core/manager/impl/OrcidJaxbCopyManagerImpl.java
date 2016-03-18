@@ -393,7 +393,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         }
 	}
 
-	@Override
+    @Override
     public void copyUpdatedResearcherUrlPreservingVisbility(OrcidBio existing, OrcidBio updated) {
         if (updated.getResearcherUrls() == null) {
             return;
