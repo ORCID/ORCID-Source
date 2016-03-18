@@ -232,13 +232,13 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    @VisibilityControl(visibilities = Visibility.PUBLIC)
     public OrcidProfile retrievePublicOrcidProfile(String orcid) {
         return retrievePublicOrcidProfile(orcid, LoadOptions.ALL);
     }
     
     @Override
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    @VisibilityControl(visibilities = Visibility.PUBLIC)
     public OrcidProfile retrievePublicOrcidProfile(String orcid, LoadOptions loadOptions) {
         return retrieveClaimedOrcidProfile(orcid, loadOptions);
     }

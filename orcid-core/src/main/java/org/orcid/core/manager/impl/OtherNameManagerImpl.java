@@ -180,7 +180,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     
     @Override
     @Transactional
-    public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility) {
+    public OtherNames updateOtherNames(String orcid, OtherNames otherNames) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
@@ -232,9 +232,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
         
-        if (defaultVisibility != null)
-            otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
-        
         return otherNames;
     }
 
@@ -251,10 +248,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
         return false;
     }
 
+    
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultOtherNamesVisibility = profile.getOtherNamesVisibility() == null ? org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getOtherNamesVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultOtherNamesVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultOtherNamesVisibility.isMoreRestrictiveThan(incomingOtherNameVisibility)) {
                 entity.setVisibility(defaultOtherNamesVisibility);

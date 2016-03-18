@@ -467,11 +467,6 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setNamesVisibility(Visibility.PRIVATE);
         profile.setGivenNames("Updated Give Name");
         profile.setFamilyName("Updated Last Name");
-        profile.setIso2Country(Iso3166Country.US);
-        profile.setKeywordsVisibility(Visibility.PRIVATE);
-        profile.setResearcherUrlsVisibility(Visibility.PRIVATE);
-        profile.setOtherNamesVisibility(Visibility.PRIVATE);
-        profile.setProfileAddressVisibility(Visibility.PRIVATE);
         boolean result = profileDao.updateProfile(profile);
         assertTrue(result);
         profile = profileDao.find("4444-4444-4444-4441");
@@ -481,11 +476,6 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE.value(), profile.getNamesVisibility().value());
         assertEquals("Updated Give Name", profile.getGivenNames());
         assertEquals("Updated Last Name", profile.getFamilyName());
-        assertEquals(Iso3166Country.US, profile.getIso2Country());
-        assertEquals(Visibility.PRIVATE.value(), profile.getKeywordsVisibility().value());
-        assertEquals(Visibility.PRIVATE.value(), profile.getResearcherUrlsVisibility().value());
-        assertEquals(Visibility.PRIVATE.value(), profile.getOtherNamesVisibility().value());
-        assertEquals(Visibility.PRIVATE.value(), profile.getProfileAddressVisibility().value());
     }
 
     @Test

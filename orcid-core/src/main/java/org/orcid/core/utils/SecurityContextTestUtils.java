@@ -29,6 +29,7 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,7 +51,11 @@ public class SecurityContextTestUtils {
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
         SecurityContextHolder.setContext(securityContext);
-        when(mockedAuthentication.getPrincipal()).thenReturn(new ProfileEntity(userOrcid));
+        ProfileEntity userProfileEntity = new ProfileEntity(userOrcid);
+        when(mockedAuthentication.getPrincipal()).thenReturn(userProfileEntity);
+        Authentication userAuthentication = mock(Authentication.class);
+        when(userAuthentication.getPrincipal()).thenReturn(userProfileEntity);
+        when(mockedAuthentication.getUserAuthentication()).thenReturn(userAuthentication);
         Set<String> scopes = new HashSet<String>();
         if (scopePathTypes != null) {
             for (ScopePathType scopePathType : scopePathTypes) {

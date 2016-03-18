@@ -548,15 +548,22 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
         if (profileEntityKeywords != null && !profileEntityKeywords.isEmpty()) {
             Keywords keywords = new Keywords();
-            keywords.setVisibility(profileEntity.getKeywordsVisibility());
+            Visibility mostRestrictive = Visibility.PUBLIC;
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
-                Keyword keyword = new Keyword(keywordEntity.getKeywordName());
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (keywordEntity.getVisibility() != null)?Visibility.fromValue(keywordEntity.getVisibility().value()):Visibility.PRIVATE;                
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+                
+                Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
                 if(keywordEntity.getSource() != null) {
                     Source source = createSource(keywordEntity.getSource().getSourceId());
                     keyword.setSource(source);
                 }
                 keywords.getKeyword().add(keyword);
             }
+            keywords.setVisibility(mostRestrictive);
             return keywords;
         }
         return null;
@@ -572,9 +579,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ResearcherUrlEntity> researcherUrlEntities = profileEntity.getResearcherUrls();
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
-            researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
+            Visibility mostRestrictive = Visibility.PUBLIC;
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
-                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (researcherUrl.getVisibility() != null)?Visibility.fromValue(researcherUrl.getVisibility().value()):Visibility.PRIVATE;                
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+
+                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()),vis);
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 
@@ -582,7 +595,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     Source source = createSource(researcherUrl.getSource().getSourceId());
                     url.setSource(source);
                 }
-                
+                researcherUrls.setVisibility(mostRestrictive);
                 researcherUrls.getResearcherUrl().add(url);
             }
             return researcherUrls;
@@ -593,10 +606,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private ExternalIdentifiers getExternalIdentifiers(ProfileEntity profileEntity) {
         Set<ExternalIdentifierEntity> externalIdentifierEntities = profileEntity.getExternalIdentifiers();
         ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
-        externalIdentifiers.setVisibility(profileEntity.getExternalIdentifiersVisibility());
+        Visibility mostRestrictive = Visibility.PUBLIC;
         if (externalIdentifierEntities != null) {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
-                ExternalIdentifier externalIdentifier = new ExternalIdentifier();
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (externalIdentifierEntity.getVisibility() != null)?Visibility.fromValue(externalIdentifierEntity.getVisibility().value()):Visibility.PRIVATE;
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+
+
+                ExternalIdentifier externalIdentifier = new ExternalIdentifier(vis);
+                
                 SourceEntity sourceEntity = externalIdentifierEntity.getSource();
                 if (sourceEntity != null) {
                     Source source = new Source();
@@ -614,9 +635,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         externalIdentifierEntity.getExternalIdCommonName()) : null);
                 externalIdentifier.setExternalIdUrl(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdUrl()) ? new ExternalIdUrl(externalIdentifierEntity
                         .getExternalIdUrl()) : null);
+                
                 externalIdentifiers.getExternalIdentifier().add(externalIdentifier);
             }
         }
+        externalIdentifiers.setVisibility(mostRestrictive);
         return externalIdentifiers;
     }
 
@@ -660,6 +683,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return delegation;
     }
 
+    
     private ContactDetails getContactDetails(ProfileEntity profileEntity) {
         ContactDetails contactDetails = new ContactDetails();
         setEmails(profileEntity, contactDetails);
@@ -667,15 +691,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return contactDetails;
     }
 
+    
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        Iso3166Country iso2Country = profileEntity.getIso2Country();
+        Iso3166Country iso2Country = null;
         SourceEntity sourceEntity = null;
-        
+        Visibility vis = null;
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
             for(AddressEntity address : profileEntity.getAddresses()) {
                 if(address.getPrimary() != null && address.getPrimary()) {
                     if(address.getIso2Country() != null) {
                         iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
+                        if(address.getVisibility() != null) {
+                            vis = Visibility.fromValue(address.getVisibility().value());
+                        }
                         break;
                     }
                     if(address.getSource() != null) {
@@ -688,7 +716,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (iso2Country != null) {
             Address address = new Address();
             Country country = new Country(iso2Country);
-            country.setVisibility(profileEntity.getProfileAddressVisibility());
+            country.setVisibility(vis);
             address.setCountry(country);
             if(sourceEntity != null) {
                 Source source = createSource(sourceEntity.getSourceId());
@@ -696,7 +724,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             }            
             contactDetails.setAddress(address);
         }
-    }        
+    }       
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         // The new way of doing emails.
@@ -964,11 +992,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OtherNames getOtherNames(ProfileEntity profile) {
         OtherNames otherNames = new OtherNames();
-        otherNames.setVisibility(profile.getOtherNamesVisibility());
+        Visibility mostRestrictive = Visibility.PUBLIC;
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
             for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
-                OtherName otherName = new OtherName(otherNameEntity.getDisplayName());
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+
+                
+                OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
                 if(otherNameEntity.getSource() != null) {
                     Source source = createSource(otherNameEntity.getSource().getSourceId());
                     otherName.setSource(source);
@@ -976,6 +1011,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 otherNames.getOtherName().add(otherName);
             }
         }
+        otherNames.setVisibility(mostRestrictive);
         return otherNames;
     }
 

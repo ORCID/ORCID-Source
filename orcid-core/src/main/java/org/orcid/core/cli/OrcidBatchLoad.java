@@ -33,6 +33,7 @@ import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Visibility;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -124,7 +125,7 @@ public class OrcidBatchLoad {
         profile.getOrcidBio().getContactDetails().addOrReplacePrimaryEmail(new Email(RandomStringUtils.randomAlphabetic(150)));
 
         Keywords keywords = new Keywords();
-        keywords.getKeyword().add(new Keyword(RandomStringUtils.randomAlphabetic(255)));
+        keywords.getKeyword().add(new Keyword(RandomStringUtils.randomAlphabetic(255), Visibility.PUBLIC));
         profile.getOrcidBio().setKeywords(keywords);
 
         profile.retrieveOrcidWorks().getOrcidWork();

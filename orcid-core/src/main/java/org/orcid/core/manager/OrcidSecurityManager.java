@@ -30,13 +30,13 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
  */
 public interface OrcidSecurityManager {
 
-    void checkVisibility(Filterable filterable);   
+    void checkVisibility(Filterable filterable, String orcid);   
     
-    void checkVisibility(Name name);
+    void checkVisibility(Name name, String orcid);
     
-    void checkVisibility(Biography biography);
+    void checkVisibility(Biography biography, String orcid);
     
-    void checkVisibility(OtherName otherName);
+    void checkVisibility(OtherName otherName, String orcid);
     
     void checkSource(SourceEntity existingSource);
 
@@ -46,5 +46,5 @@ public interface OrcidSecurityManager {
 
     String getClientIdFromAPIRequest();
     
-    void checkPermissions(ScopePathType requiredScope);
+    void checkPermissions(ScopePathType requiredScope, String orcid);
 }

@@ -72,8 +72,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
+        webDriver = new FirefoxDriver();        
+        webDriver.manage().window().maximize();
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);        
         signin();
     }
 
@@ -100,6 +101,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")));
         WebElement toggle = webDriver.findElement(By.id("open-edit-emails"));
         toggle.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-public-id")));
         WebElement privateVisibility = webDriver.findElement(By.id("email-" + emailValue + "-public-id"));
         privateVisibility.click();
         Thread.sleep(500);
@@ -173,8 +175,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")));
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-other-names")));
         privateVisibility = webDriver.findElement(By.id("other-names-public-id"));
         privateVisibility.click();
         saveButton = webDriver.findElement(By.id("save-other-names"));
@@ -194,7 +198,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         toggle = webDriver.findElement(By.id("open-edit-other-names"));
         toggle.click();
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='other-name']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-other-names")));
         List<WebElement> otherNames = webDriver.findElements(By.xpath("//input[@name='other-name']"));
         WebElement toClick = null;
         for (WebElement element : otherNames) {
@@ -317,7 +321,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("keywords-public-id")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")));
         privateVisibility = webDriver.findElement(By.id("keywords-public-id"));
         privateVisibility.click();
         Thread.sleep(150);
@@ -335,10 +339,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Rollback changes
         showMyOrcidPage();
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
         toggle = webDriver.findElement(By.id("open-edit-keywords"));
         toggle.click();
 
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")));
         List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));
         for (WebElement element : keywords) {
             if (keywordValue.equals(element.getAttribute("value"))) {
@@ -403,7 +408,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
         toggle = webDriver.findElement(By.id("open-edit-websites"));
         toggle.click();
-        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("websites-public-id")));
+        (new WebDriverWait(webDriver, FIVE)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-websites")));
         privateVisibility = webDriver.findElement(By.id("websites-public-id"));
         privateVisibility.click();
         saveButton = webDriver.findElement(By.id("save-websites"));

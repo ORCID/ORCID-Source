@@ -81,7 +81,7 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        visibilityFilter.filter(activitiesSummary);
+        visibilityFilter.filter(activitiesSummary, "4444-4444-4444-4441");
         // assertEquals(expectedActivitiesSummary.toString(),
         // activitiesSummary.toString());
         Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
@@ -93,7 +93,7 @@ public class VisibilityFilterV2ImplTest {
         ActivitiesSummary activitiesSummary = getActivitiesSummary("/activities-protected-full-latest.xml");
         ActivitiesSummary expectedActivitiesSummary = getActivitiesSummary("/activities-stripped-latest.xml");
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
-        visibilityFilter.filter(activitiesSummary);
+        visibilityFilter.filter(activitiesSummary, "4444-4444-4444-4441");
         Diff diff = new Diff(expectedActivitiesSummary.toString(), activitiesSummary.toString());
         assertTrue(diff.identical());
         // assertEquals(expectedActivitiesSummary.toString(),
@@ -105,7 +105,7 @@ public class VisibilityFilterV2ImplTest {
         PersonalDetails personalDetailsWithLimited = getPersonalDetails("/personal-details-protected.xml");
         PersonalDetails personalDetailsPublic = getPersonalDetails("/personal-details-public.xml");
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
-        visibilityFilter.filter(personalDetailsWithLimited);
+        visibilityFilter.filter(personalDetailsWithLimited, "4444-4444-4444-4441");
         // assertEquals(personalDetailsPublic.toString(),
         // personalDetailsWithLimited.toString());
         Diff diff = new Diff(personalDetailsPublic.toString(), personalDetailsWithLimited.toString());

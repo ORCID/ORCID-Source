@@ -47,7 +47,9 @@ public class Text implements ErrorsInterface, Required, Serializable {
     }
     
     public Keyword toKeyword() {
-        return new Keyword(this.value);
+        Keyword k = new Keyword();
+        k.setContent(this.value);
+        return k;
     }
 
     public Title toTitle() {
@@ -59,7 +61,9 @@ public class Text implements ErrorsInterface, Required, Serializable {
     }
     
     public OtherName toOtherName() {
-        return new OtherName(this.value);
+        OtherName n = new OtherName();
+        n.setContent(this.value);
+        return n;
     }
 
     public List<String> getErrors() {
