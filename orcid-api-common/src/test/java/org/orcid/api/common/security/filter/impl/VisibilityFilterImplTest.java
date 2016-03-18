@@ -62,16 +62,6 @@ public class VisibilityFilterImplTest extends XMLTestCase {
         assertTrue(myDiff.toString(), myDiff.similar());
     }
 
-    @Test
-    public void testFilterStripWithNoVisibilities() throws Exception {
-        protectedOrcidMessage = getOrcidMessage("/orcid-protected-full-message-latest.xml");
-        publicOrcidMessage = getOrcidMessage("/orcid-stripped-no-visibility-message-latest.xml");
-        OrcidMessage orcidMessage = visibilityFilter.filter(cascadeSectionPrivacyToItems(protectedOrcidMessage), true, Visibility.PUBLIC);
-        Diff myDiff = new Diff(publicOrcidMessage.toString(), orcidMessage.toString());
-        assertEquals(publicOrcidMessage.toString(), orcidMessage.toString());
-        assertTrue(myDiff.toString(), myDiff.similar());
-    }
-
     private OrcidMessage getOrcidMessage(String s) throws JAXBException {
         InputStream inputStream = VisibilityFilterImplTest.class.getResourceAsStream(s);
         return (OrcidMessage) unmarshaller.unmarshal(inputStream);

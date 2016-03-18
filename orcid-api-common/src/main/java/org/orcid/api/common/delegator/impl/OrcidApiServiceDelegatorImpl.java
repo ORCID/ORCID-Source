@@ -117,7 +117,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false)
+    @VisibilityControl()
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findBioDetailsFromPublicCache(String orcid) {
@@ -155,7 +155,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false)
+    @VisibilityControl()
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findExternalIdentifiersFromPublicCache(String orcid) {
@@ -193,7 +193,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false)
+    @VisibilityControl()
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findFullDetailsFromPublicCache(String orcid) {
@@ -225,7 +225,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false)
+    @VisibilityControl()
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findAffiliationsDetailsFromPublicCache(String orcid) {
@@ -262,7 +262,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false)
+    @VisibilityControl()
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findFundingDetailsFromPublicCache(String orcid) {
@@ -299,7 +299,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false)
+    @VisibilityControl()
     @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
     @NonLocked
     public Response findWorksDetailsFromPublicCache(String orcid) {

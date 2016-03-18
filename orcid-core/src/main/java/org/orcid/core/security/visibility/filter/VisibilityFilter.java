@@ -26,8 +26,6 @@ public interface VisibilityFilter {
 
     OrcidMessage filter(OrcidMessage messageToBeFiltered, Visibility... visibilities);
 
-    OrcidMessage filter(OrcidMessage messageToBeFiltered, boolean removeAttribute, Visibility... visibilities);
-    
-    OrcidMessage filter(OrcidMessage messageToBeFiltered, String sourceId, boolean allowPrivateWorks, boolean allowPrivateFunding, boolean allowPrivateAffiliations, boolean removeAttribute, Visibility... visibilities);
+    OrcidMessage filter(OrcidMessage messageToBeFiltered, String sourceId, boolean allowPrivateWorks, boolean allowPrivateFunding, boolean allowPrivateAffiliations, Visibility... visibilities);
     
 }
