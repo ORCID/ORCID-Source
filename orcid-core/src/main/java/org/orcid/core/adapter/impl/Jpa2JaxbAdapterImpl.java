@@ -548,13 +548,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
         if (profileEntityKeywords != null && !profileEntityKeywords.isEmpty()) {
             Keywords keywords = new Keywords();
-            Visibility leastRestrictive = Visibility.PRIVATE;
+            Visibility mostRestrictive = Visibility.PUBLIC;
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
                 
                 //will only be null if there's an issue with the data or you're using this layer directly
                 Visibility vis = (keywordEntity.getVisibility() != null)?Visibility.fromValue(keywordEntity.getVisibility().value()):Visibility.PRIVATE;                
-                if (leastRestrictive.isMoreRestrictiveThan(vis))
-                    leastRestrictive = vis;
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
                 
                 Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
                 if(keywordEntity.getSource() != null) {
@@ -563,7 +563,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 }
                 keywords.getKeyword().add(keyword);
             }
-            keywords.setVisibility(leastRestrictive);
+            keywords.setVisibility(mostRestrictive);
             return keywords;
         }
         return null;
@@ -579,13 +579,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ResearcherUrlEntity> researcherUrlEntities = profileEntity.getResearcherUrls();
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
-            Visibility leastRestrictive = Visibility.PRIVATE;
+            Visibility mostRestrictive = Visibility.PUBLIC;
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
                 
                 //will only be null if there's an issue with the data or you're using this layer directly
                 Visibility vis = (researcherUrl.getVisibility() != null)?Visibility.fromValue(researcherUrl.getVisibility().value()):Visibility.PRIVATE;                
-                if (leastRestrictive.isMoreRestrictiveThan(vis))
-                    leastRestrictive = vis;
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
 
                 ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()),vis);
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
@@ -595,7 +595,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     Source source = createSource(researcherUrl.getSource().getSourceId());
                     url.setSource(source);
                 }
-                researcherUrls.setVisibility(leastRestrictive);
+                researcherUrls.setVisibility(mostRestrictive);
                 researcherUrls.getResearcherUrl().add(url);
             }
             return researcherUrls;
@@ -606,14 +606,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private ExternalIdentifiers getExternalIdentifiers(ProfileEntity profileEntity) {
         Set<ExternalIdentifierEntity> externalIdentifierEntities = profileEntity.getExternalIdentifiers();
         ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
-        Visibility leastRestrictive = Visibility.PRIVATE;
+        Visibility mostRestrictive = Visibility.PUBLIC;
         if (externalIdentifierEntities != null) {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
                 
                 //will only be null if there's an issue with the data or you're using this layer directly
                 Visibility vis = (externalIdentifierEntity.getVisibility() != null)?Visibility.fromValue(externalIdentifierEntity.getVisibility().value()):Visibility.PRIVATE;
-                if (leastRestrictive.isMoreRestrictiveThan(vis))
-                    leastRestrictive = vis;
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
 
 
                 ExternalIdentifier externalIdentifier = new ExternalIdentifier(vis);
@@ -639,7 +639,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 externalIdentifiers.getExternalIdentifier().add(externalIdentifier);
             }
         }
-        externalIdentifiers.setVisibility(leastRestrictive);
+        externalIdentifiers.setVisibility(mostRestrictive);
         return externalIdentifiers;
     }
 
@@ -992,15 +992,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OtherNames getOtherNames(ProfileEntity profile) {
         OtherNames otherNames = new OtherNames();
-        Visibility leastRestrictive = Visibility.PRIVATE;
+        Visibility mostRestrictive = Visibility.PUBLIC;
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
             for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
                 
                 //will only be null if there's an issue with the data or you're using this layer directly
                 Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
-                if (leastRestrictive.isMoreRestrictiveThan(vis))
-                    leastRestrictive = vis;
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
 
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
@@ -1011,7 +1011,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 otherNames.getOtherName().add(otherName);
             }
         }
-        otherNames.setVisibility(leastRestrictive);
+        otherNames.setVisibility(mostRestrictive);
         return otherNames;
     }
 
