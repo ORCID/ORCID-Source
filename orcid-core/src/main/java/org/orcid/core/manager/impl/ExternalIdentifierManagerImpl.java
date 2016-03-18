@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -193,6 +194,48 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             return false;
         }
         return true;    
+    }
+
+    @Override
+    public PersonExternalIdentifiers updateExternalIdentifiers(String orcid, PersonExternalIdentifiers externalIdentifiers) {
+        List<ExternalIdentifierEntity> existingExternalIdentifiersList = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));        
+        // Delete the deleted ones
+        for (ExternalIdentifierEntity existing : existingExternalIdentifiersList) {
+            boolean deleteMe = true;
+            if(externalIdentifiers.getExternalIdentifier() != null) {
+                for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+                    if (existing.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
+                }
+            }            
+
+            if (deleteMe) {
+                try {
+                    externalIdentifierDao.removeExternalIdentifier(orcid, existing.getId());
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete external identifier " + existing.getId(), e);
+                }
+            }
+        }
+
+        if (externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
+            for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+                if (updatedOrNew.getPutCode() != null) {
+                    // Update the existing ones
+                    for (ExternalIdentifierEntity existingExtId : existingExternalIdentifiersList) {
+                        if (existingExtId.getId().equals(updatedOrNew.getPutCode())) {
+                            existingExtId.setLastModified(new Date());
+                            existingExtId.setVisibility(updatedOrNew.getVisibility());
+                            existingExtId.setDisplayIndex(updatedOrNew.getDisplayIndex());
+                            externalIdentifierDao.merge(existingExtId);
+                        }
+                    }
+                } 
+            }
+        }
+        return externalIdentifiers;
     }
 
 }

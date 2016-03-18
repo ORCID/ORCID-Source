@@ -549,13 +549,10 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.POST)
     public @ResponseBody
-    ExternalIdentifiersForm updateExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifiersForm externalIdentifiers) {
-        
-        
-        //TODO
-        
-        
-        return externalIdentifiers;
+    ExternalIdentifiersForm updateExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifiersForm externalIdentifiersForm) {        
+        PersonExternalIdentifiers externalIdentifiers = externalIdentifiersForm.toPersonExternalIdentifiers();
+        externalIdentifiers = externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
+        return externalIdentifiersForm;
     }
     
     @RequestMapping(value = "/my-orcid/sourceGrantReadWizard.json", method = RequestMethod.GET)
