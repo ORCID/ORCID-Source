@@ -2932,7 +2932,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
        $scope.otherNamesForm.otherNames[idxB].displayIndex = valueA;
     }    
     
-    $scope.setPriorityUp = function(displayIndex){        
+    $scope.setPriorityUp = function(displayIndex){
         var otherNames = $scope.otherNamesForm.otherNames;
         var len = otherNames.length;
         var current = 0;
@@ -3302,7 +3302,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
 
 orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', function ($scope, $compile){
-    $scope.externalIdentifiersForm = null;
+    
+	$scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;
     $scope.primary = true;
     
@@ -3313,6 +3314,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
             dataType: 'json',
             success: function(data) {
                 $scope.externalIdentifiersForm = data;
+                $scope.displayIndexInit();
                 $scope.$apply();
             }
         }).fail(function(){
@@ -3333,10 +3335,9 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
             dataType: 'json',
             success: function(data) {
                 $scope.externalIdentifiersForm = data;
-                if ($scope.externalIdentifiersForm.errors.length == 0){
-                    $scope.close();
+                if ($scope.externalIdentifiersForm.errors.length == 0){                    
                     $scope.getExternalIdentifiersForm();                
-                    $.colorbox.close();
+                    $scope.closeEditModal();
                 }else{
                     console.log($scope.externalIdentifiersForm.errors);
                 }
@@ -3449,7 +3450,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
             }
             if (externalIdentifiers[len].displayIndex < displayIndex){
                 current = externalIdentifiers[len].displayIndex;
-                if (current >= valueB){
+                if (current > valueB){
                     valueB = current;
                     idxB = len;
                 }
@@ -3459,8 +3460,9 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     };
     
     $scope.setPriorityDown = function(displayIndex){
-        
+
         var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+        
         var len = externalIdentifiers.length;
         
         var current = 0;
@@ -3484,6 +3486,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     $scope.getLastDisplayIndex = function(){
         var last = 0;
         var current = 0;
+        
         var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
         var len = externalIdentifiers.length;
         while (len--) {
@@ -3492,19 +3495,40 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
                 last = externalIdentifiers[len].displayIndex;
             }
         }
+        
         return last;
    };
+   
+   
+   //To fix displayIndex values that comes with -1
+   $scope.displayIndexInit = function(){
+	   var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+	   var len = externalIdentifiers.length;
+	   var displayIndex = 0;
+	   var lastDisplayIndex = $scope.getLastDisplayIndex();
+	   
+	   if(lastDisplayIndex == -1)
+		   displayIndex = 0;
+	   else
+		   displayIndex = lastDisplayIndex;
+	   
+       while (len--) {
+    	    if (externalIdentifiers[len].displayIndex == -1){
+    	    	displayIndex++;
+            	externalIdentifiers[len].displayIndex = displayIndex;	
+    	    }
+       }
+       $scope.externalIdentifiersForm.externalIdentifiers = externalIdentifiers;       
+   }
 
     
-    $scope.closeEditModal = function(){
-        $.colorbox.close();
-    }
+   $scope.closeEditModal = function(){
+	   $.colorbox.close();
+   }
     
-    //init
-    $scope.getExternalIdentifiersForm();
-    
-    
-    
+   //init
+   $scope.getExternalIdentifiersForm();
+   
 
 }]);
 
