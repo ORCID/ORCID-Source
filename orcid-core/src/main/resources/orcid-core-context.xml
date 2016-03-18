@@ -104,8 +104,6 @@
 		</property>
 	</bean>
 
-	<bean id="hearAboutManager" class="org.orcid.core.manager.impl.HearAboutManagerImpl" />
-
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="notificationManager" ref="notificationManager" />
@@ -120,8 +118,6 @@
 	<bean id="sponsorManager" class="org.orcid.core.manager.impl.SponsorManagerImpl" />
 
 	<bean id="securityQuestionManager" class="org.orcid.core.manager.impl.SecurityQuestionManagerImpl" />
-
-	<bean id="registrationRoleManager" class="org.orcid.core.manager.impl.RegistrationRoleManagerImpl" />
 
 	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">
 		<property name="numberOfIndexingThreads" value="${org.orcid.core.numberOfIndexingThreads:4}" />

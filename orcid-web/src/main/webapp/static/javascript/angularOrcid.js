@@ -1360,7 +1360,7 @@ orcidNgModule.factory("prefsSrvc", function ($rootScope) {
     return serv; 
 });
 
-orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) {
+orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootScope, $q) {
     var defaultMaxResults = 10;
     var serv = {
         loading: true,
@@ -1417,7 +1417,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 url: getBaseUri() + '/inbox/unreadCount.json',
                 dataType: 'json',
                 success: function(data) {
-                    serv.unreadCount = data;
+                    serv.unreadCount = data;                   
                     $rootScope.$apply();
                 }
             }).fail(function() {
@@ -1493,8 +1493,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
             serv.reloadNotifications();
         },
         swapbulkChangeAll: function(){
-            serv.bulkChecked = !serv.bulkChecked; 
-            console.log(serv.bulkChecked);
+            serv.bulkChecked = !serv.bulkChecked;
             if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
             else
@@ -1503,10 +1502,36 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', function ($rootScope) 
                 serv.selectionActive = true;
             
         },
-        bulkArchive: function(){
+        bulkArchive: function(){            
+            var promises = [];
+            var tmpNotifications = serv.notifications;
+            
+            function archive(notificationId){                
+                var defer = $q.defer(notificationId);                
+                $.ajax({
+                    url: getBaseUri() + '/inbox/' + notificationId + '/archive.json',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data) {
+                        defer.resolve(notificationId);
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error flagging notification as archived");
+                });                
+                return defer.promise;
+            }
+            
             for (putCode in serv.bulkArchiveMap)
-                if(serv.bulkArchiveMap[putCode])                    
-                    serv.archive(putCode);            
+                if(serv.bulkArchiveMap[putCode])
+                    promises.push(archive(putCode));            
+            
+            $q.all(promises).then(function(){
+                serv.bulkArchiveMap.length = 0;
+                serv.bulkChecked = false;
+                serv.reloadNotifications();
+            });
+            
         },
         checkSelection: function(){
             
@@ -1543,12 +1568,19 @@ orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
     return widgetSrvc;
 }]);
 
-orcidNgModule.filter('urlWithHttp', function(){
-    return function(input){
-        if (input == null) return input;
-        if (!input.startsWith('http')) return 'http://' + input;
-        return input;
-    };
+
+orcidNgModule.filter('urlProtocol', function(){
+    return function(url){
+    	if (url == null) return url;
+    	if(!url.startsWith('http')) {    			
+            if (url.startsWith('//')){            	
+            	url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
+          	} else {
+          	    url = 'http://' + url;    
+          	}
+        }
+        return url;
+    }
 });
 
 orcidNgModule.filter('latex', function(){
@@ -1635,7 +1667,7 @@ orcidNgModule.filter('contributorFilter', function(){
 });
 
 
-orcidNgModule.filter('workExternalIdentifierHtml', function(){
+orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
 
         var output = '';
@@ -1669,13 +1701,14 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
         else link = workIdLinkJs.getLink(id,type); 
         	
         if (link != null){
-        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {        	    
-        		link = 'http://' + link;
-        	}
+        	link = $filter('urlProtocol')(link);
+        	
             output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+            
         }else{
             output = output + id;        
         }
+        
         output += '<div class="popover-pos">\
 			<div class="popover-help-container">\
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
@@ -1692,7 +1725,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function(){
 });
 
 //Currently being used in Fundings only
-orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingSrvc){
+orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
     return function(externalIdentifier, first, last, length, type, moreInfo){
     	
     	var ngclass = '';
@@ -1721,8 +1754,8 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', function(fundingS
             link = externalIdentifier.url.value;
        
         if(link != null) {
-        	if (link.search(/^http[s]?\:\/\//) == -1)
-            	link = 'http://' + link;
+        	
+        	link = $filter('urlProtocol')(link);
         	
         	if(value != null) {
         		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
@@ -1794,9 +1827,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
         else link = workIdLinkJs.getLink(id,type); 
         	
         if (link != null){
-        	if(link.lastIndexOf('http://') === -1 && link.lastIndexOf('https://') === -1) {
-        		link = '//' + link;
-        	}
+        	link = $filter('urlProtocol')(link);
             output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
         }else{
             output += id;        

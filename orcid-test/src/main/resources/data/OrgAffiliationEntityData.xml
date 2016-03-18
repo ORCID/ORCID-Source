@@ -302,5 +302,24 @@
             visibility="PRIVATE"
             source_id="4444-4444-4444-4446"
             />
+            
+	<org_affiliation_relation
+            id="16"
+            org_id="1"
+            orcid="4444-4444-4444-4442"
+            org_affiliation_relation_role="EMPLOYMENT"
+            org_affiliation_relation_title="Primary Researcher"
+            department="A Department"
+            date_created="2010-07-02 15:31:00.00"
+            last_modified="2010-07-02 15:31:00.00"
+            start_year="2010"
+            start_month="07"
+            start_day="02"
+            end_year="2011"
+            end_month="07"
+            end_day="02"
+            visibility="PUBLIC"
+            source_id="4444-4444-4444-4442"
+            />            
                                                                                     
 </dataset>

@@ -19,9 +19,11 @@ package org.orcid.api.t2.server.delegator;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -502,8 +504,66 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         organizationAddress.setCity("Edinburgh");
         organizationAddress.setCountry(Iso3166Country.GB);
         t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
-    }
-
+    }    
+    
+    @Test
+    public void testViewOtherProfileDontWork() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        try {
+            t2OrcidApiServiceDelegator.findFullDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            t2OrcidApiServiceDelegator.findAffiliationsDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }        
+        
+        try {
+            t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }        
+        
+        try {
+            t2OrcidApiServiceDelegator.findExternalIdentifiers("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            t2OrcidApiServiceDelegator.findFundingDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            t2OrcidApiServiceDelegator.findWorksDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }                        
+    }        
+    
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
