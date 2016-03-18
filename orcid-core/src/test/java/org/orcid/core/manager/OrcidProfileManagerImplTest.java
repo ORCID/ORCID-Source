@@ -544,7 +544,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void testSectionLevelIsMostRestrictive(){
+    public void testSectionLevelIsLeastRestrictive(){
         OrcidProfile profile = createBasicProfile();
         profile = orcidProfileManager.createOrcidProfile(profile, false, false);
         Keywords kk = new Keywords();
@@ -578,10 +578,10 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         
-        assertEquals(Visibility.LIMITED,resultProfile.getOrcidBio().getKeywords().getVisibility());        
+        assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getKeywords().getVisibility());        
         assertEquals(Visibility.LIMITED,resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());                
-        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getResearcherUrls().getVisibility());
-        assertEquals(Visibility.PRIVATE,resultProfile.getOrcidBio().getExternalIdentifiers().getVisibility());
+        assertEquals(Visibility.LIMITED,resultProfile.getOrcidBio().getResearcherUrls().getVisibility());
+        assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getExternalIdentifiers().getVisibility());
     }
 
 
