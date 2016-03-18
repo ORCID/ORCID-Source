@@ -443,7 +443,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
-        //profileEntity.setResearcherUrlsVisibility(researcherUrls != null ? researcherUrls.getVisibility() : null);
         if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {
             List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
             SortedSet<ResearcherUrlEntity> researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
@@ -484,7 +483,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setOtherNames(ProfileEntity profileEntity, OtherNames otherNames) {
         if (otherNames != null) {
-            //profileEntity.setOtherNamesVisibility(otherNames.getVisibility());
             List<OtherName> otherNameList = otherNames.getOtherName();
             if (otherNameList != null && !otherNameList.isEmpty()) {
                 SortedSet<OtherNameEntity> otherNameEntities = new TreeSet<OtherNameEntity>();
@@ -544,7 +542,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileKeywordEntities = existingProfileKeywordEntities;
         }
         if (keywords != null) {
-            //profileEntity.setKeywordsVisibility(keywords.getVisibility());
             List<Keyword> keywordList = keywords.getKeyword();
             if (keywordList != null && !keywordList.isEmpty()) {
                 for (Keyword keyword : keywordList) {
@@ -570,10 +567,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private ProfileKeywordEntity getProfileKeywordEntity(Keyword keyword, ProfileEntity profileEntity, Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap, Visibility requestVisibility) {
         String keywordContent = keyword.getContent();
-        /*ProfileKeywordEntity existingProfileKeywordEntity = existingProfileKeywordEntitiesMap.get(keywordContent);
-        if (existingProfileKeywordEntity != null) {
-            return existingProfileKeywordEntity;
-        }*/
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setProfile(profileEntity);
@@ -597,8 +590,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
         if (externalIdentifiers != null) {
-            //profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
-
+            
             Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
             Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
             Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
@@ -718,8 +710,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }        
         
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
-        //profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
-        //profileEntity.setIso2Country(country);
         
         //Set the info in the address table
         if(country != null) {

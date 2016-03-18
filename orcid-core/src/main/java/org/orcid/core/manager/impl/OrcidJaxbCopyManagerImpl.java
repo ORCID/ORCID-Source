@@ -217,7 +217,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     }
 
     @Override
-    //TODO: needs to work with item level
     public void copyUpdatedExternalIdentifiersToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
         if (updated.getExternalIdentifiers() == null) {
             return;
@@ -276,7 +275,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
     }
 
     @Override
-    //TODO: needs to work with item level
     public void copyUpdatedKeywordsToExistingPreservingVisibility(OrcidBio existing, OrcidBio updated) {
         if (updated.getKeywords() == null) {
             return;
@@ -396,7 +394,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 	}
 
     @Override
-    //TODO: needs to work with item level
     public void copyUpdatedResearcherUrlPreservingVisbility(OrcidBio existing, OrcidBio updated) {
         if (updated.getResearcherUrls() == null) {
             return;
@@ -454,7 +451,6 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         }        
     }
 
-    //TODO: needs to work with item level
     private void copyOtherNamesPreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
         OtherNames existingOtherNames = existingPersonalDetails.getOtherNames();
         OtherNames updatedOtherNames = updatedPersonalDetails.getOtherNames();

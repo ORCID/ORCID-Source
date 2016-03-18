@@ -71,18 +71,6 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
         query.setParameter("keyword", keyword);
         return query.executeUpdate() > 0 ? true : false;
     }
-
-    /*
-    @Override
-    @Transactional
-    public boolean updateKeywordsVisibility(String orcid, Visibility visibility) {
-        Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), keywords_visibility=:keywords_visibility, indexing_status='PENDING' where orcid=:orcid");
-        query.setParameter("keywords_visibility", StringUtils.upperCase(visibility.value()));
-        query.setParameter("orcid", orcid);
-        boolean result = query.executeUpdate() > 0 ? true : false;
-        return result;
-    }*/
     
     /**
      * Adds a keyword to a specific profile

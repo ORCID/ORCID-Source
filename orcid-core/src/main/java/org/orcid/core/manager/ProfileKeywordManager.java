@@ -41,8 +41,6 @@ public interface ProfileKeywordManager {
 
     boolean deleteKeyword(String orcid, Long putCode, boolean checkSource);
     
-    //boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity);
-
     Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest);
 
     Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest);

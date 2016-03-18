@@ -875,9 +875,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                     address.setVisibility(Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             } else {
-                //ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-                //defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()) : org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getProfileAddressVisibility());
-                defaultVisibility = org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
+               defaultVisibility = org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
             }
                     
             addressManager.updateAddresses(getCurrentUserOrcid(), addresses);            

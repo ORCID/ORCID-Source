@@ -675,7 +675,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    //TODO: map visibilities
     public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {        
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
 
@@ -713,15 +712,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    //TODO: map visibilities
-
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {        
         addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid()); 
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
             return null;
         }
-        
         // preserve the visibility settings
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
         OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
@@ -846,15 +842,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             orcidProfileCacheManager.put(cachedProfile);
         }
     }
-
-    /*
-    @Override
-    @Transactional
-    public void updateCountry(OrcidProfile orcidProfile) {
-        
-        profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
-                orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
-    }*/
 
     @Override
     @Transactional
@@ -2043,37 +2030,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         : OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
             }
 
-            /*
-            if (profileEntity.getExternalIdentifiersVisibility() == null) {
-                profileEntity.setExternalIdentifiersVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getKeywordsVisibility() == null) {
-                profileEntity.setKeywordsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getResearcherUrlsVisibility() == null) {
-                profileEntity.setResearcherUrlsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
-            }
-*/
             if (profileEntity.getNamesVisibility() == null) {
                 profileEntity.setNamesVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
             }
 
-            /*
-            if (profileEntity.getOtherNamesVisibility() == null) {
-                profileEntity.setOtherNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getProfileAddressVisibility() == null) {
-                profileEntity.setProfileAddressVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-            }
-*/
             if (profileEntity.getActivitiesVisibilityDefault() == null) {
                 profileEntity.setActivitiesVisibilityDefault(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
                         : OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility());

@@ -380,7 +380,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
 
             Keywords updatedKeywords = kf.toKeywords();
-            //TODO: Remove the default visibility from the element
             Visibility defaultVisibility = kf.getVisibility();
             
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
@@ -421,7 +420,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
                     
             OtherNames otherNames = onf.toOtherNames();                
-            //TODO: Remove the visibility from the section element
             Visibility defaultVisibility = onf.getVisibility();
             
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {

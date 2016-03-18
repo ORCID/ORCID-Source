@@ -41,8 +41,6 @@ public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long
      * */
     boolean deleteProfileKeyword(String orcid, String keyword);
     
-    //boolean updateKeywordsVisibility(String orcid, Visibility visibility);
-
     /**
      * Adds a keyword to a specific profile
      * @param orcid

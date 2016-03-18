@@ -165,7 +165,6 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         return false;
     }
 
-    
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
         org.orcid.jaxb.model.common_rc2.Visibility defaultExternalIdentifierVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value());
@@ -176,7 +175,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         } else if (incomingExternalIdentifierVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }
-    }   
+    }    
 
     @Override
     public boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource) {

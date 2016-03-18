@@ -87,14 +87,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     OrcidProfile retrieveOrcidProfileWithNoInternal(String orcid);
 
     /**
-     * Persist the country and country visibility
-     * 
-     * * @param orcidProfile Profile containing the personal details, contact
-     * details and identifiers to replace those in the DB.
-     */
-    //void updateCountry(OrcidProfile orcidProfile);
-
-    /**
      * Persist the biography
      * 
      * * @param orcidProfile Profile containing the personal details, contact

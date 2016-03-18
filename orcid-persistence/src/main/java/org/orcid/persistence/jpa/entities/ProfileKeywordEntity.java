@@ -133,7 +133,6 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
     //TODO: this should include source.  To meet the Set contract it should include everything that equals does.
     @Override
     public int compareTo(ProfileKeywordEntity profileKeywordEntity) {
-        //return CompareToBuilder.reflectionCompare(this,  profileKeywordEntity);
         if (keywordName != null && profileKeywordEntity != null) {
             return keywordName.compareTo(profileKeywordEntity.getKeywordName());
         } else {

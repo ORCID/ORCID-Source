@@ -86,7 +86,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
     private String biography;
-    //private Iso3166Country iso2Country;
     private SortedSet<ProfileKeywordEntity> keywords;
     private Set<ExternalIdentifierEntity> externalIdentifiers;
     private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
@@ -142,14 +141,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     // Visibility settings
     private Visibility namesVisibility;
     private Visibility biographyVisibility;
-    //private Visibility profileAddressVisibility;
     private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
-
-    //depreciate visibilities
-    //private Visibility otherNamesVisibility;
-    //private Visibility keywordsVisibility;
-    //private Visibility externalIdentifiersVisibility;
-    //private Visibility researcherUrlsVisibility;
 
     // Salesfore ID
     private String salesforeId;
@@ -608,18 +600,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return accountExpiry;
     }
 
-    /*
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "iso2_country", length = 2)
-    public Iso3166Country getIso2Country() {
-        return iso2Country;
-    }
-
-    public void setIso2Country(Iso3166Country iso2Country) {
-        this.iso2Country = iso2Country;
-    }*/
-
     /**
      * Returns the authorities granted to the user. Cannot return
      * <code>null</code>.
@@ -837,18 +817,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.namesVisibility = namesVisibility;
     }
 
-    /*
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "other_names_visibility")
-    public Visibility getOtherNamesVisibility() {
-        return otherNamesVisibility;
-    }
-
-    public void setOtherNamesVisibility(Visibility otherNamesVisibility) {
-        this.otherNamesVisibility = otherNamesVisibility;
-    }*/
-
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "biography_visibility")
@@ -860,51 +828,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.biographyVisibility = biographyVisibility;
     }
 
-    /*
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "keywords_visibility")
-    public Visibility getKeywordsVisibility() {
-        return keywordsVisibility;
-    }
 
-    public void setKeywordsVisibility(Visibility keywordsVisibility) {
-        this.keywordsVisibility = keywordsVisibility;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "external_identifiers_visibility")
-    public Visibility getExternalIdentifiersVisibility() {
-        return externalIdentifiersVisibility;
-    }
-
-    public void setExternalIdentifiersVisibility(Visibility externalIdentifiersVisibility) {
-        this.externalIdentifiersVisibility = externalIdentifiersVisibility;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "researcher_urls_visibility")
-    public Visibility getResearcherUrlsVisibility() {
-        return researcherUrlsVisibility;
-    }
-
-    public void setResearcherUrlsVisibility(Visibility researcherUrlsVisibility) {
-        this.researcherUrlsVisibility = researcherUrlsVisibility;
-    }*/
-
-    /*
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "profile_address_visibility")
-    public Visibility getProfileAddressVisibility() {
-        return profileAddressVisibility;
-    }
-
-    public void setProfileAddressVisibility(Visibility profileAddressVisibility) {
-        this.profileAddressVisibility = profileAddressVisibility;
-    }*/
 
     @Basic
     @Enumerated(EnumType.STRING)
