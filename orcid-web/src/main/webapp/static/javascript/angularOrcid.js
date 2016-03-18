@@ -7229,6 +7229,7 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
     $scope.getCurrentLanguage = function(){
         $scope.language = $scope.languages[0]; //Default
         typeof($cookies.locale_v3) !== 'undefined' ? locale_v3 = $cookies.locale_v3 : locale_v3 = "en"; //If cookie exists we get the language value from it
+        
         angular.forEach($scope.languages, function(value, key){ //angular.forEach doesn't support break
             if (value.value == locale_v3){
             	$scope.language = $scope.languages[key];
@@ -7248,8 +7249,7 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
                 angular.forEach($scope.languages, function(value, key){
                     if(value.value == data.locale){
                         $scope.language = $scope.languages[key];
-                        $scope.widgetSrvc.setLocale($scope.language.value); 
-                        console.log($scope.widgetSrvc.locale);
+                        $scope.widgetSrvc.setLocale($scope.language.value);
                         window.location.reload(true);
                     }
                 });
