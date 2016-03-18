@@ -101,7 +101,6 @@ public class OrcidIndexManagerImplTest extends BaseTest {
     @Test
     @Rollback
     public void fullyPopulatedOrcidPersistsAllSolrDocumentFields() throws Exception {
-
         orcidIndexManager.persistProfileInformationForIndexing(getStandardOrcid());
         verify(solrDao).persist(eq(fullyPopulatedSolrDocumentForPersistence()));
 
@@ -200,6 +199,7 @@ public class OrcidIndexManagerImplTest extends BaseTest {
             name.setVisibility(Visibility.LIMITED);
         limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.LIMITED);
         limitedOrcid.getOrcidBio().getPersonalDetails().getCreditName().setVisibility(Visibility.LIMITED);
+        limitedOrcid.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.LIMITED);
         return limitedOrcid;
     }
 

@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
 
 /**
  * <p>
