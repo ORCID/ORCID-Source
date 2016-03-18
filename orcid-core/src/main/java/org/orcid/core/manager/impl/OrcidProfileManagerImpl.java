@@ -91,6 +91,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
@@ -1387,6 +1388,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     private void setVisibilityToPrivate(VisibilityType visibilityType) {
+        if (visibilityType != null) {
+            visibilityType.setVisibility(Visibility.PRIVATE);
+        }
+    }
+    
+    private void setVisibilityToPrivate(OtherNames visibilityType) {
         if (visibilityType != null) {
             visibilityType.setVisibility(Visibility.PRIVATE);
         }

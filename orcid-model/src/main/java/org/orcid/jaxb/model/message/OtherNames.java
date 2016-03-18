@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "otherName" })
 @XmlRootElement(name = "other-names")
-public class OtherNames implements VisibilityType, Serializable {
+public class OtherNames implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "other-name")
