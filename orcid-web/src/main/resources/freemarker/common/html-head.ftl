@@ -102,12 +102,7 @@
     <link href="${staticCdn}/html/respond-proxy.html" id="respond-proxy" rel="respond-proxy" />
     <link href="${staticLoc}/img/respond.proxy.gif" id="respond-redirect" rel="respond-redirect" />
     <script src="${staticLoc}/javascript/respond.proxy.js"></script>
-    
-    <#-- manage bio settings still requires modernizr :-( -->
-	    <#if request.requestURI?ends_with("account/manage-bio-settings")>
-	        <script src="${staticCdn}/javascript/modernizr.js?v=${ver}"></script>
-	</#if>	
-	
+        
 	<style type="text/css">
 		/* 
 	  	Allow angular.js to be loaded in body, hiding cloaked elements until 

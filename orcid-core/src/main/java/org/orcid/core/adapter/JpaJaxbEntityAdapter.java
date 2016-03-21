@@ -21,6 +21,7 @@ import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.message.DisambiguatedOrganization;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

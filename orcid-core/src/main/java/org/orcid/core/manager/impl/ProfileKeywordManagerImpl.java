@@ -91,15 +91,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
         return result;
-    }
-    
-    @Override
-    public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
-        Visibility v = (defaultVisiblity == null)
-                ? Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : defaultVisiblity;
-        return profileKeywordDao.updateKeywordsVisibility(orcid, v);
-    }
+    }       
 
     @Override
     public Keyword getKeyword(String orcid, Long putCode) {
@@ -181,7 +173,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
+    public Keywords updateKeywords(String orcid, Keywords keywords) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));        
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
@@ -232,11 +224,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                 }
             }
         }
-
-        if (defaultVisibility != null) {
-            updateKeywordsVisibility(orcid, defaultVisibility);
-        }
-
+        
         return keywords;
     }
 
@@ -255,9 +243,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = profile.getKeywordsVisibility() == null
-                ? org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getKeywordsVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultKeywordVisibility.isMoreRestrictiveThan(incomingKeywordVisibility)) {
                 entity.setVisibility(defaultKeywordVisibility);

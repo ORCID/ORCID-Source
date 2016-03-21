@@ -313,7 +313,7 @@ public class SetUpClientsAndUsers {
     @Resource
     protected ProfileEntityManager profileEntityManager;
     @Resource
-    protected GivenPermissionToDao givenPermissionToDao;
+    protected GivenPermissionToDao givenPermissionToDao;    
     
     @Before
     public void before() throws Exception {
@@ -572,9 +572,11 @@ public class SetUpClientsAndUsers {
             name.setGivenNames(new GivenNames(params.get(GIVEN_NAMES)));
             name.setFamilyName(new FamilyName(params.get(FAMILY_NAMES)));
             name.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
-            personalDetails.setName(name);
+            personalDetails.setName(name);            
             orcidProfileManager.updateNames(orcid, personalDetails);
-
+                       
+            profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
+            
             // Set default bio
             OrcidBio bio = new OrcidBio();
             bio.setBiography(new Biography(params.get(BIO), OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
@@ -582,15 +584,12 @@ public class SetUpClientsAndUsers {
             orcidProfileManager.updateBiography(existingProfile);
 
             // Remove other names
-            otherNameManager.updateOtherNames(orcid, new OtherNames(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value()));
+            otherNameManager.updateOtherNames(orcid, new OtherNames());
 
             // Remove keywords
-            profileKeywordManager.updateKeywords(orcid, new Keywords(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
+            profileKeywordManager.updateKeywords(orcid, new Keywords());
 
-            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
+            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls());
 
             // Remove external ids
             PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
@@ -602,8 +601,7 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove addresses
-            addressManager.updateAddresses(orcid, new Addresses(),
-                    org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            addressManager.updateAddresses(orcid, new Addresses());
 
             // Remove emails
             Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
@@ -619,7 +617,9 @@ public class SetUpClientsAndUsers {
             List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, true, 0, 10000);
             if (notifications != null && !notifications.isEmpty()) {
                 for (NotificationEntity notification : notifications) {
-                    notificationDao.remove(notification.getId());
+                    notificationDao.deleteNotificationItemByNotificationId(notification.getId());
+                    notificationDao.deleteNotificationWorkByNotificationId(notification.getId());
+                    notificationDao.deleteNotificationById(notification.getId());
                 }
             }
 

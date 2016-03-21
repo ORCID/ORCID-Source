@@ -53,5 +53,11 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
     void flagAsRead(String orcid, Long id);
 
     void flagAsArchived(String orcid, Long id);
+    
+    void deleteNotificationById(Long notificationId);
+    
+    void deleteNotificationItemByNotificationId(Long notificationId);
+    
+    void deleteNotificationWorkByNotificationId(Long notificationId);
 
 }

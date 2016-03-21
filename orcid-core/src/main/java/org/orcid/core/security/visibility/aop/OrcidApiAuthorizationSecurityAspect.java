@@ -209,14 +209,14 @@ public class OrcidApiAuthorizationSecurityAspect {
                             allowAffiliations = true;
                     }
 
-                    visibilityFilter.filter(orcidMessage, clientId, allowWorks, allowFunding, allowAffiliations, false,
+                    visibilityFilter.filter(orcidMessage, clientId, allowWorks, allowFunding, allowAffiliations,
                             visibilities.toArray(new Visibility[visibilities.size()]));
                 } else {
-                    visibilityFilter.filter(orcidMessage, null, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
+                    visibilityFilter.filter(orcidMessage, null, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
                 }
 
             } else {
-                visibilityFilter.filter(orcidMessage, null, false, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
+                visibilityFilter.filter(orcidMessage, null, false, false, false, visibilities.toArray(new Visibility[visibilities.size()]));
             }
             
             //This applies for given names that were filtered because of the new visibility field applied on them

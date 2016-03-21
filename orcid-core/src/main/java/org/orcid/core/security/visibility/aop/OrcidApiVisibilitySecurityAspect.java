@@ -40,7 +40,7 @@ public class OrcidApiVisibilitySecurityAspect {
     public void simpleVisibilityResponseFilter(Response response, VisibilityControl visibilityAnnotation) {
         Object entity = response != null ? response.getEntity() : null;
         if (entity != null && OrcidMessage.class.isAssignableFrom(entity.getClass())) {
-            visibilityFilter.filter((OrcidMessage) entity, visibilityAnnotation.removeAttributes(), visibilityAnnotation.visibilities());
+            visibilityFilter.filter((OrcidMessage) entity, visibilityAnnotation.visibilities());
         }
     }
 
@@ -48,7 +48,7 @@ public class OrcidApiVisibilitySecurityAspect {
     public void simpleVisibilityProfileFilter(OrcidProfile profile, VisibilityControl visibilityAnnotation) {
         if (profile != null) {
             OrcidMessage message = new OrcidMessage(profile);
-            visibilityFilter.filter(message, visibilityAnnotation.removeAttributes(), visibilityAnnotation.visibilities());
+            visibilityFilter.filter(message, visibilityAnnotation.visibilities());
         }
     }
 

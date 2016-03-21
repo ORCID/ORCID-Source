@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "otherName" })
 @XmlRootElement(name = "other-names")
-public class OtherNames implements Serializable, VisibilityType {
+public class OtherNames implements Serializable {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "other-name")
@@ -127,11 +127,11 @@ public class OtherNames implements Serializable, VisibilityType {
         this.visibility = value;
     }
 
-    public void addOtherName(String value) {
+    public void addOtherName(String value, Visibility vis) {
         if (getOtherName() == null) {
             setOtherName(new ArrayList<OtherName>());
         }
-        getOtherName().add(new OtherName(value));
+        getOtherName().add(new OtherName(value, vis));
     }
 
     @Override

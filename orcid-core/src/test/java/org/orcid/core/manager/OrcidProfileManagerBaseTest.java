@@ -139,11 +139,11 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         bio.setPersonalDetails(personalDetails);
 
         ResearcherUrls researcherUrls = new ResearcherUrls();
-        researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk")));
+        researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk"),null));
         bio.setResearcherUrls(researcherUrls);
         Keywords keywords = new Keywords();
         bio.setKeywords(keywords);
-        keywords.getKeyword().add(new Keyword("Java"));
+        keywords.getKeyword().add(new Keyword("Java",null));
         bio.setBiography(new Biography("Will is a software developer at Semantico"));
         return profile2;
     }
@@ -167,7 +167,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         bio.setBiography(new Biography("Will is a software developer"));
         ResearcherUrls researcherUrls = new ResearcherUrls();
         bio.setResearcherUrls(researcherUrls);
-        researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk")));
+        researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk"),null));
         OrcidWorks orcidWorks = new OrcidWorks();
         profile.setOrcidWorks(orcidWorks);
         OrcidWork orcidWork = createWork1();

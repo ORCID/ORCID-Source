@@ -909,6 +909,19 @@
             display_index="0"
             />
             
+	<address
+            id="8"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4443"
+            visibility="LIMITED"
+            is_primary="true"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="0"
+            source_id="4444-4444-4444-4443"
+            />
+		            
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"
