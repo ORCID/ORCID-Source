@@ -608,11 +608,11 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testDefaultPrivacyOnBio(){
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441",ScopePathType.ORCID_BIO_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499",ScopePathType.ORCID_BIO_UPDATE);
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
         OrcidProfile orcidProfile = new OrcidProfile();
-        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4441"));
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4499"));
         orcidMessage.setOrcidProfile(orcidProfile);
         OrcidBio orcidBio = new OrcidBio();
         orcidProfile.setOrcidBio(orcidBio);
@@ -636,9 +636,9 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidBio.setResearcherUrls(new ResearcherUrls());
         orcidBio.getResearcherUrls().getResearcherUrl().add(new ResearcherUrl(new Url("http://rurl2.com"),null));
         
-        Response r = t2OrcidApiServiceDelegator.updateBioDetails(mockedUriInfo, "4444-4444-4444-4441", orcidMessage);
+        t2OrcidApiServiceDelegator.updateBioDetails(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
         
-        OrcidProfile p = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4441");
+        OrcidProfile p = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4499");
         assertEquals("cn1",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
         assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
         assertEquals("on1",p.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
