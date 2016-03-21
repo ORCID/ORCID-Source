@@ -620,7 +620,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         orcidBio.setPersonalDetails(personalDetails);        
         GivenNames givenNames = new GivenNames("Test given names");
         personalDetails.setGivenNames(givenNames);
-        CreditName creditName = new CreditName("Test credit name");
+        CreditName creditName = new CreditName("Credit Name");
         personalDetails.setCreditName(creditName);
         
         ExternalIdentifier id = new ExternalIdentifier();
