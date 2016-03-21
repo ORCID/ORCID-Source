@@ -27,7 +27,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -58,7 +62,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl", "externalIdSource", "source" })
 @XmlRootElement(name = "external-identifier")
-public class ExternalIdentifier implements Serializable {
+public class ExternalIdentifier implements VisibilityType, Serializable {
 
     /**
      * 
@@ -86,9 +90,18 @@ public class ExternalIdentifier implements Serializable {
     protected ExternalIdUrl externalIdUrl;
     @XmlElement
     protected Source source;
-
+    
+    @XmlTransient
+    @JsonIgnore
+    protected Visibility visibility;
+  
     public ExternalIdentifier() {
         super();
+    }
+
+    public ExternalIdentifier(Visibility vis) {
+        super();
+        this.visibility=vis;
     }
 
     /**
@@ -194,6 +207,14 @@ public class ExternalIdentifier implements Serializable {
      */
     public void setExternalIdUrl(ExternalIdUrl value) {
         this.externalIdUrl = value;
+    }
+    
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
     }
 
     @Override

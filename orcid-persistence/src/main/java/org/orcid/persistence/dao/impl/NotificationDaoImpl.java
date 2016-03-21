@@ -120,4 +120,28 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
         query.executeUpdate();
     }
 
+    @Override
+    @Transactional
+    public void deleteNotificationItemByNotificationId(Long notificationId) {
+        Query query = entityManager.createNativeQuery("delete from notification_item where notification_id = :id");
+        query.setParameter("id", notificationId);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void deleteNotificationWorkByNotificationId(Long notificationId) {
+        Query query = entityManager.createNativeQuery("delete from notification_work where notification_id = :id");
+        query.setParameter("id", notificationId);
+        query.executeUpdate();
+    }
+
+    @Override
+    @Transactional
+    public void deleteNotificationById(Long notificationId) {
+        Query query = entityManager.createNativeQuery("delete from notification where id = :id");
+        query.setParameter("id", notificationId);
+        query.executeUpdate();
+    }
+
 }

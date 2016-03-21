@@ -20,6 +20,7 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;

@@ -246,13 +246,6 @@
        			</div>
        			
 			</div>
-																    
-	        <#if RequestParameters['OldPersonal']??>	        
-				<p class="hoover-white-fonts">	       
-		       		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-		        </p>
-	        </#if>
-			
         </div>
     </div>
     <div class="col-md-9 right-aside">
@@ -300,10 +293,8 @@
         			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text">
 	        			   			<i class="glyphicon-chevron-down glyphicon x0" ng-class="{'glyphicon-chevron-right':displayInfo==false}"></i></a>
 	        			   		</a>
-        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a></li>
-        			   		<#if RequestParameters['OldPersonal']??>	        
-        			   		   <li><a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a></li>        			   		
-        			        </#if>
+        			   			<a href="" ng-click="toggleDisplayInfo()" class="toggle-text"><@orcid.msg 'workspace.personal_information'/></a>
+        			   		</li>        			   		
         			   </ul>
         			</div>
             		<div class="workspace-accordion-content" ng-show="displayInfo">
