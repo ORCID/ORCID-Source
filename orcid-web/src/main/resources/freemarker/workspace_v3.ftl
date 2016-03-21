@@ -359,7 +359,7 @@
 	       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
 	       				<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
 	       			</div>
-	       			<div ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'>	       				
+	       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers | orderBy:'displayIndex'">	       				
 			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
 			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>				   		
 	       			</div>
