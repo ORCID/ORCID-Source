@@ -20,8 +20,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 
 /**
  * 

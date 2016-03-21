@@ -25,8 +25,8 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -98,9 +98,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
 
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
-                        + "from WorkEntity w "
-                        + "where w.profile.id=:orcid "
+                .createQuery("from MinimizedWorkEntity w "
+                        + "where w.orcid=:orcid "
                         + "order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
 
@@ -118,9 +117,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Cacheable(value = "dao-public-works", key = "#orcid.concat('-').concat(#lastModified)")
     public List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified) {
         Query query = entityManager
-                .createQuery("select NEW org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity(w.id, w.title, w.subtitle, w.journalTitle, w.description, w.publicationDate.day, w.publicationDate.month, w.publicationDate.year, w.visibility, w.externalIdentifiersJson, w.displayIndex, w.source, w.dateCreated, w.lastModified, w.workType, w.languageCode, w.translatedTitleLanguageCode, w.translatedTitle, w.workUrl) "
-                        + "from WorkEntity w "
-                        + "where w.visibility='PUBLIC' and w.profile.id=:orcid "
+                .createQuery("from MinimizedWorkEntity w "
+                        + "where w.visibility='PUBLIC' and w.orcid=:orcid "
                         + "order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
 
