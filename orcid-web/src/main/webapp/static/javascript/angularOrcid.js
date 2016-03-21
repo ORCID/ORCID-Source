@@ -3448,7 +3448,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         }).fail(function() {
             console.log("Error deleting external identifier.");
         });
-        $scope.closeModal();
+        $.colorbox.close();
     };
     
     //Person 2

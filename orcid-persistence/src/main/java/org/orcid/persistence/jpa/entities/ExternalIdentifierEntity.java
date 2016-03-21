@@ -133,7 +133,7 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
         this.visibility = visibility;
     }
     
-    @Column(name = "display_index", updatable=false, insertable=false)
+    @Column(name = "display_index")
     public Long getDisplayIndex() {
         return displayIndex;
     }
