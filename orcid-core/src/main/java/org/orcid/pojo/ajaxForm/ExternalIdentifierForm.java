@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 
 public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
@@ -62,6 +63,23 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
             form.setDisplayIndex(Long.valueOf(-1));
         }
         return form;
+    }
+    
+    public PersonExternalIdentifier toPersonExternalIdentifier() {
+        PersonExternalIdentifier result = new PersonExternalIdentifier();
+        if(putCode != null) {
+            result.setPutCode(Long.valueOf(putCode));
+        }
+        result.setDisplayIndex(displayIndex);
+        if(visibility != null && visibility.getVisibility() != null) {
+            result.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(visibility.getVisibility().value()));
+        }
+        if(url != null) {
+            result.setUrl(new Url(url));
+        }
+        result.setType(commonName);
+        result.setValue(reference);
+        return result;
     }
 
     public List<String> getErrors() {
