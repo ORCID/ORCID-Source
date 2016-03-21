@@ -641,8 +641,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, PersonExternalIdentifier externalIdentifier) {
-        if (!putCode.equals(externalIdentifier.getPutCode())) {
-            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
+        if (!putCode.equals(externalIdentifier.getPutCode())) {            
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
