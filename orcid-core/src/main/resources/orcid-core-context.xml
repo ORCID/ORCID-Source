@@ -148,7 +148,9 @@
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
-	
+
+	<bean id="workCacheManager" class="org.orcid.core.manager.impl.WorkCacheManagerImpl"/>
+
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
 	<bean id="webhookManager" class="org.orcid.core.manager.impl.WebhookManagerImpl">
@@ -506,8 +508,26 @@
 		<property name="maxElementsOnDisk" value="0" />
 		<property name="strategy" value="NONE" />
 	</bean>
+	
+	<bean id="workLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="work-last-modified" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToLiveSeconds" value="604800" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="500000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+    </bean>
 
-
+    <bean id="minimizedWorkCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="minimized-work" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToLiveSeconds" value="604800" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="500000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+    </bean>
 
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"

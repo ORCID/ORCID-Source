@@ -28,6 +28,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.WorkCacheManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
@@ -73,7 +74,10 @@ public class WorkManagerImpl implements WorkManager {
     private ProfileEntityManager profileEntityManager;
     
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;        
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private WorkCacheManager workCacheManager;
 
     @Resource
     private NotificationManager notificationManager;
@@ -185,26 +189,27 @@ public class WorkManagerImpl implements WorkManager {
             work.setSource(source);
         }
 
-        if (applyAPIValidations) {                                   
+        if (applyAPIValidations) {
             ActivityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
             Date lastModified = profileEntityManager.getLastModified(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-            List<MinimizedWorkEntity> works = workDao.findWorks(orcid, lastModifiedTime);
+            List<MinimizedWorkEntity> works = workCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
                 if (works != null) {
                     List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
                     for (Work existing : workEntities) {
-                        ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                        ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                                sourceEntity);
                     }
                 }
             }
-        }else{
-            //validate external ID vocab
-            ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
+        } else {
+            // validate external ID vocab
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());
         }
-        
+
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setProfile(profile);
@@ -289,7 +294,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> works = workDao.findWorks(orcid, lastModified);
+        List<MinimizedWorkEntity> works = workCacheManager.retrieveMinimizedWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 
