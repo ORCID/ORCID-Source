@@ -1794,7 +1794,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
     	};
 }]);
 
-orcidNgModule.filter('peerReviewExternalIdentifierHtml', function(){
+orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
     return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
     	
     	
@@ -6769,8 +6769,6 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             getPeerReviewGroupDetails: function(groupIDvalue, putCode){
             	var group = peerReviewSrvc.getGroup(putCode);
             	
-            	console.log(getBaseUri() + '/public/group/' + groupIDvalue);
-            	
             	$.ajax({
                     url: getBaseUri() + '/public/group/' + groupIDvalue,
                     dataType: 'json',
@@ -11114,6 +11112,21 @@ orcidNgModule.filter('formatBibtexOutput', function () {
 		return str.toUpperCase();
     };
 });
+
+
+orcidNgModule.filter('orderObjectBy', function() {
+	  return function(items, field, reverse) {
+	    var filtered = [];
+	    angular.forEach(items, function(item) {
+	      filtered.push(item);
+	    });
+	    filtered.sort(function (a, b) {
+	      return (a[field] > b[field] ? 1 : -1);
+	    });
+	    if(reverse) filtered.reverse();
+	    return filtered;
+	  };
+	});
 
 /*
  * For forms submitted using the default submit function (Scope: document)
