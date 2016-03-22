@@ -641,13 +641,13 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, PersonExternalIdentifier externalIdentifier) {
-        if (!putCode.equals(externalIdentifier.getPutCode())) {
-            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, orcid);
+        if (!putCode.equals(externalIdentifier.getPutCode())) {            
             Map<String, String> params = new HashMap<String, String>();
             params.put("urlPutCode", String.valueOf(putCode));
             params.put("bodyPutCode", String.valueOf(externalIdentifier.getPutCode()));
             throw new MismatchedPutCodeException(params);
-        }
+        }        
         PersonExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier, true);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();

@@ -518,9 +518,25 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testViewOtherProfileDontWork() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
+                ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
+                ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
+                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
+                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
+                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED, ScopePathType.READ_PUBLIC);        
+        String orcid = "4444-4444-4444-4442";                
         try {
-            t2OrcidApiServiceDelegator.findFullDetails("4444-4444-4444-4442");
+            t2OrcidApiServiceDelegator.findAffiliationsDetails(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }  
+        
+        try {
+            t2OrcidApiServiceDelegator.findFullDetails(orcid);
             fail();
         } catch(AccessControlException e) {
             assertEquals("You do not have the required permissions.", e.getMessage());
@@ -529,7 +545,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            t2OrcidApiServiceDelegator.findAffiliationsDetails("4444-4444-4444-4442");
+            t2OrcidApiServiceDelegator.findBioDetails(orcid);
             fail();
         } catch(AccessControlException e) {
             assertEquals("You do not have the required permissions.", e.getMessage());
@@ -538,16 +554,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         }        
         
         try {
-            t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4442");
-            fail();
-        } catch(AccessControlException e) {
-            assertEquals("You do not have the required permissions.", e.getMessage());
-        } catch(Exception e) {
-            fail();
-        }        
-        
-        try {
-            t2OrcidApiServiceDelegator.findExternalIdentifiers("4444-4444-4444-4442");
+            t2OrcidApiServiceDelegator.findExternalIdentifiers(orcid);
             fail();
         } catch(AccessControlException e) {
             assertEquals("You do not have the required permissions.", e.getMessage());
@@ -556,7 +563,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         }
                 
         try {
-            t2OrcidApiServiceDelegator.findFundingDetails("4444-4444-4444-4442");
+            t2OrcidApiServiceDelegator.findFundingDetails(orcid);
             fail();
         } catch(AccessControlException e) {
             assertEquals("You do not have the required permissions.", e.getMessage());
@@ -565,7 +572,7 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         }
                 
         try {
-            t2OrcidApiServiceDelegator.findWorksDetails("4444-4444-4444-4442");
+            t2OrcidApiServiceDelegator.findWorksDetails(orcid);
             fail();
         } catch(AccessControlException e) {
             assertEquals("You do not have the required permissions.", e.getMessage());
