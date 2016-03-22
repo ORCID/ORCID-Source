@@ -17,31 +17,22 @@
 
 -->
 	<#include "/common/browser-checks.ftl" />
-	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box oauth-signin-register" ng-controller="OauthAuthorizationController" ng-cloak>
-		<!-- Freemarker and GA variables -->
-		<#assign user_id = "">			
-		<#if userId??>
-			<#assign user_id = userId>
-        </#if>        
-        <#assign js_scopes_string = "">                
-        <#list scopes as scope>
-        	<#assign js_scopes_string = js_scopes_string + scope.name()?replace("ORCID_", "")?js_string + " ">
-		</#list>				      
+	<div class="col-md-12 col-sm-12 oauth-margin-top-bottom-box oauth-signin-register" ng-controller="OauthAuthorizationController" ng-cloak>		
 	    <!-- Freemarker and GA variables -->	    
-		<div class="app-client-name" ng-init="initScopes('${js_scopes_string}')">
-			<h3 ng-click="toggleClientDescription()">${client_name}
+		<div class="app-client-name">
+			<h3 ng-click="toggleClientDescription()">{{requestInfoForm.clientName}}
 				<a class="glyphicon glyphicon-question-sign oauth-question-sign"></a>
 			</h3>
 		</div>
 		<div class="app-client-description">
 			<p ng-show="showClientDescription">
-				<span class="uppercase gray-bold-about"><@orcid.msg 'oauth_sign_in.about'/></span> ${client_description}
+				<span class="uppercase gray-bold-about"><@orcid.msg 'oauth_sign_in.about'/></span> {{requestInfoForm.clientDescription}}
 			</p>
 		</div>
 		<div> 
 			<p><@orcid.msg 'orcid.frontend.oauth.have_asked'/></p>
 		</div>
-		<div>
+		<div> 
 			<#include "includes/oauth/scopes.ftl"/>
 		</div>
 		<div>
@@ -64,7 +55,7 @@
 						</div>
 						<!-- Personal Login -->
 						<!-- Login form -->
-						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm()" ng-cloak>
 							<div class="login-box">
 								<p class="title">Sign in with your ORCID account</p>
 								<div class="row personal-login">
@@ -98,7 +89,7 @@
 			                    <p class="title">Sign in with a social account <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
 			                    <ul class="social-icons">
 			                        <li>
-			                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST">
+			                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
 			                                <button type="submit" class="btn btn-social-icon btn-facebook"></button>
 			                                <input type="hidden" name="scope" value="email" />
 			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -106,7 +97,7 @@
 			                        </li>
 			                        <!-- 
 			                        <li>
-			                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST">
+			                            <form action="<@orcid.rootPath '/signin/twitter'/>" method="POST" ng-submit="loginSocial('twitter')">
 			                                <button type="submit" class="btn btn-social-icon btn-twitter"></button>
 			                                <input type="hidden" name="scope" value="email" />
 			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -114,7 +105,7 @@
 			                        </li>
 			                         -->
 			                         <li>
-			                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST">
+			                            <form action="<@orcid.rootPath '/signin/google'/>" method="POST" ng-submit="loginSocial('google')">
 			                                <button type="submit" class="btn btn-social-icon btn-google"></button>
 			                                <input type="hidden" name="scope" value="email" />
 			                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -145,7 +136,7 @@
 							</div>
 						</div>
 						<!-- Register form -->
-						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
+						<div class="personal-account-login" ng-show="personalLogin == true && showRegisterForm" ng-init="loadAndInitRegistrationForm()" ng-cloak>
 							<div id="register" class="oauth-registration">
 						    	<div class="">
 						    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
@@ -298,7 +289,7 @@
 			</div>
 		<#else>
 			<!-- LOGIN FORM -->			
-			<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm('${scopesString}','${redirect_uri}', '${response_type}', '${user_id}')" ng-cloak>
+			<div id="login" class="oauth-login-form" ng-show="!showRegisterForm" ng-init="loadAndInitLoginForm()" ng-cloak>
 				 <div class="row">
 					 <div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 						<p class="pull-right"><@orcid.msg 'common.dont_have_an_id'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-signin-switch-form"><@orcid.msg 'oauth_sign_up.btnregister'/></a>.</p>			    	
@@ -350,7 +341,7 @@
 	       	</div>         	        	
 	       	
 	       	<!-- REGISTER FORM --> 
-	       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm('${scopesString}','${redirect_uri}','${response_type}')" ng-cloak>
+	       	<div id="register" class="oauth-registration" ng-show="showRegisterForm" ng-init="loadAndInitRegistrationForm()" ng-cloak>
 	       		<div class="control-group col-md-12 col-sm-12 col-xs-12"> 			    	
 					<p class="pull-right"><@orcid.msg 'orcid.frontend.oauth.alread_have_account'/>&nbsp;<a class="reg" ng-click="switchForm()" id="in-register-switch-form"><@orcid.msg 'orcid.frontend.oauth.alread_have_account.link.text'/></a>.</p>
 		    	</div> 

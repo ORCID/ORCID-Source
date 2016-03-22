@@ -20,7 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 
 public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
 
@@ -35,13 +36,13 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
     private Long displayIndex;
     private String putCode;
 
-    public static ExternalIdentifierForm valueOf(ExternalIdentifier extId) {
+    public static ExternalIdentifierForm valueOf(PersonExternalIdentifier extId) {
         if (extId == null)
             return null;
         ExternalIdentifierForm form = new ExternalIdentifierForm();
         form.setPutCode(String.valueOf(extId.getPutCode()));
-        form.setCommonName(extId.getCommonName());
-        form.setReference(extId.getReference());
+        form.setCommonName(extId.getType());
+        form.setReference(extId.getValue());
         if (extId.getVisibility() != null) {
             form.setVisibility(Visibility.valueOf(extId.getVisibility()));
         }
@@ -62,6 +63,23 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
             form.setDisplayIndex(Long.valueOf(-1));
         }
         return form;
+    }
+    
+    public PersonExternalIdentifier toPersonExternalIdentifier() {
+        PersonExternalIdentifier result = new PersonExternalIdentifier();
+        if(putCode != null) {
+            result.setPutCode(Long.valueOf(putCode));
+        }
+        result.setDisplayIndex(displayIndex);
+        if(visibility != null && visibility.getVisibility() != null) {
+            result.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(visibility.getVisibility().value()));
+        }
+        if(url != null) {
+            result.setUrl(new Url(url));
+        }
+        result.setType(commonName);
+        result.setValue(reference);
+        return result;
     }
 
     public List<String> getErrors() {

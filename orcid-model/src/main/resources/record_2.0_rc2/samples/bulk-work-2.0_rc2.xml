@@ -21,14 +21,14 @@
 			<common:month>06</common:month>
 			<common:day>01</common:day>
 		</common:publication-date>
-		<work:external-identifiers>
-			<work:work-external-identifier>
-				<common:external-identifier-url>http://extId/1</common:external-identifier-url>
-				<common:relationship>self</common:relationship>
-				<work:external-identifier-type>doi</work:external-identifier-type>
-				<work:external-identifier-id>10.1016/j.crvasa.2015.05.007</work:external-identifier-id>
-			</work:work-external-identifier>
-		</work:external-identifiers>
+		<common:external-ids>
+			<common:external-id>
+				<common:external-id-type>doi</common:external-id-type>
+				<common:external-id-value>10.1016/j.crvasa.2015.05.007</common:external-id-value>			
+				<common:external-id-url>http://extId/1</common:external-id-url>
+				<common:external-id-relationship>self</common:external-id-relationship>
+			</common:external-id>
+		</common:external-ids>		
 	</work:work>
 	<work:work>
 		<work:title>
@@ -41,14 +41,14 @@
 			<common:month>06</common:month>
 			<common:day>01</common:day>
 		</common:publication-date>
-		<work:external-identifiers>
-			<work:work-external-identifier>
-				<common:external-identifier-url>http://extId/2</common:external-identifier-url>
-				<common:relationship>self</common:relationship>
-				<work:external-identifier-type>doi</work:external-identifier-type>
-				<work:external-identifier-id>10.1016/j.crvasa.2015.05.008</work:external-identifier-id>
-			</work:work-external-identifier>
-		</work:external-identifiers>
+		<common:external-ids>
+			<common:external-id>
+				<common:external-id-type>doi</common:external-id-type>
+				<common:external-id-value>10.1016/j.crvasa.2015.05.008</common:external-id-value>			
+				<common:external-id-url>http://extId/2</common:external-id-url>
+				<common:external-id-relationship>self</common:external-id-relationship>
+			</common:external-id>
+		</common:external-ids>
 	</work:work>
 	<error:error>
 		<error:response-code>1</error:response-code>

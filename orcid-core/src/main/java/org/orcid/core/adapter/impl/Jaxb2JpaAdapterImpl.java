@@ -100,7 +100,6 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
@@ -166,7 +165,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     protected SourceManager sourceManager;
 
     @Override
-    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) {
+    public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
         Assert.notNull(profile, "Cannot convert a null OrcidProfile");
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
 
@@ -179,7 +178,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         profileEntity.setId(orcidString);
         profileEntity.setOrcidType(profile.getType());
         profileEntity.setGroupType(profile.getGroupType());
-        setBioDetails(profileEntity, profile.getOrcidBio());
+        setBioDetails(profileEntity, profile.getOrcidBio());            
         setHistoryDetails(profileEntity, profile.getOrcidHistory());
         setActivityDetails(profileEntity, profile.getOrcidActivities());
         setInternalDetails(profileEntity, profile.getOrcidInternal());
@@ -329,21 +328,49 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (work == null || work.getWorkExternalIdentifiers() == null) {
             return null;
         }
-        //Transform the external id v1.2 into an external id v2.0
-        org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
+        //Transform the external id v1.2 into an external id v2.0 
+        //note uses rc1 format, rc2 no longer has WorkExternalIdentifiers, this is to maintain db compatibility
+        org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
         
         /**
          * Transform the external identifiers according to the rules in: 
          * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
          * */
-        for(org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
-            if(WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+        for(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
+            if(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
+                if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF);
+                } else {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
+                }                
+            } else if(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF);
+                } else {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
+                }
+            } else {
+                extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
+            }
+        }
+        
+        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
+        
+        /*
+        if (work == null || work.getWorkExternalIdentifiers() == null) {
+            return null;
+        }
+        
+        org.orcid.jaxb.model.record_rc2.ExternalIDs recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.ExternalIDs.valueOf(work.getWorkExternalIdentifiers());
+        
+        for(org.orcid.jaxb.model.record_rc2.ExternalID extId : recordExternalIdentifiers.getExternalIdentifiers()) {
+            if(ExternalIDType.ISSN.equals(extId.getType())) {
                 if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
                     extId.setRelationship(Relationship.PART_OF);
                 } else {
                     extId.setRelationship(Relationship.SELF);
                 }                
-            } else if(WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
+            } else if(ExternalIDType.ISBN.equals(extId.getType())) {
                 if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
                     extId.setRelationship(Relationship.PART_OF);
                 } else {
@@ -355,6 +382,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         
         return JsonUtils.convertToJsonString(recordExternalIdentifiers);
+        */
     }
     
     
@@ -415,7 +443,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
-        profileEntity.setResearcherUrlsVisibility(researcherUrls != null ? researcherUrls.getVisibility() : null);
         if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {
             List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
             SortedSet<ResearcherUrlEntity> researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
@@ -424,6 +451,21 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 researcherUrlEntity.setUrl(researcherUrl.getUrl() != null ? researcherUrl.getUrl().getValue() : null);
                 researcherUrlEntity.setUrlName(researcherUrl.getUrlName() != null ? researcherUrl.getUrlName().getContent() : null);
                 researcherUrlEntity.setUser(profileEntity);
+
+                if (researcherUrl.getVisibility() != null){
+                    researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(researcherUrl.getVisibility().value()));                    
+                } else {
+                    researcherUrlEntity
+                            .setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
+                }
+                
+                Source source = researcherUrl.getSource();
+                if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                    researcherUrlEntity.setSource(getSource(source));
+                } else {
+                    researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
+                }
+                                
                 researcherUrlEntities.add(researcherUrlEntity);
             }
             profileEntity.setResearcherUrls(researcherUrlEntities);
@@ -441,7 +483,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setOtherNames(ProfileEntity profileEntity, OtherNames otherNames) {
         if (otherNames != null) {
-            profileEntity.setOtherNamesVisibility(otherNames.getVisibility());
             List<OtherName> otherNameList = otherNames.getOtherName();
             if (otherNameList != null && !otherNameList.isEmpty()) {
                 SortedSet<OtherNameEntity> otherNameEntities = new TreeSet<OtherNameEntity>();
@@ -449,6 +490,20 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     OtherNameEntity otherNameEntity = new OtherNameEntity();
                     otherNameEntity.setDisplayName(otherName.getContent());
                     otherNameEntity.setProfile(profileEntity);
+                    
+                    if (otherName.getVisibility() != null){
+                        otherNameEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(otherName.getVisibility().value()));                    
+                    } else {
+                        otherNameEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value()));
+                    }
+                    
+                    Source source = otherName.getSource();
+                    if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                        otherNameEntity.setSource(getSource(source));
+                    } else {
+                        otherNameEntity.setSource(sourceManager.retrieveSourceEntity());
+                    }
+                                        
                     otherNameEntities.add(otherNameEntity);
                 }
                 profileEntity.setOtherNames(otherNameEntities);
@@ -487,15 +542,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileKeywordEntities = existingProfileKeywordEntities;
         }
         if (keywords != null) {
-            profileEntity.setKeywordsVisibility(keywords.getVisibility());
             List<Keyword> keywordList = keywords.getKeyword();
             if (keywordList != null && !keywordList.isEmpty()) {
                 for (Keyword keyword : keywordList) {
                     if (StringUtils.isNotBlank(keyword.getContent())) {
-                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap));
+                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap, keywords.getVisibility()));                        
                     }
                 }
-
             }
         }
         profileEntity.setKeywords(profileKeywordEntities);
@@ -512,24 +565,32 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return map;
     }
 
-    private ProfileKeywordEntity getProfileKeywordEntity(Keyword keyword, ProfileEntity profileEntity, Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap) {
+    private ProfileKeywordEntity getProfileKeywordEntity(Keyword keyword, ProfileEntity profileEntity, Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap, Visibility requestVisibility) {
         String keywordContent = keyword.getContent();
-        ProfileKeywordEntity existingProfileKeywordEntity = existingProfileKeywordEntitiesMap.get(keywordContent);
-        if (existingProfileKeywordEntity != null) {
-            return existingProfileKeywordEntity;
-        }
         
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setProfile(profileEntity);
         entity.setKeywordName(keywordContent);
+
+        if (keyword.getVisibility() != null){
+            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(keyword.getVisibility().value()));
+        } else {
+            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
+        }
+                        
+        Source source = keyword.getSource();
+        if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+            entity.setSource(getSource(source));
+        } else {
+            entity.setSource(sourceManager.retrieveSourceEntity());
+        }
         
         return entity;
     }
 
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
         if (externalIdentifiers != null) {
-            profileEntity.setExternalIdentifiersVisibility(externalIdentifiers.getVisibility());
-
+            
             Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
             Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
             Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
@@ -548,7 +609,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
                     //Discard the ext ids that comes without external id reference, which is a required field
                     if(externalIdentifier.getExternalIdReference() != null) {
-                        ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity.getId(), externalIdentifier, existingExternalIdentifiersMap);
+                        ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity, externalIdentifier, existingExternalIdentifiersMap, externalIdentifiers.getVisibility());
                         if (externalIdentifierEntity != null) {
                             externalIdentifierEntity.setOwner(profileEntity);
                             externalIdentifierEntities.add(externalIdentifierEntity);
@@ -580,17 +641,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return triplet;
     }
 
-    private ExternalIdentifierEntity getExternalIdentifierEntity(String userOrcid, ExternalIdentifier externalIdentifier,
-            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap) {
+    private ExternalIdentifierEntity getExternalIdentifierEntity(ProfileEntity profileEntity, ExternalIdentifier externalIdentifier,
+            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap, Visibility requestVisibility) {
         if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
             ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
-            Source source = externalIdentifier.getSource();
-            String externalIdOrcidValue = source != null ? source.retrieveSourcePath() : null;
             ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
             String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
             ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
+            Visibility externalIdVisibility = externalIdentifier.getVisibility();
             
-            String first = userOrcid;            
+            String first = profileEntity.getId();            
             
             String second = null;
             if(externalIdentifier.getExternalIdReference() != null)
@@ -607,17 +667,23 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             ExternalIdentifierEntity externalIdentifierEntity = null;
             if (existingExternalIdentifierEntity == null) {
                 externalIdentifierEntity = new ExternalIdentifierEntity();
-                SourceEntity sourceEntity = externalIdOrcidValue != null ? new SourceEntity(externalIdOrcidValue) : null;
-                externalIdentifierEntity.setSource(sourceEntity);
+                externalIdentifierEntity.setSource(sourceManager.retrieveSourceEntity());
                 externalIdentifierEntity.setExternalIdReference(referenceValue);
             } else {
                 existingExternalIdentifierEntity.clean();
                 externalIdentifierEntity = existingExternalIdentifierEntity;
             }
-
+            
+            if (externalIdVisibility != null){
+                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(externalIdVisibility.value()));            
+            }else {
+                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value()));
+            }
+            
             externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
             externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
             externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
+            
             return externalIdentifierEntity;
         }
         return null;
@@ -634,12 +700,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
+    private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {        
         Country contactCountry = contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null ? contactDetails.getAddress().getCountry()
                 : null;
+        
+        Source source = null;
+        if(contactDetails.getAddress() != null && contactDetails.getAddress().getSource() != null) {
+            source = contactDetails.getAddress().getSource();
+        }        
+        
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
-        profileEntity.setProfileAddressVisibility(contactCountry != null ? contactCountry.getVisibility() : null);
-        profileEntity.setIso2Country(country);
         
         //Set the info in the address table
         if(country != null) {
@@ -657,15 +727,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             address.setPrimary(true);
             address.setDisplayIndex(-1L);
-            address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            if(profileEntity.getActivitiesVisibilityDefault() != null) {                
+                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+            }else{
+                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            }
+            
             address.setUser(profileEntity);
-            String amenderOrcid = sourceManager.retrieveSourceOrcid();  
-            if(!PojoUtil.isEmpty(amenderOrcid)) {
-                if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-                    address.setSource(new SourceEntity(new ProfileEntity(amenderOrcid)));
-                } else {
-                    address.setSource(new SourceEntity(new ClientDetailsEntity(amenderOrcid)));
-                }
+            if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
+                address.setSource(getSource(source));
+            } else {
+                address.setSource(sourceManager.retrieveSourceEntity());
             }
             
             HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();

@@ -25,16 +25,18 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
+import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -66,17 +68,17 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     
     @Override
     @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
-    public ExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified) {
+    public PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified) {
         return getExternalIdentifies(orcid, Visibility.PUBLIC);
     }
 
     @Override
     @Cacheable(value = "external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
-    public ExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified) {
+    public PersonExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified) {
         return getExternalIdentifies(orcid, null);
     }
 
-    private ExternalIdentifiers getExternalIdentifies(String orcid, Visibility visibility) {
+    private PersonExternalIdentifiers getExternalIdentifies(String orcid, Visibility visibility) {
         List<ExternalIdentifierEntity> externalIdentifiers = new ArrayList<ExternalIdentifierEntity>();
         if (visibility == null) {
             externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));
@@ -84,22 +86,22 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             externalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, visibility);
         }
 
-        ExternalIdentifiers extIds = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
+        PersonExternalIdentifiers extIds = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
         LastModifiedDatesHelper.calculateLatest(extIds);
         return extIds;
     }
 
     @Override
-    public ExternalIdentifier getExternalIdentifier(String orcid, Long id) {  
+    public PersonExternalIdentifier getExternalIdentifier(String orcid, Long id) {  
         ExternalIdentifierEntity entity = externalIdentifierDao.getExternalIdentifierEntity(orcid, id);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(entity);
     }
 
     @Override
-    public ExternalIdentifier createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+    public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate external identifier
-        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true);
+        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));
         for (ExternalIdentifierEntity existing : existingExternalIdentifiers) {
@@ -122,10 +124,12 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     @Override
-    public ExternalIdentifier updateExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier) {
+    public PersonExternalIdentifier updateExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        ExternalIdentifierEntity updatedExternalIdentifierEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, externalIdentifier.getPutCode());
+        Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());
         // Validate external identifier
-        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false);
+        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));
         for (ExternalIdentifierEntity existing : existingExternalIdentifiers) {
@@ -137,20 +141,17 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             }
         }
 
-        ExternalIdentifierEntity updatedExternalIdentifierEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, externalIdentifier.getPutCode());
-        Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());
+        
         SourceEntity existingSource = updatedExternalIdentifierEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier, updatedExternalIdentifierEntity);
-
-        updatedExternalIdentifierEntity.setLastModified(new Date());
-        updatedExternalIdentifierEntity.setVisibility(originalVisibility);
+        updatedExternalIdentifierEntity.setLastModified(new Date());        
         updatedExternalIdentifierEntity.setSource(existingSource);
         externalIdentifierDao.merge(updatedExternalIdentifierEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(updatedExternalIdentifierEntity);
     }
 
-    private boolean isDuplicated(ExternalIdentifierEntity existing, ExternalIdentifier newExternalIdentifier, SourceEntity source) {
+    private boolean isDuplicated(ExternalIdentifierEntity existing, PersonExternalIdentifier newExternalIdentifier, SourceEntity source) {
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
             if (existing.getSource() != null) {
                 // If they have the same source
@@ -167,8 +168,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultExternalIdentifierVisibility = profile.getExternalIdentifiersVisibility() == null
-                ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getExternalIdentifiersVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultExternalIdentifierVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultExternalIdentifierVisibility.isMoreRestrictiveThan(incomingExternalIdentifierVisibility)) {
                 entity.setVisibility(defaultExternalIdentifierVisibility);
@@ -194,6 +194,48 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             return false;
         }
         return true;    
+    }
+
+    @Override
+    public PersonExternalIdentifiers updateExternalIdentifiers(String orcid, PersonExternalIdentifiers externalIdentifiers) {
+        List<ExternalIdentifierEntity> existingExternalIdentifiersList = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));        
+        // Delete the deleted ones
+        for (ExternalIdentifierEntity existing : existingExternalIdentifiersList) {
+            boolean deleteMe = true;
+            if(externalIdentifiers.getExternalIdentifier() != null) {
+                for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+                    if (existing.getId().equals(updatedOrNew.getPutCode())) {
+                        deleteMe = false;
+                        break;
+                    }
+                }
+            }            
+
+            if (deleteMe) {
+                try {
+                    externalIdentifierDao.removeExternalIdentifier(orcid, existing.getId());
+                } catch (Exception e) {
+                    throw new ApplicationException("Unable to delete external identifier " + existing.getId(), e);
+                }
+            }
+        }
+
+        if (externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
+            for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+                if (updatedOrNew.getPutCode() != null) {
+                    // Update the existing ones
+                    for (ExternalIdentifierEntity existingExtId : existingExternalIdentifiersList) {
+                        if (existingExtId.getId().equals(updatedOrNew.getPutCode())) {
+                            existingExtId.setLastModified(new Date());
+                            existingExtId.setVisibility(updatedOrNew.getVisibility());
+                            existingExtId.setDisplayIndex(updatedOrNew.getDisplayIndex());
+                            externalIdentifierDao.merge(existingExtId);
+                        }
+                    }
+                } 
+            }
+        }
+        return externalIdentifiers;
     }
 
 }

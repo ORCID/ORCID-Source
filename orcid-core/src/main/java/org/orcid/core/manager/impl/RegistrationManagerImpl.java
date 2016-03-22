@@ -31,7 +31,6 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.HearAboutEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -45,9 +44,6 @@ import org.springframework.beans.factory.annotation.Required;
 public class RegistrationManagerImpl implements RegistrationManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistrationManagerImpl.class);
-
-    @Resource(name = "hearAboutDao")
-    private GenericDao<HearAboutEntity, Integer> hearAboutDao;
 
     @Resource
     private ProfileDao profileDao;
@@ -64,10 +60,6 @@ public class RegistrationManagerImpl implements RegistrationManager {
 
     @Resource
     private PasswordGenerationManager passwordResetManager;
-
-    public void setHearAboutDao(GenericDao<HearAboutEntity, Integer> hearAboutDao) {
-        this.hearAboutDao = hearAboutDao;
-    }
 
     public void setOrcidProfileManager(OrcidProfileManager orcidProfileManager) {
         this.orcidProfileManager = orcidProfileManager;

@@ -54,7 +54,8 @@
                                                     clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
                                                     publicClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
                                                     limitedClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                    privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)" />
+                                                    privateClick="fundingSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"
+                                                    />
                                             </li>
                                         </ul>
                                     </div>
@@ -65,7 +66,7 @@
                 </li><!--  End of header -->
 
 
-                <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true">
+                <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true" funding-put-code="{{funding.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-show="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
@@ -158,7 +159,7 @@
                                     </span>
                                  </li>
                                  <li ng-show="group.getActive().url.value" class="url-popover">
-                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlWithHttp}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="_blank" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>                                 		
+                                 	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="_blank" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>                                 		
 	                                <div class="popover-pos">
 		                                <div class="popover-help-container">
 									       <div class="popover bottom" ng-class="{'block' : displayURLPopOver[funding.putCode.value + '-alternate'] == true}">
@@ -309,7 +310,7 @@
 	                                    </div>	
 	                                </li>
 									<li ng-show="group.activitiesCount == 1">
-									   <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
+									   <a id="delete-funding_{{group.getActive().putCode.value}}" ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
 									      <span class="glyphicon glyphicon-trash"></span>
 									   </a>									
 									  <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true">

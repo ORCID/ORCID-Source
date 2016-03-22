@@ -104,8 +104,6 @@
 		</property>
 	</bean>
 
-	<bean id="hearAboutManager" class="org.orcid.core.manager.impl.HearAboutManagerImpl" />
-
 	<bean id="registrationManager" class="org.orcid.core.manager.impl.RegistrationManagerImpl">
 		<property name="encryptionManager" ref="encryptionManager" />
 		<property name="notificationManager" ref="notificationManager" />
@@ -120,8 +118,6 @@
 	<bean id="sponsorManager" class="org.orcid.core.manager.impl.SponsorManagerImpl" />
 
 	<bean id="securityQuestionManager" class="org.orcid.core.manager.impl.SecurityQuestionManagerImpl" />
-
-	<bean id="registrationRoleManager" class="org.orcid.core.manager.impl.RegistrationRoleManagerImpl" />
 
 	<bean id="orcidProfileManager" class="org.orcid.core.manager.impl.OrcidProfileManagerImpl">
 		<property name="numberOfIndexingThreads" value="${org.orcid.core.numberOfIndexingThreads:4}" />
@@ -172,12 +168,10 @@
 
 	<bean id="orcidSearchManager" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
 	    <property name="orcidProfileCacheManager" ref="orcidProfileCacheManager" />
-	    <property name="orcidProfileManager" ref="orcidProfileManager" />
 	</bean>
 	
 	<bean id="orcidSearchManagerReadOnly" class="org.orcid.core.manager.impl.OrcidSearchManagerImpl" >
         <property name="orcidProfileCacheManager" ref="orcidProfileCacheManagerReadOnly" />
-        <property name="orcidProfileManager" ref="orcidProfileManagerReadOnly" />
     </bean>
 
 	<bean id="orcidIndexManager" class="org.orcid.core.manager.impl.OrcidIndexManagerImpl" />
@@ -202,13 +196,15 @@
         <property name="validationBehaviour"
             value="THROW_VALIDATION_EXCEPTION" />
         <property name="version" value="${org.orcid.core.default_api}" />
-        <property name="requireOrcidProfile" value="true"/>        
-        <property name="validateTitle" value="true"/>
+        <property name="requireOrcidProfile" value="${org.orcid.core.api.validation.default.requireOrcidProfile:true}"/>        
+        <property name="validateTitle" value="${org.orcid.core.api.validation.default.validateTitle:true}"/>
+        <property name="validateOnlyOnePrimaryEmail" value="${org.orcid.core.api.validation.default.validateOnlyOnePrimaryEmail:true}"/>
+        <property name="validateWorksHaveExternalIds" value="${org.orcid.core.api.validation.default.validateWorksHaveExternalIds:true}"/>
+        <property name="validateFundingHaveExternalIds" value="${org.orcid.core.api.validation.default.validateFundingHaveExternalIds:true}"/>       
     </bean>
     <bean id="outgoingValidationManagerRoot" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
-            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
+            value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />     
         <property name="version" value="${org.orcid.core.default_api}" />
     </bean>
     
@@ -222,7 +218,6 @@
     <bean id="outgoingValidationManagerV1_1" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.1" />
     </bean>
     
@@ -237,7 +232,6 @@
     <bean id="outgoingValidationManagerV1_2_rc3" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2_rc3" />
     </bean>
 
@@ -252,7 +246,6 @@
     <bean id="outgoingValidationManagerV1_2_rc4" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2_rc4" />
     </bean>
 
@@ -269,7 +262,6 @@
     <bean id="outgoingValidationManagerV1_2_rc5" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2_rc5" />
     </bean>
     
@@ -286,7 +278,6 @@
     <bean id="outgoingValidationManagerV1_2_rc6" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2_rc6" />
     </bean>
     
@@ -303,7 +294,6 @@
     <bean id="outgoingValidationManagerV1_2_rc7" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2_rc7" />
     </bean>
 
@@ -320,7 +310,6 @@
     <bean id="outgoingValidationManagerV1_2" class="org.orcid.core.manager.impl.ValidationManagerImpl">
         <property name="validationBehaviour"
             value="${org.orcid.core.manager.outgoingValidationBehaviour:LOG_WARNING}" />
-        <property name="validateBibtex" value="false"/>        
         <property name="version" value="1.2" />
     </bean>
 
@@ -458,6 +447,16 @@
 		
     <bean id="publicProfileCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="public-profile" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="500" />
+        <property name="timeToLiveSeconds" value="604800" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="500000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+    </bean>
+    
+    <bean id="publicBioCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="public-bio" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="604800" />

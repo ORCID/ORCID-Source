@@ -39,7 +39,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBase;
+import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -52,7 +52,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthExchangeCodeTest extends BlackBoxBase {
+public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
 
     @Resource(name = "pubClient")
     private T2OAuthAPIService<ClientResponse> clientPub;
@@ -109,13 +109,13 @@ public class OauthExchangeCodeTest extends BlackBoxBase {
     }
 
     private String getAuthorizationCode() {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", webBaseUrl, client1ClientId, "/activities/update",
-                client1RedirectUri));
+        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), "/activities/update",
+                this.getClient1RedirectUri()));
         List<WebElement> signInEl = webDriver.findElements(By.id("in-register-switch-form"));
         if (signInEl.size() != 0) {
             signInEl.get(0).click();
-            webDriver.findElement(By.id("userId")).sendKeys(user1UserName);
-            webDriver.findElement(By.id("password")).sendKeys(user1Password);
+            webDriver.findElement(By.id("userId")).sendKeys(this.getUser1UserName());
+            webDriver.findElement(By.id("password")).sendKeys(this.getUser1Password());
             webDriver.findElement(By.id("authorize-button")).click();
         } else {
             webDriver.findElement(By.id("authorize-button")).click();
@@ -134,11 +134,11 @@ public class OauthExchangeCodeTest extends BlackBoxBase {
 
     public MultivaluedMap<String, String> getParamMap(String authorizationCode) {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", client1ClientId);
-        params.add("client_secret", client1ClientSecret);
+        params.add("client_id", this.getClient1ClientId());
+        params.add("client_secret", this.getClient1ClientSecret());        
+        params.add("redirect_uri", this.getClient1RedirectUri());
         params.add("grant_type", "authorization_code");
         params.add("scope", "/activities/update");
-        params.add("redirect_uri", client1RedirectUri);
         params.add("code", authorizationCode);
         return params;
     }

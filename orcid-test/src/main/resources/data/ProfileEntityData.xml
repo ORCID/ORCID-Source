@@ -120,7 +120,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="true"
             send_orcid_news="false"
-            activities_visibility_default='PRIVATE'
+            activities_visibility_default="PUBLIC"
             credentials_expiry="2013-02-01"
             biography="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer."
             indexing_status="DONE"
@@ -365,7 +365,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            activities_visibility_default='PRIVATE'
+            activities_visibility_default='PUBLIC'
             credentials_expiry="2013-02-01"
             biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
             indexing_status="DONE"
@@ -909,6 +909,19 @@
             display_index="0"
             />
             
+	<address
+            id="8"            
+            iso2_country="US"
+            orcid="4444-4444-4444-4443"
+            visibility="LIMITED"
+            is_primary="true"            
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="0"
+            source_id="4444-4444-4444-4443"
+            />
+		            
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"

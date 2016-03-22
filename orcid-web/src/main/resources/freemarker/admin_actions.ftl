@@ -50,7 +50,7 @@
 			<div class="controls save-btns pull-right bottom-margin-small">
 				<span ng-click="closeModal()" class="btn btn-primary"><@orcid.msg 'freemarker.btnclose'/></span>
 			</div>
-		</div
+		</div>
 	</div>
 </script>
 
@@ -417,27 +417,35 @@
 				</div>
 			</div>
 		</div>
-				
+
 		<!-- Deactivate Profile -->
-		<a name="deactivate-profile"></a>			  
-		<div ng-controller="profileDeactivationAndReactivationCtrl" class="workspace-accordion-item" ng-cloak>
-			<p>
-				<a  ng-show="showDeactivateModal" ng-click="toggleDeactivationModal()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
-				<a  ng-hide="showDeactivateModal" ng-click="toggleDeactivationModal()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
+		<div ng-controller="DeactivateProfileCtrl" class="workspace-accordion-item" ng-cloak>
+	        <p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.profile_deactivation' /></a>
 			</p>			  	
-			<div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">					    		
-	    		<div class="form-group">
-					<label for="orcid_to_deactivate"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
-					<input type="text" id="orcid_to_deactivate" ng-enter="confirmDeactivateAccount()" ng-model="orcidToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" class="form-control" />					
-					<div ng-show="deactivatedAccount.errors.length">
-						<span class="orcid-error" ng-repeat='error in deactivatedAccount.errors' ng-bind-html="error"></span><br />
-					</div>		
+	        
+		    <div class="collapsible bottom-margin-small admin-modal" id="deactivation_modal" style="display:none;">
+			    <div class="alert alert-success" ng-show="result.deactivateSuccessfulList.length || result.notFoundList.length || result.alreadyDeactivatedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.deactivateSuccessfulList.length"><@spring.message "admin.profile_deactivation.deactivation_success"/>
+	    				<br>{{result.deactivateSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyDeactivatedList.length"><br><@spring.message "admin.profile_deactivation.already_deactivated"/>
+	    				<br>{{result.alreadyDeactivatedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.profile_deactivation.not_found"/>
+	    				<br>{{result.notFoundList}}
+					</div>
 				</div>
-				<div class="controls save-btns pull-left">
-					<span id="bottom-confirm-deactivate-profile" ng-click="confirmDeactivateAccount()" class="btn btn-primary"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
+				<div class="control-group">
+	    			<label for="orcid_to_deactivate" class="control-label"><@orcid.msg 'admin.profile_deactivation.to_deactivate' /></label>
+					<div class="controls">
+						<input type="text" id="orcid_to_deactivate" class="input-xlarge" ng-model="orcidsToDeactivate" placeholder="<@orcid.msg 'admin.profile_deactivation.placeholder.to_deactivate' />" />
+	       			</div>
+	       			<span class="btn btn-primary" data-ng-click="deactivateOrcids()"><@orcid.msg 'admin.profile_deactivation.deactivate_account'/></span>
 				</div>
 			</div>
-		</div>
+	    </div>
 		
 		<!-- Reactivate Profile -->
 		<a name="reactivate-profile"></a>
@@ -460,141 +468,141 @@
 			</div>
 		</div>
 			
-	<!-- Lock Profile -->			
-	<a name="lock-profile"></a>
-	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
-		<p>				
-			<a ng-show="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lock_profile' /></a>
-			<a ng-hide="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
-		</p>
-		<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">					    		
-	    	<div class="form-group">
-	    		<p ng-show="message != ''">{{message}}</p>
-				<label for="orcid_to_lock"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_lock" ng-enter="checkProfileToLock()" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
-				<div ng-show="profileDetails.errors.length">
-					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+		<!-- Lock Profile -->			
+		<a name="lock-profile"></a>
+		<div id="lockProfileDiv" ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>				
+				<a ng-show="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.lock_profile' /></a>
+				<a ng-hide="showLockModal" ng-click="toggleLockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.lock_profile' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="lock_modal" style="display:none;">					    		
+		    	<div class="form-group">
+		    		<p ng-show="message != ''">{{message}}</p>
+					<label for="orcid_to_lock"><@orcid.msg 'common.orcidOrEmail' /></label>
+					<input type="text" id="orcid_to_lock" ng-enter="checkProfileToLock()" ng-model="orcidToLock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<div ng-show="profileDetails.errors.length">
+						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-confirm-lock-profile" ng-click="checkProfileToLock()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
 				</div>
 			</div>
-			<div class="controls save-btns pull-left">
-				<span id="bottom-confirm-lock-profile" ng-click="checkProfileToLock()" class="btn btn-primary"><@orcid.msg 'admin.lock_profile.btn.lock'/></span>		
-			</div>
 		</div>
-	</div>
-						
-	<!-- Unlock Profile -->			
-	<a name="unlock-profile"></a>
-	<div ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
-		<p>				
-			<a ng-show="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
-			<a ng-hide="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
-		</p>
-		<div class="collapsible bottom-margin-small admin-modal" id="unlock_modal" style="display:none;">					    		
-	    	<div class="form-group">
-	    		<p ng-show="message != ''">{{message}}</p>
-				<label for="orcid_to_unlock"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_unlock" ng-enter="checkProfileToUnlock()" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
-				<div ng-show="profileDetails.errors.length">
-					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+							
+		<!-- Unlock Profile -->			
+		<a name="unlock-profile"></a>
+		<div id="unlockProfileDiv" ng-controller="profileLockingCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>				
+				<a ng-show="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
+				<a ng-hide="showUnlockModal" ng-click="toggleUnlockModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unlock_profile' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="unlock_modal" style="display:none;">					    		
+		    	<div class="form-group">
+		    		<p ng-show="message != ''">{{message}}</p>
+					<label for="orcid_to_unlock"><@orcid.msg 'common.orcidOrEmail' /></label>
+					<input type="text" id="orcid_to_unlock" ng-enter="checkProfileToUnlock()" ng-model="orcidToUnlock" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<div ng-show="profileDetails.errors.length">
+						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-confirm-unlock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
 				</div>
 			</div>
-			<div class="controls save-btns pull-left">
-				<span id="bottom-confirm-unlock-profile" ng-click="checkProfileToUnlock()" class="btn btn-primary"><@orcid.msg 'admin.unlock_profile.btn.unlock'/></span>		
-			</div>
 		</div>
-	</div>
-	
+		
 		<!-- Review Profile -->			
-	<a name="review-profile"></a>
-	<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
-		<p>				
-			<a ng-show="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.review_profile' /></a>
-			<a ng-hide="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
-		</p>
-		<div class="collapsible bottom-margin-small admin-modal" id="review_modal" style="display:none;">					    		
-	    	<div class="form-group">
-	    		<p ng-show="message != ''">{{message}}</p>
-				<label for="orcid_to_review"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_lock" ng-enter="checkProfileToReview()" ng-model="orcidToReview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
-				<div ng-show="profileDetails.errors.length">
-					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+		<a name="review-profile"></a>
+		<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>				
+				<a ng-show="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.review_profile' /></a>
+				<a ng-hide="showReviewModal" ng-click="toggleReviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.review_profile' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="review_modal" style="display:none;">					    		
+		    	<div class="form-group">
+		    		<p ng-show="message != ''">{{message}}</p>
+					<label for="orcid_to_review"><@orcid.msg 'common.orcidOrEmail' /></label>
+					<input type="text" id="orcid_to_lock" ng-enter="checkProfileToReview()" ng-model="orcidToReview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<div ng-show="profileDetails.errors.length">
+						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-confirm-review-profile" ng-click="checkProfileToReview()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>		
 				</div>
 			</div>
-			<div class="controls save-btns pull-left">
-				<span id="bottom-confirm-review-profile" ng-click="checkProfileToReview()" class="btn btn-primary"><@orcid.msg 'admin.review_profile.btn.review'/></span>		
-			</div>
 		</div>
-	</div>
-						
-	<!-- Un Review Profile -->			
-	<a name="unreview-profile"></a>
-	<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
-		<p>				
-			<a ng-show="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
-			<a ng-hide="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
-		</p>
-		<div class="collapsible bottom-margin-small admin-modal" id="unreview_modal" style="display:none;">					    		
-	    	<div class="form-group">
-	    		<p ng-show="message != ''">{{message}}</p>
-				<label for="orcid_to_unreview"><@orcid.msg 'common.orcidOrEmail' /></label>
-				<input type="text" id="orcid_to_unreview" ng-enter="checkProfileToUnreview()" ng-model="orcidToUnreview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
-				<div ng-show="profileDetails.errors.length">
-					<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+							
+		<!-- Un Review Profile -->			
+		<a name="unreview-profile"></a>
+		<div ng-controller="profileReviewCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>				
+				<a ng-show="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-down blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
+				<a ng-hide="showUnreviewModal" ng-click="toggleUnreviewModal()"><span class="glyphicon glyphicon-chevron-right blue"></span><@orcid.msg 'admin.unreview_profile' /></a>
+			</p>
+			<div class="collapsible bottom-margin-small admin-modal" id="unreview_modal" style="display:none;">					    		
+		    	<div class="form-group">
+		    		<p ng-show="message != ''">{{message}}</p>
+					<label for="orcid_to_unreview"><@orcid.msg 'common.orcidOrEmail' /></label>
+					<input type="text" id="orcid_to_unreview" ng-enter="checkProfileToUnreview()" ng-model="orcidToUnreview" placeholder="<@orcid.msg 'common.orcidOrEmail' />" class="input-xlarge" />
+					<div ng-show="profileDetails.errors.length">
+						<span class="orcid-error" ng-repeat="error in profileDetails.errors" ng-bind-html="error"></span><br />
+					</div>
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="bottom-confirm-unreview-profile" ng-click="checkProfileToUnreview()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
 				</div>
 			</div>
-			<div class="controls save-btns pull-left">
-				<span id="bottom-confirm-unreview-profile" ng-click="checkProfileToUnreview()" class="btn btn-primary"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></span>		
-			</div>
 		</div>
-	</div>
-	
-	<!-- Lookup id or email -->
-	<a name="lookup-id-email"></a>
-	<div ng-controller="lookupIdOrEmailCtrl" class="workspace-accordion-item" ng-cloak>
-		<p>
-			<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
-			<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
-		</p>			  	
-		<div class="collapsible bottom-margin-small admin-modal" id="lookup_ids_section" style="display:none;">
-			<div class="form-group">
-				<label for="idOrEmails"><@orcid.msg 'admin.lookup_id_email' /></label>
-				<input type="text" id="idOrEmails" ng-enter="lookupIdOrEmails()" ng-model="idOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
-			</div>
-			<div class="controls save-btns pull-left">
-				<span id="lookup-ids" ng-click="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>						
-			</div>
-		</div>	
-	</div>
-	
-	<!-- Batch resend claim emails -->
-	<div ng-controller="ResendClaimCtrl" class="workspace-accordion-item" ng-cloak>
-        <p>
-			<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
-			<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
-		</p>			  	
-        
-	    <div class="collapsible bottom-margin-small admin-modal" id="batch_resend_section" style="display:none;">
-		    <div class="alert alert-success" ng-show="result.claimResendSuccessfulList.length || result.notFoundList.length || result.alreadyClaimedList.length" style="overflow-x:auto;">
-    			<div ng-show="result.claimResendSuccessfulList.length"><@spring.message "admin.resend_claim.sent_success"/>
-    				<br>{{result.claimResendSuccessfulList}}
-    			</div>
-    			<div ng-show="result.alreadyClaimedList.length"><br><@spring.message "admin.resend_claim.already_claimed"/>
-    				<br>{{result.alreadyClaimedList}}
-    			</div>
-    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.resend_claim.not_found"/>
-    				<br>{{result.notFoundList}}
+		
+		<!-- Lookup id or email -->
+		<a name="lookup-id-email"></a>
+		<div ng-controller="lookupIdOrEmailCtrl" class="workspace-accordion-item" ng-cloak>
+			<p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.lookup_id_email' /></a>
+			</p>			  	
+			<div class="collapsible bottom-margin-small admin-modal" id="lookup_ids_section" style="display:none;">
+				<div class="form-group">
+					<label for="idOrEmails"><@orcid.msg 'admin.lookup_id_email' /></label>
+					<input type="text" id="idOrEmails" ng-enter="lookupIdOrEmails()" ng-model="idOrEmails" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" class="input-xlarge" />
+				</div>
+				<div class="controls save-btns pull-left">
+					<span id="lookup-ids" ng-click="lookupIdOrEmails()" class="btn btn-primary"><@orcid.msg 'admin.lookup_id_email.button'/></span>						
+				</div>
+			</div>	
+		</div>
+		
+		<!-- Batch resend claim emails -->
+		<div ng-controller="ResendClaimCtrl" class="workspace-accordion-item" ng-cloak>
+	        <p>
+				<a  ng-show="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-down blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
+				<a  ng-hide="showSection" ng-click="toggleSection()"><span class="glyphicon glyphicon-chevron-right blue"></span></span><@orcid.msg 'admin.resend_claim.title' /></a>
+			</p>			  	
+	        
+		    <div class="collapsible bottom-margin-small admin-modal" id="batch_resend_section" style="display:none;">
+			    <div class="alert alert-success" ng-show="result.claimResendSuccessfulList.length || result.notFoundList.length || result.alreadyClaimedList.length" style="overflow-x:auto;">
+	    			<div ng-show="result.claimResendSuccessfulList.length"><@spring.message "admin.resend_claim.sent_success"/>
+	    				<br>{{result.claimResendSuccessfulList}}
+	    			</div>
+	    			<div ng-show="result.alreadyClaimedList.length"><br><@spring.message "admin.resend_claim.already_claimed"/>
+	    				<br>{{result.alreadyClaimedList}}
+	    			</div>
+	    			<div ng-show="result.notFoundList.length"><br><@spring.message "admin.resend_claim.not_found"/>
+	    				<br>{{result.notFoundList}}
+					</div>
+				</div>
+				<div class="control-group">
+	    			<label for="emailIds" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
+	       			<div class="controls">                    	
+	       				<input type="text" data-ng-model="emailIds" class="input-xlarge" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" />
+	       			</div>
+	       			<span class="btn btn-primary" data-ng-click="resendClaimEmails()"><@spring.message "resend_claim.resend_claim_button_text"/></span>
 				</div>
 			</div>
-			<div class="control-group">
-    			<label for="givenNames" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
-       			<div class="controls">                    	
-       				<input type="text" data-ng-model="emailIds" class="input-xlarge" />
-       				<span class="required">*</span>
-       			</div>
-       			<span class="btn btn-primary" data-ng-click="resendClaimEmails()"><@spring.message "resend_claim.resend_claim_button_text"/></span>
-			</div>
-		</div>
-    </div>
+	    </div>
+	</div>
 </div>
 
 <script type="text/ng-template" id="confirm-modal">
@@ -672,7 +680,7 @@
     			<button class="btn btn-primary" id="btn-unreview" ng-click="unreviewAccount()" ng-show="!showReviewPopover"><@orcid.msg 'admin.unreview_profile.btn.unreview'/></button>
 			</div>
 		</div>
-    </div>
+    </div>    
 </script>
 
 </@public >

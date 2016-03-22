@@ -30,6 +30,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
@@ -172,7 +173,7 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work, boolean applyValidations) {
+    public Work createWork(String orcid, Work work, boolean applyAPIValidations) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         if (sourceEntity != null) {
             Source source = new Source();
@@ -184,8 +185,8 @@ public class WorkManagerImpl implements WorkManager {
             work.setSource(source);
         }
 
-        if (applyValidations) {                                   
-            ActivityValidator.validateWork(work, true, sourceEntity);
+        if (applyAPIValidations) {                                   
+            ActivityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
             Date lastModified = profileEntityManager.getLastModified(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
             List<MinimizedWorkEntity> works = workDao.findWorks(orcid, lastModifiedTime);
@@ -195,12 +196,15 @@ public class WorkManagerImpl implements WorkManager {
                 if (works != null) {
                     List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
                     for (Work existing : workEntities) {
-                        ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                        ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                     }
                 }
             }
+        }else{
+            //validate external ID vocab
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
         }
-
+        
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setProfile(profile);
@@ -214,20 +218,25 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public Work updateWork(String orcid, Work work, boolean applyValidations) {
+    public Work updateWork(String orcid, Work work, boolean applyAPIValidations) {
+        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
+        Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        if (applyValidations) {
-            ActivityValidator.validateWork(work, false, sourceEntity);
+        
+        if (applyAPIValidations) {
+            ActivityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
             List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());            
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
-                    ActivityValidator.checkExternalIdentifiers(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
+        }else{
+            //validate external ID vocab
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
         }
-        WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());        
-        Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
+                        
         SourceEntity existingSource = workEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);

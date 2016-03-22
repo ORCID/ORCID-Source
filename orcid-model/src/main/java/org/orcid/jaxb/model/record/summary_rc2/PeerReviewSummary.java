@@ -34,7 +34,7 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "organization", "groupId", "completionDate" })
@@ -42,8 +42,8 @@ import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifiers;
 public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
     
     private static final long serialVersionUID = -7769331531691171324L;    
-    @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/peer-review")
-    protected WorkExternalIdentifiers externalIdentifiers;
+    @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")
+    protected ExternalIDs externalIdentifiers;
     @XmlElement(name = "completion-date", namespace = "http://www.orcid.org/ns/peer-review")
     protected FuzzyDate completionDate;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/peer-review", name = "convening-organization")
@@ -65,11 +65,11 @@ public class PeerReviewSummary implements Filterable, Activity, GroupableActivit
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "review-group-id", required = true)
     protected String groupId;    
 
-    public WorkExternalIdentifiers getExternalIdentifiers() {
+    public ExternalIDs getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(WorkExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(ExternalIDs externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 

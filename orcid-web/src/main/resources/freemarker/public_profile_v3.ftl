@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-<#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
 <@public >
 <#escape x as x?html>
 <div class="row workspace-top public-profile">
@@ -27,11 +26,7 @@
 	            	<#if (locked)?? && locked>
 	            		<@orcid.msg 'public_profile.deactivated.given_names' /> <@orcid.msg 'public_profile.deactivated.family_name' />
 	            	<#else>
-		                <#if (profile.orcidBio.personalDetails.creditName.content)??>
-		                    ${(profile.orcidBio.personalDetails.creditName.content)!}
-		                <#else>
-		                    ${(profile.orcidBio.personalDetails.givenNames.content)!} ${(profile.orcidBio.personalDetails.familyName.content)!}
-		                </#if>
+		                ${(displayName)!}		                
 	                </#if>
 	            </h2>	            	            
 	            
@@ -43,7 +38,7 @@
 						<div class="orcid-id-info">
 					    	<span class="mini-orcid-icon"></span>
 					    	<!-- Reference: orcid.js:removeProtocolString() -->
-				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(profile.orcidIdentifier.path)!}</span>
+				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(orcidId)!}</span>
 						</div>
 						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
 							<div class="orcid-id-options">
@@ -52,79 +47,91 @@
 						</@security.authorize>
 					</div>
 				</div>
-				
+					        
 				<#if (locked)?? && !locked>
-		            <#if (profile.orcidBio.personalDetails.otherNames)?? && (profile.orcidBio.personalDetails.otherNames.otherName?size != 0)>
+					<!-- Other Names -->
+		            <#if (publicOtherNames)?? && (publicOtherNames.otherNames?size != 0)>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span>
 		                	</div>
-		                	<div>
-				                <#list profile.orcidBio.personalDetails.otherNames.otherName as otherName>
+		                	<div id="public-other-names-div">
+				                <#list publicOtherNames.otherNames as otherName>
 				                	${otherName.content}<#if otherName_has_next>,</#if>
 				                </#list>
 			                </div>
 		                </div>
-		            </#if>	            	            	           
+		            </#if>
+		            <!-- Address -->    	            	           
 		            <#if (countryName)??>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		                		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
-		                		<div>
+		                		<div id="public-country-div">
 		                			${(countryName)!}
 		                		</div>
 		                	</div>
 		                </div>
 		            </#if>
-		            <#if (profile.orcidBio.keywords)?? && (profile.orcidBio.keywords.keyword?size != 0)>
+		            <!-- Keywords -->
+		            <#if (publicKeywords)?? && (publicKeywords.keywords?size != 0)>
 			            <div class="workspace-section">
 		            		<div class="workspace-section-header">
 		                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span>
-		                		<div> 
-		                    		<#list profile.orcidBio.keywords.keyword as keyword>
+		                		<div id="public-keywords-div"> 
+		                    		<#list publicKeywords.keywords as keyword>
 		                        		${keyword.content}<#if keyword_has_next>,</#if>	                    
 	                    			</#list>
 	                        	</div>
 	                        </div>
 	                    </div>	                   
-		            </#if>	            	            
-		            <#if (profile.orcidBio.researcherUrls)?? && (profile.orcidBio.researcherUrls.researcherUrl?size != 0)>
+		            </#if>	     
+		            <!-- Researcher Urls -->       	            
+		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">            
 				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span>
-				                <div>
-				                    <#list profile.orcidBio.researcherUrls.researcherUrl as url>
-				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow"><#if (url.urlName.content)! != "">${url.urlName.content}<#else>${url.url.value}</#if></a><#if url_has_next><br/></#if>
+				                <div id="public-researcher-urls-div">
+				                    <#list publicResearcherUrls.researcherUrls as url>
+				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
+				                        	<#if (url.urlName)! != "">
+				                        		${url.urlName}
+				                        	<#else>
+				                        		${url.url.value}
+				                        	</#if>
+			                        	</a>
+			                        	<#if url_has_next><br/></#if>
 				                    </#list>
 			                    </div>
 			                </div>
 	                    </div>
 		            </#if>	  
 		            <!-- Email -->
-		            <#if (profile.orcidBio.contactDetails)?? && (profile.orcidBio.contactDetails.email?size != 0)>
+		            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			 <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span>
-		            			 <div class="emails-box">
-			            			 <#list profile.orcidBio.contactDetails.email as email>
+		            			 <div class="emails-box" id="public-emails-div">
+			            			 <#list publicEmails.emails as email>
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
-			            					<div>${email.value}</div>
+			            					<div name="email">${email.email}</div>
 			        					</#if>    					 		
 			            			 </#list>
 		            			 </div>		            			
 			                </div>
 	                    </div>
 		            </#if>          	            
-		            <#if (profile.orcidBio.externalIdentifiers)?? && (profile.orcidBio.externalIdentifiers.externalIdentifier?size != 0)>
+		            <!-- External Identifiers -->
+		            <#if (publicPersonExternalIdentifiers)?? && (publicPersonExternalIdentifiers.externalIdentifier?size != 0)>
 						<div class="workspace-section">
 		            		<div class="workspace-section-header">            
 				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span>
-				                <div>
-				                    <#list profile.orcidBio.externalIdentifiers.externalIdentifier as external>
-				                        <#if (external.externalIdUrl.value)??>
-				                            <a href="${external.externalIdUrl.value}" target="_blank">${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}</a><#if external_has_next><br/></#if>
+				                <div  id="public-external-identifiers-div">
+				                    <#list publicPersonExternalIdentifiers.externalIdentifier as external>
+				                        <#if (external.url.value)??>
+				                            <a href="${external.url.value}" target="_blank">${(external.type)!}: ${(external.value)!}</a><#if external_has_next><br/></#if>
 				                        <#else>
-				                            ${(external.externalIdCommonName.content)!}: ${(external.externalIdReference.content)!}<#if external_has_next><br/></#if>
+				                            ${(external.type)!}: ${(external.value)!}<#if external_has_next><br/></#if>
 				                        </#if>    
 				                    </#list>
 			                    </div>

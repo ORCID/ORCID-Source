@@ -54,18 +54,6 @@
         <table class="table table-bordered settings-table"
             ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
             <tbody>
-                <#if RequestParameters['OldPersonal']??>
-                    <tr>
-                        <!-- Personal Information -->
-                        <th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
-                        <td>
-                            <div>
-                                <a href="<@orcid.rootPath '/account/manage-bio-settings'/>"
-                                    class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
-                            </div>
-                        </td>
-                    </tr>
-                </#if>
                 <tr>
                     <!-- Email header -->
                     <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
@@ -405,6 +393,12 @@
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
         </p>
         <div ng-controller="DelegatesCtrl" id="DelegatesCtrl" data-search-query-url="${searchBaseUrl}">
+            <div class="ng-hide" ng-show="showInitLoader == true;">
+                <i id="delegates-spinner" class="glyphicon glyphicon-refresh spin x4 green"></i>
+                <!--[if lt IE 8]>    
+                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                <![endif]-->
+            </div>
             <table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
                 <thead>
                     <tr>
@@ -476,7 +470,7 @@
                 <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
-        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])??)>
+        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])?? || (RequestParameters['newlogin'])??)>
 	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
 	            <h1>
 	                <@orcid.msg 'manage_signin_title' />
@@ -535,7 +529,7 @@
 
 <script type="text/ng-template" id="delete-email-modal">
     <div style="padding: 20px;"><h3><@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}</h3>
-    <button class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button>
+    <button id="confirm-delete-email_{{emailSrvc.delEmail.value}}" class="btn btn-danger" ng-click="deleteEmail(emailSrvc.delEmail)"><@orcid.msg 'manage.email.deleteEmail' /></button>
     <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a></div>
 </script>
 
@@ -672,9 +666,8 @@
     <div class="lightbox-container revoke-social">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-	        	<h3>Revoke Social Account</h3>
+	        	<h3><@orcid.msg 'social.revoke'/></h3>
         		<p>{{socialRemoteUserToRevoke}}</p>
- 				<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
         		<form ng-submit="revoke()">
 		            <div ng-show="isPasswordConfirmationRequired">
                 		<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

@@ -45,7 +45,6 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.PasswordResetToken;
@@ -159,9 +158,6 @@ public class RegistrationController extends BaseController {
     private SecurityQuestionManager securityQuestionManager;
 
     @Resource
-    private RegistrationRoleManager registrationRoleManager;
-
-    @Resource
     private OrcidProfileManager orcidProfileManager;
 
     @Resource
@@ -235,17 +231,9 @@ public class RegistrationController extends BaseController {
         Registration reg = new Registration();
 
         reg.getEmail().setRequired(true);
-
         reg.getEmailConfirm().setRequired(true);
-
-        reg.getPassword();
-        reg.getPasswordConfirm();
-        reg.getEmail();
-
         reg.getFamilyNames().setRequired(false);
-
         reg.getGivenNames().setRequired(true);
-
         reg.getSendChangeNotifications().setValue(true);
         reg.getSendOrcidNews().setValue(true);
         reg.getSendMemberUpdateRequests().setValue(true);
@@ -533,11 +521,24 @@ public class RegistrationController extends BaseController {
         validateEmailAddress(reg.getEmail().getValue(), false, true, request, mbr);
 
         for (ObjectError oe : mbr.getAllErrors()) {
+            Object[] arguments = oe.getArguments();
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 // XXX
-                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", oe.getArguments()));
+                reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
             } else {
-                reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
+                Object email = "";
+                if(arguments != null && arguments.length > 0){
+                   email = arguments[0]; 
+                }
+                String link = "/signin";
+                String linkType = reg.getLinkType();
+                if("social".equals(linkType)){
+                    link = "/social/access";
+                }
+                else if("shibboleth".equals(linkType)){
+                    link = "/shibboleth/signin";
+                }
+                reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
             }
         }
 

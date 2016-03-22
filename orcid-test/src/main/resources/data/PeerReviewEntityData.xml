@@ -104,7 +104,7 @@
 		completion_month="1"
 		completion_year="2015"
 		url="http://peer_review.com/3"
-		visibility="LIMITED"		
+		visibility="PRIVATE"		
 		group_id="issn:0000003"
 		subject_external_identifiers_json="{&quot;workExternalIdentifierType&quot;:&quot;AGR&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;peer-review:subject-external-identifier-id#3&quot;}}"
 		subject_name="Peer Review # 3"

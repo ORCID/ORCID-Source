@@ -20,8 +20,6 @@
     <li class="bottom-margin-small workspace-border-box card" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse">
         <div class="work-list-container">
             <ul class="sources-edit-list">
-
-
                 <!-- Header -->
                 <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
@@ -56,14 +54,14 @@
                                                 </div>
                                             </li>
                                             <#if !(isPublicProfile??)>
-                                            <li>
-                                                <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
-                                                    questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
-                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
-                                                    publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
-                                                    limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
-                                                    privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
-                                            </li>
+	                                            <li>
+	                                                <@orcid.privacyToggle2 angularModel="group.getActive().visibility"
+	                                                    questionClick="toggleClickPrivacyHelp(group.getActive().putCode)"
+	                                                    clickedClassCheck="{'popover-help-container-show':privacyHelp[group.getActive().putCode.value]==true}"
+	                                                    publicClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PUBLIC', $event)"
+	                                                    limitedClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'LIMITED', $event)"
+	                                                    privateClick="worksSrvc.setGroupPrivacy(group.getActive().putCode.value, 'PRIVATE', $event)"/>
+	                                            </li>
                                             </#if>
                                         </ul>
                                     </div>
@@ -120,7 +118,7 @@
                                               clickedClassCheck="{'popover-help-container-show':privacyHelp[work.putCode.value]==true}"
                                               publicClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PUBLIC', $event)"
                                               limitedClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'LIMITED', $event)"
-                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)"/>
+                                              privateClick="worksSrvc.setGroupPrivacy(work.putCode.value, 'PRIVATE', $event)" />
                                       </li>
                                   </#if>
                               </ul>
@@ -153,7 +151,7 @@
                                  	</ul>                                 	
                                  </li>
                                  <li ng-show="work.url.value" class="url-popover url-work">
-                                 	<@orcid.msg 'common.url' />: <a href="{{work.url.value | urlWithHttp}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
+                                 	<@orcid.msg 'common.url' />: <a href="{{work.url.value | urlProtocol}}" ng-mouseenter="showURLPopOver(work.putCode.value)" ng-mouseleave="hideURLPopOver(work.putCode.value)" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == undefined}" target="_blank">{{work.url.value}}</a>
                                  	<div class="popover-pos">                                 	
 		                                <div class="popover-help-container">
 									       <div class="popover bottom" ng-class="{'block' : displayURLPopOver[work.putCode.value] == true}">

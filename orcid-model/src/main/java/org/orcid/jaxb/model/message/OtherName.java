@@ -23,12 +23,16 @@
 
 package org.orcid.jaxb.model.message;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * <p>
@@ -52,7 +56,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "other-name")
-public class OtherName implements Serializable {
+public class OtherName implements VisibilityType, Serializable {
 
     /**
      * 
@@ -60,12 +64,20 @@ public class OtherName implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlValue
     protected String content;
+    
+    @XmlTransient
+    @JsonIgnore
+    protected Visibility visibility;
 
+    @XmlTransient
+    protected Source source;
+    
     public OtherName() {
     }
 
-    public OtherName(String content) {
+    public OtherName(String content, Visibility vis) {
         this.content = content;
+        this.visibility=vis;
     }
 
     /**
@@ -87,6 +99,22 @@ public class OtherName implements Serializable {
      */
     public void setContent(String value) {
         this.content = value;
+    }
+    
+    public Visibility getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Visibility visibility) {
+        this.visibility = visibility;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     @Override

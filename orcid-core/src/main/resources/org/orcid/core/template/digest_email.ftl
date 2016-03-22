@@ -41,7 +41,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 <#list itemsByType?keys?sort as itemType>
 <@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})
 <#list itemsByType[itemType] as item>
-    ${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
+    ${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
 </#list>
 
 <@emailMacros.msg "email.digest.plaintext.addnow" />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
@@ -53,7 +53,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 <#if notification.items??>
 
 <#list notification.items.items as item>
-     ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.externalIdentifierType?lower_case}: ${item.externalIdentifier.externalIdentifierId})</#if>
+     ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
 </#list>
 </#if>
 <#else>

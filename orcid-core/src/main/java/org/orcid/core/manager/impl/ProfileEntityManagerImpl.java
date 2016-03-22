@@ -63,7 +63,6 @@ import org.orcid.jaxb.model.record.summary_rc2.Employments;
 import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Fundings;
-import org.orcid.jaxb.model.record.summary_rc2.Identifier;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroupKey;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
@@ -71,15 +70,14 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
-import org.orcid.jaxb.model.record_rc2.FundingExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.GroupAble;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
 import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
+import org.orcid.jaxb.model.record_rc2.GroupAble;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.ProfileDao;
@@ -222,13 +220,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
-        profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
         profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
-        profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
-        profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
-        profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
         profile.setNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
-        profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         profile.setId(orcidProfile.getOrcidIdentifier().getPath());
         return profile;
     }
@@ -285,11 +278,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean disableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
         return result;
-    }
-
-    @Override
-    public Iso3166Country getCountry(String orcid) {
-        return profileDao.getCountry(orcid);
     }
 
     @Override
@@ -456,8 +444,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             WorkGroup workGroup = new WorkGroup();
             // Fill the work groups with the external identifiers
             for (GroupAble extId : externalIdentifiers) {
-                WorkExternalIdentifier workExtId = (WorkExternalIdentifier) extId;
-                workGroup.getIdentifiers().getIdentifier().add(Identifier.fromWorkExternalIdentifier(workExtId));
+                ExternalID workExtId = (ExternalID) extId;
+                workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
             }
 
             // Fill the work group with the list of activities
@@ -494,8 +482,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
             // Fill the funding groups with the external identifiers
             for (GroupAble extId : externalIdentifiers) {
-                FundingExternalIdentifier fundingExtId = (FundingExternalIdentifier) extId;
-                fundingGroup.getIdentifiers().getIdentifier().add(Identifier.fromFundingExternalIdentifier(fundingExtId));
+                ExternalID fundingExtId = (ExternalID) extId;
+                fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
             }
 
             // Fill the funding group with the list of activities
@@ -534,7 +522,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             // Fill the peer review groups with the external identifiers
             for (GroupAble groupKey : groupKeys) {
                 PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
-                peerReviewGroup.getIdentifiers().getIdentifier().add(Identifier.fromPeerReviewGroupKey(key));
+                ExternalID id = new ExternalID();
+                id.setType(key.KEY_NAME);//TODO: this is not nice
+                id.setValue(key.getGroupId());
+                peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
             }
 
             // Fill the peer review group with the list of activities
@@ -571,13 +562,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.unreviewProfile(orcid);
     }
 
-    @Override
+    /*@Override
     public Visibility getResearcherUrlDefaultVisibility(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value())
                 : Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
         return result;
-    }
+    }*/
 
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
@@ -658,13 +649,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getResearcherUrls().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        person.setEmails(emailManager.getEmails(orcid));
+        person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
         Delegation delegation = null;
+        
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
         Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
         
@@ -732,10 +724,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             person.setName(name);
         }
 		
-		Date lastModified = getLastModified(orcid);
-		long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-
-		person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
+        Date lastModified = getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        person.setAddresses(addressManager.getPublicAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
@@ -754,13 +745,14 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getResearcherUrls().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
 
-        person.setEmails(emailManager.getPublicEmails(orcid));
+        person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         //The rest should come from the ProfileEntity object
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
         Delegation delegation = null;
+        
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
         Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
         LastModifiedDate delLastModified = null;

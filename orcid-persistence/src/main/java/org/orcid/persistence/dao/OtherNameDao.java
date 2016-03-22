@@ -65,7 +65,5 @@ public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
      * */
     boolean deleteOtherName(OtherNameEntity otherName);
     
-    boolean updateOtherNamesVisibility(String orcid, Visibility visibility);
-    
     OtherNameEntity getOtherName(String orcid, Long putCode);
 }

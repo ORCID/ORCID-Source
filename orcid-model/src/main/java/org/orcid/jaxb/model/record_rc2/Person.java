@@ -53,7 +53,7 @@ public class Person implements Serializable {
     @XmlElement(name = "keywords", namespace = "http://www.orcid.org/ns/keyword")
     Keywords keywords;
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/external-identifier")
-    ExternalIdentifiers externalIdentifiers;
+    PersonExternalIdentifiers externalIdentifiers;
     @XmlElement(name = "delegation", namespace = "http://www.orcid.org/ns/person")
     Delegation delegation;
     @XmlElement(name = "applications", namespace = "http://www.orcid.org/ns/person")
@@ -120,11 +120,11 @@ public class Person implements Serializable {
         this.keywords = keywords;
     }
 
-    public ExternalIdentifiers getExternalIdentifiers() {
+    public PersonExternalIdentifiers getExternalIdentifiers() {
         return externalIdentifiers;
     }
 
-    public void setExternalIdentifiers(ExternalIdentifiers externalIdentifiers) {
+    public void setExternalIdentifiers(PersonExternalIdentifiers externalIdentifiers) {
         this.externalIdentifiers = externalIdentifiers;
     }
 

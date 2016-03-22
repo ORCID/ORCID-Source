@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 
 public interface ExternalIdentifierManager {
     
@@ -29,7 +29,7 @@ public interface ExternalIdentifierManager {
      * @return the list of public external identifiers associated with the orcid
      *         profile
      */
-    ExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified);
+    PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified);
 
     /**
      * Return the list of external identifiers associated to a specific profile
@@ -38,7 +38,7 @@ public interface ExternalIdentifierManager {
      * @return the list of external identifiers associated with the orcid
      *         profile
      */
-    ExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified);
+    PersonExternalIdentifiers getExternalIdentifiers(String orcid, long lastModified);
 
     /**
      * Retrieve a external identifier from database
@@ -46,7 +46,7 @@ public interface ExternalIdentifierManager {
      * @param id
      * @return the externalIdentifierEntity associated with the parameter id
      */
-    ExternalIdentifier getExternalIdentifier(String orcid, Long id);
+    PersonExternalIdentifier getExternalIdentifier(String orcid, Long id);
 
     /**
      * Add a new external identifier to a specific profile
@@ -56,7 +56,7 @@ public interface ExternalIdentifierManager {
      * @return true if the external identifier was successfully created on
      *         database
      */
-    ExternalIdentifier createExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
+    PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest);
 
     /**
      * Updates an existing external identifier
@@ -65,7 +65,7 @@ public interface ExternalIdentifierManager {
      * @param externalIdentifier
      * @return the updated external identifier
      */
-    ExternalIdentifier updateExternalIdentifier(String orcid, ExternalIdentifier externalIdentifier);
+    PersonExternalIdentifier updateExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest);
 
     /**
      * Deletes an external identifier
@@ -74,4 +74,6 @@ public interface ExternalIdentifierManager {
      * @param id
      */
     boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource);
+    
+    PersonExternalIdentifiers updateExternalIdentifiers(String orcid, PersonExternalIdentifiers externalIdentifiers);
 }

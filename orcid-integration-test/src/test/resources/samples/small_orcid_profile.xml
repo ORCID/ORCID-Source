@@ -48,6 +48,13 @@
             <keywords>
                 <keyword>K1</keyword>
             </keywords>
+            <external-identifiers>
+            	<external-identifier>
+            		<external-id-common-name>extId#1</external-id-common-name>
+            		<external-id-reference>extId#1</external-id-reference>
+            		<external-id-url>http://orcid.org/extId#1</external-id-url>
+            	</external-identifier>            	
+            </external-identifiers>
         </orcid-bio>
     </orcid-profile>
 </orcid-message>

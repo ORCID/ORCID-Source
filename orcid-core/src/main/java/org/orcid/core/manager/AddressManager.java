@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 
@@ -26,7 +25,7 @@ import org.orcid.jaxb.model.record_rc2.Addresses;
  * 
  */
 public interface AddressManager {
-    Address getPrimaryAddress(String orcid);
+    Address getPrimaryAddress(String orcid, long lastModified);
     
     Addresses getAddresses(String orcid, long lastModified);
     
@@ -34,11 +33,11 @@ public interface AddressManager {
     
     Address getAddress(String orcid, Long putCode);        
 
-    Address updateAddress(String orcid, Long putCode, Address address, boolean isApiCall);
+    Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest);
 
-    Address createAddress(String orcid, Address address);
+    Address createAddress(String orcid, Address address, boolean isApiRequest);
 
     boolean deleteAddress(String orcid, Long putCode);
     
-    Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility);
+    Addresses updateAddresses(String orcid, Addresses addresses);
 }

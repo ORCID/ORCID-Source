@@ -102,7 +102,7 @@ public class AddressDaoTest extends DBUnitTest {
     
     @Test
     public void findByOrcidTest() {
-        List<AddressEntity> addresses = addressDao.findByOrcid("4444-4444-4444-4447", 0L);
+        List<AddressEntity> addresses = addressDao.getAddresses("4444-4444-4444-4447", 0L);
         assertNotNull(addresses);
         assertEquals(4, addresses.size());
     }
@@ -112,12 +112,12 @@ public class AddressDaoTest extends DBUnitTest {
     public void pendingToMigrateTest() {
         List<Object[]> pendingToMigrate = addressDao.findAddressesToMigrate();
         assertNotNull(pendingToMigrate);
-        assertEquals(2, pendingToMigrate.size());
+        assertEquals(1, pendingToMigrate.size());
 
         for (Object[] item : pendingToMigrate) {
             String orcid = (String) item[0];
             String iso2Country = (String) item[1];
-            assertThat(orcid, anyOf(is("4444-4444-4444-4443"), is("5555-5555-5555-5558")));
+            assertEquals("5555-5555-5555-5558", orcid);
             assertEquals("GB", iso2Country);
         }
     }

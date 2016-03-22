@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,17 +70,23 @@ public class OtherNameManagerImpl implements OtherNameManager {
     @Override
     @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public OtherNames getOtherNames(String orcid, long lastModified) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, lastModified);
-        OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        result.updateIndexingStatusOnChilds();
-        LastModifiedDatesHelper.calculateLatest(result);
-        return result;
+        return getOtherNames(orcid, null);
     }
     
     @Override
     @Cacheable(value = "public-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public OtherNames getPublicOtherNames(String orcid, long lastModified) {
-        List<OtherNameEntity> otherNameEntityList = otherNameDao.getOtherNames(orcid, Visibility.PUBLIC);
+        return getOtherNames(orcid, Visibility.PUBLIC);        
+    }
+    
+    private OtherNames getOtherNames(String orcid, Visibility visibility) {
+        List<OtherNameEntity> otherNameEntityList = new ArrayList<OtherNameEntity>();
+        if(visibility == null) {
+            otherNameEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
+        } else {
+            otherNameEntityList = otherNameDao.getOtherNames(orcid, visibility);
+        }
+        
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
         result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
@@ -118,10 +125,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
-    public OtherName createOtherName(String orcid, OtherName otherName) {
+    public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the otherName
-        PersonValidator.validateOtherName(otherName, sourceEntity, true);
+        PersonValidator.validateOtherName(otherName, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         for (OtherNameEntity existing : existingOtherNames) {
@@ -144,11 +151,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
 
     @Override
-    public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName) {
+    public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-
+        OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
+        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());
         // Validate the other name
-        PersonValidator.validateOtherName(otherName, sourceEntity, false);
+        PersonValidator.validateOtherName(otherName, sourceEntity, false, isApiRequest, originalVisibility);
 
         // Validate it is not duplicated
         List<OtherNameEntity> existingOtherNames = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
@@ -161,13 +169,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
        
-        OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());
         SourceEntity existingSource = updatedOtherNameEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
-        updatedOtherNameEntity.setLastModified(new Date());
-        updatedOtherNameEntity.setVisibility(originalVisibility);
+        updatedOtherNameEntity.setLastModified(new Date());        
         updatedOtherNameEntity.setSource(existingSource);
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
@@ -175,7 +180,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
     
     @Override
     @Transactional
-    public OtherNames updateOtherNames(String orcid, OtherNames otherNames, org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility) {
+    public OtherNames updateOtherNames(String orcid, OtherNames otherNames) {
         List<OtherNameEntity> existingOtherNamesEntityList = otherNameDao.getOtherNames(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(OtherNameEntity existingOtherName : existingOtherNamesEntityList) {
@@ -227,9 +232,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
         
-        if (defaultVisibility != null)
-            otherNameDao.updateOtherNamesVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
-        
         return otherNames;
     }
 
@@ -246,10 +248,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
         return false;
     }
 
+    
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultOtherNamesVisibility = profile.getOtherNamesVisibility() == null ? org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getOtherNamesVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultOtherNamesVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultOtherNamesVisibility.isMoreRestrictiveThan(incomingOtherNameVisibility)) {
                 entity.setVisibility(defaultOtherNamesVisibility);

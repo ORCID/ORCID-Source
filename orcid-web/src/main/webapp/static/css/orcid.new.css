@@ -4512,7 +4512,7 @@ a.toggle-menu{
 
 ul.menu-options{
 	position: absolute;	
-	top: 31px;	
+	top: 100%;	
 	margin: 0; 
 	padding: 0;
 	width: auto;	 
@@ -4617,7 +4617,7 @@ ul.toggle-menu li:hover {
 ul.toggle-menu li ul {
   padding: 0;
   position: absolute;
-  top: 30px;
+  top: 100%;
   right: 0;
   display: none;
   opacity: 0;
@@ -4732,6 +4732,7 @@ ul.toggle-menu li:hover ul{
 .bibtex-box,
 .work-import-wizard,
 .funding-import-wizard{
+	min-height: 75px;
 	height: auto;
 	display: inline-block;	
 	width: 100%;
@@ -5488,6 +5489,10 @@ ul.oauth-icons li {
 .notifications tbody>tr{
 	cursor: pointer;
 }
+
+.notifications .archive-checkbox{
+	vertical-align: top;
+} 
 
 .notification-top-bar{
 	display: block;
@@ -6416,6 +6421,30 @@ a:hover .mozilla-badge{
 
 .revoke-social{
 	min-height: 195px; 
+}
+
+.bibtex-box #downloadlink{
+	font-size: 12px;
+} 
+
+.email-pop-up .editTablePadCell35{
+	margin-right: 15px;	
+	margin-left: 15px;	
+}
+
+.email-pop-up .table-responsive{
+	margin-right: -20px;	
+	margin-left: -20px;
+}
+
+.email-pop-up .col-md-12,
+.email-pop-up .control-group{
+	margin-right: -15px;	
+	margin-left: -15px;
+}
+
+.settings-table .table-responsive{
+	overflow-x: initial;
 }
 
 
@@ -7658,6 +7687,23 @@ a:hover .mozilla-badge{
 	.edit-record-emails{
 		width: 100%;
 	}	
+	
+	.email-pop-up .editTablePadCell35{ 
+		margin-right: 0 !important;	 /* Overwriting main global class */
+		margin-left: 15px !important;	
+	}
+	
+	.email-pop-up .table-responsive{
+		margin-right: 0;	
+		margin-left: -15px;
+	}
+	
+	.email-pop-up .col-md-12,
+	.email-pop-up .control-group{
+		margin-right: 0;	
+		margin-left: -15px;
+	}
+	
 
 }
 

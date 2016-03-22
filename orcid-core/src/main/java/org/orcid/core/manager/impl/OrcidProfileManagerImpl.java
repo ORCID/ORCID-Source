@@ -59,6 +59,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -77,6 +78,8 @@ import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -87,8 +90,12 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
@@ -103,6 +110,8 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
@@ -112,6 +121,7 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EmailEventEntity;
@@ -199,6 +209,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Resource
     private OrgManager orgManager;
+    
+    @Resource
+    private UserConnectionDao userConnectionDao;
 
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
@@ -251,6 +264,14 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToFundings(orcidProfile, amenderOrcid);
 
+        Visibility defaultActivityVis = OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility();
+        if (createdByMember){
+            defaultActivityVis = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();                                    
+        }else if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
+                defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();            
+        }
+        addDefaultVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
@@ -261,6 +282,32 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
         return updatedTranslatedOrcid;
+    }
+
+    private void addDefaultVisibilityToBioItems(OrcidProfile orcidProfile, Visibility defaultActivityVis) {
+        if (orcidProfile.getOrcidBio() != null){
+            if (orcidProfile.getOrcidBio().getExternalIdentifiers() != null)
+                for (ExternalIdentifier x : orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+            if (orcidProfile.getOrcidBio().getKeywords() !=null)
+                for (Keyword x : orcidProfile.getOrcidBio().getKeywords().getKeyword() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+            if (orcidProfile.getOrcidBio().getResearcherUrls() != null)
+                for (ResearcherUrl x : orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+            if (orcidProfile.getOrcidBio().getPersonalDetails() != null && orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames() != null)
+                for (OtherName x : orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName() ){
+                    if (x.getVisibility() == null)
+                        x.setVisibility(defaultActivityVis);
+                }
+        }
+        
     }
 
     @Override
@@ -286,6 +333,13 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         dedupeAffiliations(orcidProfile);
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
+        
+        Visibility defaultActivityVis = existingProfileEntity.getActivitiesVisibilityDefault();
+        if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
+            defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
+        }
+        addDefaultVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
@@ -339,6 +393,69 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
+    /**
+     * Add source to each element in the bio that doesnt comes with a source
+     * 
+     * @param orcidProfile
+     *            The profile
+     * @param amenderOrcid
+     *            The orcid of the user or client that add the email to the
+     *            profile user
+     * */
+    private void addSourceToBioElements(OrcidProfile orcidProfile, String amenderOrcid) {
+        Source source = createSource(amenderOrcid);
+        if(orcidProfile != null && orcidProfile.getOrcidBio() != null) {
+            OrcidBio bio = orcidProfile.getOrcidBio();
+            //Other names
+            if (bio.getPersonalDetails() != null && bio.getPersonalDetails().getOtherNames() != null && bio.getPersonalDetails().getOtherNames().getOtherName() != null
+                    && !bio.getPersonalDetails().getOtherNames().getOtherName().isEmpty()) {
+                for(OtherName otherName : bio.getPersonalDetails().getOtherNames().getOtherName()) {
+                    if(otherName.getSource() == null || PojoUtil.isEmpty(otherName.getSource().retrieveSourcePath())) {
+                        otherName.setSource(source);
+                    }
+                }
+            }
+                        
+            //Address
+            if(bio.getContactDetails() != null && bio.getContactDetails().getAddress() != null) {
+                Address address = bio.getContactDetails().getAddress(); 
+                if(address.getSource() == null || PojoUtil.isEmpty(address.getSource().retrieveSourcePath())) {
+                    address.setSource(source);
+                }
+            }            
+            
+            //Keywords
+            if(bio.getKeywords() != null && bio.getKeywords().getKeyword() != null && !bio.getKeywords().getKeyword().isEmpty()) {
+                Keywords keywords = bio.getKeywords();
+                for(Keyword keyword : keywords.getKeyword()) {
+                    if (keyword.getSource() == null || PojoUtil.isEmpty(keyword.getSource().retrieveSourcePath())) {
+                        keyword.setSource(source);
+                    }
+                }
+            }
+            
+            //Researcher urls
+            if(bio.getResearcherUrls() != null && bio.getResearcherUrls().getResearcherUrl() != null && !bio.getResearcherUrls().getResearcherUrl().isEmpty()) {
+                ResearcherUrls rUrls = bio.getResearcherUrls();
+                for(ResearcherUrl rUrl : rUrls.getResearcherUrl()) {
+                    if(rUrl.getSource() == null || PojoUtil.isEmpty(rUrl.getSource().retrieveSourcePath())) {
+                        rUrl.setSource(source);
+                    }
+                }                
+            }
+                        
+            //External identifiers
+            if (bio.getExternalIdentifiers() != null && bio.getExternalIdentifiers().getExternalIdentifier() != null
+                    && !bio.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
+                for (ExternalIdentifier extId : bio.getExternalIdentifiers().getExternalIdentifier()) {
+                    if (extId.getSource() == null || PojoUtil.isEmpty(extId.getSource().retrieveSourcePath())) {
+                        extId.setSource(source);
+                    }
+                }
+            }
+        }
+    }
+    
     /**
      * Add source to the profile emails
      * 
@@ -558,7 +675,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {
+    public OrcidProfile addExternalIdentifiers(OrcidProfile updatedOrcidProfile) {        
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
 
         if (existingProfile != null && existingProfile.getOrcidBio() != null) {
@@ -595,7 +712,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     @Override
     @Transactional
-    public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {
+    public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {        
+        addSourceToBioElements(updatedOrcidProfile, sourceManager.retrieveSourceOrcid()); 
         OrcidProfile existingProfile = retrieveOrcidProfile(updatedOrcidProfile.getOrcidIdentifier().getPath());
         if (existingProfile == null) {
             return null;
@@ -723,13 +841,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             cachedProfile.setSecurityQuestionAnswer(encryptedAnswer != null ? unencryptedAnswer : null);
             orcidProfileCacheManager.put(cachedProfile);
         }
-    }
-
-    @Override
-    @Transactional
-    public void updateCountry(OrcidProfile orcidProfile) {
-        profileDao.updateCountry(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue(),
-                orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
     }
 
     @Override
@@ -932,7 +1043,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                                     .getTitle();
                                             Title titleToCompare = (newWorkToCompare.getWorkTitle() == null || newWorkToCompare.getWorkTitle().getTitle() == null) ? null
                                                     : newWorkToCompare.getWorkTitle().getTitle();
-                                            if (!isTheSameTitle(title, titleToCompare)) {
+                                            if (!isTheSameTitle(title, titleToCompare) && !areBothExtIdsPartOf(newWork.getWorkType(), workExtId, workExtIdToCompare)) {
                                                 String extIdContent = (workExtId.getWorkExternalIdentifierId() == null || PojoUtil.isEmpty(workExtId
                                                         .getWorkExternalIdentifierId().getContent())) ? "" : workExtId.getWorkExternalIdentifierId().getContent();
                                                 String title1 = (title == null) ? "" : title.getContent();
@@ -1029,7 +1140,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                                                         .getWorkTitle().getTitle();
                                                 Title titleToCompare = (existingWork.getWorkTitle() == null || existingWork.getWorkTitle().getTitle() == null) ? null
                                                         : existingWork.getWorkTitle().getTitle();
-                                                if (!isTheSameTitle(title, titleToCompare)) {
+                                                if (!isTheSameTitle(title, titleToCompare) && !areBothExtIdsPartOf(orcidWork.getWorkType(), existingExternalIdentifier, newExternalIdentifier)) {
                                                     String extIdContent = (existingExternalIdentifier.getWorkExternalIdentifierId() == null || PojoUtil
                                                             .isEmpty(existingExternalIdentifier.getWorkExternalIdentifierId().getContent())) ? ""
                                                             : existingExternalIdentifier.getWorkExternalIdentifierId().getContent();
@@ -1049,6 +1160,30 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
             }
         }
+    }
+    
+    private boolean areBothExtIdsPartOf(WorkType workType, WorkExternalIdentifier existing, WorkExternalIdentifier newer) {
+        boolean isExistingPartOf = false;
+        boolean isNewPartOf = false;
+        if(WorkType.BOOK_CHAPTER.equals(workType)) {
+            if(WorkExternalIdentifierType.ISBN.equals(existing.getWorkExternalIdentifierType())) {        
+                isExistingPartOf = true;
+            }
+            
+            if(WorkExternalIdentifierType.ISBN.equals(newer.getWorkExternalIdentifierType())) {
+                isNewPartOf = true;
+            }
+        } else if(WorkType.JOURNAL_ARTICLE.equals(workType)) {
+            if(WorkExternalIdentifierType.ISSN.equals(existing.getWorkExternalIdentifierType())) {
+                isExistingPartOf = true;
+            }
+            
+            if(WorkExternalIdentifierType.ISSN.equals(newer.getWorkExternalIdentifierType())) {
+                isNewPartOf = true;
+            }
+        }
+        
+        return (isExistingPartOf && isNewPartOf);
     }
 
     /**
@@ -1208,6 +1343,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
         setVisibilityToPrivate(minimalPersonalDetails.getCreditName());
         setVisibilityToPrivate(minimalPersonalDetails.getOtherNames());
+        if (minimalPersonalDetails.getOtherNames() != null && minimalPersonalDetails.getOtherNames().getOtherName() != null){
+            for (OtherName name : minimalPersonalDetails.getOtherNames().getOtherName())
+                setVisibilityToPrivate(name);            
+        }
 
         minimalBio.setPersonalDetails(minimalPersonalDetails);
         minimalBio.setContactDetails(minimalContactDetails);
@@ -1217,6 +1356,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
 
         OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile);
+        
+        userConnectionDao.deleteByOrcid(existingOrcidProfile.getOrcidIdentifier().getPath());
+        
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
@@ -1233,6 +1375,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     private void setVisibilityToPrivate(VisibilityType visibilityType) {
+        if (visibilityType != null) {
+            visibilityType.setVisibility(Visibility.PRIVATE);
+        }
+    }
+    
+    private void setVisibilityToPrivate(OtherNames visibilityType) {
         if (visibilityType != null) {
             visibilityType.setVisibility(Visibility.PRIVATE);
         }
@@ -1882,33 +2030,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         : OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
             }
 
-            if (profileEntity.getExternalIdentifiersVisibility() == null) {
-                profileEntity.setExternalIdentifiersVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getKeywordsVisibility() == null) {
-                profileEntity.setKeywordsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getResearcherUrlsVisibility() == null) {
-                profileEntity.setResearcherUrlsVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility());
-            }
-
             if (profileEntity.getNamesVisibility() == null) {
                 profileEntity.setNamesVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getOtherNamesVisibility() == null) {
-                profileEntity.setOtherNamesVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility());
-            }
-
-            if (profileEntity.getProfileAddressVisibility() == null) {
-                profileEntity.setProfileAddressVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
             }
 
             if (profileEntity.getActivitiesVisibilityDefault() == null) {

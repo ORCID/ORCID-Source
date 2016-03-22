@@ -344,7 +344,21 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     private void checkKeywords(Keywords keywords) {
         assertNotNull(keywords);
-        assertEquals(Visibility.LIMITED, keywords.getVisibility());
+        assertEquals(Visibility.PRIVATE, keywords.getVisibility());
+        assertNotNull(keywords.getKeyword());
+        assertEquals(4, keywords.getKeyword().size());
+        //They are alpha ordered
+        assertEquals("chocolat making", keywords.getKeyword().get(0).getContent());
+        assertEquals(Visibility.PRIVATE, keywords.getKeyword().get(0).getVisibility()); 
+        
+        assertEquals("coffee making", keywords.getKeyword().get(1).getContent());
+        assertEquals(Visibility.LIMITED, keywords.getKeyword().get(1).getVisibility());
+        
+        assertEquals("tea making", keywords.getKeyword().get(2).getContent());
+        assertEquals(Visibility.PUBLIC, keywords.getKeyword().get(2).getVisibility());
+        
+        assertEquals("what else can we make?", keywords.getKeyword().get(3).getContent());
+        assertEquals(Visibility.PRIVATE, keywords.getKeyword().get(3).getVisibility());
     }
 
     private void checkPersonalDetails(PersonalDetails personalDetails) {
@@ -393,12 +407,14 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
 
     private void checkExternalIdentifiers(ExternalIdentifiers externalIdentifiers) {
         assertNotNull(externalIdentifiers);
-        assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
+        assertEquals(Visibility.PUBLIC, externalIdentifiers.getVisibility());
         assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
         ExternalIdentifier externalIdentifier = externalIdentifiers.getExternalIdentifier().get(0);
         assertEquals("4444-4444-4444-4441", externalIdentifier.getSource().retrieveSourcePath());
         assertEquals("d3clan", externalIdentifier.getExternalIdReference().getContent());
         assertEquals("Facebook", externalIdentifier.getExternalIdCommonName().getContent());
+        assertNotNull(externalIdentifier.getVisibility());
+        assertNotNull("PUBLIC", externalIdentifier.getVisibility().value());
     }
 
     private void checkDelegation(Delegation delegation) {

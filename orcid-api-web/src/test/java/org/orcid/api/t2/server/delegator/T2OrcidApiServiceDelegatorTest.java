@@ -19,9 +19,11 @@ package org.orcid.api.t2.server.delegator;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,8 +52,14 @@ import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -61,9 +69,13 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
@@ -502,8 +514,66 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         organizationAddress.setCity("Edinburgh");
         organizationAddress.setCountry(Iso3166Country.GB);
         t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
-    }
-
+    }    
+    
+    @Test
+    public void testViewOtherProfileDontWork() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.AFFILIATIONS_UPDATE);
+        try {
+            t2OrcidApiServiceDelegator.findFullDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            t2OrcidApiServiceDelegator.findAffiliationsDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }        
+        
+        try {
+            t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }        
+        
+        try {
+            t2OrcidApiServiceDelegator.findExternalIdentifiers("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            t2OrcidApiServiceDelegator.findFundingDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            t2OrcidApiServiceDelegator.findWorksDetails("4444-4444-4444-4442");
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }                        
+    }        
+    
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
@@ -534,6 +604,50 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         response = t2OrcidApiServiceDelegator.unregisterWebhook(mockedUriInfo, "4444-4444-4444-4447", "www.webhook.com");
         assertNotNull(response);
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
+    }
+    
+    @Test
+    public void testDefaultPrivacyOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499",ScopePathType.ORCID_BIO_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4499"));
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidBio orcidBio = new OrcidBio();
+        orcidProfile.setOrcidBio(orcidBio);
+        PersonalDetails personalDetails = new PersonalDetails();
+        orcidBio.setPersonalDetails(personalDetails);        
+        GivenNames givenNames = new GivenNames("Test given names");
+        personalDetails.setGivenNames(givenNames);
+        CreditName creditName = new CreditName("Credit Name");
+        personalDetails.setCreditName(creditName);
+        
+        ExternalIdentifier id = new ExternalIdentifier();
+        id.setExternalIdCommonName(new ExternalIdCommonName("cn1"));
+        id.setExternalIdReference(new ExternalIdReference("value1"));
+        orcidBio.setExternalIdentifiers(new ExternalIdentifiers());
+        orcidBio.getExternalIdentifiers().getExternalIdentifier().add(id);
+        
+        personalDetails.setOtherNames(new OtherNames());
+        personalDetails.getOtherNames().addOtherName("on1", null);
+        orcidBio.setKeywords(new Keywords());
+        orcidBio.getKeywords().getKeyword().add(new Keyword("kw1",null));  
+        orcidBio.setResearcherUrls(new ResearcherUrls());
+        orcidBio.getResearcherUrls().getResearcherUrl().add(new ResearcherUrl(new Url("http://rurl2.com"),null));
+        
+        t2OrcidApiServiceDelegator.updateBioDetails(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
+        
+        OrcidProfile p = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4499");
+        assertEquals("cn1",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+        assertEquals("on1",p.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        assertEquals("kw1",p.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getKeywords().getVisibility());
+        assertEquals(new Url("http://rurl2.com"),p.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getResearcherUrls().getVisibility());
+
     }
 
 }

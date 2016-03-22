@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "externalIdentifier" })
 @XmlRootElement(name = "external-identifiers")
-public class ExternalIdentifiers implements VisibilityType, Serializable {
+public class ExternalIdentifiers implements Serializable {
 
     /**
      * 

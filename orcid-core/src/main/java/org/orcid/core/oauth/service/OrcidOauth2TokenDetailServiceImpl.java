@@ -26,6 +26,7 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -132,7 +133,8 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     }
     
     @Override
-    public int findCountByUserName(String userName) {
+    @Cacheable(value = "count-tokens", key = "#userName.concat('-').concat(#lastModified)")
+    public int findCountByUserName(String userName, long lastModified) {
         return orcidOauth2TokenDetailDao.findCountByUserName(userName);
     }
 

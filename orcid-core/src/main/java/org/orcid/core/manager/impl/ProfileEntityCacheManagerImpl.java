@@ -20,15 +20,16 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
@@ -47,6 +48,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     private static final Logger LOG = LoggerFactory.getLogger(ProfileEntityCacheManagerImpl.class);
 
     @Override
+    @Transactional
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(orcid, releaseName);
         Date dbDate = retrieveLastModifiedDate(orcid);
@@ -56,9 +58,15 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
                 synchronized (lockers.obtainLock(orcid)) {
                     profile = toProfileEntity(profileCache.get(orcid));
                     if (needsFresh(dbDate, profile)) {
-                        profile = profileDao.find(orcid);
+                        profile = profileDao.find(orcid);                        
                         if(profile == null)
-                            throw new IllegalArgumentException("Invalid orcid " + orcid);
+                            throw new IllegalArgumentException("Invalid orcid " + orcid);                         
+                        if(profile.getGivenPermissionBy() != null) {
+                            profile.getGivenPermissionBy().size();
+                        }                        
+                        if(profile.getGivenPermissionTo() != null) {
+                            profile.getGivenPermissionTo().size();
+                        }                        
                         profileCache.put(new Element(key, profile));
                     }
                 }

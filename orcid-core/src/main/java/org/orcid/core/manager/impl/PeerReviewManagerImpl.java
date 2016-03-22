@@ -32,6 +32,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
@@ -123,7 +124,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         // If request comes from the API, perform the validations
         if (isApiRequest) {
             // Validate it have at least one ext id
-            ActivityValidator.validatePeerReview(peerReview, sourceEntity);
+            ActivityValidator.validatePeerReview(peerReview, sourceEntity, true, isApiRequest, null);
 
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
@@ -132,10 +133,14 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                        ActivityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
                     }
                 }
+            }else{
+                //check vocab of external identifiers
+                ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+                ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
             }
 
             validateGroupId(peerReview);
@@ -159,21 +164,28 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
+        Visibility originalVisibility = existingEntity.getVisibility();
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
         // If request comes from the API perform validations
         if (isApiRequest) {
+            ActivityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, originalVisibility);
             validateGroupId(peerReview);
             List<PeerReview> existingReviews = this.findPeerReviews(orcid, System.currentTimeMillis());
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {
-                    ActivityValidator.checkExternalIdentifiers(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                    ActivityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                             sourceManager.retrieveSourceEntity());
                 }
             }
+        }else{
+            //check vocab of external identifiers
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
-        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
-        PeerReviewEntity updatedEntity = new PeerReviewEntity();
-        Visibility originalVisibility = existingEntity.getVisibility();
+        PeerReviewEntity updatedEntity = new PeerReviewEntity();        
         SourceEntity existingSource = existingEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);

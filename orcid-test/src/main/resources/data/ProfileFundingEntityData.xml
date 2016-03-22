@@ -107,6 +107,7 @@
             last_modified="2014-07-03 15:31:00.00"
 			client_source_id="APP-5555555555555555"
 			display_index="2"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;111&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://111.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
 			/> 	
 			
 	<profile_funding 
@@ -123,5 +124,39 @@
             last_modified="2014-07-03 15:31:00.00"
 			client_source_id="APP-5555555555555555"
 			display_index="2"
-			/>					  		    		
+			/>
+			
+			
+			
+	<profile_funding 
+			id="8" 
+			orcid="4444-4444-4444-4446" 
+			org_id="1" 
+			title="Limited Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="LIMITED" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			source_id="4444-4444-4444-4446"
+			display_index="3"
+			/>
+			
+	<profile_funding 
+			id="9" 
+			orcid="4444-4444-4444-4446" 
+			org_id="1" 
+			title="Private own Funding" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2014-07-03 15:31:00.00"
+            last_modified="2014-07-03 15:31:00.00"
+			source_id="4444-4444-4444-4446"
+			display_index="4"
+			/>		
+			
+								  		    		
 </dataset>

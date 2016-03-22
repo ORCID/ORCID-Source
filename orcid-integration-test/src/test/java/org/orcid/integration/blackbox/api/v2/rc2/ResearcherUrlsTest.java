@@ -29,16 +29,17 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -51,40 +52,57 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class ResearcherUrlsTest extends BlackBoxBase {
-
+public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
-    @Value("${org.orcid.web.base.url:https://localhost:8443/orcid-web}")
-    private String webBaseUrl;
-    @Value("${org.orcid.web.testClient1.redirectUri}")
-    private String client1RedirectUri;
-    @Value("${org.orcid.web.testClient1.clientId}")
-    public String client1ClientId;
-    @Value("${org.orcid.web.testClient1.clientSecret}")
-    public String client1ClientSecret;            
-    @Value("${org.orcid.web.testClient2.clientId}")
-    public String client2ClientId;
-    @Value("${org.orcid.web.testClient2.clientSecret}")
-    public String client2ClientSecret;
-    @Value("${org.orcid.web.testClient2.redirectUri}")
-    protected String client2RedirectUri;    
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;    
-    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
-
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
+    @After
+    public void after() throws InterruptedException, JSONException {
+        String client1accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
+        //Get all researcher urls created by client # 1
+        ClientResponse getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), client1accessToken);
+        assertNotNull(getAllResponse);
+        ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
+        assertNotNull(researcherUrls);
+        if(researcherUrls.getResearcherUrls() != null && !researcherUrls.getResearcherUrls().isEmpty()) {
+            // And delete them
+            for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+                if(rUrl.getSource() != null) {
+                    if(rUrl.getSource().retrieveSourcePath().equals(getClient1ClientId())) {
+                        ClientResponse deletedResponse = memberV2ApiClient.deleteResearcherUrl(getUser1OrcidId(), rUrl.getPutCode(), client1accessToken);
+                        assertNotNull(deletedResponse);
+                        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
+                    } 
+                }            
+            }
+        }
+        
+        String client2accessToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        //Get all researcher urls created by client # 2
+        getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), client2accessToken);
+        assertNotNull(getAllResponse);
+        researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
+        assertNotNull(researcherUrls);
+        if(researcherUrls.getResearcherUrls() != null && !researcherUrls.getResearcherUrls().isEmpty()) {
+            // And delete them
+            for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
+                if(rUrl.getSource() != null) {
+                    if(rUrl.getSource().retrieveSourcePath().equals(getClient2ClientId())) {
+                        ClientResponse deletedResponse = memberV2ApiClient.deleteResearcherUrl(getUser1OrcidId(), rUrl.getPutCode(), client2accessToken);
+                        assertNotNull(deletedResponse);
+                        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
+                    } 
+                }            
+            }
+        }
+    }
+    
     @Test
     public void testResearcherUrl() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         ResearcherUrl rUrlToCreate = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml", ResearcherUrl.class);
         assertNotNull(rUrlToCreate);
@@ -98,11 +116,11 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         rUrlToCreate.setUrlName(String.valueOf(time));
         
         // Create
-        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         String locationPath = postResponse.getLocation().getPath();
-        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + user1OrcidId + "/researcher-urls/\\d+"));
+        assertTrue("Location header path should match pattern, but was " + locationPath, locationPath.matches(".*/v2.0_rc2/" + getUser1OrcidId() + "/researcher-urls/\\d+"));
 
         // Read
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
@@ -113,18 +131,32 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         assertNotNull(gotResearcherUrl.getSource());
         assertNotNull(gotResearcherUrl.getCreatedDate());
         assertNotNull(gotResearcherUrl.getLastModifiedDate());
-        assertEquals(this.client1ClientId, gotResearcherUrl.getSource().retrieveSourcePath());
+        assertEquals(getClient1ClientId(), gotResearcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://site1.com/" + time, gotResearcherUrl.getUrl().getValue());
         assertEquals(String.valueOf(time), gotResearcherUrl.getUrlName());
         assertEquals("public", gotResearcherUrl.getVisibility().value());
 
+        //Save the original visibility
+        Visibility originalVisibility = gotResearcherUrl.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotResearcherUrl.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotResearcherUrl);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotResearcherUrl.setVisibility(originalVisibility);
+        
         // Update
         LastModifiedDate initialLastModified = gotResearcherUrl.getLastModifiedDate();
         Long currentTime = System.currentTimeMillis();
         gotResearcherUrl.setUrlName(gotResearcherUrl.getUrlName() + " - " + currentTime);
         gotResearcherUrl.getUrl().setValue(gotResearcherUrl.getUrl().getValue() + currentTime);
-        gotResearcherUrl.setVisibility(Visibility.LIMITED);
-        ClientResponse updatedResearcherUrlResponse = memberV2ApiClient.updateResearcherUrls(this.user1OrcidId, gotResearcherUrl, accessToken);
+        ClientResponse updatedResearcherUrlResponse = memberV2ApiClient.updateResearcherUrls(getUser1OrcidId(), gotResearcherUrl, accessToken);
         assertNotNull(updatedResearcherUrlResponse);
         assertEquals(Response.Status.OK.getStatusCode(), updatedResearcherUrlResponse.getStatus());
         ResearcherUrl updatedResearcherUrl = updatedResearcherUrlResponse.getEntity(ResearcherUrl.class);
@@ -137,13 +169,13 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         assertFalse(initialLastModified.equals(updatedResearcherUrl.getLastModifiedDate()));
 
         // Delete
-        ClientResponse deleteResponse = memberV2ApiClient.deleteResearcherUrl(this.user1OrcidId, gotResearcherUrl.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteResearcherUrl(getUser1OrcidId(), gotResearcherUrl.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
 
     @Test
     public void testCantAddDuplicatedResearcherUrl() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         Long now = System.currentTimeMillis();
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
@@ -152,25 +184,25 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         rUrlToCreate.setVisibility(Visibility.PUBLIC);
 
         // Create it
-        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
 
         // Add it again
-        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());
 
         // Check it can be created by other client
-        String otherClientToken = getAccessToken(this.client2ClientId, this.client2ClientSecret, this.client2RedirectUri);
-        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, otherClientToken);
+        String otherClientToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, otherClientToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
     }
 
     @Test
     public void testAddMultipleResearcherUrlAndGetThem() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         Long now = System.currentTimeMillis();
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
@@ -181,17 +213,17 @@ public class ResearcherUrlsTest extends BlackBoxBase {
             rUrlToCreate.setUrlName("url-name-" + now + "-" + i);
             rUrlToCreate.setUrl(new Url("http://newurl.com/" + now + "/" + i));
             // Create it
-            ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+            ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
             assertNotNull(postResponse);
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         }
 
-        ClientResponse getAllResponse = memberV2ApiClient.getResearcherUrls(this.user1OrcidId, accessToken);
+        ClientResponse getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getPath());
-        assertTrue(researcherUrls.getPath().contains(this.user1OrcidId));
+        assertTrue(researcherUrls.getPath().contains(getUser1OrcidId()));
         assertNotNull(researcherUrls.getResearcherUrls());
 
         boolean found1 = false, found2 = false, found3 = false;
@@ -206,25 +238,42 @@ public class ResearcherUrlsTest extends BlackBoxBase {
             }
         }
 
-        assertTrue(found1 && found2 && found3);
-
-        // Clean
-        for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
-            memberV2ApiClient.deletePeerReviewXml(this.user1OrcidId, rUrl.getPutCode(), accessToken);
-        }
+        assertTrue(found1 && found2 && found3);        
     }
     
     @Test
-    public void testGetWithPublicAPI() {
-        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(user1OrcidId);
+    public void testGetWithPublicAPI() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
+        //Create some researcher urls
+        ResearcherUrl rUrlToCreate = new ResearcherUrl();        
+        Long now = System.currentTimeMillis();
+        for (int i = 0; i < 5; i++) {
+            // Change the name
+            rUrlToCreate.setUrlName("url-name-" + now + "-" + i);
+            rUrlToCreate.setUrl(new Url("http://newurl.com/" + now + "/" + i));
+            if(i == 3) {
+                rUrlToCreate.setVisibility(Visibility.LIMITED);
+            } else if(i == 4) {
+                rUrlToCreate.setVisibility(Visibility.PRIVATE);
+            } else {
+                rUrlToCreate.setVisibility(Visibility.PUBLIC);
+            }
+            // Create it
+            ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+            assertNotNull(postResponse);
+            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        }
+        
+        ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(getUser1OrcidId()); 
         assertNotNull(getAllResponse);
         ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
         assertNotNull(researcherUrls);
         assertNotNull(researcherUrls.getResearcherUrls());
+        assertEquals(3, researcherUrls.getResearcherUrls().size());
         for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
             assertNotNull(rUrl);
             assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
-            ClientResponse theRUrl = publicV2ApiClient.viewResearcherUrlXML(user1OrcidId, String.valueOf(rUrl.getPutCode()));
+            ClientResponse theRUrl = publicV2ApiClient.viewResearcherUrlXML(getUser1OrcidId(), String.valueOf(rUrl.getPutCode()));
             assertNotNull(theRUrl);
             ResearcherUrl researcherUrl = theRUrl.getEntity(ResearcherUrl.class);
             assertEquals(researcherUrl.getCreatedDate(), rUrl.getCreatedDate());
@@ -239,13 +288,13 @@ public class ResearcherUrlsTest extends BlackBoxBase {
 
     @Test
     public void testTryingToAddInvalidResearcherUrls() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
         rUrlToCreate.setUrl(new Url(""));
         rUrlToCreate.setUrlName("");
         // Create
-        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
         
@@ -255,18 +304,18 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         }
         
         rUrlToCreate.setUrl(new Url(_351Chars));
-        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
         
         rUrlToCreate.setUrl(new Url("http://myurl.com"));
         rUrlToCreate.setUrlName(_351Chars);
-        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());
         
         rUrlToCreate.setUrlName("The name");
-        postResponse = memberV2ApiClient.createResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         
@@ -274,13 +323,13 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         ResearcherUrl gotResearcherUrl = getResponse.getEntity(ResearcherUrl.class);        
-        ClientResponse deleteResponse = memberV2ApiClient.deleteResearcherUrl(this.user1OrcidId, gotResearcherUrl.getPutCode(), accessToken);
+        ClientResponse deleteResponse = memberV2ApiClient.deleteResearcherUrl(getUser1OrcidId(), gotResearcherUrl.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
     
     @Test
     public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(this.client1ClientId, this.client1ClientSecret, this.client1RedirectUri);
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
@@ -289,10 +338,10 @@ public class ResearcherUrlsTest extends BlackBoxBase {
         rUrlToCreate.setVisibility(Visibility.PUBLIC);    
         rUrlToCreate.setPutCode(1234567890L);
         
-        ClientResponse response = memberV2ApiClient.updateResearcherUrls(user1OrcidId, rUrlToCreate, accessToken);
+        ClientResponse response = memberV2ApiClient.updateResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
+    }       
     
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {

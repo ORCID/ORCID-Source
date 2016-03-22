@@ -16,10 +16,10 @@
     =============================================================================
 
 -->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript">
 if (typeof jQuery == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/1.8.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/1.9.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
 
@@ -29,6 +29,14 @@ if (typeof jQuery.ui == 'undefined') {
     document.write(unescape("%3Cscript src='${staticCdn}/javascript/jqueryui/1.10.0/jquery-ui.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery-migrate/1.3.0/jquery-migrate.min.js"></script>
+<script type="text/javascript">
+if (typeof jQuery == 'undefined') {
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery-migrate/1.3.0/jquery-migrate.min.js' type='text/javascript'%3E%3C/script%3E"));
+}
+</script>
+
 <script type="text/javascript" >
     // CSRF
     var token = $("meta[name='_csrf']").attr("content");
@@ -44,15 +52,15 @@ if (typeof jQuery.ui == 'undefined') {
 
 <script type="text/javascript" src="${staticCdn}/javascript/orcid.js?v=${ver}"></script>
 
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular-cookies.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular-sanitize.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-cookies.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-sanitize.min.js"></script>
 
 <script type="text/javascript">
 if (typeof angular == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.2.28/angular.min.js' type='text/javascript'%3E%3C/script%3E"));
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.2.28/angular-cookies.min.js' type='text/javascript'%3E%3C/script%3E"));
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.2.28/angular-sanitize.min.js' type='text/javascript'%3E%3C/script%3E"));    
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.0/angular.min.js' type='text/javascript'%3E%3C/script%3E"));
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.0/angular-cookies.min.js' type='text/javascript'%3E%3C/script%3E"));
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/angularjs/1.5.0/angular-sanitize.min.js' type='text/javascript'%3E%3C/script%3E"));    
 }
 </script>
 <script type="text/javascript" src="${staticCdn}/javascript/script.js?v=${ver}"></script>
@@ -67,7 +75,7 @@ if (typeof angular == 'undefined') {
 
 
 
-<script src="${staticCdn}/javascript/angularjs/1.2.28/angular-recaptcha.min.js"></script>
+<script src="${staticCdn}/javascript/angularjs/1.5.0/angular-recaptcha.min.js"></script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/angularOrcid.js?v=${ver}"></script>
 

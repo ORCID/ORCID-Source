@@ -160,10 +160,15 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         }
         return null;
     }
+    
+    @Override
+    public OrcidProfile retrieveClaimedOrcidProfile(String orcid){
+        return retrieveClaimedOrcidProfile(orcid, LoadOptions.ALL);
+    }
 
     @Override
-    public OrcidProfile retrieveClaimedOrcidProfile(String orcid) {
-        OrcidProfile orcidProfile = retrieveOrcidProfile(orcid);
+    public OrcidProfile retrieveClaimedOrcidProfile(String orcid, LoadOptions loadOptions) {
+        OrcidProfile orcidProfile = retrieveOrcidProfile(orcid, loadOptions);
         if (orcidProfile != null) {
             if (Boolean.TRUE.equals(orcidProfile.getOrcidHistory().getClaimed().isValue()) || orcidProfile.isDeactivated() || isBeingAccessedByCreator(orcidProfile)
                     || haveSystemRole() || isOldEnough(orcidProfile)) {
@@ -227,9 +232,15 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
     }
 
     @Override
-    @VisibilityControl(removeAttributes = false, visibilities = Visibility.PUBLIC)
+    @VisibilityControl(visibilities = Visibility.PUBLIC)
     public OrcidProfile retrievePublicOrcidProfile(String orcid) {
-        return retrieveClaimedOrcidProfile(orcid);
+        return retrievePublicOrcidProfile(orcid, LoadOptions.ALL);
+    }
+    
+    @Override
+    @VisibilityControl(visibilities = Visibility.PUBLIC)
+    public OrcidProfile retrievePublicOrcidProfile(String orcid, LoadOptions loadOptions) {
+        return retrieveClaimedOrcidProfile(orcid, loadOptions);
     }
 
     @Override
