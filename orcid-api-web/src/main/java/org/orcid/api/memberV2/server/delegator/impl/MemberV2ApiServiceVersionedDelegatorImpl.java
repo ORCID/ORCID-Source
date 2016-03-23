@@ -25,7 +25,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.persistence.dao.ProfileDao;
@@ -34,10 +34,10 @@ import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements
-        MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
+        MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
     @Resource
-    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
+    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
 
     private String externalVersion;
 
@@ -48,7 +48,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     private ProfileDao profileDao;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -81,6 +81,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid);
         work = upgradeObject(work);
         return memberV2ApiServiceDelegator.createWork(orcid, work);
+    }
+    
+    @Override
+    public Response createWorks(String orcid, Object bulk) {
+        checkProfileStatus(orcid);
+        bulk = upgradeObject(bulk);
+        return memberV2ApiServiceDelegator.createWorks(orcid, bulk);
     }
 
     @Override
@@ -453,9 +460,9 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         return result.getObjectToConvert();
     }
 
-    private void checkProfileStatus(String orcid) {
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+    private void checkProfileStatus(String orcid) {        
         if (profileDao.isProfileDeprecated(orcid)) {
+            ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
             params.put(OrcidDeprecatedException.ORCID, primary.toString());
