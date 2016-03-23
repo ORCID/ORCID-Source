@@ -52,16 +52,16 @@ This should setup the test data and then run a test that verifies the data persi
         orcid-web
 
 2. Start Tomcat and wait for it to be up
-2. Select Run > Run Configurations
-3. Right click JUnit and select New
-4. In the Test tab, set the following options:
+3. Select Run > Run Configurations
+4. Right click JUnit and select New
+5. In the Test tab, set the following options:
 
     * Run a single test: ```True```
     * Project: ```orcid-integration-test```
     * Test class: ```org.orcid.integration.blackbox.BlackBoxTestSuite```
     * Test runner: ```JUnit 4```
 
-5. In the Arguments tab, set the following VM arguments
+6. In the Arguments tab, set the following VM arguments
 
         -Xmx2g
         -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid
@@ -70,7 +70,7 @@ This should setup the test data and then run a test that verifies the data persi
         -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource
         -Dwebdriver.firefox.bin=[path to Firefox executable]
 
-6. Click Apply, then click Run
+7. Click Apply, then click Run
 
 VM Argument notes:
 
