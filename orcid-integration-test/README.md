@@ -4,13 +4,13 @@ There are two types of test in the project.
 
 ## New Style Blackbox Tests
 
-The new style blackbox tests are in [ORICD-Source/orcid-integration-test/src/test/java/org/orcid/integration/blackbox](https://github.com/ORCID/ORCID-Source/blob/master/src/test/java/org/orcid/integration/blackbox)
+The new style blackbox tests are in [ORICD-Source/orcid-integration-test/src/test/java/org/orcid/integration/blackbox](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integration-test/src/test/java/org/orcid/integration/blackbox)
 
 The new style tests are different from the old style integration tests because they use a set of test data configured before running the tests that is *not* removed from the database when the tests are run.
 
 ###Set up the test data
 
-Test data is set up using a whitebox test located at [src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java](https://github.com/ORCID/ORCID-Source/blob/master/src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java)
+Test data is set up using a whitebox test located at [src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java)
 
 The default test data is in the following config files:
 
@@ -52,16 +52,16 @@ This should setup the test data and then run a test that verifies the data persi
         orcid-web
 
 2. Start Tomcat and wait for it to be up
-3. Select Run > Run Configurations
-2. Right click JUnit and select New
-3. In the Test tab, set the following options:
+2. Select Run > Run Configurations
+3. Right click JUnit and select New
+4. In the Test tab, set the following options:
 
     * Run a single test: ```True```
     * Project: ```orcid-integration-test```
     * Test class: ```org.orcid.integration.blackbox.BlackBoxTestSuite```
     * Test runner: ```JUnit 4```
 
-4. In the Arguments tab, set the following VM arguments
+5. In the Arguments tab, set the following VM arguments
 
         -Xmx2g
         -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid
@@ -70,6 +70,8 @@ This should setup the test data and then run a test that verifies the data persi
         -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource
         -Dwebdriver.firefox.bin=[path to Firefox executable]
 
+6. Click Apply, then click Run
+
 VM Argument notes:
 
 * For best results, use [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/)
@@ -77,6 +79,7 @@ VM Argument notes:
 Win: ```C:\Program Files (x86)\Mozilla Firefox\firefox.exe```
 Mac: ```/Applications/Firefox.app/Contents/MacOS/firefox-bin```
 * To run tests with NGINX, adjust the base URIs in the properties files
+
     [src/test/resources/test-web.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-web.properties)
     [src/test/resources/test-client.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-client.properties)
 
