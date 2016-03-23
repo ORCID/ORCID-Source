@@ -74,4 +74,6 @@ public interface ExternalIdentifierManager {
      * @param id
      */
     boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource);
+    
+    PersonExternalIdentifiers updateExternalIdentifiers(String orcid, PersonExternalIdentifiers externalIdentifiers);
 }
