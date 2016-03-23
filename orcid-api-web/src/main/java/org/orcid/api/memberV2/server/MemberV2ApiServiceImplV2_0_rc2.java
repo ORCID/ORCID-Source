@@ -45,6 +45,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_XML;
 import static org.orcid.core.api.OrcidApiConstants.WORK;
+import static org.orcid.core.api.OrcidApiConstants.WORKS;
 import static org.orcid.core.api.OrcidApiConstants.WORK_SUMMARY;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -87,6 +88,7 @@ import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
@@ -117,12 +119,12 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
     @Value("${org.orcid.core.apiBaseUri}")
     protected String apiBaseUri;
 
-    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    protected MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Bulk, Address, Keyword> serviceDelegator;
 
     private NotificationsApiServiceDelegator<NotificationPermission> notificationsServiceDelegator;
 
     public void setServiceDelegator(
-            MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator) {
+            MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Bulk, Address, Keyword> serviceDelegator) {
         this.serviceDelegator = serviceDelegator;
     }
 
@@ -224,7 +226,7 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
             @ApiResponse(code = 400, message = "Invalid Work representation", response = String.class),
             @ApiResponse(code = 500, message = "Invalid Work representation that wasn't trapped (bad fuzzy date or you tried to add a put code)", response = String.class) })
     public Response createWorks(@PathParam("orcid") String orcid, Bulk bulk) {
-        return serviceDelegator.createWork(orcid, work);
+        return serviceDelegator.createWorks(orcid, bulk);
     }
     
     

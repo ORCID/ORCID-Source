@@ -73,6 +73,7 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
+import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.Citation;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
@@ -114,7 +115,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
-    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Bulk, Address, Keyword> serviceDelegator;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {

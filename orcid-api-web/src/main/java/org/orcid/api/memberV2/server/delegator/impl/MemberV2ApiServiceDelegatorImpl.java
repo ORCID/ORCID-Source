@@ -240,6 +240,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response createWorks(String orcid, Bulk bulk) {
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_CREATE, orcid);
         return null;
     }
     

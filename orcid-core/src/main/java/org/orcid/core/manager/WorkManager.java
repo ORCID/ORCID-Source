@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.Work;
 
 public interface WorkManager {
@@ -89,15 +90,15 @@ public interface WorkManager {
     WorkSummary getWorkSummary(String orcid, Long workId, long lastModified);
     
     /**
-     * Add a new work to the work table
+     * Add a list of works to the give user
      * 
-     * @param work
-     *            The work that will be persited
-     * @param applyValidations
-     *          Should the work be validated?           
-     * @return the work already persisted on database
+     * @param bulk
+     *            a list of works to be added
+     * @return a Bulk object containing the works created or the errors associated with a given work 
      * */
     Work createWork(String orcid, Work work, boolean applyValidations);
+    
+    Bulk createWorks(String orcid, Bulk bulk);
 
     /**
      * Edits an existing work
