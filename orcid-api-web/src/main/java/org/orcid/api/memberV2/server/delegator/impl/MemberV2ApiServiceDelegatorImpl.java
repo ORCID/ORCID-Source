@@ -64,6 +64,7 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
@@ -99,7 +100,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl
-        implements MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> {
+        implements MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Bulk, Address, Keyword> {
 
     @Resource
     private WorkManager workManager;
@@ -237,6 +238,11 @@ public class MemberV2ApiServiceDelegatorImpl
         }
     }
 
+    @Override
+    public Response createWorks(String orcid, Bulk bulk) {
+        return null;
+    }
+    
     @Override
     public Response updateWork(String orcid, Long putCode, Work work) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_UPDATE, orcid);

@@ -19,6 +19,7 @@ package org.orcid.record;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -41,6 +42,7 @@ import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
 import org.orcid.jaxb.model.record_rc2.Applications;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.Email;
@@ -59,7 +61,9 @@ import org.orcid.jaxb.model.record_rc2.Preferences;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.Deprecated;
+import org.orcid.jaxb.model.record_rc2.Error;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -557,9 +561,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("8888-8888-8888-8880", application.getGroupOrcid().getPath());
         assertEquals("application-group-name", application.getGroupName());
     }
-
-    
-    
+        
     @Test
     public void testUnmarshallDeprecated() {
         Deprecated deprecated = (Deprecated) unmarshallFromPath("/record_2.0_rc2/samples/deprecated-2.0_rc2.xml", Deprecated.class);
@@ -618,6 +620,79 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(12, history.getSubmissionDate().getValue().getMonth());
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
     }
+        
+    @Test
+    public void testUnmarshallWorkBulk() {
+        Bulk bulk = (Bulk) unmarshallFromPath("/record_2.0_rc2/samples/bulk-work-2.0_rc2.xml", Bulk.class);
+        assertNotNull(bulk);
+        assertNotNull(bulk.getBulk());
+        assertEquals(4, bulk.getBulk().size());
+        Object o1 = bulk.getBulk().get(0);
+        Object o2 = bulk.getBulk().get(1);
+        Object o3 = bulk.getBulk().get(2);
+        Object o4 = bulk.getBulk().get(3);
+        assertEquals(Error.class.getName(), o1.getClass().getName());
+        Error e1 = (Error)o1;
+        assertEquals("0", e1.getResponseCode());
+        assertEquals("error:developer-message0", e1.getDeveloperMessage());
+        assertEquals("error:user-message0", e1.getUserMessage());
+        assertEquals("0", e1.getErrorCode());
+        assertNotNull(e1.getMoreInfo());
+        assertEquals("http://tempuri.org/0", e1.getMoreInfo().getValue());
+        
+        assertEquals(Error.class.getName(), o4.getClass().getName());
+        Error e4 = (Error)o4;
+        assertEquals("1", (e4.getResponseCode()));
+        assertEquals("error:developer-message1", e4.getDeveloperMessage());
+        assertEquals("error:user-message1", e4.getUserMessage());
+        assertEquals("1", e4.getErrorCode());
+        assertNotNull(e4.getMoreInfo());
+        assertEquals("http://tempuri.org/1", e4.getMoreInfo().getValue());
+        
+        assertEquals(Work.class.getName(), o2.getClass().getName());
+        Work w2 = (Work)o2;
+        assertNotNull(w2.getWorkTitle());
+        assertNotNull(w2.getWorkTitle().getTitle());
+        assertEquals("Current treatment of left main coronary artery disease # 1", w2.getWorkTitle().getTitle().getContent());
+        assertNotNull(w2.getJournalTitle());
+        assertEquals("Cor et Vasa", w2.getJournalTitle().getContent());
+        assertNotNull(w2.getWorkType());
+        assertEquals("journal-article", w2.getWorkType().value());
+        assertNotNull(w2.getPublicationDate());
+        assertEquals("01", w2.getPublicationDate().getDay().getValue());
+        assertEquals("06", w2.getPublicationDate().getMonth().getValue());
+        assertEquals("2015", w2.getPublicationDate().getYear().getValue());
+        assertNotNull(w2.getExternalIdentifiers());
+        assertNotNull(w2.getExternalIdentifiers().getExternalIdentifier());
+        assertFalse(w2.getExternalIdentifiers().getExternalIdentifier().isEmpty());
+        assertNotNull(w2.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertEquals("http://extId/1", w2.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("self", w2.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship().value());
+        assertEquals("doi", w2.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("10.1016/j.crvasa.2015.05.007", w2.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());        
+        
+        assertEquals(Work.class.getName(), o3.getClass().getName());
+        Work w3 = (Work)o3;
+        assertNotNull(w3.getWorkTitle());
+        assertNotNull(w3.getWorkTitle().getTitle());
+        assertEquals("Current treatment of left main coronary artery disease # 2", w3.getWorkTitle().getTitle().getContent());
+        assertNotNull(w3.getJournalTitle());
+        assertEquals("Cor et Vasa", w3.getJournalTitle().getContent());
+        assertNotNull(w3.getWorkType());
+        assertEquals("journal-article", w3.getWorkType().value());
+        assertNotNull(w3.getPublicationDate());
+        assertEquals("01", w3.getPublicationDate().getDay().getValue());
+        assertEquals("06", w3.getPublicationDate().getMonth().getValue());
+        assertEquals("2015", w3.getPublicationDate().getYear().getValue());
+        assertNotNull(w3.getExternalIdentifiers());
+        assertNotNull(w3.getExternalIdentifiers().getExternalIdentifier());
+        assertFalse(w3.getExternalIdentifiers().getExternalIdentifier().isEmpty());
+        assertNotNull(w3.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertEquals("http://extId/2", w3.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("self", w3.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship().value());
+        assertEquals("doi", w3.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("10.1016/j.crvasa.2015.05.008", w3.getExternalIdentifiers().getExternalIdentifier().get(0).getValue()); 
+    }
     
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
@@ -667,6 +742,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (Preferences) obj;
             } else if (History.class.equals(type)) {
                 result = (History) obj;
+            } else if (Bulk.class.equals(type)) {
+                result = (Bulk) obj;
             }
             return result;
         } catch (IOException e) {
