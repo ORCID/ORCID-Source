@@ -35,12 +35,23 @@ The default test data is in the following config files:
 
 5. Click Apply, then click Run
 
+####Command Line
+
+1. Switch to the orcid-integration-test directory
+
+    cd ~/git/ORCID-Source/orcid-integration-test
+
+2. Run the test with the VM arguments listed above
+
+    mvn test -Xmx2g  -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -Dorg.orcid.config.file=classpath:staging-persistence.properties 
+
 This should setup the test data and then run a test that verifies the data persisted in the database. If this process succeeds, run the blackbox test as follows.
 
 ###Run the Blackbox tests
 
-*Note:* Test data setup above must be run before each Blackbox test run, so that the data is in the correct state to start the Black box test.
+**Note:** Test data setup above must be run before each Blackbox test run, so that the data is in the correct state to start the Black box test.
 
+####Eclipse
 
 1. Make sure that the following modules are added to Tomcat (stop Tomcat before adding modules):
 
@@ -72,6 +83,16 @@ This should setup the test data and then run a test that verifies the data persi
 
 7. Click Apply, then click Run
 
+####Command Line
+
+1. Switch to the orcid-integration-test directory
+
+    cd ~/git/ORCID-Source/orcid-integration-test
+
+2. Run the test with the VM arguments listed above
+
+    mvn test -Xmx2g  -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.config.file=classpath:test-web.properties,classpath:test-client.properties -Dorg.orcid.persistence.db.dataSource=simpleDataSource  -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=[path to Firefox executable]
+
 VM Argument notes:
 
 * For best results, use [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/)
@@ -81,6 +102,7 @@ Mac: ```/Applications/Firefox.app/Contents/MacOS/firefox-bin```
 * To run tests with NGINX, adjust the base URIs in the properties files
 
     [src/test/resources/test-web.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-web.properties)
+
     [src/test/resources/test-client.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/resources/test-client.properties)
 
 ## Old Style Integration Tests
