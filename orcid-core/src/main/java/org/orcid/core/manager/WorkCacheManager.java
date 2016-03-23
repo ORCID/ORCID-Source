@@ -29,9 +29,13 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 public interface WorkCacheManager {
 
     List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified);
+    
+    List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified);
 
     MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified);
 
     List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
+
+    List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
 
 }

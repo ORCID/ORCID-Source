@@ -47,12 +47,17 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
     @Resource(name = "workLastModifiedCache")
     private Cache workLastModifiedCache;
 
+    @Resource(name = "publicWorkLastModifiedCache")
+    private Cache publicWorkLastModifiedCache;
+
     @Resource(name = "minimizedWorkCache")
     private Cache minimizedWorkCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
-    LockerObjectsManager lockers = new LockerObjectsManager();
+    private LockerObjectsManager lockers = new LockerObjectsManager();
+
+    private LockerObjectsManager publicLockers = new LockerObjectsManager();
 
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
@@ -75,6 +80,26 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
     }
 
     @Override
+    public List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified) {
+        Object key = new ProfileCacheKey(orcid, profileLastModified, releaseName);
+        List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(publicWorkLastModifiedCache.get(key));
+        if (workLastModifiedList == null) {
+            try {
+                synchronized (publicLockers.obtainLock(orcid)) {
+                    workLastModifiedList = toWorkLastModifiedList(publicWorkLastModifiedCache.get(key));
+                    if (workLastModifiedList == null) {
+                        workLastModifiedList = workDao.getPublicWorkLastModifiedList(orcid);
+                        publicWorkLastModifiedCache.put(new Element(key, workLastModifiedList));
+                    }
+                }
+            } finally {
+                publicLockers.releaseLock(orcid);
+            }
+        }
+        return workLastModifiedList;
+    }
+
+    @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, workLastModified, releaseName);
         MinimizedWorkEntity minimizedWorkEntity = toMinimizedWork(minimizedWorkCache.get(key));
@@ -84,11 +109,20 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
         }
         return minimizedWorkEntity;
     }
-    
+
     @Override
     public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified) {
         List<WorkLastModifiedEntity> workLastModifiedList = retrieveWorkLastModifiedList(orcid, profileLastModified);
-        List<MinimizedWorkEntity> works = workLastModifiedList.stream().map(e -> retrieveMinimizedWork(e.getId(), e.getLastModified().getTime())).collect(Collectors.toList());
+        List<MinimizedWorkEntity> works = workLastModifiedList.stream().map(e -> retrieveMinimizedWork(e.getId(), e.getLastModified().getTime()))
+                .collect(Collectors.toList());
+        return works;
+    }
+
+    @Override
+    public List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified) {
+        List<WorkLastModifiedEntity> workLastModifiedList = retrievePublicWorkLastModifiedList(orcid, profileLastModified);
+        List<MinimizedWorkEntity> works = workLastModifiedList.stream().map(e -> retrieveMinimizedWork(e.getId(), e.getLastModified().getTime()))
+                .collect(Collectors.toList());
         return works;
     }
 

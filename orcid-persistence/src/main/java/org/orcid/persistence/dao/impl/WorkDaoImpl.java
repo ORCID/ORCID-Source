@@ -88,6 +88,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     /**
+     * @deprecated Use {@link org.orcid.core.manager.WorkCacheManager#retrieveMinimizedWorks(String, long) } instead
+     * 
      * Find works for a specific user
      * 
      * @param orcid
@@ -96,6 +98,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-works", key = "#orcid.concat('-').concat(#lastModified)")
+    @Deprecated
     public List<MinimizedWorkEntity> findWorks(String orcid, long lastModified) {
 
         Query query = entityManager
@@ -108,6 +111,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     /**
+     * @deprepcated Use {@link org.orcid.core.manager.WorkCacheManager#retrievePublicMinimizedWorks(String, long)} instead
+     * 
      * Find the public works for a specific user
      * 
      * @param orcid
@@ -116,6 +121,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
      * */
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-public-works", key = "#orcid.concat('-').concat(#lastModified)")
+    @Deprecated
     public List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified) {
         Query query = entityManager
                 .createQuery("from MinimizedWorkEntity w "
@@ -273,6 +279,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Override
     public List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid) {
         Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.orcid=:orcid order by w.displayIndex desc, w.dateCreated asc");
+        query.setParameter("orcid", orcid);
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid) {
+        Query query = entityManager.createQuery("from WorkLastModifiedEntity w where w.visibility='PUBLIC' and w.orcid=:orcid order by w.displayIndex desc, w.dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }

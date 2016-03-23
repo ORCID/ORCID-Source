@@ -148,4 +148,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid);
 
+    List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid);
+
 }

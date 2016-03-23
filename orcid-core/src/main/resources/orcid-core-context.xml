@@ -518,6 +518,16 @@
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
+    
+    <bean id="publicWorkLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="public-work-last-modified" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="2000" />
+        <property name="timeToLiveSeconds" value="604800" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="500000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+    </bean>
 
     <bean id="minimizedWorkCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
