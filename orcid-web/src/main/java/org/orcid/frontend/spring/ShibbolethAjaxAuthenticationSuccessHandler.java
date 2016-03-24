@@ -38,56 +38,56 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 
 public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticationSuccessHandlerBase {
-    
+
     private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
-    
+
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean enabled;
-    
+
     private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "targeted-id" };
-    
+
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-    	linkShibbolethAccount(request, response);
+        linkShibbolethAccount(request, response);
         String targetUrl = getTargetUrl(request, response, authentication);
         response.setContentType("application/json");
-        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");        
+        response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
     }
-    
-	public void linkShibbolethAccount(HttpServletRequest request, HttpServletResponse response) {
-		Map<String, String> headers = new HashMap<String, String>();
-    	
-    	Enumeration<String> headerNames = request.getHeaderNames();
-    	while (headerNames.hasMoreElements()) {
-    		String key = (String) headerNames.nextElement();
-    		String value = request.getHeader(key);
-    		headers.put(key, value);
-    	}
-    	checkEnabled();
+
+    public void linkShibbolethAccount(HttpServletRequest request, HttpServletResponse response) {
+        Map<String, String> headers = new HashMap<String, String>();
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            headers.put(key, value);
+        }
+        checkEnabled();
         String providerUserId = retrieveRemoteUser(headers);
         String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
         if (userConnectionEntity == null) {
-        	userConnectionEntity = new UserconnectionEntity();
-		    String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
-		    UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
-		    OrcidProfile profile = getRealProfile();
-		    userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
-		    userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
-		    userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-		    userConnectionEntity.setRank(1);
-		    userConnectionEntity.setId(pk);
-		    userConnectionEntity.setLinked(true);
-		    userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
-		    userConnectionDao.persist(userConnectionEntity);
+            userConnectionEntity = new UserconnectionEntity();
+            String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
+            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
+            OrcidProfile profile = getRealProfile();
+            userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
+            userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
+            userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+            userConnectionEntity.setRank(1);
+            userConnectionEntity.setId(pk);
+            userConnectionEntity.setLinked(true);
+            userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
+            userConnectionDao.persist(userConnectionEntity);
         }
-	}
-    
+    }
+
     private void checkEnabled() {
         if (!enabled) {
             throw new FeatureDisabledException();
         }
     }
-    
+
     private String retrieveRemoteUser(Map<String, String> headers) {
         for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
             String userId = headers.get(possibleHeader);
