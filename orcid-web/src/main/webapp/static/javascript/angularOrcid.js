@@ -1575,6 +1575,7 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
             $.ajax({
                 url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
                 dataType: 'json',
+                cache: true,
                 success: function(data) {
                     serv.feed = data;
                     $rootScope.$apply();
@@ -7300,7 +7301,7 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 
 }]);
 
-orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl($scope, $compile){
+orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
     $scope.showLoader = false;
     $scope.sort = {
         column: 'providerUserId',
@@ -7364,6 +7365,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
             dataType: 'json',
             success: function(data) {
                 $scope.socialAccounts = data;
+                $scope.populateIdPNames();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -7371,6 +7373,21 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
             console.log("error getting social accounts");
         });
     };
+    
+    $scope.$watch(function() { return discoSrvc.feed; }, function(){
+        $scope.populateIdPNames();
+        
+    });
+    
+    $scope.populateIdPNames = function() {
+        if(discoSrvc.feed != null) {
+            for(i in $scope.socialAccounts){
+                var account = $scope.socialAccounts[i];
+                var name = discoSrvc.getIdPName(account.id.providerid);
+                account.idpName = name;
+            }
+        }
+    }
 
     $scope.closeModal = function() {
         $.colorbox.close();

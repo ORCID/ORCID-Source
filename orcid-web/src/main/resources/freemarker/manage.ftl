@@ -486,7 +486,7 @@
 	                    <thead>
 	                        <tr>
 	                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
-	                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
+	                            <th width="30%" ng-click="changeSorting('idpName')"><@orcid.msg 'manage_signin_table_header2' /></th>
 	                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
 	                            <td width="10%"></td>
 	                        </tr>
@@ -494,7 +494,7 @@
 	                    <tbody>
 	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
 	                            <td width="40%" style="word-break:break-all">{{socialAccount.accountIdForDisplay}}</a></td>
-	                            <td width="30%" style="word-break:break-all">{{socialAccount.id.providerid}}</a></td>
+	                            <td width="30%" style="word-break:break-all">{{socialAccount.idpName}}</a></td>
 	                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
 	                            <td width="10%">
 	                                <a
