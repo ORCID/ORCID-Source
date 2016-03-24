@@ -107,7 +107,7 @@ public class ShibbolethController extends BaseController {
         }
     }
 
-    private String retrieveRemoteUser(Map<String, String> headers) {
+    public static String retrieveRemoteUser(Map<String, String> headers) {
         for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
             String userId = headers.get(possibleHeader);
             if (userId != null) {
@@ -117,7 +117,7 @@ public class ShibbolethController extends BaseController {
         throw new OrcidBadRequestException("Couldn't find remote user header");
     }
 
-    private String retrieveDisplayName(Map<String, String> headers) {
+    public static String retrieveDisplayName(Map<String, String> headers) {
         String eppn = headers.get("eppn");
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;

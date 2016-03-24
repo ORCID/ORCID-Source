@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.frontend.web.controllers.ShibbolethController;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -43,8 +44,6 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
 
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean enabled;
-
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "targeted-id" };
 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         linkShibbolethAccount(request, response);
@@ -63,7 +62,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             headers.put(key, value);
         }
         checkEnabled();
-        String providerUserId = retrieveRemoteUser(headers);
+        String providerUserId = ShibbolethController.retrieveRemoteUser(headers);
         String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
         if (userConnectionEntity == null) {
@@ -73,7 +72,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             OrcidProfile profile = getRealProfile();
             userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
             userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
-            userConnectionEntity.setDisplayname(profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+            userConnectionEntity.setDisplayname(ShibbolethController.retrieveDisplayName(headers));
             userConnectionEntity.setRank(1);
             userConnectionEntity.setId(pk);
             userConnectionEntity.setLinked(true);
@@ -88,13 +87,4 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         }
     }
 
-    private String retrieveRemoteUser(Map<String, String> headers) {
-        for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
-            String userId = headers.get(possibleHeader);
-            if (userId != null) {
-                return userId;
-            }
-        }
-        throw new OrcidBadRequestException("Couldn't find remote user header");
-    }
 }
