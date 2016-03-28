@@ -20,8 +20,9 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.persistence.jpa.entities.custom.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 
 /**
  * 
@@ -65,6 +66,8 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return the list of works associated to the specific user
      * */
     List<MinimizedWorkEntity> findPublicWorks(String orcid, long lastModified);
+    
+    MinimizedWorkEntity getMinimizedWorkEntity(Long id);
 
     /**
      * Updates the visibility of an existing work
@@ -142,4 +145,9 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
      * @return the WorkEntity associated with the parameter id
      * */
     WorkEntity getWork(String orcid, Long id);
+
+    List<WorkLastModifiedEntity> getWorkLastModifiedList(String orcid);
+
+    List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid);
+
 }
