@@ -1492,8 +1492,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             serv.showArchived = !serv.showArchived;
             serv.reloadNotifications();
         },
-        swapbulkChangeAll: function($event){
-        	$event.stopPropagation();
+        swapbulkChangeAll: function(){        	
             serv.bulkChecked = !serv.bulkChecked;
             
             if(serv.bulkChecked == false)

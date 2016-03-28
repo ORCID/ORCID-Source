@@ -55,7 +55,7 @@
 	                    <th>${springMacroRequestContext.getMessage("notifications.date")}</th>
 	                    <th></th>		
 	                    <th class="centered">		                    
-			            	<input type="checkbox" value="" ng-click="notificationsSrvc.swapbulkChangeAll($event)" ng-model="bulkChecked">
+			            	<input type="checkbox" value="" ng-click="notificationsSrvc.swapbulkChangeAll()" ng-model="bulkChecked">
 	                    </th>
 	                </tr>
                 </thead>
