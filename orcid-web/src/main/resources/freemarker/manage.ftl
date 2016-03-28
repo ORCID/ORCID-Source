@@ -171,7 +171,7 @@
                     ng-show="showEditPrivacyPreferences" ng-cloak>
                     <td colspan="2">
                         <div class="editTablePadCell35" id="privacy-settings">
-                            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}<br />
+                            ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
                             <@orcid.privacyToggle3
 						    angularModel="prefsSrvc.prefs.activitiesVisibilityDefault.value"
 						    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
