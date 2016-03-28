@@ -2016,24 +2016,20 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         orcidProfile.getOrcidPreferences().setLocale(org.orcid.jaxb.model.message.Locale.fromValue(locale.toString()));
     }
 
-    private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults, Visibility defaultVisibility) {
-        setDefaultVisibility(profileEntity, useMemberDefaults, defaultVisibility, false);
-    }
-    
     /**
      * Sets the default visibility of each bio element present in the
      * orcidProfile object
      * 
      * @param orcidProfile
      * */
-    private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults, Visibility defaultVisibility, boolean overrideExistings) {
+    private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults, Visibility defaultVisibility) {
         if (profileEntity != null) {
             //Names should be public by default
-            if (overrideExistings || profileEntity.getNamesVisibility() == null) {
+            if (profileEntity.getNamesVisibility() == null) {
                 profileEntity.setNamesVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
             }
             
-            if (overrideExistings || profileEntity.getBiographyVisibility() == null) {
+            if (profileEntity.getBiographyVisibility() == null) {
                 if(useMemberDefaults) {
                     profileEntity.setBiographyVisibility(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility());
                 } else {
@@ -2041,7 +2037,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }                
             }
            
-            if (overrideExistings || profileEntity.getActivitiesVisibilityDefault() == null) {
+            if (profileEntity.getActivitiesVisibilityDefault() == null) {
                 if(useMemberDefaults) {
                     profileEntity.setActivitiesVisibilityDefault(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility());
                 } else {
