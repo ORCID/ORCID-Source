@@ -1492,14 +1492,16 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             serv.showArchived = !serv.showArchived;
             serv.reloadNotifications();
         },
-        swapbulkChangeAll: function(){
+        swapbulkChangeAll: function(){        	
             serv.bulkChecked = !serv.bulkChecked;
+            
             if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
             else
                 for (var idx in serv.notifications)
                     serv.bulkArchiveMap[serv.notifications[idx].putCode] = serv.bulkChecked;
                 serv.selectionActive = true;
+            
             
         },
         bulkArchive: function(){            
@@ -1538,10 +1540,10 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             var count = 0;
             var totalNotifications = 0;
             
-            serv.selectionActive = false;
+            serv.selectionActive = false;            
             
             for (putCode in serv.bulkArchiveMap){                
-                if(serv.bulkArchiveMap[putCode]){
+                if(serv.bulkArchiveMap[putCode] == true){
                     serv.selectionActive = true;
                     count++;
                 }
@@ -1551,10 +1553,11 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 if (serv.notifications[i].archivedDate == null)
                     totalNotifications++;            
             
-            totalNotifications == count ? serv.bulkChecked = true : serv.bulkChecked = false;            
+            totalNotifications == count ? serv.bulkChecked = true :	serv.bulkChecked = false;
+            
         }
     };
-    serv.getNotifications();
+    serv.getNotifications();    
     return serv;
 }]);
 
@@ -7363,9 +7366,11 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
         iframeResize(notificationId);
     };    
     
-    $scope.selectAllNotifications = function(){
-        
-    }
+    $scope.$watch(function () { return notificationsSrvc.bulkChecked }, function (newVal, oldVal) {
+        if (typeof newVal !== 'undefined') {
+        	$scope.bulkChecked = notificationsSrvc.bulkChecked;
+        }
+    });
 
         
 }]);
