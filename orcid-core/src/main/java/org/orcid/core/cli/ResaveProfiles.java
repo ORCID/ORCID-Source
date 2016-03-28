@@ -125,7 +125,7 @@ public class ResaveProfiles {
                     IndexingStatus originalIndexingStatus = profileDao.find(orcid).getIndexingStatus();
                     // Save it straight back - it will be saved back in the
                     // new DB table automatically
-                    orcidProfileManager.updateOrcidProfile(orcidProfile, false);
+                    orcidProfileManager.updateOrcidProfile(orcidProfile);
                     if (!updateLastModified) {
                         profileDao.updateLastModifiedDateAndIndexingStatusWithoutResult(orcid, originalLastModified, originalIndexingStatus);
                     }

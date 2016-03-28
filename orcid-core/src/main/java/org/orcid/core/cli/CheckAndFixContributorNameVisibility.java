@@ -132,7 +132,7 @@ public class CheckAndFixContributorNameVisibility {
                         }
                     }
                 }
-                orcidProfileManager.updateOrcidProfile(orcidProfile, false);
+                orcidProfileManager.updateOrcidProfile(orcidProfile);
             }
         });
     }

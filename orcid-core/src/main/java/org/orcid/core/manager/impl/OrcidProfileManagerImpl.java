@@ -319,7 +319,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     @Transactional
-    public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, boolean justClaimed) {
+    public OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile) {
         String amenderOrcid = sourceManager.retrieveSourceOrcid();
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
@@ -342,9 +342,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         //If it is just claimed, set the default visibility values
-        if(justClaimed) {
-            setDefaultVisibility(profileEntity, false, defaultVisibility, true);
-        }
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
         ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
@@ -666,7 +663,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             existingActivities.setOrcidWorks(existingOrcidWorks);
         }
         orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.WORK);
         return profileToReturn;
     }
@@ -700,7 +697,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
             orcidJaxbCopyManager.copyUpdatedExternalIdentifiersToExistingPreservingVisibility(orcidBio, updatedOrcidProfile.getOrcidBio());
 
-            OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, false);
+            OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
             notificationManager.sendAmendEmail(profileToReturn, AmendedSection.EXTERNAL_IDENTIFIERS);
             return profileToReturn;
         } else {
@@ -724,7 +721,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
         // preserve the visibility settings
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingProfile.getOrcidBio(), updatedOrcidProfile.getOrcidBio());
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.BIO);
         return profileToReturn;
     }
@@ -756,7 +753,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
 
         orcidJaxbCopyManager.copyAffiliationsToExistingPreservingVisibility(existingAffiliations, updatedAffiliations);
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.AFFILIATION);
         return profileToReturn;
     }
@@ -789,7 +786,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
 
         orcidJaxbCopyManager.copyFundingListToExistingPreservingVisibility(existingFundingList, updatedFundingList);
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.FUNDING);
         return profileToReturn;
     }
@@ -904,7 +901,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
 
         existingProfile.setOrcidPreferences(updatedOrcidProfile.getOrcidPreferences());
-        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.PREFERENCES);
         return profileToReturn;
     }
@@ -1359,7 +1356,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         blankedOrcidProfile.setOrcidBio(minimalBio);
         blankedOrcidProfile.setOrcidIdentifier(existingOrcidProfile.getOrcidIdentifier().getPath());
 
-        OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(blankedOrcidProfile);
         
         userConnectionDao.deleteByOrcid(existingOrcidProfile.getOrcidIdentifier().getPath());
         
@@ -1373,7 +1370,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     public OrcidProfile reactivateOrcidProfile(OrcidProfile deactivatedOrcidProfile) {
         OrcidHistory deactivatedOrcidHistory = deactivatedOrcidProfile.getOrcidHistory();
         deactivatedOrcidHistory.setDeactivationDate(null);
-        OrcidProfile profileToReturn = updateOrcidProfile(deactivatedOrcidProfile, false);
+        OrcidProfile profileToReturn = updateOrcidProfile(deactivatedOrcidProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }

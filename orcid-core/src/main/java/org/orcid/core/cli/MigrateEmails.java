@@ -68,7 +68,7 @@ public class MigrateEmails {
                         OrcidProfile orcidProfile = orcidProfileManager.retrieveOrcidProfile(orcid);
                         // Save it straight back - it will be saved back in the
                         // new DB table automatically
-                        orcidProfileManager.updateOrcidProfile(orcidProfile, false);
+                        orcidProfileManager.updateOrcidProfile(orcidProfile);
                     }
                 });
                 doneCount++;
