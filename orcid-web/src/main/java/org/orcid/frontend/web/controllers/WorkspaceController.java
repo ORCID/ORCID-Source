@@ -56,7 +56,6 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
@@ -400,6 +399,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid(), lastModifiedTime);                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
         return form;
     }
     
@@ -420,15 +424,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
                     
             OtherNames otherNames = onf.toOtherNames();                
-            Visibility defaultVisibility = onf.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(OtherName o : otherNames.getOtherNames()) {
-                    o.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            } 
-                        
             otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
         }
 
