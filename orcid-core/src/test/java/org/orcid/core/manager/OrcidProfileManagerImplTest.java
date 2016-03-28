@@ -234,7 +234,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidProfile profile2 = createBasicProfile();
         profile2.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).setPutCode(originalPutCode);
-        profile2 = orcidProfileManager.updateOrcidProfile(profile2);
+        profile2 = orcidProfileManager.updateOrcidProfile(profile2, false);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         String resultPutCode = resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getPutCode();
@@ -256,7 +256,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         OrcidProfile profile2 = createBasicProfile();
         profile2.setOrcidActivities(null);
-        profile2 = orcidProfileManager.updateOrcidProfile(profile2);
+        profile2 = orcidProfileManager.updateOrcidProfile(profile2, false);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
 
@@ -284,7 +284,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
             }
         }
 
-        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
+        profile1 = orcidProfileManager.updateOrcidProfile(profile1, false);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
 
@@ -312,7 +312,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
             }
         }
 
-        profile1 = orcidProfileManager.updateOrcidProfile(profile1);
+        profile1 = orcidProfileManager.updateOrcidProfile(profile1, false);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
 
@@ -337,7 +337,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidProfile profile2 = createBasicProfile();
         profile2.setOrcidIdentifier(DELEGATE_ORCID);
 
-        orcidProfileManager.updateOrcidProfile(profile2);
+        orcidProfileManager.updateOrcidProfile(profile2, false);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
         assertNotNull(resultProfile);
@@ -361,7 +361,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().setVerified(true);
 
-        orcidProfileManager.updateOrcidProfile(profile);
+        orcidProfileManager.updateOrcidProfile(profile, false);
 
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertNotNull(resultProfile);
@@ -415,7 +415,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().setVisibility(Visibility.PRIVATE);
         profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().setVisibility(Visibility.PRIVATE);
         profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().setVisibility(Visibility.PRIVATE);
-        profile = orcidProfileManager.updateOrcidProfile(profile);
+        profile = orcidProfileManager.updateOrcidProfile(profile, false);
         
         assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
@@ -471,7 +471,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile.getOrcidBio().setExternalIdentifiers(ii);
         profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);        
 
-        profile = orcidProfileManager.updateOrcidProfile(profile);
+        profile = orcidProfileManager.updateOrcidProfile(profile, false);
         
         assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
         assertEquals(Visibility.LIMITED,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
@@ -769,7 +769,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         orcidWorkList.add(createWork1());
         assertEquals(2, orcidWorkList.size());
-        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(createdProfile);
+        OrcidProfile updatedProfile = orcidProfileManager.updateOrcidProfile(createdProfile, false);
         List<OrcidWork> updatedOrcidWorkList = updatedProfile.getOrcidActivities().getOrcidWorks().getOrcidWork();
         assertEquals(1, updatedOrcidWorkList.size());
     }
@@ -1148,7 +1148,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         affiliations.getAffiliation().add(affiliation1);
         profile2.setOrcidActivities(orcidActivities);
 
-        orcidProfileManager.updateOrcidProfile(profile2);
+        orcidProfileManager.updateOrcidProfile(profile2, false);
 
         OrcidProfile profile3 = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         assertEquals(1, profile3.getOrcidActivities().getAffiliations().getAffiliation().size());

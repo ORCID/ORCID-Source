@@ -60,9 +60,11 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * 
      * @param orcidProfile
      *            the new properties of the profile
+     * @param justClaimed
+     *          indicates if the profile is just claimed                           
      * @return the updated profile as it new state dictates
      */
-    OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile);
+    OrcidProfile updateOrcidProfile(OrcidProfile orcidProfile, boolean justClaimed);
 
     /**
      * Returns true if ORCID exist.

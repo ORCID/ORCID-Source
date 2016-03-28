@@ -1063,7 +1063,7 @@ public class RegistrationController extends BaseController {
             preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
             preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
         }
-        OrcidProfile profileToReturn = orcidProfileManager.updateOrcidProfile(orcidProfile);
+        OrcidProfile profileToReturn = orcidProfileManager.updateOrcidProfile(orcidProfile, true);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
