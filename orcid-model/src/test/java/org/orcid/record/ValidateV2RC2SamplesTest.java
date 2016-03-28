@@ -744,6 +744,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (History) obj;
             } else if (Bulk.class.equals(type)) {
                 result = (Bulk) obj;
+            } else if (OrcidError.class.equals(type)) {
+                result = (OrcidError) obj;
             }
             return result;
         } catch (IOException e) {

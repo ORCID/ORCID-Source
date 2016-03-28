@@ -608,11 +608,18 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         Bulk bulk = new Bulk();
         //Work # 1: No ext ids
+        Work work1 = getWork();
         //Work # 2: No title
+        Work work2 = getWork();
         //Work # 3: No work type
+        Work work3 = getWork();
         //Work # 4: Ext id already exists
-        //Work # 5: Duplicated work
+        Work work4 = getWork();
         
+        bulk.getBulk().add(work1);
+        bulk.getBulk().add(work2);
+        bulk.getBulk().add(work3);
+        bulk.getBulk().add(work4);
         
         
         fail();
