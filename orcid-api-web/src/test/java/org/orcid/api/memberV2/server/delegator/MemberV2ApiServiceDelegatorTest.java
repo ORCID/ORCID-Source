@@ -516,6 +516,133 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteWork("4444-4444-4444-4446", 8L);
         fail();
     }
+    
+    
+    
+    
+    @Test
+    public void testCreateWorksWithBulkAllOK() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        
+        Bulk bulk = new Bulk();
+        for(int i = 0; i < 5; i++) {
+            Work work = new Work();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(new Title("Bulk work " + i));
+            work.setWorkTitle(title);
+            
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId = new ExternalID();
+            extId.setRelationship(Relationship.SELF);
+            extId.setType("doi");
+            extId.setUrl(new Url("http://doi/" + i));
+            extId.setValue("doi-" + i);
+            extIds.getExternalIdentifier().add(extId);
+            work.setWorkExternalIdentifiers(extIds);
+            
+            work.setWorkType(WorkType.BOOK);
+            bulk.getBulk().add(work);
+        }
+        
+        Response response = serviceDelegator.createWorks(orcid, bulk);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        bulk = (Bulk) response.getEntity();
+        
+        assertNotNull(bulk);
+        assertEquals(5, bulk.getBulk().size());
+        
+        for(int i = 0; i < 5; i++) {
+            assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
+            Work w = (Work)bulk.getBulk().get(i);
+            assertNotNull(w.getPutCode());
+            assertTrue(0L < w.getPutCode());
+            assertEquals("Bulk work " + i, w.getWorkTitle().getTitle().getContent());
+            
+            Response r = serviceDelegator.viewWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+            assertEquals("Bulk work " + i, ((Work)r.getEntity()).getWorkTitle().getTitle().getContent());            
+        
+            //Delete the work
+            r = serviceDelegator.deleteWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());            
+        }
+    }
+    
+    @Test
+    public void testCreateWorksWithBulkSomeOKSomeErrors() {
+        fail();
+    }
+    
+    @Test
+    public void testCreateWorksWithBulkAllErrors() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        
+        //Set up data: 
+        //Create one work with a DOI doi-1 so we can create a duplicate
+        Work work = new Work();
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("work #1"));
+        work.setWorkTitle(workTitle);
+        
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://doi/1"));
+        extId.setValue("doi-1");
+        extIds.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIds);
+        
+        work.setWorkType(WorkType.BOOK);
+        
+        Response response = serviceDelegator.createWork(orcid, work);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        work = (Work) response.getEntity();
+        assertNotNull(work.getPutCode());
+        
+        Bulk bulk = new Bulk();
+        //Work # 1: No ext ids
+        //Work # 2: No title
+        //Work # 3: No work type
+        //Work # 4: Ext id already exists
+        //Work # 5: Duplicated work
+        
+        
+        
+        fail();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * TEST FUNDINGS

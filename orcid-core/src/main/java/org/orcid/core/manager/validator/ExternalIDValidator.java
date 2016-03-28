@@ -28,56 +28,57 @@ import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 public class ExternalIDValidator {
 
     private static ExternalIDValidator instance = new ExternalIDValidator();
-    
-    private ExternalIDValidator(){}
-    
-    public static ExternalIDValidator getInstance(){
+
+    private ExternalIDValidator() {
+    }
+
+    public static ExternalIDValidator getInstance() {
         return instance;
     }
-    
-    public void validateWorkOrPeerReview(ExternalID id){
+
+    public void validateWorkOrPeerReview(ExternalID id) {
         if (id == null)
             return;
-        try{
-            WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-        }catch (IllegalArgumentException e){
+        try {
+            WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
+        } catch (IllegalArgumentException e) {
             checkAndThrow(Lists.newArrayList(id.getType()));
         }
     }
 
-    public void validateWorkOrPeerReview(ExternalIDs ids){     
-        if (ids==null) //yeuch
+    public void validateWorkOrPeerReview(ExternalIDs ids) {
+        if (ids == null) // yeuch
             return;
-        List<String> errors = Lists.newArrayList();        
-        for (ExternalID id : ids.getExternalIdentifier()){
-            try{
-                WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+        List<String> errors = Lists.newArrayList();
+        for (ExternalID id : ids.getExternalIdentifier()) {
+            try {
+                WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
+            } catch (IllegalArgumentException e) {
                 errors.add(id.getType());
             }
-        }            
+        }
         checkAndThrow(errors);
     }
 
-    public void validateFunding(ExternalIDs ids){
-        if (ids==null) //urgh
+    public void validateFunding(ExternalIDs ids) {
+        if (ids == null) // urgh
             return;
-        List<String> errors = Lists.newArrayList();        
-        for (ExternalID id : ids.getExternalIdentifier()){
-            try{
-                FundingExternalIdentifierType t = FundingExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+        List<String> errors = Lists.newArrayList();
+        for (ExternalID id : ids.getExternalIdentifier()) {
+            try {
+                FundingExternalIdentifierType.fromValue(id.getType().toLowerCase());
+            } catch (IllegalArgumentException e) {
                 errors.add(id.getType());
             }
-        }            
+        }
         checkAndThrow(errors);
     }
 
-    private void checkAndThrow(List<String> errors){
-        if (!errors.isEmpty()){
+    private void checkAndThrow(List<String> errors) {
+        if (!errors.isEmpty()) {
             StringBuffer errorString = new StringBuffer();
-            errors.forEach(n -> errorString.append(" "+n));
-            throw new ActivityIdentifierValidationException("Invalid external-id "+errorString.toString());
+            errors.forEach(n -> errorString.append(" " + n));
+            throw new ActivityIdentifierValidationException("Invalid external-id " + errorString.toString());
         }
     }
 

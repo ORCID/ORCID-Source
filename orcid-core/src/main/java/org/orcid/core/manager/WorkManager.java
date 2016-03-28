@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.Work;
 
 public interface WorkManager {
@@ -98,8 +97,6 @@ public interface WorkManager {
      * */
     Work createWork(String orcid, Work work, boolean applyValidations);
     
-    Bulk createWorks(String orcid, Bulk bulk);
-
     /**
      * Edits an existing work
      * 

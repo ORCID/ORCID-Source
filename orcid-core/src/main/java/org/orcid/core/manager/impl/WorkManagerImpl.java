@@ -23,11 +23,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
-import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.core.exception.ActivityTitleValidationException;
-import org.orcid.core.exception.InvalidPutCodeException;
-import org.orcid.core.exception.OrcidDuplicatedActivityException;
-import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -44,9 +39,7 @@ import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Bulk;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkBulkElement;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -223,54 +216,6 @@ public class WorkManagerImpl implements WorkManager {
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    @Override
-    @Transactional
-    public Bulk createWorks(String orcid, Bulk bulk) {
-        if (bulk == null || bulk.getBulk() == null || bulk.getBulk().isEmpty()) {
-            return bulk;
-        }
-
-        for (int i = 0; i < bulk.getBulk().size(); i++) {
-            WorkBulkElement element = bulk.getBulk().get(i);
-            if (Work.class.isAssignableFrom(element.getClass())) {
-                Work newWork = (Work) element;
-                try {
-                    //TODO: wouldnt it be faster to do our own logic here and: 
-                    //1. Fetch the works from DB just once
-                    //2. Compare ext ids between new and then between existings and find problems
-                    //3. Create the ones that are ok
-                    newWork = createWork(orcid, newWork, true);
-                } catch (ActivityIdentifierValidationException e) {
-                    // TODO
-                } catch (ActivityTitleValidationException e) {
-                    // TODO
-                } catch (InvalidPutCodeException e) {
-                    // TODO
-                } catch (OrcidDuplicatedActivityException e) {
-                    // TODO
-                } catch (VisibilityMismatchException e) {
-                    // TODO
-                }
-            }
-        }
-
-        return bulk;
-    }
-    
-    
-    
-    
-    
-
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work, boolean applyAPIValidations) {

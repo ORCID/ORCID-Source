@@ -21,7 +21,6 @@
 // Generated on: 2015.01.09 at 01:28:54 PM GMT 
 //
 
-
 package org.orcid.jaxb.model.error_rc2;
 
 import java.io.Serializable;
@@ -33,11 +32,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.record_rc2.WorkBulkElement;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -58,17 +61,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "responseCode",
-    "developerMessage",
-    "userMessage",
-    "errorCode",
-    "moreInfo"
-})
+@XmlType(name = "", propOrder = { "responseCode", "developerMessage", "userMessage", "errorCode", "moreInfo" })
 @XmlRootElement(name = "error", namespace = "http://www.orcid.org/ns/error")
-public class OrcidError
-    implements Serializable
-{
+public class OrcidError implements Serializable, WorkBulkElement {
 
     private final static long serialVersionUID = 1L;
     @XmlElement(name = "response-code", namespace = "http://www.orcid.org/ns/error")
@@ -102,10 +97,8 @@ public class OrcidError
     /**
      * Gets the value of the developerMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getDeveloperMessage() {
         return developerMessage;
@@ -115,9 +108,8 @@ public class OrcidError
      * Sets the value of the developerMessage property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setDeveloperMessage(String value) {
         this.developerMessage = value;
@@ -126,10 +118,8 @@ public class OrcidError
     /**
      * Gets the value of the userMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getUserMessage() {
         return userMessage;
@@ -139,9 +129,8 @@ public class OrcidError
      * Sets the value of the userMessage property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setUserMessage(String value) {
         this.userMessage = value;
@@ -150,10 +139,8 @@ public class OrcidError
     /**
      * Gets the value of the errorCode property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     * @return possible object is {@link Integer }
+     * 
      */
     public Integer getErrorCode() {
         return errorCode;
@@ -163,9 +150,8 @@ public class OrcidError
      * Sets the value of the errorCode property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *            allowed object is {@link Integer }
+     * 
      */
     public void setErrorCode(Integer value) {
         this.errorCode = value;
@@ -174,10 +160,8 @@ public class OrcidError
     /**
      * Gets the value of the moreInfo property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMoreInfo() {
         return moreInfo;
@@ -187,9 +171,8 @@ public class OrcidError
      * Sets the value of the moreInfo property.
      * 
      * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *            allowed object is {@link String }
+     * 
      */
     public void setMoreInfo(String value) {
         this.moreInfo = value;

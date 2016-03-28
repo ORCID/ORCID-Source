@@ -310,6 +310,20 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return getOrcidErrorResponse(pair.getRight(), pair.getLeft().getStatusCode(), t, version);
     }
 
+    public Object getOrcidError(Throwable t, String version) {
+        Pair<Response.Status, Integer> pair = getHttpStatusAndErrorCode(t);
+        int errorCode = pair.getRight();
+        int status = pair.getLeft().getStatusCode();
+        Object orcidError;
+        if (V2_RC2.equals(version)) {
+            orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
+        } else {
+            orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
+        }
+        
+        return orcidError;
+    }
+    
     private Response getOrcidErrorResponse(WebApplicationException e, String version) {
         int status = e.getResponse().getStatus();
         return getOrcidErrorResponse(9001, status, e, version);

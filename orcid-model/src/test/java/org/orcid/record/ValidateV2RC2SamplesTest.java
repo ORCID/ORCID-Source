@@ -35,6 +35,7 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc2.OrcidError;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -63,7 +64,6 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.Deprecated;
-import org.orcid.jaxb.model.record_rc2.Error;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -631,23 +631,23 @@ public class ValidateV2RC2SamplesTest {
         Object o2 = bulk.getBulk().get(1);
         Object o3 = bulk.getBulk().get(2);
         Object o4 = bulk.getBulk().get(3);
-        assertEquals(Error.class.getName(), o1.getClass().getName());
-        Error e1 = (Error)o1;
+        assertEquals(OrcidError.class.getName(), o1.getClass().getName());
+        OrcidError e1 = (OrcidError)o1;
         assertEquals("0", e1.getResponseCode());
         assertEquals("error:developer-message0", e1.getDeveloperMessage());
         assertEquals("error:user-message0", e1.getUserMessage());
         assertEquals("0", e1.getErrorCode());
         assertNotNull(e1.getMoreInfo());
-        assertEquals("http://tempuri.org/0", e1.getMoreInfo().getValue());
+        assertEquals("http://tempuri.org/0", e1.getMoreInfo());
         
-        assertEquals(Error.class.getName(), o4.getClass().getName());
-        Error e4 = (Error)o4;
+        assertEquals(OrcidError.class.getName(), o4.getClass().getName());
+        OrcidError e4 = (OrcidError)o4;
         assertEquals("1", (e4.getResponseCode()));
         assertEquals("error:developer-message1", e4.getDeveloperMessage());
         assertEquals("error:user-message1", e4.getUserMessage());
         assertEquals("1", e4.getErrorCode());
         assertNotNull(e4.getMoreInfo());
-        assertEquals("http://tempuri.org/1", e4.getMoreInfo().getValue());
+        assertEquals("http://tempuri.org/1", e4.getMoreInfo());
         
         assertEquals(Work.class.getName(), o2.getClass().getName());
         Work w2 = (Work)o2;

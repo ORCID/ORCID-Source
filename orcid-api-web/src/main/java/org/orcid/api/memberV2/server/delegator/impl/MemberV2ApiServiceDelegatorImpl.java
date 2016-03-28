@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.api.common.jaxb.OrcidExceptionMapper;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
@@ -52,6 +53,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.jaxb.model.error_rc2.OrcidError;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -69,8 +71,6 @@ import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -78,14 +78,18 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.WorkBulkElement;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -164,6 +168,9 @@ public class MemberV2ApiServiceDelegatorImpl
     
     @Resource
     private AddressManager addressManager;
+    
+    @Autowired
+    private OrcidExceptionMapper exceptionMapper;
 
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
@@ -238,11 +245,73 @@ public class MemberV2ApiServiceDelegatorImpl
         }
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @Override
     public Response createWorks(String orcid, Bulk bulk) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_CREATE, orcid);
-        return null;
+        for (int i = 0; i < bulk.getBulk().size(); i++) {
+            WorkBulkElement element = bulk.getBulk().get(i);
+            if (Work.class.isAssignableFrom(element.getClass())) {
+                Work newWork = (Work) element;
+                try {
+                    //TODO: wouldnt it be faster to do our own logic here and: 
+                    //1. Fetch the works from DB just once
+                    //2. Compare ext ids between new and then between existing and find problems
+                    //3. Create the ones that are ok
+                    newWork = workManager.createWork(orcid, newWork, true);
+                    bulk.getBulk().set(i, newWork);
+                } catch (Exception e) {
+                    OrcidError error = (OrcidError)exceptionMapper.getOrcidError(e, "2.0_rc2");
+                    bulk.getBulk().set(i, error);
+                } 
+            }
+        }
+        return Response.ok(bulk).build();
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @Override
     public Response updateWork(String orcid, Long putCode, Work work) {

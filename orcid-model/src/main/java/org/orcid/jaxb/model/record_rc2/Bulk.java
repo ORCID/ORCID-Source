@@ -17,6 +17,7 @@
 package org.orcid.jaxb.model.record_rc2;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -38,10 +39,38 @@ public class Bulk implements Serializable {
     private List<WorkBulkElement> bulk;
 
     public List<WorkBulkElement> getBulk() {
+        if(bulk == null) {
+            bulk = new ArrayList<WorkBulkElement>();
+        }
         return bulk;
     }
 
     public void setBulk(List<WorkBulkElement> bulk) {
         this.bulk = bulk;
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bulk == null) ? 0 : bulk.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Bulk other = (Bulk) obj;
+        if (bulk == null) {
+            if (other.bulk != null)
+                return false;
+        } else if (!bulk.equals(other.bulk))
+            return false;
+        return true;
+    }        
 }
