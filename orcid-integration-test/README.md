@@ -43,7 +43,7 @@ The default test data is in the following config files:
 
 2. Run the test with the VM arguments listed above
 
-    mvn test -Xmx2g  -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -Dorg.orcid.config.file=classpath:staging-persistence.properties 
+    mvn test -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -Dorg.orcid.config.file=classpath:staging-persistence.properties 
 
 This should setup the test data and then run a test that verifies the data persisted in the database. If this process succeeds, run the blackbox test as follows.
 
