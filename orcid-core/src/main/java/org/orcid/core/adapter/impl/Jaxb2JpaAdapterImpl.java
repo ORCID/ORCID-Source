@@ -727,12 +727,22 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
             address.setPrimary(true);
             address.setDisplayIndex(-1L);
-            if(profileEntity.getActivitiesVisibilityDefault() != null) {                
-                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
-            }else{
-                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+            boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();
+            if(claimed) {
+                if(profileEntity.getActivitiesVisibilityDefault() != null) {                
+                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+                }else{
+                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+                }
+            } else {
+                Visibility countryVisibility = contactCountry != null ? contactCountry.getVisibility() : Visibility.PRIVATE;
+                if(countryVisibility != null) {
+                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(countryVisibility.value()));
+                } else {
+                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                }
             }
-            
+                                                
             address.setUser(profileEntity);
             if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
                 address.setSource(getSource(source));
