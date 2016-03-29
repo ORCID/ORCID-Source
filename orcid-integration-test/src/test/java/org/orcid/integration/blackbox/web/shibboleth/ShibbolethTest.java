@@ -92,10 +92,8 @@ public class ShibbolethTest {
     @Test
     public void testLinkAndSignInWithShibboleth() {
         webDriver.get(baseUri + "/shibboleth/signin");
-
         new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='userId']")));
         SigninTest.signIn(webDriver, user1UserName, user1Password);
-
         new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(., '" + user1OrcidId + "')]")));
     }
 
