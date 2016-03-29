@@ -265,19 +265,19 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToAffiliations(orcidProfile, amenderOrcid);
         addSourceToFundings(orcidProfile, amenderOrcid);
 
-        Visibility defaultActivityVis = OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility();
+        Visibility defaultVisibility = OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility();
         if (createdByMember){
-            defaultActivityVis = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();                                    
-        }else if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
-                defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();            
+            defaultVisibility = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();                                    
+        } else if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() != null){
+            defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();            
         }
-        addDefaultVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility);
         
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile);
         profileEntity.setUsedRecaptchaOnRegistration(usedCaptcha);
         encryptAndMapFieldsForProfileEntityPersistence(orcidProfile, profileEntity);
         profileEntity.setAuthorities(getGrantedAuthorities(profileEntity));
-        setDefaultVisibility(profileEntity, createdByMember);
+        setDefaultVisibility(profileEntity, createdByMember, defaultVisibility);
 
         profileDao.persist(profileEntity);
         profileDao.flush();
@@ -335,11 +335,11 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         
-        Visibility defaultActivityVis = existingProfileEntity.getActivitiesVisibilityDefault();
+        Visibility defaultVisibility = existingProfileEntity.getActivitiesVisibilityDefault();
         if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
-            defaultActivityVis = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
+            defaultVisibility = orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault().getValue();
         }
-        addDefaultVisibilityToBioItems(orcidProfile, defaultActivityVis);
+        addDefaultVisibilityToBioItems(orcidProfile, defaultVisibility);
         
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
@@ -2008,23 +2008,28 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * 
      * @param orcidProfile
      * */
-    private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults) {
+    private void setDefaultVisibility(ProfileEntity profileEntity, boolean useMemberDefaults, Visibility defaultVisibility) {
         if (profileEntity != null) {
-
-            if (profileEntity.getBiographyVisibility() == null) {
-                profileEntity.setBiographyVisibility(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility());
-            }
-
+            //Names should be public by default
             if (profileEntity.getNamesVisibility() == null) {
                 profileEntity.setNamesVisibility(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility());
             }
-
-            if (profileEntity.getActivitiesVisibilityDefault() == null) {
-                profileEntity.setActivitiesVisibilityDefault(useMemberDefaults ? OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility()
-                        : OrcidVisibilityDefaults.ACTIVITIES_DEFAULT.getVisibility());
+            
+            if (profileEntity.getBiographyVisibility() == null) {
+                if(useMemberDefaults) {
+                    profileEntity.setBiographyVisibility(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility());
+                } else {
+                    profileEntity.setBiographyVisibility(defaultVisibility);
+                }                
             }
-
+           
+            if (profileEntity.getActivitiesVisibilityDefault() == null) {
+                if(useMemberDefaults) {
+                    profileEntity.setActivitiesVisibilityDefault(OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility());
+                } else {
+                    profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
+                }                
+            }
         }
     }
 }

@@ -29,7 +29,6 @@ import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.utils.VerifyRegistrationToken;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

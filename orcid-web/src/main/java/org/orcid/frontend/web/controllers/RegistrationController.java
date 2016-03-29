@@ -1061,7 +1061,13 @@ public class RegistrationController extends BaseController {
             preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
             preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
             preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
+            
+            //Set the default visibility to the bio
+            if(orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getBiography() != null) {
+                orcidProfile.getOrcidBio().getBiography().setVisibility(Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value()));
+            }            
         }
+        
         OrcidProfile profileToReturn = orcidProfileManager.updateOrcidProfile(orcidProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
