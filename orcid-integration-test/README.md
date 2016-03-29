@@ -39,11 +39,11 @@ The default test data is in the following config files:
 
 1. Switch to the orcid-integration-test directory
 
-    cd ~/git/ORCID-Source/orcid-integration-test
+        cd ~/git/ORCID-Source/orcid-integration-test
 
 2. Run the test with the VM arguments listed above
 
-    mvn test -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -Dorg.orcid.config.file=classpath:staging-persistence.properties 
+        mvn test -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -Dorg.orcid.config.file=classpath:staging-persistence.properties 
 
 This should setup the test data and then run a test that verifies the data persisted in the database. If this process succeeds, run the blackbox test as follows.
 
@@ -87,11 +87,11 @@ This should setup the test data and then run a test that verifies the data persi
 
 1. Switch to the orcid-integration-test directory
 
-    cd ~/git/ORCID-Source/orcid-integration-test
+        cd ~/git/ORCID-Source/orcid-integration-test
 
 2. Run the test with the VM arguments listed above
 
-    mvn test -Xmx2g  -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.config.file=classpath:test-web.properties,classpath:test-client.properties -Dorg.orcid.persistence.db.dataSource=simpleDataSource  -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=[path to Firefox executable]
+        mvn test -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.config.file=classpath:test-web.properties,classpath:test-client.properties -Dorg.orcid.persistence.db.dataSource=simpleDataSource  -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=[path to Firefox executable]
 
 VM Argument notes:
 
