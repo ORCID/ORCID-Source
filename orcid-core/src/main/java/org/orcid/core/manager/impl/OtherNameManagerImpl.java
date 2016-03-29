@@ -67,6 +67,11 @@ public class OtherNameManagerImpl implements OtherNameManager {
     }
     
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     @Cacheable(value = "other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public OtherNames getOtherNames(String orcid, long lastModified) {
         return getOtherNames(orcid, null);

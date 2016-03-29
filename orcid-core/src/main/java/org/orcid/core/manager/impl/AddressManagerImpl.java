@@ -66,6 +66,11 @@ public class AddressManagerImpl implements AddressManager {
     }
     
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     @Cacheable(value = "primary-address", key = "#orcid.concat('-').concat(#lastModified)")
     public Address getPrimaryAddress(String orcid, long lastModified) {        
         List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));

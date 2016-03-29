@@ -67,6 +67,11 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     }
     
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     @Cacheable(value = "keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public Keywords getKeywords(String orcid, long lastModified) {
         return getKeywords(orcid, null);

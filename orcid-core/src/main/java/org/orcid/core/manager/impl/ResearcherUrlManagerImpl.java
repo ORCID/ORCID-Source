@@ -74,6 +74,11 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
         boolean result = true;        
         ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, id);          

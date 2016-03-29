@@ -66,6 +66,11 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
     
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
+    @Override
     @Cacheable(value = "public-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public PersonExternalIdentifiers getPublicExternalIdentifiers(String orcid, long lastModified) {
         return getExternalIdentifies(orcid, Visibility.PUBLIC);
