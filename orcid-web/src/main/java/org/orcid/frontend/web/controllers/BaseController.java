@@ -688,8 +688,6 @@ public class BaseController {
         }
     }
 
-    
-    
     protected void validateUrl(Text url) {
         validateUrl(url, SiteConstants.URL_MAX_LENGTH);
     }
@@ -715,7 +713,7 @@ public class BaseController {
             }
         }
     }
-    
+
     protected boolean validateUrl(String url) {
         return urlValidator.isValid(url);
     }
@@ -729,9 +727,9 @@ public class BaseController {
             setError(text, "manualWork.length_less_X", maxLength);
         }
     }
-    
+
     protected boolean isLongerThan(String value, int maxLength) {
-        if(value == null)
+        if (value == null)
             return false;
         return (value.length() > maxLength);
     }
@@ -756,35 +754,13 @@ public class BaseController {
         String orcid = getCurrentUserOrcid();
         if (PojoUtil.isEmpty(orcid)) {
             return false;
-        }            
+        }
         return profileEntityManager.isLocked(orcid);
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        if (savedRequest != null) {
-            String savedUrl = savedRequest.getRedirectUrl();
-            if (savedUrl != null) {
-                try {
-                    String path = new URL(savedUrl).getPath();
-                    if (path != null && path.contains("/oauth/")) {
-                        // This redirect url is OK
-                        savedUrl = correctContext(request, savedUrl);
-                        return savedUrl;
-                    }
-                } catch (MalformedURLException e) {
-                    LOGGER.debug("Malformed saved redirect url: {}", savedUrl);
-                }
-            }
-        }
-        return getBaseUri() + "/my-orcid";
-    }
-
-    private String correctContext(HttpServletRequest request, String savedUrl) {
-        String contextPath = request.getContextPath();
-        if (orcidUrlManager.getBasePath().equals("/") && !contextPath.equals("/"))
-            savedUrl = savedUrl.replaceFirst(contextPath.replace("/", "\\/"), "");
-        return savedUrl;
+        String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
+        return targetUrl != null ? targetUrl : getBaseUri() + "/my-orcid";
     }
 
 }
