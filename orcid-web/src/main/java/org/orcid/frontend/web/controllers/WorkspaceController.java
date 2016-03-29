@@ -54,7 +54,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
@@ -357,7 +356,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {     
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
-        KeywordsForm form = KeywordsForm.valueOf(keywords);                
+        KeywordsForm form = KeywordsForm.valueOf(keywords);
+        
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
+        
         return form;
     }
     
@@ -378,16 +384,7 @@ public class WorkspaceController extends BaseWorkspaceController {
                 }                      
             }
 
-            Keywords updatedKeywords = kf.toKeywords();
-            Visibility defaultVisibility = kf.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(Keyword k : updatedKeywords.getKeywords()) {
-                    k.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            } 
-                         
+            Keywords updatedKeywords = kf.toKeywords();                        
             profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
         }
         return kf;

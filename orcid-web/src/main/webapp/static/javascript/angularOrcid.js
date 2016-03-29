@@ -2619,7 +2619,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.privacyHelp = false;
     $scope.showElement = {};
     $scope.defaultVisibility = null;
-
+    $scope.newElementDefaultVisibility = null;
+    
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -2637,7 +2638,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     
     $scope.addNewModal = function() {        
         var idx = $scope.getLastDisplayIndex();
-        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null};
+        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null};
         tmpObj['displayIndex'] = idx + 1;
         $scope.keywordsForm.keywords.push(tmpObj);
         $scope.newInput = true;
@@ -2649,9 +2650,9 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             dataType: 'json',
             success: function(data) {
                 $scope.keywordsForm = data;
-                                
-                //Iterate over all elements to see if they have the same visibility, to set the default  visibility element
-                if($scope.keywordsForm != null && $scope.keywordsForm.keywords != null) {
+                $scope.newElementDefaultVisibility = $scope.keywordsForm.visibility.visibility;
+                //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element                
+                if($scope.keywordsForm != null && $scope.keywordsForm.keywords != null && $scope.keywordsForm.keywords.length > 0) {
                 	for(var i = 0; i < $scope.keywordsForm.keywords.length; i ++) {
                 		var itemVisibility = null;
                 		if($scope.keywordsForm.keywords[i].visibility != null && $scope.keywordsForm.keywords[i].visibility.visibility) {
@@ -2682,10 +2683,10 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 			}
                 		}                		
                     }
+                } else {
+                	$scope.defaultVisibility = $scope.keywordsForm.visibility.visibility;
                 }
-                
-                
-                
+                                                                
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2714,7 +2715,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             			if($scope.keywordsForm.keywords[i].visibility == null) {
             				$scope.keywordsForm.keywords[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
             			}
-            			        			
             			$scope.keywordsForm.keywords[i].visibility.visibility = $scope.defaultVisibility; 
             		}
             	}
@@ -2730,9 +2730,10 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             success: function(data) {
                 $scope.keywordsForm = data;
                 
-                if(data.errors.length == 0)
-                   $scope.close();
-                   $.colorbox.close();
+                if(data.errors.length == 0){
+                	$scope.close();
+                    $.colorbox.close();
+                }                   
                 $scope.$apply();
             }
         }).fail(function() {
@@ -2922,7 +2923,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.showElement = {};
     $scope.orcidId = orcidVar.orcidId; 
     $scope.defaultVisibility = null;
-
+    $scope.newElementDefaultVisibility = null;
+    
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -2937,16 +2939,12 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
     };
     
-    $scope.addNewModal = function() {
-        
-        var idx = $scope.getLastDisplayIndex();        
-        
-        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.defaultVisibility},"displayIndex":1,"source":null,"sourceName":null};
+    $scope.addNewModal = function() {        
+        var idx = $scope.getLastDisplayIndex();               
+        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":null,"sourceName":null};
         tmpObj['displayIndex'] = idx + 1;
-        $scope.otherNamesForm.otherNames.push(tmpObj);
-        
-        $scope.newInput = true;
-        
+        $scope.otherNamesForm.otherNames.push(tmpObj);        
+        $scope.newInput = true;        
     };
 
     $scope.getOtherNamesForm = function(){
@@ -2955,6 +2953,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             dataType: 'json',
             success: function(data) {                
                 $scope.otherNamesForm = data;   
+                $scope.newElementDefaultVisibility = $scope.otherNamesForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
                 if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null && $scope.otherNamesForm.otherNames.length > 0) {
                 	for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
@@ -3258,6 +3257,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.newInput = false;
     $scope.primary = true;
     $scope.defaultVisibility = null;
+    $scope.newElementDefaultVisibility = null;
     
     $scope.openEdit = function() {
         $scope.showEdit = true;        
@@ -3273,6 +3273,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             dataType: 'json',
             success: function(data) {
                 $scope.countryForm = data;  
+                $scope.newElementDefaultVisibility = $scope.countryForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
                 if($scope.countryForm != null && $scope.countryForm.addresses != null && $scope.countryForm.addresses.length > 0) {
                 	for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
@@ -3306,7 +3307,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 		}                		
                     }
                 } else {
-                	$scope.defaultVisibility = $scope.otherNamesForm.visibility.visibility;
+                	$scope.defaultVisibility = $scope.countryForm.visibility.visibility;
                 }     
                 $scope.$apply();                
             }
@@ -3430,7 +3431,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.addNewModal = function() {
-        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
         var idx = $scope.getLastDisplayIndex();        
         tmpObj['displayIndex'] = idx + 1;
         $scope.countryForm.addresses.push(tmpObj);        
