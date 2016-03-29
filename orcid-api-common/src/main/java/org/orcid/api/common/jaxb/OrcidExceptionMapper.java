@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -29,7 +30,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -68,6 +68,7 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.version.ApiSection;
 import org.orcid.core.web.filters.ApiVersionFilter;
@@ -109,8 +110,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final String LOCATION_HEADER = "location";
 
-    @Context
-    private UriInfo uriInfo;
+    @Context 
+    private HttpServletRequest httpRequest;
 
     @Resource
     private MessageSource messageSource;
@@ -248,9 +249,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                     PrimaryRecord pr = new PrimaryRecord();
                     pr.setOrcid(new Orcid(params.get(OrcidDeprecatedException.ORCID)));
                     depreciatedError.setPrimaryRecord(pr);
-                    String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(uriInfo.getAbsolutePath().toString());
-                    String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
-                    location = uriInfo.getAbsolutePath().toString().replace(deprecatedOrcid, primaryOrcid);
+                    location = getPrimaryRecordLocation(params);
                 }
                 if (params.containsKey(OrcidDeprecatedException.DEPRECATED_DATE)) {
                     DeprecatedDate dd = new DeprecatedDate();
@@ -328,10 +327,8 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
             Map<String, String> params = exception.getParams();
             String location = null;
             if (params != null) {
-                if (params.containsKey(OrcidDeprecatedException.ORCID)) {
-                    String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(uriInfo.getAbsolutePath().toString());
-                    String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));
-                    location = uriInfo.getAbsolutePath().toString().replace(deprecatedOrcid, primaryOrcid);
+                if (params.containsKey(OrcidDeprecatedException.ORCID)) {                    
+                    location = getPrimaryRecordLocation(params);
                 }
             }
 
@@ -430,5 +427,22 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         // Try super class
         pair = HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.get(t.getClass().getSuperclass());
         return pair != null ? pair : new ImmutablePair<>(Response.Status.INTERNAL_SERVER_ERROR, 9008);
+    }
+    
+    /**
+     * Returns the location of the primary record for a deprecated record
+     * */
+    private String getPrimaryRecordLocation(Map<String, String> params) {        
+        String deprecatedOrcid = OrcidStringUtils.getOrcidNumber(httpRequest.getRequestURI());
+        String primaryOrcid = OrcidStringUtils.getOrcidNumber(params.get(OrcidDeprecatedException.ORCID));        
+        String originalRequest = httpRequest.getRequestURL().toString();                
+        
+        if(OrcidUrlManager.isSecure(httpRequest)) {
+            if(originalRequest.startsWith("http:")) {
+                originalRequest = originalRequest.replaceFirst("http:", "https:");
+            }
+        }
+        
+        return originalRequest.replace(deprecatedOrcid, primaryOrcid);
     }
 }
