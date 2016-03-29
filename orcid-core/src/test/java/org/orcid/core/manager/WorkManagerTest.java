@@ -84,22 +84,7 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testAddWorkToUnclaimedRecordPreserveWorkVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
-        Work work = new Work();
-        WorkTitle title = new WorkTitle();
-        title.setTitle(new Title("Work title"));
-        work.setWorkTitle(title);        
-        work.setWorkType(WorkType.BOOK);
-        
-        ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("doi");
-        extId.setUrl(new Url("http://orcid.org"));
-        extId.setValue("ext-id-value");
-        extIds.getExternalIdentifier().add(extId);
-        work.setWorkExternalIdentifiers(extIds);
-        
-        work.setVisibility(Visibility.PUBLIC);
+        Work work = getWork();
         
         work = workManager.createWork(unclaimedOrcid, work, true);        
         work = workManager.getWork(unclaimedOrcid, work.getPutCode(), 0);
@@ -112,6 +97,17 @@ public class WorkManagerTest extends BaseTest {
     @Test
     public void testAddWorkToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        Work work = getWork();
+        
+        work = workManager.createWork(claimedOrcid, work, true);        
+        work = workManager.getWork(claimedOrcid, work.getPutCode(), 0);
+        
+        assertNotNull(work);
+        assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
+        assertEquals(Visibility.LIMITED, work.getVisibility());
+    }
+    
+    private Work getWork() {
         Work work = new Work();
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("Work title"));
@@ -128,12 +124,6 @@ public class WorkManagerTest extends BaseTest {
         work.setWorkExternalIdentifiers(extIds);
         
         work.setVisibility(Visibility.PUBLIC);
-        
-        work = workManager.createWork(claimedOrcid, work, true);        
-        work = workManager.getWork(claimedOrcid, work.getPutCode(), 0);
-        
-        assertNotNull(work);
-        assertEquals("Work title", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Visibility.PRIVATE, work.getVisibility());
+        return work;
     }
 }
