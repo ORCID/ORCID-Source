@@ -49,7 +49,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
@@ -68,7 +67,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
@@ -811,6 +809,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());        
+        
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
@@ -821,6 +821,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         }        
         
+        //Set the default visibility
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
+        
         //Return an empty country in case we dont have any
         if(form.getAddresses() == null){
            form.setAddresses(new ArrayList<AddressForm>()); 
@@ -830,9 +835,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(0L);
             address.setPrimary(true);
-            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
+            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
             form.getAddresses().add(address);
-        }
+        }                
         
         return form;
     }
@@ -865,19 +870,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 return addressesForm;
             }
             
-            Addresses addresses = addressesForm.toAddresses();
-            //TODO: Remove default visibility from this element
-            org.orcid.pojo.ajaxForm.Visibility defaultVisibility = addressesForm.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(Address address : addresses.getAddress()) {
-                    address.setVisibility(Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            } else {
-               defaultVisibility = org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
-            }
-                    
+            Addresses addresses = addressesForm.toAddresses();                    
             addressManager.updateAddresses(getCurrentUserOrcid(), addresses);            
         }
         return addressesForm;
