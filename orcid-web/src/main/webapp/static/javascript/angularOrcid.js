@@ -2358,7 +2358,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.privacyHelp = false;
     $scope.showElement = {};
     $scope.defaultVisibility = null;
-
+    $scope.newElementDefaultVisibility = null;
+    
     $scope.openEdit = function() {
         $scope.addNew();
         $scope.showEdit = true;
@@ -2375,7 +2376,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     
     $scope.addNewModal = function() {
         var idx = $scope.getLastDisplayIndex();        
-        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"},"source":null,"sourceName":null, "displayIndex": 0};
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":null,"sourceName":null, "displayIndex": 0};
         tmpObj['displayIndex'] = idx + 1;
         $scope.websitesForm.websites.push(tmpObj);
         $scope.newInput = true; 
@@ -2387,49 +2388,54 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             dataType: 'json',
             success: function(data) {
                 $scope.websitesForm = data;
-                
+                $scope.newElementDefaultVisibility = $scope.websitesForm.visibility.visibility;
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 //Iterate over all elements to:
                 // -> see if they have the same visibility, to set the default  visibility element
                 // -> set the default protocol when needed
-                while (len--) {
-                    if(websites[len].url != null) {
-                        if (!websites[len].url.toLowerCase().startsWith('http')) {
-                            websites[len].url = 'http://' + websites[len].url;
-                        }                            
-                    }     
-                    
-                    var itemVisibility = null;
-            		if(websites[len].visibility != null && websites[len].visibility.visibility) {
-            			itemVisibility = websites[len].visibility.visibility;
-            		}
-            		/**
-            		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
-            		 * 
-            		 * Rules: 
-            		 * - If the default visibility is null:
-            		 * 	- If the item visibility is not null, set the default visibility to the item visibility
-            		 * - If the default visibility is not null:
-            		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
-            		 * */
-            		if($scope.defaultVisibility == null) {
-            			if(itemVisibility != null) {
-            				$scope.defaultVisibility = itemVisibility;
-            			}                			
-            		} else {
-            			if(itemVisibility != null) {
-            				if($scope.defaultVisibility != itemVisibility) {
-            					$scope.defaultVisibility = null;
+                if(len > 0) {
+                	while (len--) {
+                        if(websites[len].url != null) {
+                            if (!websites[len].url.toLowerCase().startsWith('http')) {
+                                websites[len].url = 'http://' + websites[len].url;
+                            }                            
+                        }     
+                        
+                        var itemVisibility = null;
+                		if(websites[len].visibility != null && websites[len].visibility.visibility) {
+                			itemVisibility = websites[len].visibility.visibility;
+                		}
+                		/**
+                		 * The default visibility should be set only when all elements have the same visibility, so, we should follow this rules: 
+                		 * 
+                		 * Rules: 
+                		 * - If the default visibility is null:
+                		 * 	- If the item visibility is not null, set the default visibility to the item visibility
+                		 * - If the default visibility is not null:
+                		 * 	- If the default visibility is not equals to the item visibility, set the default visibility to null and stop iterating 
+                		 * */
+                		if($scope.defaultVisibility == null) {
+                			if(itemVisibility != null) {
+                				$scope.defaultVisibility = itemVisibility;
+                			}                			
+                		} else {
+                			if(itemVisibility != null) {
+                				if($scope.defaultVisibility != itemVisibility) {
+                					$scope.defaultVisibility = null;
+                    				break;
+                				}
+                			} else {
+                				$scope.defaultVisibility = null;
                 				break;
-            				}
-            			} else {
-            				$scope.defaultVisibility = null;
-            				break;
-            			}
-            		}                		
-                    
+                			}
+                		}                		
+                        
+                    }
+                } else {
+                	$scope.defaultVisibility = $scope.websitesForm.visibility.visibility;
                 }
+                
                 
                 $scope.$apply();
             }
@@ -2460,7 +2466,6 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             			if($scope.websitesForm.websites[i].visibility == null) {
             				$scope.websitesForm.websites[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
             			}
-            			        			
             			$scope.websitesForm.websites[i].visibility.visibility = $scope.defaultVisibility; 
             		}
             	}
