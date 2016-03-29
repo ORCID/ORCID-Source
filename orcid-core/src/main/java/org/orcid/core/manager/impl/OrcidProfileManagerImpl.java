@@ -285,26 +285,39 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         return updatedTranslatedOrcid;
     }
 
-    private void addDefaultVisibilityToBioItems(OrcidProfile orcidProfile, Visibility defaultActivityVis, boolean isClaimed) {
-        if(defaultActivityVis == null) {
+    private void addDefaultVisibilityToBioItems(OrcidProfile orcidProfile, Visibility defaultActivityVis, Boolean isClaimed) {
+        if (defaultActivityVis == null) {
             defaultActivityVis = Visibility.PRIVATE;
         }
+
+        if(isClaimed == null) {
+            isClaimed = false;
+        }
         
-        if (orcidProfile.getOrcidBio() != null){
+        if (orcidProfile.getOrcidBio() != null) {
+            if (orcidProfile.getOrcidBio().getBiography() != null) {
+                if (isClaimed) {
+                    orcidProfile.getOrcidBio().getBiography().setVisibility(defaultActivityVis);
+                } else {
+                    Visibility visibility = orcidProfile.getOrcidBio().getBiography().getVisibility();
+                    orcidProfile.getOrcidBio().getBiography().setVisibility(visibility != null ? visibility : Visibility.PRIVATE);
+                }
+            }
+
             if (orcidProfile.getOrcidBio().getExternalIdentifiers() != null) {
                 Visibility listVisibility = orcidProfile.getOrcidBio().getExternalIdentifiers().getVisibility();
-                for (ExternalIdentifier x : orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier() ){
-                    if(isClaimed) {
+                for (ExternalIdentifier x : orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier()) {
+                    if (isClaimed) {
                         x.setVisibility(defaultActivityVis);
                     } else {
                         x.setVisibility(listVisibility != null ? listVisibility : Visibility.PRIVATE);
                     }
                 }
             }
-            if (orcidProfile.getOrcidBio().getKeywords() !=null) {
+            if (orcidProfile.getOrcidBio().getKeywords() != null) {
                 Visibility listVisibility = orcidProfile.getOrcidBio().getKeywords().getVisibility();
-                for (Keyword x : orcidProfile.getOrcidBio().getKeywords().getKeyword() ){
-                    if(isClaimed) {
+                for (Keyword x : orcidProfile.getOrcidBio().getKeywords().getKeyword()) {
+                    if (isClaimed) {
                         x.setVisibility(defaultActivityVis);
                     } else {
                         x.setVisibility(listVisibility != null ? listVisibility : Visibility.PRIVATE);
@@ -313,8 +326,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
             if (orcidProfile.getOrcidBio().getResearcherUrls() != null) {
                 Visibility listVisibility = orcidProfile.getOrcidBio().getResearcherUrls().getVisibility();
-                for (ResearcherUrl x : orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl() ){
-                    if(isClaimed) {
+                for (ResearcherUrl x : orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl()) {
+                    if (isClaimed) {
                         x.setVisibility(defaultActivityVis);
                     } else {
                         x.setVisibility(listVisibility != null ? listVisibility : Visibility.PRIVATE);
@@ -323,24 +336,25 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
             if (orcidProfile.getOrcidBio().getPersonalDetails() != null && orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames() != null) {
                 Visibility listVisibility = orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility();
-                for (OtherName x : orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName() ){
-                    if(isClaimed) {
+                for (OtherName x : orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName()) {
+                    if (isClaimed) {
                         x.setVisibility(defaultActivityVis);
                     } else {
                         x.setVisibility(listVisibility != null ? listVisibility : Visibility.PRIVATE);
                     }
                 }
             }
-            if(orcidProfile.getOrcidBio().getContactDetails() != null && orcidProfile.getOrcidBio().getContactDetails().getAddress() != null && orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry() != null) {
+            if (orcidProfile.getOrcidBio().getContactDetails() != null && orcidProfile.getOrcidBio().getContactDetails().getAddress() != null
+                    && orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry() != null) {
                 Country country = orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry();
-                if(isClaimed) {
+                if (isClaimed) {
                     country.setVisibility(defaultActivityVis);
                 } else {
                     country.setVisibility(country.getVisibility() != null ? country.getVisibility() : Visibility.PRIVATE);
                 }
             }
         }
-        
+
     }
 
     @Override
@@ -367,7 +381,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         dedupeFundings(orcidProfile);
         addSourceToEmails(orcidProfile, existingProfileEntity, amenderOrcid);
         
-        Boolean claimed = existingProfileEntity.getClaimed();
+        Boolean claimed = orcidProfile.getOrcidHistory() != null ? orcidProfile.getOrcidHistory().isClaimed() : existingProfileEntity.getClaimed();
         
         Visibility defaultVisibility = existingProfileEntity.getActivitiesVisibilityDefault();
         if (orcidProfile.getOrcidInternal() !=null && orcidProfile.getOrcidInternal().getPreferences() !=null && orcidProfile.getOrcidInternal().getPreferences().getActivitiesVisibilityDefault() !=null){
