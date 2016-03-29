@@ -41,6 +41,20 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
         return form;
     }
     
+    public PersonExternalIdentifiers toPersonExternalIdentifiers() {
+        if(externalIdentifiers == null) {
+            return null;
+        }
+        
+        PersonExternalIdentifiers result = new PersonExternalIdentifiers();
+        result.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>());
+        for(ExternalIdentifierForm form: externalIdentifiers) {
+            result.getExternalIdentifier().add(form.toPersonExternalIdentifier());
+        }
+        
+        return result;
+    }
+    
     public List<String> getErrors() {
         return errors;
     }

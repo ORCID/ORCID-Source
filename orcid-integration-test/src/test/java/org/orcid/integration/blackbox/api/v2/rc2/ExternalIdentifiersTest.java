@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
@@ -137,6 +138,8 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
                 assertNotNull(e.getUrl());
                 assertEquals("http://ext-id/A-0003", e.getUrl().getValue());
                 assertEquals(Visibility.LIMITED, e.getVisibility());
+                assertEquals("APP-9999999999999901", e.getSource().retrieveSourcePath());
+                assertEquals("Client APP-9999999999999901 - Fastest's Elephant", e.getSource().getSourceName().getContent());
                 haveNew = true;
             }
         }
@@ -156,6 +159,21 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.LIMITED, externalIdentifier.getVisibility());
         assertEquals(putCode, externalIdentifier.getPutCode());
         
+        //Save the original visibility
+        Visibility originalVisibility = externalIdentifier.getVisibility();
+        Visibility updatedVisibility = Visibility.PUBLIC;
+        
+        //Verify you cant update the visibility
+        externalIdentifier.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateExternalIdentifier(getUser1OrcidId(), externalIdentifier, accessToken);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        externalIdentifier.setVisibility(originalVisibility);
+        
         //Update it
         externalIdentifier.setType("A-0004");
         externalIdentifier.setValue("A-0004");
@@ -173,7 +191,9 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals(putCode, externalIdentifier.getPutCode());       
         
         //Delete
-        response = memberV2ApiClient.deleteExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
+        //Get access token to delete the external identifier
+        String deleteAccessToken = super.getAccessToken(ScopePathType.ORCID_BIO_UPDATE.value(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        response = memberV2ApiClient.deleteExternalIdentifier(getUser1OrcidId(), putCode, deleteAccessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
@@ -231,7 +251,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
             return accessTokens.get(clientId);
         }
 
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value() + " " + ScopePathType.READ_LIMITED.value(), clientId, clientSecret, redirectUri);
+        String accessToken = super.getAccessToken(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value() + " " + ScopePathType.READ_LIMITED.value(), clientId, clientSecret, redirectUri);
         accessTokens.put(clientId, accessToken);
         return accessToken;
     }

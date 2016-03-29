@@ -16,6 +16,8 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -25,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -120,7 +123,10 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         webDriver.get(url);
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals(scapedEmail));
+        WebElement inputElement = webDriver.findElement(element);
+        assertNotNull(inputElement);
+        assertNotNull(inputElement.getAttribute("value"));
+        assertEquals(scapedEmail, inputElement.getAttribute("value"));
         // make sure register
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
 

@@ -220,13 +220,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
         profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
         profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
-        profile.setIso2Country(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
         profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
-        profile.setKeywordsVisibility(orcidProfile.getOrcidBio().getKeywords().getVisibility());
-        profile.setResearcherUrlsVisibility(orcidProfile.getOrcidBio().getResearcherUrls().getVisibility());
-        profile.setOtherNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
         profile.setNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
-        profile.setProfileAddressVisibility(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         profile.setId(orcidProfile.getOrcidIdentifier().getPath());
         return profile;
     }
@@ -283,11 +278,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean disableDeveloperTools(OrcidProfile profile) {
         boolean result = profileDao.updateDeveloperTools(profile.getOrcidIdentifier().getPath(), false);
         return result;
-    }
-
-    @Override
-    public Iso3166Country getCountry(String orcid) {
-        return profileDao.getCountry(orcid);
     }
 
     @Override
@@ -572,13 +562,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.unreviewProfile(orcid);
     }
 
-    @Override
+    /*@Override
     public Visibility getResearcherUrlDefaultVisibility(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value())
                 : Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
         return result;
-    }
+    }*/
 
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {

@@ -73,7 +73,7 @@ public interface AffiliationsManager {
      *          The education to add
      * @return the added education
      * */
-    Education createEducationAffiliation(String orcid, Education education);
+    Education createEducationAffiliation(String orcid, Education education, boolean isApiRequest);
     
     /**
      * Updates a education that belongs to the given user
@@ -83,7 +83,7 @@ public interface AffiliationsManager {
      *          The education to update
      * @return the updated education
      * */
-    Education updateEducationAffiliation(String orcid, Education education);
+    Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest);
     
     /**
      * Get an employment based on the orcid and education id
@@ -113,7 +113,7 @@ public interface AffiliationsManager {
      *          The employment to add
      * @return the added employment
      * */
-    Employment createEmploymentAffiliation(String orcid, Employment employment);
+    Employment createEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest);
     
     /**
      * Updates a employment that belongs to the given user
@@ -123,7 +123,7 @@ public interface AffiliationsManager {
      *          The employment to update
      * @return the updated employment
      * */
-    Employment updateEmploymentAffiliation(String orcid, Employment employment);
+    Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest);
     
     /**
      * Deletes a given affiliation, if and only if, the client that requested the delete is the source of the affiliation

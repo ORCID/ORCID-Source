@@ -55,6 +55,7 @@ import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.UrlName;
+import org.orcid.jaxb.model.message.Visibility;
 
 //@RunWith(OrcidJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml" })
@@ -104,26 +105,26 @@ public class RDFWriterTest {
         personal.setCreditName(new CreditName("John F Doe"));
         personal.setGivenNames(new GivenNames("John"));
         personal.setOtherNames(new OtherNames());
-        personal.getOtherNames().addOtherName("Johnny");
-        personal.getOtherNames().addOtherName("Mr Doe");
+        personal.getOtherNames().addOtherName("Johnny",Visibility.PUBLIC);
+        personal.getOtherNames().addOtherName("Mr Doe",Visibility.PUBLIC);
 
         ResearcherUrls urls = new ResearcherUrls();
         bio.setResearcherUrls(urls);
 
-        ResearcherUrl anonymous = new ResearcherUrl(new Url("http://example.com/anon"));
+        ResearcherUrl anonymous = new ResearcherUrl(new Url("http://example.com/anon"),Visibility.PUBLIC);
         urls.getResearcherUrl().add(anonymous);
 
         // "home page" - with strange casing
-        ResearcherUrl homePage = new ResearcherUrl(new Url("http://example.com/myPage"), new UrlName("homePage"));
+        ResearcherUrl homePage = new ResearcherUrl(new Url("http://example.com/myPage"), new UrlName("homePage"),Visibility.PUBLIC);
         urls.getResearcherUrl().add(homePage);
 
-        ResearcherUrl foaf = new ResearcherUrl(new Url("http://example.com/foaf#me"), new UrlName("FOAF"));
+        ResearcherUrl foaf = new ResearcherUrl(new Url("http://example.com/foaf#me"), new UrlName("FOAF"),Visibility.PUBLIC);
         urls.getResearcherUrl().add(foaf);
 
-        ResearcherUrl webId = new ResearcherUrl(new Url("http://example.com/webId"), new UrlName("webID"));
+        ResearcherUrl webId = new ResearcherUrl(new Url("http://example.com/webId"), new UrlName("webID"),Visibility.PUBLIC);
         urls.getResearcherUrl().add(webId);
 
-        ResearcherUrl other = new ResearcherUrl(new Url("http://example.com/other"), new UrlName("other"));
+        ResearcherUrl other = new ResearcherUrl(new Url("http://example.com/other"), new UrlName("other"),Visibility.PUBLIC);
         urls.getResearcherUrl().add(other);
 
         bio.setContactDetails(new ContactDetails());

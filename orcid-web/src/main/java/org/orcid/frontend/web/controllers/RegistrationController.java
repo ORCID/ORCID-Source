@@ -45,7 +45,6 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
-import org.orcid.core.manager.RegistrationRoleManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.utils.PasswordResetToken;
@@ -157,9 +156,6 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private SecurityQuestionManager securityQuestionManager;
-
-    @Resource
-    private RegistrationRoleManager registrationRoleManager;
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
@@ -945,8 +941,7 @@ public class RegistrationController extends BaseController {
     }
 
     private boolean isTokenExpired(PasswordResetToken passwordResetToken) {
-
-        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 1);
+        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 4);
         Date now = new Date();
         return (expiryDateOfOneHourFromIssueDate.getTime() < now.getTime());
     }

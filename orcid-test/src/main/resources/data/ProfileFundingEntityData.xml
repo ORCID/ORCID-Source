@@ -107,6 +107,7 @@
             last_modified="2014-07-03 15:31:00.00"
 			client_source_id="APP-5555555555555555"
 			display_index="2"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;111&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://111.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
 			/> 	
 			
 	<profile_funding 

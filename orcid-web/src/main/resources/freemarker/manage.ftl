@@ -54,18 +54,6 @@
         <table class="table table-bordered settings-table"
             ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
             <tbody>
-                <#if RequestParameters['OldPersonal']??>
-                    <tr>
-                        <!-- Personal Information -->
-                        <th>${springMacroRequestContext.getMessage("public_profile.h3PersonalInformation")}</th>
-                        <td>
-                            <div>
-                                <a href="<@orcid.rootPath '/account/manage-bio-settings'/>"
-                                    class="update">${springMacroRequestContext.getMessage("settings.tdEdit")}</a>
-                            </div>
-                        </td>
-                    </tr>
-                </#if>
                 <tr>
                     <!-- Email header -->
                     <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
@@ -678,9 +666,8 @@
     <div class="lightbox-container revoke-social">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
-	        	<h3>Revoke Social Account</h3>
+	        	<h3><@orcid.msg 'social.revoke'/></h3>
         		<p>{{socialRemoteUserToRevoke}}</p>
- 				<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
         		<form ng-submit="revoke()">
 		            <div ng-show="isPasswordConfirmationRequired">
                 		<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>

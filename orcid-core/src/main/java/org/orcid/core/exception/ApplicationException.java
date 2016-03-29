@@ -40,11 +40,11 @@ public class ApplicationException extends RuntimeException {
         super(cause);
     }
 
-	public ApplicationException(Map<String, String> params) {
-		this.params = params;
-	}
+    public ApplicationException(Map<String, String> params) {
+        this.params = params;
+    }
 
-	public Map<String, String> getParams() {
-		return params;
-	}
+    public Map<String, String> getParams() {
+        return params;
+    }
 }

@@ -41,9 +41,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.util.ActivityUtils;
+import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc2.Country;
@@ -77,26 +80,26 @@ import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.PeerReviewType;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Role;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkTitle;
-import org.orcid.jaxb.model.record_rc2.WorkType;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.Role;
+import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.WorkTitle;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -373,21 +376,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks().getWorkGroup().get(0).getWorkSummary());
         assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
 
-        Work work = new Work();
-        WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("A new work!"));
-        work.setWorkTitle(workTitle);
-        work.setWorkType(WorkType.BOOK);
-        work.setVisibility(Visibility.PUBLIC);
-        ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.PART_OF);
-        extId.setType(ExternalIDType.AGR.value());
-        extId.setValue("ext-id-" + System.currentTimeMillis());
-        extId.setUrl(new Url("http://thisIsANewUrl.com"));
-
-        extIds.getExternalIdentifier().add(extId);
-        work.setWorkExternalIdentifiers(extIds);
+        Work work = getWork();
+       
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
@@ -432,7 +422,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(work.getWorkTitle().getTitle());
         assertEquals("A day in the life", work.getWorkTitle().getTitle().getContent());
         assertEquals(WorkType.BOOK, work.getWorkType());
-
+        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        
         work.setWorkType(WorkType.EDITED_BOOK);
         work.getWorkTitle().getTitle().setContent("Updated work title");
 
@@ -480,11 +471,26 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extId.setType(ExternalIDType.AGR.value());
         extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
-        ;
+        
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
 
         serviceDelegator.updateWork("4444-4444-4444-4443", 2L, work);
+        fail();
+    }
+    
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateWorkChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 10L);
+        assertNotNull(response);
+        Work work = (Work) response.getEntity(); 
+        assertNotNull(work);
+        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        
+        work.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateWork("4444-4444-4444-4447", 10L, work);
         fail();
     }
 
@@ -592,20 +598,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle());
         assertEquals("Public Funding # 1", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
 
-        Funding newFunding = new Funding();
-        FundingTitle title = new FundingTitle();
-        title.setTitle(new Title("Public Funding # 2"));
-        newFunding.setTitle(title);
-        newFunding.setType(FundingType.AWARD);
-        ExternalID fExtId = new ExternalID();
-        fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
-        fExtId.setUrl(new Url("http://fundingExtId.com"));
-        fExtId.setValue("new-funding-ext-id");
-        ExternalIDs fExtIds = new ExternalIDs();
-        fExtIds.getExternalIdentifier().add(fExtId);
-        newFunding.setExternalIdentifiers(fExtIds);
-        newFunding.setOrganization(getOrganization());
+        Funding newFunding = getFunding();
 
         response = serviceDelegator.createFunding("4444-4444-4444-4447", newFunding);
         assertNotNull(response);
@@ -698,6 +691,21 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.updateFunding("4444-4444-4444-4446", 5L, funding);
         fail();
     }
+    
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateFundingChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
+        assertNotNull(response);
+        Funding funding = (Funding) response.getEntity();
+        assertNotNull(funding);
+        assertEquals(Visibility.PUBLIC, funding.getVisibility());
+        
+        funding.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
+        fail();       
+    }
 
     @Test(expected = NoResultException.class)
     public void testDeleteFunding() {
@@ -778,7 +786,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -799,10 +806,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.createEducation("4444-4444-4444-4442", education);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewActivities("4444-4444-4444-4442");
@@ -876,7 +883,22 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.updateEducation("4444-4444-4444-4442", 1L, education);
         fail();
     }
+    
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateEducationChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        assertEquals(Visibility.PUBLIC, education.getVisibility());
 
+        education.setVisibility(education.getVisibility().equals(Visibility.PRIVATE) ? Visibility.LIMITED : Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        fail();
+    }
+    
     @Test(expected = NoResultException.class)
     public void testDeleteEducation() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -955,7 +977,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -976,10 +997,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.createEmployment("4444-4444-4444-4447", employment);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewActivities("4444-4444-4444-4447");
@@ -1051,6 +1072,21 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         employment.setDepartmentName("Updated department name");
         employment.setRoleTitle("The updated role title");
         serviceDelegator.updateEmployment("4444-4444-4444-4446", 11L, employment);
+        fail();
+    }
+    
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateEmploymentChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        assertNotNull(response);
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+
+        employment.setVisibility(Visibility.LIMITED);
+        
+        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
         fail();
     }
 
@@ -1181,7 +1217,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(peerReview);
         peerReview.setUrl(new Url("http://updated.com/url"));
         peerReview.getSubjectName().getTitle().setContent("Updated Title");
-        serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+        response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        
         response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
         PeerReview updatedPeerReview = (PeerReview) response.getEntity();
         assertNotNull(updatedPeerReview);
@@ -1216,8 +1255,22 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://peer_review.com/2", peerReview.getUrl().getValue());
         assertEquals("APP-6666666666666666", peerReview.getSource().retrieveSourcePath());
     }
-
-    @SuppressWarnings({ "unused", "rawtypes" })
+    
+    @Test(expected = VisibilityMismatchException.class)    
+    public void testUpdatePeerReviewChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        assertNotNull(response);
+        PeerReview peerReview = (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals(Visibility.PUBLIC, peerReview.getVisibility());
+        
+        peerReview.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+        fail();
+    }        
+    
     @Test
     public void testAddPeerReview() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -1233,33 +1286,15 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0));
         assertEquals("issn:0000001", summary.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
 
-        PeerReview peerReview = new PeerReview();
-        ExternalIDs weis = new ExternalIDs();
-        ExternalID wei1 = new ExternalID();
-        wei1.setRelationship(Relationship.PART_OF);
-        wei1.setUrl(new Url("http://myUrl.com"));
-        wei1.setValue("work-external-identifier-id");
-        wei1.setType(ExternalIDType.DOI.value());
-        weis.getExternalIdentifier().add(wei1);
-        peerReview.setExternalIdentifiers(weis);
-        peerReview.setGroupId("issn:0000003");
-        peerReview.setOrganization(getOrganization());
-        peerReview.setRole(Role.CHAIR);
-        peerReview.setSubjectContainerName(new Title("subject-container-name"));
-        peerReview.setSubjectExternalIdentifier(wei1);
-        WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("work-title"));
-        peerReview.setSubjectName(workTitle);
-        peerReview.setSubjectType(WorkType.DATA_SET);
-        peerReview.setType(PeerReviewType.EVALUATION);
+        PeerReview peerReview = getPeerReview();
 
         response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewActivities("4444-4444-4444-4444");
@@ -1284,37 +1319,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         assertTrue(haveOld);
         assertTrue(haveNew);
+        
+        //Delete the new so it doesn't affect other tests
+        serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode);
     }
     
     @Test(expected = OrcidDuplicatedActivityException.class)
     public void testAddPeerReviewDuplicateFails() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-
-        PeerReview peerReview = new PeerReview();
-        ExternalIDs weis = new ExternalIDs();
-        ExternalID wei1 = new ExternalID();
-        wei1.setRelationship(null);
-        wei1.setValue("1");
-        wei1.setType(ExternalIDType.DOI.value());
-        weis.getExternalIdentifier().add(wei1);
-        peerReview.setExternalIdentifiers(weis);
-        peerReview.setGroupId("issn:0000003");
-        peerReview.setOrganization(getOrganization());
-        peerReview.setRole(Role.CHAIR);
-        peerReview.setSubjectContainerName(new Title("subject-container-name"));
-        peerReview.setSubjectExternalIdentifier(wei1);
-        WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("work-title"));
-        peerReview.setSubjectName(workTitle);
-        peerReview.setSubjectType(WorkType.DATA_SET);
-        peerReview.setType(PeerReviewType.EVALUATION);
-
-        Response response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
         assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
-        response = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview);
-
+        PeerReview peerReview = (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        peerReview.setUrl(new Url("http://updated.com/url"));
+        peerReview.getSubjectName().getTitle().setContent("Updated Title");
+        
+        peerReview.setPutCode(null);
+        
+        response = serviceDelegator.createPeerReview("4444-4444-4444-4447", peerReview);
     }
     
     @Test
@@ -1343,7 +1365,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response1 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview1);
         assertNotNull(response1);
         assertEquals(Response.Status.CREATED.getStatusCode(), response1.getStatus());
-
+        Map<?, ?> map = response1.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode1 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+                
         PeerReview peerReview2 = new PeerReview();
         ExternalIDs weis2 = new ExternalIDs();
         ExternalID wei2 = new ExternalID();
@@ -1366,7 +1393,15 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response2 = serviceDelegator.createPeerReview("4444-4444-4444-4444", peerReview2);
         assertNotNull(response2);
         assertEquals(Response.Status.CREATED.getStatusCode(), response2.getStatus());
-
+        map = response2.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode2 = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+                
+        //Delete new peer reviews so they don't affect other tests
+        serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode1);
+        serviceDelegator.deletePeerReview("4444-4444-4444-4444", putCode2);        
     }
 
     @Test
@@ -1565,7 +1600,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddResearcherUrl() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -1577,10 +1611,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.createResearcherUrl("4444-4444-4444-4441", rUrl);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4441", putCode);
@@ -1635,6 +1669,20 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 8L, researcherUrl);
     }
 
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateResearcherUrlChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
+        assertNotNull(response);
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();        
+        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        
+        researcherUrl.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
+        fail();
+    }        
+    
     @Test
     public void testDeleteResearcherUrl() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4445", ScopePathType.PERSON_UPDATE, ScopePathType.PERSON_READ_LIMITED);
@@ -1785,7 +1833,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -1795,10 +1842,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.createOtherName("4444-4444-4444-4441", otherName);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewOtherName("4444-4444-4444-4441", putCode);
@@ -1825,8 +1872,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
 
         otherName.setContent("Updated Other Name");
-        otherName.setVisibility(Visibility.PRIVATE);
-
+        
         response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
         assertNotNull(response);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -1836,7 +1882,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         OtherName updatedOtherName = (OtherName) response.getEntity();
         assertNotNull(updatedOtherName);
         assertEquals("Updated Other Name", updatedOtherName.getContent());
-        // Visibility should not change to something more restrictive
         assertEquals(Visibility.PUBLIC, updatedOtherName.getVisibility());
     }
 
@@ -1850,11 +1895,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Flibberdy Flabinah", otherName.getContent());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
 
-        otherName.setContent("Updated Other Name " + System.currentTimeMillis());
-        otherName.setVisibility(Visibility.PRIVATE);
+        otherName.setContent("Updated Other Name " + System.currentTimeMillis());        
 
         serviceDelegator.updateOtherName("4444-4444-4444-4443", 2L, otherName);
         fail();
+    }
+    
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateOtherNameChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
+        assertNotNull(response);
+        OtherName otherName = (OtherName) response.getEntity();
+        assertNotNull(otherName);
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+
+        otherName.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);               
     }
 
     @Test
@@ -1994,7 +2052,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddExternalIdentifier() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -2020,10 +2077,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
 
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4443");
@@ -2103,6 +2160,21 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateExternalIdentifierChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
+        assertNotNull(response);
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        
+        extId.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
+        fail();
+    }
+    
     @Test
     public void testDeleteExternalIdentifier() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -2222,7 +2294,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddKeyword() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -2232,10 +2303,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.createKeyword("4444-4444-4444-4441", keyword);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewKeyword("4444-4444-4444-4441", putCode);
@@ -2262,7 +2333,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
 
         keyword.setContent("Updated keyword");
-        keyword.setVisibility(Visibility.PRIVATE);
 
         response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
         assertNotNull(response);
@@ -2273,7 +2343,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         keyword = (Keyword) response.getEntity();
         assertNotNull(keyword);
         assertEquals("Updated keyword", keyword.getContent());
-        // Visibility should not change to something more restrictive
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
     }
 
@@ -2289,13 +2358,27 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(keyword.getSource());
         assertEquals("4444-4444-4444-4443", keyword.getSource().retrieveSourcePath());
 
-        keyword.setContent("Updated Keyword " + System.currentTimeMillis());
-        keyword.setVisibility(Visibility.PRIVATE);
+        keyword.setContent("Updated Keyword " + System.currentTimeMillis());        
 
         serviceDelegator.updateKeyword("4444-4444-4444-4443", 2L, keyword);
         fail();
     }
 
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateKeywordChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+
+        keyword.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
+        fail();
+    }
+    
     @Test
     public void testDeleteKeyword() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -2403,7 +2486,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
-    @SuppressWarnings("rawtypes")
     @Test
     public void testAddAddress() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -2415,10 +2497,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.createAddress("4444-4444-4444-4442", address);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
+        Map<?, ?> map = response.getMetadata();
         assertNotNull(map);
         assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
         Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
 
         response = serviceDelegator.viewAddress("4444-4444-4444-4442", putCode);
@@ -2485,7 +2567,22 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.updateAddress("4444-4444-4444-4447", 2L, address);
         fail();
     }
+    
+    @Test(expected = VisibilityMismatchException.class)
+    public void testUpdateAddressChangingVisibilityTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
 
+        address.setVisibility(Visibility.PRIVATE);
+        
+        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        fail();
+    }    
+    
     @Test
     public void testDeleteAddress() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -2677,6 +2774,457 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         // TODO: TEST APPLICATIONS AND DELEGATION
     }
 
+    @Test
+    public void testViewOtherProfileDontWork() {
+        //Set all possible permissions to user 4444-4444-4444-4446
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
+                ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
+                ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
+                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
+                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
+                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED, ScopePathType.READ_PUBLIC);
+        //Try to view anything on the user
+        String orcid = "4444-4444-4444-4442";
+        Long putCode = 1L;
+        try {
+            //Check activities
+            serviceDelegator.viewActivities(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewAddress(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewAddresses(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewBiography(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEducation(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEducationSummary(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmails(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmployment(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmploymentSummary(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewExternalIdentifiers(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFunding(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFundingSummary(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewKeyword(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewKeywords(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewOtherName(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewOtherNames(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPeerReview(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPeerReviewSummary(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPerson(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPersonalDetails(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewResearcherUrls(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWork(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWorkSummary(orcid, putCode);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test    
+    public void testAddWorkWithInvalidExtIdTypeFail() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Work work = getWork();
+        try {
+            work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
+            serviceDelegator.createWork(orcid, work);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
+            serviceDelegator.createWork(orcid, work);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Assert that it could be created with a valid value
+        work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
+        Response response = serviceDelegator.createWork(orcid, work);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        
+        //Delete it to roll back the test data
+        response = serviceDelegator.deleteWork(orcid, putCode);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    @Test
+    public void testAddPeerReviewWithInvalidExtIdTypeFail() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        PeerReview peerReview = getPeerReview();
+        
+        //Set both to a correct value
+        peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
+        peerReview.getSubjectExternalIdentifier().setType("doi");
+        
+        //Check it fail on external identifier type
+        try {
+            peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
+            serviceDelegator.createPeerReview(orcid, peerReview);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
+            serviceDelegator.createPeerReview(orcid, peerReview);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Set the ext id to a correct value to test the subject ext id
+        peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
+        //Check it fail on subject external identifier type
+        try {
+            peerReview.getSubjectExternalIdentifier().setType("INVALID");
+            serviceDelegator.createPeerReview(orcid, peerReview);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            peerReview.getSubjectExternalIdentifier().setType("DOI");
+            serviceDelegator.createPeerReview(orcid, peerReview);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Test it works with correct values
+        peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
+        peerReview.getSubjectExternalIdentifier().setType("doi");
+        Response response = serviceDelegator.createPeerReview(orcid, peerReview);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        
+        //Delete it to roll back the test data
+        response = serviceDelegator.deletePeerReview(orcid, putCode);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    
+    @Test
+    public void testAddFundingWithInvalidExtIdTypeFail() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        
+        Funding funding = getFunding();
+        
+        try {
+            funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
+            serviceDelegator.createFunding(orcid, funding);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("GRANT_NUMBER");
+            serviceDelegator.createFunding(orcid, funding);
+            fail();
+        } catch(ActivityIdentifierValidationException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("grant_number");
+        Response response = serviceDelegator.createFunding(orcid, funding);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        Long putCode = Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
+        
+        //Delete it to roll back the test data
+        response = serviceDelegator.deleteFunding(orcid, putCode);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    private Work getWork() {
+        Work work = new Work();
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("A new work!"));
+        work.setWorkTitle(workTitle);
+        work.setWorkType(WorkType.BOOK);
+        work.setVisibility(Visibility.PUBLIC);
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.PART_OF);
+        extId.setType(ExternalIDType.AGR.value());
+        extId.setValue("ext-id-" + System.currentTimeMillis());
+        extId.setUrl(new Url("http://thisIsANewUrl.com"));
+        extIds.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIds);
+        return work;
+    }
+    
+    private PeerReview getPeerReview() {
+        PeerReview peerReview = new PeerReview();
+        ExternalIDs weis = new ExternalIDs();
+        ExternalID wei1 = new ExternalID();
+        wei1.setRelationship(Relationship.PART_OF);
+        wei1.setUrl(new Url("http://myUrl.com"));
+        wei1.setValue("work-external-identifier-id");
+        wei1.setType(ExternalIDType.DOI.value());
+        weis.getExternalIdentifier().add(wei1);
+        peerReview.setExternalIdentifiers(weis);
+        peerReview.setGroupId("issn:0000003");
+        peerReview.setOrganization(getOrganization());
+        peerReview.setRole(Role.CHAIR);
+        peerReview.setSubjectContainerName(new Title("subject-container-name"));
+        peerReview.setSubjectExternalIdentifier(wei1);
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("work-title"));
+        peerReview.setSubjectName(workTitle);
+        peerReview.setSubjectType(WorkType.DATA_SET);
+        peerReview.setType(PeerReviewType.EVALUATION);
+        return peerReview;
+    }
+    
+    private Funding getFunding(){
+        Funding newFunding = new Funding();
+        FundingTitle title = new FundingTitle();
+        title.setTitle(new Title("Public Funding # 2"));
+        newFunding.setTitle(title);
+        newFunding.setType(FundingType.AWARD);
+        ExternalID fExtId = new ExternalID();
+        fExtId.setRelationship(Relationship.PART_OF);
+        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
+        fExtId.setUrl(new Url("http://fundingExtId.com"));
+        fExtId.setValue("new-funding-ext-id");
+        ExternalIDs fExtIds = new ExternalIDs();
+        fExtIds.getExternalIdentifier().add(fExtId);
+        newFunding.setExternalIdentifiers(fExtIds);
+        newFunding.setOrganization(getOrganization());
+        return newFunding;
+    }
+    
     private Organization getOrganization() {
         Organization org = new Organization();
         org.setName("Org Name");

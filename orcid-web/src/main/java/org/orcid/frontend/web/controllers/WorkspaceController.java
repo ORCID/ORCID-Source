@@ -41,7 +41,6 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -360,10 +359,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
         KeywordsForm form = KeywordsForm.valueOf(keywords);                
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        //Set the default visibility since we still need it in the front end
-        Visibility defaultVisibility = profileEntity.getKeywordsVisibility() == null ? Visibility.valueOf(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility()) : Visibility.valueOf(profileEntity.getKeywordsVisibility());
-        form.setVisibility(defaultVisibility);        
         return form;
     }
     
@@ -394,11 +389,7 @@ public class WorkspaceController extends BaseWorkspaceController {
                 }
             } 
                          
-            if(defaultVisibility != null) {
-                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            } else {
-                profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords, null);
-            }
+            profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
         }
         return kf;
     }
@@ -409,14 +400,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid(), lastModifiedTime);                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
-        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
-        if(entity.getOtherNamesVisibility() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getOtherNamesVisibility()));
-        } else {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility()));
-        }
-        
         return form;
     }
     
@@ -445,12 +428,8 @@ public class WorkspaceController extends BaseWorkspaceController {
                     o.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             } 
-            
-            if(defaultVisibility != null) {
-                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            } else {
-                otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames, null);
-            }
+                        
+            otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
         }
 
         return onf;
@@ -464,14 +443,6 @@ public class WorkspaceController extends BaseWorkspaceController {
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
-        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
-        if(entity.getResearcherUrlsVisibility() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getResearcherUrlsVisibility()));
-        } else {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility()));
-        }
-        
         return form;
     }
     
@@ -503,6 +474,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             
             ResearcherUrls rUrls = ws.toResearcherUrls();
+            
+            //TODO: Remove the visibility from the section element
             Visibility defaultVisibility = ws.getVisibility();
             
             if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
@@ -511,12 +484,8 @@ public class WorkspaceController extends BaseWorkspaceController {
                     rUrl.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
                 }
             }
-            
-            if(defaultVisibility != null) {
-                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-            } else {
-                researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls, null);
-            }
+                        
+            researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);            
         }
         
         return ws;
@@ -533,7 +502,7 @@ public class WorkspaceController extends BaseWorkspaceController {
     }
 
     /**
-     * Updates the list of external identifiers assigned to a user
+     * Delete an external identifier
      * */
     @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.DELETE)
     public @ResponseBody
@@ -542,6 +511,17 @@ public class WorkspaceController extends BaseWorkspaceController {
             externalIdentifierManager.deleteExternalIdentifier(getCurrentUserOrcid(), Long.valueOf(externalIdentifier.getPutCode()), false);
         }       
         return externalIdentifier;
+    }
+    
+    /**
+     * Update the visibility of the given external identifeirs
+     * */
+    @RequestMapping(value = "/my-orcid/externalIdentifiers.json", method = RequestMethod.POST)
+    public @ResponseBody
+    ExternalIdentifiersForm updateExternalIdentifierJson(HttpServletRequest request, @RequestBody ExternalIdentifiersForm externalIdentifiersForm) {        
+        PersonExternalIdentifiers externalIdentifiers = externalIdentifiersForm.toPersonExternalIdentifiers();
+        externalIdentifiers = externalIdentifierManager.updateExternalIdentifiers(getCurrentUserOrcid(), externalIdentifiers);
+        return externalIdentifiersForm;
     }
     
     @RequestMapping(value = "/my-orcid/sourceGrantReadWizard.json", method = RequestMethod.GET)

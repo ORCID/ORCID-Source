@@ -31,6 +31,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -99,7 +100,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
      * */
     @Override
     @Transactional
-    public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility) {
+    public ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls) {
         List<ResearcherUrlEntity> existingEntities = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(ResearcherUrlEntity existingEntity : existingEntities) {
@@ -153,9 +154,6 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
             }
         }
         
-        if(defaultVisibility != null) {
-            profileDao.updateResearcherUrlsVisibility(orcid, org.orcid.jaxb.model.message.Visibility.fromValue(defaultVisibility.value()));
-        }
         return researcherUrls;
     }
 
@@ -211,10 +209,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     @Override
     @Transactional
-    public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+    public ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) {
+        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
+        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false);        
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false, isApiRequest, originalVisibility);        
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         
@@ -226,24 +226,21 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-                
-        ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
-        Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());        
+                               
         SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
         updatedResearcherUrlEntity.setLastModified(new Date());
-        updatedResearcherUrlEntity.setVisibility(originalVisibility);
         updatedResearcherUrlEntity.setSource(existingSource);
         researcherUrlDao.merge(updatedResearcherUrlEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
     }
 
     @Override
-    public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
+    public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
-        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true);
+        PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<ResearcherUrlEntity> existingResearcherUrls = researcherUrlDao.getResearcherUrls(orcid, getLastModified(orcid));
         for (ResearcherUrlEntity existing : existingResearcherUrls) {
@@ -282,8 +279,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultResearcherUrlsVisibility = profile.getResearcherUrlsVisibility() == null ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getResearcherUrlsVisibility()
-                .value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultResearcherUrlsVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             if (defaultResearcherUrlsVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
                 entity.setVisibility(defaultResearcherUrlsVisibility);
