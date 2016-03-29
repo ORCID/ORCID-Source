@@ -59,6 +59,7 @@ import org.orcid.core.manager.OrgManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
@@ -573,17 +574,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void setWorkPrivacy(OrcidWorks incomingWorks, Visibility defaultWorkVisibility, boolean isClaimed) {
         for (OrcidWork incomingWork : incomingWorks.getOrcidWork()) {
-            if (StringUtils.isBlank(incomingWork.getPutCode())) {
-                Visibility incomingWorkVisibility = incomingWork.getVisibility();
-                if (isClaimed) {
-                    if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                        incomingWork.setVisibility(defaultWorkVisibility);
-                    }
-                } else if (incomingWorkVisibility == null) {
-                    incomingWork.setVisibility(Visibility.PRIVATE);
-                }
-            }
+            if (StringUtils.isBlank(incomingWork.getPutCode()))
+                choosePrivacy(incomingWork, defaultWorkVisibility, isClaimed);
         }
+    }
+
+    private void choosePrivacy(Activity act, Visibility defaultWorkVisibility, boolean isClaimed) {
+        if (isClaimed)
+            act.setVisibility(defaultWorkVisibility);
+        else
+            act.setVisibility(act.getVisibility() !=null ? act.getVisibility():Visibility.PRIVATE);
     }
 
     @Override
@@ -1584,32 +1584,18 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         }
     }
 
-    private void setAffiliationPrivacy(Affiliations incomingAffiliations, Visibility defaultAffiliationVisibility, boolean isClaimed) {
+    private void setAffiliationPrivacy(Affiliations incomingAffiliations, Visibility defaultVisibility, boolean isClaimed) {
         for (Affiliation incomingAffiliation : incomingAffiliations.getAffiliation()) {
             if (StringUtils.isBlank(incomingAffiliation.getPutCode())) {
-                Visibility incomingAffiliationVisibility = incomingAffiliation.getVisibility();
-                if (isClaimed) {
-                    if (defaultAffiliationVisibility.isMoreRestrictiveThan(incomingAffiliationVisibility)) {
-                        incomingAffiliation.setVisibility(defaultAffiliationVisibility);
-                    }
-                } else if (incomingAffiliationVisibility == null) {
-                    incomingAffiliation.setVisibility(Visibility.PRIVATE);
-                }
+               choosePrivacy(incomingAffiliation, defaultVisibility, isClaimed);
             }
         }
     }
 
-    private void setFundingPrivacy(FundingList incomingFundings, Visibility defaultFundingVisibility, boolean isClaimed) {
+    private void setFundingPrivacy(FundingList incomingFundings, Visibility defaultVisibility, boolean isClaimed) {
         for (Funding incomingFunding : incomingFundings.getFundings()) {
             if (StringUtils.isBlank(incomingFunding.getPutCode())) {
-                Visibility incomingFundingVisibility = incomingFunding.getVisibility();
-                if (isClaimed) {
-                    if (defaultFundingVisibility.isMoreRestrictiveThan(incomingFundingVisibility)) {
-                        incomingFunding.setVisibility(defaultFundingVisibility);
-                    }
-                } else if (incomingFundingVisibility == null) {
-                    incomingFunding.setVisibility(Visibility.PRIVATE);
-                }
+               choosePrivacy(incomingFunding, defaultVisibility, isClaimed);
             }
         }
     }

@@ -941,8 +941,7 @@ public class RegistrationController extends BaseController {
     }
 
     private boolean isTokenExpired(PasswordResetToken passwordResetToken) {
-
-        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 1);
+        Date expiryDateOfOneHourFromIssueDate = org.apache.commons.lang.time.DateUtils.addHours(passwordResetToken.getIssueDate(), 4);
         Date now = new Date();
         return (expiryDateOfOneHourFromIssueDate.getTime() < now.getTime());
     }
