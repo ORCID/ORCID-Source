@@ -1586,6 +1586,8 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
             }).fail(function() {
                 // something bad is happening!
                 console.log("error with disco feed");
+                serv.feed = [];
+                $rootScope.$apply();
             });
         },
         getIdPName: function(entityId) {

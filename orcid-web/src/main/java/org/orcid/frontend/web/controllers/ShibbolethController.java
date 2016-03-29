@@ -75,7 +75,8 @@ public class ShibbolethController extends BaseController {
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider, remoteUser.getIdType());
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
+                remoteUser.getIdType());
         if (userConnectionEntity != null) {
             try {
                 PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser);
@@ -137,7 +138,11 @@ public class ShibbolethController extends BaseController {
         if (remoteUser != null) {
             String remoteUserId = remoteUser.getUserId();
             if (StringUtils.isNotBlank(remoteUserId)) {
-                return remoteUserId.substring(remoteUserId.lastIndexOf("!"));
+                if ("persistent-id".equals(remoteUser.getIdType()) && remoteUser.getUserId().contains("!")) {
+                    return remoteUserId.substring(remoteUserId.lastIndexOf("!"));
+                } else {
+                    return remoteUserId;
+                }
             }
         }
         throw new OrcidBadRequestException("Couldn't find any user display name headers");

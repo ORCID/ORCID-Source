@@ -91,19 +91,10 @@ public class ShibbolethTest {
 
     @Test
     public void testLinkAndSignInWithShibboleth() {
-        webDriver.get(baseUri + "/signin?shibboleth");
-        WebElement buttonEl = webDriver.findElement(By.xpath("//a[text()=\"Sign in with my institution's single sign on\"]"));
-        buttonEl.click();
+        webDriver.get(baseUri + "/shibboleth/signin");
 
-        WebDriverWait waitForUserId = new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS);
-        waitForUserId.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")));
+        new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='userId']")));
         SigninTest.signIn(webDriver, user1UserName, user1Password);
-
-        By orcidRecordLinkBy = By.xpath("//a[text()='continue to your ORCID record']");
-        WebDriverWait orcidRecordLinkWait = new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS);
-        orcidRecordLinkWait.until(ExpectedConditions.presenceOfElementLocated(orcidRecordLinkBy));
-        WebElement orcidRecordLink = webDriver.findElement(orcidRecordLinkBy);
-        orcidRecordLink.click();
 
         new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//span[contains(., '" + user1OrcidId + "')]")));
     }
