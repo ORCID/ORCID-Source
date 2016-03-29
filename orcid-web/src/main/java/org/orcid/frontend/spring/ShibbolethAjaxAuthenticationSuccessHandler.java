@@ -29,9 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.controllers.ShibbolethController;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
+import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
@@ -62,13 +62,14 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             headers.put(key, value);
         }
         checkEnabled();
-        String providerUserId = ShibbolethController.retrieveRemoteUser(headers);
+        RemoteUser remoteUser = ShibbolethController.retrieveRemoteUser(headers);
         String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(providerUserId, providerId);
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), providerId,
+                remoteUser.getIdType());
         if (userConnectionEntity == null) {
             userConnectionEntity = new UserconnectionEntity();
             String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
-            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, providerUserId);
+            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, remoteUser.getUserId());
             OrcidProfile profile = getRealProfile();
             userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
             userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
@@ -77,6 +78,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             userConnectionEntity.setId(pk);
             userConnectionEntity.setLinked(true);
             userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
+            userConnectionEntity.setIdType(remoteUser.getIdType());
             userConnectionDao.persist(userConnectionEntity);
         }
     }

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
+import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.slf4j.Logger;
@@ -69,12 +70,12 @@ public class ShibbolethController extends BaseController {
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
-        String remoteUser = retrieveRemoteUser(headers);
+        RemoteUser remoteUser = retrieveRemoteUser(headers);
         String displayName = retrieveDisplayName(headers);
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(remoteUser, shibIdentityProvider);
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider, remoteUser.getIdType());
         if (userConnectionEntity != null) {
             try {
                 PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser);
@@ -107,11 +108,11 @@ public class ShibbolethController extends BaseController {
         }
     }
 
-    public static String retrieveRemoteUser(Map<String, String> headers) {
+    public static RemoteUser retrieveRemoteUser(Map<String, String> headers) {
         for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
             String userId = headers.get(possibleHeader);
             if (userId != null) {
-                return userId;
+                return new RemoteUser(userId, possibleHeader);
             }
         }
         throw new OrcidBadRequestException("Couldn't find remote user header");
@@ -132,9 +133,12 @@ public class ShibbolethController extends BaseController {
         if (StringUtils.isNotBlank(combinedNames)) {
             return combinedNames;
         }
-        String remoteUser = retrieveRemoteUser(headers);
-        if (StringUtils.isNotBlank(remoteUser)) {
-            return remoteUser.substring(remoteUser.lastIndexOf("!"));
+        RemoteUser remoteUser = retrieveRemoteUser(headers);
+        if (remoteUser != null) {
+            String remoteUserId = remoteUser.getUserId();
+            if (StringUtils.isNotBlank(remoteUserId)) {
+                return remoteUserId.substring(remoteUserId.lastIndexOf("!"));
+            }
         }
         throw new OrcidBadRequestException("Couldn't find any user display name headers");
     }

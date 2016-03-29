@@ -59,6 +59,8 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     private boolean isLinked;
 
+    private String idType;
+
     public UserconnectionEntity() {
     }
 
@@ -183,5 +185,17 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     public void setLinked(boolean isLinked) {
         this.isLinked = isLinked;
+    }
+
+    /**
+     * The name of the Shibboleth header used.
+     */
+    @Column(name = "id_type")
+    public String getIdType() {
+        return idType;
+    }
+
+    public void setIdType(String idType) {
+        this.idType = idType;
     }
 }
