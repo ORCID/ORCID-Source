@@ -271,14 +271,14 @@ Check that the activities section is returned with affiliations, funding, peer-r
 5. Call:
  
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 80e4aa5a-6ccc-44b3-83bb-3d9e315cda22' -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/activities' -L -i
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [token]’ -X GET 'https://pub.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/activities' -L -i
     ```
 Check that affiliation, funding, peer-review and works are returned
 
 6. Call 
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 0658713c-5b6d-4fa4-a3da-73db9c7ab16c' -X GET 'https://api.qa.orcid.org/v1.2/0000-0002-3874-7658/orcid-profile' -L -i
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [token]’ -X GET 'https://api.qa.orcid.org/v1.2/0000-0002-3874-7658/orcid-profile' -L -i
     ```
 Check that the bio section is returned
 Check that affiliations, funding, peer-review and work sections are returned
@@ -286,7 +286,7 @@ Check that affiliations, funding, peer-review and work sections are returned
 7. Call:
 
     ```
-    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 0658713c-5b6d-4fa4-a3da-73db9c7ab16c' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/person' -L -i
+    curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer [token]’ -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0002-3874-7658/person' -L -i
     ```
 Check that personal information fields are returned
 
