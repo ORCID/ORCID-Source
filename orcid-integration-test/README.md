@@ -8,6 +8,13 @@ The new style blackbox tests are in [ORICD-Source/orcid-integration-test/src/tes
 
 The new style tests are different from the old style integration tests because they use a set of test data configured before running the tests that is *not* removed from the database when the tests are run.
 
+###Prerequisites
+1. Complete the ORCID [Development Environment Setup](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
+2. Install [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/) 
+3. Verify Firefox installation and locate installation directory
+
+        find / -name firefox 2>/dev/null
+
 ###Set up the test data
 
 Test data is set up using a whitebox test located at [src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java](https://github.com/ORCID/ORCID-Source/blob/master/orcid-integration-test/src/test/java/org/orcid/integration/whitebox/SetUpClientsAndUsers.java)
