@@ -670,18 +670,14 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         Item 4 Public 
         */
         OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
-        System.out.println(p.toString());
         assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("type4",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
-        
         assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
-        
     }
     
     @Test
     public void testReadPrivacyOnBio(){
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497",ScopePathType.READ_LIMITED);
-        //ARGH - authentication object does not contain a client ID.  
         /*Example A List on 4444-4444-4444-4497:
         Item 1 Private (client is source)
         Item 2 Private (other source)
@@ -689,7 +685,6 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         Item 4 Public 
         */
         OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
-        System.out.println(p.toString());
         assertEquals(3,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
         assertEquals("type2",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
         assertEquals(Visibility.PRIVATE,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
@@ -699,32 +694,66 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(2).getVisibility());
         assertEquals(Visibility.PRIVATE,p.getOrcidBio().getExternalIdentifiers().getVisibility());
     }
-        
-        
     
-        //use manager to set up record two
+    @Test
+    public void testReadPrivacyOnBio2(){
         /*Example B List:
         Item 1 Limited
         Item 2 Public 
          */
+                
+        //read the profile with LIMITED
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441",ScopePathType.READ_LIMITED);
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4441").getEntity()).getOrcidProfile();
+        assertEquals(2,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("A-0001",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals("A-0002",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.LIMITED,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(1).getVisibility());
+        assertEquals(Visibility.LIMITED,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+        
+        //read the profile with PUBLIC
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441",ScopePathType.READ_PUBLIC);
+        p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4441").getEntity()).getOrcidProfile();
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("A-0001",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());        
+    }
     
-        //use manager to set up record three
+    @Test
+    public void testReadPrivacyOnBio3(){
         /*Example C List:
         Item 1 Public
-        Item 2 Public 
          */
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443",ScopePathType.READ_LIMITED);
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4443").getEntity()).getOrcidProfile();
+        System.out.println(p.toString());        
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("Facebook",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443",ScopePathType.READ_PUBLIC);
+        p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4443").getEntity()).getOrcidProfile();
+        System.out.println(p.toString());        
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("Facebook",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+    }
     
     @Test
     @DirtiesContext
+    //which endpoints can be used to update the bio...?
+    //e.g. update external identifiers.
+    //review code to discover where we can change visibility of bio elements.    
+    //add sanity test for updateProfile.
     public void testUpdateBioByDifferentClientNoConflicts(){
        //tests that when client one posts a keyword, it doesn't remove ones added by client 2.
         
     }
     
-    //which endpoints can be used to update the bio...?
-    //e.g. update external identifiers.
-    //review code to discover where we can change visibility of bio elements.
-    
-    //add sanity test for updateProfile.
+   
 
 }
