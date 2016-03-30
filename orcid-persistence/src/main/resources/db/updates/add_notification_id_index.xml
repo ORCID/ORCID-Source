@@ -27,6 +27,7 @@
 				<indexExists indexName="notification_item_notification_id_index" tableName="notification_id" />
 			</not>
 		</preConditions>
+		<sql>create index notification_item_notification_id_index on notification_item(notification_id);</sql>
 	</changeSet>
 	<changeSet id="ADD-DATE-CREATED-ON-NOTIFICATION" author="rcpeters">
 		<preConditions onFail="MARK_RAN">
