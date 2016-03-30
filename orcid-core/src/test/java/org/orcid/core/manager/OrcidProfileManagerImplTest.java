@@ -510,6 +510,23 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.LIMITED,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
         assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
         assertEquals(Visibility.LIMITED,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
+        
+        //now attempt to alter privacy.  It should fail as record has been claimed.
+        profile.getOrcidBio().getKeywords().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getResearcherUrls().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getExternalIdentifiers().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.PUBLIC);
+        profile = orcidProfileManager.updateOrcidProfile(profile);
+        
+        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
+        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
+        assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
+        assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
+        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
+
     }      
     
     @Test
