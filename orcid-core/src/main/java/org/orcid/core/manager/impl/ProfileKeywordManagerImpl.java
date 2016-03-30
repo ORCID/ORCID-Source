@@ -29,6 +29,7 @@ import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
@@ -60,6 +61,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
@@ -138,7 +142,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         }
 
         ProfileKeywordEntity newEntity = adapter.toProfileKeywordEntity(keyword);
-        ProfileEntity profile = new ProfileEntity(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
         newEntity.setSource(sourceEntity);
