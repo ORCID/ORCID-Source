@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,7 +31,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHttpResponse;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -46,8 +45,6 @@ import org.orcid.persistence.jpa.entities.WebhookEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.annotation.DirtiesContext;
 
-import net.sf.ehcache.CacheManager;
-
 @DirtiesContext
 public class WebhookManagerImplTest extends BaseTest {
 
@@ -59,9 +56,6 @@ public class WebhookManagerImplTest extends BaseTest {
 
     @Mock
     private WebhookDao mockWebhookDao;
-
-    @Resource 
-    private CacheManager cacheManager;
     
     private ClientDetailsEntity clientDetails;
 
@@ -95,12 +89,7 @@ public class WebhookManagerImplTest extends BaseTest {
         assertNotNull(clientDetails.getId());
 
         testProfile = new ProfileEntity("4444-4444-4444-4444");
-    }
-
-    @After
-    public void after() {
-        cacheManager.clearAll();
-    }
+    }   
         
     @Test
     public void testValidUriOnWebhook() {
