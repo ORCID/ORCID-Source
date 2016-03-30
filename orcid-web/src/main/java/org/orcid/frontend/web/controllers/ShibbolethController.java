@@ -95,7 +95,7 @@ public class ShibbolethController extends BaseController {
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
             try {
-                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser);
+                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
