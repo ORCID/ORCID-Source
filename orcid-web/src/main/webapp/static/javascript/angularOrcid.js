@@ -2109,14 +2109,15 @@ orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', functio
 
 
 orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
-    $scope.errors=null;
-    $scope.password=null;
+    $scope.errors = null;
+    $scope.password = null;
+    $scope.securityQuestions = [];
 
     $scope.getSecurityQuestion = function() {
         $.ajax({
             url: getBaseUri() + '/account/security-question.json',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {            	
                 $scope.securityQuestionPojo = data;
                 $scope.$apply();
             }
@@ -2150,7 +2151,7 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                //alert(angular.toJson($scope.securityQuestionPojo));
+            	
                 if(data.errors.length != 0) {
                     $scope.errors=data.errors;
                 } else {
