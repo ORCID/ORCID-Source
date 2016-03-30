@@ -62,7 +62,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "orcid", "externalIdOrcid", "externalIdCommonName", "externalIdReference", "externalIdUrl", "externalIdSource", "source" })
 @XmlRootElement(name = "external-identifier")
-public class ExternalIdentifier implements VisibilityType, Serializable {
+public class ExternalIdentifier implements VisibilityType, PrivateVisibleToSource, Serializable {
 
     /**
      * 
