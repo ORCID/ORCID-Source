@@ -77,7 +77,7 @@ public class AddressManagerTest extends BaseTest {
     }
     
     @Test
-    public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
+    public void testAddAddressToUnclaimedRecordPreserveAddressVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
         Address address = getAddress();
         
@@ -89,7 +89,7 @@ public class AddressManagerTest extends BaseTest {
     }
     
     @Test
-    public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
+    public void testAddAddressToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         Address address = getAddress();
         

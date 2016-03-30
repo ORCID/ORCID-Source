@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -45,7 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class ExternalIdentifierManagerTest extends BaseTest {
+public class ResearcherUrlManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
 
@@ -57,7 +58,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     private SourceManager sourceManager;
 
     @Resource
-    private ExternalIdentifierManager externalIdentifierManager;
+    private ResearcherUrlManager researcherUrlManager;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -66,7 +67,7 @@ public class ExternalIdentifierManagerTest extends BaseTest {
 
     @Before
     public void before() {
-        externalIdentifierManager.setSourceManager(sourceManager);
+        researcherUrlManager.setSourceManager(sourceManager);
     }
 
     @AfterClass
@@ -77,36 +78,34 @@ public class ExternalIdentifierManagerTest extends BaseTest {
     }
 
     @Test
-    public void testAddExternalIdentifierToUnclaimedRecordPreserveExternalIdentifierVisibility() {
+    public void testAddResearcherUrlToUnclaimedRecordPreserveResearcherUrlVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        PersonExternalIdentifier extId = getExternalIdentifier();
+        ResearcherUrl rUrl = getResearcherUrl();
+        
+        rUrl = researcherUrlManager.createResearcherUrl(unclaimedOrcid, rUrl, true);
+        rUrl = researcherUrlManager.getResearcherUrl(unclaimedOrcid, rUrl.getPutCode());
 
-        extId = externalIdentifierManager.createExternalIdentifier(unclaimedOrcid, extId, true);
-        extId = externalIdentifierManager.getExternalIdentifier(unclaimedOrcid, extId.getPutCode());
-
-        assertNotNull(extId);
-        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        assertNotNull(rUrl);
+        assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
     }
 
     @Test
-    public void testAddExternalIdentifierToClaimedRecordPreserveUserDefaultVisibility() {
+    public void testAddResearcherUrToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        PersonExternalIdentifier extId = getExternalIdentifier();
+        ResearcherUrl rUrl = getResearcherUrl();
+        
+        rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, true);
+        rUrl = researcherUrlManager.getResearcherUrl(claimedOrcid, rUrl.getPutCode());
 
-        extId = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
-        extId = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId.getPutCode());
-
-        assertNotNull(extId);
-        assertEquals(Visibility.LIMITED, extId.getVisibility());
+        assertNotNull(rUrl);
+        assertEquals(Visibility.LIMITED, rUrl.getVisibility());
     }
 
-    private PersonExternalIdentifier getExternalIdentifier() {
-        PersonExternalIdentifier extId = new PersonExternalIdentifier();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("person-ext-id-type");
-        extId.setValue("person-ext-id-value");
-        extId.setUrl(new Url("http://orcid.org"));
-        extId.setVisibility(Visibility.PUBLIC);
-        return extId;
+    private ResearcherUrl getResearcherUrl() {
+        ResearcherUrl rUrl = new ResearcherUrl();
+        rUrl.setUrl(new Url("http://orcid.org"));
+        rUrl.setUrlName("ORCID Site");
+        rUrl.setVisibility(Visibility.PUBLIC);
+        return rUrl;
     }
 }

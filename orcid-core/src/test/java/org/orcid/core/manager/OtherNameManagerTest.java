@@ -75,7 +75,7 @@ public class OtherNameManagerTest extends BaseTest {
     }
     
     @Test
-    public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
+    public void testAddOtherNameToUnclaimedRecordPreserveOtherNameVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
         OtherName otherName = getOtherName();
         
@@ -87,7 +87,7 @@ public class OtherNameManagerTest extends BaseTest {
     }
     
     @Test
-    public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
+    public void testAddOtherNameToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         OtherName otherName = getOtherName();
         

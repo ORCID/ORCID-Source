@@ -75,7 +75,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     }
 
     @Test
-    public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
+    public void testAddKeywordToUnclaimedRecordPreserveKeywordVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Keyword keyword = getKeyword();
 
@@ -87,7 +87,7 @@ public class ProfileKeywordManagerTest extends BaseTest {
     }
 
     @Test
-    public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
+    public void testAddKeywordToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
         Keyword keyword = getKeyword();
 

@@ -85,7 +85,7 @@ public class PeerReviewManagerTest extends BaseTest {
     }
     
     @Test
-    public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
+    public void testAddPeerReviewToUnclaimedRecordPreservePeerReviewVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
         PeerReview peer = getPeerReview();
         
@@ -97,7 +97,7 @@ public class PeerReviewManagerTest extends BaseTest {
     }
     
     @Test
-    public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
+    public void testAddPeerReviewToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
         PeerReview peer = getPeerReview();
         
