@@ -17,7 +17,6 @@
 package org.orcid.frontend.spring;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -77,7 +76,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             userConnectionEntity.setRank(1);
             userConnectionEntity.setId(pk);
             userConnectionEntity.setLinked(true);
-            userConnectionEntity.setLastLogin(new Timestamp(new Date().getTime()));
+            userConnectionEntity.setLastLogin(new Date());
             userConnectionEntity.setIdType(remoteUser.getIdType());
             userConnectionDao.persist(userConnectionEntity);
         }

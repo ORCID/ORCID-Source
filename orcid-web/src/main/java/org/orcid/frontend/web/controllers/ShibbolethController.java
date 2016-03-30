@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -52,7 +53,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "targeted-id" };
+    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "eduPersonUniqueId", "targeted-id-oid", "targeted-id" };
 
     private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
 
@@ -83,6 +84,8 @@ public class ShibbolethController extends BaseController {
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                userConnectionEntity.setLastLogin(new Date());
+                userConnectionDao.merge(userConnectionEntity);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -138,8 +141,9 @@ public class ShibbolethController extends BaseController {
         if (remoteUser != null) {
             String remoteUserId = remoteUser.getUserId();
             if (StringUtils.isNotBlank(remoteUserId)) {
-                if ("persistent-id".equals(remoteUser.getIdType()) && remoteUser.getUserId().contains("!")) {
-                    return remoteUserId.substring(remoteUserId.lastIndexOf("!"));
+                int indexOfBang = remoteUserId.lastIndexOf("!");
+                if (indexOfBang != -1) {
+                    return remoteUserId.substring(indexOfBang);
                 } else {
                     return remoteUserId;
                 }

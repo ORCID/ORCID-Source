@@ -16,7 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -45,7 +45,7 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
 
     private String imageurl;
 
-    private Timestamp lastLogin;
+    private Date lastLogin;
 
     private String orcid;
 
@@ -125,11 +125,11 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     }
 
     @Column(name = "last_login")
-    public Timestamp getLastLogin() {
+    public Date getLastLogin() {
         return this.lastLogin;
     }
 
-    public void setLastLogin(Timestamp lastLogin) {
+    public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
     }
 
