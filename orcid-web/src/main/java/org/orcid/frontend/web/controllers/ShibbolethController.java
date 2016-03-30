@@ -71,9 +71,16 @@ public class ShibbolethController extends BaseController {
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
-        RemoteUser remoteUser = retrieveRemoteUser(headers);
-        String displayName = retrieveDisplayName(headers);
+        mav.setViewName("social_link_signin");
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
+        mav.addObject("providerId", shibIdentityProvider);
+        RemoteUser remoteUser = retrieveRemoteUser(headers);
+        if(remoteUser == null){
+            mav.addObject("unsupportedInstitution", true);
+            return mav;
+        }
+        String displayName = retrieveDisplayName(headers);
+       
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
@@ -94,8 +101,6 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
         } else {
             // To avoid confusion, force the user to login to ORCID again
-            mav.setViewName("social_link_signin");
-            mav.addObject("providerId", shibIdentityProvider);
             mav.addObject("accountId", displayName);
             mav.addObject("linkType", "shibboleth");
 
@@ -119,7 +124,7 @@ public class ShibbolethController extends BaseController {
                 return new RemoteUser(userId, possibleHeader);
             }
         }
-        throw new OrcidBadRequestException("Couldn't find remote user header");
+        return null;
     }
 
     public static String retrieveDisplayName(Map<String, String> headers) {
