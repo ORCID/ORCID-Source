@@ -24,4 +24,9 @@
             <column name="id_type" type="VARCHAR(1000)" />
         </addColumn>
     </changeSet>
+    
+    <changeSet id="POPULATE-USERCONNECTION-ID-TYPE" author="Will Simpson">
+        <sql>UPDATE userconnection SET id_type = 'persistent-id' WHERE providerid NOT IN ('facebook', 'google');</sql>
+    </changeSet>
+    
 </databaseChangeLog>
