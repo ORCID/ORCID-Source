@@ -100,10 +100,10 @@
                 </div>
                 
                 <div class="row">
-                	<div class="col-md-offset-3 col-md-8 col-sm-9 col-sm-offset-3 col-xs-12 bottomBuffer">
-        	            <div class="control-group"> 
-        	            	${springMacroRequestContext.getMessage("social.link.dont_have_orcid")} <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${emailId}&firstName=${firstName}&lastName=${lastName}">${springMacroRequestContext.getMessage("social.link.register_now")}</a>
-        	            </div>            
+                    <div class="col-md-offset-3 col-md-8 col-sm-9 col-sm-offset-3 col-xs-12 bottomBuffer">
+                        <div class="control-group">
+                            ${springMacroRequestContext.getMessage("social.link.dont_have_orcid")} <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${emailId!}&firstName=${firstName!}&lastName=${lastName!}">${springMacroRequestContext.getMessage("social.link.register_now")}</a>
+                        </div>
                     </div>
                 </div>
                 

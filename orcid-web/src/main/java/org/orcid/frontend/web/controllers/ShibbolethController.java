@@ -53,9 +53,17 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "eduPersonUniqueId", "targeted-id-oid", "targeted-id" };
+    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id" };
 
     private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
+    
+    private static final String EPPN_HEADER = "eppn";
+
+    private static final String DISPLAY_NAME_HEADER = "displayname";
+
+    private static final String GIVEN_NAME_HEADER = "givenname";
+    
+    private static final String SN_HEADER = "sn";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
 
@@ -103,10 +111,8 @@ public class ShibbolethController extends BaseController {
             // To avoid confusion, force the user to login to ORCID again
             mav.addObject("accountId", displayName);
             mav.addObject("linkType", "shibboleth");
-
-            mav.addObject("emailId", (headers.get("eppn") == null) ? "" : headers.get("eppn"));
-            mav.addObject("firstName", (headers.get("givenName") == null) ? "" : headers.get("givenName"));
-            mav.addObject("lastName", (headers.get("sn") == null) ? "" : headers.get("sn"));
+            mav.addObject("firstName", (headers.get(GIVEN_NAME_HEADER) == null) ? "" : headers.get(GIVEN_NAME_HEADER));
+            mav.addObject("lastName", (headers.get(SN_HEADER) == null) ? "" : headers.get(SN_HEADER));
         }
         return mav;
     }
@@ -128,16 +134,16 @@ public class ShibbolethController extends BaseController {
     }
 
     public static String retrieveDisplayName(Map<String, String> headers) {
-        String eppn = headers.get("eppn");
+        String eppn = headers.get(EPPN_HEADER);
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;
         }
-        String displayName = headers.get("displayName");
+        String displayName = headers.get(DISPLAY_NAME_HEADER);
         if (StringUtils.isNotBlank(displayName)) {
             return displayName;
         }
-        String givenName = headers.get("givenName");
-        String sn = headers.get("sn");
+        String givenName = headers.get(GIVEN_NAME_HEADER);
+        String sn = headers.get(SN_HEADER);
         String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
         if (StringUtils.isNotBlank(combinedNames)) {
             return combinedNames;
