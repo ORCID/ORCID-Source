@@ -73,9 +73,10 @@
 	                        </div>
 	                    </div>
 	     				<div class="margin-top-box privacy">
-	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label>
-	                        <@orcid.privacyToggle "register.activitiesVisibilityDefault.visibility" "updateActivitiesVisibilityDefault('PUBLIC', $event)"
-	                        	"updateActivitiesVisibilityDefault('LIMITED', $event)" "updateActivitiesVisibilityDefault('PRIVATE', $event)" />
+	                        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
+        					<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+    						<@orcid.privacyToggle "register.activitiesVisibilityDefault.visibility" "updateActivitiesVisibilityDefault('PUBLIC', $event)"
+	                        	"updateActivitiesVisibilityDefault('LIMITED', $event)" "updateActivitiesVisibilityDefault('PRIVATE', $event)" /> 
 	                    </div>                    
 		                <div class="margin-top-box">
 		                    <div class="relative">

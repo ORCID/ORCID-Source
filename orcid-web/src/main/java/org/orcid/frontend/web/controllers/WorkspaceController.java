@@ -54,13 +54,10 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.SequenceType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Role;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
@@ -358,7 +355,14 @@ public class WorkspaceController extends BaseWorkspaceController {
     KeywordsForm getKeywordsFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {     
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         Keywords keywords = profileKeywordManager.getKeywords(getCurrentUserOrcid(), lastModifiedTime);        
-        KeywordsForm form = KeywordsForm.valueOf(keywords);                
+        KeywordsForm form = KeywordsForm.valueOf(keywords);
+        
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
+        
         return form;
     }
     
@@ -379,16 +383,7 @@ public class WorkspaceController extends BaseWorkspaceController {
                 }                      
             }
 
-            Keywords updatedKeywords = kf.toKeywords();
-            Visibility defaultVisibility = kf.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(Keyword k : updatedKeywords.getKeywords()) {
-                    k.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            } 
-                         
+            Keywords updatedKeywords = kf.toKeywords();                        
             profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
         }
         return kf;
@@ -400,6 +395,11 @@ public class WorkspaceController extends BaseWorkspaceController {
         long lastModifiedTime = getLastModifiedTime(getCurrentUserOrcid());
         OtherNames otherNames = otherNameManager.getOtherNames(getCurrentUserOrcid(), lastModifiedTime);                
         OtherNamesForm form = OtherNamesForm.valueOf(otherNames);
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
         return form;
     }
     
@@ -420,15 +420,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
                     
             OtherNames otherNames = onf.toOtherNames();                
-            Visibility defaultVisibility = onf.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(OtherName o : otherNames.getOtherNames()) {
-                    o.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            } 
-                        
             otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
         }
 
@@ -443,6 +434,11 @@ public class WorkspaceController extends BaseWorkspaceController {
     WebsitesForm getWebsitesFormJson(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
         ResearcherUrls rUrls = researcherUrlManager.getResearcherUrls(getCurrentUserOrcid(), getLastModifiedTime(getCurrentUserOrcid()));                 
         WebsitesForm form = WebsitesForm.valueOf(rUrls);
+        //Set the default visibility
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+        }
         return form;
     }
     
@@ -474,17 +470,6 @@ public class WorkspaceController extends BaseWorkspaceController {
             }
             
             ResearcherUrls rUrls = ws.toResearcherUrls();
-            
-            //TODO: Remove the visibility from the section element
-            Visibility defaultVisibility = ws.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(ResearcherUrl rUrl : rUrls.getResearcherUrls()) {
-                    rUrl.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            }
-                        
             researcherUrlManager.updateResearcherUrls(getCurrentUserOrcid(), rUrls);            
         }
         
