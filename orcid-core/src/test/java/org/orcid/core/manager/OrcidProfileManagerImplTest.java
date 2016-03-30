@@ -109,6 +109,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.sf.ehcache.CacheManager;
+
 /**
  * @author Will Simpson
  */
@@ -137,8 +139,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Resource
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
-    
-
     @Resource
     private EncryptionManager encryptionManager;
 
@@ -154,6 +154,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Mock
     private NotificationManager notificationManager;
 
+    @Resource 
+    private CacheManager cacheManager;
+    
     @Before
     @Transactional
     @Rollback
@@ -222,6 +225,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profileDao.remove(DELEGATE_ORCID);
         profileDao.remove(APPLICATION_ORCID);
         orcidProfileManager.clearOrcidProfileCache();
+        cacheManager.clearAll();
     }
 
     @Test
