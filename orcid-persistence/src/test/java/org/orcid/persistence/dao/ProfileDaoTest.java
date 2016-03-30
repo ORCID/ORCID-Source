@@ -390,7 +390,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNotIndexedAfterWaitPeriod() {
         List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertTrue(resultsList.isEmpty());
+        assertEquals(1, resultsList.size());
 
         // test far back
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(100000, 200000, 10, Collections.<String> emptyList());
@@ -400,7 +400,7 @@ public class ProfileDaoTest extends DBUnitTest {
         // test range that fits test data
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertEquals(1, resultsList.size());
+        assertEquals(2, resultsList.size());
         assertTrue(resultsList.contains("4444-4444-4444-4447"));
     }
 
@@ -410,7 +410,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNeedingReminder() {
         List<String> results = profileDao.findUnclaimedNeedingReminder(1, 10, Collections.<String> emptyList());
         assertNotNull(results);
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
         assertTrue(results.contains("4444-4444-4444-4447"));
 
         // Now insert claimed reminder event, result should be excluded
@@ -421,7 +421,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profileEventDao.persist(eventEntity);
 
         results = profileDao.findUnclaimedNeedingReminder(1, 10, Collections.<String> emptyList());
-        assertTrue(results.isEmpty());
+        assertEquals(1, results.size());
     }
 
     @Test
