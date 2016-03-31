@@ -22,6 +22,8 @@ import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.notification.permission_rc2.Item;
+import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
@@ -70,6 +72,21 @@ public class ExternalIDValidator {
                 errors.add(id.getType());
             }
         }            
+        checkAndThrow(errors);
+    }
+    
+    public void validateNotificationItems(Items items){
+        if (items == null)
+            return;
+        List<String> errors = Lists.newArrayList();
+        for (Item i: items.getItems()){
+            try{
+                if (i.getExternalIdentifier() !=null && i.getExternalIdentifier().getType()!=null)
+                    WorkExternalIdentifierType.fromValue(i.getExternalIdentifier().getType().toLowerCase());
+            }catch (IllegalArgumentException e){
+                errors.add(i.getExternalIdentifier().getType());
+            }
+        }
         checkAndThrow(errors);
     }
 
