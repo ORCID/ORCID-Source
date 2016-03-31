@@ -30,7 +30,6 @@ import javax.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ClientDetailsManager;

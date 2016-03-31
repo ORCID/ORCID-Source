@@ -445,6 +445,61 @@
             reviewed="false"          
             />
 
+
+	<profile
+            orcid="0000-0000-0000-0001"
+            creation_method="API"
+            completed_date="2016-01-01 15:31:00.00"
+            date_created="2016-01-01 15:31:00.00"
+            submission_date="2016-01-01 15:31:00.00"
+            last_indexed_date="2016-01-01 15:31:00.00"
+            last_modified="2016-01-01 15:31:00.00"
+            given_names="Leonardo"
+            family_name="da Vinci"
+            credit_name="Leonardo"
+            biography_visibility="PUBLIC"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default="LIMITED"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="false"
+            reviewed="true"
+            />
+
+	<profile
+            orcid="0000-0000-0000-0002"
+            creation_method="API"
+            completed_date="2016-03-29 15:31:00.00"
+            date_created="2016-03-29 15:31:00.00"
+            submission_date="2016-03-29 15:31:00.00"
+            last_indexed_date="2016-03-29 15:31:00.00"
+            last_modified="2016-03-29 15:31:00.00"
+            given_names="Vincent"
+            family_name="van Gogh"
+            credit_name="van Gogh"
+            biography_visibility="PUBLIC"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default="LIMITED"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="true"
+            reviewed="true"
+            />
+
     <granted_authority
             authority="USER_ROLE"
             orcid="4444-4444-4444-4441"
@@ -635,7 +690,6 @@
             display_index="0"
             />
     
-
     <researcher_url
             id="1"
             url="www.4444-4444-4444-4441.com"
