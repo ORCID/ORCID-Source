@@ -10,7 +10,7 @@ The new style tests are different from the old style integration tests because t
 
 ###Prerequisites
 1. Complete the ORCID [Development Environment Setup](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
-2. Install [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/) 
+2. Install [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
 3. Verify Firefox installation and locate installation directory
 
         find / -name firefox 2>/dev/null
