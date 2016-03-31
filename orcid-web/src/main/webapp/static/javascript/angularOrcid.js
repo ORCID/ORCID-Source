@@ -6035,6 +6035,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             loadingDetails: false,
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
+            peerReviewGroupDetailsRequested: new Array(),
             peerReviewsToAddIds: null,
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
@@ -6249,26 +6250,28 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDvalue, putCode){
-            	var group = peerReviewSrvc.getGroup(putCode);
+            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDvalue) < 0){            		
+            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDvalue); 
             	
-            	console.log(getBaseUri() + '/public/group/' + groupIDvalue);
-            	
-            	$.ajax({
-                    url: getBaseUri() + '/public/group/' + groupIDvalue,
-                    dataType: 'json',
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'GET',
-                    success: function(data) {
-                    	$rootScope.$apply(function(){
-                    		group.groupName = data.name;
-                    		group.groupDescription = data.description;
-                    		group.groupType = data.type;
-                    	});
-                    }
-                }).fail(function(xhr, status, error){
-                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
-                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-                });
+	            	var group = peerReviewSrvc.getGroup(putCode);
+	            	
+	            	$.ajax({
+	                    url: getBaseUri() + '/public/group/' + groupIDvalue,
+	                    dataType: 'json',
+	                    contentType: 'application/json;charset=UTF-8',
+	                    type: 'GET',
+	                    success: function(data) {
+	                    	$rootScope.$apply(function(){
+	                    		group.groupName = data.name;
+	                    		group.groupDescription = data.description;
+	                    		group.groupType = data.type;
+	                    	});
+	                    }
+	                }).fail(function(xhr, status, error){
+	                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
+	                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+	                });
+            	}
             }
     };
     return peerReviewSrvc;
