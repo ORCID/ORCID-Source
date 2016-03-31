@@ -165,10 +165,10 @@
                 <tr>
                     <th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
-                        ng-bind="privacyPreferencesToggleText"></a></td>
+                        ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
                 </tr>
                 <tr ng-controller="WorksPrivacyPreferencesCtrl"
-                    ng-show="showEditPrivacyPreferences" ng-cloak>
+                    ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
                     <td colspan="2">
                         <div class="editTablePadCell35" id="privacy-settings">
                             ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
