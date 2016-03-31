@@ -20,7 +20,7 @@
 <#include "sandbox_warning.ftl"/>
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
         <#if unsupportedInstitution??>
-            <div class="alert">Unsupported institution ${providerId}.</div>
+            <div class="alert">Unsupported institution ${providerId}. <#if institutionContactEmail??>Contact ${institutionContactEmail}.</#if></div>
         <#else>
             <div ng-hide="loadedFeed" class="text-center">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>

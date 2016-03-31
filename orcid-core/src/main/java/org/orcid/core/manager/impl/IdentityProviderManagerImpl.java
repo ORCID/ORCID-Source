@@ -61,6 +61,15 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
 
     @Override
+    public String retrieveContactEmailByProviderid(String providerid) {
+        IdentityProviderEntity idp = identityProviderDao.findByProviderid(providerid);
+        if (idp == null) {
+            return null;
+        }
+        return idp.getSupportEmail();
+    }
+
+    @Override
     public void loadIdentityProviders() {
         String[] metadataUrls = StringUtils.split(metadataUrlsString);
         XPath xpath = createXPath();

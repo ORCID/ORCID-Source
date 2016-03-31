@@ -16,8 +16,6 @@
  */
 package org.orcid.core.manager;
 
-import javax.xml.xpath.XPathExpressionException;
-
 /**
  * 
  * @author Will Simpson
@@ -26,5 +24,7 @@ import javax.xml.xpath.XPathExpressionException;
 public interface IdentityProviderManager {
 
     void loadIdentityProviders();
+
+    String retrieveContactEmailByProviderid(String providerid);
 
 }

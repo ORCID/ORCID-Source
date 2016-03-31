@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -56,13 +57,13 @@ public class ShibbolethController extends BaseController {
     private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id" };
 
     private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
-    
+
     private static final String EPPN_HEADER = "eppn";
 
     private static final String DISPLAY_NAME_HEADER = "displayname";
 
     private static final String GIVEN_NAME_HEADER = "givenname";
-    
+
     private static final String SN_HEADER = "sn";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
@@ -76,6 +77,9 @@ public class ShibbolethController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;
 
+    @Resource
+    private IdentityProviderManager identityProviderManager;
+
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
@@ -83,12 +87,13 @@ public class ShibbolethController extends BaseController {
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         mav.addObject("providerId", shibIdentityProvider);
         RemoteUser remoteUser = retrieveRemoteUser(headers);
-        if(remoteUser == null){
+        if (remoteUser == null) {
             mav.addObject("unsupportedInstitution", true);
+            mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;
         }
         String displayName = retrieveDisplayName(headers);
-       
+
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
