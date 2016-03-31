@@ -221,5 +221,17 @@ public class NotificationsTest {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }
     }
+    
+    @Test
+    public void createNotificationInvalidWorkIDType() throws JSONException {
+        NotificationPermission notification = unmarshallFromPath("/notification_2.0_rc2/samples/notification-permission-2.0_rc2.xml");
+        notification.setPutCode(null);
+        notification.getItems().getItems().get(0).getExternalIdentifier().setType("invalid");
+        String accessToken = oauthHelper.getClientCredentialsAccessToken(client1ClientId, client1ClientSecret, ScopePathType.PREMIUM_NOTIFICATION);
+
+        ClientResponse response = notificationsClient.addPermissionNotificationXml(testUser1OrcidId, notification, accessToken);
+        assertNotNull(response);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+    }
 
 }

@@ -163,7 +163,6 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         for (ClientDetailsEntity clientDetailsEntity : all) {
             if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) &&
                     !"APP-5555555555555556".equals(clientDetailsEntity.getId())) {
-                System.out.println("Delete client: " + clientDetailsEntity.getId());
                 clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
             }
         }
