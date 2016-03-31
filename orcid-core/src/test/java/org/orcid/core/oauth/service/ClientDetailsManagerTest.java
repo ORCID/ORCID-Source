@@ -163,7 +163,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         assertEquals(9, all.size());
         for (ClientDetailsEntity clientDetailsEntity : all) {
             if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) &&
-                    !"APP-55555555555555556".equals(clientDetailsEntity.getId())) {
+                    !"APP-5555555555555556".equals(clientDetailsEntity.getId())) {
                 clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
             }
         }
