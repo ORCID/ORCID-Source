@@ -25,6 +25,7 @@ import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -32,6 +33,9 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.PrivateVisibleToSource;
+import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
@@ -40,6 +44,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import javassist.compiler.ast.Keyword;
 
 /**
  * I would imagine the first time you see this class, it may be a bit confusing.
@@ -158,6 +164,19 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                 }
                             } 
                         }
+                        
+                        //if we have a source, and that source can read limited, also return the private things they own
+                        //Applies to ExternalIdentifier, Keyword, ResearcherUrl, OtherName and anything in the future that implements PrivateVisibleToSource
+                        if (sourceId!=null)
+                            if (PrivateVisibleToSource.class.isAssignableFrom(clazz)
+                                    && visibilitySet.contains(Visibility.LIMITED)){
+                                Source source = ((PrivateVisibleToSource)obj).getSource();
+                                if(source != null) {
+                                    if(sourceId.equals(source.retrieveSourcePath())){
+                                        decision = TreeCleaningDecision.IGNORE;
+                                    }
+                                }
+                            }
                                                  
                         if(TreeCleaningDecision.DEFAULT.equals(decision)){
                             if (WorkContributors.class.isAssignableFrom(clazz)) {
