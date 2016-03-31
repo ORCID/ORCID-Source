@@ -6570,7 +6570,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
             peerReviewsToAddIds: null,
-            peerReviewGroupsLoaded: new Array(),
+            peerReviewGroupDetailsRequested: new Array(),
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
@@ -6784,8 +6784,8 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 return count;
             },
             getPeerReviewGroupDetails: function(groupIDvalue, putCode){
-            	if (peerReviewSrvc.peerReviewGroupsLoaded.indexOf(groupIDvalue) < 0){            		
-            		peerReviewSrvc.peerReviewGroupsLoaded.push(groupIDvalue);            		
+            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDvalue) < 0){            		
+            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDvalue);            		
             		var group = peerReviewSrvc.getGroup(putCode);
             		
             		$.ajax({
