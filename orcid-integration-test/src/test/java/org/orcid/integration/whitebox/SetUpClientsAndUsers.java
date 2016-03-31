@@ -815,6 +815,7 @@ public class SetUpClientsAndUsers {
         a1.setDateCreated(new Date());
         a1.setDisplayIndex(-1L);
         a1.setIso2Country(Iso3166Country.US);
+        a1.setPrimary(true);
         a1.setLastModified(new Date());
         a1.setUser(new ProfileEntity(orcid));
         a1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
