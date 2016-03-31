@@ -1,1 +1,1 @@
-See [ORCID-Source/TESTAUTO.md](https://github.com/ORCID/ORCID-Source/blob/master/TESTAUTO.md)
+See [ORCID-Source/TESTAUTO.md](../TESTAUTO.md)
