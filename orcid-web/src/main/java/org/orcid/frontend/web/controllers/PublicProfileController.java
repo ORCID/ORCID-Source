@@ -17,7 +17,9 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +38,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.cli.UrlDecode;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.AddressManager;
@@ -668,9 +671,11 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     /**
      * Get group information based on the group id
+     * @throws UnsupportedEncodingException 
      */
-    @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {
+    @RequestMapping(value = "/public/group/{groupId:.+}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
+    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) throws UnsupportedEncodingException {
+        groupId = URLDecoder.decode(groupId, "UTF-8");        
         return groupIdRecordManager.findByGroupId(groupId);
     }
 

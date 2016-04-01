@@ -6787,9 +6787,8 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDvalue) < 0){            		
             		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDvalue);            		
             		var group = peerReviewSrvc.getGroup(putCode);
-            		
             		$.ajax({
-                        url: getBaseUri() + '/public/group/' + groupIDvalue,
+                        url: getBaseUri() + '/public/group/' + encodeURIComponent(groupIDvalue),
                         dataType: 'json',
                         contentType: 'application/json;charset=UTF-8',
                         type: 'GET',
