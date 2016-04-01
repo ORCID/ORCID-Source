@@ -19,10 +19,12 @@ package org.orcid.frontend.web.controllers;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -450,7 +452,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
         
-        if(ws != null) {        
+        if(ws != null) {
+            Set<String> existingUrls = new HashSet<String>();
             for (WebsiteForm w : ws.getWebsites()) {
                 //Clean old errors
                 w.setErrors(new ArrayList<String>());
@@ -462,6 +465,14 @@ public class WorkspaceController extends BaseWorkspaceController {
                 if(isLongerThan(w.getUrlName(), SiteConstants.URL_MAX_LENGTH)) {
                     w.getErrors().add(getMessage("manualWork.length_less_X"));
                 }         
+                
+                //Check there are no duplicates
+                if(existingUrls.contains(w.getUrl())) {
+                    w.getErrors().add(getMessage("researcher_url.error.duplicated", w.getUrl()));
+                } else {
+                    existingUrls.add(w.getUrl());
+                }
+                
                 copyErrors(w, ws);
             }   
             
