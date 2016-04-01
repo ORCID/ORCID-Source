@@ -17,22 +17,14 @@
 package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.orcid.core.adapter.impl.WorkExternalIDConverter;
+import org.orcid.core.adapter.impl.PeerReviewWorkExternalIDConverter;
 import org.orcid.core.adapter.impl.WorkExternalIDsConverter;
 import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.pojo.FundingExternalIdentifier;
-import org.orcid.pojo.FundingExternalIdentifiers;
-import ma.glasnost.orika.metadata.Type;
 
 public class WorkExternalIdentifiersConversionsTest {
 
@@ -41,7 +33,7 @@ public class WorkExternalIdentifiersConversionsTest {
 
     @Test
     public void testConvertFromExternalID(){
-        WorkExternalIDConverter conv = new WorkExternalIDConverter();
+        PeerReviewWorkExternalIDConverter conv = new PeerReviewWorkExternalIDConverter();
         String externalIdentifiersAsString = expected;
         ExternalID id = conv.convertFrom(externalIdentifiersAsString, null);
         assertEquals(Relationship.SELF,id.getRelationship());
@@ -52,7 +44,7 @@ public class WorkExternalIdentifiersConversionsTest {
 
     @Test
     public void testConvertToExternalID(){
-        WorkExternalIDConverter conv = new WorkExternalIDConverter();
+        PeerReviewWorkExternalIDConverter conv = new PeerReviewWorkExternalIDConverter();
         ExternalID id = new ExternalID(); 
         id.setRelationship(Relationship.SELF);
         id.setType("doi");

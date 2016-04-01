@@ -28,7 +28,13 @@ import org.orcid.jaxb.model.record_rc2.ExternalID;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
-public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, String> {
+/** This class serializes a single ExternalID into a WorkExternalIdentifier.
+ * It is used by peer review.  Works are handled differently by SingleWorkExternalIdentifierConvertor.
+ * 
+ * @author tom
+ *
+ */
+public class PeerReviewWorkExternalIDConverter extends BidirectionalConverter<ExternalID, String> {
 
     /** Uses rc1 as intermediary form
      * 
