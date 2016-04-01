@@ -38,7 +38,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.cli.UrlDecode;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.AddressManager;
