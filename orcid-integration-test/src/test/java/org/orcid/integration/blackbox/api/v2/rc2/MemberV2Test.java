@@ -169,6 +169,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         for (int i = 1; i <= numWorks; i++) {
+            StopWatch singleWorkStopWatch = new StopWatch();
+            singleWorkStopWatch.start();
             long time = System.currentTimeMillis();
             Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
             workToCreate.setPutCode(null);
@@ -200,6 +202,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
             assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
             Work gotWork = getResponse.getEntity(Work.class);
             assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
+            System.out.println("Time for single work = " + singleWorkStopWatch);
         }
     }
 
