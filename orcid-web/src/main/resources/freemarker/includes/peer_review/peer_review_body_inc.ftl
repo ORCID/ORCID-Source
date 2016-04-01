@@ -23,7 +23,7 @@
 			 	<!-- active row summary info -->
                 <div class="row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
-                    	<div ng-init="peerReviewSrvc.getPeerReviewGroupDetails(group.groupRealId, peerReview.putCode.value)">
+                    	<div ng-init="peerReviewSrvc.getPeerReviewGroupDetails(peerReview.groupIdPutCode.value, peerReview.putCode.value)">
                     		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="group.groupName"></span>({{group.activitiesCount}})</span></span>
                     	</div>
                     </div>
