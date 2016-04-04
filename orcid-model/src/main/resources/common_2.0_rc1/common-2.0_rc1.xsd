@@ -1586,7 +1586,7 @@
 			</xs:documentation>
 		</xs:annotation>		
 		<xs:restriction base="common:string-1000">
-			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:).*" />
+			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:|publons:)([0-9a-zA-Z\^._~:/?#\[\]@!$&amp;'()*+,;=-]){2,}" />
 		</xs:restriction>    		
 	</xs:simpleType>
 </xs:schema>

@@ -17,6 +17,7 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -546,6 +547,12 @@ public class PublicProfileController extends BaseWorkspaceController {
                 }
             }
 
+            //Set the numeric id (the table id in the group_id_record table) of the group id
+            if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
+                GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue());
+                form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
+            }
+            
             peerReviews.add(form);
         }
         return peerReviews;
@@ -668,10 +675,11 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     /**
      * Get group information based on the group id
+     * @throws UnsupportedEncodingException 
      */
     @RequestMapping(value = "/public/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {
-        return groupIdRecordManager.findByGroupId(groupId);
+    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") Long groupId) {
+        return groupIdRecordManager.getGroupIdRecord(groupId);
     }
 
     public LinkedHashMap<Long, Funding> fundingMap(String orcid) {
