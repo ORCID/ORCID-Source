@@ -164,6 +164,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
     public void createManyWorks() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
         int numWorks = 1000;
+        // Amount of linear increase allowed
+        float scalingFactor = 1.5f;
         int numInitialSample = numWorks / 10;
         long initialSampleTime = 0;
         StopWatch stopWatch = new StopWatch();
@@ -189,7 +191,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
             if (i == numInitialSample) {
                 initialSampleTime = splitTime;
             } else if (i > numInitialSample) {
-                float maxTime = (initialSampleTime / numInitialSample) * 1.1f * i;
+                float maxTime = (initialSampleTime / numInitialSample) * scalingFactor * i;
                 System.out.println("Max time: " + maxTime);
                 assertTrue("Split time = " + splitTime + ", but max allowed time = " + maxTime + ", when num added = " + i, splitTime <= maxTime);
             }
