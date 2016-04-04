@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +45,6 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
     private static final List<String> GROUP_IDS = Arrays.asList("orcid-generated:this-is-a-hippen-separated-id", 
             "orcid-generated:this.is.a.dot.separated.id", 
             "orcid-generated:this'is'a'apostrophe'separated'id", 
-            "orcid-generated:this\"is\"a\"double\"quotes\"separated\"id", 
             "orcid-generated:this_is_a_dash_separated_id", 
             "orcid-generated:this-is-a-dash-separated-id",
             "orcid-generated:(this)(is)(a)(test)",
@@ -75,7 +73,6 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
         
         for(String groupId : GROUP_IDS) {            
-            String urlEncodedGroupId = URLEncoder.encode(groupId, "UTF-8");
             GroupIdRecord g1 = new GroupIdRecord();
             g1.setDescription("Description");
             g1.setGroupId(groupId);
@@ -85,7 +82,7 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
             g1.setPutCode(Long.valueOf(r1LocationPutCode));
             
-            webDriver.get(getWebBaseUrl() + "/public/group/" + urlEncodedGroupId);
+            webDriver.get(getWebBaseUrl() + "/public/group/" + g1.getPutCode());
             String pageContent = webDriver.getPageSource();
             assertNotNull(pageContent);
             assertTrue("Missing " + groupId, pageContent.contains(groupId.replace("\"", "\\\"")));
