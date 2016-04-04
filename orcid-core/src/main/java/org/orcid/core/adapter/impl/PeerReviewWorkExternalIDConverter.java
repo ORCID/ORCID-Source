@@ -16,6 +16,7 @@
  */
 package org.orcid.core.adapter.impl;
 
+import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common_rc1.Url;
 import org.orcid.jaxb.model.record_rc1.Relationship;
@@ -27,7 +28,13 @@ import org.orcid.jaxb.model.record_rc2.ExternalID;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
-public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, String> {
+/** This class serializes a single ExternalID into a WorkExternalIdentifier.
+ * It is used by peer review.  Works are handled differently by SingleWorkExternalIdentifierConvertor.
+ * 
+ * @author tom
+ *
+ */
+public class PeerReviewWorkExternalIDConverter extends BidirectionalConverter<ExternalID, String> {
 
     /** Uses rc1 as intermediary form
      * 
@@ -75,7 +82,7 @@ public class WorkExternalIDConverter extends BidirectionalConverter<ExternalID, 
         try{
             id.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(externalID.getType()));            
         }catch(IllegalArgumentException e){
-            id.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID); 
+            throw new ActivityIdentifierValidationException(e); 
         }
         if (externalID.getValue() !=null)
             id.setWorkExternalIdentifierId(new WorkExternalIdentifierId(externalID.getValue()));

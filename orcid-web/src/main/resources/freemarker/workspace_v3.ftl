@@ -73,7 +73,7 @@
                 </div>
             </div>            	       	
 	       	
-	       	<!-- Also known as -->
+	       	<!-- Other Names -->
 	       	<#if RequestParameters['v2modal']??>
 	       		<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
 	        	   <div class="workspace-section-header">
@@ -97,7 +97,7 @@
 		        	      </span>
 		        	   </span>
 		        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
-			        	   <@orcid.privacyToggle3  angularModel="otherNamesForm.visibility.visibility"
+			        	   <@orcid.privacyToggle3  angularModel="defaultVisibility"
 				             questionClick="toggleClickPrivacyHelp($index)"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				             publicClick="setPrivacy('PUBLIC', $event)" 
@@ -155,7 +155,7 @@
 			            	</span>			            	
 			            </span>
 			            <span class="pull-right" ng-hide="showEdit == false" ng-cloak>
-			            	<@orcid.privacyToggle3 angularModel="countryForm.visibility.visibility"
+			            	<@orcid.privacyToggle3 angularModel="defaultVisibility"
 				         		questionClick="toggleClickPrivacyHelp($index)"
 				         		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				         		publicClick="setPrivacy('PUBLIC', $event)" 
@@ -213,7 +213,7 @@
 		        	      	</span>
 		        	   	</span>
 		        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
-		        	   			<@orcid.privacyToggle3  angularModel="keywordsForm.visibility.visibility"
+		        	   			<@orcid.privacyToggle3  angularModel="defaultVisibility"
 			             	  	questionClick="toggleClickPrivacyHelp($index)"
 			             	  	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 			             	  	publicClick="setPrivacy('PUBLIC', $event)" 
@@ -274,7 +274,7 @@
 		        	   </span>	
 		        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
 		        	   		<@orcid.privacyToggle3 
-			        	   		angularModel="websitesForm.visibility.visibility"
+			        	   		angularModel="defaultVisibility"
 				            	questionClick="toggleClickPrivacyHelp($index)"
 				             	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 				             	publicClick="setPrivacy('PUBLIC', $event)" 
@@ -352,25 +352,30 @@
 		        	</div>	        	
 		       	</div>
 	       	</#if>
-	       	<!--  Pending to apply style -->
-       		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersPojo.externalIdentifiers.length" ng-cloak  class="workspace-section">
-       			<div class="workspace-section-header">	       			
-       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
-       			</div>
-       			<div ng-repeat='externalIdentifier in externalIdentifiersPojo.externalIdentifiers'>
-		        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
-		        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
-			   		<a ng-click="deleteExternalIdentifier($index)" class="glyphicon glyphicon-trash grey"></a>       			
-       			</div>
-			</div>
-			
-			
-																    
-	        <#if RequestParameters['OldPersonal']??>	        
-				<p class="hoover-white-fonts">	       
-		       		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>
-		        </p>
-	        </#if>
+			<!--  External Identifiers -->
+	       	<#if RequestParameters['v2modal']??>
+	       		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
+	       			<div class="workspace-section-header">
+	       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
+	       				<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
+	       			</div>
+	       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers | orderBy:'displayIndex'">	       				
+			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
+			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>				   		
+	       			</div>
+				</div>
+			<#else>
+				<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
+	       			<div class="workspace-section-header">
+	       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
+	       			</div>
+	       			<div ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'>
+			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
+			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
+				   		<a ng-click="deleteExternalIdentifierConfirmation($index)" class="glyphicon glyphicon-trash grey"></a>
+	       			</div>
+				</div>
+			</#if>		
 		</div>
     </div>
     
@@ -392,16 +397,7 @@
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
-				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">
-					<#if RequestParameters['OldPersonal']??>        			
-	       				<div class="row">
-	       					<div class="col-md-12 col-sm-12 col-xs-12">	 			   			
-	 			   					        
-	      			   		   		<a href="<@orcid.rootPath '/account/manage-bio-settings'/>" id="update-personal-modal-link" class="label btn-primary"><@orcid.msg 'workspace.Update'/></a>        			   		
-	      			    	 			   			
-	 			   			</div>
-	  			   		</div>
-  			   		</#if>        			
+				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
             		<div class="workspace-accordion-content" ng-show="displayInfo">
             			<#include "workspace_personal_v3.ftl"/>
         			</div>
@@ -737,7 +733,7 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<h3><@orcid.msg 'manage.deleteExternalIdentifier.pleaseConfirm'/> {{removeExternalModalText}} </h3>
 				<button class="btn btn-danger" ng-click="removeExternalIdentifier()"><@orcid.msg 'freemarker.btnDelete'/></button> 
-				<a ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel'/></a>
+				<a ng-click="closeEditModal()"><@orcid.msg 'freemarker.btncancel'/></a>
 			<div>
 		<div>
 	<div>	

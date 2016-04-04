@@ -80,8 +80,12 @@ public class SourceManagerImpl implements SourceManager {
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
             return sourceEntity;
         }
-        // Normal web user
         String userOrcid = retrieveEffectiveOrcid(authentication);
+        if(userOrcid == null){
+            // Must be system role
+            return null;
+        }
+        // Normal web user
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceProfile(new ProfileEntity(userOrcid));
         return sourceEntity;

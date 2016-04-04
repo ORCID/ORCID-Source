@@ -33,15 +33,19 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.common_rc1.Day;
 import org.orcid.jaxb.model.common_rc1.Month;
 import org.orcid.jaxb.model.common_rc1.Year;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -76,13 +80,9 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Angel Montenegro
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class) 
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PublicV2Test extends BlackBoxBaseRC1 {
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-    @Resource(name = "memberV2ApiClient_rc1")
-    private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
@@ -93,6 +93,18 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     static List<GroupIdRecord> groupRecords = null;
     
     static Map<String, String> publicAccessTokens = new HashMap<String, String>();
+    
+    static WebDriver webDriver;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        webDriver = new FirefoxDriver();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        webDriver.quit();
+    }
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
@@ -495,6 +507,8 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
          
     public void checkLimitedWork(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
+        //Change the default user visibility to public so we can create a limited work
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
         workToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
@@ -533,6 +547,9 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Let the default visibility set to PUBLIC
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
 
     @Test
@@ -546,6 +563,8 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     public void checkLimitedFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
+        //Change the default user visibility to public so we can create a limited work
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Funding fundingToCreate = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         fundingToCreate.setPutCode(null);
         fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
@@ -584,6 +603,9 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Let the default visibility set to PUBLIC
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
 
     @Test
@@ -597,6 +619,8 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     public void checkLimitedEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
+        //Change the default user visibility to public so we can create a limited work
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Employment employmentToCreate = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employmentToCreate.setPutCode(null);
         employmentToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
@@ -623,6 +647,9 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Let the default visibility set to PUBLIC
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
 
     @Test
@@ -636,6 +663,8 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     public void checkLimitedEducation(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
+        //Change the default user visibility to public so we can create a limited work
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Education educationToCreate = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         educationToCreate.setPutCode(null);
         educationToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
@@ -671,6 +700,9 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Let the default visibility set to PUBLIC
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
     
     @Test
@@ -684,6 +716,8 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     public void checkLimitedPeerReview(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
+        //Change the default user visibility to public so we can create a limited work
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         PeerReview peerReviewToCreate = (PeerReview) unmarshallFromPath("/record_2.0_rc1/samples/peer-review-2.0_rc1.xml", PeerReview.class);
         peerReviewToCreate.setPutCode(null);
         peerReviewToCreate.setGroupId(groupRecords.get(0).getGroupId());
@@ -719,6 +753,9 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
+        
+        //Let the default visibility set to PUBLIC
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
 
     @Test

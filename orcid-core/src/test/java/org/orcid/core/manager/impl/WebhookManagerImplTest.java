@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager.impl;
 
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -56,7 +56,7 @@ public class WebhookManagerImplTest extends BaseTest {
 
     @Mock
     private WebhookDao mockWebhookDao;
-
+    
     private ClientDetailsEntity clientDetails;
 
     private ProfileEntity testProfile;
@@ -89,8 +89,8 @@ public class WebhookManagerImplTest extends BaseTest {
         assertNotNull(clientDetails.getId());
 
         testProfile = new ProfileEntity("4444-4444-4444-4444");
-    }
-
+    }   
+        
     @Test
     public void testValidUriOnWebhook() {
         WebhookEntity webhook = new WebhookEntity();

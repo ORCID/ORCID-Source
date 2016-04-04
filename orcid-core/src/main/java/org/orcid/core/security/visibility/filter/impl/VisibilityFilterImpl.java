@@ -25,6 +25,7 @@ import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
 import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -32,6 +33,9 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.PrivateVisibleToSource;
+import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
@@ -40,6 +44,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import javassist.compiler.ast.Keyword;
 
 /**
  * I would imagine the first time you see this class, it may be a bit confusing.
@@ -83,29 +89,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      */
     @Override
     public OrcidMessage filter(OrcidMessage messageToBeFiltered, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, false, false, false, visibilities);
-    }
-
-    /**
-     * Remove the elements that are not present in the list of set of
-     * {@link org.orcid.jaxb.model.message .Visibility}s present in the array
-     * passed in By default the remaining visibility elements will not be
-     * removed from the object.
-     * 
-     * However, it will allow private activities where the source is the one passed by parameter
-     * 
-     * @param messageToBeFiltered
-     *            the {@link org.orcid.jaxb.model.message.OrcidMessage} that
-     *            will be traversed looking for
-     *            {@link org .orcid.jaxb.model.message.VisibilityType}
-     * @param visibilities
-     *            What {@link org.orcid.jaxb.model.message.Visibility} elements
-     *            should be allowed.
-     * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
-     */
-    @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final boolean removeAttribute, Visibility... visibilities) {
-        return filter(messageToBeFiltered, null, false, false, false, removeAttribute, visibilities);
+        return filter(messageToBeFiltered, null, false, false, false, visibilities);
     }
     
     /**
@@ -130,7 +114,7 @@ public class VisibilityFilterImpl implements VisibilityFilter {
      * @return the cleansed {@link org.orcid.jaxb.model.message.OrcidMessage}
      */
     @Override
-    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, final boolean removeAttribute, Visibility... visibilities) {
+    public OrcidMessage filter(OrcidMessage messageToBeFiltered, final String sourceId,  final boolean allowPrivateWorks, final boolean allowPrivateFunding, final boolean allowPrivateAffiliations, Visibility... visibilities) {
         if (messageToBeFiltered == null || visibilities == null || visibilities.length == 0) {
             return null;
         }
@@ -180,6 +164,19 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                 }
                             } 
                         }
+                        
+                        //if we have a source, and that source can read limited, also return the private things they own
+                        //Applies to ExternalIdentifier, Keyword, ResearcherUrl, OtherName and anything in the future that implements PrivateVisibleToSource
+                        if (sourceId!=null)
+                            if (PrivateVisibleToSource.class.isAssignableFrom(clazz)
+                                    && visibilitySet.contains(Visibility.LIMITED)){
+                                Source source = ((PrivateVisibleToSource)obj).getSource();
+                                if(source != null) {
+                                    if(sourceId.equals(source.retrieveSourcePath())){
+                                        decision = TreeCleaningDecision.IGNORE;
+                                    }
+                                }
+                            }
                                                  
                         if(TreeCleaningDecision.DEFAULT.equals(decision)){
                             if (WorkContributors.class.isAssignableFrom(clazz)) {
@@ -188,9 +185,6 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                 VisibilityType visibilityType = (VisibilityType) obj;
                                 if ((visibilityType.getVisibility() == null || !visibilitySet.contains(visibilityType.getVisibility()))) {
                                     decision = TreeCleaningDecision.CLEANING_REQUIRED;
-                                }
-                                if (removeAttribute) {
-                                    visibilityType.setVisibility(null);
                                 }
                             }
                         }

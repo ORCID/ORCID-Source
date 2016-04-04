@@ -19,9 +19,11 @@ package org.orcid.api.t2.server.delegator;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.net.URI;
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,8 +52,14 @@ import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidActivities;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -61,9 +69,13 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Organization;
 import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
@@ -73,6 +85,7 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.test.DBUnitTest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -502,8 +515,73 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         organizationAddress.setCity("Edinburgh");
         organizationAddress.setCountry(Iso3166Country.GB);
         t2OrcidApiServiceDelegator.updateAffiliations(mockedUriInfo, "4444-4444-4444-4443", orcidMessage);
-    }
-
+    }    
+    
+    @Test
+    public void testViewOtherProfileDontWork() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
+                ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
+                ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
+                ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
+                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
+                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED, ScopePathType.READ_PUBLIC);        
+        String orcid = "4444-4444-4444-4442";                
+        try {
+            t2OrcidApiServiceDelegator.findAffiliationsDetails(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }  
+        
+        try {
+            t2OrcidApiServiceDelegator.findFullDetails(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            t2OrcidApiServiceDelegator.findBioDetails(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }        
+        
+        try {
+            t2OrcidApiServiceDelegator.findExternalIdentifiers(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            t2OrcidApiServiceDelegator.findFundingDetails(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            t2OrcidApiServiceDelegator.findWorksDetails(orcid);
+            fail();
+        } catch(AccessControlException e) {
+            assertEquals("You do not have the required permissions.", e.getMessage());
+        } catch(Exception e) {
+            fail();
+        }                        
+    }        
+    
     private OrcidMessage createStubOrcidMessage() {
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion("1.2_rc6");
@@ -535,5 +613,147 @@ public class T2OrcidApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         assertEquals(HttpStatus.SC_NO_CONTENT, response.getStatus());
     }
+    
+    @Test
+    public void testDefaultPrivacyOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499",ScopePathType.ORCID_BIO_UPDATE);
+        OrcidMessage orcidMessage = new OrcidMessage();
+        orcidMessage.setMessageVersion("1.2_rc6");
+        OrcidProfile orcidProfile = new OrcidProfile();
+        orcidProfile.setOrcidIdentifier(new OrcidIdentifier("4444-4444-4444-4499"));
+        orcidMessage.setOrcidProfile(orcidProfile);
+        OrcidBio orcidBio = new OrcidBio();
+        orcidProfile.setOrcidBio(orcidBio);
+        PersonalDetails personalDetails = new PersonalDetails();
+        orcidBio.setPersonalDetails(personalDetails);        
+        GivenNames givenNames = new GivenNames("Test given names");
+        personalDetails.setGivenNames(givenNames);
+        CreditName creditName = new CreditName("Credit Name");
+        personalDetails.setCreditName(creditName);
+        
+        ExternalIdentifier id = new ExternalIdentifier();
+        id.setExternalIdCommonName(new ExternalIdCommonName("cn1"));
+        id.setExternalIdReference(new ExternalIdReference("value1"));
+        orcidBio.setExternalIdentifiers(new ExternalIdentifiers());
+        orcidBio.getExternalIdentifiers().getExternalIdentifier().add(id);
+        
+        personalDetails.setOtherNames(new OtherNames());
+        personalDetails.getOtherNames().addOtherName("on1", null);
+        orcidBio.setKeywords(new Keywords());
+        orcidBio.getKeywords().getKeyword().add(new Keyword("kw1",null));  
+        orcidBio.setResearcherUrls(new ResearcherUrls());
+        orcidBio.getResearcherUrls().getResearcherUrl().add(new ResearcherUrl(new Url("http://rurl2.com"),null));
+        
+        t2OrcidApiServiceDelegator.updateBioDetails(mockedUriInfo, "4444-4444-4444-4499", orcidMessage);
+        
+        OrcidProfile p = orcidProfileManager.retrieveOrcidProfile("4444-4444-4444-4499");
+        assertEquals("cn1",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+        assertEquals("on1",p.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        assertEquals("kw1",p.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getKeywords().getVisibility());
+        assertEquals(new Url("http://rurl2.com"),p.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getResearcherUrls().getVisibility());
+
+        //now test what happens if we add a new one.
+        
+    }
+    
+    @Test
+    public void testReadPrivacyOnBioAsPublic(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497",ScopePathType.READ_PUBLIC);
+        /*Example A List on 4444-4444-4444-4497:
+        Item 1 Private (client is source)
+        Item 2 Private (other source)
+        Item 3 Limited
+        Item 4 Public 
+        */
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("type4",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+    }
+    
+    @Test
+    public void testReadPrivacyOnBio(){
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4497",ScopePathType.READ_LIMITED);
+        /*Example A List on 4444-4444-4444-4497:
+        Item 1 Private (client is source)
+        Item 2 Private (other source)
+        Item 3 Limited
+        Item 4 Public 
+        */
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4497").getEntity()).getOrcidProfile();
+        assertEquals(3,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("type2",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PRIVATE,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals("type3",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.LIMITED,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(1).getVisibility());
+        assertEquals("type4",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(2).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(2).getVisibility());
+        assertEquals(Visibility.PRIVATE,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+    }
+    
+    @Test
+    public void testReadPrivacyOnBio2(){
+        /*Example B List:
+        Item 1 Limited
+        Item 2 Public 
+         */
+                
+        //read the profile with LIMITED
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441",ScopePathType.READ_LIMITED);
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4441").getEntity()).getOrcidProfile();
+        assertEquals(2,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("A-0001",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals("A-0002",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.LIMITED,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(1).getVisibility());
+        assertEquals(Visibility.LIMITED,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+        
+        //read the profile with PUBLIC
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441",ScopePathType.READ_PUBLIC);
+        p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4441").getEntity()).getOrcidProfile();
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("A-0001",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());        
+    }
+    
+    @Test
+    public void testReadPrivacyOnBio3(){
+        /*Example C List:
+        Item 1 Public
+         */
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443",ScopePathType.READ_LIMITED);
+        OrcidProfile p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4443").getEntity()).getOrcidProfile();
+        System.out.println(p.toString());        
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("Facebook",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443",ScopePathType.READ_PUBLIC);
+        p = ((OrcidMessage)t2OrcidApiServiceDelegator.findBioDetails("4444-4444-4444-4443").getEntity()).getOrcidProfile();
+        System.out.println(p.toString());        
+        assertEquals(1,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("Facebook",p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC,p.getOrcidBio().getExternalIdentifiers().getVisibility());
+    }
+    
+    @Test
+    @DirtiesContext
+    //which endpoints can be used to update the bio...?
+    //e.g. update external identifiers.
+    //review code to discover where we can change visibility of bio elements.    
+    //add sanity test for updateProfile.
+    public void testUpdateBioByDifferentClientNoConflicts(){
+       //tests that when client one posts a keyword, it doesn't remove ones added by client 2.
+        
+    }
+    
+   
 
 }

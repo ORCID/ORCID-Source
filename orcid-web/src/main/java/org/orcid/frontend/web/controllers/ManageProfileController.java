@@ -49,8 +49,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.frontend.web.forms.ChangePersonalInfoForm;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
@@ -65,12 +63,10 @@ import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
@@ -310,7 +306,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             DelegateSummary summary = new DelegateSummary();
             details.setDelegateSummary(summary);
             summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-            String creditName = delegateProfile.getNameEntity().getCreditName();
+            String creditName = delegateProfile.getRecordNameEntity().getCreditName();
             if (StringUtils.isNotBlank(creditName)) {
                 summary.setCreditName(new CreditName(creditName));
             }
@@ -631,16 +627,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         }
 
         return result;
-    }
-
-    @RequestMapping(value = "/manage-bio-settings", method = RequestMethod.GET)
-    public ModelAndView viewEditBio(HttpServletRequest request) {
-        ModelAndView manageBioView = new ModelAndView("manage_bio_settings");
-        OrcidProfile profile = getEffectiveProfile();
-        ChangePersonalInfoForm changePersonalInfoForm = new ChangePersonalInfoForm(profile);
-        manageBioView.addObject("changePersonalInfoForm", changePersonalInfoForm);
-        return manageBioView;
-    }
+    }    
 
     @RequestMapping(value = "/verifyEmail.json", method = RequestMethod.GET)
     public @ResponseBody Errors verifyEmailJson(HttpServletRequest request, @RequestParam("email") String email) {
@@ -822,6 +809,8 @@ public class ManageProfileController extends BaseWorkspaceController {
         Date lastModified = profileEntityManager.getLastModified(getCurrentUserOrcid());
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());        
+        
         Addresses addresses = addressManager.getAddresses(getCurrentUserOrcid(), lastModifiedTime);
         AddressesForm form = AddressesForm.valueOf(addresses);
         // Set country name
@@ -832,14 +821,11 @@ public class ManageProfileController extends BaseWorkspaceController {
             }
         }        
         
-        ProfileEntity entity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-        
-        if(entity.getProfileAddressVisibility() != null) {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(entity.getProfileAddressVisibility()));
-        } else {
-            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
+        //Set the default visibility
+        if(profile != null && profile.getActivitiesVisibilityDefault() != null) {
+            form.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
         }
-
+        
         //Return an empty country in case we dont have any
         if(form.getAddresses() == null){
            form.setAddresses(new ArrayList<AddressForm>()); 
@@ -849,9 +835,9 @@ public class ManageProfileController extends BaseWorkspaceController {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(0L);
             address.setPrimary(true);
-            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()));
+            address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
             form.getAddresses().add(address);
-        }
+        }                
         
         return form;
     }
@@ -884,20 +870,8 @@ public class ManageProfileController extends BaseWorkspaceController {
                 return addressesForm;
             }
             
-            Addresses addresses = addressesForm.toAddresses();
-            org.orcid.pojo.ajaxForm.Visibility defaultVisibility = addressesForm.getVisibility();
-            
-            if(defaultVisibility != null && defaultVisibility.getVisibility() != null) {
-                //If the default visibility is null, then, the user changed the default visibility, so, change the visibility for all items
-                for(Address address : addresses.getAddress()) {
-                    address.setVisibility(Visibility.fromValue(defaultVisibility.getVisibility().value()));
-                }
-            } else {
-                ProfileEntity profileEntity = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
-                defaultVisibility = profileEntity.getResearcherUrlsVisibility() == null ? org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility()) : org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getProfileAddressVisibility());
-            }
-                    
-            addressManager.updateAddresses(getCurrentUserOrcid(), addresses, Visibility.fromValue(defaultVisibility.getVisibility().value()));            
+            Addresses addresses = addressesForm.toAddresses();                    
+            addressManager.updateAddresses(getCurrentUserOrcid(), addresses);            
         }
         return addressesForm;
     }
@@ -951,49 +925,6 @@ public class ManageProfileController extends BaseWorkspaceController {
             profileEntityManager.updateBiography(getCurrentUserOrcid(), bio);
         }
         return bf;
-    }
-
-    @RequestMapping(value = "/save-bio-settings", method = RequestMethod.POST)
-    public ModelAndView saveEditedBio(HttpServletRequest request, @Valid @ModelAttribute("changePersonalInfoForm") ChangePersonalInfoForm changePersonalInfoForm,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        ModelAndView manageBioView = new ModelAndView("redirect:/account/manage-bio-settings");
-
-        for (String keyword : changePersonalInfoForm.getKeywordsAsList()) {
-            if (keyword.length() > ChangePersonalInfoForm.KEYWORD_MAX_LEN) {
-                bindingResult.rejectValue("keywordsDelimited", "Length.changePersonalInfoForm.keywordsDelimited");
-                break;
-            }
-        }
-
-        if (bindingResult.hasErrors()) {
-            ModelAndView erroredView = new ModelAndView("manage_bio_settings");
-
-            // If an error happens and the user doesnt have any website,
-            // the privacy selector for websites dissapears.
-            // In order to fix this, if the ChangePersonalInfoForm doesnt have
-            // any researcher url, we add a new one with an empty list, which
-            // is different than null ResearcherUrls
-            Map<String, Object> model = bindingResult.getModel();
-
-            if (changePersonalInfoForm.getSavedResearcherUrls() == null) {
-                changePersonalInfoForm.setSavedResearcherUrls(new ResearcherUrls());
-            }
-
-            model.put("changePersonalInfoForm", changePersonalInfoForm);
-
-            erroredView.addAllObjects(bindingResult.getModel());
-            return erroredView;
-        }
-
-        OrcidProfile profile = getEffectiveProfile();
-        // Update profile with values that comes from user request
-        changePersonalInfoForm.mergeOrcidBioDetails(profile);
-
-        // Update profile on database
-        profileEntityManager.updateProfile(profile);
-
-        redirectAttributes.addFlashAttribute("changesSaved", true);
-        return manageBioView;
     }    
 
     /**
@@ -1089,7 +1020,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         DelegateSummary summary = new DelegateSummary();
                         details.setDelegateSummary(summary);
                         summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
-                        String creditName = delegateProfile.getNameEntity().getCreditName();
+                        String creditName = delegateProfile.getRecordNameEntity().getCreditName();
                         if (StringUtils.isNotBlank(creditName)) {
                             summary.setCreditName(new CreditName(creditName));
                         }

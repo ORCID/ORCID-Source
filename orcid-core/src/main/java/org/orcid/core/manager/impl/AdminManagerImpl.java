@@ -199,20 +199,15 @@ public class AdminManagerImpl implements AdminManager {
                         Date deprecationDate = new Date();
                         deprecated.setDeactivationDate(deprecationDate);
                         deprecated.setDeprecatedDate(deprecationDate);
-                        deprecated.setNameEntity(new RecordNameEntity());
-                        deprecated.getNameEntity().setCreditName(null);
-                        deprecated.getNameEntity().setGivenName("Given Names Deactivated");
-                        deprecated.getNameEntity().setFamilyName("Family Name Deactivated");
-                        deprecated.setOtherNamesVisibility(Visibility.PRIVATE);
-                        deprecated.getNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
-                        deprecated.setExternalIdentifiersVisibility(Visibility.PRIVATE);
+
+                        deprecated.setRecordNameEntity(new RecordNameEntity());
+                        deprecated.getRecordNameEntity().setCreditName(null);
+                        deprecated.getRecordNameEntity().setGivenName("Given Names Deactivated");
+                        deprecated.getRecordNameEntity().setFamilyName("Family Name Deactivated");
+                        deprecated.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
                         deprecated.setBiographyVisibility(Visibility.PRIVATE);
-                        deprecated.setKeywordsVisibility(Visibility.PRIVATE);
-                        deprecated.setResearcherUrlsVisibility(Visibility.PRIVATE);
-                        deprecated.setProfileAddressVisibility(Visibility.PRIVATE);
                         deprecated.setPrimaryRecord(primary);
                         deprecated.setBiography(new String());
-                        deprecated.setIso2Country(null);
                         deprecated.setIndexingStatus(IndexingStatus.PENDING);
                         
                         profileEntityManager.updateProfile(deprecated);                        

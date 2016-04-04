@@ -30,12 +30,17 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -58,6 +63,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
+    protected static WebDriver webDriver;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        webDriver = new FirefoxDriver();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        webDriver.quit();
+    }
+    
     @After
     public void after() throws InterruptedException, JSONException {
         String client1accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
@@ -135,12 +152,26 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertEquals(String.valueOf(time), gotResearcherUrl.getUrlName());
         assertEquals("public", gotResearcherUrl.getVisibility().value());
 
+        //Save the original visibility
+        Visibility originalVisibility = gotResearcherUrl.getVisibility();
+        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        
+        //Verify you cant update the visibility
+        gotResearcherUrl.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateLocationXml(postResponse.getLocation(), accessToken, gotResearcherUrl);
+        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
+        OrcidError error = putResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9035), error.getErrorCode());
+                        
+        //Set the visibility again to the initial one
+        gotResearcherUrl.setVisibility(originalVisibility);
+        
         // Update
         LastModifiedDate initialLastModified = gotResearcherUrl.getLastModifiedDate();
         Long currentTime = System.currentTimeMillis();
         gotResearcherUrl.setUrlName(gotResearcherUrl.getUrlName() + " - " + currentTime);
         gotResearcherUrl.getUrl().setValue(gotResearcherUrl.getUrl().getValue() + currentTime);
-        gotResearcherUrl.setVisibility(Visibility.LIMITED);
         ClientResponse updatedResearcherUrlResponse = memberV2ApiClient.updateResearcherUrls(getUser1OrcidId(), gotResearcherUrl, accessToken);
         assertNotNull(updatedResearcherUrlResponse);
         assertEquals(Response.Status.OK.getStatusCode(), updatedResearcherUrlResponse.getStatus());
@@ -237,17 +268,31 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
             rUrlToCreate.setUrlName("url-name-" + now + "-" + i);
             rUrlToCreate.setUrl(new Url("http://newurl.com/" + now + "/" + i));
             if(i == 3) {
+                changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
                 rUrlToCreate.setVisibility(Visibility.LIMITED);
+                // Create it
+                ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+                assertNotNull(postResponse);
+                assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             } else if(i == 4) {
+                changeDefaultUserVisibility(webDriver, Visibility.PRIVATE);
                 rUrlToCreate.setVisibility(Visibility.PRIVATE);
+                // Create it
+                ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+                assertNotNull(postResponse);
+                assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             } else {
+                changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
                 rUrlToCreate.setVisibility(Visibility.PUBLIC);
-            }
-            // Create it
-            ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
-            assertNotNull(postResponse);
-            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+                // Create it
+                ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+                assertNotNull(postResponse);
+                assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+            }            
         }
+        
+        //Set the default visibility in public
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         
         ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(getUser1OrcidId()); 
         assertNotNull(getAllResponse);
@@ -326,7 +371,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         ClientResponse response = memberV2ApiClient.updateResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-    }
+    }       
     
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
         if (accessTokens.containsKey(clientId)) {

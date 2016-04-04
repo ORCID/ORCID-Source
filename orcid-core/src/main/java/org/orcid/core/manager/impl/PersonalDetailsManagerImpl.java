@@ -55,18 +55,18 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         Name name = new Name();
         if (profileEntity != null) {
             Visibility nameVisibility = Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-            if(profileEntity.getNameEntity().getVisibility() != null) {
-                nameVisibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
+            if(profileEntity.getRecordNameEntity().getVisibility() != null) {
+                nameVisibility = Visibility.fromValue(profileEntity.getRecordNameEntity().getVisibility().value());
             }            
             name.setVisibility(nameVisibility);            
-            if (!PojoUtil.isEmpty(profileEntity.getNameEntity().getCreditName())) {
-                name.setCreditName(new CreditName(profileEntity.getNameEntity().getCreditName()));
+            if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getCreditName())) {
+                name.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
             }
-            if (!PojoUtil.isEmpty(profileEntity.getNameEntity().getFamilyName())) {
-                name.setFamilyName(new FamilyName(profileEntity.getNameEntity().getFamilyName()));
+            if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getFamilyName())) {
+                name.setFamilyName(new FamilyName(profileEntity.getRecordNameEntity().getFamilyName()));
             }
-            if (!PojoUtil.isEmpty(profileEntity.getNameEntity().getGivenName())) {
-                name.setGivenNames(new GivenNames(profileEntity.getNameEntity().getGivenName()));
+            if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getGivenName())) {
+                name.setGivenNames(new GivenNames(profileEntity.getRecordNameEntity().getGivenName()));
             }                        
         }
         return name;

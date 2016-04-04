@@ -48,7 +48,7 @@ public class Member implements ErrorsInterface, Serializable {
     public static Member fromProfileEntity(ProfileEntity profile){
     	Member group = new Member();
     	group.setEmail(Text.valueOf(profile.getPrimaryEmail().getId()));
-    	group.setGroupName(Text.valueOf(profile.getNameEntity().getCreditName()));
+    	group.setGroupName(Text.valueOf(profile.getRecordNameEntity().getCreditName()));
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
     	group.setType(Text.valueOf(profile.getGroupType().value()));
     	group.setSalesforceId(Text.valueOf(profile.getSalesforeId()));

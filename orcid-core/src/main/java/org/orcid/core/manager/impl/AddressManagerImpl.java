@@ -30,10 +30,10 @@ import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -60,10 +60,18 @@ public class AddressManagerImpl implements AddressManager {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;    
     
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
     }
     
     @Override
@@ -90,11 +98,18 @@ public class AddressManagerImpl implements AddressManager {
     
     @Override
     @Transactional
-    public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiCall) {
+    public Address updateAddress(String orcid, Long putCode, Address address, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-
+        AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
+        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
+        SourceEntity existingSource = updatedEntity.getSource();
+        //If it is an update from the API, check the source and preserve the original visibility
+        if(isApiRequest) {
+            orcidSecurityManager.checkSource(existingSource);            
+        }
+        
         // Validate the address
-        PersonValidator.validateAddress(address, sourceEntity, false);
+        PersonValidator.validateAddress(address, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
@@ -108,15 +123,7 @@ public class AddressManagerImpl implements AddressManager {
                 }
             }
         }
-
-        AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
-        SourceEntity existingSource = updatedEntity.getSource();
-        //If it is an update from the API, check the source and preserve the original visibility
-        if(isApiCall) {
-            orcidSecurityManager.checkSource(existingSource);
-            Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
-            updatedEntity.setVisibility(originalVisibility);
-        }        
+                        
         adapter.toAddressEntity(address, updatedEntity);
         updatedEntity.setLastModified(new Date());        
         updatedEntity.setSource(existingSource);
@@ -126,10 +133,10 @@ public class AddressManagerImpl implements AddressManager {
     
     @Override
     @Transactional
-    public Address createAddress(String orcid, Address address) {
+    public Address createAddress(String orcid, Address address, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the address
-        PersonValidator.validateAddress(address, sourceEntity, true);
+        PersonValidator.validateAddress(address, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         for (AddressEntity existing : existingAddresses) {
@@ -142,7 +149,7 @@ public class AddressManagerImpl implements AddressManager {
         }
 
         AddressEntity newEntity = adapter.toAddressEntity(address);
-        ProfileEntity profile = new ProfileEntity(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
         newEntity.setSource(sourceEntity);        
@@ -177,14 +184,10 @@ public class AddressManagerImpl implements AddressManager {
     }    
     
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
-        Visibility incomingCountryVisibility = entity.getVisibility();
-        Visibility defaultCountryVisibility = profile.getProfileAddressVisibility() == null
-                ? Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getProfileAddressVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility incomingCountryVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc2.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            if (defaultCountryVisibility.isMoreRestrictiveThan(incomingCountryVisibility)) {
-                entity.setVisibility(defaultCountryVisibility);
-            }
+            entity.setVisibility(defaultCountryVisibility);            
         } else if (incomingCountryVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }
@@ -219,7 +222,7 @@ public class AddressManagerImpl implements AddressManager {
     }
     
     @Override
-    public Addresses updateAddresses(String orcid, Addresses addresses, Visibility defaultVisibility) {
+    public Addresses updateAddresses(String orcid, Addresses addresses) {
         List<AddressEntity> existingAddressList = addressDao.getAddresses(orcid, getLastModified(orcid));
         //Delete the deleted ones
         for(AddressEntity existingAddress : existingAddressList) {
@@ -270,9 +273,6 @@ public class AddressManagerImpl implements AddressManager {
                 }
             }
         }
-        
-        if (defaultVisibility != null)
-            addressDao.updateAddressVisibility(orcid, defaultVisibility);
         
         return addresses;
     }

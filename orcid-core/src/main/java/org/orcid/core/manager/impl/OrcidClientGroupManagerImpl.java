@@ -227,7 +227,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 primaryEmailEntity.setVisibility(Visibility.PRIVATE);
                 groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
-            groupProfileEntity.getNameEntity().setCreditName(orcidClientGroup.getGroupName());
+            groupProfileEntity.getRecordNameEntity().setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             // If group type changed
             if (!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {

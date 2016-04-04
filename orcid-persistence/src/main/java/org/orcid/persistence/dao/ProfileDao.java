@@ -73,10 +73,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     Long getConfirmedProfileCount();
 
-    public void updateCountry(String orcid, Iso3166Country country, Visibility activitiesVisibilityDefault);
-
-    public Iso3166Country getCountry(String orcid);
-
     public void updateBiography(String orcid, String biography, Visibility visibility);
 
     boolean updateProfile(ProfileEntity profile);
@@ -120,7 +116,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
-    public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
+    //public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
     public boolean getClaimedStatus(String orcid);
 

@@ -193,7 +193,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
-        group.setGroupName(profileEntity.getNameEntity().getCreditName());
+        group.setGroupName(profileEntity.getRecordNameEntity().getCreditName());
         group.setType(profileEntity.getGroupType());
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {
@@ -548,15 +548,22 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ProfileKeywordEntity> profileEntityKeywords = profileEntity.getKeywords();
         if (profileEntityKeywords != null && !profileEntityKeywords.isEmpty()) {
             Keywords keywords = new Keywords();
-            keywords.setVisibility(profileEntity.getKeywordsVisibility());
+            Visibility mostRestrictive = Visibility.PUBLIC;
             for (ProfileKeywordEntity keywordEntity : profileEntityKeywords) {
-                Keyword keyword = new Keyword(keywordEntity.getKeywordName());
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (keywordEntity.getVisibility() != null)?Visibility.fromValue(keywordEntity.getVisibility().value()):Visibility.PRIVATE;                
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+                
+                Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
                 if(keywordEntity.getSource() != null) {
                     Source source = createSource(keywordEntity.getSource().getSourceId());
                     keyword.setSource(source);
                 }
                 keywords.getKeyword().add(keyword);
             }
+            keywords.setVisibility(mostRestrictive);
             return keywords;
         }
         return null;
@@ -572,9 +579,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Set<ResearcherUrlEntity> researcherUrlEntities = profileEntity.getResearcherUrls();
         if (researcherUrlEntities != null) {
             ResearcherUrls researcherUrls = new ResearcherUrls();
-            researcherUrls.setVisibility(profileEntity.getResearcherUrlsVisibility());
+            Visibility mostRestrictive = Visibility.PUBLIC;
             for (ResearcherUrlEntity researcherUrl : researcherUrlEntities) {
-                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()));
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (researcherUrl.getVisibility() != null)?Visibility.fromValue(researcherUrl.getVisibility().value()):Visibility.PRIVATE;                
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+
+                ResearcherUrl url = new ResearcherUrl(new Url(researcherUrl.getUrl()),vis);
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 
@@ -582,7 +595,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     Source source = createSource(researcherUrl.getSource().getSourceId());
                     url.setSource(source);
                 }
-                
+                researcherUrls.setVisibility(mostRestrictive);
                 researcherUrls.getResearcherUrl().add(url);
             }
             return researcherUrls;
@@ -593,10 +606,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private ExternalIdentifiers getExternalIdentifiers(ProfileEntity profileEntity) {
         Set<ExternalIdentifierEntity> externalIdentifierEntities = profileEntity.getExternalIdentifiers();
         ExternalIdentifiers externalIdentifiers = new ExternalIdentifiers();
-        externalIdentifiers.setVisibility(profileEntity.getExternalIdentifiersVisibility());
+        Visibility mostRestrictive = Visibility.PUBLIC;
         if (externalIdentifierEntities != null) {
             for (ExternalIdentifierEntity externalIdentifierEntity : externalIdentifierEntities) {
-                ExternalIdentifier externalIdentifier = new ExternalIdentifier();
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (externalIdentifierEntity.getVisibility() != null)?Visibility.fromValue(externalIdentifierEntity.getVisibility().value()):Visibility.PRIVATE;
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+
+
+                ExternalIdentifier externalIdentifier = new ExternalIdentifier(vis);
+                
                 SourceEntity sourceEntity = externalIdentifierEntity.getSource();
                 if (sourceEntity != null) {
                     Source source = new Source();
@@ -614,9 +635,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         externalIdentifierEntity.getExternalIdCommonName()) : null);
                 externalIdentifier.setExternalIdUrl(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdUrl()) ? new ExternalIdUrl(externalIdentifierEntity
                         .getExternalIdUrl()) : null);
+                
                 externalIdentifiers.getExternalIdentifier().add(externalIdentifier);
             }
         }
+        externalIdentifiers.setVisibility(mostRestrictive);
         return externalIdentifiers;
     }
 
@@ -660,6 +683,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return delegation;
     }
 
+    
     private ContactDetails getContactDetails(ProfileEntity profileEntity) {
         ContactDetails contactDetails = new ContactDetails();
         setEmails(profileEntity, contactDetails);
@@ -667,15 +691,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return contactDetails;
     }
 
+    
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        Iso3166Country iso2Country = profileEntity.getIso2Country();
+        Iso3166Country iso2Country = null;
         SourceEntity sourceEntity = null;
-        
+        Visibility vis = null;
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
             for(AddressEntity address : profileEntity.getAddresses()) {
                 if(address.getPrimary() != null && address.getPrimary()) {
                     if(address.getIso2Country() != null) {
                         iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
+                        if(address.getVisibility() != null) {
+                            vis = Visibility.fromValue(address.getVisibility().value());
+                        }
                         break;
                     }
                     if(address.getSource() != null) {
@@ -688,7 +716,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (iso2Country != null) {
             Address address = new Address();
             Country country = new Country(iso2Country);
-            country.setVisibility(profileEntity.getProfileAddressVisibility());
+            country.setVisibility(vis);
             address.setCountry(country);
             if(sourceEntity != null) {
                 Source source = createSource(sourceEntity.getSourceId());
@@ -696,7 +724,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             }            
             contactDetails.setAddress(address);
         }
-    }        
+    }       
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         // The new way of doing emails.
@@ -813,20 +841,20 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }    
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {
-        String creditName = groupProfile.getNameEntity().getCreditName();
+        String creditName = groupProfile.getRecordNameEntity().getCreditName();
         if (creditName != null) {
             if (groupProfile.getGroupType() != null) {
                 // It's a member so, it will definitely have a credit name. Use
                 // it regardless of privacy.
                 return creditName;
             }
-            org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = groupProfile.getNameEntity().getVisibility();
+            org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = groupProfile.getRecordNameEntity().getVisibility();
             if (Visibility.PUBLIC.equals(namesVisibilty)) {
                 return creditName;
             }
         }
-        String displayName = groupProfile.getNameEntity().getGivenName();
-        String familyName = groupProfile.getNameEntity().getFamilyName();
+        String displayName = groupProfile.getRecordNameEntity().getGivenName();
+        String familyName = groupProfile.getRecordNameEntity().getFamilyName();
         if (StringUtils.isNotBlank(familyName)) {
             displayName += " " + familyName;
         }
@@ -964,11 +992,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private OtherNames getOtherNames(ProfileEntity profile) {
         OtherNames otherNames = new OtherNames();
-        otherNames.setVisibility(profile.getOtherNamesVisibility());
+        Visibility mostRestrictive = Visibility.PUBLIC;
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
             for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
-                OtherName otherName = new OtherName(otherNameEntity.getDisplayName());
+                
+                //will only be null if there's an issue with the data or you're using this layer directly
+                Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
+                if (vis.isMoreRestrictiveThan(mostRestrictive))
+                    mostRestrictive = vis;
+
+                
+                OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
                 if(otherNameEntity.getSource() != null) {
                     Source source = createSource(otherNameEntity.getSource().getSourceId());
                     otherName.setSource(source);
@@ -976,16 +1011,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 otherNames.getOtherName().add(otherName);
             }
         }
+        otherNames.setVisibility(mostRestrictive);
         return otherNames;
     }
 
     private GivenNames getGivenNames(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getNameEntity().getGivenName())) {
+        if (StringUtils.isNotBlank(profileEntity.getRecordNameEntity().getGivenName())) {
             GivenNames names = new GivenNames();
-            names.setContent(profileEntity.getNameEntity().getGivenName());
+            names.setContent(profileEntity.getRecordNameEntity().getGivenName());
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNameEntity().getVisibility() != null) {
-            	visibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
+            if(profileEntity.getRecordNameEntity().getVisibility() != null) {
+            	visibility = Visibility.fromValue(profileEntity.getRecordNameEntity().getVisibility().value());
             } 
             names.setVisibility(visibility);
             return names;
@@ -994,12 +1030,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private FamilyName getFamilyName(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getNameEntity().getFamilyName())) {
+        if (StringUtils.isNotBlank(profileEntity.getRecordNameEntity().getFamilyName())) {
             FamilyName name = new FamilyName();
-            name.setContent(profileEntity.getNameEntity().getFamilyName());
+            name.setContent(profileEntity.getRecordNameEntity().getFamilyName());
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNameEntity().getVisibility() != null) {
-                visibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
+            if(profileEntity.getRecordNameEntity().getVisibility() != null) {
+                visibility = Visibility.fromValue(profileEntity.getRecordNameEntity().getVisibility().value());
             } 
             name.setVisibility(visibility);
             return name;
@@ -1008,13 +1044,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private CreditName getCreditName(ProfileEntity profileEntity) {
-        String creditName = profileEntity.getNameEntity().getCreditName();
+        String creditName = profileEntity.getRecordNameEntity().getCreditName();
         if (StringUtils.isNotBlank(creditName)) {
             CreditName name = new CreditName();
             name.setContent(creditName);
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNameEntity().getVisibility() != null) {
-                visibility = Visibility.fromValue(profileEntity.getNameEntity().getVisibility().value());
+            if(profileEntity.getRecordNameEntity().getVisibility() != null) {
+                visibility = Visibility.fromValue(profileEntity.getRecordNameEntity().getVisibility().value());
             } 
             name.setVisibility(visibility);
             return name;

@@ -34,5 +34,4 @@ public @interface VisibilityControl {
 
     Visibility[] visibilities() default { Visibility.PUBLIC };
 
-    boolean removeAttributes() default true;
 }

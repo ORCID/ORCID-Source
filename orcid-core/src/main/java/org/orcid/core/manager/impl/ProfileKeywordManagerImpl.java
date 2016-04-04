@@ -29,11 +29,11 @@ import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -62,9 +62,17 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Resource
     private ProfileEntityManager profileEntityManager;
     
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
     }
     
     @Override
@@ -91,15 +99,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
         return result;
-    }
-    
-    @Override
-    public boolean updateKeywordsVisibility(String orcid, Visibility defaultVisiblity) {
-        Visibility v = (defaultVisiblity == null)
-                ? Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : defaultVisiblity;
-        return profileKeywordDao.updateKeywordsVisibility(orcid, v);
-    }
+    }       
 
     @Override
     public Keyword getKeyword(String orcid, Long putCode) {
@@ -126,10 +126,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keyword createKeyword(String orcid, Keyword keyword) {
+    public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
-        PersonValidator.validateKeyword(keyword, sourceEntity, true);
+        PersonValidator.validateKeyword(keyword, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
@@ -142,7 +142,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         }
 
         ProfileKeywordEntity newEntity = adapter.toProfileKeywordEntity(keyword);
-        ProfileEntity profile = new ProfileEntity(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
         newEntity.setSource(sourceEntity);
@@ -153,11 +153,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword) {
+    public Keyword updateKeyword(String orcid, Long putCode, Keyword keyword, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-
+        ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
+        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
         // Validate the keyword
-        PersonValidator.validateKeyword(keyword, sourceEntity, false);
+        PersonValidator.validateKeyword(keyword, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
         List<ProfileKeywordEntity> existingKeywords = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));
         for (ProfileKeywordEntity existing : existingKeywords) {
@@ -168,14 +169,11 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-
-        ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
+        
         SourceEntity existingSource = updatedEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
-        updatedEntity.setLastModified(new Date());
-        updatedEntity.setVisibility(originalVisibility);
+        updatedEntity.setLastModified(new Date());        
         updatedEntity.setSource(existingSource);
         profileKeywordDao.merge(updatedEntity);
         return adapter.toKeyword(updatedEntity);
@@ -183,7 +181,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     @Override
     @Transactional
-    public Keywords updateKeywords(String orcid, Keywords keywords, Visibility defaultVisibility) {
+    public Keywords updateKeywords(String orcid, Keywords keywords) {
         List<ProfileKeywordEntity> existingKeywordsList = profileKeywordDao.getProfileKeywors(orcid, getLastModified(orcid));        
         // Delete the deleted ones
         for (ProfileKeywordEntity existing : existingKeywordsList) {
@@ -234,11 +232,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                 }
             }
         }
-
-        if (defaultVisibility != null) {
-            updateKeywordsVisibility(orcid, defaultVisibility);
-        }
-
+        
         return keywords;
     }
 
@@ -257,13 +251,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = profile.getKeywordsVisibility() == null
-                ? org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getKeywordsVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            if (defaultKeywordVisibility.isMoreRestrictiveThan(incomingKeywordVisibility)) {
-                entity.setVisibility(defaultKeywordVisibility);
-            }
+            entity.setVisibility(defaultKeywordVisibility);
         } else if (incomingKeywordVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }

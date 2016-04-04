@@ -16,12 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
 public interface ResearcherUrlManager {
-        
+    void setSourceManager(SourceManager sourceManager); 
     
     /**
      * Delete a researcher url
@@ -61,7 +60,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return true if the researcher url was successfully created on database
      * */
-    ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl);  
+    ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest);  
     
     /**
      * Updates an existing researcher url
@@ -69,7 +68,7 @@ public interface ResearcherUrlManager {
      * @param researcherUrl
      * @return the updated researcher url
      * */
-    ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl);        
+    ResearcherUrl updateResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest);        
     
-    ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls, Visibility defaultVisibility);
+    ResearcherUrls updateResearcherUrls(String orcid, ResearcherUrls researcherUrls);
 }

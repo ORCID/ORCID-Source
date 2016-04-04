@@ -14,17 +14,21 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.persistence.jpa.entities;
 
-import java.util.Map;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
+ * An object that will contain the minimum work information needed to display
+ * work in the UI.
  * 
- * @author Will Simpson
- * 
+ * @author Angel Montenegro (amontenegro)
  */
-public interface RegistrationRoleManager {
-
-    Map<String, String> retrieveRegistrationRolesAsMap();
+@Entity
+@Table(name = "work")
+public class MinimizedWorkEntity extends WorkBaseEntity {
+    
+    private static final long serialVersionUID = 1L;
 
 }

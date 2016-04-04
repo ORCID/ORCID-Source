@@ -54,7 +54,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
     public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsPublicAndIsSource() {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Work work = createWork();
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
     }
 
@@ -64,7 +64,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         Work work = createWork();
         work.setVisibility(Visibility.LIMITED);
         try {
-            orcidSecurityManager.checkVisibility(work);
+            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException e) {
 
@@ -77,7 +77,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         Work work = createWork();
         work.setVisibility(Visibility.PRIVATE);
         try {
-            orcidSecurityManager.checkVisibility(work);
+            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException e) {
 
@@ -92,7 +92,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));
         boolean caughtException = false;
         try {
-            orcidSecurityManager.checkVisibility(work);
+            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException e) {
             caughtException = true;
         }
@@ -103,12 +103,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
     public void testCheckVisibilityOfActivityWhenUsingReadLimitedScopeAndActivityIsPublicAndIsSource() {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
         work = createWork();
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
     }
 
@@ -117,13 +117,13 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
         work.setVisibility(Visibility.LIMITED);
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
         work = createWork();
         work.setVisibility(Visibility.LIMITED);
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
     }
 
@@ -132,13 +132,13 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         Work work = createWork();
         work.setVisibility(Visibility.PRIVATE);
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.ACTIVITIES_READ_LIMITED);
         work = createWork();
         work.setVisibility(Visibility.PRIVATE);
-        orcidSecurityManager.checkVisibility(work);
+        orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         // There should be no exceptions
     }
 
@@ -150,7 +150,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));
         boolean caughtException = false;
         try {
-            orcidSecurityManager.checkVisibility(work);
+            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException e) {
             caughtException = true;
         }
@@ -162,7 +162,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
         work.getSource().setSourceClientId(new SourceClientId("APP-1111111111111111"));
         caughtException = false;
         try {
-            orcidSecurityManager.checkVisibility(work);
+            orcidSecurityManager.checkVisibility(work, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException e) {
             caughtException = true;
         }
@@ -183,11 +183,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Name name = createName();
         // Check public with any scope
-        orcidSecurityManager.checkVisibility(name);
+        orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
         name.setVisibility(Visibility.LIMITED);
         try {
             // Check limited with any scope
-            orcidSecurityManager.checkVisibility(name);
+            orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException ua) {
 
@@ -197,12 +197,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         // Check limited with read_limited scope
-        orcidSecurityManager.checkVisibility(name);
+        orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
 
         name.setVisibility(Visibility.PRIVATE);
         try {
             // Check private always fail
-            orcidSecurityManager.checkVisibility(name);
+            orcidSecurityManager.checkVisibility(name, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException ua) {
 
         } catch (Exception e) {
@@ -215,11 +215,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
         Biography bio = createBiography();
         // Check public with any scope
-        orcidSecurityManager.checkVisibility(bio);
+        orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
         bio.setVisibility(Visibility.LIMITED);
         try {
             // Check limited with any scope
-            orcidSecurityManager.checkVisibility(bio);
+            orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException ua) {
 
@@ -229,12 +229,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         // Check limited with read_limited scope
-        orcidSecurityManager.checkVisibility(bio);
+        orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
 
         bio.setVisibility(Visibility.PRIVATE);
         try {
             // Check private always fail
-            orcidSecurityManager.checkVisibility(bio);
+            orcidSecurityManager.checkVisibility(bio, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException ua) {
 
         } catch (Exception e) {
@@ -248,11 +248,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
         OtherName otherName = createOtherName();
 
         // Check public with any scope
-        orcidSecurityManager.checkVisibility(otherName);
+        orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
         otherName.setVisibility(Visibility.LIMITED);
         try {
             // Check limited with any scope
-            orcidSecurityManager.checkVisibility(otherName);
+            orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
             fail();
         } catch (OrcidUnauthorizedException ua) {
 
@@ -262,12 +262,12 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_LIMITED);
         // Check limited with read_limited scope
-        orcidSecurityManager.checkVisibility(otherName);
+        orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
 
         otherName.setVisibility(Visibility.PRIVATE);
         try {
             // Check private always fail
-            orcidSecurityManager.checkVisibility(otherName);
+            orcidSecurityManager.checkVisibility(otherName, "4444-4444-4444-4441");
         } catch (OrcidVisibilityException ua) {
 
         } catch (Exception e) {
@@ -291,13 +291,13 @@ public class OrcidSecurityManagerTest extends BaseTest {
         for (ScopePathType scope : ScopePathType.values()) {
             if (scopeThatShouldWork.combined().contains(scope)) {
                 try {
-                    orcidSecurityManager.checkPermissions(scope);
+                    orcidSecurityManager.checkPermissions(scope, userOrcid);
                 } catch (Exception e) {
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should work");
                 }
             } else {
                 try {
-                    orcidSecurityManager.checkPermissions(scope);
+                    orcidSecurityManager.checkPermissions(scope, userOrcid);
                     fail("Testing scope '" + scopeThatShouldWork.value() + "' scope '" + scope.value() + "' should fail");
                 } catch (AccessControlException ace) {
 

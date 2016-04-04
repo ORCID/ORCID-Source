@@ -30,9 +30,11 @@ import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
@@ -57,12 +59,16 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
             Object result = null;
-            if (Education.class.equals(type)) {
+            if (Address.class.equals(type)) {
+                result = (Address) obj;
+            } else if (Education.class.equals(type)) {
                 result = (Education) obj;
             } else if (Employment.class.equals(type)) {
                 result = (Employment) obj;
             } else if (Funding.class.equals(type)) {
-                result = (Funding) obj;
+                result = (Funding) obj;               
+            } else if(Keyword.class.equals(type)) {
+                result = (Keyword) obj;
             } else if (Work.class.equals(type)) {
                 result = (Work) obj;
             } else if (PeerReview.class.equals(type)) {

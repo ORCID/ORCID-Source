@@ -222,9 +222,10 @@
 							        </div>			        
 							    </div>
 								
-								<div class="oauth-privacy" style="margin-bottom: 20px; margin-top: 10px;">
-							        <label class="privacy-toggle-lbl"><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault'/></label>
-							    	<@orcid.privacyToggle 
+								<div class="oauth-privacy" style="margin-bottom: 20px; margin-top: 10px;">							        
+							        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
+        							<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+    						    	<@orcid.privacyToggle 
 							    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
 							    	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
 										clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
@@ -430,7 +431,8 @@
 			    </div>
 				
 				<div class="oauth-privacy" style="margin-bottom: 20px; margin-top: 10px;">
-			        <label class="privacy-toggle-lbl"><@orcid.msg 'privacy_preferences.activitiesVisibilityDefault'/></label>
+			        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
+        			<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>    						    	
 			    	<@orcid.privacyToggle 
 			    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
 			    	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"

@@ -189,10 +189,10 @@ public class OauthControllerBase extends BaseController {
             ProfileEntity profile = profileEntityCacheManager.retrieve(loggedUserOrcid);
             String creditName = "";
             
-            if (!PojoUtil.isEmpty(profile.getNameEntity().getCreditName())) {
-                creditName = profile.getNameEntity().getCreditName();
+            if (!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
+                creditName = profile.getRecordNameEntity().getCreditName();
             } else {
-                creditName = PojoUtil.isEmpty(profile.getNameEntity().getGivenName()) ? profile.getNameEntity().getFamilyName() : profile.getNameEntity().getGivenName() + " " + profile.getNameEntity().getFamilyName();
+                creditName = PojoUtil.isEmpty(profile.getRecordNameEntity().getGivenName()) ? profile.getRecordNameEntity().getFamilyName() : profile.getRecordNameEntity().getGivenName() + " " + profile.getRecordNameEntity().getFamilyName();
             }
             
             if(!PojoUtil.isEmpty(creditName)) {
@@ -239,7 +239,7 @@ public class OauthControllerBase extends BaseController {
             memberName = PUBLIC_MEMBER_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
             ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-            memberName = groupProfile.getNameEntity().getCreditName();
+            memberName = groupProfile.getRecordNameEntity().getCreditName();
         }
         // If the group name is empty, use the same as the client
         // name, since it should be a SSO user

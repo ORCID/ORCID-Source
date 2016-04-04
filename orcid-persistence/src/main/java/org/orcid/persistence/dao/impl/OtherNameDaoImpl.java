@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.persistence.Query;
 
-import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -100,18 +98,6 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
         Query query = entityManager.createQuery("DELETE FROM OtherNameEntity WHERE id=:id");
         query.setParameter("id", otherName.getId());
         return query.executeUpdate() > 0 ? true : false;
-    }
-    
-    @Override
-    @Transactional
-    public boolean updateOtherNamesVisibility(String orcid, Visibility visibility) {
-        Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), other_names_visibility=:other_names_visibility, indexing_status='PENDING' where orcid=:orcid");
-        query.setParameter("other_names_visibility", StringUtils.upperCase(visibility.value()));
-        query.setParameter("orcid", orcid);
-        boolean result = query.executeUpdate() > 0 ? true : false;
-        return result;
-
     }
 
     @Override

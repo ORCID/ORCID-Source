@@ -16,6 +16,7 @@
  */
 package org.orcid.core.adapter.impl;
 
+import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
@@ -36,8 +37,12 @@ public class FundingExternalIDsConverter extends BidirectionalConverter<External
 
     @Override
     public String convertTo(ExternalIDs fundingExternalIdentifiers, Type<String> arg1) {
-        org.orcid.pojo.FundingExternalIdentifiers jpaExternalIdentifiers = org.orcid.pojo.FundingExternalIdentifiers.fromRecordPojo(fundingExternalIdentifiers);
-        return JsonUtils.convertToJsonString(jpaExternalIdentifiers);
+        try {
+            org.orcid.pojo.FundingExternalIdentifiers jpaExternalIdentifiers = org.orcid.pojo.FundingExternalIdentifiers.fromRecordPojo(fundingExternalIdentifiers);
+            return JsonUtils.convertToJsonString(jpaExternalIdentifiers);
+        } catch(IllegalArgumentException e) {
+            throw new ActivityIdentifierValidationException(e); 
+        }        
     }
     
 }

@@ -25,8 +25,10 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -34,6 +36,7 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.helper.SystemPropertiesHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -199,40 +202,49 @@ public class BlackBoxBase {
     public void adminUnlockAccount(String adminUserName, String adminPassword, String orcidToUnlock) {
         // Login Admin
         adminSignIn(adminUserName, adminPassword);
-        // Unlock the account
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("unlockProfileDiv")));
-        WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
-        unLockProfileLink.click();
-        WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
-        unLockProfileOrcidId.sendKeys(orcidToUnlock);
-                
-        WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
-        unLockButton.click();
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
-        WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
-        confirmUnLockButton.click();
-    
-        webDriver.quit();
+        try {
+            // Unlock the account
+            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("unlockProfileDiv")));
+            WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
+            unLockProfileLink.click();
+            WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
+            unLockProfileOrcidId.sendKeys(orcidToUnlock);
+                    
+            WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
+            unLockButton.click();
+            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
+            WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
+            confirmUnLockButton.click();
+        } catch(TimeoutException t) {
+            //Account might be already unlocked
+        } finally {
+            webDriver.quit();
+        }
+        
     }
 
     public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
         adminSignIn(adminUserName, adminPassword);
-        // Lock the account
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("lockProfileDiv")));
-        WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
-        lockProfileLink.click();
-        WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
-        lockProfileOrcidId.sendKeys(orcidToLock);
-        WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
-        lockButton.click();
-        
-        (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
-        WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
-        confirmLockButton.click();
-        
-        webDriver.quit();
+        try {
+            // Lock the account
+            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("lockProfileDiv")));
+            WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
+            lockProfileLink.click();
+            WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
+            lockProfileOrcidId.sendKeys(orcidToLock);
+            WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
+            lockButton.click();
+
+            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
+            WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
+            confirmLockButton.click();
+        } catch (TimeoutException t) {
+            // Account might be already locked
+        } finally {
+            webDriver.quit();
+        }
     }
-    
+
     public static void revokeApplicationsAccess() {
         List<String> clientIds = new ArrayList<String>();        
         Properties prop = SystemPropertiesHelper.getProperties();        
@@ -305,6 +317,37 @@ public class BlackBoxBase {
         }
     }
 
+    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        Properties prop = SystemPropertiesHelper.getProperties();
+        String userName = prop.getProperty("org.orcid.web.testUser1.username");
+        String password = prop.getProperty("org.orcid.web.testUser1.password");
+        String baseUrl = "https://localhost:8443/orcid-web";
+        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
+            baseUrl = prop.getProperty("org.orcid.web.baseUri");
+        }
+
+        int timeout = 10;
+        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(baseUrl + "/account");
+        SigninTest.signIn(webDriver, userName, password);
+        
+        By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle));
+        WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
+        toggle.click();
+                
+        By privacySettingsDiv = By.id("privacy-settings");
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacySettingsDiv));
+        WebElement privacySettings = webDriver.findElement(privacySettingsDiv);
+        
+        int visibilityIndex = Visibility.PUBLIC.equals(visibility) ? 1 : (Visibility.LIMITED.equals(visibility) ? 2 : 3);
+        
+        WebElement visibilityToClick = privacySettings.findElement(ByXPath.xpath(".//div[@id='privacy-bar']//ul//li[" + visibilityIndex + "]"));
+        visibilityToClick.click();
+        
+        try {Thread.sleep(500);} catch(Exception e) {};        
+    }
+    
     public String getAdminUserName() {
         return adminUserName;
     }

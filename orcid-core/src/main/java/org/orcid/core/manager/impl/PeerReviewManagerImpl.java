@@ -124,7 +124,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         // If request comes from the API, perform the validations
         if (isApiRequest) {
             // Validate it have at least one ext id
-            ActivityValidator.validatePeerReview(peerReview, sourceEntity);
+            ActivityValidator.validatePeerReview(peerReview, sourceEntity, true, isApiRequest, null);
 
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
@@ -164,8 +164,13 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
 
     @Override
     public PeerReview updatePeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
+        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
+        Visibility originalVisibility = existingEntity.getVisibility();
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
         // If request comes from the API perform validations
         if (isApiRequest) {
+            ActivityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, originalVisibility);
             validateGroupId(peerReview);
             List<PeerReview> existingReviews = this.findPeerReviews(orcid, System.currentTimeMillis());
             for (PeerReview existing : existingReviews) {
@@ -180,9 +185,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
             ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
-        PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
-        PeerReviewEntity updatedEntity = new PeerReviewEntity();
-        Visibility originalVisibility = existingEntity.getVisibility();
+        PeerReviewEntity updatedEntity = new PeerReviewEntity();        
         SourceEntity existingSource = existingEntity.getSource();
         orcidSecurityManager.checkSource(existingSource);
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
@@ -215,10 +218,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {
         Visibility incomingVisibility = entity.getVisibility();
         Visibility defaultVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            if (defaultVisibility.isMoreRestrictiveThan(incomingVisibility)) {
-                entity.setVisibility(defaultVisibility);
-            }
+        if (profile.getClaimed()) {            
+            entity.setVisibility(defaultVisibility);            
         } else if (incomingVisibility == null) {
             entity.setVisibility(Visibility.PRIVATE);
         }

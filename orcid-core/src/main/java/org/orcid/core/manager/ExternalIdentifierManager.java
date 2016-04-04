@@ -20,7 +20,7 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 
 public interface ExternalIdentifierManager {
-    
+    void setSourceManager(SourceManager sourceManager); 
     /**
      * Return the list of public external identifiers associated to a specific
      * profile
@@ -56,7 +56,7 @@ public interface ExternalIdentifierManager {
      * @return true if the external identifier was successfully created on
      *         database
      */
-    PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier);
+    PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest);
 
     /**
      * Updates an existing external identifier
@@ -65,7 +65,7 @@ public interface ExternalIdentifierManager {
      * @param externalIdentifier
      * @return the updated external identifier
      */
-    PersonExternalIdentifier updateExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier);
+    PersonExternalIdentifier updateExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest);
 
     /**
      * Deletes an external identifier
@@ -74,4 +74,6 @@ public interface ExternalIdentifierManager {
      * @param id
      */
     boolean deleteExternalIdentifier(String orcid, Long id, boolean checkSource);
+    
+    PersonExternalIdentifiers updateExternalIdentifiers(String orcid, PersonExternalIdentifiers externalIdentifiers);
 }

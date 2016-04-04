@@ -29,14 +29,14 @@ import org.orcid.jaxb.model.record_rc2.PersonalDetails;
  */
 public interface VisibilityFilterV2 {
 
-    ActivitiesSummary filter(ActivitiesSummary activitiesSummary);
+    ActivitiesSummary filter(ActivitiesSummary activitiesSummary, String orcid);
     
-    Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables);
+    Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables, String orcid);
         
-    Collection<? extends Group> filterGroups(Collection<? extends Group> groups);
+    Collection<? extends Group> filterGroups(Collection<? extends Group> groups, String orcid);
     
-    PersonalDetails filter(PersonalDetails personalDetails);
+    PersonalDetails filter(PersonalDetails personalDetails, String orcid);
     
-    Person filter(Person person);
+    Person filter(Person person, String orcid);
 
 }
