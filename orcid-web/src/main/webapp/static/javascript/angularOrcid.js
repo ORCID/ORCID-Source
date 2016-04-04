@@ -6783,13 +6783,12 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return count;
             },
-            getPeerReviewGroupDetails: function(groupIDvalue, putCode){
-            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDvalue) < 0){            		
-            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDvalue);            		
+            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
+            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){            		
+            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);            		
             		var group = peerReviewSrvc.getGroup(putCode);
-            		
             		$.ajax({
-                        url: getBaseUri() + '/public/group/' + groupIDvalue,
+                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
                         dataType: 'json',
                         contentType: 'application/json;charset=UTF-8',
                         type: 'GET',
@@ -6801,7 +6800,6 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         	});
                         }
                     }).fail(function(xhr, status, error){
-                        //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
                         console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
                     });
             		

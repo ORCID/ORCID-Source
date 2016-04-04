@@ -42,7 +42,7 @@ public class ExternalIDValidator {
             return;
         try{
             WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException | NullPointerException e ){
             checkAndThrow(Lists.newArrayList(id.getType()));
         }
     }
@@ -54,7 +54,7 @@ public class ExternalIDValidator {
         for (ExternalID id : ids.getExternalIdentifier()){
             try{
                 WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+            }catch (IllegalArgumentException  | NullPointerException e){
                 errors.add(id.getType());
             }
         }            
@@ -68,7 +68,7 @@ public class ExternalIDValidator {
         for (ExternalID id : ids.getExternalIdentifier()){
             try{
                 FundingExternalIdentifierType t = FundingExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+            }catch (IllegalArgumentException  | NullPointerException e ){
                 errors.add(id.getType());
             }
         }            
@@ -83,7 +83,7 @@ public class ExternalIDValidator {
             try{
                 if (i.getExternalIdentifier() !=null && i.getExternalIdentifier().getType()!=null)
                     WorkExternalIdentifierType.fromValue(i.getExternalIdentifier().getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+            }catch (IllegalArgumentException  | NullPointerException e){
                 errors.add(i.getExternalIdentifier().getType());
             }
         }

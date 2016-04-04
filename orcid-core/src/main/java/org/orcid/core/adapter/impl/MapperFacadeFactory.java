@@ -312,17 +312,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
         converterFactory.registerConverter("workContributorsConverterId", new JsonOrikaConverter<WorkContributors>());
-
-        //create BidirectionalConverter for WorkExternalIdentifiers in same way as FundingExternalIdentifiers
-        
-        //work external ids are JSON in the db.
-        //could simply change class above but will break existing conversions.
-        //option 1: keep it the same in the db and change convertors
-        //      a) for some I'm adding possible fields (e.g. relationship) - because it's JSON I can handle that using optional fields
-        //option 2: change the database format (and migrate) - there would be a period where we'd have both. 
-        //      a) would mean we have to convert both and use the one that parses
-        //      b) could have two different DB fields
-        //      c) requires a script that reads and converts all
         
         ClassMapBuilder<Work, WorkEntity> workClassMap = mapperFactory.classMap(Work.class, WorkEntity.class);
         workClassMap.byDefault();
@@ -506,7 +495,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("workExternalIdentifiersConverterId", new WorkExternalIDsConverter());
-        converterFactory.registerConverter("workExternalIdentifierConverterId", new WorkExternalIDConverter());
+        converterFactory.registerConverter("workExternalIdentifierConverterId", new PeerReviewWorkExternalIDConverter());
         //do same as work
         
         ClassMapBuilder<PeerReview, PeerReviewEntity> classMap = mapperFactory.classMap(PeerReview.class, PeerReviewEntity.class);
