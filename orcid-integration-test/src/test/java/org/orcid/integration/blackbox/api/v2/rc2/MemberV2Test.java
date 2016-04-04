@@ -161,54 +161,6 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
     }
     
     @Test
-    public void createManyWorks() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();
-        int numWorks = 1000;
-        // Amount of linear increase allowed
-        float scalingFactor = 1.5f;
-        int numInitialSample = numWorks / 10;
-        long initialSampleTime = 0;
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        for (int i = 1; i <= numWorks; i++) {
-            StopWatch singleWorkStopWatch = new StopWatch();
-            singleWorkStopWatch.start();
-            long time = System.currentTimeMillis();
-            Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
-            workToCreate.setPutCode(null);
-            workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
-            ExternalID wExtId = new ExternalID();
-            wExtId.setValue("Work Id " + i + " " + time);
-            wExtId.setType(ExternalIDType.AGR.value());
-            wExtId.setRelationship(Relationship.SELF);
-            workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-            String accessToken = getAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
-
-            ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
-            stopWatch.split();
-            long splitTime = stopWatch.getSplitTime();
-            System.out.println("Split time: " + splitTime);
-            if (i == numInitialSample) {
-                initialSampleTime = splitTime;
-            } else if (i > numInitialSample) {
-                float maxTime = (initialSampleTime / numInitialSample) * scalingFactor * i;
-                System.out.println("Max time: " + maxTime);
-                assertTrue("Split time = " + splitTime + ", but max allowed time = " + maxTime + ", when num added = " + i, splitTime <= maxTime);
-            }
-            assertNotNull(postResponse);
-            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
-            String locationPath = postResponse.getLocation().getPath();
-            assertTrue("Location header path should match pattern, but was " + locationPath,
-                    locationPath.matches(".*/v2.0_rc2/" + this.getUser1OrcidId() + "/work/\\d+"));
-            ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
-            assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
-            Work gotWork = getResponse.getEntity(Work.class);
-            assertEquals("common:title", gotWork.getWorkTitle().getTitle().getContent());
-            System.out.println("Time for single work = " + singleWorkStopWatch);
-        }
-    }
-
-    @Test
     public void testUpdateWorkWithProfileCreationTokenWhenClaimedAndNotSource() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
