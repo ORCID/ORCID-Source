@@ -16,23 +16,30 @@
  */
 package org.orcid.integration.blackbox.api.v2.rc2;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -42,17 +49,34 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class GroupIdRecordTest extends BlackBoxBaseRC2 {
 
-    private static final List<String> GROUP_IDS = Arrays.asList("orcid-generated:this-is-a-hippen-separated-id", 
-            "orcid-generated:this.is.a.dot.separated.id", 
-            "orcid-generated:this'is'a'apostrophe'separated'id", 
-            "orcid-generated:this_is_a_dash_separated_id", 
-            "orcid-generated:this-is-a-dash-separated-id",
+    private static final List<String> VALID_GROUP_IDS = Arrays.asList( 
+            "orcid-generated:this.is.a.test.", 
+            "orcid-generated:this'is'a'test'", 
+            "orcid-generated:this_is_a_test_", 
+            "orcid-generated:this-is-a-test-",
             "orcid-generated:(this)(is)(a)(test)",
-            "orcid-generated:test.", 
-            "orcid-generated:test,", 
-            "orcid-generated:test-", 
-            "orcid-generated:test_");
+            "orcid-generated:this^is^a^test^",
+            "orcid-generated:this~is~a~test~",
+            "orcid-generated:this:is:a:test:",
+            "orcid-generated:this/is/a/test/",
+            "orcid-generated:this?is?a?test?",
+            "orcid-generated:this#is#a#test#",
+            "orcid-generated:this[is]a[test]",
+            "orcid-generated:this@is@a@test@",
+            "orcid-generated:this!is!a!test!",
+            "orcid-generated:this$is$a$test$",
+            "orcid-generated:this&is&a&test&",
+            "orcid-generated:this*is*a*test*",
+            "orcid-generated:this+is+a+test+",
+            "orcid-generated:this,is,a,test,");
     
+    public static final List<String> INVALID_GROUP_IDS = Arrays.asList(
+            "orcid-generated:this{is}a{test}",
+            "orcid-generated:this\\is\\a\\test\\",
+            "orcid-generated:this\"is\"a\"test\"",
+            "orcid-generated:this<is>a<test>",
+            "orcid-generated:this¢is¢a¢test¢");
+
     private WebDriver webDriver;
     
     @Before
@@ -72,7 +96,7 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
     public void testGetGroupIdRecordsWithSeveralFormats() throws JSONException, InterruptedException, URISyntaxException, UnsupportedEncodingException {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
         
-        for(String groupId : GROUP_IDS) {            
+        for(String groupId : VALID_GROUP_IDS) {            
             GroupIdRecord g1 = new GroupIdRecord();
             g1.setDescription("Description");
             g1.setGroupId(groupId);
@@ -83,13 +107,25 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             g1.setPutCode(Long.valueOf(r1LocationPutCode));
             
             webDriver.get(getWebBaseUrl() + "/public/group/" + g1.getPutCode());
-            String pageContent = webDriver.getPageSource();
-            assertNotNull(pageContent);
-            assertTrue("Missing " + groupId, pageContent.contains(groupId.replace("\"", "\\\"")));
+            WebElement preElement = webDriver.findElement(By.tagName("pre"));
+            String groupElementString = preElement.getText();
+            assertFalse(PojoUtil.isEmpty(groupElementString));
+            GroupIdRecord groupFromWebPage = JsonUtils.readObjectFromJsonString(groupElementString, GroupIdRecord.class);
+            assertNotNull(groupFromWebPage);
+            assertEquals("Missing " + groupId, groupId, groupFromWebPage.getGroupId());
             
             memberV2ApiClient.deleteGroupIdRecord(g1.getPutCode(), token);
         }
         
-        
+        for(String invdalidGroupId : INVALID_GROUP_IDS) {            
+            GroupIdRecord g1 = new GroupIdRecord();
+            g1.setDescription("Description");
+            g1.setGroupId(invdalidGroupId);
+            g1.setName("Group # " + System.currentTimeMillis());
+            g1.setType("publisher");
+            ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
+            assertNotNull(r1);
+            assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), r1.getStatus());
+        }        
     }
 }
