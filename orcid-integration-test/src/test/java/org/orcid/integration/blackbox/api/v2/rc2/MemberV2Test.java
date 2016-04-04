@@ -32,7 +32,6 @@ import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.AfterClass;
