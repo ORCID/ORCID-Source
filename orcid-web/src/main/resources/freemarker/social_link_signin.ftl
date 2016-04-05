@@ -20,7 +20,7 @@
 <#include "sandbox_warning.ftl"/>
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
         <#if unsupportedInstitution??>
-            <div class="alert">${springMacroRequestContext.getMessage("social.link.unsupported.1")}<a href="mailto:${institutionContactEmail!}?cc=support@orcid.org&amp;subject=${springMacroRequestContext.getMessage("social.link.unsupported.email.subject")?url}&amp;body=${springMacroRequestContext.getMessage("social.link.unsupported.email.body")?url}">${springMacroRequestContext.getMessage("social.link.unsupported.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.3")}</div>
+            <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 alert">${springMacroRequestContext.getMessage("social.link.unsupported.1")}<a href="mailto:${institutionContactEmail!}?cc=support@orcid.org&amp;subject=${springMacroRequestContext.getMessage("social.link.unsupported.email.subject")?url}&amp;body=${springMacroRequestContext.getMessage("social.link.unsupported.email.body")?url}">${springMacroRequestContext.getMessage("social.link.unsupported.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.3")}</div>
         <#else>
             <div ng-hide="loadedFeed" class="text-center">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
