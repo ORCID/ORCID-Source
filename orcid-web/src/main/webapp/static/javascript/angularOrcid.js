@@ -5246,7 +5246,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.workspaceSrvc  = workspaceSrvc;
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
-	 $scope.showPeerReviewDetails = {};
+	 $scope.showPeerReviewDetails = new Array();
 	 $scope.sortHideOption = true;
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
@@ -5269,11 +5269,13 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
     };
     
     
-    $scope.showMoreDetails = function(putCode){    	
+    $scope.showMoreDetails = function(putCode){  
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = false;
     };
     
@@ -6228,7 +6230,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
 	$scope.showDetails = {};
-	$scope.showPeerReviewDetails = {};
+	$scope.showPeerReviewDetails = new Array();
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
 	$scope.sortHideOption = true;
@@ -6441,11 +6443,13 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
     };
     
-    $scope.showMoreDetails = function(putCode){    	
+    $scope.showMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = false;
     };
     
