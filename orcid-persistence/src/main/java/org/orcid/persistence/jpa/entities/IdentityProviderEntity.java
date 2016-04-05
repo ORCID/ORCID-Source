@@ -39,6 +39,8 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
     private String providerid;
     private String displayName;
     private String supportEmail;
+    private String adminEmail;
+    private String techEmail;
     private Date lastFailed;
     private int failedCount;
 
@@ -78,6 +80,24 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
 
     public void setSupportEmail(String supportEmail) {
         this.supportEmail = supportEmail;
+    }
+
+    @Column(name="admin_email")
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }
+
+    @Column(name="tech_email")
+    public String getTechEmail() {
+        return techEmail;
+    }
+
+    public void setTechEmail(String techEmail) {
+        this.techEmail = techEmail;
     }
 
     @Column(name="last_failed")

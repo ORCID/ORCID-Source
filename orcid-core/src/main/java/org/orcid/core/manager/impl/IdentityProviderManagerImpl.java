@@ -76,6 +76,8 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         XPathExpression entityDescriptorXpath = compileXPath(xpath, "//saml2:EntityDescriptor");
         XPathExpression displayNameXpath = compileXPath(xpath, "string(.//mdui:DisplayName[1])");
         XPathExpression supportContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='support'])[1]/saml2:EmailAddress[1])");
+        XPathExpression adminContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='administrative'])[1]/saml2:EmailAddress[1])");
+        XPathExpression techContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='technical'])[1]/saml2:EmailAddress[1])");
         for (String metadataUrl : metadataUrls) {
             Document document = downloadMetadata(metadataUrl);
             NodeList nodes = evaluateXPathNodeList(entityDescriptorXpath, document);
@@ -84,8 +86,10 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
                 String entityId = element.getAttribute("entityID");
                 String displayName = evaluateXPathString(displayNameXpath, element);
                 String supportEmail = tidyEmail(evaluateXPathString(supportContactXpath, element));
+                String adminEmail = tidyEmail(evaluateXPathString(adminContactXpath, element));
+                String techEmail = tidyEmail(evaluateXPathString(techContactXpath, element));
                 LOGGER.info("Found entityID: {}, displayName: {}, supportEmail: {}", new Object[] { entityId, displayName, supportEmail });
-                saveOrUpdateIdentityProvider(entityId, displayName, supportEmail);
+                saveOrUpdateIdentityProvider(entityId, displayName, supportEmail, adminEmail, techEmail);
             }
         }
     }
@@ -99,7 +103,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         return document;
     }
 
-    private void saveOrUpdateIdentityProvider(String entityId, String displayName, String supportEmail) {
+    private void saveOrUpdateIdentityProvider(String entityId, String displayName, String supportEmail, String adminEmail, String techEmail) {
         IdentityProviderEntity entity = identityProviderDao.findByProviderid(entityId);
         if (entity == null) {
             entity = new IdentityProviderEntity();
@@ -107,6 +111,8 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         entity.setProviderid(entityId);
         entity.setDisplayName(displayName);
         entity.setSupportEmail(supportEmail);
+        entity.setAdminEmail(adminEmail);
+        entity.setTechEmail(techEmail);
         identityProviderDao.merge(entity);
     }
 
