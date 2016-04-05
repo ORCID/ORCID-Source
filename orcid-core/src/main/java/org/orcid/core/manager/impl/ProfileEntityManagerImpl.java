@@ -225,7 +225,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 PersonalDetails personalDetails = bio.getPersonalDetails();
                 profile.getRecordNameEntity().setCreditName(personalDetails.getCreditName() == null ? null : personalDetails.getCreditName().getContent());
                 profile.getRecordNameEntity().setFamilyName(personalDetails.getFamilyName() == null ? null : personalDetails.getFamilyName().getContent());
-                profile.getRecordNameEntity().setGivenName(personalDetails.getGivenNames() == null ? null : personalDetails.getGivenNames().getContent());
+                profile.getRecordNameEntity().setGivenNames(personalDetails.getGivenNames() == null ? null : personalDetails.getGivenNames().getContent());
                 
                 if(personalDetails.getCreditName() != null && personalDetails.getCreditName().getVisibility() != null) {
                     profile.getRecordNameEntity().setVisibility(Visibility.fromValue(personalDetails.getCreditName().getVisibility().value()));
@@ -610,7 +610,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 if (!PojoUtil.isEmpty(recordName.getCreditName())) {
                     publicName = recordName.getCreditName();
                 } else {
-                    publicName = PojoUtil.isEmpty(recordName.getGivenName()) ? "" : recordName.getGivenName();
+                    publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
                     publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
                 }
             }

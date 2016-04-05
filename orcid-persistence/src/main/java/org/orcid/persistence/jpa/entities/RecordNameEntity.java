@@ -24,6 +24,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -40,7 +41,7 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
     private static final long serialVersionUID = -219497844494612167L;
     private Long id;
     private String creditName;
-    private String givenName;
+    private String givenNames;
     private String familyName;
     private ProfileEntity profile;
     private Visibility visibility;
@@ -81,16 +82,16 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
     /**
      * @return the givenName
      */
-    @Column(name = "given_name")
-    public String getGivenName() {
-        return givenName;
+    @Column(name = "given_names")
+    public String getGivenNames() {
+        return givenNames;
     }
 
     /**
      * @param givenName the givenName to set
      */
-    public void setGivenName(String givenName) {
-        this.givenName = givenName;
+    public void setGivenNames(String givenNames) {
+        this.givenNames = givenNames;
     }
     
     /**
@@ -111,7 +112,8 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
     /**
      * @return the profile
      */
-    @OneToOne(optional = false, mappedBy = "recordNameEntity")
+    @OneToOne
+    @JoinColumn(name = "orcid")
     public ProfileEntity getProfile() {
         return profile;
     }

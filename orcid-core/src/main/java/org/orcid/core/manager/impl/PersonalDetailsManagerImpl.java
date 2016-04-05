@@ -65,8 +65,8 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getFamilyName())) {
                 name.setFamilyName(new FamilyName(profileEntity.getRecordNameEntity().getFamilyName()));
             }
-            if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getGivenName())) {
-                name.setGivenNames(new GivenNames(profileEntity.getRecordNameEntity().getGivenName()));
+            if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getGivenNames())) {
+                name.setGivenNames(new GivenNames(profileEntity.getRecordNameEntity().getGivenNames()));
             }                        
         }
         return name;

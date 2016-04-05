@@ -730,8 +730,8 @@ public class NotificationManagerImpl implements NotificationManager {
      * */
     public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
         String result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
-        if (profileEntity.getRecordNameEntity().getGivenName() != null) {
-            result = profileEntity.getRecordNameEntity().getGivenName();
+        if (profileEntity.getRecordNameEntity().getGivenNames() != null) {
+            result = profileEntity.getRecordNameEntity().getGivenNames();
             if (!StringUtils.isBlank(profileEntity.getRecordNameEntity().getFamilyName())) {
                 result += " " + profileEntity.getRecordNameEntity().getFamilyName();
             }

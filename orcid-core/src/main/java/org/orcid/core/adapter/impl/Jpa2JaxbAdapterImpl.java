@@ -853,7 +853,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 return creditName;
             }
         }
-        String displayName = groupProfile.getRecordNameEntity().getGivenName();
+        String displayName = groupProfile.getRecordNameEntity().getGivenNames();
         String familyName = groupProfile.getRecordNameEntity().getFamilyName();
         if (StringUtils.isNotBlank(familyName)) {
             displayName += " " + familyName;
@@ -1016,9 +1016,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private GivenNames getGivenNames(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getRecordNameEntity().getGivenName())) {
+        if (StringUtils.isNotBlank(profileEntity.getRecordNameEntity().getGivenNames())) {
             GivenNames names = new GivenNames();
-            names.setContent(profileEntity.getRecordNameEntity().getGivenName());
+            names.setContent(profileEntity.getRecordNameEntity().getGivenNames());
             Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
             if(profileEntity.getRecordNameEntity().getVisibility() != null) {
             	visibility = Visibility.fromValue(profileEntity.getRecordNameEntity().getVisibility().value());

@@ -110,7 +110,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
                 if (StringUtils.isNotBlank(profile.getRecordNameEntity().getCreditName())) {
                     creditName = profile.getRecordNameEntity().getCreditName();
                 } else {
-                    String givenName = profile.getRecordNameEntity().getGivenName();
+                    String givenName = profile.getRecordNameEntity().getGivenNames();
                     String familyName = profile.getRecordNameEntity().getFamilyName();
                     String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
                     creditName = composedCreditName;
@@ -141,7 +141,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
                 if(!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
                     publicCreditName = profile.getRecordNameEntity().getCreditName();
                 } else {
-                    String givenName = profile.getRecordNameEntity().getGivenName();
+                    String givenName = profile.getRecordNameEntity().getGivenNames();
                     String familyName = profile.getRecordNameEntity().getFamilyName();
                     publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
                 }

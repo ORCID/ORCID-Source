@@ -37,7 +37,7 @@
 			<column name="credit_name" type="VARCHAR(150)" />
 			<column name="family_name" type="VARCHAR(150)" />
 			<column name="given_names" type="VARCHAR(150)" />
-			<column name="names_visibility" type="VARCHAR(20)" />
+			<column name="visibility" type="VARCHAR(20)" />
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
 			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
 		</createTable>

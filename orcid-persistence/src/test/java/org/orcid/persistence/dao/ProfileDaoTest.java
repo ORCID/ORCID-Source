@@ -113,7 +113,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
         assertTrue(profile.getClaimed());
-        assertEquals("One", profile.getRecordNameEntity().getGivenName());
+        assertEquals("One", profile.getRecordNameEntity().getGivenNames());
         assertEquals("User", profile.getRecordNameEntity().getFamilyName());
         assertEquals("Spike Milligan", profile.getVocativeName());
     }
@@ -466,7 +466,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profile.setRecordNameEntity(new RecordNameEntity());
         profile.getRecordNameEntity().setCreditName("Updated Credit Name");
         profile.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
-        profile.getRecordNameEntity().setGivenName("Updated Give Name");
+        profile.getRecordNameEntity().setGivenNames("Updated Give Name");
         profile.getRecordNameEntity().setFamilyName("Updated Last Name");
         boolean result = profileDao.updateProfile(profile);
         assertTrue(result);
@@ -475,7 +475,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
         assertEquals("Updated Credit Name", profile.getRecordNameEntity().getCreditName());
         assertEquals(Visibility.PRIVATE.value(), profile.getRecordNameEntity().getVisibility().value());
-        assertEquals("Updated Give Name", profile.getRecordNameEntity().getGivenName());
+        assertEquals("Updated Give Name", profile.getRecordNameEntity().getGivenNames());
         assertEquals("Updated Last Name", profile.getRecordNameEntity().getFamilyName());        
     }
 

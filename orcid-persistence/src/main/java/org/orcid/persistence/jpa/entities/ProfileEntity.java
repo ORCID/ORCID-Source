@@ -42,7 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -993,8 +992,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
     }
 
-    @OneToOne(optional=false)
-    @JoinColumn(name="orcid", unique=true, nullable=false, updatable=false)
+    @OneToOne(mappedBy = "profile")    
     public RecordNameEntity getRecordNameEntity() {
         return recordNameEntity;
     }

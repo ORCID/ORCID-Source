@@ -513,7 +513,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setGivenNames(ProfileEntity profileEntity, GivenNames givenNames) {
         if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
-            profileEntity.getRecordNameEntity().setGivenName(givenNames.getContent());
+            profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());
         }
     }
 

@@ -192,7 +192,7 @@ public class OauthControllerBase extends BaseController {
             if (!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
                 creditName = profile.getRecordNameEntity().getCreditName();
             } else {
-                creditName = PojoUtil.isEmpty(profile.getRecordNameEntity().getGivenName()) ? profile.getRecordNameEntity().getFamilyName() : profile.getRecordNameEntity().getGivenName() + " " + profile.getRecordNameEntity().getFamilyName();
+                creditName = PojoUtil.isEmpty(profile.getRecordNameEntity().getGivenNames()) ? profile.getRecordNameEntity().getFamilyName() : profile.getRecordNameEntity().getGivenNames() + " " + profile.getRecordNameEntity().getFamilyName();
             }
             
             if(!PojoUtil.isEmpty(creditName)) {

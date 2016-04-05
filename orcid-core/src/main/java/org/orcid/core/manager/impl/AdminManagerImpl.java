@@ -202,7 +202,7 @@ public class AdminManagerImpl implements AdminManager {
 
                         deprecated.setRecordNameEntity(new RecordNameEntity());
                         deprecated.getRecordNameEntity().setCreditName(null);
-                        deprecated.getRecordNameEntity().setGivenName("Given Names Deactivated");
+                        deprecated.getRecordNameEntity().setGivenNames("Given Names Deactivated");
                         deprecated.getRecordNameEntity().setFamilyName("Family Name Deactivated");
                         deprecated.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
                         deprecated.setBiographyVisibility(Visibility.PRIVATE);
