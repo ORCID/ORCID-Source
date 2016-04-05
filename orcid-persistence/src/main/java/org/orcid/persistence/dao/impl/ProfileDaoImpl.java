@@ -384,15 +384,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean updateProfile(ProfileEntity profile) {
+    public boolean updateProfileBiography(ProfileEntity profile) {
         Query query = entityManager
-        .createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, biography_visibility=:biography_visibility, names_visibility=:names_visibility, indexing_status='PENDING' where orcid=:orcid");
-        query.setParameter("credit_name", profile.getCreditName());
-        query.setParameter("family_name", profile.getFamilyName());
-        query.setParameter("given_names", profile.getGivenNames());
+        .createNativeQuery("update profile set last_modified=now(), biography=:biography, biography_visibility=:biography_visibility, indexing_status='PENDING' where orcid=:orcid");
         query.setParameter("biography", profile.getBiography());
         query.setParameter("biography_visibility", StringUtils.upperCase(profile.getBiographyVisibility().value()));
-        query.setParameter("names_visibility", StringUtils.upperCase(profile.getNamesVisibility().value()));
         query.setParameter("orcid", profile.getId());
 
         boolean result = query.executeUpdate() > 0 ? true : false;
@@ -490,7 +486,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
         Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now() where orcid=:orcid");
+                .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now(), profile_deactivation_date=now() where orcid=:orcid");
         query.setParameter("orcid", deprecatedOrcid);
         query.setParameter("primary_record", primaryOrcid);
 

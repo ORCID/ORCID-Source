@@ -52,10 +52,8 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;
@@ -183,20 +181,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     /**
-     * Updates a profile with the given OrcidProfile object
-     * 
-     * @param orcidProfile
-     *            The object that will be used to update the database profile
-     * @return true if the profile was successfully updated on database, false
-     *         otherwise
-     */
-    @Override
-    public boolean updateProfile(OrcidProfile orcidProfile) {
-        ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
-        return profileDao.updateProfile(profile);
-    }
-
-    /**
      * Updates a profile entity object on database.
      * 
      * @param profile
@@ -204,42 +188,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @return true if the profile was successfully updated.
      */
     @Override
-    public boolean updateProfile(ProfileEntity profile) {
-        return profileDao.updateProfile(profile);
-    }
-
-    /**
-     * Generate a ProfileEntity object with the bio information populated from
-     * the info that comes from the OrcidProfile parameter
-     * 
-     * @param orcidProfile
-     * @return A Profile Entity containing the bio information that comes in the
-     *         OrcidProfile parameter
-     */
-    private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
-        ProfileEntity profile = new ProfileEntity();
-        if(orcidProfile != null && orcidProfile.getOrcidBio() != null) {
-            OrcidBio bio = orcidProfile.getOrcidBio();
-            profile.setRecordNameEntity(new RecordNameEntity());
-            if(orcidProfile.getOrcidBio().getPersonalDetails() != null) {
-                PersonalDetails personalDetails = bio.getPersonalDetails();
-                profile.getRecordNameEntity().setCreditName(personalDetails.getCreditName() == null ? null : personalDetails.getCreditName().getContent());
-                profile.getRecordNameEntity().setFamilyName(personalDetails.getFamilyName() == null ? null : personalDetails.getFamilyName().getContent());
-                profile.getRecordNameEntity().setGivenNames(personalDetails.getGivenNames() == null ? null : personalDetails.getGivenNames().getContent());
-                
-                if(personalDetails.getCreditName() != null && personalDetails.getCreditName().getVisibility() != null) {
-                    profile.getRecordNameEntity().setVisibility(Visibility.fromValue(personalDetails.getCreditName().getVisibility().value()));
-                }
-            }
-            
-            if(orcidProfile.getOrcidBio().getBiography() != null) {
-                profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());        
-                profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
-            }
-        }
-        profile.setId(orcidProfile.getOrcidIdentifier().getPath());
-        return profile;
-    }
+    public boolean updateProfileBiography(ProfileEntity profile) {
+        return profileDao.updateProfileBiography(profile);
+    }    
 
     /**
      * Deprecates a profile

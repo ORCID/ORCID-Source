@@ -17,7 +17,6 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,15 +45,15 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.AdminDelegatesRequest;
@@ -114,7 +113,10 @@ public class AdminManagerImpl implements AdminManager {
     private ProfileKeywordManager profileKeywordManager;
     
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
     
     @Override    
     @Transactional
@@ -195,22 +197,19 @@ public class AdminManagerImpl implements AdminManager {
                             }                                                        
                         }
                         
-                        // Update deprecated profile
-                        Date deprecationDate = new Date();
-                        deprecated.setDeactivationDate(deprecationDate);
-                        deprecated.setDeprecatedDate(deprecationDate);
-
-                        deprecated.setRecordNameEntity(new RecordNameEntity());
-                        deprecated.getRecordNameEntity().setCreditName(null);
-                        deprecated.getRecordNameEntity().setGivenNames("Given Names Deactivated");
-                        deprecated.getRecordNameEntity().setFamilyName("Family Name Deactivated");
-                        deprecated.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
-                        deprecated.setBiographyVisibility(Visibility.PRIVATE);
-                        deprecated.setPrimaryRecord(primary);
-                        deprecated.setBiography(new String());
-                        deprecated.setIndexingStatus(IndexingStatus.PENDING);
+                        //Set the deactivated names
+                        RecordNameEntity recordName = new RecordNameEntity();
+                        recordName.setCreditName(null);
+                        recordName.setGivenNames("Given Names Deactivated");
+                        recordName.setFamilyName("Family Name Deactivated");
+                        recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                        recordName.setProfile(new ProfileEntity(deprecatedOrcid));
+                        recordNameDao.updateRecordName(recordName);
                         
-                        profileEntityManager.updateProfile(deprecated);                        
+                        //Remove the biography
+                        deprecated.setBiographyVisibility(Visibility.PRIVATE);
+                        deprecated.setBiography(new String());
+                        profileEntityManager.updateProfileBiography(deprecated);                        
                         
                         // Move all emails to the primary email
                         Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
@@ -222,20 +221,7 @@ public class AdminManagerImpl implements AdminManager {
                                 LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] {email.getId(), deprecatedOrcid, primaryOrcid});
                                 emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
                             }
-                        } 
-                        
-                        LOGGER.info("Updating last modified for {} and {}", deprecated.getId(), primary.getId());
-
-                        //Update the last modified date of both profiles
-                        orcidProfileManager.updateLastModifiedDate(deprecatedOrcid);
-                        orcidProfileManager.updateLastModifiedDate(primaryOrcid);
-                        
-                        // TODO: Currently we dont want to send the
-                        // notifications, but in a near future, when we
-                        // want to send them, just uncomment the
-                        // following line:
-                        // notificationManager.sendProfileDeprecationEmail(deprecated,
-                        // primary);
+                        }
                     }
                 }
             }

@@ -75,7 +75,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public void updateBiography(String orcid, String biography, Visibility visibility);
 
-    boolean updateProfile(ProfileEntity profile);
+    boolean updateProfileBiography(ProfileEntity profile);
 
     Date retrieveLastModifiedDate(String orcid);
 

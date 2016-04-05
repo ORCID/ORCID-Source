@@ -46,7 +46,6 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
@@ -93,15 +92,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void beforeRunning() {
         assertNotNull(profileDao);
     }
-
-    // vocative_name="Spike Milligan"/>
-
-    // orcid="4444-4444-4444-4441"
-    // creation_method="API"
-    // completed_date="2011-07-02 15:31:00.00"
-    // submission_date="2011-06-29 15:31:00.00"
-    // confirmed="true"
-    // full_name="Spike Milligan"
+    
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -463,20 +454,11 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
-        profile.setRecordNameEntity(new RecordNameEntity());
-        profile.getRecordNameEntity().setCreditName("Updated Credit Name");
-        profile.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
-        profile.getRecordNameEntity().setGivenNames("Updated Give Name");
-        profile.getRecordNameEntity().setFamilyName("Updated Last Name");
-        boolean result = profileDao.updateProfile(profile);
+        boolean result = profileDao.updateProfileBiography(profile);
         assertTrue(result);
         profile = profileDao.find("4444-4444-4444-4441");
         assertEquals("Updated Biography", profile.getBiography());
-        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
-        assertEquals("Updated Credit Name", profile.getRecordNameEntity().getCreditName());
-        assertEquals(Visibility.PRIVATE.value(), profile.getRecordNameEntity().getVisibility().value());
-        assertEquals("Updated Give Name", profile.getRecordNameEntity().getGivenNames());
-        assertEquals("Updated Last Name", profile.getRecordNameEntity().getFamilyName());        
+        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());               
     }
 
     @Test

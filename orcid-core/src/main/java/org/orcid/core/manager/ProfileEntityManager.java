@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -50,9 +48,7 @@ public interface ProfileEntityManager {
 
     Long getConfirmedProfileCount();
 
-    boolean updateProfile(OrcidProfile profile);
-
-    boolean updateProfile(ProfileEntity profile);
+    boolean updateProfileBiography(ProfileEntity profile);
 
     boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
 
