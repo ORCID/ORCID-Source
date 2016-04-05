@@ -99,7 +99,7 @@ public class ShibbolethController extends BaseController {
         mav.addObject("providerId", shibIdentityProvider);
         RemoteUser remoteUser = retrieveRemoteUser(headers);
         if (remoteUser == null) {
-            LOGGER.info("Failed federeated log in for {}", shibIdentityProvider);
+            LOGGER.info("Failed federated log in for {}", shibIdentityProvider);
             identityProviderDao.incrementFailedCount(shibIdentityProvider);
             mav.addObject("unsupportedInstitution", true);
             mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
