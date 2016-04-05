@@ -25,7 +25,7 @@ import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
  */
 public interface IdentityProviderDao extends GenericDao<IdentityProviderEntity, Long> {
 
-
     IdentityProviderEntity findByProviderid(String providerid);
-    
+
+    void incrementFailedCount(String providerid);
 }

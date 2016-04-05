@@ -54,4 +54,13 @@
             columnName="id" columnDataType="bigint" />
     </changeSet>
     
+    <changeSet id="ADD-FAILED-INFO-TO-IDP" author="Will Simpson">
+        <addColumn tableName="identity_provider">
+            <column name="last_failed" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="failed_count" type="INTEGER" defaultValue="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
 </databaseChangeLog>

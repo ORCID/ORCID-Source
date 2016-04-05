@@ -29,6 +29,7 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
+import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.slf4j.Logger;
@@ -87,6 +88,9 @@ public class ShibbolethController extends BaseController {
     @Resource
     private IdentityProviderManager identityProviderManager;
 
+    @Resource
+    private IdentityProviderDao identityProviderDao;
+
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
@@ -95,6 +99,8 @@ public class ShibbolethController extends BaseController {
         mav.addObject("providerId", shibIdentityProvider);
         RemoteUser remoteUser = retrieveRemoteUser(headers);
         if (remoteUser == null) {
+            LOGGER.info("Failed federeated log in for {}", shibIdentityProvider);
+            identityProviderDao.incrementFailedCount(shibIdentityProvider);
             mav.addObject("unsupportedInstitution", true);
             mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;

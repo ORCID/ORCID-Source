@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,6 +39,8 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
     private String providerid;
     private String displayName;
     private String supportEmail;
+    private Date lastFailed;
+    private int failedCount;
 
     @Override
     @Id
@@ -74,6 +78,24 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
 
     public void setSupportEmail(String supportEmail) {
         this.supportEmail = supportEmail;
+    }
+
+    @Column(name="last_failed")
+    public Date getLastFailed() {
+        return lastFailed;
+    }
+
+    public void setLastFailed(Date lastFailed) {
+        this.lastFailed = lastFailed;
+    }
+
+    @Column(name="failed_count")
+    public int getFailedCount() {
+        return failedCount;
+    }
+
+    public void setFailedCount(int failedCount) {
+        this.failedCount = failedCount;
     }
     
     
