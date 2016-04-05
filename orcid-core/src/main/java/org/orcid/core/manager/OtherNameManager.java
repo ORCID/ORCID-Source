@@ -16,11 +16,12 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 
 public interface OtherNameManager {
+    void setSourceManager(SourceManager sourceManager);  
+    
     OtherNames getOtherNames(String orcid, long lastModified);
     
     OtherNames getPublicOtherNames(String orcid, long lastModified);

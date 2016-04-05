@@ -2152,14 +2152,15 @@ orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', functio
 
 
 orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
-    $scope.errors=null;
-    $scope.password=null;
+    $scope.errors = null;
+    $scope.password = null;
+    $scope.securityQuestions = [];
 
     $scope.getSecurityQuestion = function() {
         $.ajax({
             url: getBaseUri() + '/account/security-question.json',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {            	
                 $scope.securityQuestionPojo = data;
                 $scope.$apply();
             }
@@ -2193,7 +2194,7 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                //alert(angular.toJson($scope.securityQuestionPojo));
+            	
                 if(data.errors.length != 0) {
                     $scope.errors=data.errors;
                 } else {
@@ -6612,6 +6613,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
             peerReviewsToAddIds: null,
+            peerReviewGroupDetailsRequested: new Array(),
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
@@ -6824,25 +6826,27 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return count;
             },
-            getPeerReviewGroupDetails: function(groupIDvalue, putCode){
-            	var group = peerReviewSrvc.getGroup(putCode);
-            	
-            	$.ajax({
-                    url: getBaseUri() + '/public/group/' + groupIDvalue,
-                    dataType: 'json',
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'GET',
-                    success: function(data) {
-                    	$rootScope.$apply(function(){
-                    		group.groupName = data.name;
-                    		group.groupDescription = data.description;
-                    		group.groupType = data.type;
-                    	});
-                    }
-                }).fail(function(xhr, status, error){
-                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
-                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-                });
+            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
+            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){            		
+            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);            		
+            		var group = peerReviewSrvc.getGroup(putCode);
+            		$.ajax({
+                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
+                        dataType: 'json',
+                        contentType: 'application/json;charset=UTF-8',
+                        type: 'GET',
+                        success: function(data) {
+                        	$rootScope.$apply(function(){
+                        		group.groupName = data.name;
+                        		group.groupDescription = data.description;
+                        		group.groupType = data.type;
+                        	});
+                        }
+                    }).fail(function(xhr, status, error){
+                        console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+                    });
+            		
+            	}
             }
     };
     return peerReviewSrvc;

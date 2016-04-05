@@ -189,4 +189,6 @@
     <include file="/db/updates/remove-hear-about.xml" />
     <include file="/db/updates/user_connection_id_type.xml" />
     <include file="/db/updates/federated-idp-info.xml" />
+    <include file="/db/updates/add_notification_id_index.xml" />
+    <include file="/db/updates/add_indexes_2016_03_31.xml" />
 </databaseChangeLog>

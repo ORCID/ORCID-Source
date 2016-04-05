@@ -275,9 +275,7 @@ public class WorkManagerImpl implements WorkManager {
         org.orcid.jaxb.model.message.Visibility incomingWorkVisibility = workEntity.getVisibility();
         org.orcid.jaxb.model.message.Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
         if (profile.getClaimed()) {
-            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                workEntity.setVisibility(defaultWorkVisibility);
-            }
+            workEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
             workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
         }

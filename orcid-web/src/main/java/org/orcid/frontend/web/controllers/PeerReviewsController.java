@@ -203,6 +203,13 @@ public class PeerReviewsController extends BaseWorkspaceController {
 
                     form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry()
                             .name())));
+                    
+                    //Set the numeric id (the table id in the group_id_record table) of the group id
+                    if(form.getGroupId() != null && !PojoUtil.isEmpty(form.getGroupId().getValue())) {
+                        GroupIdRecord groupId = groupIdRecordManager.findByGroupId(form.getGroupId().getValue());
+                        form.setGroupIdPutCode(Text.valueOf(groupId.getPutCode()));
+                    }                    
+                    
                     peerReviewMap.put(peerReview.getPutCode(), form);
                     peerReviewIds.add(String.valueOf(peerReview.getPutCode()));
                 } catch (Exception e) {
@@ -656,13 +663,5 @@ public class PeerReviewsController extends BaseWorkspaceController {
             peerReviewIds.add(new Long(peerReviewId));
         peerReviewManager.updateVisibilities(orcid, peerReviewIds, Visibility.fromValue(visibilityStr));
         return peerReviewIds;
-    }    
-    
-    /**
-     * Get group information based on the group id
-     * */
-    @RequestMapping(value = "/group/{groupId}", method = RequestMethod.GET, produces = "application/json; charset=utf-8")
-    public @ResponseBody GroupIdRecord getGroupInformation(@PathVariable("groupId") String groupId) {        
-        return groupIdRecordManager.findByGroupId(groupId);
-    }
+    }     
 }
