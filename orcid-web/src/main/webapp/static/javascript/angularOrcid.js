@@ -2013,9 +2013,10 @@ orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'e
     $scope.emailSrvc = emailSrvc;
 }]);
 
-orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc', function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', function ($scope, $compile, emailSrvc, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
+    
 }]);
 
 orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
@@ -10676,7 +10677,7 @@ orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
 }]);
 
 
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',function ($scope, emailSrvc, $compile){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -10687,9 +10688,9 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 		$scope.showEdit = true;
 	}
 	
-	$scope.close = function(){
-	    console.log('Close');
+	$scope.close = function(){	    
 		$scope.showEdit = false;
+		prefsSrvc.saved = false;
 	    $.colorbox.close();
 	}
 	    
