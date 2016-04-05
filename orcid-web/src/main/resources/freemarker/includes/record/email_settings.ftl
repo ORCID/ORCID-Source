@@ -44,12 +44,12 @@
 	                        	${springMacroRequestContext.getMessage("manage.email.primary_email")}
 	                        </span>
 	                    </td>
-	                    <td>
-	                        <select ng-change="emailSrvc.saveEmail()" ng-model="email.current">
-	                            <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
-	                            <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>
-	                        </select>
-	                    </td>
+						<td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];">							
+    						<select ng-model="email.current" 
+								ng-options ="emailStatusOption.val as emailStatusOption.label for emailStatusOption in emailStatusOptions"
+								ng-change="emailSrvc.saveEmail()">						
+  							</select>
+						</td>
 	                    <td class="email-verified">
 	                        <span ng-hide="email.verified" class="left">
 								<a ng-click="verifyEmail(email, emailSrvc.popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
