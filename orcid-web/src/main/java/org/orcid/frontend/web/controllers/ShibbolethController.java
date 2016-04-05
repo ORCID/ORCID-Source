@@ -18,6 +18,7 @@ package org.orcid.frontend.web.controllers;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +68,12 @@ public class ShibbolethController extends BaseController {
     private static final String SN_HEADER = "sn";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
+
+    private static final String SEPARATOR = ";";
+
+    private static final Pattern ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile("(?<!\\\\)" + SEPARATOR);
+
+    private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
 
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean enabled;
@@ -130,7 +137,7 @@ public class ShibbolethController extends BaseController {
 
     public static RemoteUser retrieveRemoteUser(Map<String, String> headers) {
         for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
-            String userId = headers.get(possibleHeader);
+            String userId = extractFirst(headers.get(possibleHeader));
             if (userId != null) {
                 return new RemoteUser(userId, possibleHeader);
             }
@@ -139,16 +146,16 @@ public class ShibbolethController extends BaseController {
     }
 
     public static String retrieveDisplayName(Map<String, String> headers) {
-        String eppn = headers.get(EPPN_HEADER);
+        String eppn = extractFirst(headers.get(EPPN_HEADER));
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;
         }
-        String displayName = headers.get(DISPLAY_NAME_HEADER);
+        String displayName = extractFirst(headers.get(DISPLAY_NAME_HEADER));
         if (StringUtils.isNotBlank(displayName)) {
             return displayName;
         }
-        String givenName = headers.get(GIVEN_NAME_HEADER);
-        String sn = headers.get(SN_HEADER);
+        String givenName = extractFirst(headers.get(GIVEN_NAME_HEADER));
+        String sn = extractFirst(headers.get(SN_HEADER));
         String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
         if (StringUtils.isNotBlank(combinedNames)) {
             return combinedNames;
@@ -166,6 +173,23 @@ public class ShibbolethController extends BaseController {
             }
         }
         throw new OrcidBadRequestException("Couldn't find any user display name headers");
+    }
+
+    /**
+     * Shibboleth SP combines multiple values by concatenating, using semicolon
+     * as the separator (the escape character is '\'). Mutliple values will be
+     * provided, even if it is actually the same attribute in mace and oid
+     * format.
+     * 
+     * @param headerValue
+     * @return the first attribute value
+     */
+    private static String extractFirst(String headerValue) {
+        if (headerValue == null) {
+            return null;
+        }
+        String[] values = ATTRIBUTE_SEPARATOR_PATTERN.split(headerValue);
+        return values.length > 0 ? ESCAPED_SEPARATOR_PATTERN.matcher(values[0]).replaceAll(SEPARATOR) : "";
     }
 
 }
