@@ -802,4 +802,43 @@ public class AdminController extends BaseController {
 
         return generateProfileDetails(orcid, 4);
     }
+
+    @RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
+    public @ResponseBody Map<String, List<String>> resendClaimEmail(@RequestBody String emailsOrOrcids) {
+        List<String> emailOrOrcidList = new ArrayList<String>();
+        if (StringUtils.isNotBlank(emailsOrOrcids)) {
+            StringTokenizer tokenizer = new StringTokenizer(emailsOrOrcids, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                emailOrOrcidList.add(tokenizer.nextToken());
+            }
+        }
+
+        List<String> claimedIds = new ArrayList<String>();
+        List<String> successIds = new ArrayList<String>();
+        List<String> notFoundIds = new ArrayList<String>();
+        for (String emailOrOrcid : emailOrOrcidList) {
+            String orcid = getOrcidFromParam(emailOrOrcid);
+            if (orcid == null) {
+                notFoundIds.add(emailOrOrcid);
+            } else {
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if (profile == null) {
+                    notFoundIds.add(emailOrOrcid);
+                } else {
+                    if (profile.getOrcidHistory() != null && profile.getOrcidHistory().isClaimed()) {
+                        claimedIds.add(emailOrOrcid);
+                    } else {
+                        notificationManager.sendApiRecordCreationEmail(emailOrOrcid, profile);
+                        successIds.add(emailOrOrcid);
+                    }
+                }
+            }
+        }
+        Map<String, List<String>> resendIdMap = new HashMap<String, List<String>>();
+        resendIdMap.put("notFoundList", notFoundIds);
+        resendIdMap.put("claimResendSuccessfulList", successIds);
+        resendIdMap.put("alreadyClaimedList", claimedIds);
+        return resendIdMap;
+    }
+
 }

@@ -8879,7 +8879,7 @@ orcidNgModule.controller('ResendClaimCtrl', ['$scope', function ($scope) {
 	
 	$scope.resendClaimEmails = function() {
 		$.ajax({
-            url: getBaseUri()+'/resend-claim.json',
+            url: getBaseUri()+'/admin-actions/resend-claim.json',
             type: 'POST',
             dataType: 'json',
             data: $scope.emailIds,
