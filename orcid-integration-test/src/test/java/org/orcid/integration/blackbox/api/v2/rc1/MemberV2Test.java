@@ -94,7 +94,8 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
         // we need to make sure the users activity visibility setting is public for this test
         WebDriver webDriver = new FirefoxDriver();
         changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        revokeApplicationsAccess();                       
+        revokeApplicationsAccess();
+        webDriver.quit();
     }
     
     @AfterClass
