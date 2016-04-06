@@ -103,7 +103,7 @@ public class AdminController extends BaseController {
 
     @Resource
     private AdminManager adminManager;
-    
+
     private static final String INP_STRING_SEPARATOR = " \n\r\t,";
     private static final String OUT_STRING_SEPARATOR = "		";
     private static final String OUT_NOT_AVAILABLE = "N/A";
@@ -178,7 +178,7 @@ public class AdminController extends BaseController {
      *            Orcid to deprecate
      * @param primaryOrcid
      *            Orcid to use as a primary account
-     * */
+     */
     @RequestMapping(value = { "/deprecate-profile/deprecate-profile.json" }, method = RequestMethod.GET)
     public @ResponseBody ProfileDeprecationRequest deprecateProfile(@RequestParam("deprecated") String deprecatedOrcid, @RequestParam("primary") String primaryOrcid) {
         ProfileDeprecationRequest result = new ProfileDeprecationRequest();
@@ -226,8 +226,8 @@ public class AdminController extends BaseController {
      *            The orcid string to check on database
      * @return a ProfileDetails object with the details of the profile or an
      *         error message.
-     * */
-    @RequestMapping(value = {"/deprecate-profile/check-orcid.json"}, method = RequestMethod.GET)
+     */
+    @RequestMapping(value = { "/deprecate-profile/check-orcid.json" }, method = RequestMethod.GET)
     public @ResponseBody ProfileDetails checkOrcidToDeprecate(@RequestParam("orcid") String orcid) {
         ProfileDetails profileDetails = new ProfileDetails();
         try {
@@ -311,82 +311,80 @@ public class AdminController extends BaseController {
         }
         return profileDetList;
     }
-    
+
     @RequestMapping(value = "/lookup-id-or-emails.json", method = RequestMethod.POST)
     public @ResponseBody String lookupIdOrEmails(@RequestBody String csvIdOrEmails) {
-    	List<String> idEmailList = new ArrayList<String>();
-    	StringBuilder builder = new StringBuilder();
-    	if (StringUtils.isNotBlank(csvIdOrEmails)) {
-	   		StringTokenizer tokenizer = new StringTokenizer(csvIdOrEmails, INP_STRING_SEPARATOR);
-	   		while (tokenizer.hasMoreTokens()) {
-	   			idEmailList.add(tokenizer.nextToken());
-	   		}
-    		
-    		for(String idEmail : idEmailList) {
-    			idEmail = idEmail.trim();
-    			boolean isOrcid = matchesOrcidPattern(idEmail);
-    			String orcid = idEmail;
-    			if (!isOrcid) {
-    				Map<String, String> email = findIdByEmailHelper(idEmail);
-    				orcid = email.get(idEmail);
-    	        }
-    			
-    			OrcidProfile profile = null;
-    			if(orcid != null) {
-    				profile = orcidProfileManager.retrieveOrcidProfile(orcid);
-    			}
-    			if(profile != null) {
-    				if(profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null 
-    						&& profile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
-    					builder.append(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
-    				} else {
-    					builder.append(OUT_NOT_AVAILABLE);
-    				}
-    				builder.append(OUT_STRING_SEPARATOR).append(orcid);
-    			} else {
-    				if(isOrcid) {
-    					builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
-    				} else {
-    					builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
-    				}
-    			}
-    			builder.append(OUT_NEW_LINE);
-    		}
-    	}
-    	
+        List<String> idEmailList = new ArrayList<String>();
+        StringBuilder builder = new StringBuilder();
+        if (StringUtils.isNotBlank(csvIdOrEmails)) {
+            StringTokenizer tokenizer = new StringTokenizer(csvIdOrEmails, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                idEmailList.add(tokenizer.nextToken());
+            }
+
+            for (String idEmail : idEmailList) {
+                idEmail = idEmail.trim();
+                boolean isOrcid = matchesOrcidPattern(idEmail);
+                String orcid = idEmail;
+                if (!isOrcid) {
+                    Map<String, String> email = findIdByEmailHelper(idEmail);
+                    orcid = email.get(idEmail);
+                }
+
+                OrcidProfile profile = null;
+                if (orcid != null) {
+                    profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                }
+                if (profile != null) {
+                    if (profile.getOrcidBio() != null && profile.getOrcidBio().getContactDetails() != null
+                            && profile.getOrcidBio().getContactDetails().retrievePrimaryEmail() != null) {
+                        builder.append(profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
+                    } else {
+                        builder.append(OUT_NOT_AVAILABLE);
+                    }
+                    builder.append(OUT_STRING_SEPARATOR).append(orcid);
+                } else {
+                    if (isOrcid) {
+                        builder.append(OUT_NOT_AVAILABLE).append(OUT_STRING_SEPARATOR).append(idEmail);
+                    } else {
+                        builder.append(idEmail).append(OUT_STRING_SEPARATOR).append(OUT_NOT_AVAILABLE);
+                    }
+                }
+                builder.append(OUT_NEW_LINE);
+            }
+        }
+
         return builder.toString();
     }
-    
+
     @RequestMapping(value = "/deactivate-profiles.json", method = RequestMethod.POST)
-    public @ResponseBody Map<String, Set<String>> deactivateOrcidAccount(
-                    @RequestBody String orcidIds) {
-            Set<String> deactivatedIds = new HashSet<String>();
-            Set<String> successIds = new HashSet<String>();
-            Set<String> notFoundIds = new HashSet<String>();
-            if (StringUtils.isNotBlank(orcidIds)) {
-                StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
-                while (tokenizer.hasMoreTokens()) {
-                    String orcid = tokenizer.nextToken();
-                    OrcidProfile profile = orcidProfileManager
-                            .retrieveOrcidProfile(orcid);
-                    if (profile == null) {
-                            notFoundIds.add(orcid);
+    public @ResponseBody Map<String, Set<String>> deactivateOrcidAccount(@RequestBody String orcidIds) {
+        Set<String> deactivatedIds = new HashSet<String>();
+        Set<String> successIds = new HashSet<String>();
+        Set<String> notFoundIds = new HashSet<String>();
+        if (StringUtils.isNotBlank(orcidIds)) {
+            StringTokenizer tokenizer = new StringTokenizer(orcidIds, INP_STRING_SEPARATOR);
+            while (tokenizer.hasMoreTokens()) {
+                String orcid = tokenizer.nextToken();
+                OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid);
+                if (profile == null) {
+                    notFoundIds.add(orcid);
+                } else {
+                    if (profile.isDeactivated()) {
+                        deactivatedIds.add(orcid);
                     } else {
-                            if (profile.isDeactivated()) {
-                                deactivatedIds.add(orcid);
-                            } else {
-                                orcidProfileManager.deactivateOrcidProfile(profile);
-                                successIds.add(orcid);
-                            }
+                        orcidProfileManager.deactivateOrcidProfile(profile);
+                        successIds.add(orcid);
                     }
                 }
             }
-            
-            Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
-            resendIdMap.put("notFoundList", notFoundIds);
-            resendIdMap.put("deactivateSuccessfulList", successIds);
-            resendIdMap.put("alreadyDeactivatedList", deactivatedIds);
-            return resendIdMap;
+        }
+
+        Map<String, Set<String>> resendIdMap = new HashMap<String, Set<String>>();
+        resendIdMap.put("notFoundList", notFoundIds);
+        resendIdMap.put("deactivateSuccessfulList", successIds);
+        resendIdMap.put("alreadyDeactivatedList", deactivatedIds);
+        return resendIdMap;
     }
 
     public Map<String, String> findIdByEmailHelper(String csvEmails) {
@@ -397,7 +395,7 @@ public class AdminController extends BaseController {
 
     /**
      * Generate random string
-     * */
+     */
     @RequestMapping(value = "/generate-random-string.json", method = RequestMethod.GET)
     public @ResponseBody String generateRandomString() {
         return RandomStringUtils.random(RANDOM_STRING_LENGTH, OrcidPasswordConstants.getEntirePasswordCharsRange());
@@ -405,7 +403,7 @@ public class AdminController extends BaseController {
 
     /**
      * Reset password
-     * */
+     */
     @RequestMapping(value = "/reset-password.json", method = RequestMethod.POST)
     public @ResponseBody String resetPassword(HttpServletRequest request, @RequestBody AdminChangePassword form) {
         String orcidOrEmail = form.getOrcidOrEmail();
@@ -446,7 +444,7 @@ public class AdminController extends BaseController {
 
     /**
      * Remove security question
-     * */
+     */
     @RequestMapping(value = "/remove-security-question.json", method = RequestMethod.POST)
     public @ResponseBody String removeSecurityQuestion(HttpServletRequest request, @RequestBody String orcidOrEmail) {
         if (StringUtils.isNotBlank(orcidOrEmail))
@@ -479,7 +477,7 @@ public class AdminController extends BaseController {
 
     /**
      * Admin switch user
-     * */
+     */
     @RequestMapping(value = "/admin-switch-user", method = RequestMethod.GET)
     public @ResponseBody Map<String, String> adminSwitchUser(@ModelAttribute("orcidOrEmail") String orcidOrEmail, RedirectAttributes redirectAttributes) {
         if (StringUtils.isNotBlank(orcidOrEmail))
@@ -515,7 +513,7 @@ public class AdminController extends BaseController {
 
     /**
      * Admin verify email
-     * */
+     */
     @RequestMapping(value = "/admin-verify-email.json", method = RequestMethod.POST)
     public @ResponseBody String adminVerifyEmail(@RequestBody String email) {
         String result = getMessage("admin.verify_email.success", email);
@@ -531,7 +529,7 @@ public class AdminController extends BaseController {
 
     /**
      * Admin starts delegation process
-     * */
+     */
     @RequestMapping(value = "/admin-delegates", method = RequestMethod.POST)
     public @ResponseBody AdminDelegatesRequest startDelegationProcess(@RequestBody AdminDelegatesRequest request) {
         // Clear errors
@@ -575,7 +573,7 @@ public class AdminController extends BaseController {
 
     /**
      * Admin starts delegation process
-     * */
+     */
     @RequestMapping(value = "/admin-delegates/check-claimed-status.json", method = RequestMethod.GET)
     public @ResponseBody boolean checkClaimedStatus(@RequestParam("orcidOrEmail") String orcidOrEmail) {
         boolean isOrcid = matchesOrcidPattern(orcidOrEmail);
@@ -607,7 +605,7 @@ public class AdminController extends BaseController {
      *            orcid or email of the account we want to lock
      * @return a ProfileDetails object containing either an error message or the
      *         info of the account we want to lock
-     * */
+     */
     @RequestMapping(value = "/check-account-to-lock.json", method = RequestMethod.POST)
     public @ResponseBody ProfileDetails checkAccountToLock(@RequestBody String orcidOrEmail) {
         String orcid = getOrcidFromParam(orcidOrEmail);
@@ -628,7 +626,7 @@ public class AdminController extends BaseController {
      *            orcid or email of the account we want to unlock
      * @return a ProfileDetails object containing either an error message or the
      *         info of the account we want to unlock
-     * */
+     */
     @RequestMapping(value = "/check-account-to-unlock.json", method = RequestMethod.POST)
     public @ResponseBody ProfileDetails checkAccountToUnlock(@RequestBody String orcidOrEmail) {
         String orcid = getOrcidFromParam(orcidOrEmail);
@@ -660,53 +658,50 @@ public class AdminController extends BaseController {
 
         return orcid;
     }
-    
+
     /**
      * @param flag
-     *            1 : lock
-     *            2 : unlock
-     *            3 : review
-     *            4 : unreview
-     * */
-    private ProfileDetails generateProfileDetails(String orcid, int flag) {        
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);        
-        if(flag == 1) {
-            if(profile.isLocked()) {
+     *            1 : lock 2 : unlock 3 : review 4 : unreview
+     */
+    private ProfileDetails generateProfileDetails(String orcid, int flag) {
+        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(orcid, LoadOptions.BIO_ONLY);
+        if (flag == 1) {
+            if (profile.isLocked()) {
                 ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.lock_profile.error.already_locked", orcid));
                 return result;
-            } else if(profile.isReviewed()) {
-            	ProfileDetails result = new ProfileDetails();
+            } else if (profile.isReviewed()) {
+                ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.lock_reviewed_profile.error", orcid));
                 return result;
             }
-        } else if(flag == 2) {
-            if(!profile.isLocked()) {
+        } else if (flag == 2) {
+            if (!profile.isLocked()) {
                 ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.unlock_profile.error.non_locked", orcid));
                 return result;
             }
-        }else if(flag == 3) {
-            if(profile.isReviewed()) {
+        } else if (flag == 3) {
+            if (profile.isReviewed()) {
                 ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.review_profile.error.already_reviewed", orcid));
                 return result;
             }
-        } else if(flag == 4) {
-            if(!profile.isReviewed()) {
+        } else if (flag == 4) {
+            if (!profile.isReviewed()) {
                 ProfileDetails result = new ProfileDetails();
                 result.setErrors(new ArrayList<String>());
                 result.getErrors().add(getMessage("admin.unreview_profile.error.non_reviewed", orcid));
                 return result;
             }
         }
-        
-        ProfileDetails  profileDetails = new ProfileDetails();
-        
+
+        ProfileDetails profileDetails = new ProfileDetails();
+
         profileDetails.setOrcid(orcid);
         if (profile != null && profile.getOrcidBio().getPersonalDetails() != null) {
             boolean hasName = false;
@@ -730,8 +725,8 @@ public class AdminController extends BaseController {
                     break;
                 }
             }
-        }        
-        
+        }
+
         return profileDetails;
     }
 
@@ -741,7 +736,7 @@ public class AdminController extends BaseController {
      * @param orcid
      *            The orcid of the account we want to lock
      * @return true if the account was locked, false otherwise
-     * */
+     */
     @RequestMapping(value = "/lock-account.json", method = RequestMethod.POST)
     public @ResponseBody String lockAccount(@RequestBody String orcid) {
         if (profileEntityManager.lockProfile(orcid)) {
@@ -756,7 +751,7 @@ public class AdminController extends BaseController {
      * @param orcid
      *            The orcid of the account we want to unlock
      * @return true if the account was unlocked, false otherwise
-     * */
+     */
     @RequestMapping(value = "/unlock-account.json", method = RequestMethod.POST)
     public @ResponseBody String unlockAccount(@RequestBody String orcid) {
         if (profileEntityManager.unlockProfile(orcid)) {
@@ -764,7 +759,7 @@ public class AdminController extends BaseController {
         }
         return getMessage("admin.unlock_profile.error.couldnt_unlock_account", orcid);
     }
-    
+
     @RequestMapping(value = "/unreview-account.json", method = RequestMethod.POST)
     public @ResponseBody String unreviewAccount(@RequestBody String orcid) {
         if (profileEntityManager.unreviewProfile(orcid)) {
@@ -772,16 +767,16 @@ public class AdminController extends BaseController {
         }
         return getMessage("admin.unreview_profile.error.couldnt_unreview_account", orcid);
     }
-	
-	@RequestMapping(value = "/review-account.json", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/review-account.json", method = RequestMethod.POST)
     public @ResponseBody String reviewAccount(@RequestBody String orcid) {
         if (profileEntityManager.reviewProfile(orcid)) {
             return getMessage("admin.review_profile.success", orcid);
         }
         return getMessage("admin.review_profile.error.couldnt_review_account", orcid);
     }
-	
-	@RequestMapping(value = "/check-account-to-review.json", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/check-account-to-review.json", method = RequestMethod.POST)
     public @ResponseBody ProfileDetails checkAccountToReview(@RequestBody String orcidOrEmail) {
         String orcid = getOrcidFromParam(orcidOrEmail);
 
@@ -793,8 +788,8 @@ public class AdminController extends BaseController {
         }
         return generateProfileDetails(orcid, 3);
     }
-	
-	@RequestMapping(value = "/check-account-to-unreview.json", method = RequestMethod.POST)
+
+    @RequestMapping(value = "/check-account-to-unreview.json", method = RequestMethod.POST)
     public @ResponseBody ProfileDetails checkAccountToUnreview(@RequestBody String orcidOrEmail) {
         String orcid = getOrcidFromParam(orcidOrEmail);
 
