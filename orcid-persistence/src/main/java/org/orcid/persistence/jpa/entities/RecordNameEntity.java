@@ -112,7 +112,7 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
     /**
      * @return the profile
      */
-    @OneToOne
+    @OneToOne 
     @JoinColumn(name = "orcid")
     public ProfileEntity getProfile() {
         return profile;

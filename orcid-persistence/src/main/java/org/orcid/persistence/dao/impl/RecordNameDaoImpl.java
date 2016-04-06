@@ -18,7 +18,7 @@ package org.orcid.persistence.dao.impl;
 
 import javax.persistence.Query;
 
-
+import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +49,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         query.setParameter("creditName", recordName.getCreditName());
         query.setParameter("givenNames", recordName.getGivenNames());
         query.setParameter("familyName", recordName.getFamilyName());
-        query.setParameter("visibility", recordName.getVisibility());
+        query.setParameter("visibility", StringUtils.upperCase(recordName.getVisibility().value()));
         query.setParameter("orcid", recordName.getProfile().getId());
         return query.executeUpdate() > 0;
     }

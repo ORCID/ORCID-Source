@@ -53,8 +53,8 @@ public class RecordNameDaoTest extends DBUnitTest {
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", 
-                "/data/SecurityQuestionEntityData.xml", "/data/RecordNameEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SourceClientDetailsEntityData.xml", 
+                "/data/SecurityQuestionEntityData.xml"));
     }
     
     @Test
