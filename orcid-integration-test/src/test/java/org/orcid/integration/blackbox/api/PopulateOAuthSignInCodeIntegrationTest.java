@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -176,6 +177,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form family and given names
         String url = authorizeScreen + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
+        JavascriptExecutor je = (JavascriptExecutor)webDriver;
         
         By element = By.xpath("//input[@name='familyNames']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));        
@@ -193,16 +195,21 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form with family name
         url = authorizeScreen + "&family_names=test_family_names";
         webDriver.get(url);
-        element = By.xpath("//input[@name='familyNames']");
+        element = By.xpath("//input[@ng-model='registrationForm.familyNames.value']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                        
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("test_family_names"));
+        WebElement we = webDriver.findElement(element);
+        // angular doesn't always populate the element value attribute on init. Instead we check to make sure the model is populated
+        assertEquals("test_family_names",(String)je.executeScript("return angular.element(arguments[0]).scope().registrationForm.familyNames.value", we).toString());
 
         // test populating form with given name
-        url = authorizeScreen + "&given_names=test_given_names";
+        url = authorizeScreen + "&given_names=testGivenNames";
         webDriver.get(url);
-        element = By.xpath("//input[@name='givenNames']");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                                
-        assertTrue(webDriver.findElement(element).getAttribute("value").equals("test_given_names"));
-    }
+        element = By.xpath("//input[@ng-model='registrationForm.givenNames.value']");
+        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));
+        we = webDriver.findElement(element);
+        // angular doesn't always populate the element value attribute on init. Instead we check to make sure the model is populated
+        assertEquals("testGivenNames",(String)je.executeScript("return angular.element(arguments[0]).scope().registrationForm.givenNames.value", we).toString());
+   }
 
 }
