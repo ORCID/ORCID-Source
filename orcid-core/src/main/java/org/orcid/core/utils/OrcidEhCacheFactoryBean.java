@@ -90,6 +90,38 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     public void setTimeToIdleSeconds(int timeToIdleSeconds) {
         this.timeToIdleSeconds = timeToIdleSeconds;
     }
+    
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(String strategy) {
+        this.strategy = strategy;
+    }
+
+    public int getMaxElementsOnDisk() {
+        return maxElementsOnDisk;
+    }
+
+    public void setMaxElementsOnDisk(int maxElementsOnDisk) {
+        this.maxElementsOnDisk = maxElementsOnDisk;
+    }
+    
+    public boolean isCopyOnRead() {
+        return copyOnRead;
+    }
+
+    public void setCopyOnRead(boolean copyOnRead) {
+        this.copyOnRead = copyOnRead;
+    }
+
+    public boolean isCopyOnWrite() {
+        return copyOnWrite;
+    }
+
+    public void setCopyOnWrite(boolean copyOnWrite) {
+        this.copyOnWrite = copyOnWrite;
+    }
 
     @Override
     public Ehcache getObject() {
@@ -128,22 +160,6 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         config.setCopyOnWrite(this.copyOnWrite);
         config.persistence(new PersistenceConfiguration().strategy(this.strategy));
         return config;
-    }
-
-    public String getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(String strategy) {
-        this.strategy = strategy;
-    }
-
-    public int getMaxElementsOnDisk() {
-        return maxElementsOnDisk;
-    }
-
-    public void setMaxElementsOnDisk(int maxElementsOnDisk) {
-        this.maxElementsOnDisk = maxElementsOnDisk;
     }
 
 }

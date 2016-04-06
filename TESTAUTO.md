@@ -10,7 +10,7 @@ The new style tests are different from the old style integration tests because t
 
 ###Prerequisites
 1. Complete the ORCID [Development Environment Setup](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
-2. Install [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/) 
+2. Install [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
 3. Verify Firefox installation and locate installation directory
 
         find / -name firefox 2>/dev/null
@@ -44,13 +44,17 @@ The default test data is in the following config files:
 
 ####Command Line
 
-1. Switch to the orcid-integration-test directory
+1. Goto project directory
 
-        cd ~/git/ORCID-Source/orcid-integration-test
+        cd ~/git/ORCID-Source
 
-2. Run the test with the VM arguments listed above
+2. Run the test with the following arguments
 
-        mvn test -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers -Dorg.orcid.config.file=classpath:staging-persistence.properties 
+        export MAVEN_OPTS="-Xmx2g";
+        mvn test \
+        -Dtest=org.orcid.integration.whitebox.SetUpClientsAndUsers \
+        -DfailIfNoTests=false \
+        -Dorg.orcid.config.file='classpath:staging-persistence.properties';
 
 This should setup the test data and then run a test that verifies the data persisted in the database. If this process succeeds, run the blackbox test as follows.
 
@@ -92,13 +96,20 @@ This should setup the test data and then run a test that verifies the data persi
 
 ####Command Line
 
-1. Switch to the orcid-integration-test directory
+1. Goto project directory
 
-        cd ~/git/ORCID-Source/orcid-integration-test
+        cd ~/git/ORCID-Source
 
-2. Run the test with the VM arguments listed above
+2. Run the test with the following arguments (note your `Dwebdriver.firefox.bin` path will be different
 
-        mvn test -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid -Dorg.orcid.config.file=classpath:test-web.properties,classpath:test-client.properties -Dorg.orcid.persistence.db.dataSource=simpleDataSource  -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource -Dwebdriver.firefox.bin=[path to Firefox executable]
+        export MAVEN_OPTS="-Xmx2g";
+        mvn test -DfailIfNoTests=false \
+        -Dtest=org.orcid.integration.blackbox.BlackBoxTestSuite \
+        -Dorg.orcid.config.file='classpath:test-web.properties,classpath:test-client.properties' \
+        -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid \
+        -Dorg.orcid.persistence.db.dataSource=simpleDataSource \
+        -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource \
+        -Dwebdriver.firefox.bin=/Users/rcpeters/bin/firefox_38_7_1esr/Firefox.app/Contents/MacOS/firefox-bin
 
 VM Argument notes:
 
