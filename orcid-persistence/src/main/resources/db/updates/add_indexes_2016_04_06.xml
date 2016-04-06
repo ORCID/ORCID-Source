@@ -20,12 +20,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
 	            
-	<changeSet id="group_id_lowercase_unique_idx" author="Angel Montenegro">
+	<changeSet id="group_id_lowercase_unique_idx" author="Angel Montenegro" dbms="postgresql">
 		<preConditions onFail="MARK_RAN">
 			<not>
 				<indexExists indexName="group_id_lowercase_unique_idx" tableName="group_id_record" />
 			</not>
 		</preConditions>
 		<sql>CREATE UNIQUE INDEX group_id_lowercase_unique_idx on group_id_record (LOWER(group_id));</sql>
-	</changeSet>	
+	</changeSet>
 </databaseChangeLog>
