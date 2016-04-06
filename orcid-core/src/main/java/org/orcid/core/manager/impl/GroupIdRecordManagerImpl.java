@@ -79,8 +79,8 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateCreateGroupRecord(groupIdRecord, sourceEntity);
-        
+    	ActivityValidator.validateGroupIdRecord(groupIdRecord, true, sourceEntity);
+    	validateDuplicate(groupIdRecord);    	
         if (sourceEntity != null) {
             Source source = new Source();
             if (sourceEntity.getSourceClient() != null) {
@@ -90,8 +90,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
             }
             groupIdRecord.setSource(source);
         }
-        validateDuplicate(groupIdRecord);
-
+        
         GroupIdRecordEntity entity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
         groupIdRecordDao.persist(entity);
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
@@ -99,20 +98,19 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Override
     public GroupIdRecord updateGroupIdRecord(Long putCode, GroupIdRecord groupIdRecord) {
-        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);
-        GroupIdRecordEntity updatedEntity = null;
-        validateDuplicate(groupIdRecord);
-        if (existingEntity != null) {
-            SourceEntity existingSource = existingEntity.getSource();
-            orcidSecurityManager.checkSource(existingSource);
-            updatedEntity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
-            updatedEntity.setDateCreated(existingEntity.getDateCreated());
-            updatedEntity.setSource(existingSource);
-            updatedEntity = groupIdRecordDao.merge(updatedEntity);
-        } else {
+        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);                
+        if(existingEntity == null) {
             throw new GroupIdRecordNotFoundException();
-        }
-
+        }        
+        SourceEntity existingSource = existingEntity.getSource();
+        ActivityValidator.validateGroupIdRecord(groupIdRecord, false, existingSource);        
+        validateDuplicate(groupIdRecord);
+        
+        orcidSecurityManager.checkSource(existingSource);
+        GroupIdRecordEntity updatedEntity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
+        updatedEntity.setDateCreated(existingEntity.getDateCreated());
+        updatedEntity.setSource(existingSource);
+        updatedEntity = groupIdRecordDao.merge(updatedEntity);
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(updatedEntity);
     }
 
@@ -161,14 +159,16 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
         return returnVal;
     }
 
-    private void validateDuplicate(GroupIdRecord groupIdRecord) {
-        List<GroupIdRecordEntity> groupIdRecords = groupIdRecordDao.getAll();
-        if (groupIdRecords != null) {
-            for (GroupIdRecordEntity entity : groupIdRecords) {
-                GroupIdRecord existing = jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(entity);
-                if (existing.isDuplicated(groupIdRecord) && !existing.getPutCode().equals(groupIdRecord.getPutCode())) {
-                    throw new DuplicatedGroupIdRecordException();
-                }
+    private void validateDuplicate(GroupIdRecord newGroupIdRecord) {
+        List<GroupIdRecordEntity> existingGroupIdRecords = groupIdRecordDao.getAll();
+        if (existingGroupIdRecords != null && !existingGroupIdRecords.isEmpty()) {
+            for (GroupIdRecordEntity existing : existingGroupIdRecords) {
+                //Compare if it is a new element or if the element to compare dont have the same put code than me
+                if(newGroupIdRecord.getPutCode() == null || !newGroupIdRecord.getPutCode().equals(existing.getId())){
+                    if(newGroupIdRecord.getGroupId().equalsIgnoreCase(existing.getGroupId())) {
+                        throw new DuplicatedGroupIdRecordException();
+                    }
+                }                                              
             }
         }
     }

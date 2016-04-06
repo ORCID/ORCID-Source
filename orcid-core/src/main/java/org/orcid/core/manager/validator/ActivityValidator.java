@@ -18,6 +18,8 @@ package org.orcid.core.manager.validator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
@@ -25,6 +27,7 @@ import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -161,14 +164,22 @@ public class ActivityValidator {
         }
     }
 
-    public static void validateCreateGroupRecord(GroupIdRecord groupIdRecord, SourceEntity sourceEntity) {
-        if (groupIdRecord.getPutCode() != null) {
-            Map<String, String> params = new HashMap<String, String>();
-            if (sourceEntity != null) {
-                params.put("clientName", sourceEntity.getSourceName());
+    public static void validateGroupIdRecord(GroupIdRecord groupIdRecord, boolean createFlag, SourceEntity sourceEntity) {
+        if(createFlag) {
+            if (groupIdRecord.getPutCode() != null) {
+                Map<String, String> params = new HashMap<String, String>();
+                if (sourceEntity != null) {
+                    params.put("clientName", sourceEntity.getSourceName());
+                }
+                throw new InvalidPutCodeException(params);
             }
-            throw new InvalidPutCodeException(params);
         }
+        
+        Pattern validGroupIdRegexPattern = Pattern.compile("(ringgold:|issn:|orcid-generated:|fundref:|publons:)([0-9a-zA-Z\\^._~:/?#\\[\\]@!$&amp;'()*+,;=-]){2,}");
+        Matcher matcher = validGroupIdRegexPattern.matcher(groupIdRecord.getGroupId());
+        if(!matcher.matches()) {
+            throw new OrcidValidationException("Invalid group-id: '" + groupIdRecord.getGroupId() + "'");
+        }        
     }
 
     public static void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
