@@ -63,7 +63,7 @@
                         				<span class="glyphicons expand"></span>
                         				show details
                         			</a> 
-                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value]" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
                         				<span class="glyphicons collapse_top"></span>
                         				hide details
                         			</a> | 
