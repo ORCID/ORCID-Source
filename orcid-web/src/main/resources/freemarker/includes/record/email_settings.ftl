@@ -151,11 +151,11 @@
 				<div class="control-group">
     				<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
         			<form class="form-inline">
-        				<div class="form-group">
+        				<div class="form-group">							
             				<div class="input-group">
                 				<select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.clearMessage()">
          							<#list sendEmailFrequencies?keys as key>
-    									<option value="${key}" ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+    									<option value="${key}">${sendEmailFrequencies[key]}</option>
 									</#list>
                     			</select>
                 			</div>
