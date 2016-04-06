@@ -39,6 +39,8 @@ undetected into the code during the previous development period. Release candida
 - [work-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/work-2.0_rc2.xsd)
 **not stable**, developement ongoing
 
+##Changes:
+Addition of person sections: address, email, external-identifiers, keywords, name, other-names, person, personal-details, and researcher-urls.
 
 ## Sample XML files:
 
@@ -171,8 +173,7 @@ The swagger interfaces to the API available at:
 | Researcher URL  |/person/update|  /orcid-bio/update |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/researcher-urls/[PUT-CODE]'```|
 | Work  |/activities/update|  /orcid-works/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work-updated.xml' -X PUT 'https://api.sandbox.orcid.org/v2.0_rc2/0000-0002-1306-4180/work/[PUT-CODE]'```|
 
-When updating a record item, include the put code as an attribute in the root element, ex:
-<education:education put-code="14775" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc2.xsd ">
+When updating a record item, include the put code as an attribute in the root element, ex: ```<education:education put-code="14775" xmlns:common="http://www.orcid.org/ns/common" xmlns:education="http://www.orcid.org/ns/education" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/education ../education-2.0_rc2.xsd ">```
 
 ### Delete Record Items
 |Item  |v2.0 Scope      |v1.2 Scope (deprecated)| Example cURL Statement  |
