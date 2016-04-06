@@ -10708,7 +10708,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 	$scope.openEditModal = function(){
 	    var HTML = '<div class="lightbox-container"><div class="edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
 	    $('#edit-emails').html() +
-	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">Cancel</a></div></div></div></div>';  
+	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a></div></div></div></div>';  
 	    
 	    $scope.emailSrvc.popUp = true;
 	    
