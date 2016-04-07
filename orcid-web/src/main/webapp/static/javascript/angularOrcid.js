@@ -4426,9 +4426,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     $scope.showAddModal = function(){
         var numOfResults = 25;
         $.colorbox({
-            html: $compile($('#add-affiliation-modal').html())($scope),
-            // start the colorbox off with the correct width
-            width: formColorBoxResize(),
+            html: $compile($('#add-affiliation-modal').html())($scope),            
             onComplete: function() {
                 //resize to insure content fits
                 formColorBoxResize();
