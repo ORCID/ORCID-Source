@@ -992,7 +992,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
     }
 
-    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER)    
+    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})    
     public RecordNameEntity getRecordNameEntity() {
         return recordNameEntity;
     }

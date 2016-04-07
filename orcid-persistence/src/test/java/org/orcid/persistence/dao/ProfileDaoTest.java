@@ -80,12 +80,12 @@ public class ProfileDaoTest extends DBUnitTest {
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -97,16 +97,18 @@ public class ProfileDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindById() {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
         assertNotNull(profile);
-        assertEquals("4444-4444-4444-4441", profile.getId());
+        assertEquals("4444-4444-4444-4442", profile.getId());
         assertEquals("API", profile.getCreationMethod());
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
         assertTrue(profile.getClaimed());
-        assertEquals("One", profile.getRecordNameEntity().getGivenNames());
-        assertEquals("User", profile.getRecordNameEntity().getFamilyName());
-        assertEquals("Spike Milligan", profile.getVocativeName());
+        assertNotNull(profile.getRecordNameEntity());
+        assertEquals("Given Names", profile.getRecordNameEntity().getGivenNames());
+        assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
+        assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
+        assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
     }
     
     @Test

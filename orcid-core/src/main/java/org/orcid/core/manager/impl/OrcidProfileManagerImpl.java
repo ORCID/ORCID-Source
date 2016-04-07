@@ -284,7 +284,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         setDefaultVisibility(profileEntity, createdByMember, defaultVisibility);
 
         profileDao.persist(profileEntity);
-        recordNameDao.persist(profileEntity.getRecordNameEntity());
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
         return updatedTranslatedOrcid;
