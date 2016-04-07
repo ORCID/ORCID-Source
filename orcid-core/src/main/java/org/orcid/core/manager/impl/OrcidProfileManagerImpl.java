@@ -123,6 +123,7 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -214,6 +215,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     
     @Resource
     private UserConnectionDao userConnectionDao;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
 
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
@@ -280,6 +284,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         setDefaultVisibility(profileEntity, createdByMember, defaultVisibility);
 
         profileDao.persist(profileEntity);
+        recordNameDao.persist(profileEntity.getRecordNameEntity());
         profileDao.flush();
         OrcidProfile updatedTranslatedOrcid = adapter.toOrcidProfile(profileEntity);
         return updatedTranslatedOrcid;
