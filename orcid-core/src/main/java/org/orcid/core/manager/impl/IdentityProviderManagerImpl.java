@@ -16,7 +16,10 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -66,7 +69,14 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         if (idp == null) {
             return null;
         }
-        return idp.getSupportEmail();
+        String supportEmail = idp.getSupportEmail();
+        if (supportEmail != null) {
+            return supportEmail;
+        }
+        List<String> otherEmails = new ArrayList<>(2);
+        otherEmails.add(idp.getAdminEmail());
+        otherEmails.add(idp.getTechEmail());
+        return String.join(";", otherEmails.stream().filter(e -> e != null).collect(Collectors.toList()));
     }
 
     @Override
