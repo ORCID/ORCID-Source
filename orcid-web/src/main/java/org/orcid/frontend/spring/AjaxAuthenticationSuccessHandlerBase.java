@@ -117,6 +117,8 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
         		url = url.replaceFirst(contextPath.replace("/", "\\/"), "");
             if (url.contains("/signin/auth"))
                 url = null;
+            else if(url.contains("/signout"))
+                url = null;
             else if (url.contains(".json"))
                 url = null;
         }
