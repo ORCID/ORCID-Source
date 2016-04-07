@@ -2056,9 +2056,10 @@ orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'e
     $scope.emailSrvc = emailSrvc;
 }]);
 
-orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc', function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', function ($scope, $compile, emailSrvc, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
+    
 }]);
 
 orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
@@ -5289,7 +5290,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.workspaceSrvc  = workspaceSrvc;
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
-	 $scope.showPeerReviewDetails = {};
+	 $scope.showPeerReviewDetails = new Array();
 	 $scope.sortHideOption = true;
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
@@ -5312,11 +5313,13 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
     };
     
     
-    $scope.showMoreDetails = function(putCode){    	
+    $scope.showMoreDetails = function(putCode){  
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = false;
     };
     
@@ -6271,7 +6274,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
 	$scope.showDetails = {};
-	$scope.showPeerReviewDetails = {};
+	$scope.showPeerReviewDetails = new Array();
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
 	$scope.sortHideOption = true;
@@ -6484,11 +6487,13 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
     };
     
-    $scope.showMoreDetails = function(putCode){    	
+    $scope.showMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = false;
     };
     
@@ -8938,7 +8943,7 @@ orcidNgModule.controller('ResendClaimCtrl', ['$scope', function ($scope) {
 	
 	$scope.resendClaimEmails = function() {
 		$.ajax({
-            url: getBaseUri()+'/resend-claim.json',
+            url: getBaseUri()+'/admin-actions/resend-claim.json',
             type: 'POST',
             dataType: 'json',
             data: $scope.emailIds,
@@ -10748,7 +10753,7 @@ orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', functio
 }]);
 
 
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',function ($scope, emailSrvc, $compile){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -10759,9 +10764,9 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 		$scope.showEdit = true;
 	}
 	
-	$scope.close = function(){
-	    console.log('Close');
+	$scope.close = function(){	    
 		$scope.showEdit = false;
+		prefsSrvc.saved = false;
 	    $.colorbox.close();
 	}
 	    
@@ -10776,7 +10781,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 	$scope.openEditModal = function(){
 	    var HTML = '<div class="lightbox-container"><div class="edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
 	    $('#edit-emails').html() +
-	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">Cancel</a></div></div></div></div>';  
+	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a></div></div></div></div>';  
 	    
 	    $scope.emailSrvc.popUp = true;
 	    
