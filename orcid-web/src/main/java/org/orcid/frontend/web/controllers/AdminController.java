@@ -199,17 +199,27 @@ public class AdminController extends BaseController {
                     ProfileDetails deprecatedDetails = new ProfileDetails();
                     deprecatedDetails.setOrcid(deprecatedOrcid);
 
-                    deprecatedDetails.setFamilyName(deprecated.getRecordNameEntity().getFamilyName());
-                    deprecatedDetails.setGivenNames(deprecated.getRecordNameEntity().getGivenNames());
+                    if(deprecated.getRecordNameEntity() != null) {
+                        deprecatedDetails.setFamilyName(deprecated.getRecordNameEntity().getFamilyName());
+                        deprecatedDetails.setGivenNames(deprecated.getRecordNameEntity().getGivenNames());
+                    } else {
+                        deprecatedDetails.setFamilyName(deprecated.getFamilyName());
+                        deprecatedDetails.setGivenNames(deprecated.getGivenNames());
+                    }
 
                     ProfileDetails primaryDetails = new ProfileDetails();
                     primaryDetails.setOrcid(primaryOrcid);
-                    primaryDetails.setFamilyName(primary.getRecordNameEntity().getFamilyName());
-                    primaryDetails.setGivenNames(primary.getRecordNameEntity().getGivenNames());
+                    if(primary.getRecordNameEntity() != null) {
+                        primaryDetails.setFamilyName(primary.getRecordNameEntity().getFamilyName());
+                        primaryDetails.setGivenNames(primary.getRecordNameEntity().getGivenNames());
+                    } else {
+                        primaryDetails.setFamilyName(primary.getFamilyName());
+                        primaryDetails.setGivenNames(primary.getGivenNames());
+                    }
 
                     result.setDeprecatedAccount(deprecatedDetails);
                     result.setPrimaryAccount(primaryDetails);
-                    result.setDeprecatedDate(new Date());
+                    result.setDeprecatedDate(new Date());                                        
                 }
             } catch (Exception e) {
                 result.getErrors().add(getMessage("admin.profile_deprecation.errors.internal_error", deprecatedOrcid));

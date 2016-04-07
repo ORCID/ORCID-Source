@@ -214,8 +214,13 @@ public class AdminControllerTest extends BaseControllerTest {
                 
         ProfileEntity deprecated = adminController.getProfileEntityManager().findByOrcid("4444-4444-4444-4441");
                 
-        assertEquals("Given Names Deactivated", deprecated.getRecordNameEntity().getGivenNames());
-        assertEquals("Family Name Deactivated", deprecated.getRecordNameEntity().getFamilyName());                            
+        if(deprecated.getRecordNameEntity() != null) {
+            assertEquals("Given Names Deactivated", deprecated.getRecordNameEntity().getGivenNames());
+            assertEquals("Family Name Deactivated", deprecated.getRecordNameEntity().getFamilyName());
+        } else {
+            assertEquals("Given Names Deactivated", deprecated.getGivenNames());
+            assertEquals("Family Name Deactivated", deprecated.getFamilyName());
+        }
     }
 
     @Test         
