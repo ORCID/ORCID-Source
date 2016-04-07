@@ -1316,9 +1316,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 if (contributor.getContributorOrcid() != null) {
                     ProfileEntity profile = profileDao.find(contributor.getContributorOrcid().getPath());
                     if (profile != null) {
-                        if (Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
-                            contributor.setCreditName(new CreditName(profile.getRecordNameEntity().getCreditName()));
+                        if(profile.getRecordNameEntity() != null) {
+                            if (org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {
+                                contributor.setCreditName(new CreditName(profile.getRecordNameEntity().getCreditName()));
+                            }
+                        } else {
+                            if(Visibility.PUBLIC.equals(profile.getNamesVisibility())) {
+                                contributor.setCreditName(new CreditName(profile.getCreditName()));
+                            }
                         }
+                        
                     }
                 } else if (contributor.getContributorEmail() != null) {
                     // Else, if email is available, get the profile
@@ -1329,8 +1336,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     if (emailEntity != null) {
                         ProfileEntity profileEntity = emailEntity.getProfile();
                         contributor.setContributorOrcid(new ContributorOrcid(profileEntity.getId()));
-                        if (Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
+                        if(profileEntity.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(profileEntity.getRecordNameEntity().getVisibility())) {
                             contributor.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
+                        } else if(Visibility.PUBLIC.equals(profileEntity.getNamesVisibility())) {
+                            contributor.setCreditName(new CreditName(profileEntity.getCreditName()));
                         } else {
                             contributor.setCreditName(null);
                         }

@@ -194,7 +194,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
-        group.setGroupName(profileEntity.getRecordNameEntity().getCreditName());
+        if(profileEntity.getRecordNameEntity() != null) {
+            group.setGroupName(profileEntity.getRecordNameEntity().getCreditName());
+        } else {
+            group.setGroupName(profileEntity.getCreditName());
+        }
+        
         group.setType(profileEntity.getGroupType());
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {

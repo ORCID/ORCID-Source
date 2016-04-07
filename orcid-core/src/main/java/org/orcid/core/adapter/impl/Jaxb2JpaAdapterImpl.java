@@ -540,7 +540,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (creditName != null) {
             RecordNameEntity recordName = profileEntity.getRecordNameEntity();
             //Save the record name entity
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(creditName.getVisibility().value()));
+            if(creditName.getVisibility() != null) {
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(creditName.getVisibility().value()));
+            } else {
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+            }
+            
             recordName.setCreditName(creditName.getContent());
             
             //TODO: remove when the names migration is done
