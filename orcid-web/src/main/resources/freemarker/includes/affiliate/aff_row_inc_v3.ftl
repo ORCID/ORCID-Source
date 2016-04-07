@@ -21,26 +21,26 @@
 	<div class="col-md-10 col-sm-10 col-xs-8 bottomBuffer">
 	    <h3 class="workspace-title">	    	
         	<span ng-bind-html="group.getActive().affiliationName.value"></span>:
-        	<span ng-bind="group.getActive().city.value"></span><span ng-show="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
+        	<span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
         </h3>
         <div class="info-detail">
         	<div class="info-date">        	        	
-	        	<span class="affiliation-date" ng-show="group.getActive().startDate">
-	        	    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
+	        	<span class="affiliation-date" ng-if="group.getActive().startDate">
+	        	    <span ng-if="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-if="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
 	        	    <span><@orcid.msg 'workspace_affiliations.dateSeparator'/></span>
 	        	    <span ng-hide="group.getActive().endDate.year"><@orcid.msg 'workspace_affiliations.present'/></span>
-	        		<span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+	        		<span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	            </span>
-	            <span class="affiliation-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
-	        	     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-show="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
+	            <span class="affiliation-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
+	        	     <span ng-if="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-if="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span><span ng-if="group.getActive().endDate.day">-{{group.getActive().endDate.day}}</span>
 	        	</span>
         	</div>
-        	<span class="divisor" ng-show="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
-        	<div class="role" ng-show="group.getActive().roleTitle.value">
+        	<span class="divisor" ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
+        	<div class="role" ng-if="group.getActive().roleTitle.value">
 	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
         	</div>
-			<span ng-show="group.getActive().departmentName.value">
-				<span ng-show="group.getActive().roleTitle.value">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
+			<span ng-if="group.getActive().departmentName.value">
+				<span ng-if="group.getActive().roleTitle.value">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)
 			</span>
         </div>
        </div>
@@ -73,11 +73,11 @@
 				<div class="col-md-2 col-sm-2 col-xs-2">
 					<ul class="sources-options">
 						<#if !(isPublicProfile??)>
-							<li ng-show="group.getActive().source == '${effectiveUserOrcid}'">
+							<li ng-if="group.getActive().source == '${effectiveUserOrcid}'">
 								<a ng-click="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
 								    <span class="glyphicon glyphicon-pencil"></span>
 								</a>
-								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-edit'] == true"> 
+								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-if="showElement[group.getActive().putCode.value+'-edit']"> 
 								    <div class="arrow"></div>
 								    <div class="popover-content">
 								        <span ><@orcid.msg 'groups.common.edit_my'/></span>
@@ -86,7 +86,7 @@
 							</li>   
 					        <li>
 					            <a id="delete-affiliation_{{group.getActive().putCode.value}}" href ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
-					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-show="showElement[group.getActive().putCode.value+'-delete'] == true"> 
+					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-if="showElement[group.getActive().putCode.value+'-delete']"> 
 								 	<div class="arrow"></div>
 								    <div class="popover-content">
 								    	 <@orcid.msg 'groups.common.delete_this_source' />

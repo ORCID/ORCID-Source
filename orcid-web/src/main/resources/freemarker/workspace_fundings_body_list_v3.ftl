@@ -25,7 +25,7 @@
     <div id="workspace-fundings" class="workspace-accordion-item workspace-accordion-active" >
         <#include "includes/funding/funding_section_header_inc_v3.ftl" />
         
-        <div ng-show="fundingImportWizard == true" class="funding-import-wizard" ng-cloak>
+        <div ng-if="fundingImportWizard" class="funding-import-wizard" ng-cloak>
         	<#if ((fundingImportWizards)??)>
 				<div class="ie7fix-inner">
 					<div class="row">	
@@ -46,9 +46,9 @@
 		                 		<div class="justify">
 									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null}">
 										${(thirdPartyDetails.shortDescription)!}
-									<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+									<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-if="wizardDescExpanded[${thirdPartyDetails.clientId}] == true"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 												</p>												
-												<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-show="wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+												<a ng-click="toggleWizardDesc(${thirdPartyDetails.clientId})" ng-if="wizardDescExpanded[${thirdPartyDetails.clientId}] == false || wizardDescExpanded[${thirdPartyDetails.clientId}] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 								</div>
 		                   		<#if (thirdPartyDetails_has_next)>
 			                      	<hr/>
@@ -59,7 +59,7 @@
 				</div>
 			</#if>
         </div>
-        <div ng-show="workspaceSrvc.displayFunding" class="workspace-accordion-content">
+        <div ng-if="workspaceSrvc.displayFunding" class="workspace-accordion-content">
             <#include "includes/funding/body_funding_inc_v3.ftl" />
         </div>
     </div>

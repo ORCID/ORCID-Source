@@ -49,7 +49,7 @@
 				                                         </li>
 									            	</#if>
 			                                    	<!-- Search & Link -->
-			                                        <li ng-show="noLinkFlag" ng-cloak>
+			                                        <li ng-if="noLinkFlag" ng-cloak>
 			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
 			                                                <span class="glyphicon glyphicon-cloud-upload"></span> <@orcid.msg 'workspace_peer_review_body_list.searchAndLink'/> 
 														</a>
@@ -70,7 +70,7 @@
 				</div>			
 			</div>
 			<!--  Import Wizard -->
-			<div ng-show="peerReviewImportWizard == true" class="funding-import-wizard" ng-cloak>
+			<div ng-if="peerReviewImportWizard == true" class="funding-import-wizard" ng-cloak>
 				<div class="ie7fix-inner">
 					<div class="row">	
 						<div class="col-md-12 col-sm-12 col-xs-12">
@@ -92,9 +92,9 @@
 		                 		<div class="justify">												
 									<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null}">
 										{{peerReview.shortDescription}}													
-										<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == true" ng-cloak><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+										<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-if="wizardDescExpanded[peerReview.clientId]" ng-cloak><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 									</p>												
-									<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-show="wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null" class="toggle-wizard-desc" ng-cloak><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+									<a ng-click="toggleWizardDesc(peerReview.clientId)" ng-if="wizardDescExpanded[peerReview.clientId] == false || wizardDescExpanded[peerReview.clientId] == null" class="toggle-wizard-desc" ng-cloak><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 								</div>
 			                    <hr/>
 		                	</div>
@@ -102,7 +102,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="workspace-accordion-content" ng-show="workspaceSrvc.displayPeerReview == true" >
+			<div class="workspace-accordion-content" ng-if="workspaceSrvc.displayPeerReview" >
 				<#include "includes/peer_review/peer_review_body_inc.ftl" />
 			</div>
 		</div>
