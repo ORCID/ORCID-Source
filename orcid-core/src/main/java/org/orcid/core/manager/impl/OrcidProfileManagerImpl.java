@@ -56,6 +56,7 @@ import org.orcid.core.manager.OrcidJaxbCopyManager;
 import org.orcid.core.manager.OrcidProfileCleaner;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
@@ -123,7 +124,6 @@ import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -218,7 +218,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private UserConnectionDao userConnectionDao;
     
     @Resource
-    private RecordNameDao recordNameDao;
+    private RecordNameManager recordNameManager;
 
     @Value("${org.orcid.core.works.compare.useScopusWay:false}")
     private boolean compareWorksUsingScopusWay;
@@ -909,12 +909,25 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
         String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
         String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
-        Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : null;
+        Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
         
-        RecordNameEntity recordName = recordNameDao.getRecordName(orcid);
-        RecordNameEntity recordName = new RecordNameEntity();
-        recordNameDao.updateRecordName(recordName);
-        
+        RecordNameEntity recordName = recordNameManager.getRecordName(orcid);
+        if(recordName != null) {
+            recordName.setCreditName(creditName);
+            recordName.setFamilyName(familyName);
+            recordName.setGivenNames(givenNames);
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(namesVisibility.value()));
+            recordNameManager.updateRecordName(recordName);
+        } else {
+            recordName = new RecordNameEntity();
+            recordName.setCreditName(creditName);
+            recordName.setFamilyName(familyName);
+            recordName.setGivenNames(givenNames);
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(namesVisibility.value()));
+            recordName.setProfile(new ProfileEntity(orcid));
+            recordNameManager.createRecordName(recordName);
+        }
+                
         //TODO: remove when the names are fully migrated
         profileDao.updateNames(orcid, givenNames, familyName, creditName, namesVisibility);
     }            

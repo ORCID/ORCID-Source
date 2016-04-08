@@ -42,6 +42,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -81,7 +82,6 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
@@ -168,7 +168,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private OtherNameManager otherNamesManager;
     
     @Resource
-    private RecordNameDao recordNameDao;
+    private RecordNameManager recordNameManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -291,7 +291,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 recordName.setFamilyName("Family Name Deactivated");
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
                 recordName.setProfile(new ProfileEntity(deprecatedOrcid));
-                recordNameDao.updateRecordName(recordName);                
+                recordNameManager.updateRecordName(recordName);                
             }
                                                         
             // Move all emails to the primary email

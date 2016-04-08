@@ -52,8 +52,11 @@ public class RecordNameManagerImpl implements RecordNameManager {
 
     @Override
     public void createRecordName(RecordNameEntity recordName) {
-        // TODO Auto-generated method stub
-
+        if(recordName == null || recordName.getProfile() == null) {
+            return;
+        }
+        
+        recordNameDao.createRecordName(recordName);
     }
 
 }

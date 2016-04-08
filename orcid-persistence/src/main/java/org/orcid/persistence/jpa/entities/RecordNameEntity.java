@@ -51,8 +51,8 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
      */
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "name_seq")
-    @SequenceGenerator(name = "name_seq", sequenceName = "name_seq")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "record_name_seq")
+    @SequenceGenerator(name = "record_name_seq", sequenceName = "record_name_seq")
     public Long getId() {
         return id;
     }

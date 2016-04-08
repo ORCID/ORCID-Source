@@ -58,6 +58,5 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     @Transactional
     public void createRecordName(RecordNameEntity recordName) {
         entityManager.persist(recordName);
-    }
-    
+    }    
 }
