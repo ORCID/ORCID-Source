@@ -53,4 +53,11 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         query.setParameter("orcid", recordName.getProfile().getId());
         return query.executeUpdate() > 0;
     }
+    
+    @Override
+    @Transactional
+    public void createRecordName(RecordNameEntity recordName) {
+        entityManager.persist(recordName);
+    }
+    
 }

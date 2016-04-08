@@ -136,6 +136,7 @@ import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -909,6 +910,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
         String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
         Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : null;
+        
+        RecordNameEntity recordName = recordNameDao.getRecordName(orcid);
+        RecordNameEntity recordName = new RecordNameEntity();
+        recordNameDao.updateRecordName(recordName);
+        
+        //TODO: remove when the names are fully migrated
         profileDao.updateNames(orcid, givenNames, familyName, creditName, namesVisibility);
     }            
 

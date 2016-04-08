@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
 
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
@@ -23,8 +23,10 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
  * @author Angel Montenegro
  * 
  */
-public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
+public interface RecordNameManager {
     RecordNameEntity getRecordName(String orcid);
+
     boolean updateRecordName(RecordNameEntity recordName);
+
     void createRecordName(RecordNameEntity recordName);
 }
