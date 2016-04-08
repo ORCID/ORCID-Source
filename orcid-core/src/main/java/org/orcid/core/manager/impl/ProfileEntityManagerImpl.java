@@ -79,14 +79,26 @@ import org.orcid.jaxb.model.record_rc2.GroupAble;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.RecordNameDao;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +108,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("profileEntityManager")
 public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -147,6 +161,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private JpaJaxbGivenPermissionByAdapter jpaJaxbGivenPermissionByAdapter;
     
+    @Resource
+    private OrgAffiliationRelationDao orgRelationAffiliationDao;    
+    
+    @Resource
+    private OtherNameManager otherNamesManager;
+    
+    @Resource
+    private RecordNameDao recordNameDao;
+    
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
      * use the cache profileEntityCacheManager whenever is possible
@@ -181,18 +204,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     /**
-     * Updates a profile entity object on database.
-     * 
-     * @param profile
-     *            The profile object to update
-     * @return true if the profile was successfully updated.
-     */
-    @Override
-    public boolean updateProfileBiography(ProfileEntity profile) {
-        return profileDao.updateProfileBiography(profile);
-    }    
-
-    /**
      * Deprecates a profile
      * 
      * @param deprecatedProfile
@@ -203,7 +214,97 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      */
     @Override
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
+        //Remove the biography
+        deprecatedProfile.setBiographyVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        deprecatedProfile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE); 
+        deprecatedProfile.setBiography(new String());
+        deprecatedProfile.setGivenNames("Given Names Deactivated");
+        deprecatedProfile.setFamilyName("Family Name Deactivated");
+        deprecatedProfile.setCreditName(null);
+        
+        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedProfile, primaryProfile.getId());        
+        // If it was successfully deprecated
+        if (wasDeprecated) {
+            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedProfile.getId(), primaryProfile.getId());
+            ProfileEntity deprecated = profileDao.find(deprecatedProfile.getId());
+            
+            String deprecatedOrcid = deprecatedProfile.getId();
+            String primaryOrcid = primaryProfile.getId();
+            
+            // Remove works
+            if (deprecated.getWorks() != null) {
+                for (WorkEntity work : deprecated.getWorks()) {
+                    List<Long> works = new ArrayList<Long>();
+                    works.add(work.getId());
+                    workManager.removeWorks(deprecated.getId(), works);
+                }
+            }
+            
+            // Remove funding
+            if (deprecated.getProfileFunding() != null) {
+                for(ProfileFundingEntity funding : deprecated.getProfileFunding()) {
+                    fundingManager.removeProfileFunding(funding.getProfile().getId(), funding.getId());
+                }
+            }
+            
+            // Remove affiliations
+            if (deprecated.getOrgAffiliationRelations() != null) {
+                for(OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {                    
+                    orgRelationAffiliationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
+                }
+            }
+            
+            // Remove external identifiers
+            if (deprecated.getExternalIdentifiers() != null) {
+                for (ExternalIdentifierEntity externalIdentifier : deprecated.getExternalIdentifiers()) {
+                    externalIdentifierManager.deleteExternalIdentifier(deprecated.getId(), externalIdentifier.getId(), false);
+                }
+            }
+
+            // Remove researcher urls
+            if(deprecated.getResearcherUrls() != null) {
+                for(ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
+                    researcherUrlManager.deleteResearcherUrl(deprecatedOrcid, rUrl.getId(), false);
+                }
+            }
+            
+            // Remove other names
+            if(deprecated.getOtherNames() != null) {
+                for(OtherNameEntity otherName : deprecated.getOtherNames()) {
+                    otherNamesManager.deleteOtherName(deprecatedOrcid, otherName.getId(), false);
+                }                            
+            }
+            
+            // Remove keywords
+            if(deprecated.getKeywords() != null) {
+                for(ProfileKeywordEntity keyword : deprecated.getKeywords()) {
+                    profileKeywordManager.deleteKeyword(deprecatedOrcid, keyword.getId(), false);
+                }                                                        
+            }
+            
+            //Set the deactivated names
+            RecordNameEntity recordName = new RecordNameEntity();
+            recordName.setCreditName(null);
+            recordName.setGivenNames("Given Names Deactivated");
+            recordName.setFamilyName("Family Name Deactivated");
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+            recordName.setProfile(new ProfileEntity(deprecatedOrcid));
+            recordNameDao.updateRecordName(recordName);
+                                                        
+            // Move all emails to the primary email
+            Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
+            if (deprecatedAccountEmails != null) {
+                // For each email in the deprecated profile                            
+                for (EmailEntity email : deprecatedAccountEmails) {
+                    // Delete each email from the deprecated
+                    // profile
+                    LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] {email.getId(), deprecatedOrcid, primaryOrcid });
+                    emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
+                }
+            }
+        }
+        
+        return false; 
     }
 
     /**
@@ -489,7 +590,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             for (GroupAble groupKey : groupKeys) {
                 PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
                 ExternalID id = new ExternalID();
-                id.setType(key.KEY_NAME);//TODO: this is not nice
+                id.setType(PeerReviewGroupKey.KEY_NAME);//TODO: this is not nice
                 id.setValue(key.getGroupId());
                 peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
             }
@@ -527,15 +628,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean unreviewProfile(String orcid) {
         return profileDao.unreviewProfile(orcid);
     }
-
-    /*@Override
-    public Visibility getResearcherUrlDefaultVisibility(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value())
-                : Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
-        return result;
-    }*/
-
+   
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
         return jpa2JaxbAdapter.getApplications(tokenDetails);

@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -75,8 +74,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     public void updateBiography(String orcid, String biography, Visibility visibility);
 
-    boolean updateProfileBiography(ProfileEntity profile);
-
     Date retrieveLastModifiedDate(String orcid);
 
     Date updateLastModifiedDate(String orcid);
@@ -97,7 +94,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLocale(String orcid, Locale locale);
 
-    boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid);
+    boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid);
 
     String retrievePrimaryAccountOrcid(String deprecatedOrcid);
 

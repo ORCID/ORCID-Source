@@ -227,7 +227,7 @@ public class AdminControllerTest extends BaseControllerTest {
     public void tryToDeprecateDeprecatedProfile() throws Exception {
         ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4444", "4444-4444-4444-4445");
         assertEquals(0, result.getErrors().size());        
-                
+        
         // Test deprecating a deprecated account
         result = adminController.deprecateProfile("4444-4444-4444-4444", "4444-4444-4444-4443");
         assertEquals(1, result.getErrors().size());

@@ -230,6 +230,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             }
             if(groupProfileEntity.getRecordNameEntity() == null) {
                 groupProfileEntity.setRecordNameEntity(new RecordNameEntity());
+                groupProfileEntity.getRecordNameEntity().setProfile(new ProfileEntity(groupOrcid));
             }
             //Set the record name entity table
             groupProfileEntity.getRecordNameEntity().setCreditName(orcidClientGroup.getGroupName());

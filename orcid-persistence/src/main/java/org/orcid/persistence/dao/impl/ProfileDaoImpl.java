@@ -382,20 +382,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getSingleResult();
     }
 
-    @Override
-    @Transactional
-    public boolean updateProfileBiography(ProfileEntity profile) {
-        Query query = entityManager
-        .createNativeQuery("update profile set last_modified=now(), biography=:biography, biography_visibility=:biography_visibility, indexing_status='PENDING' where orcid=:orcid");
-        query.setParameter("biography", profile.getBiography());
-        query.setParameter("biography_visibility", StringUtils.upperCase(profile.getBiographyVisibility().value()));
-        query.setParameter("orcid", profile.getId());
-
-        boolean result = query.executeUpdate() > 0 ? true : false;
-
-        return result;
-    }
-
     @SuppressWarnings("unchecked")
     public Date retrieveLastModifiedDate(String orcid) {
         Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
@@ -484,11 +470,17 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
-        Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now(), profile_deactivation_date=now() where orcid=:orcid");
-        query.setParameter("orcid", deprecatedOrcid);
+    public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
+        Query query = entityManager.createNativeQuery(
+                "update profile set last_modified = now(), deprecated_date = now(), profile_deactivation_date = now(), indexing_status = 'PENDING', primary_record = :primary_record, given_names = :givenNames, family_name = :familyName, credit_name = :creditName, biography = :bio, biography_visibility = :bioVisibility, activities_visibility_default = :defaultVisibility where orcid = :orcid");
+        query.setParameter("orcid", toDeprecate.getId());
         query.setParameter("primary_record", primaryOrcid);
+        query.setParameter("givenNames", toDeprecate.getGivenNames());
+        query.setParameter("familyName", toDeprecate.getFamilyName());
+        query.setParameter("creditName", toDeprecate.getCreditName());
+        query.setParameter("bio", toDeprecate.getBiography());
+        query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : StringUtils.upperCase(toDeprecate.getBiographyVisibility().value()));
+        query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : StringUtils.upperCase(toDeprecate.getActivitiesVisibilityDefault().value()));
 
         boolean result = query.executeUpdate() > 0 ? true : false;
 
