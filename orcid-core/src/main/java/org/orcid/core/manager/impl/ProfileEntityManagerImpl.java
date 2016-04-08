@@ -284,13 +284,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             }
             
             //Set the deactivated names
-            RecordNameEntity recordName = new RecordNameEntity();
-            recordName.setCreditName(null);
-            recordName.setGivenNames("Given Names Deactivated");
-            recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
-            recordName.setProfile(new ProfileEntity(deprecatedOrcid));
-            recordNameDao.updateRecordName(recordName);
+            RecordNameEntity recordName = deprecated.getRecordNameEntity();
+            if(recordName != null) {
+                recordName.setCreditName(null);
+                recordName.setGivenNames("Given Names Deactivated");
+                recordName.setFamilyName("Family Name Deactivated");
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                recordName.setProfile(new ProfileEntity(deprecatedOrcid));
+                recordNameDao.updateRecordName(recordName);                
+            }
                                                         
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
@@ -303,6 +305,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                     emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
                 }
             }
+            
+            return true;
         }
         
         return false; 
