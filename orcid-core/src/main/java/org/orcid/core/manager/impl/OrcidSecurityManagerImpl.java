@@ -77,7 +77,7 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
  * @author Will Simpson
  *
  */
-public class OrcidSecurityManagerImpl implements OrcidSecurityManager { 
+public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private SourceManager sourceManager;
@@ -196,6 +196,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public boolean isAdmin() {
+        if (SecurityContextHolder.getContext() == null || SecurityContextHolder.getContext().getAuthentication() == null) {
+            return false;
+        }
         Authentication authentication = getOAuth2Authentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
@@ -256,14 +259,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 || filterable instanceof Biography) {
             updateScopes.add(ScopePathType.PERSON_UPDATE.value());
             updateScopes.add(ScopePathType.ORCID_BIO_UPDATE.value());
-            if(filterable instanceof PersonExternalIdentifier) {
+            if (filterable instanceof PersonExternalIdentifier) {
                 updateScopes.add(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value());
             }
         }
         updateScopes.retainAll(requestedScopes);
         return updateScopes;
     }
-    
+
     private void checkIsCorrectUser(String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         if (oAuth2Authentication != null) {
