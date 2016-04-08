@@ -362,7 +362,12 @@ public class BlackBoxBase {
         (new WebDriverWait(webDriver, 20, 100))
         .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
     }
-    
+
+    public void noCboxOverlay(WebDriver webDriver) {
+        (new WebDriverWait(webDriver, 20, 100))
+        .until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@id='cboxOverlay']")));
+    }
+
     public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
         /*
          * Getting complex.

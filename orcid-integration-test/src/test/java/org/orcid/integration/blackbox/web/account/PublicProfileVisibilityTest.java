@@ -456,7 +456,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
-
+        noSpinners(webDriver);
+        noCboxOverlay(webDriver);
 
         // Set Private Visibility
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
@@ -464,7 +465,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         WebElement educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")));
-        ngAwareClick(educationElement.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
+        ngAwareClick(webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
 
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
@@ -534,10 +535,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set Private Visibility
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
-        WebElement educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")));
-        ngAwareClick(educationElement.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
+        ngAwareClick(webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
 
@@ -557,7 +557,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         noSpinners(webDriver);
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
-        educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
+        WebElement educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         ngAwareClick(educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
 
         
@@ -613,6 +613,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         selectBox.selectByVisibleText("United States");
         angularHasFinishedProcessing();
         ngAwareClick(webDriver.findElement(By.id("save-funding")), webDriver);
+        noSpinners(webDriver);
+        
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
 
@@ -681,7 +683,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         angularHasFinishedProcessing();
 
         ngAwareClick(webDriver.findElement(By.id("save-new-work")), webDriver);
-        angularHasFinishedProcessing();
+        noSpinners(webDriver);
         
         // Set private
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
