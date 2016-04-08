@@ -213,6 +213,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @return true if the account was successfully deprecated, false otherwise
      */
     @Override
+    @Transactional 
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
         //Remove the biography
         deprecatedProfile.setBiographyVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
