@@ -25,7 +25,7 @@
                 <@orcid.msg 'org.orcid.jaxb.model.message.AffiliationType.education'/> (<span ng-bind="affiliationsSrvc.educations.length"></span>)
             </a>
         </div>
-        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayEducation">
+        <div class="col-md-9 col-sm-9 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayEducation">
             <#include "../workspace/workspace_act_sort_menu.ftl"/>                    
             <#if !(isPublicProfile??)>
                 <ul class="workspace-bar-menu">                         

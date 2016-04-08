@@ -16,8 +16,8 @@
     =============================================================================
 
 -->
-<div class="more-info" ng-show="moreInfo[group.groupId] && group.activePutCode == work.putCode.value">
-	<div id="ajax-loader" ng-show="worksSrvc.details[work.putCode.value] == undefined">
+<div class="more-info" ng-if="moreInfo[group.groupId] && group.activePutCode == work.putCode.value">
+	<div id="ajax-loader" ng-if="worksSrvc.details[work.putCode.value] == undefined">
 		<span id="ajax-loader"><i id="ajax-loader" class="glyphicon glyphicon-refresh spin x4 green"></i></span>
 	</div>
 	
@@ -25,7 +25,7 @@
 		
 		<span class="dotted-bar"></span>
 		<div class="row">		
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].translatedTitle.content" ng-cloak>
+			<div class="col-md-6" ng-if="worksSrvc.details[work.putCode.value].translatedTitle.content" ng-cloak>
 				<!-- Translated title -->
 				<div class="bottomBuffer">
 					<strong><@orcid.msg
@@ -33,7 +33,7 @@
 					<div>{{worksSrvc.details[work.putCode.value].translatedTitle.content}}</div>				
 				</div>
 			</div>
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].languageCode.value" ng-cloak>
+			<div class="col-md-6" ng-if="worksSrvc.details[work.putCode.value].languageCode.value" ng-cloak>
 				<!-- Language -->
 				<div class="bottomBuffer">					
 					<strong><@orcid.msg
@@ -41,14 +41,14 @@
 					<div ng-bind="worksSrvc.details[work.putCode.value].languageName.value"></div>					
 				</div>
 			</div>
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].subtitle.value" ng-cloak>
+			<div class="col-md-6" ng-if="worksSrvc.details[work.putCode.value].subtitle.value" ng-cloak>
 				<div class="bottomBuffer">
 					<strong> <@orcid.msg 'manual_work_form_contents.labelsubtitle'/> </strong>
 					<div ng-bind="worksSrvc.details[work.putCode.value].subtitle.value"></div>
 				</div>
 			</div>
 			
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].url.value" ng-cloak>
+			<div class="col-md-6" ng-if="worksSrvc.details[work.putCode.value].url.value" ng-cloak>
 				<!-- URL -->				
 				<div class="bottomBuffer">
 					<strong>
@@ -62,16 +62,16 @@
 			</div>			
 		</div>
 		<!-- Citation -->                  
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].citation.citation.value" ng-cloak>
+		<div class="row bottomBuffer" ng-if="worksSrvc.details[work.putCode.value].citation.citation.value" ng-cloak>
 			<div class="col-md-12">				
-				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong> <span> (<span ng-show="worksSrvc.details[work.putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[work.putCode.value].citation.citationType.value}}</i></span>) 
+				<strong><@orcid.msg 'manual_work_form_contents.labelcitation'/></strong> <span> (<span ng-if="worksSrvc.details[work.putCode.value].citation.citationType.value" ng-cloak><i>{{worksSrvc.details[work.putCode.value].citation.citationType.value}}</i></span>) 
 				</span>
-				<span ng-show="showBibtex[work.putCode.value] && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'">
+				<span ng-if="showBibtex[work.putCode.value] && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'">
 					<a class="toggle-tag-option" ng-click="bibtexShowToggle(work.putCode.value)">
 						[<@orcid.msg 'work.switch_view'/>]
 					</a>
 				</span>
-				<span ng-show="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'">
+				<span ng-if="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'">
 					<a class="toggle-tag-option" ng-click="bibtexShowToggle(work.putCode.value)">
 						[<@orcid.msg 'work.switch_view'/>]
 					</a>
@@ -80,23 +80,23 @@
 			</div>
 			<div class="col-md-12">
 			
-				<div ng-show="worksSrvc.details[work.putCode.value].citation.citationType.value != 'bibtex'">
+				<div ng-if="worksSrvc.details[work.putCode.value].citation.citationType.value != 'bibtex'">
 					<span>
 						{{worksSrvc.details[work.putCode.value].citation.citation.value}}
 					</span>
 				</div>
 				
-				<div ng-show="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'" 
+				<div ng-if="(showBibtex[work.putCode.value] == null || showBibtex[work.putCode.value] == false) && worksSrvc.details[work.putCode.value].citation.citationType.value == 'bibtex'" 
 					 ng-bind="worksSrvc.details[work.putCode.value].citation.citation.value"
 					 class="col-md-offset-1 col-md-11 col-sm-offset-1 col-sm-11 col-xs-12 citation-raw">
 				</div>
 									
-				<div class="row" ng-show="showBibtex[work.putCode.value] && (worksSrvc.bibtexJson[work.putCode.value]==null || worksSrvc.bibtexJson[work.putCode.value].length==0)">
+				<div class="row" ng-if="showBibtex[work.putCode.value] && (worksSrvc.bibtexJson[work.putCode.value]==null || worksSrvc.bibtexJson[work.putCode.value].length==0)">
 					<div class="col-md-offset-1 col-md-6"><@orcid.msg 'work.unavailable_in_html'/></div>
 				</div>
 				
 				
-				<div class="row" ng-show="showBibtex[work.putCode.value]" ng-repeat='bibJSON in worksSrvc.bibtexJson[work.putCode.value]'>						
+				<div class="row" ng-if="showBibtex[work.putCode.value]" ng-repeat='bibJSON in worksSrvc.bibtexJson[work.putCode.value]'>						
 					<div class="col-md-offset-1 col-md-2 col-sm-offset-1 col-sm-1 col-xs-offset-1 col-xs-11">{{bibJSON.entryType}}</div>
 					<div class="col-md-8 col-sm-9 col-xs-offset-1 col-xs-11">{{bibJSON.citationKey}}</div>								
 					<div ng-repeat="(entKey,entVal) in bibJSON.entryTags">
@@ -107,7 +107,7 @@
 			</div>
 		</div>
 		<!-- Description -->
-		<div class="row bottomBuffer" ng-show="worksSrvc.details[work.putCode.value].shortDescription.value"
+		<div class="row bottomBuffer" ng-if="worksSrvc.details[work.putCode.value].shortDescription.value"
 			ng-cloak>
 			<div class="col-md-12">
 				<strong> <@orcid.msg
@@ -118,7 +118,7 @@
 		</div>
 		
 		<div class="row bottomBuffer">
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].countryCode.value" ng-cloak>
+			<div class="col-md-6" ng-if="worksSrvc.details[work.putCode.value].countryCode.value" ng-cloak>
 				<!-- Country -->				
 				<div class="bottomBuffer">
 					<strong><@orcid.msg
@@ -126,7 +126,7 @@
 					<div ng-bind="worksSrvc.details[work.putCode.value].countryName.value"></div>
 				</div>
 			</div>			
-			<div class="col-md-6" ng-show="worksSrvc.details[work.putCode.value].contributors.length > 0" ng-cloak>
+			<div class="col-md-6" ng-if="worksSrvc.details[work.putCode.value].contributors.length > 0" ng-cloak>
 				<!-- Contributors -->
 				<div class="bottomBuffer">			
 					<strong> Contributor </strong>
