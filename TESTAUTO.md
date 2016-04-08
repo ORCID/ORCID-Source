@@ -10,7 +10,7 @@ The new style tests are different from the old style integration tests because t
 
 ###Prerequisites
 1. Complete the ORCID [Development Environment Setup](https://github.com/ORCID/ORCID-Source/blob/master/DEVSETUP.md)
-2. Install [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
+2. Install [Firefox 45 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/), we suggest putting this into your `~/bin` as to not overwrite the default firefox. 
 3. Verify Firefox installation and locate installation directory
 
         find / -name firefox 2>/dev/null
@@ -109,11 +109,11 @@ This should setup the test data and then run a test that verifies the data persi
         -Dorg.orcid.persistence.db.url=jdbc:postgresql://localhost:5432/orcid \
         -Dorg.orcid.persistence.db.dataSource=simpleDataSource \
         -Dorg.orcid.persistence.statistics.db.dataSource=statisticsSimpleDataSource \
-        -Dwebdriver.firefox.bin=/Users/rcpeters/bin/firefox_38_7_1esr/Firefox.app/Contents/MacOS/firefox-bin
+        -Dwebdriver.firefox.bin=/Users/rcpeters/bin/firefox_45_0_1_esr/Firefox.app/Contents/MacOS/firefox-bin
 
 VM Argument notes:
 
-* For best results, use [Firefox 38 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/)
+* For best results, use [Firefox 45 ESR](https://www.mozilla.org/en-US/firefox/organizations/all/)
 * Common Firefox paths:
 Win: ```C:\Program Files (x86)\Mozilla Firefox\firefox.exe```
 Mac: ```/Applications/Firefox.app/Contents/MacOS/firefox-bin```
