@@ -44,12 +44,12 @@
 	                        	${springMacroRequestContext.getMessage("manage.email.primary_email")}
 	                        </span>
 	                    </td>
-	                    <td>
-	                        <select ng-change="emailSrvc.saveEmail()" ng-model="email.current">
-	                            <option value="true" ng-selected="email.current == true"><@orcid.msg 'manage.email.current.true' /></option>
-	                            <option value="false" ng-selected="email.current == false"><@orcid.msg 'manage.email.current.false' /></option>
-	                        </select>
-	                    </td>
+						<td ng-init="emailStatusOptions = [{label:'<@orcid.msg "manage.email.current.true" />',val:true},{label:'<@orcid.msg "manage.email.current.false" />',val:false}];">							
+    						<select ng-model="email.current" 
+								ng-options ="emailStatusOption.val as emailStatusOption.label for emailStatusOption in emailStatusOptions"
+								ng-change="emailSrvc.saveEmail()">						
+  							</select>
+						</td>
 	                    <td class="email-verified">
 	                        <span ng-hide="email.verified" class="left">
 								<a ng-click="verifyEmail(email, emailSrvc.popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
@@ -151,11 +151,11 @@
 				<div class="control-group">
     				<p>${springMacroRequestContext.getMessage("manage.send_email_to_primary_1")} <a href="${baseUri}/inbox" target="_blank">${springMacroRequestContext.getMessage("manage.send_email_to_primary_2")}</a>${springMacroRequestContext.getMessage("manage.send_email_to_primary_3")}</p>
         			<form class="form-inline">
-        				<div class="form-group">
+        				<div class="form-group">							
             				<div class="input-group">
                 				<select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays" class="input-xlarge" ng-model="prefsSrvc.prefs.sendEmailFrequencyDays" ng-change="prefsSrvc.clearMessage()">
          							<#list sendEmailFrequencies?keys as key>
-    									<option value="${key}" ng-selected="prefsSrvc.prefs.sendEmailFrequencyDays === ${key}">${sendEmailFrequencies[key]}</option>
+    									<option value="${key}">${sendEmailFrequencies[key]}</option>
 									</#list>
                     			</select>
                 			</div>

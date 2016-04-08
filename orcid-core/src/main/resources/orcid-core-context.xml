@@ -380,6 +380,8 @@
 	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl" />
 
 	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl" />
+	
+	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">

@@ -1900,6 +1900,11 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     margin: 10px 0 0 0;
 }
 
+#edit-affiliation{
+	max-width: 800px;
+	height: 435px;
+}
+
 #edit-affiliation input{
 	margin-bottom: 0;
 }
@@ -7704,6 +7709,10 @@ a:hover .mozilla-badge{
 		margin-left: -15px;
 	}
 	
+	#edit-affiliation{
+		height: auto;
+	}
+	
 
 }
 
@@ -7918,6 +7927,10 @@ a:hover .mozilla-badge{
 	
 	#old-login #login-error-mess{
 		padding-left: 170px;
+	}
+	
+	#edit-affiliation{
+		width: 100%;
 	}
 	
 }

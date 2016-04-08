@@ -27,7 +27,7 @@
         </div>
         
         
-        <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" ng-show="workspaceSrvc.displayFunding">
+        <div class="col-md-8 col-sm-8 col-xs-12 action-button-bar" ng-if="workspaceSrvc.displayFunding">
         		<!-- Sort -->
             	<#include "../workspace/workspace_act_sort_menu.ftl"/>
                 <#if !(isPublicProfile??)>

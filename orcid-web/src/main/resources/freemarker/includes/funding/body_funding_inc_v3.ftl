@@ -21,7 +21,7 @@
         <div class="work-list-container">
             <ul class="sources-edit-list">
                 <!-- Header -->
-                <li ng-show="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
+                <li ng-if="editSources[group.groupId] == true" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         <div class="row">
                             <div class="col-md-7 col-sm-7 col-xs-7">
@@ -34,16 +34,16 @@
                                 <#if !(isPublicProfile??)>
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
-                                             <li class="works-details" ng-show="editSources[group.groupId] == true">                                        
+                                             <li class="works-details" ng-if="editSources[group.groupId]">                                        
                                                 <a ng-click="showDetailsMouseClick(group.groupId,$event);" ng-mouseenter="showTooltip(group.groupId+'-showHideDetails')" ng-mouseleave="hideTooltip(group.groupId+'-showHideDetails')">
                                                     <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                                     </span>
                                                 </a>                                        
-                                                <div class="popover popover-tooltip top show-hide-details-popover ng-hide" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
+                                                <div class="popover popover-tooltip top show-hide-details-popover ng-hide" ng-if="showElement[group.groupId+'-showHideDetails']">
                                                      <div class="arrow"></div>
                                                     <div class="popover-content">
-                                                        <span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null" class=""><@orcid.msg 'common.details.show_details'/></span>                                    
-                                                        <span ng-show="moreInfo[group.groupId] == true" class="ng-hide">Hide Details</span>
+                                                        <span ng-if="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null" class=""><@orcid.msg 'common.details.show_details'/></span>                                    
+                                                        <span ng-if="moreInfo[group.groupId] == true" class="ng-hide">Hide Details</span>
                                                     </div>
                                                 </div>                                        
                                             </li>
@@ -66,34 +66,34 @@
                 </li><!--  End of header -->
 
 
-                <li ng-repeat="funding in group.activities" ng-show="group.activePutCode == funding.putCode.value || editSources[group.groupId] == true" funding-put-code="{{funding.putCode.value}}">
+                <li ng-repeat="funding in group.activities" ng-if="group.activePutCode == funding.putCode.value || editSources[group.groupId]" funding-put-code="{{funding.putCode.value}}">
                     <!-- active row summary info -->
-                    <div class="row" ng-show="group.activePutCode == funding.putCode.value">
+                    <div class="row" ng-if="group.activePutCode == funding.putCode.value">
                         <div class="col-md-9 col-sm-9 col-xs-8">
                             <h3 class="workspace-title">                                
-                               <span ng-show="group.getActive().fundingTitle.title.value">{{group.getActive().fundingTitle.title.value}}</span>                               
+                               <span ng-if="group.getActive().fundingTitle.title.value" ng-bind="group.getActive().fundingTitle.title.value"></span>                               
                             </h3>
 							<div class="clear-fix left">
-								<span ng-show="group.getActive().fundingName.value"><span ng-bind="group.getActive().fundingName.value"></span></span> (<span ng-show="group.getActive().city.value"><span ng-bind="group.getActive().city.value"></span></span><span ng-show="group.getActive().region.value">, <span ng-bind="group.getActive().region.value"></span></span><span ng-show="group.getActive().countryForDisplay">, <span ng-bind="group.getActive().countryForDisplay"></span></span>)
+								<span ng-if="group.getActive().fundingName.value"><span ng-bind="group.getActive().fundingName.value"></span></span> (<span ng-if="group.getActive().city.value"><span ng-bind="group.getActive().city.value"></span></span><span ng-if="group.getActive().region.value">, <span ng-bind="group.getActive().region.value"></span></span><span ng-if="group.getActive().countryForDisplay">, <span ng-bind="group.getActive().countryForDisplay"></span></span>)
 							</div>	
                             <div class="info-detail">
                             	<!-- Funding date -->
-                                <span class="funding-date" ng-show="group.getActive().startDate && !group.getActive().endDate">
-                                    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
+                                <span class="funding-date" ng-if="group.getActive().startDate && !group.getActive().endDate">
+                                    <span ng-if="group.getActive().startDate.year" ng-bind="group.getActive().startDate.year"></span><span ng-if="group.getActive().startDate.month">-</span><span ng-if="group.getActive().startDate.month" ng-bind="group.getActive().startDate.month"></span>
                                     <#-- Do not move it to two lines -->
                                     <@orcid.msg 'workspace_fundings.dateSeparator'/> <@orcid.msg 'workspace_fundings.present'/>
                                     <#-- ########################### -->
                                 </span>
-                                <span class="funding-date" ng-show="group.getActive().startDate && group.getActive().endDate">
-                                    <span ng-show="group.getActive().startDate.year">{{group.getActive().startDate.year}}</span><span ng-show="group.getActive().startDate.month">-{{group.getActive().startDate.month}}</span>
+                                <span class="funding-date" ng-if="group.getActive().startDate && group.getActive().endDate">
+                                    <span ng-if="group.getActive().startDate.year" ng-bind="group.getActive().startDate.year"></span><span ng-if="group.getActive().startDate.month">-</span><span ng-if="group.getActive().startDate.month" ng-bind="group.getActive().startDate.month"></span>
                                     <@orcid.msg 'workspace_fundings.dateSeparator'/>
-                                    <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
+                                    <span ng-if="group.getActive().endDate.year" ng-bind="group.getActive().endDate.year"></span><span ng-if="group.getActive().endDate.month">-</span><span ng-if="group.getActive().endDate.month" ng-bind="group.getActive().endDate.month"></span>
                                 </span>
-                                <span class="funding-date" ng-show="!group.getActive().startDate && group.getActive().endDate">
-                                     <span ng-show="group.getActive().endDate.year">{{group.getActive().endDate.year}}</span><span ng-show="group.getActive().endDate.month">-{{group.getActive().endDate.month}}</span>
+                                <span class="funding-date" ng-if="!group.getActive().startDate && group.getActive().endDate">
+                                     <span ng-if="group.getActive().endDate.year" ng-bind="group.getActive().endDate.year"></span><span ng-if="group.getActive().endDate.month">-</span><span ng-if="group.getActive().endDate.month" ng-bind="group.getActive().endDate.month"></span>
                                 </span>                                
                                 <!-- Funding type -->
-                                <span ng-show="(group.getActive().startDate || group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="capitalize"></span>
+                                <span ng-if="(group.getActive().startDate || group.getActive().endDate) && group.getActive().fundingType.value">|</span> <span ng-bind="group.getActive().fundingTypeForDisplay" class="capitalize"></span>
                             </div>                            
                         </div>
 
@@ -102,7 +102,7 @@
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <#if !(isPublicProfile??)>
                                         <!-- Bulk edit tool / for further implementation
-                                        <li ng-show="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
+                                        <li ng-if="bulkEditShow == true" class="hidden-xs bulk-checkbox-item">                                
                                                 <input type="checkbox" ng-model="bulkEditMap[funding.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">                                                            
                                         </li>
                                         -->
@@ -113,11 +113,11 @@
                                             <span ng-class="(moreInfo[group.groupId] == true) ? 'glyphicons collapse_top' : 'glyphicons expand'">
                                             </span>
                                         </a>                                        
-                                        <div class="popover popover-tooltip top show-hide-details-popover" ng-show="showElement[group.groupId+'-showHideDetails'] == true">
+                                        <div class="popover popover-tooltip top show-hide-details-popover" ng-if="showElement[group.groupId+'-showHideDetails'] == true">
                                              <div class="arrow"></div>
                                             <div class="popover-content">
-                                                <span ng-show="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>                                    
-                                                <span ng-show="moreInfo[group.groupId] == true">Hide Details</span>
+                                                <span ng-if="moreInfo[group.groupId] == false || moreInfo[group.groupId] == null"><@orcid.msg 'common.details.show_details'/></span>                                    
+                                                <span ng-if="moreInfo[group.groupId]">Hide Details</span>
                                             </div>
                                         </div>                                        
                                     </li>
@@ -133,10 +133,10 @@
                                     </#if>
                                 </ul>
                                 <#if !(isPublicProfile??)>
-                                    <div ng-show="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
+                                    <div ng-if="!group.consistentVis() && !editSources[group.groupId]" class="vis-issue">
                                          <div class="popover-help-container">
                                              <span class="glyphicons circle_exclamation_mark" ng-mouseleave="hideTooltip('vis-issue')" ng-mouseenter="showTooltip('vis-issue')"></span>
-                                             <div class="popover vis-popover bottom" ng-show="showElement['vis-issue'] == true">
+                                             <div class="popover vis-popover bottom" ng-if="showElement['vis-issue']">
 	                                             <div class="arrow"></div>
 	                                             <div class="popover-content">
 	                                             	<@orcid.msg 'groups.common.data_inconsistency' />
@@ -149,7 +149,7 @@
                     </div>
 
                     <!-- Active Row Identifiers / URL / Validations / Versions -->
-                    <div class="row" ng-show="group.activePutCode == funding.putCode.value">
+                    <div class="row" ng-if="group.activePutCode == funding.putCode.value">
                          <div class="col-md-12 col-sm-12 bottomBuffer">
                              <ul class="id-details">
                                  <li>
@@ -158,7 +158,7 @@
                                         </span>
                                     </span>
                                  </li>
-                                 <li ng-show="group.getActive().url.value" class="url-popover">
+                                 <li ng-if="group.getActive().url.value" class="url-popover">
                                  	<@orcid.msg 'manual_funding_form_contents.label_url'/>: <a href="{{group.getActive().url.value | urlProtocol}}" ng-class="{'truncate-anchor' : moreInfo[group.groupId] == false || moreInfo[group.groupId] == null}" ng-bind="group.getActive().url.value" target="_blank" ng-mouseenter='showURLPopOver(funding.putCode.value + "-alternate")' ng-mouseleave='hideURLPopOver(funding.putCode.value + "-alternate")'></a>                                 		
 	                                <div class="popover-pos">
 		                                <div class="popover-help-container">
@@ -179,21 +179,21 @@
                      <#include "funding_more_info_inc_v3.ftl"/>
 
                      <!-- active row source display -->
-                      <div class="row source-line" ng-show="group.activePutCode == funding.putCode.value">
-                          <div class="col-md-7 col-sm-7 col-xs-7" ng-show="editSources[group.groupId] == true">                              
+                      <div class="row source-line" ng-if="group.activePutCode == funding.putCode.value">
+                          <div class="col-md-7 col-sm-7 col-xs-7" ng-if="editSources[group.groupId] == true">                              
                               {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}
                           </div>                          
-                          <div class="col-md-3 col-sm-3 col-xs-3" ng-show="editSources[group.groupId] == true">
-                          <span class="glyphicon glyphicon-check ng-hide" ng-show="funding.putCode.value == group.defaultPutCode"></span><span ng-show="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                          <div class="col-md-3 col-sm-3 col-xs-3" ng-if="editSources[group.groupId] == true">
+                          <span class="glyphicon glyphicon-check ng-hide" ng-if="funding.putCode.value == group.defaultPutCode"></span><span ng-if="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                              <#if !(isPublicProfile??)>
-                                <div ng-show="editSources[group.groupId] == true">
-                                    <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" ng-show="funding.putCode.value != group.defaultPutCode" class="">
+                                <div ng-if="editSources[group.groupId]">
+                                    <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" ng-if="funding.putCode.value != group.defaultPutCode" class="">
                                          <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                     </a>
                                 </div>
                             </#if>
                           </div>
-                          <div class="col-md-2 col-sm-2  col-xs-2 trash-source" ng-show="editSources[group.groupId] == true">
+                          <div class="col-md-2 col-sm-2  col-xs-2 trash-source" ng-if="editSources[group.groupId]">
 
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
@@ -210,7 +210,7 @@
                                            <span class="glyphicon glyphicon-trash"></span>
                                         </a>
 
-                                        <div class="popover popover-tooltip top delete-activeSource-popover" ng-show="showElement[group.groupId+'-deleteActiveSource'] == true">
+                                        <div class="popover popover-tooltip top delete-activeSource-popover" ng-if="showElement[group.groupId+'-deleteActiveSource']">
                                              <div class="arrow"></div>
                                             <div class="popover-content">
                                                 <@orcid.msg 'groups.common.delete_this_source' />
@@ -225,7 +225,7 @@
                     </div>
 
                     <!-- not active row && edit sources -->
-                    <div ng-show="group.activePutCode != funding.putCode.value" class="row source-line">
+                    <div ng-if="group.activePutCode != funding.putCode.value" class="row source-line">
                         <div class="col-md-7 col-sm-7 col-xs-7">
                                 <a ng-click="group.activePutCode = funding.putCode.value;">                                
                                 {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
@@ -233,8 +233,8 @@
                         </div>                        
                         <div class="col-md-3 col-sm-3 col-xs-5">
                              <#if !(isPublicProfile??)>
-                                <span class="glyphicon glyphicon-check" ng-show="funding.putCode.value == group.defaultPutCode"></span><span ng-show="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
-                                <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value); " ng-show="funding.putCode.value != group.defaultPutCode">
+                                <span class="glyphicon glyphicon-check" ng-if="funding.putCode.value == group.defaultPutCode"></span><span ng-if="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" ng-if="funding.putCode.value != group.defaultPutCode">
                                    <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />
                                 </a>
                             </#if>
@@ -256,7 +256,7 @@
                                         <a ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(funding.putCode.value+'-deleteInactiveSource')" ng-mouseleave="hideTooltip(funding.putCode.value+'-deleteInactiveSource')">
                                             <span class="glyphicon glyphicon-trash"></span>
                                         </a>
-                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" ng-show="showElement[funding.putCode.value+'-deleteInactiveSource'] == true">
+                                        <div class="popover popover-tooltip top delete-inactiveSource-popover" ng-if="showElement[funding.putCode.value+'-deleteInactiveSource']">
                                             <div class="arrow"></div>
                                             <div class="popover-content">
                                                  <@orcid.msg 'groups.common.delete_this_source' />
@@ -276,10 +276,10 @@
                         <div class="col-md-7 col-sm-7 col-xs-7">
                               <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                         </div>                          
-                        <div class="col-md-3 col-sm-3 col-xs-3" ng-show="group.activePutCode == funding.putCode.value">
+                        <div class="col-md-3 col-sm-3 col-xs-3" ng-if="group.activePutCode == funding.putCode.value">
                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
-                            <div class="popover popover-tooltip top sources-popover" ng-show="showElement[group.groupId+'-sources'] == true">
+                            <div class="popover popover-tooltip top sources-popover" ng-if="showElement[group.groupId+'-sources']">
                                 <div class="arrow"></div>
                                 <div class="popover-content">
                                     <@orcid.msg 'groups.common.sources.show_other_sources' />                                
@@ -302,18 +302,18 @@
 	                                    <a ng-click="showSources(group)" ng-mouseenter="showTooltip(group.groupId+'-deleteGroup')" ng-mouseleave="hideTooltip(group.groupId+'-deleteGroup')">
 	                                         <span class="glyphicon glyphicon-trash"></span>
 	                                    </a>
-	                                    <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteGroup'] == true">
+	                                    <div class="popover popover-tooltip top delete-source-popover" ng-if="showElement[group.groupId+'-deleteGroup']">
 	                                         <div class="arrow"></div>
 	                                        <div class="popover-content">
 	                                             <@orcid.msg 'groups.common.delete_this_source' />                                
 	                                        </div>
 	                                    </div>	
 	                                </li>
-									<li ng-show="group.activitiesCount == 1">
+									<li ng-if="group.activitiesCount == 1">
 									   <a id="delete-funding_{{group.getActive().putCode.value}}" ng-click="deleteFundingConfirm(group.getActive().putCode.value, false)" ng-mouseenter="showTooltip(group.groupId+'-deleteSource')" ng-mouseleave="hideTooltip(group.groupId+'-deleteSource')">
 									      <span class="glyphicon glyphicon-trash"></span>
 									   </a>									
-									  <div class="popover popover-tooltip top delete-source-popover" ng-show="showElement[group.groupId+'-deleteSource'] == true">
+									  <div class="popover popover-tooltip top delete-source-popover" ng-if="showElement[group.groupId+'-deleteSource']">
 									  	<div class="arrow"></div>
 									       <div class="popover-content">
 									           <@orcid.msg 'groups.common.delete_this_source' />                                
@@ -330,13 +330,13 @@
     </li>
 </ul>
 
-<div ng-show="fundingSrvc.loading == true;" class="text-center">
+<div ng-if="fundingSrvc.loading" class="text-center">
     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
     <!--[if lt IE 8]>
         <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="fundingSrvc.loading == false && fundingSrvc.groups.length == 0" class="" ng-cloak>
+<div ng-if="fundingSrvc.loading == false && fundingSrvc.groups.length == 0" class="" ng-cloak>
     <strong>
     	<#if (publicProfile)?? && publicProfile == true><@orcid.msg 'workspace_fundings_body_list.nograntaddedyet' /><#else><@orcid.msg 'workspace_fundings.havenotaddaffiliation' />
     		<#if fundingImportWizards?has_content>

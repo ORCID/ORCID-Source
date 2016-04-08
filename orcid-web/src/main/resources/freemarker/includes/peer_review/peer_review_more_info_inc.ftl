@@ -63,7 +63,7 @@
                         				<span class="glyphicons expand"></span>
                         				show details
                         			</a> 
-                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value] == true" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
+                        			<a ng-click="hideMoreDetails(peerReview.putCode.value);" ng-show="showPeerReviewDetails[peerReview.putCode.value]" ng-hide="group.activePutCode != peerReview.putCode.value || showPeerReviewDetails[peerReview.putCode.value] == null">
                         				<span class="glyphicons collapse_top"></span>
                         				hide details
                         			</a> | 
@@ -84,7 +84,7 @@
 					            </span>					            
 						    </div>
 						    <div class="col-md-12 info-detail" ng-if="peerReview.orgName.value != null" ng-cloak>
-								<span class="workspace-title">Convening organization:&nbsp;</span><span ng-bind="peerReview.orgName.value"></span>(<span ng-bind="peerReview.city.value"></span> , <span ng-bind="peerReview.countryForDisplay"></span>)
+								<span class="workspace-title">Convening organization:&nbsp;</span><span ng-bind="peerReview.orgName.value"></span>(<span ng-bind="peerReview.city.value"></span><span ng-if="peerReview.city.value">,</span> <span ng-bind="peerReview.countryForDisplay"></span>)
 							</div>
 							<div class="col-md-12 info-detail">
 								<span ng-if="peerReview.subjectName.value != null">
