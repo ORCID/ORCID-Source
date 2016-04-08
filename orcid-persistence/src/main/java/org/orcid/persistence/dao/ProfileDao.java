@@ -72,7 +72,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     Long getConfirmedProfileCount();
 
-    public void updateBiography(String orcid, String biography, Visibility visibility);
+    boolean updateBiography(String orcid, String biography, Visibility visibility);
 
     Date retrieveLastModifiedDate(String orcid);
 

@@ -471,20 +471,19 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     @Transactional
     public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
-        Query query = entityManager.createNativeQuery(
-                "update profile set last_modified = now(), deprecated_date = now(), profile_deactivation_date = now(), indexing_status = 'PENDING', primary_record = :primary_record, given_names = :givenNames, family_name = :familyName, credit_name = :creditName, biography = :bio, biography_visibility = :bioVisibility, activities_visibility_default = :defaultVisibility where orcid = :orcid");
+        Query query = entityManager.createQuery(
+                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, givenNames = :givenNames, familyName = :familyName, creditName = :creditName, biography = :bio, biographyVisibility = :bioVisibility, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
         query.setParameter("orcid", toDeprecate.getId());
-        query.setParameter("primary_record", primaryOrcid);
+        query.setParameter("indexing_status", IndexingStatus.PENDING);
+        query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
         query.setParameter("givenNames", toDeprecate.getGivenNames());
         query.setParameter("familyName", toDeprecate.getFamilyName());
         query.setParameter("creditName", toDeprecate.getCreditName());
         query.setParameter("bio", toDeprecate.getBiography());
-        query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : StringUtils.upperCase(toDeprecate.getBiographyVisibility().value()));
-        query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : StringUtils.upperCase(toDeprecate.getActivitiesVisibilityDefault().value()));
-
-        boolean result = query.executeUpdate() > 0 ? true : false;
-
-        return result;
+        query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : toDeprecate.getBiographyVisibility());
+        query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : toDeprecate.getActivitiesVisibilityDefault());
+                
+        return query.executeUpdate() > 0 ? true : false;
     }
 
     @Override
@@ -536,13 +535,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateBiography(String orcid, String biography, Visibility visibility) {
+    public boolean updateBiography(String orcid, String biography, Visibility visibility) {
         Query updateQuery = entityManager
                 .createQuery("update ProfileEntity set lastModified = now(), biography = :biography, biography_visibility = :visibility where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("biography", biography);
         updateQuery.setParameter("visibility", visibility == null ? null : StringUtils.upperCase(visibility.value()));
-        updateQuery.executeUpdate();
+        return updateQuery.executeUpdate() > 0;
     }
 
     @Override

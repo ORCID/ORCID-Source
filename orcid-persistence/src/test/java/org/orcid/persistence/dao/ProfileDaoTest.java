@@ -456,7 +456,7 @@ public class ProfileDaoTest extends DBUnitTest {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
-        boolean result = profileDao.updateProfileBiography(profile);
+        boolean result = profileDao.updateBiography(profile.getId(), profile.getBiography(), profile.getBiographyVisibility());
         assertTrue(result);
         profile = profileDao.find("4444-4444-4444-4441");
         assertEquals("Updated Biography", profile.getBiography());
@@ -469,7 +469,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testDeprecateProfile() {
         ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         assertNull(profileToDeprecate.getPrimaryRecord());
-        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
+        boolean result = profileDao.deprecateProfile(profileToDeprecate, "4444-4444-4444-4442");
         assertTrue(result);
         profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         profileDao.refresh(profileToDeprecate);
