@@ -1571,6 +1571,49 @@ orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
     return widgetSrvc;
 }]);
 
+orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
+    var serv = {
+        feed: null,
+        getDiscoFeed: function() {
+            $.ajax({
+                url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
+                dataType: 'json',
+                cache: true,
+                success: function(data) {
+                    serv.feed = data;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with disco feed");
+                serv.feed = [];
+                $rootScope.$apply();
+            });
+        },
+        getIdPName: function(entityId) {
+            var locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en";
+            for(i in serv.feed) {
+                var idp = serv.feed[i];
+                if(entityId === idp.entityID) {
+                    var name = idp.DisplayNames[0].value;
+                    for(j in idp.DisplayNames){
+                        var displayName = idp.DisplayNames[j];
+                        if(locale === displayName.lang){
+                            name = displayName.value;
+                        }
+                    }
+                    return name;
+                }
+            }
+            return entityId;
+        }
+    };
+
+    // populate the disco feed
+    serv.getDiscoFeed();
+    return serv; 
+}]);
+
 
 orcidNgModule.filter('urlProtocol', function(){
     return function(url){
@@ -7281,7 +7324,7 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 
 }]);
 
-orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl($scope, $compile){
+orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
     $scope.showLoader = false;
     $scope.sort = {
         column: 'providerUserId',
@@ -7345,6 +7388,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
             dataType: 'json',
             success: function(data) {
                 $scope.socialAccounts = data;
+                $scope.populateIdPNames();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -7352,6 +7396,21 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
             console.log("error getting social accounts");
         });
     };
+    
+    $scope.$watch(function() { return discoSrvc.feed; }, function(){
+        $scope.populateIdPNames();
+        
+    });
+    
+    $scope.populateIdPNames = function() {
+        if(discoSrvc.feed != null) {
+            for(i in $scope.socialAccounts){
+                var account = $scope.socialAccounts[i];
+                var name = discoSrvc.getIdPName(account.id.providerid);
+                account.idpName = name;
+            }
+        }
+    }
 
     $scope.closeModal = function() {
         $.colorbox.close();
@@ -10670,13 +10729,26 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
     
 }]);
 
-orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
+orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', function ($scope, discoSrvc){
+    
+    $scope.loadedFeed = false;
     
     $scope.linkAccount = function(idp, linkType) {
         var eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
         orcidGA.gaPush(['send', 'event', 'Sign-In-Link', eventAction, idp]);
         return false;
     };
+    
+    $scope.setEntityId = function(entityId) {
+        $scope.entityId = entityId;
+    }
+    
+    $scope.$watch(function() { return discoSrvc.feed; }, function(){
+        $scope.idpName = discoSrvc.getIdPName($scope.entityId);
+        if(discoSrvc.feed != null) {
+            $scope.loadedFeed = true;
+        }
+    });
     
 }]);
 

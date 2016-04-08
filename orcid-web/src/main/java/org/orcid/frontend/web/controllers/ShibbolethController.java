@@ -16,7 +16,9 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.util.Date;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
+import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
+import org.orcid.frontend.web.util.RemoteUser;
+import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.slf4j.Logger;
@@ -51,11 +56,25 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/shibboleth")
 public class ShibbolethController extends BaseController {
 
-    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "targeted-id" };
+    private static final String[] POSSIBLE_REMOTE_USER_HEADERS = new String[] { "persistent-id", "edu-person-unique-id", "targeted-id-oid", "targeted-id" };
 
     private static final String SHIB_IDENTITY_PROVIDER_HEADER = "shib-identity-provider";
 
+    private static final String EPPN_HEADER = "eppn";
+
+    private static final String DISPLAY_NAME_HEADER = "displayname";
+
+    private static final String GIVEN_NAME_HEADER = "givenname";
+
+    private static final String SN_HEADER = "sn";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethController.class);
+
+    private static final String SEPARATOR = ";";
+
+    private static final Pattern ATTRIBUTE_SEPARATOR_PATTERN = Pattern.compile("(?<!\\\\)" + SEPARATOR);
+
+    private static final Pattern ESCAPED_SEPARATOR_PATTERN = Pattern.compile("\\\\" + SEPARATOR);
 
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean enabled;
@@ -66,21 +85,40 @@ public class ShibbolethController extends BaseController {
     @Resource
     private AuthenticationManager authenticationManager;
 
+    @Resource
+    private IdentityProviderManager identityProviderManager;
+
+    @Resource
+    private IdentityProviderDao identityProviderDao;
+
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
         checkEnabled();
-        String remoteUser = retrieveRemoteUser(headers);
-        String displayName = retrieveDisplayName(headers);
+        mav.setViewName("social_link_signin");
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
+        mav.addObject("providerId", shibIdentityProvider);
+        RemoteUser remoteUser = retrieveRemoteUser(headers);
+        if (remoteUser == null) {
+            LOGGER.info("Failed federated log in for {}", shibIdentityProvider);
+            identityProviderDao.incrementFailedCount(shibIdentityProvider);
+            mav.addObject("unsupportedInstitution", true);
+            mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
+            return mav;
+        }
+        String displayName = retrieveDisplayName(headers);
+
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserId(remoteUser, shibIdentityProvider);
+        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
+                remoteUser.getIdType());
         if (userConnectionEntity != null) {
             try {
-                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser);
+                PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                userConnectionEntity.setLastLogin(new Date());
+                userConnectionDao.merge(userConnectionEntity);
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);
@@ -89,14 +127,10 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
         } else {
             // To avoid confusion, force the user to login to ORCID again
-            mav.setViewName("social_link_signin");
-            mav.addObject("providerId", shibIdentityProvider);
             mav.addObject("accountId", displayName);
             mav.addObject("linkType", "shibboleth");
-
-            mav.addObject("emailId", (headers.get("eppn") == null) ? "" : headers.get("eppn"));
-            mav.addObject("firstName", (headers.get("givenName") == null) ? "" : headers.get("givenName"));
-            mav.addObject("lastName", (headers.get("sn") == null) ? "" : headers.get("sn"));
+            mav.addObject("firstName", (headers.get(GIVEN_NAME_HEADER) == null) ? "" : headers.get(GIVEN_NAME_HEADER));
+            mav.addObject("lastName", (headers.get(SN_HEADER) == null) ? "" : headers.get(SN_HEADER));
         }
         return mav;
     }
@@ -107,36 +141,61 @@ public class ShibbolethController extends BaseController {
         }
     }
 
-    private String retrieveRemoteUser(Map<String, String> headers) {
+    public static RemoteUser retrieveRemoteUser(Map<String, String> headers) {
         for (String possibleHeader : POSSIBLE_REMOTE_USER_HEADERS) {
-            String userId = headers.get(possibleHeader);
+            String userId = extractFirst(headers.get(possibleHeader));
             if (userId != null) {
-                return userId;
+                return new RemoteUser(userId, possibleHeader);
             }
         }
-        throw new OrcidBadRequestException("Couldn't find remote user header");
+        return null;
     }
 
-    private String retrieveDisplayName(Map<String, String> headers) {
-        String eppn = headers.get("eppn");
+    public static String retrieveDisplayName(Map<String, String> headers) {
+        String eppn = extractFirst(headers.get(EPPN_HEADER));
         if (StringUtils.isNotBlank(eppn)) {
             return eppn;
         }
-        String displayName = headers.get("displayName");
+        String displayName = extractFirst(headers.get(DISPLAY_NAME_HEADER));
         if (StringUtils.isNotBlank(displayName)) {
             return displayName;
         }
-        String givenName = headers.get("givenName");
-        String sn = headers.get("sn");
+        String givenName = extractFirst(headers.get(GIVEN_NAME_HEADER));
+        String sn = extractFirst(headers.get(SN_HEADER));
         String combinedNames = StringUtils.join(new String[] { givenName, sn }, ' ');
         if (StringUtils.isNotBlank(combinedNames)) {
             return combinedNames;
         }
-        String remoteUser = retrieveRemoteUser(headers);
-        if (StringUtils.isNotBlank(remoteUser)) {
-            return remoteUser.substring(remoteUser.lastIndexOf("!"));
+        RemoteUser remoteUser = retrieveRemoteUser(headers);
+        if (remoteUser != null) {
+            String remoteUserId = remoteUser.getUserId();
+            if (StringUtils.isNotBlank(remoteUserId)) {
+                int indexOfBang = remoteUserId.lastIndexOf("!");
+                if (indexOfBang != -1) {
+                    return remoteUserId.substring(indexOfBang);
+                } else {
+                    return remoteUserId;
+                }
+            }
         }
         throw new OrcidBadRequestException("Couldn't find any user display name headers");
+    }
+
+    /**
+     * Shibboleth SP combines multiple values by concatenating, using semicolon
+     * as the separator (the escape character is '\'). Mutliple values will be
+     * provided, even if it is actually the same attribute in mace and oid
+     * format.
+     * 
+     * @param headerValue
+     * @return the first attribute value
+     */
+    private static String extractFirst(String headerValue) {
+        if (headerValue == null) {
+            return null;
+        }
+        String[] values = ATTRIBUTE_SEPARATOR_PATTERN.split(headerValue);
+        return values.length > 0 ? ESCAPED_SEPARATOR_PATTERN.matcher(values[0]).replaceAll(SEPARATOR) : "";
     }
 
 }
