@@ -531,6 +531,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
         angularHasFinishedProcessing();
         noSpinners(webDriver);
+        noCboxOverlay(webDriver);
         
         // Set Private Visibility
         (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
