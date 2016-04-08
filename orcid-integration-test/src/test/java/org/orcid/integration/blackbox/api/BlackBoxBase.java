@@ -29,7 +29,10 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By.ByXPath;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
@@ -348,6 +351,49 @@ public class BlackBoxBase {
         try {Thread.sleep(500);} catch(Exception e) {};        
     }
     
+    public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
+        angularHasFinishedProcessing();
+        Actions actions = new Actions(webDriver);
+        actions.moveToElement(webElement).click().perform();
+        angularHasFinishedProcessing();
+    }
+    
+    public void noSpinners(WebDriver webDriver) {
+        (new WebDriverWait(webDriver, 20, 100))
+        .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
+    }
+    
+    public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
+        /*
+         * Getting complex.
+         * 1. We want to make sure Angular is done. So you call the rootScope apply
+         * 2. We want to make sure the browser is done rendering the DOM so we call $timeout
+         *    http://blog.brunoscopelliti.com/run-a-directive-after-the-dom-has-finished-rendering/
+         * 3. make sure there are no pending AJAX request, if so start over
+         */
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                ((JavascriptExecutor) driver).executeScript(""
+                        + "window._selenium_angular_done = false;"
+                        + "function _seleniumAngularDone() { "
+                        + "   angular.element(document.documentElement).scope().$root.$apply("
+                        + "      function(){"
+                        + "        setTimeout(function(){ "
+                        + "            if ($.active > 0)"
+                        + "               _seleniumAngularDone();"
+                        + "            else"
+                        + "               window._selenium_angular_done = true;"
+                        + "         }, 0);"
+                        + "   });"
+                        + "};"
+                        + "_seleniumAngularDone();");
+                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(""
+                        + "return window._selenium_angular_done;").toString());
+            }
+        };
+    }
+    
     public String getAdminUserName() {
         return adminUserName;
     }
@@ -586,5 +632,7 @@ public class BlackBoxBase {
 
     public WebDriverHelper getWebDriverHelper() {
         return webDriverHelper;
-    }        
+    }
+
+
 }
