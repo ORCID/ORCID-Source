@@ -521,7 +521,7 @@ public class RegistrationController extends BaseController {
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 // XXX
                 reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
-            } else {
+            } else if (oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 Object email = "";
                 if (arguments != null && arguments.length > 0) {
                     email = arguments[0];
@@ -534,6 +534,8 @@ public class RegistrationController extends BaseController {
                     link = "/shibboleth/signin";
                 }
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
+            } else {
+                reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
             }
         }
 
