@@ -476,11 +476,24 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", toDeprecate.getId());
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
-        query.setParameter("givenNames", toDeprecate.getGivenNames());
-        query.setParameter("familyName", toDeprecate.getFamilyName());
-        query.setParameter("creditName", toDeprecate.getCreditName());
-        query.setParameter("bio", toDeprecate.getBiography());
-        query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : toDeprecate.getBiographyVisibility());
+        if(toDeprecate.getRecordNameEntity() != null) {
+            query.setParameter("givenNames", toDeprecate.getRecordNameEntity().getGivenNames());
+            query.setParameter("familyName", toDeprecate.getRecordNameEntity().getFamilyName());
+            query.setParameter("creditName", toDeprecate.getRecordNameEntity().getCreditName());            
+        } else {
+            query.setParameter("givenNames", toDeprecate.getGivenNames());
+            query.setParameter("familyName", toDeprecate.getFamilyName());
+            query.setParameter("creditName", toDeprecate.getCreditName());
+            
+        }
+        
+        if(toDeprecate.getBiographyEntity() != null) {
+            query.setParameter("bio", toDeprecate.getBiographyEntity().getBiography());
+            query.setParameter("bioVisibility", toDeprecate.getBiographyEntity().getVisibility() == null ? null : toDeprecate.getBiographyEntity().getVisibility());
+        } else {
+            query.setParameter("bio", toDeprecate.getBiography1());
+            query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility1() == null ? null : toDeprecate.getBiographyVisibility1());
+        }
         query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : toDeprecate.getActivitiesVisibilityDefault());
                 
         return query.executeUpdate() > 0 ? true : false;

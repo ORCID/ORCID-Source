@@ -20,50 +20,48 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet id="CREATE-RECORD-NAME-TABLE" author="Angel Montenegro">
+	<changeSet id="CREATE-BIOGRAPHY-TABLE" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="record_name" />
+				<tableExists tableName="biography" />
 			</not>
 		</preConditions>	
-		<createTable tableName="record_name">
+		<createTable tableName="biography">
 			<column name="id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
 					primaryKeyName="record_name_pkey" />
 			</column>
 			<column name="orcid" type="VARCHAR(255)">
 				<constraints nullable="false" />
-			</column>			
-			<column name="credit_name" type="VARCHAR(150)" />
-			<column name="family_name" type="VARCHAR(150)" />
-			<column name="given_names" type="VARCHAR(150)" />
+			</column>
+			<column name="biography" type="TEXT" />		
 			<column name="visibility" type="VARCHAR(20)" />
 			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
 			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
 		</createTable>
-		<addForeignKeyConstraint constraintName="record_name_orcid_fk" baseTableName="record_name" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+		<addForeignKeyConstraint constraintName="biography_orcid_fk" baseTableName="biography" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
 	</changeSet>
 	
-	<changeSet id="CREATE-RECORD-NAME-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+	<changeSet id="CREATE-BIOGRAPHY-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<sequenceExists sequenceName="record_name_seq"/>
+				<sequenceExists sequenceName="biography_seq"/>
 			</not>
 		</preConditions>
-        <createSequence sequenceName="record_name_seq" startValue="1000" />
+        <createSequence sequenceName="biography_seq" startValue="1000" />
     </changeSet>
 	
 	<changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
-        <addAutoIncrement tableName="record_name" columnName="id" columnDataType="bigint"/>        
+        <addAutoIncrement tableName="biography" columnName="id" columnDataType="bigint"/>        
     </changeSet>
 	
-	<changeSet id="RECORD-NAME-ORCID-INDEX" author="Angel Montenegro">
+	<changeSet id="BIOGRAPHY-ORCID-INDEX" author="Angel Montenegro">
 		<preConditions onFail="MARK_RAN">
 			<not>
-				<indexExists indexName="record_name_orcid_index" tableName="record_name" />
+				<indexExists indexName="biography_orcid_index" tableName="biography" />
 			</not>
 		</preConditions>
-		<sql>create index record_name_orcid_index on record_name(orcid);</sql>
+		<sql>create index biography_orcid_index on biography(orcid);</sql>
 	</changeSet>
 	
-</databaseChangeLog>		
+</databaseChangeLog>

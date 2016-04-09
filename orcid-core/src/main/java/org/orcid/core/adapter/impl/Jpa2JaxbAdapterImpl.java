@@ -576,9 +576,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Biography getBiography(ProfileEntity profileEntity) {
-        String biography = profileEntity.getBiography();
-        Visibility shortDescriptionVisibility = profileEntity.getBiographyVisibility();
-        return (biography == null && shortDescriptionVisibility == null) ? null : new Biography(biography, shortDescriptionVisibility);
+        String biography = profileEntity.getBiography1();
+        Visibility biographyVisibility = profileEntity.getBiographyVisibility1();
+        
+        if(profileEntity.getBiographyEntity() != null) {
+            if(!PojoUtil.isEmpty(profileEntity.getBiographyEntity().getBiography())) {
+                biography = profileEntity.getBiographyEntity().getBiography();
+            }      
+            if(profileEntity.getBiographyEntity().getVisibility() != null) {
+                biographyVisibility = Visibility.fromValue(profileEntity.getBiographyEntity().getVisibility().value());
+            }
+        }
+        
+        return (biography == null && biographyVisibility == null) ? null : new Biography(biography, biographyVisibility);
     }
 
     private ResearcherUrls getResearcherUrls(ProfileEntity profileEntity) {

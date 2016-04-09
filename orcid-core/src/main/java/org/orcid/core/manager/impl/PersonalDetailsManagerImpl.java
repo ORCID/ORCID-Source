@@ -98,14 +98,32 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                        
         Name name = getName(orcid);
         Biography bio = new Biography();
-        if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
-            bio.setContent(profileEntity.getBiography());
+        if(profileEntity.getBiographyEntity() != null) {
+            if(!PojoUtil.isEmpty(profileEntity.getBiographyEntity().getBiography())) {
+                bio.setContent(profileEntity.getBiographyEntity().getBiography());
+            }      
+            
             Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-            if(profileEntity.getBiographyVisibility() != null) {
-                bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility().value());
+            if(profileEntity.getBiographyEntity().getVisibility() != null) {
+                bioVisibility = profileEntity.getBiographyEntity().getVisibility();
+            } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
+                bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
             }
             bio.setVisibility(bioVisibility);
-        }
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getBiographyEntity().getLastModified())));
+        } else {
+            if(!PojoUtil.isEmpty(profileEntity.getBiography1())) {
+                bio.setContent(profileEntity.getBiography1());
+                Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
+                if(profileEntity.getBiographyVisibility1() != null) {
+                    bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility1().value());
+                } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
+                    bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
+                }
+                bio.setVisibility(bioVisibility);
+            }
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
+        }                
         
         Date lastModified = profileEntity.getLastModified();
         long lastMofieiedTime = (lastModified == null) ? 0 : lastModified.getTime();
