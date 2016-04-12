@@ -28,7 +28,10 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 
-/**
+/** This class serializes a single ExternalID into a WorkExternalIdentifiers with one item - it is used in the works table.
+ * On the way back, it takes a WorkExternalIdentifiers and returns the first WorkExternalIdentifier as an ExternalID
+ * 
+ * There is a similar class (ExternalIDConvertor) which does not wrap the workExternalIdentifier in a WorkExternalIdentifiers - that is used for peer reviews.
  * 
  * @author Will Simpson
  *

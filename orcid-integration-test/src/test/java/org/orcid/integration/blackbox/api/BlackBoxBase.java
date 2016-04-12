@@ -28,13 +28,18 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By.ByXPath;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.helper.SystemPropertiesHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -315,6 +320,85 @@ public class BlackBoxBase {
         }
     }
 
+    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        Properties prop = SystemPropertiesHelper.getProperties();
+        String userName = prop.getProperty("org.orcid.web.testUser1.username");
+        String password = prop.getProperty("org.orcid.web.testUser1.password");
+        String baseUrl = "https://localhost:8443/orcid-web";
+        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
+            baseUrl = prop.getProperty("org.orcid.web.baseUri");
+        }
+
+        int timeout = 10;
+        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+        webDriver.get(baseUrl + "/account");
+        SigninTest.signIn(webDriver, userName, password);
+        
+        By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle));
+        WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
+        toggle.click();
+                
+        By privacySettingsDiv = By.id("privacy-settings");
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacySettingsDiv));
+        WebElement privacySettings = webDriver.findElement(privacySettingsDiv);
+        
+        int visibilityIndex = Visibility.PUBLIC.equals(visibility) ? 1 : (Visibility.LIMITED.equals(visibility) ? 2 : 3);
+        
+        WebElement visibilityToClick = privacySettings.findElement(ByXPath.xpath(".//div[@id='privacy-bar']//ul//li[" + visibilityIndex + "]"));
+        visibilityToClick.click();
+        
+        try {Thread.sleep(500);} catch(Exception e) {};        
+    }
+    
+    public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
+        angularHasFinishedProcessing();
+        Actions actions = new Actions(webDriver);
+        actions.moveToElement(webElement).click().perform();
+        angularHasFinishedProcessing();
+    }
+    
+    public void noSpinners(WebDriver webDriver) {
+        (new WebDriverWait(webDriver, 20, 100))
+        .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
+    }
+
+    public void noCboxOverlay(WebDriver webDriver) {
+        (new WebDriverWait(webDriver, 20, 100))
+        .until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@id='cboxOverlay']")));
+    }
+
+    public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
+        /*
+         * Getting complex.
+         * 1. We want to make sure Angular is done. So you call the rootScope apply
+         * 2. We want to make sure the browser is done rendering the DOM so we call $timeout
+         *    http://blog.brunoscopelliti.com/run-a-directive-after-the-dom-has-finished-rendering/
+         * 3. make sure there are no pending AJAX request, if so start over
+         */
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                ((JavascriptExecutor) driver).executeScript(""
+                        + "window._selenium_angular_done = false;"
+                        + "function _seleniumAngularDone() { "
+                        + "   angular.element(document.documentElement).scope().$root.$apply("
+                        + "      function(){"
+                        + "        setTimeout(function(){ "
+                        + "            if ($.active > 0)"
+                        + "               _seleniumAngularDone();"
+                        + "            else"
+                        + "               window._selenium_angular_done = true;"
+                        + "         }, 0);"
+                        + "   });"
+                        + "};"
+                        + "_seleniumAngularDone();");
+                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(""
+                        + "return window._selenium_angular_done;").toString());
+            }
+        };
+    }
+    
     public String getAdminUserName() {
         return adminUserName;
     }
@@ -553,5 +637,7 @@ public class BlackBoxBase {
 
     public WebDriverHelper getWebDriverHelper() {
         return webDriverHelper;
-    }        
+    }
+
+
 }

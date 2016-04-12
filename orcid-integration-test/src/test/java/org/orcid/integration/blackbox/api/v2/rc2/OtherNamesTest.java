@@ -31,8 +31,12 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
@@ -57,6 +61,18 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
+    
+    protected static WebDriver webDriver;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        webDriver = new FirefoxDriver();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        webDriver.quit();
+    }
     
     /**
      * PRECONDITIONS: 
@@ -84,6 +100,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteOtherName() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);        
         OtherName otherName = getOtherName(); 
@@ -173,6 +190,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         
         //Check it was actually deleted
         testGetOtherNamesWihtMembersAPI();
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
     
     /**

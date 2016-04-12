@@ -102,7 +102,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Long.valueOf(1248), rUrls.getResearcherUrls().get(0).getPutCode());
         assertEquals(Visibility.PUBLIC.value(), rUrls.getResearcherUrls().get(0).getVisibility().value());
         assertNotNull(rUrls.getResearcherUrls().get(0).getSource());
-        assertEquals("http://orcid.org/8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retriveSourceUri());
+        assertEquals("http://www.orcid.org/8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retriveSourceUri());
         assertEquals("8888-8888-8888-8880", rUrls.getResearcherUrls().get(0).getSource().retrieveSourcePath());
 
         ResearcherUrl rUrl = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml", ResearcherUrl.class);

@@ -219,23 +219,6 @@ public class GroupIdRecord implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public boolean isDuplicated(Object obj) {
-
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        GroupIdRecord other = (GroupIdRecord) obj;
-
-        if (!this.groupId.equals(other.groupId)) {
-            return false;
-        }
-
-        return true;
-    }
-
     public String retrieveSourcePath() {
         if (source == null) {
             return null;

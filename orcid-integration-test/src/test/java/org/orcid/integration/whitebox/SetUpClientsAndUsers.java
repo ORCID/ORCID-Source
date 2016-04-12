@@ -34,33 +34,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.ApplicationException;
-import org.orcid.core.manager.AddressManager;
-import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ClientDetailsManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
-import org.orcid.core.manager.OtherNameManager;
-import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileFundingManager;
-import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
-import org.orcid.jaxb.model.common_rc2.Country;
-import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
@@ -77,35 +62,41 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.FamilyName;
 import org.orcid.jaxb.model.record_rc2.GivenNames;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.persistence.dao.AddressDao;
+import org.orcid.persistence.dao.EmailDao;
+import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
+import org.orcid.persistence.dao.OtherNameDao;
+import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.dao.ProfileKeywordDao;
+import org.orcid.persistence.dao.ResearcherUrlDao;
+import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -279,33 +270,31 @@ public class SetUpClientsAndUsers {
     @Resource
     protected EncryptionManager encryptionManager;
     @Resource
-    protected OtherNameManager otherNameManager;
+    protected OtherNameDao otherNameDao;
     @Resource
-    protected ProfileKeywordManager profileKeywordManager;
+    protected ProfileKeywordDao profileKeywordDao;
     @Resource
-    protected ExternalIdentifierManager externalIdentifierManager;
+    protected ExternalIdentifierDao externalIdentifierDao;
     @Resource
-    protected AddressManager addressManager;
+    protected AddressDao addressDao;
     @Resource
-    protected EmailManager emailManager;
+    protected EmailDao emailDao;
     @Resource
-    protected WorkManager workManager;
+    protected WorkDao workDao;
     @Resource
-    protected AffiliationsManager affiliationsManager;
+    protected OrgAffiliationRelationDao affiliationsDao;
     @Resource
-    protected ProfileFundingManager profileFundingManager;
+    protected ProfileFundingDao profileFundingDao;
     @Resource
-    protected PeerReviewManager peerReviewManager;
+    protected PeerReviewDao peerReviewDao;
     @Resource
     protected NotificationDao notificationDao;
-    @Resource
-    protected OrgAffiliationRelationDao orgAffiliationRelationDao;
     @Resource
     protected ProfileDao profileDao;
     @Resource
     protected OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     @Resource
-    protected ResearcherUrlManager researcherUrlManager;
+    protected ResearcherUrlDao researcherUrlDao;
     @Resource
     protected ClientDetailsManager clientDetailsManager;
     @Resource
@@ -584,35 +573,55 @@ public class SetUpClientsAndUsers {
             orcidProfileManager.updateBiography(existingProfile);
 
             // Remove other names
-            otherNameManager.updateOtherNames(orcid, new OtherNames());
+            List<OtherNameEntity> otherNames = otherNameDao.getOtherNames(orcid, 0L);
+            if(otherNames != null && !otherNames.isEmpty()) {
+                for(OtherNameEntity otherName : otherNames) {
+                    otherNameDao.deleteOtherName(otherName);
+                }
+            }
 
             // Remove keywords
-            profileKeywordManager.updateKeywords(orcid, new Keywords());
+            List<ProfileKeywordEntity> keywords = profileKeywordDao.getProfileKeywors(orcid, 0L);
+            if(keywords != null && !keywords.isEmpty()) {
+                for(ProfileKeywordEntity keyword : keywords) {
+                    profileKeywordDao.deleteProfileKeyword(keyword);
+                }
+            }            
 
-            researcherUrlManager.updateResearcherUrls(orcid, new ResearcherUrls());
+            //Remove researcher urls
+            List<ResearcherUrlEntity> rUrls = researcherUrlDao.getResearcherUrls(orcid, 0L);
+            if(rUrls != null && !rUrls.isEmpty()) {
+                for(ResearcherUrlEntity rUrl : rUrls) {
+                    researcherUrlDao.deleteResearcherUrl(orcid, rUrl.getId());
+                }
+            }
 
             // Remove external ids
-            PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, System.currentTimeMillis());
-
-            if (extIds != null && extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
-                for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
-                    externalIdentifierManager.deleteExternalIdentifier(orcid, extId.getPutCode(), false);
+            List<ExternalIdentifierEntity> extIds = externalIdentifierDao.getExternalIdentifiers(orcid, System.currentTimeMillis());
+            if (extIds != null && !extIds.isEmpty()) {
+                for (ExternalIdentifierEntity extId : extIds) {
+                    externalIdentifierDao.removeExternalIdentifier(orcid, extId.getId());                    
                 }
             }
 
             // Remove addresses
-            addressManager.updateAddresses(orcid, new Addresses());
-
-            // Remove emails
-            Emails emails = emailManager.getEmails(orcid, System.currentTimeMillis());
-            if (emails != null && emails.getEmails() != null) {
-                for (org.orcid.jaxb.model.record_rc2.Email rc2Email : emails.getEmails()) {
-                    if (!params.get(EMAIL).equals(rc2Email.getEmail())) {
-                        emailManager.removeEmail(orcid, rc2Email.getEmail());
-                    }
+            List<AddressEntity> addresses = addressDao.getAddresses(orcid, 0L);
+            if(addresses != null && !addresses.isEmpty()) {
+                for(AddressEntity address : addresses) {
+                    addressDao.deleteAddress(orcid, address.getId());
                 }
             }
 
+            // Remove emails
+            List<EmailEntity> emails = emailDao.findByOrcid(orcid);
+            if(emails != null && !emails.isEmpty()) {
+                for(EmailEntity rc2Email : emails) {
+                    if (!params.get(EMAIL).equals(rc2Email.getId())) {
+                        emailDao.removeEmail(orcid, rc2Email.getId());
+                    }
+                }
+            }
+            
             // Remove notifications
             List<NotificationEntity> notifications = notificationDao.findByOrcid(orcid, true, 0, 10000);
             if (notifications != null && !notifications.isEmpty()) {
@@ -624,38 +633,37 @@ public class SetUpClientsAndUsers {
             }
 
             // Remove works
-            List<WorkSummary> works = workManager.getWorksSummaryList(orcid, System.currentTimeMillis());
-            List<Long> workIds = new ArrayList<Long>();
-            if (works != null && !works.isEmpty()) {
-                for (WorkSummary work : works) {
-                    workIds.add(work.getPutCode());
+            List<MinimizedWorkEntity> works = workDao.findWorks(orcid, 0L);
+            if(works != null && !works.isEmpty()) {
+                for(MinimizedWorkEntity work : works) {
+                    workDao.removeWork(orcid, work.getId());
                 }
-                workManager.removeWorks(orcid, workIds);
             }
-
+            
             // Remove affiliations
-            List<OrgAffiliationRelationEntity> affiliations = orgAffiliationRelationDao.getByUser(orcid);
+            List<OrgAffiliationRelationEntity> affiliations = affiliationsDao.getByUser(orcid);
             if (affiliations != null && !affiliations.isEmpty()) {
                 for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                    orgAffiliationRelationDao.remove(affiliation.getId());
+                    affiliationsDao.remove(affiliation.getId());
                 }
             }
 
             // Remove fundings
-            List<FundingSummary> fundings = profileFundingManager.getFundingSummaryList(orcid, System.currentTimeMillis());
-            if (fundings != null && !fundings.isEmpty()) {
-                for (FundingSummary funding : fundings) {
-                    profileFundingManager.removeProfileFunding(orcid, funding.getPutCode());
+            List<ProfileFundingEntity> fundings = profileFundingDao.getByUser(orcid);
+            if(fundings != null && !fundings.isEmpty()) {
+                for(ProfileFundingEntity funding : fundings) {
+                    profileFundingDao.removeProfileFunding(orcid, funding.getId());
                 }
             }
-
+            
             // Remove peer reviews
-            List<PeerReview> peerReviews = peerReviewManager.findPeerReviews(orcid, System.currentTimeMillis());
-            if (peerReviews != null && !peerReviews.isEmpty()) {
-                for (PeerReview peerReview : peerReviews) {
-                    peerReviewManager.removePeerReview(orcid, peerReview.getPutCode());
+            List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
+            if(peerReviews != null && !peerReviews.isEmpty()) {
+                for(PeerReviewEntity peerReview : peerReviews) {
+                    peerReviewDao.removePeerReview(orcid, peerReview.getId());
                 }
             }
+            
             // Remove 3d party links
             List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDao.findByUserName(orcid);
             if (tokenDetails != null && !tokenDetails.isEmpty()) {
@@ -803,13 +811,16 @@ public class SetUpClientsAndUsers {
      *  AddressTest.testGetAddressWithMembersAPI
      * */
     public void setUpAddresses(String orcid) {
-        Address a1 = new Address();
-        a1.setCountry(new Country(Iso3166Country.US));
+        AddressEntity a1 = new AddressEntity();
+        a1.setDateCreated(new Date());
+        a1.setDisplayIndex(-1L);
+        a1.setIso2Country(Iso3166Country.US);
         a1.setPrimary(true);
-        a1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        a1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        a1.setLastModified(new Date());
+        a1.setUser(new ProfileEntity(orcid));
+        a1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        addressManager.createAddress(orcid, a1, true);
+        addressDao.persist(a1);        
     }
     
     /**
@@ -818,19 +829,26 @@ public class SetUpClientsAndUsers {
      *  OtherNamesTest.testGetOtherNamesWihtMembersAPI
      * */
     public void setUpOtherNames(String orcid) {
-        OtherName o1 = new OtherName();
-        o1.setContent("other-name-1");
-        o1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        o1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));        
+        OtherNameEntity o1 = new OtherNameEntity();
+        o1.setDateCreated(new Date());
+        o1.setDisplayIndex(-1L);
+        o1.setDisplayName("other-name-1");
+        o1.setLastModified(new Date());
+        o1.setProfile(new ProfileEntity(orcid));
+        o1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         o1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        otherNameManager.createOtherName(orcid, o1, true);
+        otherNameDao.persist(o1);
         
-        OtherName o2 = new OtherName();
-        o2.setContent("other-name-2");
-        o2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        o2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        OtherNameEntity o2 = new OtherNameEntity();
+        o2.setDateCreated(new Date());
+        o2.setDisplayIndex(-1L);
+        o2.setDisplayName("other-name-2");
+        o2.setLastModified(new Date());
+        o2.setProfile(new ProfileEntity(orcid));
+        o2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         o2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        otherNameManager.createOtherName(orcid, o2, true);
+        otherNameDao.persist(o2);
+        
     }
     
     /**
@@ -839,19 +857,25 @@ public class SetUpClientsAndUsers {
      *  KeywordsTest.testGetKeywordsWihtMembersAPI
      * */
     public void setUpKeywords(String orcid) {
-        Keyword k1 = new Keyword();
-        k1.setContent("keyword-1");
-        k1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        k1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        ProfileKeywordEntity k1 = new ProfileKeywordEntity();
+        k1.setDateCreated(new Date());
+        k1.setDisplayIndex(-1L);
+        k1.setKeywordName("keyword-1");
+        k1.setLastModified(new Date());
+        k1.setProfile(new ProfileEntity(orcid));
+        k1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         k1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        profileKeywordManager.createKeyword(orcid, k1, true);
+        profileKeywordDao.persist(k1);
         
-        Keyword k2 = new Keyword();
-        k2.setContent("keyword-2");
-        k2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        k2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        ProfileKeywordEntity k2 = new ProfileKeywordEntity();
+        k2.setDateCreated(new Date());
+        k2.setDisplayIndex(-1L);
+        k2.setKeywordName("keyword-2");
+        k2.setLastModified(new Date());
+        k2.setProfile(new ProfileEntity(orcid));
+        k2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        profileKeywordManager.createKeyword(orcid, k2, true);
+        profileKeywordDao.persist(k2);
     }
     
     /**
@@ -860,14 +884,17 @@ public class SetUpClientsAndUsers {
      *  EmailTest.testGetWithMembersAPI
      * */
     public void setUpEmails(String orcid) {
-        Email email = new Email();
-        email.setValue("limited@test.orcid.org");
+        EmailEntity email = new EmailEntity();
+        email.setDateCreated(new Date());
+        email.setLastModified(new Date());
+        email.setProfile(new ProfileEntity(orcid));
+        email.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         email.setVisibility(Visibility.LIMITED);
+        email.setVerified(true);
         email.setCurrent(false);
         email.setPrimary(false);
-        email.setVerified(true);
-        email.setSource(orcid);
-        emailManager.addEmail(orcid, email);
+        email.setId("limited@test.orcid.org");
+        emailDao.persist(email);
     }
     
     /**
@@ -878,25 +905,27 @@ public class SetUpClientsAndUsers {
      *  ExternalIdentifiersTest.testGetExternalIdentifiersWihtPublicAPI
      * */
     public void setUpExternalIdentifiers(String orcid) {
-        PersonExternalIdentifier e1 = new PersonExternalIdentifier();
-        e1.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        e1.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
+        ExternalIdentifierEntity e1 = new ExternalIdentifierEntity();
+        e1.setDateCreated(new Date());
+        e1.setDisplayIndex(-1L);
+        e1.setExternalIdCommonName("A-0001");
+        e1.setExternalIdReference("A-0001");
+        e1.setExternalIdUrl("http://ext-id/A-0001");
+        e1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        e1.setOwner(new ProfileEntity(orcid));
         e1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        e1.setUrl(new Url("http://ext-id/A-0001"));
-        e1.setValue("A-0001");
-        e1.setSource(new Source(client1ClientId));  
-        e1.setType("A-0001");
-        externalIdentifierManager.createExternalIdentifier(orcid, e1, true);
-        
-        PersonExternalIdentifier e2 = new PersonExternalIdentifier();
-        e2.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        e2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(System.currentTimeMillis())));
-        e2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);
-        e2.setUrl(new Url("http://ext-id/A-0002"));
-        e2.setValue("A-0002");
-        e2.setSource(new Source(client1ClientId));
-        e2.setType("A-0002");
-        externalIdentifierManager.createExternalIdentifier(orcid, e2, true);
+        externalIdentifierDao.persist(e1);
+                
+        ExternalIdentifierEntity e2 = new ExternalIdentifierEntity();
+        e2.setDateCreated(new Date());
+        e2.setDisplayIndex(-1L);
+        e2.setExternalIdCommonName("A-0002");
+        e2.setExternalIdReference("A-0002");
+        e2.setExternalIdUrl("http://ext-id/A-0002");
+        e2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        e2.setOwner(new ProfileEntity(orcid));
+        e2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);        
+        externalIdentifierDao.persist(e2);                        
     }   
     
     /**

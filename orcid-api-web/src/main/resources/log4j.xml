@@ -47,7 +47,15 @@
 	<logger name="com.mchange.v2">
 	   <level value="WARN" />
 	</logger>
-
+	
+	<logger name="net.sf.ehcache">
+       <level value="WARN" />
+    </logger>
+    
+    <logger name="freemarker.cache">
+       <level value="WARN" />
+    </logger>
+	
 	<!-- Root Logger -->
 	<root>
 		<level value="DEBUG" />

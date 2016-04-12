@@ -21,12 +21,12 @@
 		    <#include "aff_row_inc_v3.ftl" />
 	</li>
 </ul>
-<div ng-show="affiliationsSrvc.loading == true;" class="text-center">
+<div ng-if="affiliationsSrvc.loading" class="text-center">
     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
     <!--[if lt IE 8]>    
     	<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
     <![endif]-->
 </div>
-<div ng-show="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" class="" ng-cloak>
+<div ng-if="affiliationsSrvc.loading == false && affiliationsSrvc.educations.length == 0" ng-cloak>
     <strong><#if (publicProfile)?? && publicProfile == true>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.Noeducationaddedyet")}<#else>${springMacroRequestContext.getMessage("workspace_affiliations_body_list.havenotaddedanyeducation")} <a ng-click="addAffiliationModal('education')">${springMacroRequestContext.getMessage("workspace_affiliations_body_list.addsomenow")}</a></#if></strong>
 </div>		

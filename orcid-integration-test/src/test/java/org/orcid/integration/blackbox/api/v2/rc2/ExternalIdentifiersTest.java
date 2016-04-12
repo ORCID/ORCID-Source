@@ -28,8 +28,12 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -55,6 +59,18 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
+    
+    protected static WebDriver webDriver;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        webDriver = new FirefoxDriver();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        webDriver.quit();
+    }
     
     /**
      * PRECONDITIONS: 
@@ -98,6 +114,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteExternalIdentifier() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);        
         PersonExternalIdentifier externalIdentifier = getExternalIdentifier(); 
@@ -199,6 +216,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         
         //Check it was actually deleted
         testGetExternalIdentifiersWihtMembersAPI();
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
     
     /**
@@ -229,8 +247,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals("A-0001", extId.getType());
         assertEquals("A-0001", extId.getValue());
         assertEquals("http://ext-id/A-0001", extId.getUrl().getValue());
-        assertEquals(putCode, extId.getPutCode());
-        
+        assertEquals(putCode, extId.getPutCode());        
     }
     
     @Test

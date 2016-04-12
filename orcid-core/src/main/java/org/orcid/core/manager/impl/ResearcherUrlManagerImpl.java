@@ -27,11 +27,11 @@ import org.orcid.core.adapter.JpaJaxbResearcherUrlAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -69,11 +69,19 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;        
     
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
     }
 
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    }
+    
     @Override
     public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
         boolean result = true;        
@@ -253,7 +261,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }
         
         ResearcherUrlEntity newEntity = jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl);
-        ProfileEntity profile = new ProfileEntity(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
         newEntity.setSource(sourceEntity);
@@ -279,11 +287,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     private void setIncomingPrivacy(ResearcherUrlEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingWorkVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultResearcherUrlsVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultResearcherUrlsVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            if (defaultResearcherUrlsVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                entity.setVisibility(defaultResearcherUrlsVisibility);
-            }
+            entity.setVisibility(defaultResearcherUrlsVisibility);
         } else if (incomingWorkVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }
