@@ -867,12 +867,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     @Deprecated
     @Column(name = "biography", length = 5000)
-    public String getBiography1() {
+    public String getBiography() {
         return biography;
     }
 
     @Deprecated
-    public void setBiography1(String biography) {
+    public void setBiography(String biography) {
         this.biography = biography;
     }
     
@@ -880,12 +880,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     @Basic
     @Enumerated(EnumType.STRING)
     @Column(name = "biography_visibility")
-    public Visibility getBiographyVisibility1() {
+    public Visibility getBiographyVisibility() {
         return biographyVisibility;
     }
 
     @Deprecated
-    public void setBiographyVisibility1(Visibility biographyVisibility) {
+    public void setBiographyVisibility(Visibility biographyVisibility) {
         this.biographyVisibility = biographyVisibility;
     }
         

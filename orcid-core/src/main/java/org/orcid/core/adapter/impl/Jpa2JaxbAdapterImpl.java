@@ -576,8 +576,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Biography getBiography(ProfileEntity profileEntity) {
-        String biography = profileEntity.getBiography1();
-        Visibility biographyVisibility = profileEntity.getBiographyVisibility1();
+        String biography = profileEntity.getBiography();
+        Visibility biographyVisibility = profileEntity.getBiographyVisibility();
         
         if(profileEntity.getBiographyEntity() != null) {
             if(!PojoUtil.isEmpty(profileEntity.getBiographyEntity().getBiography())) {

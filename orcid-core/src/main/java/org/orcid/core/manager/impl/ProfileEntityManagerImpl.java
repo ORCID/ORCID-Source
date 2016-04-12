@@ -32,6 +32,7 @@ import org.orcid.core.adapter.JpaJaxbGivenPermissionByAdapter;
 import org.orcid.core.adapter.JpaJaxbGivenPermissionToAdapter;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
@@ -169,6 +171,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private RecordNameManager recordNameManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -284,6 +289,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             }
             
             //Remove biography
+            Biography deprecatedBio = new Biography();
+            deprecatedBio.setContent(null);
+            deprecatedBio.setVisibility(Visibility.PRIVATE);
+            
+            BiographyEntity bioEntity = deprecated.getBiographyEntity();
+            if(bioEntity != null) {
+                biographyManager.updateBiography(deprecatedOrcid,deprecatedBio);
+            } else {
+                biographyManager.createBiography(deprecatedOrcid, deprecatedBio);    
+            }
             
             
             //Set the deactivated names
@@ -295,7 +310,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
                 recordName.setProfile(new ProfileEntity(deprecatedOrcid));
                 recordNameManager.updateRecordName(recordName);                
-            }                        
+            } else {
+                
+            }
                                                         
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
@@ -674,9 +691,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Biography getBiography(String orcid) {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Biography bio = new Biography();
-        bio.setVisibility(Visibility.fromValue(
-                profile.getBiographyVisibility() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getBiographyVisibility().value()));
-        bio.setContent(profile.getBiography());
+        bio.setVisibility(Visibility.fromValue(profile.getActivitiesVisibilityDefault() == null ? 
+                OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getActivitiesVisibilityDefault().value()));
+        if(profile.getBiographyEntity() != null) {
+            bio.setContent(profile.getBiographyEntity().getBiography());
+            if(profile.getBiographyEntity().getVisibility() != null) {
+                bio.setVisibility(profile.getBiographyEntity().getVisibility());
+            }            
+        } else {
+            bio.setContent(profile.getBiography());            
+        }
+        
         return bio;
     }
     

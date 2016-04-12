@@ -105,6 +105,7 @@ import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -518,6 +519,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setGivenNames(ProfileEntity profileEntity, GivenNames givenNames) {
         if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+                profileEntity.getRecordNameEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+            }
             profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());
             
             //TODO: remove when the names migration is done
@@ -528,6 +533,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setFamilyName(ProfileEntity profileEntity, FamilyName familyName) {
         if (familyName != null && StringUtils.isNotBlank(familyName.getContent())) {
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+                profileEntity.getRecordNameEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+            }
             profileEntity.getRecordNameEntity().setFamilyName(familyName.getContent());
             
             //TODO: remove when the names migration is done
@@ -538,7 +547,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setCreditNameDetails(ProfileEntity profileEntity, CreditName creditName) {
         if (creditName != null) {
-            RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+                profileEntity.getRecordNameEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+            }
+            
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity();            
+            
             //Save the record name entity
             if(creditName.getVisibility() != null) {
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(creditName.getVisibility().value()));
@@ -855,8 +870,24 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
+            if(profileEntity.getBiographyEntity() == null) {
+                profileEntity.setBiographyEntity(new BiographyEntity());
+                profileEntity.getBiographyEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+            }
+            
+            profileEntity.getBiographyEntity().setBiography(biography.getContent());
+            if (biography.getVisibility() != null) {
+                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));
+            } else {
+                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+            }
+            
+            //TODO: remove when the names migration is done
+            //Save also the profile table
             if (biography.getVisibility() != null) {
                 profileEntity.setBiographyVisibility(biography.getVisibility());
+            } else {
+                profileEntity.setBiographyVisibility(profileEntity.getActivitiesVisibilityDefault());
             }
             profileEntity.setBiography(biography.getContent());
         }

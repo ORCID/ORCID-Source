@@ -491,8 +491,8 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             query.setParameter("bio", toDeprecate.getBiographyEntity().getBiography());
             query.setParameter("bioVisibility", toDeprecate.getBiographyEntity().getVisibility() == null ? null : toDeprecate.getBiographyEntity().getVisibility());
         } else {
-            query.setParameter("bio", toDeprecate.getBiography1());
-            query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility1() == null ? null : toDeprecate.getBiographyVisibility1());
+            query.setParameter("bio", toDeprecate.getBiography());
+            query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : toDeprecate.getBiographyVisibility());
         }
         query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : toDeprecate.getActivitiesVisibilityDefault());
                 

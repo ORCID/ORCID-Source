@@ -47,11 +47,11 @@ public class BiographyForm implements ErrorsInterface, Serializable {
                     bf.setVisiblity(Visibility.valueOf(profile.getBiographyEntity().getVisibility()));
                 }
             } else {
-                if (!PojoUtil.isEmpty(profile.getBiography1())) {
-                    bf.setBiography(Text.valueOf(profile.getBiography1()));
+                if (!PojoUtil.isEmpty(profile.getBiography())) {
+                    bf.setBiography(Text.valueOf(profile.getBiography()));
                 }   
-                if(profile.getBiographyVisibility1() != null) {
-                    bf.setVisiblity(Visibility.valueOf(profile.getBiographyVisibility1()));
+                if(profile.getBiographyVisibility() != null) {
+                    bf.setVisiblity(Visibility.valueOf(profile.getBiographyVisibility()));
                 }
             }
             

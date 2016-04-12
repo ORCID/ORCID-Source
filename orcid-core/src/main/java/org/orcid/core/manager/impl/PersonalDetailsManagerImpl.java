@@ -112,11 +112,11 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             bio.setVisibility(bioVisibility);
             bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getBiographyEntity().getLastModified())));
         } else {
-            if(!PojoUtil.isEmpty(profileEntity.getBiography1())) {
-                bio.setContent(profileEntity.getBiography1());
+            if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
+                bio.setContent(profileEntity.getBiography());
                 Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-                if(profileEntity.getBiographyVisibility1() != null) {
-                    bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility1().value());
+                if(profileEntity.getBiographyVisibility() != null) {
+                    bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility().value());
                 } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
                     bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
                 }
