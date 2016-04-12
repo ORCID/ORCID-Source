@@ -673,16 +673,30 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile != null) {
             RecordNameEntity recordName = profile.getRecordNameEntity();
-            Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility().value())
-                    : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-            if (Visibility.PUBLIC.equals(namesVisibility)) {
-                if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                    publicName = recordName.getCreditName();
-                } else {
-                    publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
-                    publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
+            if(recordName != null) {
+                Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility().value())
+                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+                if (Visibility.PUBLIC.equals(namesVisibility)) {
+                    if (!PojoUtil.isEmpty(recordName.getCreditName())) {
+                        publicName = recordName.getCreditName();
+                    } else {
+                        publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
+                        publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
+                    }
+                }
+            } else {
+                Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
+                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+                if (Visibility.PUBLIC.equals(namesVisibility)) {
+                    if (!PojoUtil.isEmpty(profile.getCreditName())) {
+                        publicName = profile.getCreditName();
+                    } else {
+                        publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
+                        publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
+                    }
                 }
             }
+            
         }
         return publicName;
     }
