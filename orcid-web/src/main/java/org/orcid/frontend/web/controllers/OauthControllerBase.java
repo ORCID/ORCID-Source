@@ -249,7 +249,11 @@ public class OauthControllerBase extends BaseController {
             memberName = PUBLIC_MEMBER_NAME;
         } else if (!PojoUtil.isEmpty(clientDetails.getGroupProfileId())) {
             ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
-            memberName = groupProfile.getRecordNameEntity().getCreditName();
+            if(groupProfile.getRecordNameEntity() != null) {
+                memberName = groupProfile.getRecordNameEntity().getCreditName();
+            } else {
+                memberName = groupProfile.getCreditName();
+            }
         }
         // If the group name is empty, use the same as the client
         // name, since it should be a SSO user

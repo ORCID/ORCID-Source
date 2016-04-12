@@ -17,7 +17,6 @@
 package org.orcid.core.manager;
 
 import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.persistence.jpa.entities.BiographyEntity;
 
 /**
  * 
@@ -25,8 +24,10 @@ import org.orcid.persistence.jpa.entities.BiographyEntity;
  * 
  */
 public interface BiographyManager {
-    BiographyEntity getBiography(String orcid);
+    Biography getBiography(String orcid);
 
+    Biography getPublicBiography(String orcid);
+    
     boolean updateBiography(String orcid, Biography bio);
 
     void createBiography(String orcid, Biography bio);

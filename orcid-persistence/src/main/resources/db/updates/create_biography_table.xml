@@ -64,4 +64,11 @@
 		<sql>create index biography_orcid_index on biography(orcid);</sql>
 	</changeSet>
 	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-BIOGRAPHY" author="Angel Montenegro" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON biography to orcidro;</sql>
+	</changeSet>
+	
 </databaseChangeLog>

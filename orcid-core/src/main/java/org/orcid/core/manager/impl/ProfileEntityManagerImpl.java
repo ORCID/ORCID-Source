@@ -687,27 +687,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return publicName;
     }
 
-    @Override
-    public Biography getBiography(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Biography bio = new Biography();
-        bio.setVisibility(Visibility.fromValue(profile.getActivitiesVisibilityDefault() == null ? 
-                OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getActivitiesVisibilityDefault().value()));
-        if(profile.getBiographyEntity() != null) {
-            bio.setContent(profile.getBiographyEntity().getBiography());
-            if(profile.getBiographyEntity().getVisibility() != null) {
-                bio.setVisibility(profile.getBiographyEntity().getVisibility());
-            }            
-        } else {
-            bio.setContent(profile.getBiography()); 
-            if(profile.getBiographyVisibility() != null) {
-                bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getBiographyVisibility().value()));
-            }            
-        }
-        
-        return bio;
-    }
-    
     @Override    
     @Deprecated
     public void updateBiography(String orcid, Biography biography) {
@@ -724,7 +703,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
-        person.setBiography(getBiography(orcid));
+        person.setBiography(biographyManager.getBiography(orcid));
 		person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
@@ -811,8 +790,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Person getPublicPersonDetails(String orcid) {
         Person person = new Person();
         
-        Biography bio = getBiography(orcid);
-        if(Visibility.PUBLIC.equals(bio.getVisibility())) {
+        Biography bio = biographyManager.getPublicBiography(orcid);        
+        if(bio != null) {
             person.setBiography(bio);
         }
         

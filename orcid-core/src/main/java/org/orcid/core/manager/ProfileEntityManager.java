@@ -91,8 +91,6 @@ public interface ProfileEntityManager {
     @Deprecated
     void updateBiography(String orcid, Biography biography);
     
-    Biography getBiography(String orcid); 
-    
     Person getPersonDetails(String orcid);
     
     Person getPublicPersonDetails(String orcid);

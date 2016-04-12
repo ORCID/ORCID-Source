@@ -66,4 +66,11 @@
 		<sql>create index record_name_orcid_index on record_name(orcid);</sql>
 	</changeSet>
 	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-RECORD-NAME" author="Angel Montenegro" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON record_name to orcidro;</sql>
+	</changeSet>
+	
 </databaseChangeLog>		
