@@ -170,6 +170,8 @@
     
     <bean id="recordNameDao" class="org.orcid.persistence.dao.impl.RecordNameDaoImpl" />
 
+	<bean id="biographyDao" class="org.orcid.persistence.dao.impl.BiographyDaoImpl" />
+
     <bean id="identityProviderDao" class="org.orcid.persistence.dao.impl.IdentityProviderDaoImpl" />
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">

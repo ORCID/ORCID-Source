@@ -283,6 +283,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 }                                                        
             }
             
+            //Remove biography
+            
+            
             //Set the deactivated names
             RecordNameEntity recordName = deprecated.getRecordNameEntity();
             if(recordName != null) {
@@ -292,7 +295,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
                 recordName.setProfile(new ProfileEntity(deprecatedOrcid));
                 recordNameManager.updateRecordName(recordName);                
-            }
+            }                        
                                                         
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
