@@ -29,7 +29,7 @@
 		<createTable tableName="biography">
 			<column name="id" type="bigint">
 				<constraints nullable="false" primaryKey="true"
-					primaryKeyName="record_name_pkey" />
+					primaryKeyName="biography_pkey" />
 			</column>
 			<column name="orcid" type="VARCHAR(255)">
 				<constraints nullable="false" />

@@ -18,7 +18,7 @@
 
 -->
 <dataset>
-	<record_name 
+	<biography 
 		id="1"
 		date_created="2016-04-01 00:00:00.00"
 		last_modified="2016-04-01 00:00:00.00"
@@ -26,7 +26,7 @@
 		biography="Biography for 4444-4444-4444-4442"
 		visibility="PUBLIC"		
 		/>
-	<record_name
+	<biography
 		id="2" 
 		date_created="2016-04-01 00:00:00.00"
 		last_modified="2016-04-01 00:00:00.00"
