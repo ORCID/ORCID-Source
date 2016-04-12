@@ -709,6 +709,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
     
     @Override    
+    @Deprecated
     public void updateBiography(String orcid, Biography biography) {
         org.orcid.jaxb.model.message.Visibility visibility = OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility();        
         if(biography.getVisibility() != null) {
