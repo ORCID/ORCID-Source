@@ -1902,7 +1902,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 
 #edit-affiliation{
 	max-width: 800px;
-	height: 435px;
+	min-height: 435px;
 }
 
 #edit-affiliation input{
