@@ -1889,6 +1889,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	padding-right: 32px;
 }
 
+#add-funding .errors,
+.add-work .errors{
+	width: 100%;
+	float: left;
+	margin-top: 10px;
+}
+
 
 .no-margin-bottom {
 	margin-bottom: 0px;
@@ -1907,11 +1914,6 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 
 #edit-affiliation input{
 	margin-bottom: 0;
-}
-
-#edit-affiliation .spin{
-	margin-top: 10px;
-	vertical-align: -10px;
 }
 
 #edit-affiliation .alert{
@@ -2085,6 +2087,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .inline-list a {
 	display: inline-block;
 	*display: inline;
+}
+
+.inline-list.margin-separator li{
+	margin-right: 10px;
 }
 
 .tabs {
