@@ -59,10 +59,10 @@ public class BiographyDaoTest extends DBUnitTest {
     
     @Test
     public void testfindByOrcid() {
-        BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4442");
+        BiographyEntity bio = biographyDao.getBiography("4444-4444-4444-4447");
         assertNotNull(bio);
-        assertEquals("Biography for 4444-4444-4444-4442", bio.getBiography());
-        assertEquals(Visibility.PUBLIC, bio.getVisibility());        
+        assertEquals("Biography for 4444-4444-4444-4447", bio.getBiography());
+        assertEquals(Visibility.LIMITED, bio.getVisibility());        
     }
     
     @Test

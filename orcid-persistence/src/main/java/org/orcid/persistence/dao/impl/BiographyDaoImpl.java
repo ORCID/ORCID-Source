@@ -25,6 +25,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> implements BiographyDao {
     public BiographyDaoImpl() {
@@ -39,6 +40,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
+    @Transactional
     public boolean updateBiography(String orcid, String biography, Visibility visibility) {
         Query query = entityManager.createNativeQuery(
                 "update biography set biography = :biography, visibility = :visibility, last_modified = now() where orcid = :orcid");
@@ -49,6 +51,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
     }
 
     @Override
+    @Transactional
     public void createBiography(String orcid, String biography, Visibility visibility) {
         BiographyEntity bio = new BiographyEntity();
         bio.setVisibility(visibility);
