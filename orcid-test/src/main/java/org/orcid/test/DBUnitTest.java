@@ -78,6 +78,7 @@ public class DBUnitTest {
                 "SELECT p1.* FROM profile p1 LEFT JOIN client_details c ON c.group_orcid = p1.orcid LEFT JOIN profile p2 ON p1.source_id = p2.source_id WHERE p2.source_id IS NULL AND (c.client_details_id IS NULL OR p1.client_source_id IS NOT NULL)");        
         dataSet.addTable("other_name");
         dataSet.addTable("record_name");
+        dataSet.addTable("biography");
         dataSet.addTable("profile_keyword");
         dataSet.addTable("work");
         dataSet.addTable("profile_event");

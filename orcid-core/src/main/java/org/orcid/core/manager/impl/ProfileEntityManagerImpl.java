@@ -699,7 +699,10 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 bio.setVisibility(profile.getBiographyEntity().getVisibility());
             }            
         } else {
-            bio.setContent(profile.getBiography());            
+            bio.setContent(profile.getBiography()); 
+            if(profile.getBiographyVisibility() != null) {
+                bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getBiographyVisibility().value()));
+            }            
         }
         
         return bio;
