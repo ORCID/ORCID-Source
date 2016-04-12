@@ -871,10 +871,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
             if(profileEntity.getBiographyEntity() == null) {
-                profileEntity.setBiographyEntity(new BiographyEntity());
-                profileEntity.getBiographyEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+                profileEntity.setBiographyEntity(new BiographyEntity());                
             }
             
+            profileEntity.getBiographyEntity().setProfile(profileEntity);
             profileEntity.getBiographyEntity().setBiography(biography.getContent());
             if (biography.getVisibility() != null) {
                 profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));
