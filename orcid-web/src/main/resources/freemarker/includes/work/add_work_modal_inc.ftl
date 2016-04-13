@@ -330,25 +330,51 @@
 						</select>
                     </div>
                 </div>
-				<div class="control-group">					
-					<span ng-show="editWork.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
-					<span ng-show="addingWork">
-						<i class="glyphicon glyphicon-refresh spin x2 green"></i>
-					</span>
-				</div>
+				
+				
+
 				<div class="control-group">
-					<div ng-show="editWork.putCode.value != null">	
-						<button class="btn btn-primary" ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
-							<@orcid.msg 'freemarker.btnsave'/>
-						</button>
-						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+
+					<div ng-show="editWork.putCode.value != null">
+						<ul class="inline-list margin-separator pull-left">
+							<li>
+								<button class="btn btn-primary" ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+									<@orcid.msg 'freemarker.btnsave'/>
+								</button>
+							</li>
+							<li>
+								<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+							</li>
+							<li>
+								<span ng-show="addingWork">
+									<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+								</span>
+							</li>
+						</ul>
 					</div>
+
 					<div ng-show="editWork.putCode.value == null">
-						<button class="btn btn-primary" id='save-new-work' ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
-							<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
-						</button>
-						<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
-					</div>									
+						<ul class="inline-list margin-separator pull-left">
+							<li>
+								<button class="btn btn-primary" id='save-new-work' ng-click="putWork()" ng-disabled="addingWork" ng-class="{disabled:addingWork}">
+									<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
+								</button>
+							</li>
+							<li>
+								<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+							</li>
+							<li>
+								<span ng-show="addingWork">
+									<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+								</span>
+							</li>
+						</ul>
+					</div>
+
+					<div class="control-group errors">					
+						<span ng-show="editWork.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
+					</div>
+									
 				</div>
 			</div>
 			</fn-form>			
