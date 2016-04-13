@@ -36,6 +36,10 @@ import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.Fundings;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
@@ -43,10 +47,9 @@ import org.orcid.jaxb.model.record_rc2.Applications;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.Delegation;
+import org.orcid.jaxb.model.record_rc2.Deprecated;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -54,12 +57,14 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.Preferences;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
-import org.orcid.jaxb.model.record_rc2.Deprecated;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -619,6 +624,68 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
     }
     
+    @Test
+    public void testUnmarshallRecord() {
+        Record record = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
+        assertNotNull(record);
+        assertNotNull(record.getActivitiesSummary());
+        ActivitiesSummary activities = record.getActivitiesSummary();
+        assertNotNull(activities.getLastModifiedDate());
+        assertNotNull(activities.getEducations());
+        Educations educations = activities.getEducations();
+        assertNotNull(educations.getLastModifiedDate());
+        assertEquals(1, educations.getSummaries().size());
+        assertEquals(Long.valueOf(0), educations.getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PRIVATE, educations.getSummaries().get(0).getVisibility());
+        assertEquals("education:department-name", educations.getSummaries().get(0).getDepartmentName());
+        assertEquals("education:role-title", educations.getSummaries().get(0).getRoleTitle());
+        assertNotNull(educations.getSummaries().get(0).getEndDate());
+        assertEquals("02", educations.getSummaries().get(0).getEndDate().getDay().getValue());
+        assertEquals("02", educations.getSummaries().get(0).getEndDate().getMonth().getValue());
+        assertEquals("1848", educations.getSummaries().get(0).getEndDate().getYear().getValue());
+        assertNotNull(educations.getSummaries().get(0).getStartDate());
+        assertEquals("02", educations.getSummaries().get(0).getStartDate().getDay().getValue());
+        assertEquals("02", educations.getSummaries().get(0).getStartDate().getMonth().getValue());
+        assertEquals("1848", educations.getSummaries().get(0).getStartDate().getYear().getValue());
+        assertNotNull(educations.getSummaries().get(0).getOrganization());
+        assertEquals("common:name", educations.getSummaries().get(0).getOrganization().getName());
+        assertEquals("common:city", educations.getSummaries().get(0).getOrganization().getAddress().getCity());        
+        assertEquals("common:region", educations.getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, educations.getSummaries().get(0).getOrganization().getAddress().getCountry());
+        
+        assertNotNull(activities.getEmployments());
+        Employments employments = activities.getEmployments();
+        assertNotNull(employments.getLastModifiedDate());
+        assertEquals(1, employments.getSummaries().size());
+        assertEquals(Long.valueOf(0), employments.getSummaries().get(0).getPutCode());
+        assertEquals(Visibility.PRIVATE, employments.getSummaries().get(0).getVisibility());
+        assertEquals("affiliation:department-name", employments.getSummaries().get(0).getDepartmentName());
+        assertEquals("affiliation:role-title", employments.getSummaries().get(0).getRoleTitle());
+        assertNotNull(employments.getSummaries().get(0).getEndDate());
+        assertEquals("02", employments.getSummaries().get(0).getEndDate().getDay().getValue());
+        assertEquals("02", employments.getSummaries().get(0).getEndDate().getMonth().getValue());
+        assertEquals("1848", employments.getSummaries().get(0).getEndDate().getYear().getValue());
+        assertNotNull(employments.getSummaries().get(0).getStartDate());
+        assertEquals("02", employments.getSummaries().get(0).getStartDate().getDay().getValue());
+        assertEquals("02", employments.getSummaries().get(0).getStartDate().getMonth().getValue());
+        assertEquals("1848", employments.getSummaries().get(0).getStartDate().getYear().getValue());
+        assertNotNull(employments.getSummaries().get(0).getOrganization());
+        assertEquals("common:name", employments.getSummaries().get(0).getOrganization().getName());
+        assertEquals("common:city", employments.getSummaries().get(0).getOrganization().getAddress().getCity());        
+        assertEquals("common:region", employments.getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, employments.getSummaries().get(0).getOrganization().getAddress().getCountry());
+        
+        assertNotNull(activities.getFundings());
+        Fundings fundings = activities.getFundings();
+        assertNotNull(fundings.getLastModifiedDate());
+        assertEquals(1, fundings.getFundingGroup().size());
+        assertNotNull(fundings.getFundingGroup().get(0).getLastModifiedDate());
+        assertEquals(1, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(1, fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("grant_number", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -667,6 +734,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (Preferences) obj;
             } else if (History.class.equals(type)) {
                 result = (History) obj;
+            } else if(Record.class.equals(type)) {
+                result = (Record) obj;
             }
             return result;
         } catch (IOException e) {
