@@ -44,9 +44,7 @@
 
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     
-    <bean id="nameDao" class="org.orcid.persistence.dao.impl.NameDaoImpl" />
-    
-     <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
+    <bean id="profileDaoReadOnly" class="org.orcid.persistence.dao.impl.ProfileDaoImpl">
          <property name="entityManager" ref="entityManagerReadOnly" />
      </bean>
     

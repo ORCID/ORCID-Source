@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -60,18 +61,18 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         if (profileEntity != null) {            
             RecordNameEntity recordName = profileEntity.getRecordNameEntity();
             if(recordName != null) {
-                if(profileEntity.getRecordNameEntity().getVisibility() != null) {
-                    nameVisibility = profileEntity.getRecordNameEntity().getVisibility();
+                if(recordName.getVisibility() != null) {
+                    nameVisibility = recordName.getVisibility();
                 }            
                 name.setVisibility(nameVisibility);            
-                if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getCreditName())) {
-                    name.setCreditName(new CreditName(profileEntity.getRecordNameEntity().getCreditName()));
+                if (!PojoUtil.isEmpty(recordName.getCreditName())) {
+                    name.setCreditName(new CreditName(recordName.getCreditName()));
                 }
-                if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getFamilyName())) {
-                    name.setFamilyName(new FamilyName(profileEntity.getRecordNameEntity().getFamilyName()));
+                if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
+                    name.setFamilyName(new FamilyName(recordName.getFamilyName()));
                 }
-                if (!PojoUtil.isEmpty(profileEntity.getRecordNameEntity().getGivenNames())) {
-                    name.setGivenNames(new GivenNames(profileEntity.getRecordNameEntity().getGivenNames()));
+                if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
+                    name.setGivenNames(new GivenNames(recordName.getGivenNames()));
                 }
                 
                 name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getDateCreated())));
@@ -99,18 +100,19 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         Name name = getName(orcid);
         Biography bio = new Biography();
         if(profileEntity.getBiographyEntity() != null) {
-            if(!PojoUtil.isEmpty(profileEntity.getBiographyEntity().getBiography())) {
-                bio.setContent(profileEntity.getBiographyEntity().getBiography());
+            BiographyEntity biograpyEntity = profileEntity.getBiographyEntity(); 
+            if(!PojoUtil.isEmpty(biograpyEntity.getBiography())) {
+                bio.setContent(biograpyEntity.getBiography());
             }      
             
             Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-            if(profileEntity.getBiographyEntity().getVisibility() != null) {
-                bioVisibility = profileEntity.getBiographyEntity().getVisibility();
+            if(biograpyEntity.getVisibility() != null) {
+                bioVisibility = biograpyEntity.getVisibility();
             } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
                 bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
             }
             bio.setVisibility(bioVisibility);
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getBiographyEntity().getLastModified())));
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biograpyEntity.getLastModified())));
         } else {
             if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
                 bio.setContent(profileEntity.getBiography());

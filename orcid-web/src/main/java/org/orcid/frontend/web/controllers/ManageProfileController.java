@@ -1036,7 +1036,10 @@ public class ManageProfileController extends BaseWorkspaceController {
                         DelegateSummary summary = new DelegateSummary();
                         details.setDelegateSummary(summary);
                         summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
-                        String creditName = delegateProfile.getRecordNameEntity().getCreditName();
+                        String creditName = delegateProfile.getCreditName();
+                        if(delegateProfile.getRecordNameEntity() != null) {
+                            creditName = delegateProfile.getRecordNameEntity().getCreditName();
+                        }
                         if (StringUtils.isNotBlank(creditName)) {
                             summary.setCreditName(new CreditName(creditName));
                         }

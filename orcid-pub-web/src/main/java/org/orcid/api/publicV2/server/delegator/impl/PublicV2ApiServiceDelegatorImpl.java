@@ -227,9 +227,17 @@ public class PublicV2ApiServiceDelegatorImpl
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if (!entity.getRecordNameEntity().getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
-            creditName = entity.getRecordNameEntity().getCreditName();
+        if(entity.getRecordNameEntity() != null) {
+            if (!entity.getRecordNameEntity().getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+                creditName = entity.getRecordNameEntity().getCreditName();
+            }
+        } else {
+            //TODO: remove when the names migration is done
+            if(entity.getNamesVisibility() != null && !entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)) {
+                creditName = entity.getCreditName();
+            }            
         }
+        
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName ,true);
         return Response.ok(item).build();

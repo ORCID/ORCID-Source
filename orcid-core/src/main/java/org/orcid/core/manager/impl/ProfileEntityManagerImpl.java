@@ -99,6 +99,7 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -714,11 +715,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
-        person.setBiography(biographyManager.getBiography(orcid));
-		person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
+        Biography biography = biographyManager.getBiography(orcid);
+        if(biography != null) {
+            person.setBiography(biography);
+        } 
+        
+        person.setName(personalDetailsManager.getName(orcid));
+        
+        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
@@ -727,9 +735,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setName(personalDetailsManager.getName(orcid));
+        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
         
         person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
@@ -743,8 +749,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        //The rest should come from the ProfileEntity object
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        //The rest should come from the ProfileEntity object              
         Delegation delegation = null;
         
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
@@ -802,12 +807,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPublicPersonDetails(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Person person = new Person();
         
         Biography bio = biographyManager.getPublicBiography(orcid);        
         if(bio != null) {
             person.setBiography(bio);
-        }
+        } 
         
         Name name = personalDetailsManager.getName(orcid);
         if(Visibility.PUBLIC.equals(name.getVisibility())) {
@@ -839,8 +845,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        //The rest should come from the ProfileEntity object
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        //The rest should come from the ProfileEntity object              
         Delegation delegation = null;
         
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();

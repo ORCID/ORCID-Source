@@ -27,6 +27,11 @@ import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class BiographyManagerImpl implements BiographyManager {
 
     @Resource
