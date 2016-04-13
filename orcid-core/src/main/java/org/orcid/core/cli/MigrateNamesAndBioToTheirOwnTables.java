@@ -19,6 +19,9 @@ package org.orcid.core.cli;
 import java.util.Collections;
 import java.util.List;
 
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.BiographyDao;
@@ -47,23 +50,24 @@ public class MigrateNamesAndBioToTheirOwnTables {
     private RecordNameDao recordNameDao;
     private BiographyDao biographyDao;
 
-    public static void main(String... args) {
-        new MigrateNamesAndBioToTheirOwnTables().migrate();
-    }
+    @Option(name = "-s", usage = "Batch size")
+    private int batchSize;
     
-    private void migrate() {
-        init();
-        migrateData();
+    public static void main(String [] args) throws CmdLineException {
+        MigrateNamesAndBioToTheirOwnTables migrate = new MigrateNamesAndBioToTheirOwnTables();
+        migrate.init(args);
+        migrate.migrateData();
         System.exit(0);
     }
     
     private void migrateData() {
         LOG.debug("Starting migration process");
         List<Object[]> profileElements = Collections.emptyList();
-        
+        int counter = 0;
         do {
-            profileElements = profileDao.findProfilesWhereNamesAreNotMigrated(10000);
-            
+            LOG.debug("About to fetch a batch from DB");
+            profileElements = profileDao.findProfilesWhereNamesAreNotMigrated(batchSize);
+            LOG.debug("Procesing batch, profiles processed so far: " + counter);
             for(final Object[] profileElement : profileElements) {
                 String orcid = (String) profileElement[0];
                 String givenNames = (String) profileElement[1];
@@ -106,6 +110,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
                         }
                     }
                 });
+                counter += 1;
             }
         } while (profileElements != null && !profileElements.isEmpty());
         
@@ -113,7 +118,13 @@ public class MigrateNamesAndBioToTheirOwnTables {
     }
     
     @SuppressWarnings("resource")
-    private void init() {
+    private void init(String [] args) throws CmdLineException {
+        CmdLineParser parser = new CmdLineParser(this);
+        parser.parseArgument(args);
+        if(batchSize == 0) {
+            batchSize = 10000;
+        }
+        
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
         profileDao = (ProfileDao) context.getBean("profileDao");
         recordNameDao = (RecordNameDao) context.getBean("recordNameDao");
