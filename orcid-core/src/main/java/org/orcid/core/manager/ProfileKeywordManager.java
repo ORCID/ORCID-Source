@@ -16,11 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 
 public interface ProfileKeywordManager {
+    void setSourceManager(SourceManager sourceManager); 
     /**
      * Return the list of keywords associated to a specific profile
      * @param orcid

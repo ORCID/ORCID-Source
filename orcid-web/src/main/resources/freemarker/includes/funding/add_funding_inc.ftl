@@ -295,25 +295,48 @@
                         <div ng-repeat='error in editFunding.url.errors' ng-bind-html="error"></div>
                     </span>                    
                 </div>
-                <div class="control-group">
-                    <span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
-                    <span ng-show="addingFunding">
-                        <i class="glyphicon glyphicon-refresh spin x2 green"></i>
-                    </span>
-                </div>
-                <div class="control-group">
-                    <div ng-show="editFunding.putCode.value != null">
-                        <button class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
-                            <@orcid.msg 'freemarker.btnsave'/>
-                        </button>
-                        <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
+                
+				<div class="control-group">
+					<div class="control-group" ng-if="editFunding.putCode.value != null">
+                    	<ul class="inline-list margin-separator pull-left">
+							<li>
+								<button class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
+                            		<@orcid.msg 'freemarker.btnsave'/>
+                        		</button>
+							</li>
+							<li>
+								<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
+							</li>
+							<li>
+								<span ng-show="addingFunding">
+                        			<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+                    			</span>
+							</li>
+						</ul>
+					</div>
+
+                    <div class="control-group" ng-if="editFunding.putCode.value == null">	
+						<ul class="inline-list margin-separator pull-left">
+							<li>
+								<button id="save-funding" class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
+	                            	<@orcid.msg 'manual_funding_form_contents.btnaddtolist'/>
+                        		</button>
+							</li>
+							<li>
+								<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel'/></button>
+							</li>
+							<li>
+								<span ng-show="addingFunding">
+                        			<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+                    			</span>
+							</li>
+						</ul>
                     </div>
-                    <div ng-show="editFunding.putCode.value == null">
-                        <button id="save-funding" class="btn btn-primary" ng-click="putFunding()" ng-disabled="addingFunding" ng-class="{disabled:addingFunding}">
-                            <@orcid.msg 'manual_funding_form_contents.btnaddtolist'/>
-                        </button>
-                        <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel'/></button>
-                    </div>
+
+					<div class="control-group errors">
+                    	<span ng-show="editFunding.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
+                	</div>
+
                 </div>
             </div>
         </div>

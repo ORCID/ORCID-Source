@@ -298,10 +298,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     private void setIncomingWorkPrivacy(ProfileFundingEntity profileFundingEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = profileFundingEntity.getVisibility();
         Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                profileFundingEntity.setVisibility(defaultWorkVisibility);
-            }
+        if (profile.getClaimed()) {            
+            profileFundingEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
             profileFundingEntity.setVisibility(Visibility.PRIVATE);
         }

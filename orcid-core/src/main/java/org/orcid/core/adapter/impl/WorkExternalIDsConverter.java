@@ -37,7 +37,7 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
     @Override
     public ExternalIDs convertFrom(String externalIdentifiersAsString, Type<ExternalIDs> arg1) {
         ExternalIDs result = new ExternalIDs();
-        WorkExternalIDConverter conv = new WorkExternalIDConverter();
+        PeerReviewWorkExternalIDConverter conv = new PeerReviewWorkExternalIDConverter();
         WorkExternalIdentifiers ids = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, WorkExternalIdentifiers.class);        
         for (WorkExternalIdentifier id : ids.getWorkExternalIdentifier()){
             ExternalID exid = conv.convertRC1toRC2(id);
@@ -49,7 +49,7 @@ public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs
     @Override
     public String convertTo(ExternalIDs externalIDs, Type<String> arg1) {
         WorkExternalIdentifiers ids = new WorkExternalIdentifiers();
-        WorkExternalIDConverter conv = new WorkExternalIDConverter();
+        PeerReviewWorkExternalIDConverter conv = new PeerReviewWorkExternalIDConverter();
         for (ExternalID externalID : externalIDs.getExternalIdentifier()){
             WorkExternalIdentifier id = conv.convertRC2toRC1(externalID);
             ids.getExternalIdentifier().add(id);

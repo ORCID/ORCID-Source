@@ -165,10 +165,10 @@
                 <tr>
                     <th><a name="editPrivacyPreferences"></a>${springMacroRequestContext.getMessage("manage.privacy_preferences")}</th>
                     <td><a href="" ng-click="togglePrivacyPreferencesEdit()"
-                        ng-bind="privacyPreferencesToggleText"></a></td>
+                        ng-bind="privacyPreferencesToggleText" id="privacyPreferencesToggle"></a></td>
                 </tr>
                 <tr ng-controller="WorksPrivacyPreferencesCtrl"
-                    ng-show="showEditPrivacyPreferences" ng-cloak>
+                    ng-show="showEditPrivacyPreferences" id="privacyPreferencesSection" ng-cloak>
                     <td colspan="2">
                         <div class="editTablePadCell35" id="privacy-settings">
                             ${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}<br />
@@ -197,15 +197,13 @@
                             </span>
                             <div class="control-group">
                                 <label for="changeSecurityQuestionForm.securityQuestionAnswer"
-                                    class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>
-                                <div class="relative">
+                                    class="">${springMacroRequestContext.getMessage("manage.security_question")}</label>                                    
+                                <div class="relative" ng-init="securityQuestions = [<#list securityQuestions?keys as key>'${securityQuestions[key]?js_string}',</#list>]">
                                     <select id="securityQuestionId" name="securityQuestionId"
                                         class="input-xlarge"
-                                        ng-model="securityQuestionPojo.securityQuestionId">
-                                        <#list securityQuestions?keys as key>
-                                        <option value="${key}"
-                                            ng-selected="securityQuestionPojo.securityQuestionId == ${key}">${securityQuestions[key]}</option>
-                                        </#list>
+                                        ng-model="securityQuestionPojo.securityQuestionId"
+                                        ng-options="securityQuestions.indexOf(securityOption) as securityOption for securityOption in securityQuestions">
+                                        >                                        
                                     </select>
                                 </div>
                             </div>
@@ -486,7 +484,7 @@
 	                    <thead>
 	                        <tr>
 	                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
-	                            <th width="30%" ng-click="changeSorting('providerId')"><@orcid.msg 'manage_signin_table_header2' /></th>
+	                            <th width="30%" ng-click="changeSorting('idpName')"><@orcid.msg 'manage_signin_table_header2' /></th>
 	                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
 	                            <td width="10%"></td>
 	                        </tr>
@@ -494,7 +492,7 @@
 	                    <tbody>
 	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
 	                            <td width="40%" style="word-break:break-all">{{socialAccount.accountIdForDisplay}}</a></td>
-	                            <td width="30%" style="word-break:break-all">{{socialAccount.id.providerid}}</a></td>
+	                            <td width="30%" style="word-break:break-all">{{socialAccount.idpName}}</a></td>
 	                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
 	                            <td width="10%">
 	                                <a

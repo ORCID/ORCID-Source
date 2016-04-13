@@ -60,7 +60,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "urlName", "url" })
 @XmlRootElement(name = "researcher-url")
-public class ResearcherUrl implements Comparable<ResearcherUrl>, VisibilityType, Serializable {
+public class ResearcherUrl implements Comparable<ResearcherUrl>, VisibilityType, PrivateVisibleToSource, Serializable {
 
     /**
      * 

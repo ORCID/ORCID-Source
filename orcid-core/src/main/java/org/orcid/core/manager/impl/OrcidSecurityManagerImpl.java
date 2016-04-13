@@ -77,7 +77,7 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
  * @author Will Simpson
  *
  */
-public class OrcidSecurityManagerImpl implements OrcidSecurityManager { 
+public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Resource
     private SourceManager sourceManager;
@@ -196,7 +196,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public boolean isAdmin() {
-        Authentication authentication = getOAuth2Authentication();
+        Authentication authentication = getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof OrcidProfileUserDetails) {
@@ -212,6 +212,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return sourceManager.isInDelegationMode() && !sourceManager.isDelegatedByAnAdmin();
     }
 
+    private Authentication getAuthentication() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context != null && context.getAuthentication() != null) {
+            return context.getAuthentication();
+        } 
+        return null;
+    }
+    
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
         Set<String> readLimitedScopes = new HashSet<>();
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
@@ -256,14 +264,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 || filterable instanceof Biography) {
             updateScopes.add(ScopePathType.PERSON_UPDATE.value());
             updateScopes.add(ScopePathType.ORCID_BIO_UPDATE.value());
-            if(filterable instanceof PersonExternalIdentifier) {
+            if (filterable instanceof PersonExternalIdentifier) {
                 updateScopes.add(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value());
             }
         }
         updateScopes.retainAll(requestedScopes);
         return updateScopes;
     }
-    
+
     private void checkIsCorrectUser(String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         if (oAuth2Authentication != null) {
@@ -284,11 +292,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
             Authentication authentication = context.getAuthentication();
-            // if authentication is null, it might be a call from the public
-            // api,
-            // so, return null
-            if (authentication == null)
-                return null;
             if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
                 OAuth2Authentication oAuth2Authentication = (OAuth2Authentication) authentication;
                 return oAuth2Authentication;
@@ -304,11 +307,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 throw new AccessControlException(
                         "Cannot access method with authentication type " + authentication != null ? authentication.toString() : ", as it's null!");
             }
-
         } else {
             throw new IllegalStateException("No security context found. This is bad!");
         }
-
     }
 
     @Override

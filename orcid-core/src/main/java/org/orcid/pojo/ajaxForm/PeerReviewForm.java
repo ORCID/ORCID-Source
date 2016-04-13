@@ -75,6 +75,8 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
     
     private Text groupId;
     
+    private Text groupIdPutCode;
+    
     private Text subjectContainerName;
     
     private Text subjectType;
@@ -299,6 +301,14 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
 
     public void setSubjectUrl(Text subjectUrl) {
         this.subjectUrl = subjectUrl;
+    }
+        
+    public Text getGroupIdPutCode() {
+        return groupIdPutCode;
+    }
+
+    public void setGroupIdPutCode(Text groupIdPutCode) {
+        this.groupIdPutCode = groupIdPutCode;
     }
 
     public PeerReview toPeerReview() {

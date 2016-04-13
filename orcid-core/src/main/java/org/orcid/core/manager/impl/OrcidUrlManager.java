@@ -22,19 +22,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class OrcidUrlManager {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidUrlManager.class);
 
-    static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
+    private static Pattern fileNamePattern = Pattern.compile("https{0,1}:\\/\\/[^\\/]*(.*){0,1}");
 
-    static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
+    private static String PROTOCALL_PATTREN = "http[s]{0,1}:\\/\\/";
+
+    private static Pattern SAVED_REQUEST_PATTERN = Pattern
+            .compile("/(my-orcid|inbox|account|developer-tools|manage-members|admin-actions|verify-email/[^/]+)(\\?|$)|(oauth/(?![^?]*\\.json))");
 
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
@@ -184,20 +190,42 @@ public class OrcidUrlManager {
     public static String getscheme(HttpServletRequest request) {
         String forwardedProto = request.getHeader("X-Forwarded-Proto");
         String scheme = forwardedProto != null ? forwardedProto : request.getScheme();
-        if (scheme == null) 
+        if (scheme == null)
             LOGGER.error("WHAT THE HELL is going on? Request scheme is null.", request);
         return scheme.toLowerCase();
     }
-    
+
     public static boolean isSecure(HttpServletRequest request) {
         if (OrcidUrlManager.getscheme(request).equals("https")) {
-          return true;  
+            return true;
         }
         return false;
     }
 
     public static String getPathWithoutContextPath(HttpServletRequest request) {
         return request.getRequestURI().substring(request.getContextPath().length());
+    }
+
+    public String determineFullTargetUrlFromSavedRequest(HttpServletRequest request, HttpServletResponse response) {
+        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
+        String url = null;
+        if (savedRequest != null) {
+            url = savedRequest.getRedirectUrl();
+            if (url != null) {
+                String contextPath = request.getContextPath();
+                // Remove the context path if it looks like we are configured to
+                // run behind nginx.
+                if (getBasePath().equals("/") && !contextPath.equals("/"))
+                    url = url.replaceFirst(contextPath.replace("/", "\\/"), "");
+                // Only allow the saved request to be used if it matches the
+                // expected pattern. So, we won't redirct to blank.gif, for
+                // example.
+                if (!SAVED_REQUEST_PATTERN.matcher(url).find()) {
+                    url = null;
+                }
+            }
+        }
+        return url;
     }
 
 }

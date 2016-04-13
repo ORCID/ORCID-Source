@@ -29,11 +29,11 @@ import org.orcid.core.adapter.JpaJaxbKeywordAdapter;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -62,9 +62,17 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
     @Resource
     private ProfileEntityManager profileEntityManager;
     
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
     }
     
     @Override
@@ -134,7 +142,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         }
 
         ProfileKeywordEntity newEntity = adapter.toProfileKeywordEntity(keyword);
-        ProfileEntity profile = new ProfileEntity(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
         newEntity.setSource(sourceEntity);
@@ -243,11 +251,9 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     private void setIncomingPrivacy(ProfileKeywordEntity entity, ProfileEntity profile) {
         org.orcid.jaxb.model.common_rc2.Visibility incomingKeywordVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value());
+        org.orcid.jaxb.model.common_rc2.Visibility defaultKeywordVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            if (defaultKeywordVisibility.isMoreRestrictiveThan(incomingKeywordVisibility)) {
-                entity.setVisibility(defaultKeywordVisibility);
-            }
+            entity.setVisibility(defaultKeywordVisibility);
         } else if (incomingKeywordVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }

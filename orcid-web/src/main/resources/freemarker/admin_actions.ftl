@@ -594,7 +594,7 @@
 					</div>
 				</div>
 				<div class="control-group">
-	    			<label for="emailIds" class="control-label">${springMacroRequestContext.getMessage("resend_claim.labelEmailAddress")} </label>
+	    			<label for="emailIds" class="control-label">${springMacroRequestContext.getMessage("admin.reset_password.orcid.label")} </label>
 	       			<div class="controls">                    	
 	       				<input type="text" data-ng-model="emailIds" class="input-xlarge" placeholder="<@orcid.msg 'admin.lookup_id_email.placeholder' />" />
 	       			</div>

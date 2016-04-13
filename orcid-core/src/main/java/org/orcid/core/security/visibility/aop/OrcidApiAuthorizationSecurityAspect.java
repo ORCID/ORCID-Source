@@ -33,13 +33,19 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.springframework.core.annotation.Order;
@@ -165,7 +171,8 @@ public class OrcidApiAuthorizationSecurityAspect {
             if (isUpdateOrReadScope(requiredScope)) {                
                 // If the authentication contains a client_id, use it to check
                 // if it should be able to
-                if (authentication.getClass().isAssignableFrom(OrcidOAuth2Authentication.class)) {
+                if (OrcidOAuth2Authentication.class.isAssignableFrom(authentication.getClass())){
+//                if (authentication.getClass().isAssignableFrom(OrcidOAuth2Authentication.class)) {
                     OrcidOAuth2Authentication orcidAuth = (OrcidOAuth2Authentication) getAuthentication();
 
                     OAuth2Request authorization = orcidAuth.getOAuth2Request();
@@ -251,10 +258,42 @@ public class OrcidApiAuthorizationSecurityAspect {
                         }
                     }
                 }                
-            }                        
+            }
+            
+            //replace section visibilities now we may have filtered items
+            if(orcidMessage.getOrcidProfile() != null) {
+                if(orcidMessage.getOrcidProfile().getOrcidBio() != null) {
+                    if(orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails() != null) {
+                        OtherNames n = orcidMessage.getOrcidProfile().getOrcidBio().getPersonalDetails().getOtherNames();
+                        if(n != null) {
+                            n.setVisibility(getMostFromCollection(n.getOtherName()));
+                        }
+                    }  
+                    ExternalIdentifiers ids = orcidMessage.getOrcidProfile().getOrcidBio().getExternalIdentifiers();
+                    if (ids != null){
+                        ids.setVisibility(getMostFromCollection(ids.getExternalIdentifier()));                        
+                    }
+                    Keywords kws = orcidMessage.getOrcidProfile().getOrcidBio().getKeywords();
+                    if (kws != null){
+                        kws.setVisibility(getMostFromCollection(kws.getKeyword()));
+                    }
+                    ResearcherUrls urls = orcidMessage.getOrcidProfile().getOrcidBio().getResearcherUrls();
+                    if (urls != null){
+                        urls.setVisibility(getMostFromCollection(urls.getResearcherUrl()));                        
+                    }
+                }
+            }
         }
     }
 
+    private Visibility getMostFromCollection(List<? extends VisibilityType> c){
+        Visibility most = Visibility.PUBLIC;
+        for (VisibilityType x : c){
+            if (x.getVisibility().isMoreRestrictiveThan(most))
+                    most = x.getVisibility();
+        }
+        return most;
+    }
     private String getUserOrcidFromOrcidMessage(OrcidMessage message) {
         OrcidProfile profile = message.getOrcidProfile();
         return profile.getOrcidIdentifier().getPath();

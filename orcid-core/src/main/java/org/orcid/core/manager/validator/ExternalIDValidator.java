@@ -22,6 +22,8 @@ import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.notification.permission_rc2.Item;
+import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
@@ -40,7 +42,7 @@ public class ExternalIDValidator {
             return;
         try{
             WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-        }catch (IllegalArgumentException e){
+        }catch (IllegalArgumentException | NullPointerException e ){
             checkAndThrow(Lists.newArrayList(id.getType()));
         }
     }
@@ -52,7 +54,7 @@ public class ExternalIDValidator {
         for (ExternalID id : ids.getExternalIdentifier()){
             try{
                 WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+            }catch (IllegalArgumentException  | NullPointerException e){
                 errors.add(id.getType());
             }
         }            
@@ -66,10 +68,25 @@ public class ExternalIDValidator {
         for (ExternalID id : ids.getExternalIdentifier()){
             try{
                 FundingExternalIdentifierType t = FundingExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException e){
+            }catch (IllegalArgumentException  | NullPointerException e ){
                 errors.add(id.getType());
             }
         }            
+        checkAndThrow(errors);
+    }
+    
+    public void validateNotificationItems(Items items){
+        if (items == null)
+            return;
+        List<String> errors = Lists.newArrayList();
+        for (Item i: items.getItems()){
+            try{
+                if (i.getExternalIdentifier() !=null && i.getExternalIdentifier().getType()!=null)
+                    WorkExternalIdentifierType.fromValue(i.getExternalIdentifier().getType().toLowerCase());
+            }catch (IllegalArgumentException  | NullPointerException e){
+                errors.add(i.getExternalIdentifier().getType());
+            }
+        }
         checkAndThrow(errors);
     }
 

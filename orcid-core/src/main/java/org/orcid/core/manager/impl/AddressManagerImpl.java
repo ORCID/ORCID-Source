@@ -30,10 +30,10 @@ import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
-import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -60,10 +60,18 @@ public class AddressManagerImpl implements AddressManager {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;    
     
     private long getLastModified(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();
+    }
+    
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
     }
     
     @Override
@@ -141,7 +149,7 @@ public class AddressManagerImpl implements AddressManager {
         }
 
         AddressEntity newEntity = adapter.toAddressEntity(address);
-        ProfileEntity profile = new ProfileEntity(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
         newEntity.setSource(sourceEntity);        
@@ -176,14 +184,10 @@ public class AddressManagerImpl implements AddressManager {
     }    
     
     private void setIncomingPrivacy(AddressEntity entity, ProfileEntity profile) {
-        Visibility incomingCountryVisibility = entity.getVisibility();
-        Visibility defaultCountryVisibility = profile.getActivitiesVisibilityDefault() == null
-                ? Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value())
-                : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc2.Visibility incomingCountryVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc2.Visibility defaultCountryVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());        
         if (profile.getClaimed() != null && profile.getClaimed()) {
-            if (defaultCountryVisibility.isMoreRestrictiveThan(incomingCountryVisibility)) {
-                entity.setVisibility(defaultCountryVisibility);
-            }
+            entity.setVisibility(defaultCountryVisibility);            
         } else if (incomingCountryVisibility == null) {
             entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
         }

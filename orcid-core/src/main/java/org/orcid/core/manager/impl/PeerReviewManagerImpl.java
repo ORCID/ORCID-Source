@@ -218,10 +218,8 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     private void setIncomingPrivacy(PeerReviewEntity entity, ProfileEntity profile) {
         Visibility incomingVisibility = entity.getVisibility();
         Visibility defaultVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            if (defaultVisibility.isMoreRestrictiveThan(incomingVisibility)) {
-                entity.setVisibility(defaultVisibility);
-            }
+        if (profile.getClaimed()) {            
+            entity.setVisibility(defaultVisibility);            
         } else if (incomingVisibility == null) {
             entity.setVisibility(Visibility.PRIVATE);
         }

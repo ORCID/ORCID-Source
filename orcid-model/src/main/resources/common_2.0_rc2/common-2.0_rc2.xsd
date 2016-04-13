@@ -1595,18 +1595,6 @@
 			<xs:enumeration value="part-of" />
 		</xs:restriction>
 	</xs:simpleType>
-
-	<!-- 
-	<xs:complexType name="external-identifier">
-		<xs:annotation>
-			<xs:documentation>External references common to each activity</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="external-identifier-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
-			<xs:element name="relationship" minOccurs="1" maxOccurs="1" type="common:relationship-type" />			
-		</xs:sequence>
-	</xs:complexType>
-	 -->
 	 
 	<xs:complexType name="external-id">
 		<xs:annotation>
@@ -1635,7 +1623,7 @@
 			</xs:documentation>
 		</xs:annotation>		
 		<xs:restriction base="common:string-1000">
-			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:).*" />
+			<xs:pattern value="(ringgold:|issn:|orcid-generated:|fundref:|publons:)([0-9a-zA-Z\^._~:/?#\[\]@!$&amp;'()*+,;=-]){2,}" />
 		</xs:restriction>    		
 	</xs:simpleType>
 </xs:schema>

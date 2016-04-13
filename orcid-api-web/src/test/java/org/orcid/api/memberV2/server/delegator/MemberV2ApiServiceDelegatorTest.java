@@ -1624,7 +1624,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.myRUrl.com", researcherUrl.getUrl().getValue());
         assertEquals("My researcher Url", researcherUrl.getUrlName());
-        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
     }
 
     @Test
@@ -1854,7 +1854,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         OtherName newOtherName = (OtherName) response.getEntity();
         assertNotNull(newOtherName);
         assertEquals("New Other Name", newOtherName.getContent());
-        assertEquals(Visibility.LIMITED, newOtherName.getVisibility());
+        assertEquals(Visibility.PUBLIC, newOtherName.getVisibility());
         assertNotNull(newOtherName.getSource());
         assertEquals("APP-5555555555555555", newOtherName.getSource().retrieveSourcePath());
         assertNotNull(newOtherName.getCreatedDate());
@@ -2093,7 +2093,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
             assertNotNull(extId.getUrl());
             if (extId.getPutCode() != 1L) {
-                assertEquals(Visibility.LIMITED, extId.getVisibility());
+                assertEquals(Visibility.PUBLIC, extId.getVisibility());
                 assertEquals("new-common-name", extId.getType());
                 assertEquals("new-reference", extId.getValue());
                 assertEquals("http://newUrl.com", extId.getUrl().getValue());
@@ -2315,7 +2315,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Keyword newKeyword = (Keyword) response.getEntity();
         assertNotNull(newKeyword);
         assertEquals("New keyword", newKeyword.getContent());
-        assertEquals(Visibility.LIMITED, newKeyword.getVisibility());
+        assertEquals(Visibility.PUBLIC, newKeyword.getVisibility());
         assertNotNull(newKeyword.getSource());
         assertEquals("APP-5555555555555555", newKeyword.getSource().retrieveSourcePath());
         assertNotNull(newKeyword.getCreatedDate());
@@ -2509,7 +2509,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Address newAddress = (Address) response.getEntity();
         assertNotNull(newAddress);
         assertEquals(Iso3166Country.ES, newAddress.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, newAddress.getVisibility());
+        assertEquals(Visibility.LIMITED, newAddress.getVisibility());
         assertNotNull(newAddress.getSource());
         assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());

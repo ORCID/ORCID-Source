@@ -376,6 +376,8 @@
 	<bean id="personalDetailsManager" class="org.orcid.core.manager.impl.PersonalDetailsManagerImpl" />
 
 	<bean id="addressManager" class="org.orcid.core.manager.impl.AddressManagerImpl" />
+	
+	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -517,6 +519,8 @@
         <property name="timeToIdleSeconds" value="86400" />
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
     </bean>
     
     <bean id="publicWorkLastModifiedCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
@@ -527,16 +531,20 @@
         <property name="timeToIdleSeconds" value="86400" />
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
     </bean>
 
     <bean id="minimizedWorkCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
         <property name="cacheManager" ref="coreCacheManager" />
-        <property name="maxElementsInMemory" value="2000" />
+        <property name="maxElementsInMemory" value="10000" />
         <property name="timeToLiveSeconds" value="604800" />
         <property name="timeToIdleSeconds" value="86400" />
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="true" />
+        <property name="copyOnWrite" value="true" />
     </bean>
 
 	<!-- HTTP client connection beans -->
