@@ -89,11 +89,11 @@
 			<xs:documentation>Container for the
 				researcher or contributor biography.
 			</xs:documentation>
-		</xs:annotation>
+		</xs:annotation>		
 		<xs:complexType>
-			<xs:simpleContent>
+			<xs:complexContent>
 				<xs:extension base="personal-details:biography" />
-			</xs:simpleContent>			
+			</xs:complexContent>					
 		</xs:complexType>
 	</xs:element>
 

@@ -856,25 +856,49 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     }    
 
-    private String getGroupDisplayName(ProfileEntity groupProfile) {
-        String creditName = groupProfile.getRecordNameEntity().getCreditName();
-        if (creditName != null) {
-            if (groupProfile.getGroupType() != null) {
-                // It's a member so, it will definitely have a credit name. Use
-                // it regardless of privacy.
-                return creditName;
+    private String getGroupDisplayName(ProfileEntity groupProfile) {   
+        RecordNameEntity recordName = groupProfile.getRecordNameEntity(); 
+        if(recordName != null) {
+            String creditName = recordName.getCreditName();
+            if (!PojoUtil.isEmpty(creditName)) {
+                if (groupProfile.getGroupType() != null) {
+                    // It's a member so, it will definitely have a credit name. Use
+                    // it regardless of privacy.
+                    return creditName;
+                }
+                org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = recordName.getVisibility();
+                if (Visibility.PUBLIC.equals(namesVisibilty)) {
+                    return creditName;
+                }
             }
-            org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = groupProfile.getRecordNameEntity().getVisibility();
-            if (Visibility.PUBLIC.equals(namesVisibilty)) {
-                return creditName;
+            String displayName = recordName.getGivenNames();
+            String familyName = recordName.getFamilyName();
+            if (StringUtils.isNotBlank(familyName)) {
+                displayName += " " + familyName;
             }
-        }
-        String displayName = groupProfile.getRecordNameEntity().getGivenNames();
-        String familyName = groupProfile.getRecordNameEntity().getFamilyName();
-        if (StringUtils.isNotBlank(familyName)) {
-            displayName += " " + familyName;
-        }
-        return displayName;
+            return displayName; 
+        } else {
+            //TODO: remove this else when the names migration is done
+            String creditName = groupProfile.getCreditName();
+            if(!PojoUtil.isEmpty(creditName)) {
+                if (groupProfile.getGroupType() != null) {
+                    // It's a member so, it will definitely have a credit name. Use
+                    // it regardless of privacy.
+                    return creditName;
+                }
+                Visibility namesVisibilty = groupProfile.getNamesVisibility();
+                if (Visibility.PUBLIC.equals(namesVisibilty)) {
+                    return creditName;
+                }
+            }
+            
+            String displayName = groupProfile.getGivenNames();
+            String familyName = groupProfile.getFamilyName();
+            if (StringUtils.isNotBlank(familyName)) {
+                displayName += " " + familyName;
+            }
+            return displayName;
+        }               
     }
 
     public OrcidWork getOrcidWork(WorkEntity work) {

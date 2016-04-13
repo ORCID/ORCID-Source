@@ -521,7 +521,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
             if(profileEntity.getRecordNameEntity() == null) {
                 profileEntity.setRecordNameEntity(new RecordNameEntity());
-                profileEntity.getRecordNameEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+                profileEntity.getRecordNameEntity().setProfile(profileEntity);
             }
             profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());
             
@@ -535,7 +535,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (familyName != null && StringUtils.isNotBlank(familyName.getContent())) {
             if(profileEntity.getRecordNameEntity() == null) {
                 profileEntity.setRecordNameEntity(new RecordNameEntity());
-                profileEntity.getRecordNameEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+                profileEntity.getRecordNameEntity().setProfile(profileEntity);
             }
             profileEntity.getRecordNameEntity().setFamilyName(familyName.getContent());
             
@@ -549,7 +549,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (creditName != null) {
             if(profileEntity.getRecordNameEntity() == null) {
                 profileEntity.setRecordNameEntity(new RecordNameEntity());
-                profileEntity.getRecordNameEntity().setProfile(new ProfileEntity(profileEntity.getId()));
+                profileEntity.getRecordNameEntity().setProfile(profileEntity);
             }
             
             RecordNameEntity recordName = profileEntity.getRecordNameEntity();            
@@ -871,10 +871,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
             if(profileEntity.getBiographyEntity() == null) {
-                profileEntity.setBiographyEntity(new BiographyEntity());                
+                profileEntity.setBiographyEntity(new BiographyEntity());
+                profileEntity.getBiographyEntity().setProfile(profileEntity);
             }
-            
-            profileEntity.getBiographyEntity().setProfile(profileEntity);
+                        
             profileEntity.getBiographyEntity().setBiography(biography.getContent());
             if (biography.getVisibility() != null) {
                 profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));

@@ -339,8 +339,6 @@
 	
 	<bean id="BiographyManager" class="org.orcid.core.manager.impl.BiographyManagerImpl" />
 	
-	<bean id="nameManager" class="org.orcid.core.manager.impl.NameManagerImpl" />
-	
 	<bean id="profileFundingManager" class="org.orcid.core.manager.impl.ProfileFundingManagerImpl" />
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />

@@ -21,7 +21,7 @@
 					<common:path>8888-8888-8888-8880</common:path>
 					<common:host>orcid.org</common:host>
 				</common:source-orcid>
-				<common:source-name />
+				<common:source-name /> 
 			</common:source>
 		</other-name:other-name>
 		<other-name:other-name visibility="limited"
