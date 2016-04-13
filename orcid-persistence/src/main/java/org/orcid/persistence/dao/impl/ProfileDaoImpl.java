@@ -740,4 +740,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("reviewed", reviewFlag);
         return query.executeUpdate() > 0;
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
+        query.setParameter("batchSize", batchSize);        
+        return (List<Object[]>) query.getResultList();
+    }
 }

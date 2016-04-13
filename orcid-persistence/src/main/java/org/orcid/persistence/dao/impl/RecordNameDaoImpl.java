@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
+
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,5 +60,13 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     @Transactional
     public void createRecordName(RecordNameEntity recordName) {
         entityManager.persist(recordName);
+    }
+
+    @Override
+    public boolean exists(String orcid) {
+        Query query = entityManager.createNativeQuery("select count(*) from record_name where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
     }    
 }

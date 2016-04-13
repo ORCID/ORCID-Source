@@ -35,7 +35,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
-    
+
     String findOrcidByCreditName(String creditName);
 
     public boolean exists(String orcid);
@@ -113,8 +113,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 
-    //public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
-
     public boolean getClaimedStatus(String orcid);
 
     ClientType getClientType(String orcid);
@@ -136,4 +134,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean reviewProfile(String orcid);
 
     boolean unreviewProfile(String orcid);
+    
+    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);
 }

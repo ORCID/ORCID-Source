@@ -24,7 +24,11 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
  * 
  */
 public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
+    boolean exists(String orcid);
+    
     RecordNameEntity getRecordName(String orcid);
+
     boolean updateRecordName(RecordNameEntity recordName);
+
     void createRecordName(RecordNameEntity recordName);
 }

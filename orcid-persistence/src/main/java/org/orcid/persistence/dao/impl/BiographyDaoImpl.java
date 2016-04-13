@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import javax.persistence.Query;
@@ -27,6 +28,11 @@ import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> implements BiographyDao {
     public BiographyDaoImpl() {
         super(BiographyEntity.class);
@@ -61,4 +67,12 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
         bio.setLastModified(new Date());
         entityManager.persist(bio);
     }
+
+    @Override
+    public boolean exists(String orcid) {
+        Query query = entityManager.createNativeQuery("select count(*) from biography where orcid=:orcid");
+        query.setParameter("orcid", orcid);
+        Long result = ((BigInteger)query.getSingleResult()).longValue();
+        return (result != null && result > 0);
+    }   
 }
