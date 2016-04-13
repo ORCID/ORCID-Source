@@ -322,12 +322,7 @@ public class SetUpClientsAndUsers {
             createUser(user1Params);
         } else {
             clearRegistry(user1Profile, user1Params);
-        }
-        setUpAddresses(user1OrcidId);
-        setUpKeywords(user1OrcidId);
-        setUpOtherNames(user1OrcidId);
-        setUpEmails(user1OrcidId);
-        setUpExternalIdentifiers(user1OrcidId);
+        }        
         
         // Create user 2
         Map<String, String> user2Params = getParams(user2OrcidId);
@@ -383,6 +378,13 @@ public class SetUpClientsAndUsers {
         if (lockedClient == null) {
             createClient(lockedClientParams);
         } 
+        
+        //Set up data for user 1
+        setUpAddresses(user1OrcidId);
+        setUpKeywords(user1OrcidId);
+        setUpOtherNames(user1OrcidId);
+        setUpEmails(user1OrcidId);
+        setUpExternalIdentifiers(user1OrcidId);
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
