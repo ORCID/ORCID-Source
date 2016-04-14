@@ -852,13 +852,25 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(keyword.getSource());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
         
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getLastModifiedDate().getValue());
+        assertNotNull(person.getOtherNames().getOtherNames());
+        assertEquals(1, person.getOtherNames().getOtherNames().size());
+        OtherName otherName = person.getOtherNames().getOtherNames().get(0);
+        assertEquals("other-name-1", otherName.getContent());
+        assertNotNull(otherName.getCreatedDate().getValue());
+        assertNotNull(otherName.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+        assertEquals(Long.valueOf(1), otherName.getPutCode());
+        assertNotNull(otherName.getSource());
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
         
         
         
-        person.getName();
-        person.getOtherNames();
-        person.getPath();
-        person.getResearcherUrls();
+        assertNotNull(person.getResearcherUrls());
+        
+        person.getName();        
+        person.getPath();        
     }
     
     private Object unmarshallFromPath(String path, Class<?> type) {
