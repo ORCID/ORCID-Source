@@ -61,6 +61,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 				<xs:element name="name" type="personal-details:name"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="other-name:other-names" minOccurs="0"

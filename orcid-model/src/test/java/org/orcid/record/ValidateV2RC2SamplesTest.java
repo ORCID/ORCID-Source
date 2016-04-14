@@ -37,9 +37,14 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
@@ -62,9 +67,11 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.Preferences;
 import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -628,6 +635,7 @@ public class ValidateV2RC2SamplesTest {
     public void testUnmarshallRecord() {
         Record record = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
         assertNotNull(record);
+        //Check activities
         assertNotNull(record.getActivitiesSummary());
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities.getLastModifiedDate());
@@ -635,45 +643,47 @@ public class ValidateV2RC2SamplesTest {
         Educations educations = activities.getEducations();
         assertNotNull(educations.getLastModifiedDate());
         assertEquals(1, educations.getSummaries().size());
-        assertEquals(Long.valueOf(0), educations.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PRIVATE, educations.getSummaries().get(0).getVisibility());
-        assertEquals("education:department-name", educations.getSummaries().get(0).getDepartmentName());
-        assertEquals("education:role-title", educations.getSummaries().get(0).getRoleTitle());
-        assertNotNull(educations.getSummaries().get(0).getEndDate());
-        assertEquals("02", educations.getSummaries().get(0).getEndDate().getDay().getValue());
-        assertEquals("02", educations.getSummaries().get(0).getEndDate().getMonth().getValue());
-        assertEquals("1848", educations.getSummaries().get(0).getEndDate().getYear().getValue());
-        assertNotNull(educations.getSummaries().get(0).getStartDate());
-        assertEquals("02", educations.getSummaries().get(0).getStartDate().getDay().getValue());
-        assertEquals("02", educations.getSummaries().get(0).getStartDate().getMonth().getValue());
-        assertEquals("1848", educations.getSummaries().get(0).getStartDate().getYear().getValue());
-        assertNotNull(educations.getSummaries().get(0).getOrganization());
-        assertEquals("common:name", educations.getSummaries().get(0).getOrganization().getName());
-        assertEquals("common:city", educations.getSummaries().get(0).getOrganization().getAddress().getCity());        
-        assertEquals("common:region", educations.getSummaries().get(0).getOrganization().getAddress().getRegion());
-        assertEquals(Iso3166Country.AF, educations.getSummaries().get(0).getOrganization().getAddress().getCountry());
+        EducationSummary education = educations.getSummaries().get(0);
+        assertEquals(Long.valueOf(0), education.getPutCode());
+        assertEquals(Visibility.PRIVATE, education.getVisibility());
+        assertEquals("education:department-name", education.getDepartmentName());
+        assertEquals("education:role-title", education.getRoleTitle());
+        assertNotNull(education.getEndDate());
+        assertEquals("02", education.getEndDate().getDay().getValue());
+        assertEquals("02", education.getEndDate().getMonth().getValue());
+        assertEquals("1848", education.getEndDate().getYear().getValue());
+        assertNotNull(education.getStartDate());
+        assertEquals("02", education.getStartDate().getDay().getValue());
+        assertEquals("02", education.getStartDate().getMonth().getValue());
+        assertEquals("1848", education.getStartDate().getYear().getValue());
+        assertNotNull(education.getOrganization());
+        assertEquals("common:name", education.getOrganization().getName());
+        assertEquals("common:city", education.getOrganization().getAddress().getCity());        
+        assertEquals("common:region", education.getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, education.getOrganization().getAddress().getCountry());
         
         assertNotNull(activities.getEmployments());
         Employments employments = activities.getEmployments();
         assertNotNull(employments.getLastModifiedDate());
         assertEquals(1, employments.getSummaries().size());
-        assertEquals(Long.valueOf(0), employments.getSummaries().get(0).getPutCode());
-        assertEquals(Visibility.PRIVATE, employments.getSummaries().get(0).getVisibility());
-        assertEquals("affiliation:department-name", employments.getSummaries().get(0).getDepartmentName());
-        assertEquals("affiliation:role-title", employments.getSummaries().get(0).getRoleTitle());
-        assertNotNull(employments.getSummaries().get(0).getEndDate());
-        assertEquals("02", employments.getSummaries().get(0).getEndDate().getDay().getValue());
-        assertEquals("02", employments.getSummaries().get(0).getEndDate().getMonth().getValue());
-        assertEquals("1848", employments.getSummaries().get(0).getEndDate().getYear().getValue());
-        assertNotNull(employments.getSummaries().get(0).getStartDate());
-        assertEquals("02", employments.getSummaries().get(0).getStartDate().getDay().getValue());
-        assertEquals("02", employments.getSummaries().get(0).getStartDate().getMonth().getValue());
-        assertEquals("1848", employments.getSummaries().get(0).getStartDate().getYear().getValue());
-        assertNotNull(employments.getSummaries().get(0).getOrganization());
-        assertEquals("common:name", employments.getSummaries().get(0).getOrganization().getName());
-        assertEquals("common:city", employments.getSummaries().get(0).getOrganization().getAddress().getCity());        
-        assertEquals("common:region", employments.getSummaries().get(0).getOrganization().getAddress().getRegion());
-        assertEquals(Iso3166Country.AF, employments.getSummaries().get(0).getOrganization().getAddress().getCountry());
+        EmploymentSummary employment = employments.getSummaries().get(0);
+        assertEquals(Long.valueOf(0), employment.getPutCode());
+        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        assertEquals("affiliation:department-name", employment.getDepartmentName());
+        assertEquals("affiliation:role-title", employment.getRoleTitle());
+        assertNotNull(employment.getEndDate());
+        assertEquals("02", employment.getEndDate().getDay().getValue());
+        assertEquals("02", employment.getEndDate().getMonth().getValue());
+        assertEquals("1848", employment.getEndDate().getYear().getValue());
+        assertNotNull(employment.getStartDate());
+        assertEquals("02", employment.getStartDate().getDay().getValue());
+        assertEquals("02", employment.getStartDate().getMonth().getValue());
+        assertEquals("1848", employment.getStartDate().getYear().getValue());
+        assertNotNull(employment.getOrganization());
+        assertEquals("common:name", employment.getOrganization().getName());
+        assertEquals("common:city", employment.getOrganization().getAddress().getCity());        
+        assertEquals("common:region", employment.getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, employment.getOrganization().getAddress().getCountry());
         
         assertNotNull(activities.getFundings());
         Fundings fundings = activities.getFundings();
@@ -684,6 +694,101 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(1, fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
         assertEquals("grant_number", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
         assertEquals("external-id-value", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(1, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        FundingSummary funding = fundings.getFundingGroup().get(0).getFundingSummary().get(0);
+        assertEquals(Long.valueOf(0), funding.getPutCode());
+        assertEquals(Visibility.PRIVATE, funding.getVisibility());
+        assertNotNull(funding.getTitle());
+        assertEquals("common:title", funding.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", funding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", funding.getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(funding.getExternalIdentifiers());
+        assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(Relationship.SELF, funding.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("grant_number", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://tempuri.org", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-id-value", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());        
+        assertNotNull(funding.getEndDate());
+        assertEquals("02", funding.getEndDate().getDay().getValue());
+        assertEquals("02", funding.getEndDate().getMonth().getValue());
+        assertEquals("1848", funding.getEndDate().getYear().getValue());
+        assertNotNull(funding.getStartDate());
+        assertEquals("02", funding.getStartDate().getDay().getValue());
+        assertEquals("02", funding.getStartDate().getMonth().getValue());
+        assertEquals("1848", funding.getStartDate().getYear().getValue());
+        
+        assertNotNull(activities.getWorks());
+        Works works = activities.getWorks();
+        assertNotNull(works.getLastModifiedDate());        
+        assertEquals(1, works.getWorkGroup().size());        
+        assertNotNull(works.getWorkGroup().get(0).getIdentifiers());
+        assertEquals(1, works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(Relationship.PART_OF, works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("agr", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://orcid.org", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-id-value", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());        
+        assertEquals(1, works.getWorkGroup().get(0).getWorkSummary().size());
+        WorkSummary work = works.getWorkGroup().get(0).getWorkSummary().get(0);
+        assertEquals(Long.valueOf(0), work.getPutCode());
+        assertEquals(Visibility.PRIVATE, work.getVisibility());
+        assertNotNull(work.getTitle());
+        assertEquals("common:title", work.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", work.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", work.getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(work.getExternalIdentifiers());
+        assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());        
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("agr", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://tempuri.org", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-id-value", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE, work.getType());
+        assertNotNull(work.getPublicationDate());
+        assertEquals("02", work.getPublicationDate().getDay().getValue());
+        assertEquals("02", work.getPublicationDate().getMonth().getValue());
+        assertEquals("1848", work.getPublicationDate().getYear().getValue());
+        
+        //Check biography
+        Person person = record.getPerson();        
+        assertNotNull(person);
+        assertNotNull(person.getLastModifiedDate().getValue());
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getLastModifiedDate());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        Address address = person.getAddresses().getAddress().get(0);
+        assertEquals(Long.valueOf(1), address.getPutCode());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Long.valueOf(0), address.getDisplayIndex());
+        assertNotNull(address.getLastModifiedDate());
+        
+        assertNotNull(person.getApplications());
+        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
+        assertEquals(1, person.getApplications().getApplicationSummary().size());
+        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
+        assertEquals("application-name", application.getApplicationName());
+        assertNotNull(application.getApplicationOrcid());
+        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
+        assertNotNull(application.getApprovalDate().getValue());
+        assertEquals("application-group-name", application.getGroupName());
+        assertNotNull(application.getGroupOrcid());
+        assertNotNull(application.getScopePaths());
+        assertNotNull(application.getScopePaths().getScopePath());
+        assertEquals(2, application.getScopePaths().getScopePath().size());
+        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        
+        
+        
+        
+        person.getBiography();
+        person.getDelegation();
+        person.getEmails();
+        person.getExternalIdentifiers();
+        person.getKeywords();
+        person.getName();
+        person.getOtherNames();
+        person.getPath();
+        person.getResearcherUrls();
     }
     
     private Object unmarshallFromPath(String path, Class<?> type) {
