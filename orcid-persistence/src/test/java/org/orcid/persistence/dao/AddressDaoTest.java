@@ -104,7 +104,6 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(4, addresses.size());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void pendingToMigrateTest() {
         List<Object[]> pendingToMigrate = addressDao.findAddressesToMigrate();

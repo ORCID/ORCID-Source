@@ -21,10 +21,11 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlValue;
 
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 
 /**
@@ -33,12 +34,15 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "content" })
+@XmlType(propOrder = { "lastModifiedDate", "content" })
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
 public class Biography implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @XmlValue
+    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
+    protected LastModifiedDate lastModifiedDate;
+    
+    @XmlElement(name = "content")
     protected String content;
 
     @XmlAttribute
@@ -58,6 +62,14 @@ public class Biography implements Serializable {
     public Biography(String content, Visibility visibility) {
         this.content = content;
         this.visibility = visibility;
+    }    
+    
+    public LastModifiedDate getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     public String getContent() {
@@ -89,6 +101,7 @@ public class Biography implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((content == null) ? 0 : content.hashCode());
+        result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((path == null) ? 0 : path.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
@@ -108,6 +121,11 @@ public class Biography implements Serializable {
                 return false;
         } else if (!content.equals(other.content))
             return false;
+        if (lastModifiedDate == null) {
+            if (other.lastModifiedDate != null)
+                return false;
+        } else if (!lastModifiedDate.equals(other.lastModifiedDate))
+            return false;
         if (path == null) {
             if (other.path != null)
                 return false;
@@ -116,6 +134,5 @@ public class Biography implements Serializable {
         if (visibility != other.visibility)
             return false;
         return true;
-    }
-
+    }    
 }

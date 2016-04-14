@@ -341,14 +341,14 @@ public class WorksController extends BaseWorkspaceController {
                         if (profileEntityManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
-                            if(contributorOrcid.equals(getCurrentUserOrcid())) {
-                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                            if(contributorOrcid.equals(getCurrentUserOrcid())) {                                
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
-                            } else if (profileEntity.getNamesVisibility() != null) {
-                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                            } else if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() != null) {                                
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getRecordNameEntity().getVisibility()));
+                            } else if(profileEntity.getNamesVisibility() != null) {
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getNamesVisibility()));
                             } else {
-                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
                                         .getVisibility()));
                             }

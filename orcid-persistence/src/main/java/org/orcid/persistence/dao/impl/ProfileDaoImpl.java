@@ -382,24 +382,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getSingleResult();
     }
 
-    @Override
-    @Transactional
-    public boolean updateProfile(ProfileEntity profile) {
-        Query query = entityManager
-        .createNativeQuery("update profile set last_modified=now(), credit_name=:credit_name, family_name=:family_name, given_names=:given_names, biography=:biography, biography_visibility=:biography_visibility, names_visibility=:names_visibility, indexing_status='PENDING' where orcid=:orcid");
-        query.setParameter("credit_name", profile.getCreditName());
-        query.setParameter("family_name", profile.getFamilyName());
-        query.setParameter("given_names", profile.getGivenNames());
-        query.setParameter("biography", profile.getBiography());
-        query.setParameter("biography_visibility", StringUtils.upperCase(profile.getBiographyVisibility().value()));
-        query.setParameter("names_visibility", StringUtils.upperCase(profile.getNamesVisibility().value()));
-        query.setParameter("orcid", profile.getId());
-
-        boolean result = query.executeUpdate() > 0 ? true : false;
-
-        return result;
-    }
-
     @SuppressWarnings("unchecked")
     public Date retrieveLastModifiedDate(String orcid) {
         Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");
@@ -488,15 +470,33 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid) {
-        Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), indexing_status='PENDING', primary_record=:primary_record, deprecated_date=now() where orcid=:orcid");
-        query.setParameter("orcid", deprecatedOrcid);
-        query.setParameter("primary_record", primaryOrcid);
-
-        boolean result = query.executeUpdate() > 0 ? true : false;
-
-        return result;
+    public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
+        Query query = entityManager.createQuery(
+                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, givenNames = :givenNames, familyName = :familyName, creditName = :creditName, biography = :bio, biographyVisibility = :bioVisibility, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
+        query.setParameter("orcid", toDeprecate.getId());
+        query.setParameter("indexing_status", IndexingStatus.PENDING);
+        query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
+        if(toDeprecate.getRecordNameEntity() != null) {
+            query.setParameter("givenNames", toDeprecate.getRecordNameEntity().getGivenNames());
+            query.setParameter("familyName", toDeprecate.getRecordNameEntity().getFamilyName());
+            query.setParameter("creditName", toDeprecate.getRecordNameEntity().getCreditName());            
+        } else {
+            query.setParameter("givenNames", toDeprecate.getGivenNames());
+            query.setParameter("familyName", toDeprecate.getFamilyName());
+            query.setParameter("creditName", toDeprecate.getCreditName());
+            
+        }
+        
+        if(toDeprecate.getBiographyEntity() != null) {
+            query.setParameter("bio", toDeprecate.getBiographyEntity().getBiography());
+            query.setParameter("bioVisibility", toDeprecate.getBiographyEntity().getVisibility() == null ? null : toDeprecate.getBiographyEntity().getVisibility());
+        } else {
+            query.setParameter("bio", toDeprecate.getBiography());
+            query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : toDeprecate.getBiographyVisibility());
+        }
+        query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : toDeprecate.getActivitiesVisibilityDefault());
+                
+        return query.executeUpdate() > 0 ? true : false;
     }
 
     @Override
@@ -548,13 +548,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    public void updateBiography(String orcid, String biography, Visibility visibility) {
+    public boolean updateBiography(String orcid, String biography, Visibility visibility) {
         Query updateQuery = entityManager
                 .createQuery("update ProfileEntity set lastModified = now(), biography = :biography, biography_visibility = :visibility where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("biography", biography);
         updateQuery.setParameter("visibility", visibility == null ? null : StringUtils.upperCase(visibility.value()));
-        updateQuery.executeUpdate();
+        return updateQuery.executeUpdate() > 0;
     }
 
     @Override
@@ -739,5 +739,13 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", orcid);
         query.setParameter("reviewed", reviewFlag);
         return query.executeUpdate() > 0;
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
+        query.setParameter("batchSize", batchSize);        
+        return (List<Object[]>) query.getResultList();
     }
 }

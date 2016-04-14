@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +58,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  * 
  */
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidClientGroupManagerTest extends BaseTest {
 
     public static final String CLIENT_GROUP = "/orcid-client-group-request.xml";
@@ -90,12 +92,14 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Test    
     public void testCreateOrcidClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
+        String email = group.getEmail() + System.currentTimeMillis();
+        group.setEmail(email);
 
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         assertNotNull(createdGroup);
 
         assertEquals("Elsevier", createdGroup.getGroupName());
-        assertEquals("orcid-admin@elsevier.com", createdGroup.getEmail());
+        assertEquals(email, createdGroup.getEmail());
         assertNotNull(createdGroup.getGroupOrcid());
         List<OrcidClient> createdClients = createdGroup.getOrcidClient();
         assertNotNull(createdClients);
@@ -135,12 +139,14 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Test
     public void testCreateOrcidCreatorClientGroup() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-
+        String email = group.getEmail() + System.currentTimeMillis();
+        group.setEmail(email);
+        
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
         assertNotNull(createdGroup);
 
         assertEquals("Elsevier", createdGroup.getGroupName());
-        assertEquals("orcid-admin@elsevier.com", createdGroup.getEmail());
+        assertEquals(email, createdGroup.getEmail());
         assertNotNull(createdGroup.getGroupOrcid());
         List<OrcidClient> createdClients = createdGroup.getOrcidClient();
         assertNotNull(createdClients);
@@ -172,6 +178,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testUpdateOrcidClientGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -221,7 +229,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Test
     public void testGetOrcidClientList() {
         OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
-
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
 
         createdGroup = orcidClientGroupManager.retrieveOrcidClientGroup(createdGroup.getGroupOrcid());
@@ -235,6 +244,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddMoreThanOneClientToBasicGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -278,6 +289,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddCreatorToBasicGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_CLIENT_GROUP_NO_CLIENT));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -308,6 +321,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddMoreThanOneClientToBasicInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -351,6 +366,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddUpdaterToBasicInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(BASIC_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -381,6 +398,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddCreatorToPremiumGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_CLIENT_GROUP_NO_CLIENT));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -411,6 +430,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testAddUpdaterToPremiumInstitutionGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(PREMIUM_INSTITUTION_CLIENT_GROUP_NO_CLIENT));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);
@@ -440,6 +461,8 @@ public class OrcidClientGroupManagerTest extends BaseTest {
     @Test
     public void testUpdateGroup() {
         final OrcidClientGroup group = OrcidClientGroup.unmarshall(getClass().getResourceAsStream(CLIENT_GROUP));
+        group.setEmail(group.getEmail() + System.currentTimeMillis());
+        
         final OrcidClientGroup createdGroup = transactionTemplate.execute(new TransactionCallback<OrcidClientGroup>() {
             public OrcidClientGroup doInTransaction(TransactionStatus status) {
                 return orcidClientGroupManager.createOrUpdateOrcidClientGroup(group);

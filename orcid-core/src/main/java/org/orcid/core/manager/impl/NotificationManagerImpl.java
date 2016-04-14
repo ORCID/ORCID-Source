@@ -73,6 +73,7 @@ import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -730,10 +731,20 @@ public class NotificationManagerImpl implements NotificationManager {
      * */
     public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
         String result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
-        if (profileEntity.getGivenNames() != null) {
-            result = profileEntity.getGivenNames();
-            if (!StringUtils.isBlank(profileEntity.getFamilyName())) {
-                result += " " + profileEntity.getFamilyName();
+        if(profileEntity.getRecordNameEntity() != null) {
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity(); 
+            if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
+                result = recordName.getGivenNames();
+                if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
+                    result += " " + recordName.getFamilyName();
+                }
+            }
+        } else {
+            if(!PojoUtil.isEmpty(profileEntity.getGivenNames())) {
+                result = profileEntity.getGivenNames();
+                if(!PojoUtil.isEmpty(profileEntity.getFamilyName())) {
+                    result += " " + profileEntity.getFamilyName();
+                }
             }
         }
         return result;

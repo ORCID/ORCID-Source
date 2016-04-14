@@ -31,7 +31,7 @@
 						    && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
 						</span>
 						<span ng-show="nameForm != null 
-						    && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-cloak>
+						    && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-cloak>
 						    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
 						</span>						 
 					</h2>

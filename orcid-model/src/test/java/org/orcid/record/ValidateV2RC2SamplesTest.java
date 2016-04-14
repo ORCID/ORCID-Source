@@ -31,6 +31,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -164,7 +165,7 @@ public class ValidateV2RC2SamplesTest {
     public void testUnmarshallBiography() {
         Biography bio = (Biography) unmarshallFromPath("/record_2.0_rc2/samples/biography-2.0_rc2.xml", Biography.class);
         assertNotNull(bio);
-        assertEquals("biography", bio.getContent());
+        assertEquals("biography V2.0_rc2", bio.getContent());
         assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
     }
 
@@ -811,7 +812,8 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, to.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
         assertNotNull(to.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
         
-        assertNotNull(person.getEmails());        
+        assertNotNull(person.getEmails());      
+        assertTrue(StringUtils.isNotBlank(person.getEmails().getPath()));
         assertNotNull(person.getEmails().getLastModifiedDate());
         assertNotNull(person.getEmails().getEmails());
         assertEquals(1, person.getEmails().getEmails().size());
@@ -824,6 +826,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, email.getVisibility());
         
         assertNotNull(person.getExternalIdentifiers());
+        assertTrue(StringUtils.isNotBlank(person.getExternalIdentifiers().getPath()));
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
@@ -840,6 +843,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, extId.getVisibility());        
         
         assertNotNull(person.getKeywords());
+        assertTrue(StringUtils.isNotBlank(person.getKeywords().getPath()));
         assertNotNull(person.getKeywords().getLastModifiedDate().getValue());
         assertNotNull(person.getKeywords().getKeywords());
         assertEquals(1, person.getKeywords().getKeywords().size());
@@ -853,6 +857,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
         
         assertNotNull(person.getOtherNames());
+        assertTrue(StringUtils.isNotBlank(person.getOtherNames().getPath()));
         assertNotNull(person.getOtherNames().getLastModifiedDate().getValue());
         assertNotNull(person.getOtherNames().getOtherNames());
         assertEquals(1, person.getOtherNames().getOtherNames().size());
@@ -865,12 +870,28 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(otherName.getSource());
         assertEquals(Visibility.PUBLIC, otherName.getVisibility());
         
-        
-        
         assertNotNull(person.getResearcherUrls());
+        assertTrue(StringUtils.isNotBlank(person.getResearcherUrls().getPath()));
+        assertNotNull(person.getResearcherUrls().getLastModifiedDate().getValue());
+        assertNotNull(person.getResearcherUrls().getResearcherUrls().size());
+        ResearcherUrl rUrl = person.getResearcherUrls().getResearcherUrls().get(0);
+        assertNotNull(rUrl.getCreatedDate().getValue());
+        assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
+        assertNotNull(rUrl.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(1248), rUrl.getPutCode());
+        assertNotNull(rUrl.getSource());
+        assertEquals("http://url.com/", rUrl.getUrl().getValue());
+        assertEquals("url-name-1", rUrl.getUrlName());
+        assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
         
-        person.getName();        
-        person.getPath();        
+        assertNotNull(person.getName());
+        Name name = person.getName();
+        assertTrue(StringUtils.isNotBlank(name.getPath()));
+        assertEquals("credit-name", name.getCreditName().getContent());
+        assertEquals("family-name", name.getFamilyName().getContent());
+        assertEquals("give-names", name.getGivenNames().getContent());
+        assertNotNull(name.getLastModifiedDate().getValue());
+        assertEquals(Visibility.PUBLIC, name.getVisibility());        
     }
     
     private Object unmarshallFromPath(String path, Class<?> type) {
