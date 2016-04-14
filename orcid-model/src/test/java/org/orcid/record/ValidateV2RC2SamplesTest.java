@@ -55,6 +55,8 @@ import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.Deprecated;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -631,6 +633,7 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallRecord() {
         Record record = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
@@ -777,14 +780,81 @@ public class ValidateV2RC2SamplesTest {
         assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
         assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
         
+        assertNotNull(person.getBiography());
+        assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
+        assertEquals("biography", person.getBiography().getContent());
+        
+        assertNotNull(person.getDelegation());
+        assertNotNull(person.getDelegation().getLastModifiedDate().getValue());
+        assertNotNull(person.getDelegation().getGivenPermissionBy());
+        assertEquals(1, person.getDelegation().getGivenPermissionBy().size());
+        GivenPermissionBy by = person.getDelegation().getGivenPermissionBy().get(0);
+        assertNotNull(by.getLastModifiedDate().getValue());
+        assertNotNull(by.getDelegationDetails());
+        assertNotNull(by.getDelegationDetails().getApprovalDate().getValue());
+        assertNotNull(by.getDelegationDetails().getDelegateSummary());
+        assertNotNull(by.getDelegationDetails().getDelegateSummary().getCreditName());
+        assertEquals("credit-name", by.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, by.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(by.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
+        
+        assertNotNull(person.getDelegation().getGivenPermissionTo());
+        assertNotNull(person.getDelegation().getGivenPermissionTo());
+        assertEquals(1, person.getDelegation().getGivenPermissionTo().size());
+        GivenPermissionTo to = person.getDelegation().getGivenPermissionTo().get(0);
+        assertNotNull(to.getLastModifiedDate().getValue());
+        assertNotNull(to.getDelegationDetails());
+        assertNotNull(to.getDelegationDetails().getApprovalDate().getValue());
+        assertNotNull(to.getDelegationDetails().getDelegateSummary());
+        assertNotNull(to.getDelegationDetails().getDelegateSummary().getCreditName());
+        assertEquals("credit-name", to.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, to.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(to.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
+        
+        assertNotNull(person.getEmails());        
+        assertNotNull(person.getEmails().getLastModifiedDate());
+        assertNotNull(person.getEmails().getEmails());
+        assertEquals(1, person.getEmails().getEmails().size());
+        Email email = person.getEmails().getEmails().get(0);
+        assertNotNull(email.getCreatedDate().getValue());
+        assertEquals("user1@email.com", email.getEmail());
+        assertNotNull(email.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(0), email.getPutCode());
+        assertNotNull(email.getSource());
+        assertEquals(Visibility.PUBLIC, email.getVisibility());
+        
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(extId.getCreatedDate().getValue());
+        assertNotNull(extId.getLastModifiedDate());
+        assertEquals(Long.valueOf(0), extId.getDisplayIndex());
+        assertEquals(Long.valueOf(1), extId.getPutCode());
+        assertEquals(Relationship.PART_OF, extId.getRelationship());
+        assertNotNull(extId.getSource());
+        assertEquals("type-1", extId.getType());
+        assertEquals("http://url.com/1", extId.getUrl().getValue());
+        assertEquals("value-1", extId.getValue());
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());        
+        
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getLastModifiedDate().getValue());
+        assertNotNull(person.getKeywords().getKeywords());
+        assertEquals(1, person.getKeywords().getKeywords().size());
+        Keyword keyword = person.getKeywords().getKeywords().get(0);
+        assertEquals("keyword1", keyword.getContent());        
+        assertNotNull(keyword.getCreatedDate().getValue());
+        assertNotNull(keyword.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(0), keyword.getDisplayIndex());        
+        assertEquals(Long.valueOf(1), keyword.getPutCode());
+        assertNotNull(keyword.getSource());
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
         
         
         
-        person.getBiography();
-        person.getDelegation();
-        person.getEmails();
-        person.getExternalIdentifiers();
-        person.getKeywords();
+        
         person.getName();
         person.getOtherNames();
         person.getPath();
