@@ -584,35 +584,35 @@
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">					   	
 					   		  <div class="row full-height-row">	  
 			        	       	  <div class="col-md-9 col-sm-9 col-xs-9">
-			        	          	<h3 ng-if="{{work.title.value != null}}" class="workspace-title bibtex-work-title">{{work.title.value}}</h3>
-			        	          	<h3 ng-if="{{work.title.value == null}}" class="workspace-title bibtex-work-title bibtex-content-missing">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</h3>
+			        	          	<h3 ng-if="work.title.value != null" class="workspace-title bibtex-work-title">{{work.title.value}}</h3>
+			        	          	<h3 ng-if="work.title.value == null" class="workspace-title bibtex-work-title bibtex-content-missing">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</h3>
 			        	          	
 			        	          	
 			        	          	<!-- Work Category --> 
-			        	          	<span class="info-detail" ng-if="{{work.workCategory.value.length > 0}}">{{work.workCategory.value | formatBibtexOutput}}</span>
-			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="{{work.workCategory.value.length == 0}}">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
+			        	          	<span class="info-detail" ng-if="work.workCategory.value.length > 0">{{work.workCategory.value | formatBibtexOutput}}</span>
+			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="work.workCategory.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
 			        	          	
 			        	          	<!-- Work Type -->
-			        	          	<span class="info-detail" ng-if="{{work.workType.value.length > 0}}">{{work.workType.value | formatBibtexOutput}}</span>
-			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="{{work.workType.value.length == 0}}">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
+			        	          	<span class="info-detail" ng-if="work.workType.value.length > 0">{{work.workType.value | formatBibtexOutput}}</span>
+			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="work.workType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 			        	          	
 			        	          	<!-- External identifiers -->
-			        	          	<span class="info-detail" ng-if="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0}}">
+			        	          	<span class="info-detail" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0">
 			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'><span
 		                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 		                                </span>
 			        	          	</span>
 			        	          	<!-- 
-			        	          		<span class="info-detail bibtex-content-missing" ng-if="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
+			        	          		<span class="info-detail bibtex-content-missing" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
 			        	          	 -->
 			        	          
 			        	          </div>			        	          
 			        	          <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">			        	          	
 			        	          	<ul>
                                         <li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
-                                        <li><a ng-if="{{work.errors.length == 0}}" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
-                                        <li><a ng-if="{{work.errors.length > 0}}" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
-                                        <li><span ng-if="{{work.errors.length > 0}}"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
+                                        <li><a ng-if="work.errors.length == 0" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
+                                        <li><a ng-if="work.errors.length > 0" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
+                                        <li><span ng-if="work.errors.length > 0"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
 			        	          	</ul>
 		        	          	 </div>
 	        	          	 </div>
