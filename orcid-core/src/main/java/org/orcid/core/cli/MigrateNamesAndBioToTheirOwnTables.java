@@ -50,8 +50,12 @@ public class MigrateNamesAndBioToTheirOwnTables {
     private RecordNameDao recordNameDao;
     private BiographyDao biographyDao;
 
-    @Option(name = "-s", usage = "Batch size")
+    @Option(name = "-s", usage = "Batch size", required = false)
     private int batchSize;
+    
+    @Option(name = "-n", usage = "Number of batches to run", required = false)
+    private int numberOfBatches;
+    
     
     public static void main(String [] args) throws CmdLineException {
         MigrateNamesAndBioToTheirOwnTables migrate = new MigrateNamesAndBioToTheirOwnTables();
@@ -64,9 +68,10 @@ public class MigrateNamesAndBioToTheirOwnTables {
         LOG.debug("Starting migration process");
         List<Object[]> profileElements = Collections.emptyList();
         int counter = 0;
+        int batchCount = 0;
         do {
             LOG.debug("About to fetch a batch from DB");
-            profileElements = profileDao.findProfilesWhereNamesAreNotMigrated(batchSize);
+            profileElements = profileDao.findProfilesWhereNamesAreNotMigrated(batchSize);            
             LOG.debug("Procesing batch, profiles processed so far: " + counter);
             for(final Object[] profileElement : profileElements) {
                 String orcid = (String) profileElement[0];
@@ -111,6 +116,13 @@ public class MigrateNamesAndBioToTheirOwnTables {
                     }
                 });
                 counter += 1;
+                batchCount += 1;
+                //Stop if we ran the number of batches
+                if(numberOfBatches > 0) {
+                    if(batchCount >= numberOfBatches) {
+                        profileElements = null;
+                    }
+                }
             }
         } while (profileElements != null && !profileElements.isEmpty());
         
@@ -123,6 +135,10 @@ public class MigrateNamesAndBioToTheirOwnTables {
         parser.parseArgument(args);
         if(batchSize == 0) {
             batchSize = 10000;
+        }
+        
+        if(numberOfBatches == 0) {
+            numberOfBatches = -1;
         }
         
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-persistence-context.xml");
