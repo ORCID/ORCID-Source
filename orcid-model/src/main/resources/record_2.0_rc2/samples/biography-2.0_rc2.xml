@@ -2,4 +2,6 @@
 <personal-details:biography visibility="public"
 	xmlns:personal-details="http://www.orcid.org/ns/personal-details"	
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.0_rc2.xsd">biography</personal-details:biography>
+	xsi:schemaLocation="http://www.orcid.org/ns/personal-details ../personal-details-2.0_rc2.xsd">
+	<personal-details:content>biography V2.0_rc2</personal-details:content>
+</personal-details:biography> 

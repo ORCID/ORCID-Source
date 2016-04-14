@@ -210,7 +210,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         ExternalIdentifiers externalIdentifiers = orcidMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers();
         assertNotNull(externalIdentifiers);
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
-        assertEquals(4, externalIdentifiers.getExternalIdentifier().size());
+        assertEquals(2, externalIdentifiers.getExternalIdentifier().size());
 
         ClientResponse bioResponse2 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4443", accessToken);
         assertEquals(403, bioResponse2.getStatus());
@@ -231,7 +231,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         ExternalIdentifiers externalIdentifiers = orcidMessage1.getOrcidProfile().getOrcidBio().getExternalIdentifiers();
         assertNotNull(externalIdentifiers);
         assertEquals(Visibility.LIMITED, externalIdentifiers.getVisibility());
-        assertEquals(1, externalIdentifiers.getExternalIdentifier().size());
+        assertEquals(2, externalIdentifiers.getExternalIdentifier().size());
 
         ClientResponse bioResponse2 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4443", accessToken);
         assertEquals(403, bioResponse2.getStatus());
@@ -307,6 +307,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String title = "Work added by integration test " + System.currentTimeMillis();
         workTitle.setTitle(new Title(title));
 
+        orcidWork.setWorkExternalIdentifiers(generateWorkExternalIdentifiers());
+        
         ClientResponse clientResponse = oauthT2Client.addWorksJson(orcid, orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
         List<MinimizedWorkEntity> works = workDao.findWorks(orcid, 0L);
@@ -356,7 +358,9 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidWork.setJournalTitle(new Title("Journal Title"));
         orcidWork.setLanguageCode("en_US");
         orcidWork.setCountry(new Country(Iso3166Country.US));
-
+        
+        orcidWork.setWorkExternalIdentifiers(generateWorkExternalIdentifiers());        
+        
         Country country = new Country(Iso3166Country.US);
         orcidWork.setCountry(country);
 
@@ -384,6 +388,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidWork.setWorkTitle(workTitle);
         orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
 
+        orcidWork.setWorkExternalIdentifiers(generateWorkExternalIdentifiers());
+        
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4442", orcidMessage, accessToken);
         assertEquals(201, clientResponse.getStatus());
     }
@@ -904,6 +910,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         orcidWork.setWorkTitle(workTitle);
         workTitle.setTitle(new Title("Work added by integration test"));
 
+        orcidWork.setWorkExternalIdentifiers(generateWorkExternalIdentifiers());
+        
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4443", orcidMessage, accessToken);
         assertEquals(403, clientResponse.getStatus());
     }
@@ -943,4 +951,12 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         return accessToken;
     }
 
+    private WorkExternalIdentifiers generateWorkExternalIdentifiers() {
+        WorkExternalIdentifier wExtId = new WorkExternalIdentifier();
+        wExtId.setWorkExternalIdentifierId(new WorkExternalIdentifierId("ext-id-" + System.currentTimeMillis()));
+        wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        WorkExternalIdentifiers wExtIds = new WorkExternalIdentifiers();
+        wExtIds.getWorkExternalIdentifier().add(wExtId);        
+        return wExtIds;
+    }
 }

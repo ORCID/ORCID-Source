@@ -124,9 +124,16 @@ public class CheckAndFixContributorNameVisibility {
                                 if (contributorOrcid != null) {
                                     String orcid = contributorOrcid.getPath();
                                     ProfileEntity contributorProfile = profileDao.find(orcid);
-                                    if (!Visibility.PUBLIC.equals(contributorProfile.getNamesVisibility())) {
-                                        contributor.setCreditName(null);
+                                    if(contributorProfile.getRecordNameEntity() != null && contributorProfile.getRecordNameEntity().getVisibility() != null) {
+                                        if (!Visibility.PUBLIC.value().equals(contributorProfile.getRecordNameEntity().getVisibility().value())) {
+                                            contributor.setCreditName(null);
+                                        }
+                                    } else {
+                                        if (!Visibility.PUBLIC.value().equals(contributorProfile.getNamesVisibility().value())) {
+                                            contributor.setCreditName(null);
+                                        }
                                     }
+                                    
                                 }
                             }
                         }

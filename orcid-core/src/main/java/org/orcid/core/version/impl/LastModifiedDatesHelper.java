@@ -82,7 +82,7 @@ public class LastModifiedDatesHelper {
     }
 
     public static Date calculateLatest(Group groupRc2) {
-    	Date latestAct = null;
+        Date latestAct = null;
         Collection<? extends GroupableActivity> activities = groupRc2.getActivities();
         if (activities != null && !activities.isEmpty()) {
             Iterator<? extends GroupableActivity> activitiesIterator = activities.iterator();
@@ -98,12 +98,12 @@ public class LastModifiedDatesHelper {
         }
         return latestAct;
     }
-    
+
     public static Date calculateLatest(GroupIdRecords groupIdRecords) {
-    	Date latestAct = null;
+        Date latestAct = null;
         if (groupIdRecords != null && groupIdRecords.getGroupIdRecord() != null && !groupIdRecords.getGroupIdRecord().isEmpty()) {
             XMLGregorianCalendar latest = groupIdRecords.getGroupIdRecord().get(0).getLastModifiedDate().getValue();
-            for(GroupIdRecord groupid : groupIdRecords.getGroupIdRecord()) {
+            for (GroupIdRecord groupid : groupIdRecords.getGroupIdRecord()) {
                 if (latest.compare(groupid.getLastModifiedDate().getValue()) == -1) {
                     latest = groupid.getLastModifiedDate().getValue();
                 }
@@ -113,12 +113,12 @@ public class LastModifiedDatesHelper {
         }
         return latestAct;
     }
-    
+
     public static Date calculateLatest(ResearcherUrls researcherUrls) {
-    	Date latestAct = null;
+        Date latestAct = null;
         if (researcherUrls != null && researcherUrls.getResearcherUrls() != null && !researcherUrls.getResearcherUrls().isEmpty()) {
             XMLGregorianCalendar latest = researcherUrls.getResearcherUrls().get(0).getLastModifiedDate().getValue();
-            for(ResearcherUrl researcherUrl : researcherUrls.getResearcherUrls()) {
+            for (ResearcherUrl researcherUrl : researcherUrls.getResearcherUrls()) {
                 if (latest.compare(researcherUrl.getLastModifiedDate().getValue()) == -1) {
                     latest = researcherUrl.getLastModifiedDate().getValue();
                 }
@@ -129,11 +129,11 @@ public class LastModifiedDatesHelper {
         return latestAct;
     }
 
-	public static Date calculateLatest(Emails emails) {
-		Date latestAct = null;
+    public static Date calculateLatest(Emails emails) {
+        Date latestAct = null;
         if (emails != null && emails.getEmails() != null && !emails.getEmails().isEmpty()) {
             XMLGregorianCalendar latest = emails.getEmails().get(0).getLastModifiedDate().getValue();
-            for(Email email : emails.getEmails()) {
+            for (Email email : emails.getEmails()) {
                 if (latest.compare(email.getLastModifiedDate().getValue()) == -1) {
                     latest = email.getLastModifiedDate().getValue();
                 }
@@ -142,13 +142,13 @@ public class LastModifiedDatesHelper {
             emails.setLastModifiedDate(new LastModifiedDate(latest));
         }
         return latestAct;
-	}
-	
-	public static XMLGregorianCalendar calculateLatest(OtherNames otherNames) {
-		XMLGregorianCalendar latest = null;
-		if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
+    }
+
+    public static XMLGregorianCalendar calculateLatest(OtherNames otherNames) {
+        XMLGregorianCalendar latest = null;
+        if (otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
             latest = otherNames.getOtherNames().get(0).getLastModifiedDate().getValue();
-            for(OtherName otherName : otherNames.getOtherNames()) {
+            for (OtherName otherName : otherNames.getOtherNames()) {
                 if (latest.compare(otherName.getLastModifiedDate().getValue()) == -1) {
                     latest = otherName.getLastModifiedDate().getValue();
                 }
@@ -156,13 +156,13 @@ public class LastModifiedDatesHelper {
             otherNames.setLastModifiedDate(new LastModifiedDate(latest));
         }
         return latest;
-	}
-	
-	public static Date calculateLatest(PersonExternalIdentifiers extIds) {
-		Date latestAct = null;
+    }
+
+    public static Date calculateLatest(PersonExternalIdentifiers extIds) {
+        Date latestAct = null;
         if (extIds != null && extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
             XMLGregorianCalendar latest = extIds.getExternalIdentifier().get(0).getLastModifiedDate().getValue();
-            for(PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+            for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
                 if (latest.compare(extId.getLastModifiedDate().getValue()) == -1) {
                     latest = extId.getLastModifiedDate().getValue();
                 }
@@ -171,13 +171,13 @@ public class LastModifiedDatesHelper {
             extIds.setLastModifiedDate(new LastModifiedDate(latest));
         }
         return latestAct;
-	}
+    }
 
-	public static Date calculateLatest(Keywords keywords) {
-		Date latestAct = null;
+    public static Date calculateLatest(Keywords keywords) {
+        Date latestAct = null;
         if (keywords != null && keywords.getKeywords() != null && !keywords.getKeywords().isEmpty()) {
             XMLGregorianCalendar latest = keywords.getKeywords().get(0).getLastModifiedDate().getValue();
-            for(Keyword keyword : keywords.getKeywords()) {
+            for (Keyword keyword : keywords.getKeywords()) {
                 if (latest.compare(keyword.getLastModifiedDate().getValue()) == -1) {
                     latest = keyword.getLastModifiedDate().getValue();
                 }
@@ -186,13 +186,13 @@ public class LastModifiedDatesHelper {
             keywords.setLastModifiedDate(new LastModifiedDate(latest));
         }
         return latestAct;
-	}
+    }
 
-	public static Date calculateLatest(Addresses addresses) {
-		Date latestAct = null;
+    public static Date calculateLatest(Addresses addresses) {
+        Date latestAct = null;
         if (addresses != null && addresses.getAddress() != null && !addresses.getAddress().isEmpty()) {
             XMLGregorianCalendar latest = addresses.getAddress().get(0).getLastModifiedDate().getValue();
-            for(Address address : addresses.getAddress()) {
+            for (Address address : addresses.getAddress()) {
                 if (latest.compare(address.getLastModifiedDate().getValue()) == -1) {
                     latest = address.getLastModifiedDate().getValue();
                 }
@@ -201,19 +201,18 @@ public class LastModifiedDatesHelper {
             addresses.setLastModifiedDate(new LastModifiedDate(latest));
         }
         return latestAct;
-	}
+    }
 
-	public static LastModifiedDate returnLatestLastModifiedDate(
-			LastModifiedDate latest, LastModifiedDate temp) {
-		if(temp == null) {
-			return latest;
-		}
-		if(latest == null) {
-			return temp;
-		}
-		if(latest.getValue().compare(temp.getValue()) == -1) {
-			return temp;
-		}
-		return latest;
-	}
+    public static LastModifiedDate returnLatestLastModifiedDate(LastModifiedDate latest, LastModifiedDate temp) {
+        if (temp == null) {
+            return latest;
+        }
+        if (latest == null) {
+            return temp;
+        }
+        if (latest.getValue().compare(temp.getValue()) == -1) {
+            return temp;
+        }
+        return latest;
+    }
 }

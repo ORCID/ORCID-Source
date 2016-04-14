@@ -150,7 +150,7 @@ public class ValidateV2RC2SamplesTest {
     public void testUnmarshallBiography() {
         Biography bio = (Biography) unmarshallFromPath("/record_2.0_rc2/samples/biography-2.0_rc2.xml", Biography.class);
         assertNotNull(bio);
-        assertEquals("biography", bio.getContent());
+        assertEquals("biography V2.0_rc2", bio.getContent());
         assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
     }
 

@@ -126,7 +126,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         
         ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
-        assertEquals("Josiah", retrievedProfileEntity.getGivenNames());
+        assertEquals("Josiah", retrievedProfileEntity.getRecordNameEntity().getGivenNames());
 
         // Check all email visibility and values
         Set<EmailEntity> emails = profileEntity.getEmails();
@@ -229,7 +229,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
         ProfileEntity retrievedProfileEntity = profileDao.find(orcidMessage.getOrcidProfile().getOrcidIdentifier().getPath());
         assertNotNull(retrievedProfileEntity);
-        assertEquals("Josiah", retrievedProfileEntity.getGivenNames());
+        assertEquals("Josiah", retrievedProfileEntity.getRecordNameEntity().getGivenNames());
         assertEquals("abc123", retrievedProfileEntity.getEncryptedPassword());
         assertEquals(1, retrievedProfileEntity.getSecurityQuestion().getId().intValue());
         assertEquals("dMDyJ1Z7Qn6xWClFzA63fQ==", retrievedProfileEntity.getEncryptedSecurityAnswer());

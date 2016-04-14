@@ -32,6 +32,7 @@ import org.orcid.core.adapter.JpaJaxbGivenPermissionByAdapter;
 import org.orcid.core.adapter.JpaJaxbGivenPermissionToAdapter;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -42,6 +43,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -52,7 +54,6 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -80,13 +81,27 @@ import org.orcid.jaxb.model.record_rc2.GroupAble;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.BiographyEntity;
+import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,6 +111,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("profileEntityManager")
 public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -147,6 +164,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private JpaJaxbGivenPermissionByAdapter jpaJaxbGivenPermissionByAdapter;
     
+    @Resource
+    private OrgAffiliationRelationDao orgRelationAffiliationDao;    
+    
+    @Resource
+    private OtherNameManager otherNamesManager;
+    
+    @Resource
+    private RecordNameManager recordNameManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
+    
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
      * use the cache profileEntityCacheManager whenever is possible
@@ -181,52 +210,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     /**
-     * Updates a profile with the given OrcidProfile object
-     * 
-     * @param orcidProfile
-     *            The object that will be used to update the database profile
-     * @return true if the profile was successfully updated on database, false
-     *         otherwise
-     */
-    @Override
-    public boolean updateProfile(OrcidProfile orcidProfile) {
-        ProfileEntity profile = generateProfileEntityWithBio(orcidProfile);
-        return profileDao.updateProfile(profile);
-    }
-
-    /**
-     * Updates a profile entity object on database.
-     * 
-     * @param profile
-     *            The profile object to update
-     * @return true if the profile was successfully updated.
-     */
-    @Override
-    public boolean updateProfile(ProfileEntity profile) {
-        return profileDao.updateProfile(profile);
-    }
-
-    /**
-     * Generate a ProfileEntity object with the bio information populated from
-     * the info that comes from the OrcidProfile parameter
-     * 
-     * @param orcidProfile
-     * @return A Profile Entity containing the bio information that comes in the
-     *         OrcidProfile parameter
-     */
-    private ProfileEntity generateProfileEntityWithBio(OrcidProfile orcidProfile) {
-        ProfileEntity profile = new ProfileEntity();
-        profile.setCreditName(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getContent());
-        profile.setFamilyName(orcidProfile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());
-        profile.setGivenNames(orcidProfile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
-        profile.setBiography(orcidProfile.getOrcidBio().getBiography().getContent());
-        profile.setBiographyVisibility(orcidProfile.getOrcidBio().getBiography().getVisibility());
-        profile.setNamesVisibility(orcidProfile.getOrcidBio().getPersonalDetails().getCreditName().getVisibility());
-        profile.setId(orcidProfile.getOrcidIdentifier().getPath());
-        return profile;
-    }
-
-    /**
      * Deprecates a profile
      * 
      * @param deprecatedProfile
@@ -236,8 +219,118 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
      * @return true if the account was successfully deprecated, false otherwise
      */
     @Override
+    @Transactional 
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        return profileDao.deprecateProfile(deprecatedProfile.getId(), primaryProfile.getId());
+        //Remove the biography
+        deprecatedProfile.setBiographyVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        deprecatedProfile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE); 
+        deprecatedProfile.setBiography(new String());
+        deprecatedProfile.setGivenNames("Given Names Deactivated");
+        deprecatedProfile.setFamilyName("Family Name Deactivated");
+        deprecatedProfile.setCreditName(null);
+        
+        boolean wasDeprecated = profileDao.deprecateProfile(deprecatedProfile, primaryProfile.getId());        
+        // If it was successfully deprecated
+        if (wasDeprecated) {
+            LOGGER.info("Account {} was deprecated to primary account: {}", deprecatedProfile.getId(), primaryProfile.getId());
+            ProfileEntity deprecated = profileDao.find(deprecatedProfile.getId());
+            
+            String deprecatedOrcid = deprecatedProfile.getId();
+            String primaryOrcid = primaryProfile.getId();
+            
+            // Remove works
+            if (deprecated.getWorks() != null) {
+                for (WorkEntity work : deprecated.getWorks()) {
+                    List<Long> works = new ArrayList<Long>();
+                    works.add(work.getId());
+                    workManager.removeWorks(deprecated.getId(), works);
+                }
+            }
+            
+            // Remove funding
+            if (deprecated.getProfileFunding() != null) {
+                for(ProfileFundingEntity funding : deprecated.getProfileFunding()) {
+                    fundingManager.removeProfileFunding(funding.getProfile().getId(), funding.getId());
+                }
+            }
+            
+            // Remove affiliations
+            if (deprecated.getOrgAffiliationRelations() != null) {
+                for(OrgAffiliationRelationEntity affiliation : deprecated.getOrgAffiliationRelations()) {                    
+                    orgRelationAffiliationDao.removeOrgAffiliationRelation(affiliation.getProfile().getId(), affiliation.getId());
+                }
+            }
+            
+            // Remove external identifiers
+            if (deprecated.getExternalIdentifiers() != null) {
+                for (ExternalIdentifierEntity externalIdentifier : deprecated.getExternalIdentifiers()) {
+                    externalIdentifierManager.deleteExternalIdentifier(deprecated.getId(), externalIdentifier.getId(), false);
+                }
+            }
+
+            // Remove researcher urls
+            if(deprecated.getResearcherUrls() != null) {
+                for(ResearcherUrlEntity rUrl : deprecated.getResearcherUrls()) {
+                    researcherUrlManager.deleteResearcherUrl(deprecatedOrcid, rUrl.getId(), false);
+                }
+            }
+            
+            // Remove other names
+            if(deprecated.getOtherNames() != null) {
+                for(OtherNameEntity otherName : deprecated.getOtherNames()) {
+                    otherNamesManager.deleteOtherName(deprecatedOrcid, otherName.getId(), false);
+                }                            
+            }
+            
+            // Remove keywords
+            if(deprecated.getKeywords() != null) {
+                for(ProfileKeywordEntity keyword : deprecated.getKeywords()) {
+                    profileKeywordManager.deleteKeyword(deprecatedOrcid, keyword.getId(), false);
+                }                                                        
+            }
+            
+            //Remove biography
+            Biography deprecatedBio = new Biography();
+            deprecatedBio.setContent(null);
+            deprecatedBio.setVisibility(Visibility.PRIVATE);
+            
+            BiographyEntity bioEntity = deprecated.getBiographyEntity();
+            if(bioEntity != null) {
+                biographyManager.updateBiography(deprecatedOrcid,deprecatedBio);
+            } else {
+                biographyManager.createBiography(deprecatedOrcid, deprecatedBio);    
+            }
+            
+            
+            //Set the deactivated names
+            RecordNameEntity recordName = deprecated.getRecordNameEntity();
+            if(recordName != null) {
+                recordName.setCreditName(null);
+                recordName.setGivenNames("Given Names Deactivated");
+                recordName.setFamilyName("Family Name Deactivated");
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                recordName.setProfile(new ProfileEntity(deprecatedOrcid));
+                recordNameManager.updateRecordName(recordName);                
+            } else {
+                
+            }
+                                                        
+            // Move all emails to the primary email
+            Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
+            if (deprecatedAccountEmails != null) {
+                // For each email in the deprecated profile                            
+                for (EmailEntity email : deprecatedAccountEmails) {
+                    // Delete each email from the deprecated
+                    // profile
+                    LOGGER.info("About to move email {} from profile {} to profile {}", new Object[] {email.getId(), deprecatedOrcid, primaryOrcid });
+                    emailManager.moveEmailToOtherAccount(email.getId(), deprecatedOrcid, primaryOrcid);
+                }
+            }
+            
+            return true;
+        }
+        
+        return false; 
     }
 
     /**
@@ -523,7 +616,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             for (GroupAble groupKey : groupKeys) {
                 PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
                 ExternalID id = new ExternalID();
-                id.setType(key.KEY_NAME);//TODO: this is not nice
+                id.setType(PeerReviewGroupKey.KEY_NAME);//TODO: this is not nice
                 id.setValue(key.getGroupId());
                 peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
             }
@@ -561,15 +654,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public boolean unreviewProfile(String orcid) {
         return profileDao.unreviewProfile(orcid);
     }
-
-    /*@Override
-    public Visibility getResearcherUrlDefaultVisibility(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Visibility result = profile.getResearcherUrlsVisibility() == null ? Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value())
-                : Visibility.fromValue(profile.getResearcherUrlsVisibility().value());
-        return result;
-    }*/
-
+   
     @Override
     public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
         return jpa2JaxbAdapter.getApplications(tokenDetails);
@@ -588,31 +673,37 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         String publicName = "";
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         if (profile != null) {
-            Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
-                    : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-            if (Visibility.PUBLIC.equals(namesVisibility)) {
-                if (!PojoUtil.isEmpty(profile.getCreditName())) {
-                    publicName = profile.getCreditName();
-                } else {
-                    publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
-                    publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
+            RecordNameEntity recordName = profile.getRecordNameEntity();
+            if(recordName != null) {
+                Visibility namesVisibility = (recordName.getVisibility() != null) ? Visibility.fromValue(recordName.getVisibility().value())
+                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+                if (Visibility.PUBLIC.equals(namesVisibility)) {
+                    if (!PojoUtil.isEmpty(recordName.getCreditName())) {
+                        publicName = recordName.getCreditName();
+                    } else {
+                        publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
+                        publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
+                    }
+                }
+            } else {
+                Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
+                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
+                if (Visibility.PUBLIC.equals(namesVisibility)) {
+                    if (!PojoUtil.isEmpty(profile.getCreditName())) {
+                        publicName = profile.getCreditName();
+                    } else {
+                        publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
+                        publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
+                    }
                 }
             }
+            
         }
         return publicName;
     }
 
-    @Override
-    public Biography getBiography(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        Biography bio = new Biography();
-        bio.setVisibility(Visibility.fromValue(
-                profile.getBiographyVisibility() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value() : profile.getBiographyVisibility().value()));
-        bio.setContent(profile.getBiography());
-        return bio;
-    }
-    
     @Override    
+    @Deprecated
     public void updateBiography(String orcid, Biography biography) {
         org.orcid.jaxb.model.message.Visibility visibility = OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility();        
         if(biography.getVisibility() != null) {
@@ -624,11 +715,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
-        person.setBiography(getBiography(orcid));
-		person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
+        Biography biography = biographyManager.getBiography(orcid);
+        if(biography != null) {
+            person.setBiography(biography);
+        } 
+        
+        person.setName(personalDetailsManager.getName(orcid));
+        
+        person.setAddresses(addressManager.getAddresses(orcid, lastModifiedTime));
         LastModifiedDate latest = person.getAddresses().getLastModifiedDate();
         
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
@@ -637,9 +735,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
-        
-        person.setName(personalDetailsManager.getName(orcid));
+        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
         
         person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
@@ -653,8 +749,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        //The rest should come from the ProfileEntity object
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        //The rest should come from the ProfileEntity object              
         Delegation delegation = null;
         
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
@@ -712,12 +807,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPublicPersonDetails(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Person person = new Person();
         
-        Biography bio = getBiography(orcid);
-        if(Visibility.PUBLIC.equals(bio.getVisibility())) {
+        Biography bio = biographyManager.getPublicBiography(orcid);        
+        if(bio != null) {
             person.setBiography(bio);
-        }
+        } 
         
         Name name = personalDetailsManager.getName(orcid);
         if(Visibility.PUBLIC.equals(name.getVisibility())) {
@@ -749,8 +845,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        //The rest should come from the ProfileEntity object
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);       
+        //The rest should come from the ProfileEntity object              
         Delegation delegation = null;
         
         Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();

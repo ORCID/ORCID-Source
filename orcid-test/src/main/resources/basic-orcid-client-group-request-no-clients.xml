@@ -26,5 +26,5 @@
  xsi:schemaLocation="http://www.orcid.org/ns/orcid ../../../../orcid-model/src/main/resources/orcid-client-group-1.2.xsd"
  xmlns="http://www.orcid.org/ns/orcid" type="basic"> 	
     <group-name>Elsevier</group-name>
-    <email>orcid-admin@elsevier.com</email>        
+    <email>basic-member@elsevier.com</email>        
 </orcid-client-group> 

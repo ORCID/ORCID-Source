@@ -335,6 +335,10 @@
 	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />
 	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
 	
+	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl" />
+	
+	<bean id="BiographyManager" class="org.orcid.core.manager.impl.BiographyManagerImpl" />
+	
 	<bean id="profileFundingManager" class="org.orcid.core.manager.impl.ProfileFundingManagerImpl" />
 	
 	<bean id="mailGunManager" class="org.orcid.core.manager.impl.MailGunManager" />

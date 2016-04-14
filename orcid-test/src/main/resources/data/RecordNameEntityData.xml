@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<dataset>
+	<record_name 
+		id="1"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4442"
+		credit_name="Credit Name"
+		given_names="Given Names"
+		family_name="Family Name"
+		visibility="PUBLIC"		
+		/>
+	<record_name
+		id="2" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4447"
+		credit_name="Credit Name"
+		given_names="Given Names"
+		family_name="Family Name"
+		visibility="LIMITED"	
+		/>
+</dataset>
