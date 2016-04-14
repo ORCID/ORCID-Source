@@ -27,13 +27,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
-import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
@@ -49,6 +47,7 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
@@ -69,8 +68,6 @@ import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -78,14 +75,15 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -168,6 +166,9 @@ public class MemberV2ApiServiceDelegatorImpl
     @Resource
     private BiographyManager biographyManager;
 
+    @Resource
+    private RecordManager recordManager;
+    
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
@@ -178,30 +179,23 @@ public class MemberV2ApiServiceDelegatorImpl
         return Response.ok(STATUS_OK_MESSAGE).build();
     }
 
-    /**
-     * finds and returns the {@link org.orcid.jaxb.model.message.OrcidMessage}
-     * wrapped in a {@link javax.xml.ws.Response} with only the profile's bio
-     * details
-     * 
-     * @param orcid
-     *            the ORCID to be used to identify the record
-     * @return the {@link javax.xml.ws.Response} with the
-     *         {@link org.orcid.jaxb.model.message.OrcidMessage} within it
-     */
+    @Override
+    public Response viewRecord(String orcid) {
+        orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED, orcid);
+        Record record = visibilityFilter.filter(recordManager.getRecord(orcid), orcid);
+        if(record.getPerson() != null) {
+            ElementUtils.setPathToPerson(record.getPerson(), orcid);
+        }
+        if(record.getActivitiesSummary() != null) {
+            ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
+            ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
+        }               
+        return Response.ok(record).build();
+    }
+    
     @Override
     public Response viewActivities(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-        if (profileDao.isProfileDeprecated(orcid)) {
-            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if (entity.getDeprecatedDate() != null) {
-                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
-            }
-            throw new OrcidDeprecatedException(params);
-        }
+        orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);        
         ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);

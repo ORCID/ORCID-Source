@@ -29,6 +29,8 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
 
     Response viewStatusText();
 
+    Response viewRecord(String orcid);
+    
     Response viewActivities(String orcid);
 
     Response viewWork(String orcid, Long putCode);

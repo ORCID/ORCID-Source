@@ -335,6 +335,8 @@
 	<bean id="otherNameManager" class="org.orcid.core.manager.impl.OtherNameManagerImpl" />
 	<bean id="profileEntityManager" class="org.orcid.core.manager.impl.ProfileEntityManagerImpl" />
 	
+	<bean id="recordManager" class="org.orcid.core.manager.impl.RecordManagerImpl" />
+	
 	<bean id="recordNameManager" class="org.orcid.core.manager.impl.RecordNameManagerImpl" />
 	
 	<bean id="BiographyManager" class="org.orcid.core.manager.impl.BiographyManagerImpl" />

@@ -45,6 +45,11 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 
+/**
+* 
+* @author Angel Montenegro
+* 
+*/
 public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;

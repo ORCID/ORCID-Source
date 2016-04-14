@@ -44,6 +44,7 @@ import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.springframework.stereotype.Component;
 
 /**
@@ -220,4 +221,19 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
 
         return person;
     }
+
+    @Override
+    public Record filter(Record record, String orcid) {
+        if(record.getPerson() != null) {
+            record.setPerson(filter(record.getPerson(), orcid));
+        }
+        
+        if(record.getActivitiesSummary() != null) {
+            record.setActivitiesSummary(filter(record.getActivitiesSummary(), orcid));
+        }
+        
+        return record;
+    }
+    
+    
 }
