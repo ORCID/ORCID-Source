@@ -56,7 +56,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType( propOrder = { "content" })
 @XmlRootElement(name = "keyword")
-public class Keyword implements VisibilityType, Serializable {
+public class Keyword implements VisibilityType, PrivateVisibleToSource,Serializable {
 
     /**
      * 

@@ -1889,6 +1889,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	padding-right: 32px;
 }
 
+#add-funding .errors,
+.add-work .errors{
+	width: 100%;
+	float: left;
+	margin-top: 10px;
+}
+
 
 .no-margin-bottom {
 	margin-bottom: 0px;
@@ -1900,13 +1907,13 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     margin: 10px 0 0 0;
 }
 
-#edit-affiliation input{
-	margin-bottom: 0;
+#edit-affiliation{
+	max-width: 800px;
+	min-height: 435px;
 }
 
-#edit-affiliation .spin{
-	margin-top: 10px;
-	vertical-align: -10px;
+#edit-affiliation input{
+	margin-bottom: 0;
 }
 
 #edit-affiliation .alert{
@@ -2080,6 +2087,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .inline-list a {
 	display: inline-block;
 	*display: inline;
+}
+
+.inline-list.margin-separator li{
+	margin-right: 10px;
 }
 
 .tabs {
@@ -7704,6 +7715,10 @@ a:hover .mozilla-badge{
 		margin-left: -15px;
 	}
 	
+	#edit-affiliation{
+		height: auto;
+	}
+	
 
 }
 
@@ -7918,6 +7933,10 @@ a:hover .mozilla-badge{
 	
 	#old-login #login-error-mess{
 		padding-left: 170px;
+	}
+	
+	#edit-affiliation{
+		width: 100%;
 	}
 	
 }

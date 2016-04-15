@@ -370,8 +370,14 @@ orcidNgModule.directive('appFileTextReader', function($q){
                     var element = event.target;
                     $q.all(slice.call(element.files, 0).map(readFile))
                     .then(function(values){
-                        if(element.multiple) ngModelCtrl.$setViewValue(values);
-                        else ngModelCtrl.$setViewValue(values.length ? values[0] : null);
+                        if(element.multiple){
+                            for(v in values){
+                                ngModelCtrl.$viewValue.push(values[v]);
+                            }
+                        }
+                        else{
+                            ngModelCtrl.$setViewValue(values.length ? values[0] : null);
+                        }
                         scope.updateFn(scope);
                         element.value = null;
                     });
@@ -1571,6 +1577,49 @@ orcidNgModule.factory("widgetSrvc", ['$rootScope', function ($rootScope) {
     return widgetSrvc;
 }]);
 
+orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootScope, widgetSrvc) {
+    var serv = {
+        feed: null,
+        getDiscoFeed: function() {
+            $.ajax({
+                url: getBaseUri() + '/Shibboleth.sso/DiscoFeed',
+                dataType: 'json',
+                cache: true,
+                success: function(data) {
+                    serv.feed = data;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with disco feed");
+                serv.feed = [];
+                $rootScope.$apply();
+            });
+        },
+        getIdPName: function(entityId) {
+            var locale = widgetSrvc.locale != null ? widgetSrvc.locale : "en";
+            for(i in serv.feed) {
+                var idp = serv.feed[i];
+                if(entityId === idp.entityID) {
+                    var name = idp.DisplayNames[0].value;
+                    for(j in idp.DisplayNames){
+                        var displayName = idp.DisplayNames[j];
+                        if(locale === displayName.lang){
+                            name = displayName.value;
+                        }
+                    }
+                    return name;
+                }
+            }
+            return entityId;
+        }
+    };
+
+    // populate the disco feed
+    serv.getDiscoFeed();
+    return serv; 
+}]);
+
 
 orcidNgModule.filter('urlProtocol', function(){
     return function(url){
@@ -2013,9 +2062,10 @@ orcidNgModule.controller('NotificationPreferencesCtrl',['$scope', '$compile', 'e
     $scope.emailSrvc = emailSrvc;
 }]);
 
-orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', 'emailSrvc', function ($scope, $compile, emailSrvc, prefsSrvc, emailSrvc) {
+orcidNgModule.controller('EmailFrequencyCtrl',['$scope', '$compile', 'emailSrvc', 'prefsSrvc', function ($scope, $compile, emailSrvc, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.emailSrvc = emailSrvc;
+    
 }]);
 
 orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', function ($scope, $rootScope) {
@@ -2109,14 +2159,15 @@ orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', functio
 
 
 orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
-    $scope.errors=null;
-    $scope.password=null;
+    $scope.errors = null;
+    $scope.password = null;
+    $scope.securityQuestions = [];
 
     $scope.getSecurityQuestion = function() {
         $.ajax({
             url: getBaseUri() + '/account/security-question.json',
             dataType: 'json',
-            success: function(data) {
+            success: function(data) {            	
                 $scope.securityQuestionPojo = data;
                 $scope.$apply();
             }
@@ -2150,7 +2201,7 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
             contentType: 'application/json;charset=UTF-8',
             dataType: 'json',
             success: function(data) {
-                //alert(angular.toJson($scope.securityQuestionPojo));
+            	
                 if(data.errors.length != 0) {
                     $scope.errors=data.errors;
                 } else {
@@ -4424,9 +4475,7 @@ orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'a
     $scope.showAddModal = function(){
         var numOfResults = 25;
         $.colorbox({
-            html: $compile($('#add-affiliation-modal').html())($scope),
-            // start the colorbox off with the correct width
-            width: formColorBoxResize(),
+            html: $compile($('#add-affiliation-modal').html())($scope),            
             onComplete: function() {
                 //resize to insure content fits
                 formColorBoxResize();
@@ -5245,7 +5294,7 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
 	 $scope.workspaceSrvc  = workspaceSrvc;
 	 $scope.showDetails = {};
 	 $scope.showElement = {};
-	 $scope.showPeerReviewDetails = {};
+	 $scope.showPeerReviewDetails = new Array();
 	 $scope.sortHideOption = true;
 	 
 	 $scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
@@ -5268,11 +5317,13 @@ orcidNgModule.controller('PublicPeerReviewCtrl',['$scope', '$compile', '$filter'
     };
     
     
-    $scope.showMoreDetails = function(putCode){    	
+    $scope.showMoreDetails = function(putCode){  
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = false;
     };
     
@@ -5424,7 +5475,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     actBulkSrvc.initScope($scope);
     $scope.canReadFiles = false;
     $scope.showBibtexImportWizard = false;
-    $scope.textFiles = null;
+    $scope.textFiles = [];
     $scope.worksFromBibtex = null;
     $scope.workspaceSrvc = workspaceSrvc;
     $scope.worksSrvc = worksSrvc;
@@ -5566,8 +5617,8 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     });
                 });
             });
-               $scope.textFiles = null;
-               $scope.bibtexParsingError = false;
+            $scope.textFiles.length = 0;
+            $scope.bibtexParsingError = false;
                
         } catch (err) {
             $scope.bibtexParsingError = true;
@@ -6227,7 +6278,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
 	$scope.editTranslatedTitle = false;
 	$scope.editSources = {};
 	$scope.showDetails = {};
-	$scope.showPeerReviewDetails = {};
+	$scope.showPeerReviewDetails = new Array();
 	$scope.showElement = {};
 	$scope.sortState = new ActSortState(GroupedActivities.PEER_REVIEW);
 	$scope.sortHideOption = true;
@@ -6440,11 +6491,13 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
     	$scope.showDetails[groupId] = !$scope.showDetails[groupId];
     };
     
-    $scope.showMoreDetails = function(putCode){    	
+    $scope.showMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = true;   
     };
     
     $scope.hideMoreDetails = function(putCode){
+    	$scope.showPeerReviewDetails.length = 0;
     	$scope.showPeerReviewDetails[putCode] = false;
     };
     
@@ -6569,6 +6622,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
             blankPeerReview: null,
             details: new Object(), // we should think about putting details in the
             peerReviewsToAddIds: null,
+            peerReviewGroupDetailsRequested: new Array(),
             getBlankPeerReview: function(callback) {
             	 // if cached return clone of blank
                 if (peerReviewSrvc.blankPeerReview != null)
@@ -6781,25 +6835,27 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                 }
                 return count;
             },
-            getPeerReviewGroupDetails: function(groupIDvalue, putCode){
-            	var group = peerReviewSrvc.getGroup(putCode);
-            	
-            	$.ajax({
-                    url: getBaseUri() + '/public/group/' + groupIDvalue,
-                    dataType: 'json',
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'GET',
-                    success: function(data) {
-                    	$rootScope.$apply(function(){
-                    		group.groupName = data.name;
-                    		group.groupDescription = data.description;
-                    		group.groupType = data.type;
-                    	});
-                    }
-                }).fail(function(xhr, status, error){
-                    //console.log("error getPeerReviewGroupDetails(groupIDvalue, putCode)");
-                    console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-                });
+            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
+            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){            		
+            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);            		
+            		var group = peerReviewSrvc.getGroup(putCode);
+            		$.ajax({
+                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
+                        dataType: 'json',
+                        contentType: 'application/json;charset=UTF-8',
+                        type: 'GET',
+                        success: function(data) {
+                        	$rootScope.$apply(function(){
+                        		group.groupName = data.name;
+                        		group.groupDescription = data.description;
+                        		group.groupType = data.type;
+                        	});
+                        }
+                    }).fail(function(xhr, status, error){
+                        console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+                    });
+            		
+            	}
             }
     };
     return peerReviewSrvc;
@@ -7272,7 +7328,7 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
 
 }]);
 
-orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl($scope, $compile){
+orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', function SocialCtrl($scope, $compile, discoSrvc){
     $scope.showLoader = false;
     $scope.sort = {
         column: 'providerUserId',
@@ -7336,6 +7392,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
             dataType: 'json',
             success: function(data) {
                 $scope.socialAccounts = data;
+                $scope.populateIdPNames();
                 $scope.$apply();
             }
         }).fail(function() {
@@ -7343,6 +7400,21 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', function SocialCtrl
             console.log("error getting social accounts");
         });
     };
+    
+    $scope.$watch(function() { return discoSrvc.feed; }, function(){
+        $scope.populateIdPNames();
+        
+    });
+    
+    $scope.populateIdPNames = function() {
+        if(discoSrvc.feed != null) {
+            for(i in $scope.socialAccounts){
+                var account = $scope.socialAccounts[i];
+                var name = discoSrvc.getIdPName(account.id.providerid);
+                account.idpName = name;
+            }
+        }
+    }
 
     $scope.closeModal = function() {
         $.colorbox.close();
@@ -8875,7 +8947,7 @@ orcidNgModule.controller('ResendClaimCtrl', ['$scope', function ($scope) {
 	
 	$scope.resendClaimEmails = function() {
 		$.ajax({
-            url: getBaseUri()+'/resend-claim.json',
+            url: getBaseUri()+'/admin-actions/resend-claim.json',
             type: 'POST',
             dataType: 'json',
             data: $scope.emailIds,
@@ -10661,7 +10733,9 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
     
 }]);
 
-orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
+orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', function ($scope, discoSrvc){
+    
+    $scope.loadedFeed = false;
     
     $scope.linkAccount = function(idp, linkType) {
         var eventAction = linkType === 'shibboleth' ? 'Sign-In-Link-Federated' : 'Sign-In-Link-Social';
@@ -10669,10 +10743,21 @@ orcidNgModule.controller('LinkAccountController',['$scope', function ($scope){
         return false;
     };
     
+    $scope.setEntityId = function(entityId) {
+        $scope.entityId = entityId;
+    }
+    
+    $scope.$watch(function() { return discoSrvc.feed; }, function(){
+        $scope.idpName = discoSrvc.getIdPName($scope.entityId);
+        if(discoSrvc.feed != null) {
+            $scope.loadedFeed = true;
+        }
+    });
+    
 }]);
 
 
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',function ($scope, emailSrvc, $compile){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -10683,9 +10768,9 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 		$scope.showEdit = true;
 	}
 	
-	$scope.close = function(){
-	    console.log('Close');
+	$scope.close = function(){	    
 		$scope.showEdit = false;
+		prefsSrvc.saved = false;
 	    $.colorbox.close();
 	}
 	    
@@ -10700,7 +10785,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile',functio
 	$scope.openEditModal = function(){
 	    var HTML = '<div class="lightbox-container"><div class="edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
 	    $('#edit-emails').html() +
-	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">Cancel</a></div></div></div></div>';  
+	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a></div></div></div></div>';  
 	    
 	    $scope.emailSrvc.popUp = true;
 	    

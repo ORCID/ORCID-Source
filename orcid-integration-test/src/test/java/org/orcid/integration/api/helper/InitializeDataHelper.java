@@ -235,6 +235,7 @@ public class InitializeDataHelper {
         registration.setEmailConfirm(emailText);
         registration.setPassword(passwordText);
         registration.setPasswordConfirm(passwordText);
+        registration.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.LIMITED));
         OrcidProfile orcidProfile = toProfile(registration);
         orcidProfile = orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         return orcidProfile;

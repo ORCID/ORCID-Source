@@ -1,0 +1,73 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE-IDP-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="identity_provider"/>
+            </not>
+        </preConditions>
+        <createTable tableName="identity_provider">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="identity_provider_pkey" />
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="providerid" type="VARCHAR(1000)" >
+                <constraints nullable="false" unique="true" uniqueConstraintName="identity_provider_providerid_unique"/>
+            </column>
+            <column name="display_name" type="VARCHAR(1000)" />
+            <column name="support_email" type="VARCHAR(350)" />
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="ADD-SEQUENCE-FOR-NOTIFICATIONS" author="Will Simpson" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="identity_provider_seq" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="identity_provider_seq" />
+    </changeSet>
+
+    <changeSet id="ADD-AUTO-COL-FOR-NOTIFICATIONS" author="Will Simpson" dbms="hsqldb">
+        <addAutoIncrement tableName="identity_provider"
+            columnName="id" columnDataType="bigint" />
+    </changeSet>
+    
+    <changeSet id="ADD-EMAILS-TO-IDP" author="Will Simpson">
+        <addColumn tableName="identity_provider">
+            <column name="admin_email" type="VARCHAR(350)" />
+            <column name="tech_email" type="VARCHAR(350)" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="ADD-FAILED-INFO-TO-IDP" author="Will Simpson">
+        <addColumn tableName="identity_provider">
+            <column name="last_failed" type="TIMESTAMP WITH TIME ZONE" />
+            <column name="failed_count" type="INTEGER" defaultValue="0">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+    </changeSet>
+    
+</databaseChangeLog>

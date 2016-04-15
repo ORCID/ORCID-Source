@@ -167,7 +167,7 @@
         is_primary="true"
         is_current="true"
         is_verified="true"
-        visibility="PRIVATE"
+        visibility="PUBLIC"
     />	
 	
 	<email

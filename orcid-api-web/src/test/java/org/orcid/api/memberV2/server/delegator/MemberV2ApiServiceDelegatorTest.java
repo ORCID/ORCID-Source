@@ -111,7 +111,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", "/data/ClientDetailsEntityData.xml",
             "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml",
-            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml");
+            "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
     private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
@@ -1624,7 +1624,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("APP-5555555555555555", researcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://www.myRUrl.com", researcherUrl.getUrl().getValue());
         assertEquals("My researcher Url", researcherUrl.getUrlName());
-        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        assertEquals(Visibility.PUBLIC, researcherUrl.getVisibility());
     }
 
     @Test
@@ -1854,7 +1854,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         OtherName newOtherName = (OtherName) response.getEntity();
         assertNotNull(newOtherName);
         assertEquals("New Other Name", newOtherName.getContent());
-        assertEquals(Visibility.LIMITED, newOtherName.getVisibility());
+        assertEquals(Visibility.PUBLIC, newOtherName.getVisibility());
         assertNotNull(newOtherName.getSource());
         assertEquals("APP-5555555555555555", newOtherName.getSource().retrieveSourcePath());
         assertNotNull(newOtherName.getCreatedDate());
@@ -2093,7 +2093,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
             assertNotNull(extId.getUrl());
             if (extId.getPutCode() != 1L) {
-                assertEquals(Visibility.LIMITED, extId.getVisibility());
+                assertEquals(Visibility.PUBLIC, extId.getVisibility());
                 assertEquals("new-common-name", extId.getType());
                 assertEquals("new-reference", extId.getValue());
                 assertEquals("http://newUrl.com", extId.getUrl().getValue());
@@ -2315,7 +2315,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Keyword newKeyword = (Keyword) response.getEntity();
         assertNotNull(newKeyword);
         assertEquals("New keyword", newKeyword.getContent());
-        assertEquals(Visibility.LIMITED, newKeyword.getVisibility());
+        assertEquals(Visibility.PUBLIC, newKeyword.getVisibility());
         assertNotNull(newKeyword.getSource());
         assertEquals("APP-5555555555555555", newKeyword.getSource().retrieveSourcePath());
         assertNotNull(newKeyword.getCreatedDate());
@@ -2509,7 +2509,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Address newAddress = (Address) response.getEntity();
         assertNotNull(newAddress);
         assertEquals(Iso3166Country.ES, newAddress.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, newAddress.getVisibility());
+        assertEquals(Visibility.LIMITED, newAddress.getVisibility());
         assertNotNull(newAddress.getSource());
         assertEquals("APP-5555555555555555", newAddress.getSource().retrieveSourcePath());
         assertNotNull(newAddress.getCreatedDate());
@@ -2620,9 +2620,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person);
         assertNotNull(person.getName());
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
-        assertEquals("M. Bentine", person.getName().getCreditName().getContent());
-        assertEquals("Bentine", person.getName().getFamilyName().getContent());
-        assertEquals("Michael", person.getName().getGivenNames().getContent());
+        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals("Family Name", person.getName().getFamilyName().getContent());
+        assertEquals("Given Names", person.getName().getGivenNames().getContent());
 
         assertNotNull(person.getAddresses());
         assertNotNull(person.getAddresses().getAddress());
@@ -2639,7 +2639,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, person.getAddresses().getAddress().get(0).getVisibility());
 
         assertNotNull(person.getBiography());
-        assertEquals("Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons.",
+        assertEquals("Biography for 4444-4444-4444-4442",
                 person.getBiography().getContent());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
 

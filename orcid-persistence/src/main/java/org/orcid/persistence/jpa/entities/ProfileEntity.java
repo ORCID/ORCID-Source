@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -41,7 +42,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -80,19 +80,12 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String orcid;
     private OrcidType orcidType;
     private MemberType groupType;
-    private String givenNames;
-    private String familyName;
-    private String creditName;
     private SortedSet<OtherNameEntity> otherNames;
     private SortedSet<ResearcherUrlEntity> researcherUrls;
-    private String biography;
     private SortedSet<ProfileKeywordEntity> keywords;
     private Set<ExternalIdentifierEntity> externalIdentifiers;
     private SortedSet<OrgAffiliationRelationEntity> orgAffiliationRelations;
     private Set<EmailEntity> emails;
-
-    // Poor old vocative name :-(
-    private String vocativeName;
 
     // Security fields
     private String encryptedPassword;
@@ -138,11 +131,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private float sendEmailFrequencyDays;
     private Boolean enableNotifications = Boolean.TRUE;
 
-    // Visibility settings
-    private Visibility namesVisibility;
-    private Visibility biographyVisibility;
-    private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;
-
     // Salesfore ID
     private String salesforeId;
 
@@ -154,6 +142,30 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private String userLastIp;
     private boolean reviewed = Boolean.FALSE;
 
+    private Visibility activitiesVisibilityDefault = Visibility.PRIVATE;   
+    
+    private RecordNameEntity recordNameEntity;
+    
+    private BiographyEntity biographyEntity;
+    
+    //TODO: Remove this when the record name is fully populated
+    // Poor old vocative name :-(
+    @Deprecated
+    private String vocativeName;
+    @Deprecated
+    private String biography;
+    // Visibility settings
+    @Deprecated
+    private Visibility biographyVisibility;    
+    @Deprecated
+    private String givenNames;
+    @Deprecated
+    private String familyName;
+    @Deprecated
+    private String creditName;
+    @Deprecated
+    private Visibility namesVisibility;
+    
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -184,42 +196,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setGroupType(MemberType groupType) {
         this.groupType = groupType;
-    }
-
-    @Column(name = "given_names", length = 150)
-    public String getGivenNames() {
-        return givenNames;
-    }
-
-    public void setGivenNames(String givenNames) {
-        this.givenNames = givenNames;
-    }
-
-    @Column(name = "family_name", length = 150)
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-
-    @Column(name = "credit_name", length = 150)
-    public String getCreditName() {
-        return creditName;
-    }
-
-    public void setCreditName(String creditName) {
-        this.creditName = creditName;
-    }
-
-    @Column(name = "biography", length = 5000)
-    public String getBiography() {
-        return biography;
-    }
-
-    public void setBiography(String biography) {
-        this.biography = biography;
     }
 
     /**
@@ -346,22 +322,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setIsSelectableSponsor(Boolean isSelectableSponsor) {
         this.isSelectableSponsor = isSelectableSponsor;
-    }
-
-    /**
-     * @return the vocativeName
-     */
-    @Column(name = "vocative_name", length = 450)
-    public String getVocativeName() {
-        return vocativeName;
-    }
-
-    /**
-     * @param vocativeName
-     *            the vocativeName to set
-     */
-    public void setVocativeName(String vocativeName) {
-        this.vocativeName = vocativeName;
     }
 
     /**
@@ -805,42 +765,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setEnableNotifications(Boolean enableNotifications) {
         this.enableNotifications = enableNotifications;
     }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "names_visibility")
-    public Visibility getNamesVisibility() {
-        return namesVisibility;
-    }
-
-    public void setNamesVisibility(Visibility namesVisibility) {
-        this.namesVisibility = namesVisibility;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "biography_visibility")
-    public Visibility getBiographyVisibility() {
-        return biographyVisibility;
-    }
-
-    public void setBiographyVisibility(Visibility biographyVisibility) {
-        this.biographyVisibility = biographyVisibility;
-    }
-
-
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "activities_visibility_default")
-    public Visibility getActivitiesVisibilityDefault() {
-        return activitiesVisibilityDefault;
-    }
-
-    public void setActivitiesVisibilityDefault(Visibility activitesVisibilityDefault) {
-        this.activitiesVisibilityDefault = activitesVisibilityDefault;
-    }
-
+    
     @Column(name = "profile_deactivation_date")
     public Date getDeactivationDate() {
         return deactivationDate;
@@ -909,7 +834,108 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setUsedRecaptchaOnRegistration(Boolean usedRecaptchaOnRegistration) {
         this.usedRecaptchaOnRegistration = usedRecaptchaOnRegistration;
     }
+    
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "activities_visibility_default")
+    public Visibility getActivitiesVisibilityDefault() {
+        return activitiesVisibilityDefault;
+    }
 
+    public void setActivitiesVisibilityDefault(Visibility activitesVisibilityDefault) {
+        this.activitiesVisibilityDefault = activitesVisibilityDefault;
+    }
+    
+    //TODO: Remove this when the record name is fully populated
+    /**
+     * @return the vocativeName
+     */
+    @Deprecated
+    @Column(name = "vocative_name", length = 450)
+    public String getVocativeName() {
+        return vocativeName;
+    }
+
+    /**
+     * @param vocativeName
+     *            the vocativeName to set
+     */
+    @Deprecated
+    public void setVocativeName(String vocativeName) {
+        this.vocativeName = vocativeName;
+    }
+
+    @Deprecated
+    @Column(name = "biography", length = 5000)
+    public String getBiography() {
+        return biography;
+    }
+
+    @Deprecated
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+    
+    @Deprecated
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "biography_visibility")
+    public Visibility getBiographyVisibility() {
+        return biographyVisibility;
+    }
+
+    @Deprecated
+    public void setBiographyVisibility(Visibility biographyVisibility) {
+        this.biographyVisibility = biographyVisibility;
+    }
+        
+    @Deprecated
+    @Column(name = "given_names", length = 150)
+    public String getGivenNames() {
+        return givenNames;
+    }
+
+    @Deprecated
+    public void setGivenNames(String givenNames) {
+        this.givenNames = givenNames;
+    }
+
+    @Deprecated
+    @Column(name = "family_name", length = 150)
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    @Deprecated
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
+    @Deprecated
+    @Column(name = "credit_name", length = 150)
+    public String getCreditName() {
+        return creditName;
+    }
+
+    @Deprecated
+    public void setCreditName(String creditName) {
+        this.creditName = creditName;
+    }
+
+    @Deprecated
+    @Basic
+    @Enumerated(EnumType.STRING)
+    @Column(name = "names_visibility")
+    public Visibility getNamesVisibility() {
+        return namesVisibility;
+    }
+
+    @Deprecated
+    public void setNamesVisibility(Visibility namesVisibility) {
+        this.namesVisibility = namesVisibility;
+    }
+    //END TODO
+        
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -986,5 +1012,23 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         Date lastModified = this.getLastModified() == null ? new Date() : this.getLastModified();
         String lastModifiedString = DateUtils.convertToXMLGregorianCalendar(lastModified).toXMLFormat();
         return StringUtils.join(new String[] { orcid, lastModifiedString }, "_");
+    }
+
+    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})    
+    public RecordNameEntity getRecordNameEntity() {
+        return recordNameEntity;
+    }
+
+    public void setRecordNameEntity(RecordNameEntity recordNameEntity) {
+        this.recordNameEntity = recordNameEntity;
+    }
+
+    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})        
+    public BiographyEntity getBiographyEntity() {
+        return biographyEntity; 
+    }
+
+    public void setBiographyEntity(BiographyEntity biographyEntity) {
+        this.biographyEntity = biographyEntity;
     }
 }

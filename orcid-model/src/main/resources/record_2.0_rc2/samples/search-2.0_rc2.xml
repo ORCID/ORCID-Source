@@ -80,7 +80,8 @@
 						</common:source>
 					</other-name:other-name>
 				</other-name:other-names>
-				<person:biography visibility="public">biography
+				<person:biography visibility="public">
+					<personal-details:content>biography</personal-details:content>
 				</person:biography>
 				<researcher-url:researcher-urls>
 					<researcher-url:researcher-url put-code="1248"

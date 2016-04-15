@@ -39,14 +39,29 @@ public class BiographyForm implements ErrorsInterface, Serializable {
         BiographyForm bf = new BiographyForm();
 
         if(profile != null) {
-            if (!PojoUtil.isEmpty(profile.getBiography())) {
-                bf.setBiography(Text.valueOf(profile.getBiography()));
-            }               
-            if(profile.getBiographyVisibility() == null) {
-                bf.setVisiblity(Visibility.valueOf(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
+            if(profile.getBiographyEntity() != null) {
+                if(!PojoUtil.isEmpty(profile.getBiographyEntity().getBiography())) {
+                    bf.setBiography(Text.valueOf(profile.getBiographyEntity().getBiography()));
+                }      
+                if(profile.getBiographyEntity().getVisibility() != null) {
+                    bf.setVisiblity(Visibility.valueOf(profile.getBiographyEntity().getVisibility()));
+                }
             } else {
-                bf.setVisiblity(Visibility.valueOf(profile.getBiographyVisibility()));
-            }            
+                if (!PojoUtil.isEmpty(profile.getBiography())) {
+                    bf.setBiography(Text.valueOf(profile.getBiography()));
+                }   
+                if(profile.getBiographyVisibility() != null) {
+                    bf.setVisiblity(Visibility.valueOf(profile.getBiographyVisibility()));
+                }
+            }
+            
+            if(bf.getVisiblity() == null) {
+                if(profile.getActivitiesVisibilityDefault() != null) {
+                    bf.setVisiblity(Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
+                } else {
+                    bf.setVisiblity(Visibility.valueOf(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
+                }                    
+            }                                               
         }
         
         return bf;

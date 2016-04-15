@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -36,7 +35,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     List<ProfileEntity> retrieveSelectableSponsors();
 
     List<String> findOrcidsByName(String name);
-    
+
     String findOrcidByCreditName(String creditName);
 
     public boolean exists(String orcid);
@@ -73,9 +72,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     Long getConfirmedProfileCount();
 
-    public void updateBiography(String orcid, String biography, Visibility visibility);
-
-    boolean updateProfile(ProfileEntity profile);
+    boolean updateBiography(String orcid, String biography, Visibility visibility);
 
     Date retrieveLastModifiedDate(String orcid);
 
@@ -97,7 +94,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     void updateLocale(String orcid, Locale locale);
 
-    boolean deprecateProfile(String deprecatedOrcid, String primaryOrcid);
+    boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid);
 
     String retrievePrimaryAccountOrcid(String deprecatedOrcid);
 
@@ -115,8 +112,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility namesVisibility);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
-
-    //public boolean updateResearcherUrlsVisibility(String orcid, Visibility visibility);
 
     public boolean getClaimedStatus(String orcid);
 
@@ -139,4 +134,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     boolean reviewProfile(String orcid);
 
     boolean unreviewProfile(String orcid);
+    
+    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);
 }

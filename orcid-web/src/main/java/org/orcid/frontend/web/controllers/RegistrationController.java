@@ -25,7 +25,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.EncryptionManager;
@@ -140,8 +138,6 @@ public class RegistrationController extends BaseController {
     final static Integer DUP_SEARCH_ROWS = 25;
 
     public final static String GRECAPTCHA_SESSION_ATTRIBUTE_NAME = "verified-recaptcha";
-    
-    private static final String INP_STRING_SEPARATOR = " \n\r\t,";
 
     private static Random rand = new Random();
 
@@ -525,20 +521,21 @@ public class RegistrationController extends BaseController {
             if (isOauthRequest && oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 // XXX
                 reg.getEmail().getErrors().add(getMessage("oauth.registration.duplicate_email", arguments));
-            } else {
+            } else if (oe.getCode().equals("orcid.frontend.verify.duplicate_email")) {
                 Object email = "";
-                if(arguments != null && arguments.length > 0){
-                   email = arguments[0]; 
+                if (arguments != null && arguments.length > 0) {
+                    email = arguments[0];
                 }
                 String link = "/signin";
                 String linkType = reg.getLinkType();
-                if("social".equals(linkType)){
+                if ("social".equals(linkType)) {
                     link = "/social/access";
-                }
-                else if("shibboleth".equals(linkType)){
+                } else if ("shibboleth".equals(linkType)) {
                     link = "/shibboleth/signin";
                 }
                 reg.getEmail().getErrors().add(getMessage(oe.getCode(), email, orcidUrlManager.getBaseUrl() + link));
+            } else {
+                reg.getEmail().getErrors().add(getMessage(oe.getCode(), oe.getArguments()));
             }
         }
 
@@ -689,44 +686,6 @@ public class RegistrationController extends BaseController {
             }
         }
     }
-
-	@RequestMapping(value = "/resend-claim.json", method = RequestMethod.POST)
-	public @ResponseBody Map<String, List<String>> resendClaimEmail(
-			@RequestBody String emailAddresses) {
-		List<String> emailIdList = new ArrayList<String>();
-		if (StringUtils.isNotBlank(emailAddresses)) {
-			StringTokenizer tokenizer = new StringTokenizer(emailAddresses,
-					INP_STRING_SEPARATOR);
-			while (tokenizer.hasMoreTokens()) {
-				emailIdList.add(tokenizer.nextToken());
-			}
-		}
-
-		List<String> claimedIds = new ArrayList<String>();
-		List<String> successIds = new ArrayList<String>();
-		List<String> notFoundIds = new ArrayList<String>();
-		for (String email : emailIdList) {
-			OrcidProfile profile = orcidProfileManager
-					.retrieveOrcidProfileByEmail(email);
-			if (profile == null) {
-				notFoundIds.add(email);
-			} else {
-				if (profile.getOrcidHistory() != null
-						&& profile.getOrcidHistory().isClaimed()) {
-					claimedIds.add(email);
-				} else {
-					notificationManager.sendApiRecordCreationEmail(email,
-							profile);
-					successIds.add(email);
-				}
-			}
-		}
-		Map<String, List<String>> resendIdMap = new HashMap<String, List<String>>();
-		resendIdMap.put("notFoundList", notFoundIds);
-		resendIdMap.put("claimResendSuccessfulList", successIds);
-		resendIdMap.put("alreadyClaimedList", claimedIds);
-		return resendIdMap;
-	}
 
     private void automaticallyLogin(HttpServletRequest request, String password, OrcidProfile orcidProfile) {
         UsernamePasswordAuthenticationToken token = null;
@@ -1061,13 +1020,13 @@ public class RegistrationController extends BaseController {
             preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
             preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
             preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
-            
-            //Set the default visibility to the bio
-            if(orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getBiography() != null) {
+
+            // Set the default visibility to the bio
+            if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getBiography() != null) {
                 orcidProfile.getOrcidBio().getBiography().setVisibility(Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value()));
-            }            
+            }
         }
-        
+
         OrcidProfile profileToReturn = orcidProfileManager.updateOrcidProfile(orcidProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;

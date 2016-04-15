@@ -96,7 +96,7 @@
 		        	         {{ $last?otherName.content:otherName.content + ", "}}
 		        	      </span>
 		        	   </span>
-		        	   <span class="pull-right" ng-show="showEdit == true" id="other-names-visibility" ng-cloak>
+		        	   <span class="pull-right" ng-if="showEdit" id="other-names-visibility" ng-cloak>
 			        	   <@orcid.privacyToggle3  angularModel="defaultVisibility"
 				             questionClick="toggleClickPrivacyHelp($index)"
 				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -109,11 +109,11 @@
 	        	   </div>
 	        	   
 	        	   <!-- Edit -->
-	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	   <div ng-if="showEdit" ng-cloak>
 	        	      <div ng-repeat="otherName in otherNamesForm.otherNames" class="icon-inside-input">
 	        	          <input name="other-name" type="text" ng-model="otherName.content" ng-enter="setOtherNamesForm()">
 	        	          <a ng-click="deleteOtherName(otherName)" class="glyphicon glyphicon-trash grey icon-inside"></a>
-	        	          <span class="orcid-error" ng-show="otherName.errors.length > 0">
+	        	          <span class="orcid-error" ng-if="otherName.errors.length > 0">
 						     <div ng-repeat='error in otherName.errors' ng-bind-html="error"></div>
 					      </span>
 	        	      </div>
@@ -140,7 +140,7 @@
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEditModal()" title=""></span>
 			            
 			            <span ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">			            				            	
-			            	<span ng-show="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+			            	<span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
 			            </span>			            
 		            </div>
 		        </div>
@@ -151,7 +151,7 @@
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true" id="open-edit-country"></span>
 			            <span ng-hide="showEdit == true" ng-click="toggleEdit()">
 			            	<span ng-repeat="country in countryForm.addresses">			            				            	
-			            		<span ng-show="showEdit == false && country != null && country.countryName != null && country.primary == true" ng-bind="country.countryName" ></span>			            		
+			            		<span ng-if="showEdit == false && country != null && country.countryName != null && country.primary == true" ng-bind="country.countryName" ></span>			            		
 			            	</span>			            	
 			            </span>
 			            <span class="pull-right" ng-hide="showEdit == false" ng-cloak>
@@ -166,9 +166,9 @@
 			            </span>
 		            </div>
 	                <!-- Edit -->
-	                <div ng-show="showEdit == true" ng-cloak>	                		                  	 
+	                <div ng-if="showEdit" ng-cloak>	                		                  	 
 	                  	 <div ng-repeat="country in countryForm.addresses">
-			                 <select id="country" ng-model="country.iso2Country.value" ng-show="country.primary == true">
+			                 <select id="country" ng-model="country.iso2Country.value" ng-if="country.primary">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 <#list isoCountries?keys as key>
 								     <option value="${key}">${isoCountries[key]}</option>
@@ -212,7 +212,7 @@
 		        	         	{{ $last?keyword.content:keyword.content+ ", "}}
 		        	      	</span>
 		        	   	</span>
-		        	   	<span class="pull-right" ng-show="showEdit == true" ng-cloak>
+		        	   	<span class="pull-right" ng-if="showEdit" ng-cloak>
 		        	   			<@orcid.privacyToggle3  angularModel="defaultVisibility"
 			             	  	questionClick="toggleClickPrivacyHelp($index)"
 			             	  	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -224,13 +224,13 @@
 		        	   	</span>
 	        	 	</div>
 	        	   
-        	   		<div ng-show="showEdit == true" ng-cloak>
+        	   		<div ng-if="showEdit" ng-cloak>
         	      		<div ng-repeat="keyword in keywordsForm.keywords">
         	      	  		<div class="icon-inside-input">
 	        	          		<input type="text" ng-model="keyword.content" ng-enter="setKeywordsForm()" name="keyword"></input>
 		        	          	<a ng-click="deleteKeyword(keyword)" class="glyphicon glyphicon-trash grey icon-inside"></a>
 	        	          	</div>
-	        	          	<span class="orcid-error" ng-show="keyword.errors.length > 0">
+	        	          	<span class="orcid-error" ng-if="keyword.errors.length > 0">
 						     	<div ng-repeat='error in keyword.errors' ng-bind-html="error"></div>
 					      	</span>					      
 	        	      	</div>
@@ -272,7 +272,7 @@
 		        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
 		        	      </div>
 		        	   </span>	
-		        	   <span class="pull-right" ng-show="showEdit == true" ng-cloak>
+		        	   <span class="pull-right" ng-if="showEdit" ng-cloak>
 		        	   		<@orcid.privacyToggle3 
 			        	   		angularModel="defaultVisibility"
 				            	questionClick="toggleClickPrivacyHelp($index)"
@@ -285,12 +285,12 @@
 		        	   </span>
 		        	</div>
 	
-	        	   <div ng-show="showEdit == true" ng-cloak>
+	        	   <div ng-if="showEdit" ng-cloak>
 	        	      <div ng-repeat="website in websitesForm.websites" class="mobile-box">
 	        	          <input name="website-name" type="text" ng-model="website.urlName" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>        	          
 	        	          <input name="website-url" type="text" ng-model="website.url" ng-enter="setWebsitesForm()" placeholder="${springMacroRequestContext.getMessage('common.url')}" style="padding-right: 5px;"></input>
 		        	      <a name="delete-website" ng-click="deleteWebsite(website)" class="glyphicon glyphicon-trash grey icon-inside pull-right"></a>	        	              	          
-	        	          <span class="orcid-error" ng-show="website.errors.length > 0">
+	        	          <span class="orcid-error" ng-if="website.errors.length > 0">
 						     <div ng-repeat='error in website.errors' ng-bind-html="error"></div>
 					      </span>        	          
 					      <span class="dotted-bar left"></span>
@@ -331,7 +331,7 @@
 		        	   </span>
 		        	   <div id="emailSectionId" ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
 		        	   		<div ng-bind="email.value"></div>
-		        	   		<div ng-show="showEdit == true" ng-cloak>
+		        	   		<div ng-if="showEdit" ng-cloak>
 			        	   		<@orcid.privacyToggle3
 		                            angularModel="email.visibility"
 									questionClick="toggleClickPrivacyHelp($index)"
@@ -343,10 +343,10 @@
 		                	    	limitedId="email-{{email.value}}-limited-id" privateId="email-{{email.value}}-private-id" />
 		        	   		</div>
 		        	   </div>
-		        	   <div ng-show="showEdit == true" ng-cloak>
+		        	   <div ng-if="showEdit" ng-cloak>
 		        	   		<a href="account"><@orcid.msg 'workspace.EditMoreEmailSettings'/></a>
 		        	   </div>
-		        	   <div ng-show="showEdit == true" ng-cloak>
+		        	   <div ng-if="showEdit" ng-cloak>
 		        	   		<a class="cancel-option pull-right" ng-click="close()"><@spring.message "freemarker.btncancel"/></a>
 		        	   </div>	        	   
 		        	</div>	        	
@@ -361,7 +361,7 @@
 	       			</div>
 	       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers | orderBy:'displayIndex'">	       				
 			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
-			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>				   		
+			        	<span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>				   		
 	       			</div>
 				</div>
 			<#else>
@@ -371,7 +371,7 @@
 	       			</div>
 	       			<div ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'>
 			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
-			        	<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
+			        	<span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
 				   		<a ng-click="deleteExternalIdentifierConfirmation($index)" class="glyphicon glyphicon-trash grey"></a>
 	       			</div>
 				</div>
@@ -391,14 +391,14 @@
 	        	</div>                
         	</#if>
         	<div class="workspace-inner workspace-header" ng-controller="WorkspaceSummaryCtrl">
-                <div class="grey-box" ng-show="showAddAlert()" ng-cloak>
+                <div class="grey-box" ng-if="showAddAlert()" ng-cloak>
                 	<strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong>
               	</div>                
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">        		
         		<!-- Personal Information -->
 				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
-            		<div class="workspace-accordion-content" ng-show="displayInfo">
+            		<div class="workspace-accordion-content" ng-if="displayInfo">
             			<#include "workspace_personal_v3.ftl"/>
         			</div>
             	</div>
@@ -411,7 +411,7 @@
                 <div id="workspace-publications" class="workspace-accordion-item workspace-accordion-active" ng-controller="WorkCtrl" orcid-loaded="{{worksSrvc.worksToAddIds != null && worksSrvc.loading != true}}">
                     <#include "includes/work/work_section_header_inc_v3.ftl"/>
                     <!-- Work Import Wizard -->
-					<div ng-show="workImportWizard == true" class="work-import-wizard" ng-cloak>
+					<div ng-if="workImportWizard" class="work-import-wizard" ng-cloak>
 						<div class="ie7fix-inner">
 							<div class="row">	
 								<div class="col-md-12 col-sm-12 col-xs-12">
@@ -440,9 +440,9 @@
 				                 		<div class="justify">												
 											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
 												{{wtw.shortDescription}}													
-												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == true"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
+												<a ng-click="toggleWizardDesc(wtw.clientId)" ng-if="wizardDescExpanded[wtw.clientId]"><span class="glyphicon glyphicon-chevron-right wizard-chevron"></span></a>
 											</p>												
-											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-show="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
+											<a ng-click="toggleWizardDesc(wtw.clientId)" ng-if="wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null" class="toggle-wizard-desc"><span class="glyphicon glyphicon-chevron-down wizard-chevron"></span></a>
 										</div>
 					                    <hr/>
 				                	</div>
@@ -451,7 +451,7 @@
 						</div>						
 					</div>
 					<!-- Bulk Edit -->					
-					<div ng-show="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
+					<div ng-if="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
 						<div class="bulk-edit">
 							<div class="row">
 								<div class="col-md-7 col-sm-7 col-xs-6">
@@ -498,7 +498,7 @@
 													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
 														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
 													</a>
-													<div class="popover popover-tooltip top bulk-edit-popover" ng-show="showElement['Bulk-Edit'] == true">
+													<div class="popover popover-tooltip top bulk-edit-popover" ng-if="showElement['Bulk-Edit']">
 		                                             <div class="arrow"></div>
 			                                            <div class="popover-content">
 			                                                <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
@@ -514,8 +514,8 @@
 					</div>
 					<#if RequestParameters['bibtexExport']??>
 						<!-- BibTeX Export Layout -->					
-						<div ng-show="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
-							<div class=box-border" ng-show="canReadFiles" ng-cloak>
+						<div ng-if="showBibtexExport && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
+							<div class=box-border" ng-if="canReadFiles" ng-cloak>
 							   <h4>Export BibTeX</h4><span ng-click="toggleBibtexExport()" class="hide-importer">Hide export BibTeX</span>
 							   <div class="row full-height-row">
 							   	   <div class="col-md-9 col-sm-9 col-xs-8">
@@ -531,11 +531,11 @@
 								   </div>
 							   </div>
 							</div>
-							<div ng-show="loadingScripts == true" class="text-center ng-hide" ng-cloak>
+							<div ng-if="loadingScripts" class="text-center ng-hide" ng-cloak>
 							    <i id="" class="glyphicon glyphicon-refresh spin x2 green"></i>
 							</div>
-							<span class="dotted-bar" ng-show="scriptsLoaded"></span>
-							<div class="bottomBuffer" ng-show="scriptsLoaded && !bibtexGenerated && !bibtexExportError" ng-cloak>
+							<span class="dotted-bar" ng-if="scriptsLoaded"></span>
+							<div class="bottomBuffer" ng-if="scriptsLoaded && !bibtexGenerated && !bibtexExportError" ng-cloak>
 								<ul class="inline-list">
 									<li>
 										Generating BibTeX, please wait...
@@ -546,17 +546,17 @@
 								</ul>
 								 
 							</div>
-							<div class="alert alert-block" ng-show="bibtexExportError">
+							<div class="alert alert-block" ng-if="bibtexExportError">
 								<strong>Something went wrong, please try again...</strong>
 							</div>
-							<div ng-show="bibtexGenerated && !bibtexExportError" class="bottomBuffer">							
+							<div ng-if="bibtexGenerated && !bibtexExportError" class="bottomBuffer">							
 									<a download="orcid.bib" href="{{bibtexURL}}" id="downloadlink">Click to Download</a>
 							</div>
 						</div>		
 					</#if>
 					<!-- Bibtex Importer Wizard -->
-					<div ng-show="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
-						<div class=box-border" ng-show="canReadFiles" ng-cloak>
+					<div ng-if="showBibtexImportWizard && workspaceSrvc.displayWorks" ng-cloak class="bibtex-box">
+						<div class=box-border" ng-if="canReadFiles" ng-cloak>
 						   <h4>Link BibTeX</h4><span ng-click="openBibTextWizard()" class="hide-importer">Hide link BibTeX</span>
 						   <div class="row full-height-row">
 						   	   <div class="col-md-9 col-sm-9 col-xs-8">
@@ -568,51 +568,51 @@
 							   		<span class="bibtext-options">							   									   		
 									    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
 									    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-									    <span ng-show="worksFromBibtex.length > 0" class="import-label" ng-click="saveAllFromBibtex()">Save all</span>									    							           
+									    <span ng-if="worksFromBibtex.length > 0" class="import-label" ng-click="saveAllFromBibtex()">Save all</span>									    							           
 										<input id="inputBibtex" type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 									</span>								    
 							   </div>
 						   </div>
 						</div>						
-						<div class="alert alert-block" ng-show="bibtexParsingError">
+						<div class="alert alert-block" ng-if="bibtexParsingError">
 							<strong><@orcid.msg 'workspace.bibtexImporter.parsingError'/></strong>
 						</div>
-						<span class="dotted-bar" ng-show="worksFromBibtex.length > 0"></span>
+						<span class="dotted-bar" ng-if="worksFromBibtex.length > 0"></span>
 					   	
 					   	
 					   	<!-- Bibtex Import Results List -->
 					   	<div ng-repeat="work in worksFromBibtex" ng-cloak class="bottomBuffer">					   	
 					   		  <div class="row full-height-row">	  
 			        	       	  <div class="col-md-9 col-sm-9 col-xs-9">
-			        	          	<h3 ng-show="{{work.title.value != null}}" class="workspace-title bibtex-work-title">{{work.title.value}}</h3>
-			        	          	<h3 ng-show="{{work.title.value == null}}" class="workspace-title bibtex-work-title bibtex-content-missing">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</h3>
+			        	          	<h3 ng-if="work.title.value != null" class="workspace-title bibtex-work-title">{{work.title.value}}</h3>
+			        	          	<h3 ng-if="work.title.value == null" class="workspace-title bibtex-work-title bibtex-content-missing">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</h3>
 			        	          	
 			        	          	
 			        	          	<!-- Work Category --> 
-			        	          	<span class="info-detail" ng-show="{{work.workCategory.value.length > 0}}">{{work.workCategory.value | formatBibtexOutput}}</span>
-			        	          	<span class="bibtex-content-missing small-missing-info" ng-show="{{work.workCategory.value.length == 0}}">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
+			        	          	<span class="info-detail" ng-if="work.workCategory.value.length > 0">{{work.workCategory.value | formatBibtexOutput}}</span>
+			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="work.workCategory.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
 			        	          	
 			        	          	<!-- Work Type -->
-			        	          	<span class="info-detail" ng-show="{{work.workType.value.length > 0}}">{{work.workType.value | formatBibtexOutput}}</span>
-			        	          	<span class="bibtex-content-missing small-missing-info" ng-show="{{work.workType.value.length == 0}}">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
+			        	          	<span class="info-detail" ng-if="work.workType.value.length > 0">{{work.workType.value | formatBibtexOutput}}</span>
+			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="work.workType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.type_missing' />&gt;</span>
 			        	          	
 			        	          	<!-- External identifiers -->
-			        	          	<span class="info-detail" ng-show="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0}}">
+			        	          	<span class="info-detail" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0">
 			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'><span
 		                                     ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length'></span>
 		                                </span>
 			        	          	</span>
 			        	          	<!-- 
-			        	          		<span class="info-detail bibtex-content-missing" ng-show="{{work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0}}"">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
+			        	          		<span class="info-detail bibtex-content-missing" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
 			        	          	 -->
 			        	          
 			        	          </div>			        	          
 			        	          <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">			        	          	
 			        	          	<ul>
                                         <li><a ng-click="rmWorkFromBibtex(work)" class="ignore glyphicon glyphicon-trash bibtex-button" title="Ignore"></a></li>
-                                        <li><a ng-show="{{work.errors.length == 0}}" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
-                                        <li><a ng-show="{{work.errors.length > 0}}" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
-                                        <li><span ng-show="{{work.errors.length > 0}}"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
+                                        <li><a ng-if="work.errors.length == 0" ng-click="addWorkFromBibtex(work)" class="save glyphicon glyphicon-floppy-disk bibtex-button" title="Save"></a></li>
+                                        <li><a ng-if="work.errors.length > 0" ng-click="editWorkFromBibtex(work)" class="save glyphicon glyphicon-pencil bibtex-button" title="Edit"></a></li>
+                                        <li><span ng-if="work.errors.length > 0"><a ng-click="editWorkFromBibtex(work)"><i class="glyphicon glyphicon-exclamation-sign"></i><@orcid.msg 'workspace.bibtexImporter.work.warning' /></a></span></li>
 			        	          	</ul>
 		        	          	 </div>
 	        	          	 </div>
@@ -620,14 +620,14 @@
 		        	  	
 		        	  	
 					</div>
-      	            <div ng-show="workspaceSrvc.displayWorks" class="workspace-accordion-content">
+      	            <div ng-if="workspaceSrvc.displayWorks" class="workspace-accordion-content">
 	            		<#include "includes/work/add_work_modal_inc.ftl"/>
 						<#include "includes/work/del_work_modal_inc.ftl"/>
 						<#include "includes/work/body_work_inc_v3.ftl"/>						
 	            	</div>
             	</div>
             	<div ng-controller="PeerReviewCtrl">
-	            	<div ng-show="peerReviewSrvc.groups.length > 0" ng-cloak>
+	            	<div ng-if="peerReviewSrvc.groups.length > 0" ng-cloak>
 	            		<#include "workspace_peer_review_body_list.ftl"/>
 	            	</div>
 	            </div>
@@ -657,7 +657,7 @@
 		<div class="row combine-work">
 			<div class="col-md-12 col-xs-12 col-sm-12">
 				<h3>Selected work "{{combineWork.title.value}}"				
-					<span ng-show="hasCombineableEIs(combineWork)">
+					<span ng-if="hasCombineableEIs(combineWork)">
 						(<span ng-repeat='ie in combineWork.workExternalIdentifiers'>
 							<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:combineWork.workExternalIdentifiers.length'></span>
 					 	</span>)
@@ -665,7 +665,7 @@
 				</h3>
 				<p>Combine with (select one):</p>
 				<ul class="list-group">
-  					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse" ng-show="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
+  					<li class="list-group-item" ng-repeat="group in worksSrvc.groups | orderBy:sortState.predicate:sortState.reverse" ng-if="combineWork.putCode.value != group.getDefault().putCode.value && validCombineSel(combineWork,group.getDefault())">
 						<strong>{{group.getDefault().title.value}}</strong>
 						<a ng-click="combined(combineWork,group.getDefault())" class="btn btn-primary pull-right bottomBuffer">Combine</a>
 

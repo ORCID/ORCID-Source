@@ -28,6 +28,7 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -38,8 +39,11 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 
 public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     @Resource
@@ -51,23 +55,40 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     
     @Override
     public Name getName(String orcid) {
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);    
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
+        Visibility nameVisibility = Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
         Name name = new Name();
-        if (profileEntity != null) {
-            Visibility nameVisibility = Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-            if(profileEntity.getNamesVisibility() != null) {
-                nameVisibility = Visibility.fromValue(profileEntity.getNamesVisibility().value());
-            }            
-            name.setVisibility(nameVisibility);            
-            if (!PojoUtil.isEmpty(profileEntity.getCreditName())) {
+        if (profileEntity != null) {            
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+            if(recordName != null) {
+                if(recordName.getVisibility() != null) {
+                    nameVisibility = recordName.getVisibility();
+                }            
+                name.setVisibility(nameVisibility);            
+                if (!PojoUtil.isEmpty(recordName.getCreditName())) {
+                    name.setCreditName(new CreditName(recordName.getCreditName()));
+                }
+                if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
+                    name.setFamilyName(new FamilyName(recordName.getFamilyName()));
+                }
+                if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
+                    name.setGivenNames(new GivenNames(recordName.getGivenNames()));
+                }
+                
+                name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getDateCreated())));
+                name.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getLastModified())));
+            } else {                
                 name.setCreditName(new CreditName(profileEntity.getCreditName()));
-            }
-            if (!PojoUtil.isEmpty(profileEntity.getFamilyName())) {
-                name.setFamilyName(new FamilyName(profileEntity.getFamilyName()));
-            }
-            if (!PojoUtil.isEmpty(profileEntity.getGivenNames())) {
                 name.setGivenNames(new GivenNames(profileEntity.getGivenNames()));
-            }                        
+                name.setFamilyName(new FamilyName(profileEntity.getFamilyName()));
+                if(profileEntity.getNamesVisibility() != null) {
+                    nameVisibility = Visibility.fromValue(profileEntity.getNamesVisibility().value());
+                }
+                name.setVisibility(nameVisibility);
+                
+                name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
+                name.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
+            }                                  
         }
         return name;
     }
@@ -78,14 +99,33 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                        
         Name name = getName(orcid);
         Biography bio = new Biography();
-        if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
-            bio.setContent(profileEntity.getBiography());
+        if(profileEntity.getBiographyEntity() != null) {
+            BiographyEntity biograpyEntity = profileEntity.getBiographyEntity(); 
+            if(!PojoUtil.isEmpty(biograpyEntity.getBiography())) {
+                bio.setContent(biograpyEntity.getBiography());
+            }      
+            
             Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-            if(profileEntity.getBiographyVisibility() != null) {
-                bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility().value());
+            if(biograpyEntity.getVisibility() != null) {
+                bioVisibility = biograpyEntity.getVisibility();
+            } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
+                bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
             }
             bio.setVisibility(bioVisibility);
-        }
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biograpyEntity.getLastModified())));
+        } else {
+            if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
+                bio.setContent(profileEntity.getBiography());
+                Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
+                if(profileEntity.getBiographyVisibility() != null) {
+                    bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility().value());
+                } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
+                    bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
+                }
+                bio.setVisibility(bioVisibility);
+            }
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
+        }                
         
         Date lastModified = profileEntity.getLastModified();
         long lastMofieiedTime = (lastModified == null) ? 0 : lastModified.getTime();

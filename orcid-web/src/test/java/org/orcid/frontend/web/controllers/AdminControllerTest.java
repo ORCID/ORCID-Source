@@ -214,19 +214,21 @@ public class AdminControllerTest extends BaseControllerTest {
                 
         ProfileEntity deprecated = adminController.getProfileEntityManager().findByOrcid("4444-4444-4444-4441");
                 
-        assertEquals("Given Names Deactivated", deprecated.getGivenNames());
-        assertEquals("Family Name Deactivated", deprecated.getFamilyName());                            
+        if(deprecated.getRecordNameEntity() != null) {
+            assertEquals("Given Names Deactivated", deprecated.getRecordNameEntity().getGivenNames());
+            assertEquals("Family Name Deactivated", deprecated.getRecordNameEntity().getFamilyName());
+        } else {
+            assertEquals("Given Names Deactivated", deprecated.getGivenNames());
+            assertEquals("Family Name Deactivated", deprecated.getFamilyName());
+        }
     }
 
     @Test         
-    public void tryToDeprecateDeprecatedProfile() throws Exception {
-        ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4444", "4444-4444-4444-4445");
-        assertEquals(0, result.getErrors().size());        
-                
+    public void tryToDeprecateDeprecatedProfile() throws Exception {        
         // Test deprecating a deprecated account
-        result = adminController.deprecateProfile("4444-4444-4444-4444", "4444-4444-4444-4443");
+        ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-444X", "4444-4444-4444-4443");
         assertEquals(1, result.getErrors().size());
-        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.already_deprecated", "4444-4444-4444-4444"), result.getErrors().get(0));
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.already_deprecated", "4444-4444-4444-444X"), result.getErrors().get(0));
         
         // Test deprecating account with himself
         result = adminController.deprecateProfile("4444-4444-4444-4440", "4444-4444-4444-4440");
@@ -234,9 +236,9 @@ public class AdminControllerTest extends BaseControllerTest {
         assertEquals(adminController.getMessage("admin.profile_deprecation.errors.deprecated_equals_primary"), result.getErrors().get(0));
 
         // Test set deprecated account as a primary account
-        result = adminController.deprecateProfile("4444-4444-4444-4443", "4444-4444-4444-4444");
+        result = adminController.deprecateProfile("4444-4444-4444-4443", "4444-4444-4444-444X");
         assertEquals(1, result.getErrors().size());
-        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_deprecated", "4444-4444-4444-4444"), result.getErrors().get(0));
+        assertEquals(adminController.getMessage("admin.profile_deprecation.errors.primary_account_deprecated", "4444-4444-4444-444X"), result.getErrors().get(0));
         
         
         // Test deprecating an invalid orcid
@@ -270,8 +272,8 @@ public class AdminControllerTest extends BaseControllerTest {
         profileDao.refresh(profileDao.find("4444-4444-4444-4445"));
         ProfileEntity deactivated = profileDao.find("4444-4444-4444-4445");
         assertNotNull(deactivated.getDeactivationDate());
-        assertEquals(deactivated.getFamilyName(), "Family Name Deactivated");
-        assertEquals(deactivated.getGivenNames(), "Given Names Deactivated");
+        assertEquals(deactivated.getRecordNameEntity().getFamilyName(), "Family Name Deactivated");
+        assertEquals(deactivated.getRecordNameEntity().getGivenNames(), "Given Names Deactivated");
 
         // Test try to deactivate an already deactive account
         result = adminController.deactivateOrcidAccount("4444-4444-4444-4445");

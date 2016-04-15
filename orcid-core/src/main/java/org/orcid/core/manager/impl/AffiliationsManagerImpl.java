@@ -315,10 +315,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     private void setIncomingWorkPrivacy(OrgAffiliationRelationEntity orgAffiliationRelationEntity, ProfileEntity profile) {
         Visibility incomingWorkVisibility = orgAffiliationRelationEntity.getVisibility();
         Visibility defaultWorkVisibility = profile.getActivitiesVisibilityDefault();
-        if (profile.getClaimed()) {
-            if (defaultWorkVisibility.isMoreRestrictiveThan(incomingWorkVisibility)) {
-                orgAffiliationRelationEntity.setVisibility(defaultWorkVisibility);
-            }
+        if (profile.getClaimed()) {            
+            orgAffiliationRelationEntity.setVisibility(defaultWorkVisibility);            
         } else if (incomingWorkVisibility == null) {
             orgAffiliationRelationEntity.setVisibility(Visibility.PRIVATE);
         }

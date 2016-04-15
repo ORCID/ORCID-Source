@@ -16,12 +16,11 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 
 public interface ResearcherUrlManager {
-        
+    void setSourceManager(SourceManager sourceManager); 
     
     /**
      * Delete a researcher url

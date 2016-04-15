@@ -55,6 +55,10 @@
 	<logger name="net.sf.ehcache">
 		<level value="ERROR" />
 	</logger>
+	
+	<logger name="freemarker.cache">
+       <level value="WARN" />
+    </logger>
 
 	<!-- Root Logger -->
 	<root>

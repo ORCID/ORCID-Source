@@ -62,6 +62,7 @@ import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -227,7 +228,19 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
                 primaryEmailEntity.setVisibility(Visibility.PRIVATE);
                 groupProfileEntity.setPrimaryEmail(primaryEmailEntity);
             }
+            if(groupProfileEntity.getRecordNameEntity() == null) {
+                groupProfileEntity.setRecordNameEntity(new RecordNameEntity());
+                groupProfileEntity.getRecordNameEntity().setProfile(groupProfileEntity);
+            }
+            //Set the record name entity table
+            groupProfileEntity.getRecordNameEntity().setCreditName(orcidClientGroup.getGroupName());
+            groupProfileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
+            
+            //TODO: remove after names migration
+            //Set the profile table credit name
             groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
+            groupProfileEntity.setNamesVisibility(Visibility.PUBLIC);
+            
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             // If group type changed
             if (!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {

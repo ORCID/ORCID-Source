@@ -42,7 +42,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -66,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan)
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-persistence-context.xml" })
 public class ProfileDaoTest extends DBUnitTest {
 
     @Resource
@@ -81,41 +80,35 @@ public class ProfileDaoTest extends DBUnitTest {
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
     public void beforeRunning() {
         assertNotNull(profileDao);
     }
-
-    // vocative_name="Spike Milligan"/>
-
-    // orcid="4444-4444-4444-4441"
-    // creation_method="API"
-    // completed_date="2011-07-02 15:31:00.00"
-    // submission_date="2011-06-29 15:31:00.00"
-    // confirmed="true"
-    // full_name="Spike Milligan"
+    
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindById() {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
         assertNotNull(profile);
-        assertEquals("4444-4444-4444-4441", profile.getId());
+        assertEquals("4444-4444-4444-4442", profile.getId());
         assertEquals("API", profile.getCreationMethod());
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
         assertTrue(profile.getClaimed());
-        assertEquals("One", profile.getGivenNames());
-        assertEquals("User", profile.getFamilyName());
-        assertEquals("Spike Milligan", profile.getVocativeName());
+        assertNotNull(profile.getRecordNameEntity());
+        assertEquals("Given Names", profile.getRecordNameEntity().getGivenNames());
+        assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
+        assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
+        assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
     }
     
     @Test
@@ -144,9 +137,9 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindAll() {
         List<ProfileEntity> all = profileDao.getAll();
         assertNotNull(all);
-        assertEquals(12, all.size());
+        assertEquals(15, all.size());
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(12), count);
+        assertEquals(Long.valueOf(15), count);
     }
 
     @Test
@@ -168,7 +161,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(13), count);
+        assertEquals(Long.valueOf(16), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -194,7 +187,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), profile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(13), count);
+        assertEquals(Long.valueOf(16), count);
         profile = profileDao.find(newOrcid);
 
         assertNotNull(profile);
@@ -222,7 +215,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals(dateCreated.getTime(), retrievedProfile.getDateCreated().getTime());
 
         Long count = profileDao.countAll();
-        assertEquals(Long.valueOf(13), count);
+        assertEquals(Long.valueOf(16), count);
     }
 
     @Test
@@ -344,7 +337,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertNull(profile);
 
         List<ProfileEntity> all = profileDao.getAll();
-        assertEquals(10, all.size());
+        assertEquals(13, all.size());
     }
 
     @Test
@@ -381,7 +374,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("4444-4444-4444-4446", results.get(1));
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
-        assertEquals(10, results.size());
+        assertEquals(13, results.size());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, 3);
         assertEquals(3, results.size());
@@ -391,7 +384,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNotIndexedAfterWaitPeriod() {
         List<String> resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(1, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertTrue(resultsList.isEmpty());
+        assertEquals(1, resultsList.size());
 
         // test far back
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(100000, 200000, 10, Collections.<String> emptyList());
@@ -401,7 +394,7 @@ public class ProfileDaoTest extends DBUnitTest {
         // test range that fits test data
         resultsList = profileDao.findUnclaimedNotIndexedAfterWaitPeriod(5, 100000, 10, Collections.<String> emptyList());
         assertNotNull(resultsList);
-        assertEquals(1, resultsList.size());
+        assertEquals(2, resultsList.size());
         assertTrue(resultsList.contains("4444-4444-4444-4447"));
     }
 
@@ -411,7 +404,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testFindUnclaimedNeedingReminder() {
         List<String> results = profileDao.findUnclaimedNeedingReminder(1, 10, Collections.<String> emptyList());
         assertNotNull(results);
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
         assertTrue(results.contains("4444-4444-4444-4447"));
 
         // Now insert claimed reminder event, result should be excluded
@@ -422,7 +415,7 @@ public class ProfileDaoTest extends DBUnitTest {
         profileEventDao.persist(eventEntity);
 
         results = profileDao.findUnclaimedNeedingReminder(1, 10, Collections.<String> emptyList());
-        assertTrue(results.isEmpty());
+        assertEquals(1, results.size());
     }
 
     @Test
@@ -448,34 +441,26 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testGetConfirmedProfileCount() {
         String orcid = "4444-4444-4444-4446";
         Long confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(12), confirmedProfileCount);
+        assertEquals(Long.valueOf(15), confirmedProfileCount);
         ProfileEntity profileEntity = profileDao.find(orcid);
         profileEntity.setCompletedDate(null);
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
-        assertEquals(Long.valueOf(11), confirmedProfileCount);
+        assertEquals(Long.valueOf(14), confirmedProfileCount);
     }
 
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testUpdateProfile() {
+    public void testUpdateBiography() {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
-        profile.setCreditName("Updated Credit Name");
-        profile.setNamesVisibility(Visibility.PRIVATE);
-        profile.setGivenNames("Updated Give Name");
-        profile.setFamilyName("Updated Last Name");
-        boolean result = profileDao.updateProfile(profile);
+        boolean result = profileDao.updateBiography(profile.getId(), profile.getBiography(), profile.getBiographyVisibility());
         assertTrue(result);
         profile = profileDao.find("4444-4444-4444-4441");
         assertEquals("Updated Biography", profile.getBiography());
-        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
-        assertEquals("Updated Credit Name", profile.getCreditName());
-        assertEquals(Visibility.PRIVATE.value(), profile.getNamesVisibility().value());
-        assertEquals("Updated Give Name", profile.getGivenNames());
-        assertEquals("Updated Last Name", profile.getFamilyName());
+        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());               
     }
 
     @Test
@@ -484,7 +469,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testDeprecateProfile() {
         ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         assertNull(profileToDeprecate.getPrimaryRecord());
-        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
+        boolean result = profileDao.deprecateProfile(profileToDeprecate, "4444-4444-4444-4442");
         assertTrue(result);
         profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         profileDao.refresh(profileToDeprecate);

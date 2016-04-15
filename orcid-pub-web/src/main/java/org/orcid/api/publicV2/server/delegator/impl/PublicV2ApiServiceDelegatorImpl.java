@@ -34,6 +34,7 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -50,10 +51,10 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
@@ -66,8 +67,6 @@ import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -75,6 +74,8 @@ import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -164,6 +165,9 @@ public class PublicV2ApiServiceDelegatorImpl
     
     @Resource
     private AddressManager addressManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
         
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
@@ -223,9 +227,17 @@ public class PublicV2ApiServiceDelegatorImpl
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if (!entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)){
-            creditName = entity.getCreditName();
+        if(entity.getRecordNameEntity() != null) {
+            if (!entity.getRecordNameEntity().getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
+                creditName = entity.getRecordNameEntity().getCreditName();
+            }
+        } else {
+            //TODO: remove when the names migration is done
+            if(entity.getNamesVisibility() != null && !entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)) {
+                creditName = entity.getCreditName();
+            }            
         }
+        
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName ,true);
         return Response.ok(item).build();
@@ -401,12 +413,8 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.PERSON_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewBiography(String orcid) {
-        Biography bio = profileEntityManager.getBiography(orcid);
-        if(bio != null) {
-            if(!Visibility.PUBLIC.equals(bio.getVisibility())) {
-                bio.setContent("");
-            }
-        }
+        Biography bio = biographyManager.getBiography(orcid);
+        orcidSecurityManager.checkVisibility(bio, orcid);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
     }

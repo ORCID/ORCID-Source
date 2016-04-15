@@ -47,7 +47,7 @@ public class DBUnitTest {
 
     private static final String CONTEXT = "/orcid-persistence-context.xml";
     private static final String[] tables = new String[] { "security_question", "profile", "orcid_social", "profile_event", "work", "researcher_url",
-            "given_permission_to", "external_identifier", "email", "email_event", "other_name", "profile_keyword", "profile_patent", "org_disambiguated",
+            "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent", "org_disambiguated",
             "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address", "institution",
             "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority", "orcid_props",
             "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record"};
@@ -77,6 +77,8 @@ public class DBUnitTest {
                 "profile",
                 "SELECT p1.* FROM profile p1 LEFT JOIN client_details c ON c.group_orcid = p1.orcid LEFT JOIN profile p2 ON p1.source_id = p2.source_id WHERE p2.source_id IS NULL AND (c.client_details_id IS NULL OR p1.client_source_id IS NOT NULL)");        
         dataSet.addTable("other_name");
+        dataSet.addTable("record_name");
+        dataSet.addTable("biography");
         dataSet.addTable("profile_keyword");
         dataSet.addTable("work");
         dataSet.addTable("profile_event");

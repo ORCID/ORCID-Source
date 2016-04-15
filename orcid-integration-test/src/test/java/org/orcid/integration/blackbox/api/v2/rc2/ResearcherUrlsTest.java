@@ -30,8 +30,12 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Url;
@@ -59,6 +63,18 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
+    protected static WebDriver webDriver;
+    
+    @BeforeClass
+    public static void beforeClass() {
+        webDriver = new FirefoxDriver();
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        webDriver.quit();
+    }
+    
     @After
     public void after() throws InterruptedException, JSONException {
         String client1accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
@@ -252,17 +268,31 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
             rUrlToCreate.setUrlName("url-name-" + now + "-" + i);
             rUrlToCreate.setUrl(new Url("http://newurl.com/" + now + "/" + i));
             if(i == 3) {
+                changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
                 rUrlToCreate.setVisibility(Visibility.LIMITED);
+                // Create it
+                ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+                assertNotNull(postResponse);
+                assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             } else if(i == 4) {
+                changeDefaultUserVisibility(webDriver, Visibility.PRIVATE);
                 rUrlToCreate.setVisibility(Visibility.PRIVATE);
+                // Create it
+                ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+                assertNotNull(postResponse);
+                assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             } else {
+                changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
                 rUrlToCreate.setVisibility(Visibility.PUBLIC);
-            }
-            // Create it
-            ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
-            assertNotNull(postResponse);
-            assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+                // Create it
+                ClientResponse postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, accessToken);
+                assertNotNull(postResponse);
+                assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+            }            
         }
+        
+        //Set the default visibility in public
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         
         ClientResponse getAllResponse = publicV2ApiClient.viewResearcherUrlsXML(getUser1OrcidId()); 
         assertNotNull(getAllResponse);

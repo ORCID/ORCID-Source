@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -49,10 +47,6 @@ public interface ProfileEntityManager {
     boolean existsAndNotClaimedAndBelongsTo(String messageOrcid, String clientId);
 
     Long getConfirmedProfileCount();
-
-    boolean updateProfile(OrcidProfile profile);
-
-    boolean updateProfile(ProfileEntity profile);
 
     boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile);
 
@@ -94,9 +88,8 @@ public interface ProfileEntityManager {
     
     String retrivePublicDisplayName(String orcid);
     
+    @Deprecated
     void updateBiography(String orcid, Biography biography);
-    
-    Biography getBiography(String orcid); 
     
     Person getPersonDetails(String orcid);
     

@@ -199,19 +199,27 @@
                     <span class="orcid-error" ng-show="editAffiliation.endDate.errors.length > 0">
                         <div ng-repeat='error in editAffiliation.endDate.errors' ng-bind-html="error"></div>
                     </span>
-                </div>
-                <div class="control-group errors">
-                    <span ng-show="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>
-                    <span ng-show="addingAffiliation">
-                        <i class="glyphicon glyphicon-refresh spin x2 green"></i>
-                    </span>
-                </div>
+                </div>                
                 <div class="control-group">
-                    <button id="save-education" class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
-                        <span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
-                        <span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
-                    </button>
-                    <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
+					<ul class="inline-list margin-separator pull-left">
+						<li>
+							<button id="save-education" class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
+                        		<span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
+                        		<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
+                    		</button>
+						</li>						
+						<li>
+							<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>		
+						</li>
+						<li>
+							<span ng-if="addingAffiliation">
+                        		<i class="glyphicon glyphicon-refresh spin x2 green"></i>
+                    		</span>
+						</li>
+					</ul>
+                </div>
+				<div class="control-group errors">
+                    <span ng-show="editAffiliation.errors.length > 0" class="alert"><@orcid.msg 'common.please_fix_errors' /></span>                    
                 </div>
 			</fn-form>
         </div>

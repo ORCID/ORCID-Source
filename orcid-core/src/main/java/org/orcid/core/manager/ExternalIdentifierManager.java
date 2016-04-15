@@ -20,7 +20,7 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 
 public interface ExternalIdentifierManager {
-    
+    void setSourceManager(SourceManager sourceManager); 
     /**
      * Return the list of public external identifiers associated to a specific
      * profile
