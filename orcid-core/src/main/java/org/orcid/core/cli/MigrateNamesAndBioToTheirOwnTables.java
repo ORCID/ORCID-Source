@@ -115,13 +115,14 @@ public class MigrateNamesAndBioToTheirOwnTables {
                         }
                     }
                 });
-                counter += 1;
-                batchCount += 1;
-                //Stop if we ran the number of batches
-                if(numberOfBatches > 0) {
-                    if(batchCount >= numberOfBatches) {
-                        profileElements = null;
-                    }
+                counter += 1;                
+            }
+            batchCount += 1;
+            LOG.info("Batches processed so far: {}", String.valueOf(batchCount));
+            //Stop if we ran the number of batches
+            if(numberOfBatches > 0) {
+                if(batchCount >= numberOfBatches) {
+                    profileElements = null;
                 }
             }
         } while (profileElements != null && !profileElements.isEmpty());
