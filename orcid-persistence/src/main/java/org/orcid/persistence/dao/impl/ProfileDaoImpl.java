@@ -472,7 +472,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
         Query query = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, givenNames = :givenNames, familyName = :familyName, creditName = :creditName, biography = :bio, biographyVisibility = :bioVisibility, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
+                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, givenNames = :givenNames, familyName = :familyName, creditName = :creditName, biography = :bio, biographyVisibility = :defaultVisibility, activitiesVisibilityDefault = :defaultVisibility, namesVisibility = :namesVisibility where orcid = :orcid");
         query.setParameter("orcid", toDeprecate.getId());
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
@@ -489,12 +489,12 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         
         if(toDeprecate.getBiographyEntity() != null) {
             query.setParameter("bio", toDeprecate.getBiographyEntity().getBiography());
-            query.setParameter("bioVisibility", toDeprecate.getBiographyEntity().getVisibility() == null ? null : toDeprecate.getBiographyEntity().getVisibility());
         } else {
             query.setParameter("bio", toDeprecate.getBiography());
-            query.setParameter("bioVisibility", toDeprecate.getBiographyVisibility() == null ? null : toDeprecate.getBiographyVisibility());
         }
-        query.setParameter("defaultVisibility", toDeprecate.getActivitiesVisibilityDefault() == null ? null : toDeprecate.getActivitiesVisibilityDefault());
+        
+        query.setParameter("namesVisibility", Visibility.PUBLIC);
+        query.setParameter("defaultVisibility", Visibility.PRIVATE);
                 
         return query.executeUpdate() > 0 ? true : false;
     }
