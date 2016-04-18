@@ -80,41 +80,35 @@ public class ProfileDaoTest extends DBUnitTest {
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-                "/data/ProfileEntityData.xml"));
+                "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml"));
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/RecordNameEntityData.xml", "/data/ProfileEntityData.xml", "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
     public void beforeRunning() {
         assertNotNull(profileDao);
     }
-
-    // vocative_name="Spike Milligan"/>
-
-    // orcid="4444-4444-4444-4441"
-    // creation_method="API"
-    // completed_date="2011-07-02 15:31:00.00"
-    // submission_date="2011-06-29 15:31:00.00"
-    // confirmed="true"
-    // full_name="Spike Milligan"
+    
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testfindById() {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
+        ProfileEntity profile = profileDao.find("4444-4444-4444-4442");
         assertNotNull(profile);
-        assertEquals("4444-4444-4444-4441", profile.getId());
+        assertEquals("4444-4444-4444-4442", profile.getId());
         assertEquals("API", profile.getCreationMethod());
         assertNotNull(profile.getCompletedDate());
         assertNotNull(profile.getSubmissionDate());
         assertTrue(profile.getClaimed());
-        assertEquals("One", profile.getGivenNames());
-        assertEquals("User", profile.getFamilyName());
-        assertEquals("Spike Milligan", profile.getVocativeName());
+        assertNotNull(profile.getRecordNameEntity());
+        assertEquals("Given Names", profile.getRecordNameEntity().getGivenNames());
+        assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
+        assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
+        assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
     }
     
     @Test
@@ -458,23 +452,15 @@ public class ProfileDaoTest extends DBUnitTest {
     @Test
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testUpdateProfile() {
+    public void testUpdateBiography() {
         ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
         profile.setBiography("Updated Biography");
         profile.setBiographyVisibility(Visibility.PRIVATE);
-        profile.setCreditName("Updated Credit Name");
-        profile.setNamesVisibility(Visibility.PRIVATE);
-        profile.setGivenNames("Updated Give Name");
-        profile.setFamilyName("Updated Last Name");
-        boolean result = profileDao.updateProfile(profile);
+        boolean result = profileDao.updateBiography(profile.getId(), profile.getBiography(), profile.getBiographyVisibility());
         assertTrue(result);
         profile = profileDao.find("4444-4444-4444-4441");
         assertEquals("Updated Biography", profile.getBiography());
-        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());
-        assertEquals("Updated Credit Name", profile.getCreditName());
-        assertEquals(Visibility.PRIVATE.value(), profile.getNamesVisibility().value());
-        assertEquals("Updated Give Name", profile.getGivenNames());
-        assertEquals("Updated Last Name", profile.getFamilyName());
+        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());               
     }
 
     @Test
@@ -483,7 +469,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testDeprecateProfile() {
         ProfileEntity profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         assertNull(profileToDeprecate.getPrimaryRecord());
-        boolean result = profileDao.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
+        boolean result = profileDao.deprecateProfile(profileToDeprecate, "4444-4444-4444-4442");
         assertTrue(result);
         profileToDeprecate = profileDao.find("4444-4444-4444-4441");
         profileDao.refresh(profileToDeprecate);

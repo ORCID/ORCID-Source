@@ -88,17 +88,30 @@ public class SourceEntity implements Serializable {
         }
         if (sourceProfile != null) {
             // Set the source name
-            // If it is a user, check if it have a credit name and is visible
-            if(Visibility.PUBLIC.equals(sourceProfile.getNamesVisibility())) {
-                if (!StringUtils.isEmpty(sourceProfile.getCreditName())) {
-                    return sourceProfile.getCreditName();
+            //Check if the record_name table already have the names
+            if(sourceProfile.getRecordNameEntity() != null) {
+                // If it is a user, check if it have a credit name and is visible
+                if(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(sourceProfile.getRecordNameEntity().getVisibility())) {
+                    if (!StringUtils.isEmpty(sourceProfile.getRecordNameEntity().getCreditName())) {
+                        return sourceProfile.getRecordNameEntity().getCreditName();
+                    } else {
+                        //If credit name is empty
+                        return sourceProfile.getRecordNameEntity().getGivenNames() + (StringUtils.isEmpty(sourceProfile.getRecordNameEntity().getFamilyName()) ? "" : " " + sourceProfile.getRecordNameEntity().getFamilyName());
+                    }                
                 } else {
-                    //If credit name is empty
-                    return sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
-                }                
+                    return null;
+                }
             } else {
-                return null;
-            }            
+                if(Visibility.PUBLIC.equals(sourceProfile.getNamesVisibility())) {
+                    if(!StringUtils.isEmpty(sourceProfile.getCreditName())) {
+                        return sourceProfile.getCreditName();
+                    } else {
+                        return sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
+                    }
+                } else {
+                    return null;
+                }
+            }                       
         }
         return null;
     }

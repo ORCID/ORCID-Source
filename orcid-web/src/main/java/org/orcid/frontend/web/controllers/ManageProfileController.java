@@ -36,6 +36,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
@@ -179,6 +180,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private AddressManager addressManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -307,6 +311,10 @@ public class ManageProfileController extends BaseWorkspaceController {
             details.setDelegateSummary(summary);
             summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
             String creditName = delegateProfile.getCreditName();
+            if(delegateProfile.getRecordNameEntity() != null) {
+                creditName = delegateProfile.getRecordNameEntity().getCreditName();
+            }        
+                    
             if (StringUtils.isNotBlank(creditName)) {
                 summary.setCreditName(new CreditName(creditName));
             }
@@ -922,6 +930,14 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setVisibility(v);
             }
             
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+            if(profile.getBiographyEntity() != null) {
+                biographyManager.updateBiography(getCurrentUserOrcid(), bio);
+            } else {
+                biographyManager.createBiography(getCurrentUserOrcid(), bio);    
+            }
+            
+            //TODO: remove when the names migration is done
             profileEntityManager.updateBiography(getCurrentUserOrcid(), bio);
         }
         return bf;
@@ -1021,6 +1037,9 @@ public class ManageProfileController extends BaseWorkspaceController {
                         details.setDelegateSummary(summary);
                         summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
                         String creditName = delegateProfile.getCreditName();
+                        if(delegateProfile.getRecordNameEntity() != null) {
+                            creditName = delegateProfile.getRecordNameEntity().getCreditName();
+                        }
                         if (StringUtils.isNotBlank(creditName)) {
                             summary.setCreditName(new CreditName(creditName));
                         }

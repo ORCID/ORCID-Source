@@ -504,11 +504,12 @@ public class PublicProfileController extends BaseWorkspaceController {
                         if (profileEntManager.orcidExists(contributorOrcid)) {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
-                            if (profileEntity.getNamesVisibility() != null) {
-                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
+                            contributor.setCreditName(Text.valueOf(publicContributorCreditName));                            
+                            if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() != null) {                                
+                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getRecordNameEntity().getVisibility()));
+                            } else if(profileEntity.getNamesVisibility() != null) {                                
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getNamesVisibility()));
                             } else {
-                                contributor.setCreditName(Text.valueOf(publicContributorCreditName));
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
                             }
                         } else {

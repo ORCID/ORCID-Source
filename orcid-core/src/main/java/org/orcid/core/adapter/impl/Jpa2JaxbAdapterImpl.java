@@ -65,6 +65,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceAware;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -193,7 +194,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     public OrcidClientGroup toOrcidClientGroup(ProfileEntity profileEntity) {
         OrcidClientGroup group = new OrcidClientGroup();
         group.setGroupOrcid(profileEntity.getId());
-        group.setGroupName(profileEntity.getCreditName());
+        if(profileEntity.getRecordNameEntity() != null) {
+            group.setGroupName(profileEntity.getRecordNameEntity().getCreditName());
+        } else {
+            group.setGroupName(profileEntity.getCreditName());
+        }
+        
         group.setType(profileEntity.getGroupType());
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
         for (EmailEntity emailEntity : emailEntities) {
@@ -571,8 +577,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private Biography getBiography(ProfileEntity profileEntity) {
         String biography = profileEntity.getBiography();
-        Visibility shortDescriptionVisibility = profileEntity.getBiographyVisibility();
-        return (biography == null && shortDescriptionVisibility == null) ? null : new Biography(biography, shortDescriptionVisibility);
+        Visibility biographyVisibility = profileEntity.getBiographyVisibility();
+        
+        if(profileEntity.getBiographyEntity() != null) {
+            if(!PojoUtil.isEmpty(profileEntity.getBiographyEntity().getBiography())) {
+                biography = profileEntity.getBiographyEntity().getBiography();
+            }      
+            if(profileEntity.getBiographyEntity().getVisibility() != null) {
+                biographyVisibility = Visibility.fromValue(profileEntity.getBiographyEntity().getVisibility().value());
+            }
+        }
+        
+        return (biography == null && biographyVisibility == null) ? null : new Biography(biography, biographyVisibility);
     }
 
     private ResearcherUrls getResearcherUrls(ProfileEntity profileEntity) {
@@ -615,20 +631,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (vis.isMoreRestrictiveThan(mostRestrictive))
                     mostRestrictive = vis;
 
-
                 ExternalIdentifier externalIdentifier = new ExternalIdentifier(vis);
                 
-                SourceEntity sourceEntity = externalIdentifierEntity.getSource();
-                if (sourceEntity != null) {
-                    Source source = new Source();
-                    String sourceId = sourceEntity.getSourceId();
-                    if (OrcidStringUtils.isValidOrcid(sourceId)) {
-                        source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
-                    } else {
-                        source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceId())));
-                    }
-                    externalIdentifier.setSource(source);
-                }
+                externalIdentifier.setSource(getSource(externalIdentifierEntity));
+                
                 externalIdentifier.setExternalIdReference(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdReference()) ? new ExternalIdReference(
                         externalIdentifierEntity.getExternalIdReference()) : null);
                 externalIdentifier.setExternalIdCommonName(StringUtils.isNotBlank(externalIdentifierEntity.getExternalIdCommonName()) ? new ExternalIdCommonName(
@@ -840,25 +846,49 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     }    
 
-    private String getGroupDisplayName(ProfileEntity groupProfile) {
-        String creditName = groupProfile.getCreditName();
-        if (creditName != null) {
-            if (groupProfile.getGroupType() != null) {
-                // It's a member so, it will definitely have a credit name. Use
-                // it regardless of privacy.
-                return creditName;
+    private String getGroupDisplayName(ProfileEntity groupProfile) {   
+        RecordNameEntity recordName = groupProfile.getRecordNameEntity(); 
+        if(recordName != null) {
+            String creditName = recordName.getCreditName();
+            if (!PojoUtil.isEmpty(creditName)) {
+                if (groupProfile.getGroupType() != null) {
+                    // It's a member so, it will definitely have a credit name. Use
+                    // it regardless of privacy.
+                    return creditName;
+                }
+                org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = recordName.getVisibility();
+                if (Visibility.PUBLIC.equals(namesVisibilty)) {
+                    return creditName;
+                }
             }
-            Visibility namesVisibilty = groupProfile.getNamesVisibility();
-            if (Visibility.PUBLIC.equals(namesVisibilty)) {
-                return creditName;
+            String displayName = recordName.getGivenNames();
+            String familyName = recordName.getFamilyName();
+            if (StringUtils.isNotBlank(familyName)) {
+                displayName += " " + familyName;
             }
-        }
-        String displayName = groupProfile.getGivenNames();
-        String familyName = groupProfile.getFamilyName();
-        if (StringUtils.isNotBlank(familyName)) {
-            displayName += " " + familyName;
-        }
-        return displayName;
+            return displayName; 
+        } else {
+            //TODO: remove this else when the names migration is done
+            String creditName = groupProfile.getCreditName();
+            if(!PojoUtil.isEmpty(creditName)) {
+                if (groupProfile.getGroupType() != null) {
+                    // It's a member so, it will definitely have a credit name. Use
+                    // it regardless of privacy.
+                    return creditName;
+                }
+                Visibility namesVisibilty = groupProfile.getNamesVisibility();
+                if (Visibility.PUBLIC.equals(namesVisibilty)) {
+                    return creditName;
+                }
+            }
+            
+            String displayName = groupProfile.getGivenNames();
+            String familyName = groupProfile.getFamilyName();
+            if (StringUtils.isNotBlank(familyName)) {
+                displayName += " " + familyName;
+            }
+            return displayName;
+        }               
     }
 
     public OrcidWork getOrcidWork(WorkEntity work) {
@@ -1016,45 +1046,62 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private GivenNames getGivenNames(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getGivenNames())) {
-            GivenNames names = new GivenNames();
-            names.setContent(profileEntity.getGivenNames());
-            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNamesVisibility() != null) {
-            	visibility = profileEntity.getNamesVisibility();
-            } 
-            names.setVisibility(visibility);
-            return names;
-        }
+        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        if(recordName != null) {
+            if (StringUtils.isNotBlank(recordName.getGivenNames())) {
+                GivenNames names = new GivenNames();
+                names.setContent(recordName.getGivenNames());
+                names.setVisibility(recordName.getVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : Visibility.fromValue(recordName.getVisibility().value()));
+                return names;
+            }
+        } else {
+            if(StringUtils.isNotBlank(profileEntity.getGivenNames())) {
+                GivenNames names = new GivenNames();
+                names.setContent(profileEntity.getGivenNames());
+                names.setVisibility(profileEntity.getNamesVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : profileEntity.getNamesVisibility());
+                return names;
+            }
+        }        
         return null;
     }
 
     private FamilyName getFamilyName(ProfileEntity profileEntity) {
-        if (StringUtils.isNotBlank(profileEntity.getFamilyName())) {
-            FamilyName name = new FamilyName();
-            name.setContent(profileEntity.getFamilyName());
-            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNamesVisibility() != null) {
-            	visibility = profileEntity.getNamesVisibility();
-            } 
-            name.setVisibility(visibility);
-            return name;
-        }
+        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        if(recordName != null) {
+            if (StringUtils.isNotBlank(recordName.getFamilyName())) {
+                FamilyName name = new FamilyName();
+                name.setContent(recordName.getFamilyName());
+                name.setVisibility(recordName.getVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : Visibility.fromValue(recordName.getVisibility().value()));
+                return name;
+            }
+        } else {
+            if(StringUtils.isNotBlank(profileEntity.getFamilyName())) {
+                FamilyName name = new FamilyName();
+                name.setContent(profileEntity.getFamilyName());
+                name.setVisibility(profileEntity.getNamesVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : profileEntity.getNamesVisibility());
+                return name;
+            }
+        }        
         return null;
     }
 
     private CreditName getCreditName(ProfileEntity profileEntity) {
-        String creditName = profileEntity.getCreditName();
-        if (StringUtils.isNotBlank(creditName)) {
-            CreditName name = new CreditName();
-            name.setContent(creditName);
-            Visibility visibility = OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
-            if(profileEntity.getNamesVisibility() != null) {
-            	visibility = profileEntity.getNamesVisibility();
-            } 
-            name.setVisibility(visibility);
-            return name;
-        }
+        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        if(recordName != null) {
+            if (StringUtils.isNotBlank(recordName.getCreditName())) {
+                CreditName name = new CreditName();
+                name.setContent(recordName.getCreditName());
+                name.setVisibility(recordName.getVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : Visibility.fromValue(recordName.getVisibility().value()));
+                return name;
+            }
+        } else {
+            if(StringUtils.isNotBlank(profileEntity.getCreditName())) {
+                CreditName name = new CreditName();
+                name.setContent(profileEntity.getCreditName());
+                name.setVisibility(profileEntity.getNamesVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : profileEntity.getNamesVisibility());
+                return name;
+            }
+        }   
         return null;
     }
 

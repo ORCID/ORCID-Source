@@ -1,0 +1,74 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="CREATE-BIOGRAPHY-TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="biography" />
+			</not>
+		</preConditions>	
+		<createTable tableName="biography">
+			<column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="biography_pkey" />
+			</column>
+			<column name="orcid" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="biography" type="TEXT" />		
+			<column name="visibility" type="VARCHAR(20)" />
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />			
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />			
+		</createTable>
+		<addForeignKeyConstraint constraintName="biography_orcid_fk" baseTableName="biography" baseColumnNames="orcid" referencedTableName="profile" referencedColumnNames="orcid" />
+	</changeSet>
+	
+	<changeSet id="CREATE-BIOGRAPHY-SEQUENCES" author="Angel Montenegro" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<sequenceExists sequenceName="biography_seq"/>
+			</not>
+		</preConditions>
+        <createSequence sequenceName="biography_seq" startValue="1000" />
+    </changeSet>
+	
+	<changeSet id="CREATE-AUTOCOLS" author="Angel Montenegro" dbms="hsqldb">    	
+        <addAutoIncrement tableName="biography" columnName="id" columnDataType="bigint"/>        
+    </changeSet>
+	
+	<changeSet id="BIOGRAPHY-ORCID-INDEX" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="biography_orcid_index" tableName="biography" />
+			</not>
+		</preConditions>
+		<sql>create index biography_orcid_index on biography(orcid);</sql>
+	</changeSet>
+	
+	<changeSet id="GRANT-READ-PERMISSIONS-TO-ORCIDRO-ON-BIOGRAPHY" author="Angel Montenegro" dbms="postgresql">
+		<preConditions>
+			<sqlCheck expectedResult="1">SELECT 1 FROM pg_roles WHERE rolname='orcidro'</sqlCheck>
+		</preConditions>
+		<sql>GRANT SELECT ON biography to orcidro;</sql>
+	</changeSet>
+	
+</databaseChangeLog>

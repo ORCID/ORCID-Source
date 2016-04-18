@@ -45,7 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class InternalApiServiceDelegatorTest extends DBUnitTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml");
 
     private static final String USER_ORCID = "5555-5555-5555-5558";
     

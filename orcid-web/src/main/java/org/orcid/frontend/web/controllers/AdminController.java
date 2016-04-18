@@ -54,6 +54,8 @@ import org.orcid.pojo.ProfileDeprecationRequest;
 import org.orcid.pojo.ProfileDetails;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.OrcidStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,6 +74,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = { "/admin-actions" })
 public class AdminController extends BaseController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+    
     private static int RANDOM_STRING_LENGTH = 15;
 
     @Resource
@@ -199,19 +203,30 @@ public class AdminController extends BaseController {
                     ProfileDetails deprecatedDetails = new ProfileDetails();
                     deprecatedDetails.setOrcid(deprecatedOrcid);
 
-                    deprecatedDetails.setFamilyName(deprecated.getFamilyName());
-                    deprecatedDetails.setGivenNames(deprecated.getGivenNames());
+                    if(deprecated.getRecordNameEntity() != null) {
+                        deprecatedDetails.setFamilyName(deprecated.getRecordNameEntity().getFamilyName());
+                        deprecatedDetails.setGivenNames(deprecated.getRecordNameEntity().getGivenNames());
+                    } else {
+                        deprecatedDetails.setFamilyName(deprecated.getFamilyName());
+                        deprecatedDetails.setGivenNames(deprecated.getGivenNames());
+                    }
 
                     ProfileDetails primaryDetails = new ProfileDetails();
                     primaryDetails.setOrcid(primaryOrcid);
-                    primaryDetails.setFamilyName(primary.getFamilyName());
-                    primaryDetails.setGivenNames(primary.getGivenNames());
+                    if(primary.getRecordNameEntity() != null) {
+                        primaryDetails.setFamilyName(primary.getRecordNameEntity().getFamilyName());
+                        primaryDetails.setGivenNames(primary.getRecordNameEntity().getGivenNames());
+                    } else {
+                        primaryDetails.setFamilyName(primary.getFamilyName());
+                        primaryDetails.setGivenNames(primary.getGivenNames());
+                    }
 
                     result.setDeprecatedAccount(deprecatedDetails);
                     result.setPrimaryAccount(primaryDetails);
-                    result.setDeprecatedDate(new Date());
+                    result.setDeprecatedDate(new Date());                                        
                 }
             } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
                 result.getErrors().add(getMessage("admin.profile_deprecation.errors.internal_error", deprecatedOrcid));
             }
         }

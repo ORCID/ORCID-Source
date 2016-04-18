@@ -40,13 +40,15 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     private int timeToLiveSeconds = 120;
 
     private int timeToIdleSeconds = 120;
-    
+
     private int maxElementsOnDisk = 0;
+
+    private String maxBytesLocalDisk = "5g";
 
     private boolean copyOnRead = true;
 
     private boolean copyOnWrite = true;
-    
+
     private String strategy = "NONE";
 
     private Ehcache cache;
@@ -90,7 +92,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     public void setTimeToIdleSeconds(int timeToIdleSeconds) {
         this.timeToIdleSeconds = timeToIdleSeconds;
     }
-    
+
     public String getStrategy() {
         return strategy;
     }
@@ -106,7 +108,16 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     public void setMaxElementsOnDisk(int maxElementsOnDisk) {
         this.maxElementsOnDisk = maxElementsOnDisk;
     }
-    
+
+
+    public String getMaxBytesLocalDisk() {
+        return maxBytesLocalDisk;
+    }
+
+    public void setMaxBytesLocalDisk(String maxBytesLocalDisk) {
+        this.maxBytesLocalDisk = maxBytesLocalDisk;
+    }
+
     public boolean isCopyOnRead() {
         return copyOnRead;
     }
@@ -154,6 +165,8 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         CacheConfiguration config = new CacheConfiguration();
         config.setName(this.cacheName);
         config.setMaxEntriesLocalHeap(this.maxElementsInMemory);
+        config.setMaxElementsOnDisk(this.maxElementsOnDisk);
+        config.setMaxBytesLocalDisk(this.maxBytesLocalDisk);
         config.setTimeToLiveSeconds(this.timeToLiveSeconds);
         config.setTimeToIdleSeconds(this.timeToIdleSeconds);
         config.setCopyOnRead(this.copyOnRead);

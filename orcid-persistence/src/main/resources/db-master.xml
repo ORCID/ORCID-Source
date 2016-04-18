@@ -184,7 +184,7 @@
     <include file="/db/updates/add_orcid_index_on_address_researcher_url_and_external_identifiers.xml" />    
     <include file="/db/updates/add_work_orcid_display_index_index_on_work_table.xml" />
     <include file="/db/updates/add_orcid_index_other_names.xml" />
-    <include file="/db/updates/clean-address-table.xml" />
+    <include file="/db/updates/clean-address-table.xml" />    
     <include file="/db/updates/remove-user-connections-for-deactivated.xml" />
     <include file="/db/updates/remove-hear-about.xml" />
     <include file="/db/updates/user_connection_id_type.xml" />
@@ -192,4 +192,6 @@
     <include file="/db/updates/add_notification_id_index.xml" />
     <include file="/db/updates/add_indexes_2016_03_31.xml" />
     <include file="/db/updates/add_indexes_2016_04_06.xml" />
+    <include file="/db/updates/create_record_name_table.xml" />
+    <include file="/db/updates/create_biography_table.xml" />    
 </databaseChangeLog>

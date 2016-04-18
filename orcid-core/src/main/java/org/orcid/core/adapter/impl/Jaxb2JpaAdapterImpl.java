@@ -105,6 +105,7 @@ import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -118,6 +119,7 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -474,6 +476,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setPersonalDetails(ProfileEntity profileEntity, PersonalDetails personalDetails) {
         if (personalDetails != null) {
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+            }
+            profileEntity.getRecordNameEntity().setProfile(profileEntity);
             setCreditNameDetails(profileEntity, personalDetails.getCreditName());
             setFamilyName(profileEntity, personalDetails.getFamilyName());
             setGivenNames(profileEntity, personalDetails.getGivenNames());
@@ -513,20 +519,54 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setGivenNames(ProfileEntity profileEntity, GivenNames givenNames) {
         if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+                profileEntity.getRecordNameEntity().setProfile(profileEntity);
+            }
+            profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());
+            
+            //TODO: remove when the names migration is done
+            //Save also the profile table
             profileEntity.setGivenNames(givenNames.getContent());
         }
     }
 
     private void setFamilyName(ProfileEntity profileEntity, FamilyName familyName) {
-        if (familyName != null) {
+        if (familyName != null && StringUtils.isNotBlank(familyName.getContent())) {
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+                profileEntity.getRecordNameEntity().setProfile(profileEntity);
+            }
+            profileEntity.getRecordNameEntity().setFamilyName(familyName.getContent());
+            
+            //TODO: remove when the names migration is done
+            //Save also the profile table
             profileEntity.setFamilyName(familyName.getContent());
         }
     }
 
     private void setCreditNameDetails(ProfileEntity profileEntity, CreditName creditName) {
         if (creditName != null) {
-            profileEntity.setNamesVisibility(creditName.getVisibility());
+            if(profileEntity.getRecordNameEntity() == null) {
+                profileEntity.setRecordNameEntity(new RecordNameEntity());
+                profileEntity.getRecordNameEntity().setProfile(profileEntity);
+            }
+            
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity();            
+            
+            //Save the record name entity
+            if(creditName.getVisibility() != null) {
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(creditName.getVisibility().value()));
+            } else {
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+            }
+            
+            recordName.setCreditName(creditName.getContent());
+            
+            //TODO: remove when the names migration is done
+            //Save also the profile table
             profileEntity.setCreditName(creditName.getContent());
+            profileEntity.setNamesVisibility(creditName.getVisibility());
         }
     }
 
@@ -830,8 +870,24 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
+            if(profileEntity.getBiographyEntity() == null) {
+                profileEntity.setBiographyEntity(new BiographyEntity());
+                profileEntity.getBiographyEntity().setProfile(profileEntity);
+            }
+                        
+            profileEntity.getBiographyEntity().setBiography(biography.getContent());
+            if (biography.getVisibility() != null) {
+                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));
+            } else {
+                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+            }
+            
+            //TODO: remove when the names migration is done
+            //Save also the profile table
             if (biography.getVisibility() != null) {
                 profileEntity.setBiographyVisibility(biography.getVisibility());
+            } else {
+                profileEntity.setBiographyVisibility(profileEntity.getActivitiesVisibilityDefault());
             }
             profileEntity.setBiography(biography.getContent());
         }

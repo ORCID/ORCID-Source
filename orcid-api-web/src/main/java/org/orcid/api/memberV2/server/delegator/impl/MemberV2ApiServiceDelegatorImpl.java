@@ -37,6 +37,7 @@ import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -163,6 +164,9 @@ public class MemberV2ApiServiceDelegatorImpl
     
     @Resource
     private AddressManager addressManager;
+    
+    @Resource
+    private BiographyManager biographyManager;
 
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
@@ -674,7 +678,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewBiography(String orcid) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        Biography bio = profileEntityManager.getBiography(orcid);
+        Biography bio = biographyManager.getBiography(orcid);
         orcidSecurityManager.checkVisibility(bio, orcid);
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();

@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jbibtex.BibTeXDatabase;
 import org.jbibtex.ParseException;
 import org.orcid.jaxb.model.common_rc2.Contributor;
 import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.springframework.util.ReflectionUtils;
 
 import com.google.common.base.Joiner;
@@ -78,11 +78,8 @@ public class WorkToCiteprocTranslator {
      */
     private CSLItemData translateFromBibtexCitation(Work work, boolean abreviate) {
         try {
-            System.out.println("----");
-            System.out.println(work.getWorkCitation().getCitation());
-            System.out.println("----");
             BibTeXConverter conv = new BibTeXConverter();
-            BibTeXDatabase db = conv.loadDatabase(IOUtils.toInputStream(work.getWorkCitation().getCitation()));
+            BibTeXDatabase db = conv.loadDatabase(IOUtils.toInputStream(StringUtils.stripAccents(work.getWorkCitation().getCitation())));
             Map<String, CSLItemData> cids = conv.toItemData(db);
             if (cids.size() == 1) {
                 CSLItemData item = cids.values().iterator().next();
@@ -153,7 +150,7 @@ public class WorkToCiteprocTranslator {
      */
     private CSLItemData translateFromWorkMetadata(Work work, String creditName) {
         CSLItemDataBuilder builder = new CSLItemDataBuilder();
-        builder.title((work.getWorkTitle() != null) ? work.getWorkTitle().getTitle().getContent() : "No Title");
+        builder.title((work.getWorkTitle() != null) ? StringUtils.stripAccents(work.getWorkTitle().getTitle().getContent()) : "No Title");
         String doi = extractID(work, ExternalIDType.DOI);
         String url = extractID(work, ExternalIDType.URI);
         if (doi != null) {
@@ -171,7 +168,7 @@ public class WorkToCiteprocTranslator {
         }
 
         if (work.getJournalTitle() != null) {
-            builder.containerTitle(work.getJournalTitle().getContent());
+            builder.containerTitle(StringUtils.stripAccents(work.getJournalTitle().getContent()));
         }
 
         List<String> names = new ArrayList<String>();
@@ -179,7 +176,7 @@ public class WorkToCiteprocTranslator {
         names.add(creditName);
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
             for (Contributor c : work.getWorkContributors().getContributor()) {
-                names.add(c.getCreditName().getContent());
+                names.add(StringUtils.stripAccents(c.getCreditName().getContent()));
             }
         }
         CSLNameBuilder name = new CSLNameBuilder();

@@ -89,11 +89,11 @@
 			<xs:documentation>Container for the
 				researcher or contributor biography.
 			</xs:documentation>
-		</xs:annotation>
+		</xs:annotation>		
 		<xs:complexType>
-			<xs:simpleContent>
+			<xs:complexContent>
 				<xs:extension base="personal-details:biography" />
-			</xs:simpleContent>			
+			</xs:complexContent>					
 		</xs:complexType>
 	</xs:element>
 
@@ -161,12 +161,20 @@
 				information.
 			</xs:documentation>
 		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="visibility" type="common:visibility" use="optional"/>
-				<xs:attribute name="path" type="common:person-path" use="optional" />
-			</xs:extension>
-		</xs:simpleContent>
+		<xs:sequence>
+			<xs:element minOccurs="1" name="content" type="common:non-empty-string">
+				<xs:annotation>
+					<xs:documentation>A short display name describing the URL.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element ref="common:created-date" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0"
+				maxOccurs="1" />			
+		</xs:sequence>
+		<xs:attribute name="visibility" type="common:visibility" use="optional"/>
+		<xs:attribute name="path" type="common:person-path" use="optional" />		
 	</xs:complexType>
 
 	<xs:complexType name="credit-name">
