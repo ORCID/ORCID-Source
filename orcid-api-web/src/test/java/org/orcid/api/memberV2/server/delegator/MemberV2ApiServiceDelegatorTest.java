@@ -51,6 +51,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.Organization;
 import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc2.Subtitle;
@@ -60,6 +61,9 @@ import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
@@ -84,6 +88,7 @@ import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
+import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -93,6 +98,8 @@ import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -3165,6 +3172,266 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.deleteFunding(orcid, putCode);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
+    
+    
+    @Test
+    public void viewPersonalDetails() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.PERSON_READ_LIMITED);
+        Response response = serviceDelegator.viewPersonalDetails(orcid);
+        assertNotNull(response);
+        PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
+        assertNotNull(personalDetails);
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("Biography for 0000-0000-0000-0003", personalDetails.getBiography().getContent());
+        assertNotNull(personalDetails.getBiography().getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/biography", personalDetails.getBiography().getPath());
+        assertNotNull(personalDetails.getLastModifiedDate());
+        assertNotNull(personalDetails.getName());
+        assertNotNull(personalDetails.getName().getCreatedDate().getValue());
+        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals("Family Name", personalDetails.getName().getFamilyName().getContent());
+        assertEquals("Given Names", personalDetails.getName().getGivenNames().getContent());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getName().getVisibility().value());
+        assertNotNull(personalDetails.getName().getLastModifiedDate());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getLastModifiedDate());
+        assertEquals(4, personalDetails.getOtherNames().getOtherNames().size());
+        
+        for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            if(otherName.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("Other Name PUBLIC", otherName.getContent());
+                assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());
+            } else if(otherName.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals("Other Name LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/14", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());
+            } else if(otherName.getPutCode().equals(Long.valueOf(15))) { 
+                assertEquals("Other Name PRIVATE", otherName.getContent());
+                assertEquals(Long.valueOf(2), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/15", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility().value());
+            } else if(otherName.getPutCode().equals(Long.valueOf(16))) { 
+                assertEquals("Other Name SELF LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(3), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/16", otherName.getPath());
+                assertEquals("0000-0000-0000-0003", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());
+            } else {
+                fail("Invalid put code found: " + otherName.getPutCode());
+            }
+        }
+        
+        assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
+        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());        
+    }
+    
+    @Test
+    public void viewRecord() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewRecord(orcid);
+        assertNotNull(response);
+        Record record = (Record) response.getEntity();
+        assertNotNull(record);
+        assertNotNull(record.getHistory());
+        assertEquals(OrcidType.USER, record.getOrcidType());        
+        assertNotNull(record.getPreferences());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
+        assertNotNull(record.getLastModifiedDate());
+        History history = record.getHistory();
+        assertTrue(history.getClaimed());
+        assertNotNull(history.getCompletionDate());
+        assertEquals(CreationMethod.INTEGRATION_TEST, history.getCreationMethod());
+        assertNull(history.getDeactivationDate());
+        assertNotNull(history.getLastModifiedDate());
+        assertNotNull(history.getSource());
+        assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
+        assertNotNull(history.getSubmissionDate());                
+        assertNotNull(record.getOrcidIdentifier());
+        OrcidIdentifier id = record.getOrcidIdentifier();
+        assertEquals("0000-0000-0000-0003", id.getPath());
+        //Validate person
+        Person person = record.getPerson();
+        assertNotNull(person);
+        assertNotNull(person.getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/person", person.getPath());
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/address", person.getAddresses().getPath());
+        assertEquals(4, person.getAddresses().getAddress().size());
+        for(Address address : person.getAddresses().getAddress()) {
+            assertNotNull(address.getLastModifiedDate());
+            if(address.getPutCode().equals(Long.valueOf(9))) {                
+                assertEquals(Iso3166Country.US, address.getCountry().getValue());
+                assertEquals(Long.valueOf(0), address.getDisplayIndex());                
+                assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
+            } else if(address.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+                assertEquals(Long.valueOf(1), address.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/address/10", address.getPath());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), address.getVisibility().value());
+            } else if(address.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals(Iso3166Country.GB, address.getCountry().getValue());
+                assertEquals(Long.valueOf(2), address.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/address/11", address.getPath());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), address.getVisibility().value());
+            } else if(address.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals(Iso3166Country.MX, address.getCountry().getValue());
+                assertEquals(Long.valueOf(3), address.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/address/12", address.getPath());
+                assertEquals("0000-0000-0000-0003", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), address.getVisibility().value());
+            } else {
+                fail("Invalid address found with put code: " + address.getPutCode());
+            }
+        }
+        
+        assertNotNull(person.getBiography());
+        assertNotNull(person.getBiography().getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC.value(), person.getBiography().getVisibility().value());
+        assertEquals("Biography for 0000-0000-0000-0003", person.getBiography().getContent());
+        
+        assertNotNull(person.getEmails());
+        assertNotNull(person.getEmails().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/email", person.getEmails().getPath());
+        assertEquals(4, person.getEmails().getEmails().size());
+        for(Email email : person.getEmails().getEmails()) {
+            assertNotNull(email.getLastModifiedDate());
+            if(email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {                
+                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+            } else if(email.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
+                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+            } else if(email.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
+                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), email.getVisibility().value());
+            } else if(email.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
+                assertEquals("0000-0000-0000-0003", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+            } else {
+                fail("Invalid email found: " + email.getEmail());
+            }
+        }
+        
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
+        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifier().size());
+        for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifier()) {
+            assertNotNull(extId.getLastModifiedDate());
+            if(extId.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals(Long.valueOf(0), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("public_type", extId.getType());
+                assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
+                assertEquals("public_ref", extId.getValue());
+                assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+            } else if(extId.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals(Long.valueOf(1), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/14", extId.getPath());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("limited_type", extId.getType());
+                assertEquals("http://ext-id/limited_ref", extId.getUrl().getValue());
+                assertEquals("limited_ref", extId.getValue());
+                assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+            } else if(extId.getPutCode().equals(Long.valueOf(15))) {
+                assertEquals(Long.valueOf(2), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/15", extId.getPath());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("private_type", extId.getType());
+                assertEquals("http://ext-id/private_ref", extId.getUrl().getValue());
+                assertEquals("private_ref", extId.getValue());
+                assertEquals(Visibility.PRIVATE.value(), extId.getVisibility().value());
+            } else if(extId.getPutCode().equals(Long.valueOf(16))) {
+                assertEquals(Long.valueOf(3), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/16", extId.getPath());
+                assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+                assertEquals("self_limited_type", extId.getType());
+                assertEquals("http://ext-id/self/limited", extId.getUrl().getValue());
+                assertEquals("self_limited_ref", extId.getValue());
+                assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+            } else {
+                fail("Invalid external identifier found: " + extId.getPutCode());
+            }
+        }
+        
+        
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/keywords", person.getKeywords().getPath());
+        assertEquals(4, person.getKeywords().getKeywords().size());
+        for(Keyword keyword : person.getKeywords().getKeywords()) {
+            assertNotNull(keyword.getLastModifiedDate());
+            if(keyword.getPutCode().equals(Long.valueOf(9))) {
+                assertEquals("PUBLIC", keyword.getContent());
+                assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
+            } else if(keyword.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals("LIMITED", keyword.getContent());
+                assertEquals(Long.valueOf(1), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/10", keyword.getPath());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), keyword.getVisibility().value());
+            } else if(keyword.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("PRIVATE", keyword.getContent());
+                assertEquals(Long.valueOf(2), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/11", keyword.getPath());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), keyword.getVisibility().value());
+            } else if(keyword.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("SELF LIMITED", keyword.getContent());
+                assertEquals(Long.valueOf(3), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/12", keyword.getPath());
+                assertEquals("0000-0000-0000-0003", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), keyword.getVisibility().value());
+            } else {
+                fail("Invalid keyword found: " + keyword.getPutCode());
+            }
+        }
+        
+        assertNotNull(person.getName());
+        assertNotNull(person.getName().getLastModifiedDate());
+        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals("Family Name", person.getName().getFamilyName().getContent());
+        assertEquals("Given Names", person.getName().getGivenNames().getContent());        
+        assertEquals(Visibility.PUBLIC.value(), person.getName().getVisibility().value());
+        
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/other-names", person.getOtherNames().getPath());
+        assertEquals(4, person.getOtherNames().getOtherNames().size());
+        
+        assertNotNull(person.getResearcherUrls());
+        assertNotNull(person.getResearcherUrls().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/researcher-urls", person.getResearcherUrls().getPath());
+        assertEquals(4, person.getResearcherUrls().getResearcherUrls().size());
+        
+        
+        
+        
+        
+        //Validate activities
+        ActivitiesSummary activities = record.getActivitiesSummary();
+        assertNotNull(activities);
+    }
+    
+    
     
     private Work getWork() {
         Work work = new Work();

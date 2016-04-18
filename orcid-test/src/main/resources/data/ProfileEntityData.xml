@@ -770,6 +770,32 @@
             display_index="2"
             />
     
+    <external_identifier
+            id="16"
+            external_id_reference="self_limited_ref"
+            external_id_type="self_limited_type"
+            orcid="0000-0000-0000-0003"
+            external_id_url="http://ext-id/self/limited"
+            source_id="0000-0000-0000-0003"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="3"
+            />
+    
+    <external_identifier
+            id="17"
+            external_id_reference="self_private_ref"
+            external_id_type="self_private_type"
+            orcid="0000-0000-0000-0003"
+            external_id_url="http://ext-id/self/private"
+            source_id="0000-0000-0000-0003"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="4"
+            />
+    
     <researcher_url
             id="1"
             url="www.4444-4444-4444-4441.com"
@@ -949,6 +975,30 @@
             display_index="2"
             />
     
+    <researcher_url
+            id="16"
+            url="http://www.researcherurl.com?id=16"
+            url_name="self_limited_rurl"
+            orcid="0000-0000-0000-0003"
+            source_id="0000-0000-0000-0003"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            display_index="3"
+            />
+    
+    <researcher_url
+            id="17"
+            url="http://www.researcherurl.com?id=17"
+            url_name="self_private_rurl"
+            orcid="0000-0000-0000-0003"
+            source_id="0000-0000-0000-0003"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            display_index="4"
+            />
+    
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
@@ -1113,7 +1163,29 @@
             date_created="2016-04-01 15:31:00.00"
             display_index="2"
             />
-
+	
+	<other_name
+            other_name_id="16"
+            display_name="Other Name SELF LIMITED"
+            orcid="0000-0000-0000-0003"
+            visibility="LIMITED"
+            source_id="0000-0000-0000-0003"
+            last_modified="2016-04-01 15:31:00.00"
+            date_created="2016-04-01 15:31:00.00"
+            display_index="3"
+            />
+	
+	<other_name
+            other_name_id="17"
+            display_name="Other Name SELF PRIVATE"
+            orcid="0000-0000-0000-0003"
+            visibility="PRIVATE"
+            source_id="0000-0000-0000-0003"
+            last_modified="2016-04-01 15:31:00.00"
+            date_created="2016-04-01 15:31:00.00"
+            display_index="4"
+            />
+	
 	<address
             id="1"            
             iso2_country="US"
@@ -1245,8 +1317,32 @@
             last_modified="2016-01-02 15:31:00.00"
             date_created="2016-01-02 15:31:00.00"
             display_index="2"            
-            />	  	  
-		  
+            />	  	
+            
+    <address
+            id="12"            
+            iso2_country="MX"
+            orcid="0000-0000-0000-0003"
+            visibility="LIMITED"
+            is_primary="false"
+            source_id="0000-0000-0000-0003"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="3"            
+            />
+            
+    <address
+            id="13"            
+            iso2_country="PE"
+            orcid="0000-0000-0000-0003"
+            visibility="PRIVATE"
+            is_primary="false"
+            source_id="0000-0000-0000-0003"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="4"            
+            />        
+                          		  
     <given_permission_to
             given_permission_to_id="1"
             giver_orcid="4444-4444-4444-4441"
@@ -1534,6 +1630,28 @@
         last_modified="2016-04-01 15:31:00.00"
     />  
             
+	<email
+        orcid="0000-0000-0000-0003"
+        email="self_limited_0000-0000-0000-0003@test.orcid.org"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="LIMITED"
+        source_id="0000-0000-0000-0003"
+        last_modified="2016-04-01 15:31:00.00"
+    />              
+            
+    <email
+        orcid="0000-0000-0000-0003"
+        email="self_private_0000-0000-0000-0003@test.orcid.org"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="0000-0000-0000-0003"
+        last_modified="2016-04-01 15:31:00.00"
+    />  
+    
     <profile_keyword 
     	id="1"            
         profile_orcid="4444-4444-4444-4443"
@@ -1650,7 +1768,28 @@
         client_source_id="APP-5555555555555555"
         last_modified="2016-04-01 15:31:00.00"
 		date_created="2016-04-01 15:31:00.00"
-		display_index="2"
+		display_index="2"    
     />
     
+    <profile_keyword 
+    	id="12"
+        profile_orcid="0000-0000-0000-0003"
+        keywords_name="SELF LIMITED"
+        visibility="LIMITED"            
+        source_id="0000-0000-0000-0003"
+        last_modified="2016-04-01 15:31:00.00"
+		date_created="2016-04-01 15:31:00.00"
+		display_index="3"
+    />
+    
+    <profile_keyword 
+    	id="13"
+        profile_orcid="0000-0000-0000-0003"
+        keywords_name="SELF PRIVATE"
+        visibility="PRIVATE"            
+        source_id="0000-0000-0000-0003"
+        last_modified="2016-04-01 15:31:00.00"
+		date_created="2016-04-01 15:31:00.00"
+		display_index="4"
+    />                        
 </dataset>

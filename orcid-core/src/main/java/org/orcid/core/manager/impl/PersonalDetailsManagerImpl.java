@@ -135,7 +135,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         Date lastModified = profileEntity.getLastModified();
         long lastMofieiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
-        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid, lastMofieiedTime);
+        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastMofieiedTime);
         
         if(bio != null) {
             personalDetails.setBiography(bio);
