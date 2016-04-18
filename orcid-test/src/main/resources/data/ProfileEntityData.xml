@@ -500,7 +500,7 @@
 
 	<profile
             orcid="0000-0000-0000-0003"
-            creation_method="API"
+            creation_method="INTEGRATION_TEST"
             completed_date="2016-03-29 15:31:00.00"
             date_created="2016-03-29 15:31:00.00"
             submission_date="2016-03-29 15:31:00.00"
@@ -523,6 +523,7 @@
             orcid_type="USER" 
             claimed="true"
             reviewed="true"
+            client_source_id="APP-5555555555555555"
             />
 
     <granted_authority

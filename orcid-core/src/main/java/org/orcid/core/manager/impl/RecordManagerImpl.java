@@ -26,6 +26,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record_rc2.CompletionDate;
 import org.orcid.jaxb.model.record_rc2.DeactivationDate;
 import org.orcid.jaxb.model.record_rc2.Email;
@@ -60,25 +61,34 @@ public class RecordManagerImpl implements RecordManager {
     @Override
     public Record getPublicRecord(String orcid) {
         Record record = new Record();
+        record.setOrcidType(getOrcidType(orcid));
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(profileEntityManager.getPublicActivitiesSummary(orcid));
         record.setPerson(profileEntityManager.getPublicPersonDetails(orcid));
+        record.setLastModifiedDate(getLastModifiedDate(orcid));
         return record;
     }
 
     @Override
     public Record getRecord(String orcid) {
         Record record = new Record();
+        record.setOrcidType(getOrcidType(orcid));
         record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(profileEntityManager.getActivitiesSummary(orcid));
         record.setPerson(profileEntityManager.getPersonDetails(orcid));
+        record.setLastModifiedDate(getLastModifiedDate(orcid));
         return record;
     }
 
+    private LastModifiedDate getLastModifiedDate(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified()));
+    }
+    
     private OrcidIdentifier getOrcidIdentifier(String orcid) {
         OrcidIdentifier orcidIdentifier = new OrcidIdentifier();
         orcidIdentifier.setPath(orcid);
@@ -87,6 +97,11 @@ public class RecordManagerImpl implements RecordManager {
         return orcidIdentifier;
     }
 
+    private OrcidType getOrcidType(String orcid) {
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        return profile.getOrcidType();
+    }
+    
     private Preferences getPreferences(String orcid) {
         Preferences preferences = new Preferences();
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
@@ -106,7 +121,7 @@ public class RecordManagerImpl implements RecordManager {
         }
         
         if(!PojoUtil.isEmpty(profile.getCreationMethod())) {
-            history.setCreationMethod(CreationMethod.fromValue(profile.getCreationMethod()));
+            history.setCreationMethod(CreationMethod.valueOf(profile.getCreationMethod()));
         }
         
         if(profile.getDeactivationDate() != null) {

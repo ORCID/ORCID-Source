@@ -18,8 +18,8 @@ package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +36,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
@@ -44,11 +48,13 @@ import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkType;
@@ -105,6 +111,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(11), work.getPutCode());
         assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
         assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+        assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
     }
 
     @Test
@@ -119,6 +126,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/funding/10", funding.getPath());
         assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
+        assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
     }
 
     @Test
@@ -131,6 +139,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
         assertEquals("PUBLIC Department", education.getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
+        assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());
     }
 
     @Test
@@ -142,7 +151,8 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(17), employment.getPutCode());
         assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
         assertEquals("PUBLIC Department", employment.getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());        
+        assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());  
+        assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -155,6 +165,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("Other Name PUBLIC", otherName.getContent());
         assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+        assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -167,6 +178,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("PUBLIC", keyword.getContent());
         assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
+        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -181,6 +193,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
         assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
+        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -194,6 +207,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("public_rurl", rUrl.getUrlName());        
         assertEquals(Visibility.PUBLIC.value(), rUrl.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
+        assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -211,6 +225,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertTrue(email.isVerified());
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/email", emails.getPath());
+        assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -225,6 +240,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertTrue(address.getPrimary());        
         assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
+        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
     }
     
     @Test
@@ -260,6 +276,44 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.viewPerson(ORCID);
         assertNotNull(response);
         Person person = (Person) response.getEntity();
+        validatePerson(person);  
+    }
+
+    @Test
+    public void testFindActivityDetails() {
+        Response response = serviceDelegator.viewActivities(ORCID);
+        assertNotNull(response);
+        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
+        validateActivities(summary);
+    }
+    
+    @Test
+    public void testFindRecord() {
+        Response response = serviceDelegator.viewRecord(ORCID);
+        assertNotNull(response);
+        Record record = (Record) response.getEntity();
+        validatePerson(record.getPerson());
+        validateActivities(record.getActivitiesSummary());
+        assertNotNull(record.getHistory());
+        assertEquals(OrcidType.USER, record.getOrcidType());        
+        assertNotNull(record.getPreferences());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
+        assertNotNull(record.getLastModifiedDate());
+        History history = record.getHistory();
+        assertTrue(history.getClaimed());
+        assertNotNull(history.getCompletionDate());
+        assertEquals(CreationMethod.INTEGRATION_TEST, history.getCreationMethod());
+        assertNull(history.getDeactivationDate());
+        assertNotNull(history.getLastModifiedDate());
+        assertNotNull(history.getSource());
+        assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
+        assertNotNull(history.getSubmissionDate());                
+        assertNotNull(record.getOrcidIdentifier());
+        OrcidIdentifier id = record.getOrcidIdentifier();
+        assertEquals("0000-0000-0000-0003", id.getPath());                
+    }
+    
+    private void validatePerson(Person person) {
         assertNotNull(person);
         assertNotNull(person.getLastModifiedDate());
         assertNotNull(person.getAddresses());
@@ -284,8 +338,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
         assertNotNull(email.getLastModifiedDate());
         assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
-        assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
-        
+        assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());        
         assertNotNull(person.getExternalIdentifiers());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
@@ -297,7 +350,7 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
         assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
-        
+        assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
         assertNotNull(person.getKeywords());
         assertEquals(1, person.getKeywords().getKeywords().size());
         assertNotNull(person.getKeywords().getLastModifiedDate());
@@ -307,22 +360,41 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(9), keyword.getPutCode());
         assertEquals("PUBLIC", keyword.getContent());
         assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
-        assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
-        
-        person.getName();
-        person.getOtherNames();
-        person.getPath();
-        person.getResearcherUrls();
-        
-        
-        fail();
+        assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());   
+        assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+        assertNotNull(person.getName());
+        assertNotNull(person.getName().getLastModifiedDate());
+        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals("Family Name", person.getName().getFamilyName().getContent());
+        assertEquals("Given Names", person.getName().getGivenNames().getContent());
+        assertEquals(Visibility.PUBLIC.value(), person.getName().getVisibility().value());
+        assertNotNull(person.getOtherNames());
+        assertEquals("/0000-0000-0000-0003/other-names", person.getOtherNames().getPath());
+        assertNotNull(person.getOtherNames().getLastModifiedDate());
+        assertEquals(1, person.getOtherNames().getOtherNames().size());
+        OtherName otherName = person.getOtherNames().getOtherNames().get(0);
+        assertEquals("Other Name PUBLIC", otherName.getContent());
+        assertNotNull(otherName.getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+        assertEquals(Long.valueOf(13), otherName.getPutCode());
+        assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+        assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());                
+        assertNotNull(person.getResearcherUrls());
+        assertEquals(1, person.getResearcherUrls().getResearcherUrls().size());
+        assertNotNull(person.getResearcherUrls().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/researcher-urls", person.getResearcherUrls().getPath());
+        ResearcherUrl rUrl = person.getResearcherUrls().getResearcherUrls().get(0);
+        assertNotNull(rUrl);
+        assertNotNull(rUrl.getUrl());
+        assertEquals("http://www.researcherurl.com?id=13", rUrl.getUrl().getValue());
+        assertEquals("public_rurl", rUrl.getUrlName());        
+        assertEquals(Visibility.PUBLIC.value(), rUrl.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
+        assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());        
+        assertEquals("/0000-0000-0000-0003/person", person.getPath());
     }
-
-    @Test
-    public void testFindActivityDetails() {
-        Response response = serviceDelegator.viewActivities(ORCID);
-        assertNotNull(response);
-        ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
+    
+    private void validateActivities(ActivitiesSummary summary) {
         assertNotNull(summary);
         // Check works
         assertNotNull(summary.getWorks());
@@ -357,10 +429,5 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals("/0000-0000-0000-0003/employment/17", summary.getEmployments().getSummaries().get(0).getPath());
         assertEquals("PUBLIC Department", summary.getEmployments().getSummaries().get(0).getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), summary.getEmployments().getSummaries().get(0).getVisibility().value());
-    }
-    
-    @Test
-    public void testFindRecord() {
-        fail();
     }
 }
