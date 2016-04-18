@@ -3368,8 +3368,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 fail("Invalid external identifier found: " + extId.getPutCode());
             }
         }
-        
-        
+                
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/keywords", person.getKeywords().getPath());
@@ -3416,19 +3415,85 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getOtherNames().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/other-names", person.getOtherNames().getPath());
         assertEquals(4, person.getOtherNames().getOtherNames().size());
+        for(OtherName otherName : person.getOtherNames().getOtherNames()) {
+            assertNotNull(otherName.getLastModifiedDate());
+            if(otherName.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("Other Name PUBLIC", otherName.getContent());
+                assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility());                   
+            } else if(otherName.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals("Other Name LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/14", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility());                
+            } else if(otherName.getPutCode().equals(Long.valueOf(15))) {
+                assertEquals("Other Name PRIVATE", otherName.getContent());
+                assertEquals(Long.valueOf(2), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/15", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility());                
+            } else if(otherName.getPutCode().equals(Long.valueOf(16))) {
+                assertEquals("Other Name SELF LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(3), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/16", otherName.getPath());
+                assertEquals("0000-0000-0000-0003", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility());                
+            } else {
+                fail("Invalid other name found: " + otherName.getPutCode());
+            }
+        }
         
         assertNotNull(person.getResearcherUrls());
         assertNotNull(person.getResearcherUrls().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/researcher-urls", person.getResearcherUrls().getPath());
         assertEquals(4, person.getResearcherUrls().getResearcherUrls().size());
-        
-        
-        
-        
+        for(ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
+            assertNotNull(rUrl.getLastModifiedDate());
+        }
         
         //Validate activities
         ActivitiesSummary activities = record.getActivitiesSummary();
         assertNotNull(activities);
+        assertNotNull(activities.getLastModifiedDate());        
+        
+        assertNotNull(activities.getEducations());
+        assertNotNull(activities.getEducations().getLastModifiedDate());
+        assertEquals(4, activities.getEducations().getSummaries().size());
+        for(EducationSummary education : activities.getEducations().getSummaries()) {
+            assertNotNull(education.getLastModifiedDate());
+        }
+        
+        assertNotNull(activities.getEmployments());
+        assertNotNull(activities.getEmployments().getLastModifiedDate());
+        assertEquals(4, activities.getEmployments().getSummaries().size());
+        for(EmploymentSummary employment : activities.getEmployments().getSummaries()) {
+            assertNotNull(employment.getLastModifiedDate());
+        }
+                
+        assertNotNull(activities.getFundings());
+        assertNotNull(activities.getFundings().getLastModifiedDate());
+        assertEquals(4, activities.getFundings().getFundingGroup().size());
+        for(FundingGroup group : activities.getFundings().getFundingGroup()) {
+            assertNotNull(group.getLastModifiedDate());
+        }
+        
+        assertNotNull(activities.getPeerReviews());
+        assertNotNull(activities.getPeerReviews().getLastModifiedDate());
+        assertEquals(4, activities.getPeerReviews().getPeerReviewGroup().size());
+        for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
+            assertNotNull(group.getLastModifiedDate());
+        }
+        
+        assertNotNull(activities.getWorks());
+        assertNotNull(activities.getWorks().getLastModifiedDate());
+        assertEquals(4, activities.getWorks().getWorkGroup().size());
+        for(WorkGroup group : activities.getWorks().getWorkGroup()) {
+            assertNotNull(group.getLastModifiedDate());
+        }
+        fail();
     }
     
     
