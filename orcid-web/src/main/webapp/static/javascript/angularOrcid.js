@@ -510,8 +510,6 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
                     var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
                     var url = getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds;
                     
-                    console.log(affiliationIds);
-                    
                     $.ajax({
                         url: url,                        
                         headers : {'Content-Type': 'application/json'},

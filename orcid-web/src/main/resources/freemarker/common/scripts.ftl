@@ -40,10 +40,12 @@ if (typeof jQuery == 'undefined') {
 <script type="text/javascript" >
     // CSRF
     var token = $("meta[name='_csrf']").attr("content");
-    var header = $("meta[name='_csrf_header']").attr("content");
-    $(document).ajaxSend(function(e, xhr, options) {
-        xhr.setRequestHeader(header, token);
-    });
+    var header = $("meta[name='_csrf_header']").attr("content");    
+    if (header && token){
+	    $(document).ajaxSend(function(e, xhr, options) {
+	        xhr.setRequestHeader(header, token);
+	    });
+    }
 </script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>
