@@ -18,16 +18,22 @@ package org.orcid.core.manager.impl;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordManager;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
+import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.record_rc2.CompletionDate;
 import org.orcid.jaxb.model.record_rc2.DeactivationDate;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Preferences;
 import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc2.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -47,10 +53,14 @@ public class RecordManagerImpl implements RecordManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private EmailManager emailManager;
 
     @Override
     public Record getPublicRecord(String orcid) {
         Record record = new Record();
+        record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(profileEntityManager.getPublicActivitiesSummary(orcid));
@@ -61,6 +71,7 @@ public class RecordManagerImpl implements RecordManager {
     @Override
     public Record getRecord(String orcid) {
         Record record = new Record();
+        record.setHistory(getHistory(orcid));
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(profileEntityManager.getActivitiesSummary(orcid));
@@ -91,9 +102,7 @@ public class RecordManagerImpl implements RecordManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         history.setClaimed(profile.getClaimed());
         if(profile.getCompletedDate() != null) {
-            CompletionDate completionDate = new CompletionDate();
-            completionDate.setValue(DateUtils.convertToXMLGregorianCalendar(profile.getCompletedDate()));
-            history.setCompletionDate(completionDate);           
+            history.setCompletionDate(new CompletionDate(DateUtils.convertToXMLGregorianCalendar(profile.getCompletedDate())));           
         }
         
         if(!PojoUtil.isEmpty(profile.getCreationMethod())) {
@@ -101,15 +110,38 @@ public class RecordManagerImpl implements RecordManager {
         }
         
         if(profile.getDeactivationDate() != null) {
-            DeactivationDate deactivationDate = new DeactivationDate();
-            deactivationDate.setValue(DateUtils.convertToXMLGregorianCalendar(profile.getDeactivationDate()));
-            history.setDeactivationDate(deactivationDate);
+            history.setDeactivationDate(new DeactivationDate(DateUtils.convertToXMLGregorianCalendar(profile.getDeactivationDate())));
         }
-        history.setLastModifiedDate(null);
-        history.setSource(null);
-        history.setSubmissionDate(null);
-        history.setVerifiedEmail(null);
-        history.setVerifiedPrimaryEmail(null);
+        
+        if(profile.getLastModified() != null) {            
+            history.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
+        }
+        
+        if(profile.getSubmissionDate() != null) {
+            history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(profile.getSubmissionDate())));
+        }                
+        
+        if(profile.getSource() != null) {
+            history.setSource(new Source(profile.getSource().getSourceId()));                
+        }
+        
+        boolean verfiedEmail = false;
+        boolean verfiedPrimaryEmail = false;
+        
+        Emails emails = emailManager.getEmails(orcid, profile.getLastModified().getTime());
+        if (emails != null) {
+            for (Email email : emails.getEmails()) {
+                if (email.isVerified()) {
+                    verfiedEmail = true;
+                    if (email.isPrimary()) {
+                        verfiedPrimaryEmail = true;
+                        break;
+                    }
+                }
+            }
+        }
+        history.setVerifiedEmail(verfiedEmail);
+        history.setVerifiedPrimaryEmail(verfiedPrimaryEmail);
         
         return history;        
     }

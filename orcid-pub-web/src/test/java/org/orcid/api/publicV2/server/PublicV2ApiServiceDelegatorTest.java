@@ -18,6 +18,8 @@ package org.orcid.api.publicV2.server;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,11 +35,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.test.DBUnitTest;
@@ -54,7 +66,10 @@ import org.springframework.test.context.ContextConfiguration;
 public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
             "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/WorksEntityData.xml", 
-            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/OrgAffiliationEntityData.xml");
+            "/data/ClientDetailsEntityData.xml", "/data/Oauth2TokenDetailsData.xml", "/data/OrgsEntityData.xml", "/data/ProfileFundingEntityData.xml", 
+            "/data/OrgAffiliationEntityData.xml", "/data/BiographyEntityData.xml", "/data/RecordNameEntityData.xml");
+    
+    private final String ORCID = "0000-0000-0000-0003";
     
     @Resource(name = "publicV2ApiServiceDelegator")
     PublicV2ApiServiceDelegator<?, ?, ?, ?, ?, ?, ?, ?, ?> serviceDelegator;
@@ -79,95 +94,273 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
-    public void testFindWorksDetails() {
-        Response response = serviceDelegator.viewActivities("4444-4444-4444-4446");
+    public void testViewWork() {
+        Response response = serviceDelegator.viewWork(ORCID, 11L);
+        assertNotNull(response);
+        Work work = (Work) response.getEntity();
+        assertNotNull(work);
+        assertNotNull(work.getWorkTitle());
+        assertNotNull(work.getWorkTitle().getTitle());
+        assertEquals("PUBLIC", work.getWorkTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(11), work.getPutCode());
+        assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
+    }
+
+    @Test
+    public void testViewFunding() {
+        Response response = serviceDelegator.viewFunding(ORCID, 10L);
+        assertNotNull(response);
+        Funding funding = (Funding) response.getEntity();
+        assertNotNull(funding);
+        assertNotNull(funding.getTitle());
+        assertNotNull(funding.getTitle().getTitle());
+        assertEquals(Long.valueOf(10), funding.getPutCode());
+        assertEquals("/0000-0000-0000-0003/funding/10", funding.getPath());
+        assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
+        assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
+    }
+
+    @Test
+    public void testViewEducation() {
+        Response response = serviceDelegator.viewEducation(ORCID, 20L);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        assertEquals(Long.valueOf(20), education.getPutCode());
+        assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
+        assertEquals("PUBLIC Department", education.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
+    }
+
+    @Test
+    public void testViewEmployment() {
+        Response response = serviceDelegator.viewEmployment(ORCID, 17L);
+        assertNotNull(response);
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        assertEquals(Long.valueOf(17), employment.getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
+        assertEquals("PUBLIC Department", employment.getDepartmentName());
+        assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());        
+    }
+    
+    @Test
+    public void testViewOtherNames() {
+        Response response = serviceDelegator.viewOtherName(ORCID, 13L);
+        assertNotNull(response);
+        OtherName otherName = (OtherName) response.getEntity();
+        assertNotNull(otherName);
+        assertEquals(Long.valueOf(13), otherName.getPutCode());
+        assertEquals("Other Name PUBLIC", otherName.getContent());
+        assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+    }
+    
+    @Test
+    public void testViewKeywords() {
+        Response response = serviceDelegator.viewKeyword(ORCID, 9L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals(Long.valueOf(9), keyword.getPutCode());
+        assertEquals("PUBLIC", keyword.getContent());
+        assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
+    }
+    
+    @Test
+    public void testExternalIdentifiers() {
+        Response response = serviceDelegator.viewExternalIdentifier(ORCID, 13L);
+        assertNotNull(response);
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals(Long.valueOf(13), extId.getPutCode());
+        assertEquals("public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
+    }
+    
+    @Test
+    public void testResearcherUrls() {
+        Response response = serviceDelegator.viewResearcherUrl(ORCID, 13L);
+        assertNotNull(response);
+        ResearcherUrl rUrl = (ResearcherUrl) response.getEntity();
+        assertNotNull(rUrl);
+        assertNotNull(rUrl.getUrl());
+        assertEquals("http://www.researcherurl.com?id=13", rUrl.getUrl().getValue());
+        assertEquals("public_rurl", rUrl.getUrlName());        
+        assertEquals(Visibility.PUBLIC.value(), rUrl.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
+    }
+    
+    @Test
+    public void testEmails() {
+        Response response = serviceDelegator.viewEmails(ORCID);
+        assertNotNull(response);
+        Emails emails = (Emails) response.getEntity();
+        assertNotNull(emails);
+        assertNotNull(emails.getEmails());
+        assertEquals(1, emails.getEmails().size());
+        Email email = emails.getEmails().get(0);
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
+        assertTrue(email.isCurrent());
+        assertTrue(email.isPrimary());
+        assertTrue(email.isVerified());
+        assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/email", emails.getPath());
+    }
+    
+    @Test
+    public void testAddress() {
+        Response response = serviceDelegator.viewAddress(ORCID, 9L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Long.valueOf(9), address.getPutCode());
+        assertNotNull(address.getCountry());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertTrue(address.getPrimary());        
+        assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
+    }
+    
+    @Test
+    public void testFindPersonalDetails() {
+        Response response = serviceDelegator.viewPersonalDetails(ORCID);
+        assertNotNull(response);
+        PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
+        assertNotNull(personalDetails);
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("Biography for 0000-0000-0000-0003", personalDetails.getBiography().getContent());
+        assertNotNull(personalDetails.getBiography().getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/biography", personalDetails.getBiography().getPath());
+        assertNotNull(personalDetails.getLastModifiedDate());
+        assertNotNull(personalDetails.getName());
+        assertNotNull(personalDetails.getName().getCreatedDate().getValue());
+        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals("Family Name", personalDetails.getName().getFamilyName().getContent());
+        assertEquals("Given Names", personalDetails.getName().getGivenNames().getContent());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getName().getVisibility().value());
+        assertNotNull(personalDetails.getName().getLastModifiedDate());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getLastModifiedDate());
+        assertEquals(1, personalDetails.getOtherNames().getOtherNames().size());
+        assertEquals("Other Name PUBLIC", personalDetails.getOtherNames().getOtherNames().get(0).getContent());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getOtherNames().getOtherNames().get(0).getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
+        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());
+    }
+    
+    @Test
+    public void testFindPerson() {
+        Response response = serviceDelegator.viewPerson(ORCID);
+        assertNotNull(response);
+        Person person = (Person) response.getEntity();
+        assertNotNull(person);
+        assertNotNull(person.getLastModifiedDate());
+        assertNotNull(person.getAddresses());
+        assertEquals("/0000-0000-0000-0003/address", person.getAddresses().getPath());
+        assertNotNull(person.getAddresses().getLastModifiedDate());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        Address address = person.getAddresses().getAddress().get(0);
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
+        assertEquals(Long.valueOf(9), address.getPutCode());
+        assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
+        assertTrue(address.getPrimary());
+        assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+        assertNotNull(person.getBiography());
+        assertEquals(Visibility.PUBLIC.value(), person.getBiography().getVisibility().value());
+        assertEquals("Biography for 0000-0000-0000-0003", person.getBiography().getContent());
+        assertNotNull(person.getBiography().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/biography", person.getBiography().getPath());        
+        assertNotNull(person.getEmails());
+        assertEquals(1, person.getEmails().getEmails().size());
+        Email email = person.getEmails().getEmails().get(0);
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmail());
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+        assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+        
+        assertNotNull(person.getExternalIdentifiers());
+        assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(extId);
+        assertEquals(Long.valueOf(13), extId.getPutCode());
+        assertEquals("public_type", extId.getType());
+        assertNotNull(extId.getUrl());
+        assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
+        assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
+        
+        assertNotNull(person.getKeywords());
+        assertEquals(1, person.getKeywords().getKeywords().size());
+        assertNotNull(person.getKeywords().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/keywords", person.getKeywords().getPath());
+        Keyword keyword = person.getKeywords().getKeywords().get(0);
+        assertNotNull(keyword);
+        assertEquals(Long.valueOf(9), keyword.getPutCode());
+        assertEquals("PUBLIC", keyword.getContent());
+        assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
+        
+        person.getName();
+        person.getOtherNames();
+        person.getPath();
+        person.getResearcherUrls();
+        
+        
+        fail();
+    }
+
+    @Test
+    public void testFindActivityDetails() {
+        Response response = serviceDelegator.viewActivities(ORCID);
         assertNotNull(response);
         ActivitiesSummary summary = (ActivitiesSummary) response.getEntity();
         assertNotNull(summary);
         // Check works
         assertNotNull(summary.getWorks());
         assertEquals(1, summary.getWorks().getWorkGroup().size());
-        assertEquals(Long.valueOf(5), summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
-        assertEquals("/4444-4444-4444-4446/work/5", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath());
-        assertEquals("Journal article A", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(11), summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertEquals("/0000-0000-0000-0003/work/11", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPath());
+        assertEquals("PUBLIC", summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), summary.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility().value());
         
         // Check fundings
         assertNotNull(summary.getFundings());
         assertEquals(1, summary.getFundings().getFundingGroup().size());
-        assertEquals(Long.valueOf(5), summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
-        assertEquals("/4444-4444-4444-4446/funding/5", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath());
-        assertEquals("Public Funding", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
+        assertEquals(Long.valueOf(10), summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertEquals("/0000-0000-0000-0003/funding/10", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPath());
+        assertEquals("PUBLIC", summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
         assertEquals(Visibility.PUBLIC.value(), summary.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility().value());
         
         // Check Educations
         assertNotNull(summary.getEducations());
         assertNotNull(summary.getEducations().getSummaries());
         assertEquals(1, summary.getEducations().getSummaries().size());
-        assertEquals(Long.valueOf(7), summary.getEducations().getSummaries().get(0).getPutCode());
-        assertEquals("/4444-4444-4444-4446/education/7", summary.getEducations().getSummaries().get(0).getPath());
-        assertEquals("Education Dept # 2", summary.getEducations().getSummaries().get(0).getDepartmentName());
+        assertEquals(Long.valueOf(20), summary.getEducations().getSummaries().get(0).getPutCode());
+        assertEquals("/0000-0000-0000-0003/education/20", summary.getEducations().getSummaries().get(0).getPath());
+        assertEquals("PUBLIC Department", summary.getEducations().getSummaries().get(0).getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), summary.getEducations().getSummaries().get(0).getVisibility().value());
         
         // Check Employments
         assertNotNull(summary.getEmployments());
         assertNotNull(summary.getEmployments().getSummaries());
         assertEquals(1, summary.getEmployments().getSummaries().size());
-        assertEquals(Long.valueOf(8), summary.getEmployments().getSummaries().get(0).getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/8", summary.getEmployments().getSummaries().get(0).getPath());
-        assertEquals("Employment Dept # 2", summary.getEmployments().getSummaries().get(0).getDepartmentName());
+        assertEquals(Long.valueOf(17), summary.getEmployments().getSummaries().get(0).getPutCode());
+        assertEquals("/0000-0000-0000-0003/employment/17", summary.getEmployments().getSummaries().get(0).getPath());
+        assertEquals("PUBLIC Department", summary.getEmployments().getSummaries().get(0).getDepartmentName());
         assertEquals(Visibility.PUBLIC.value(), summary.getEmployments().getSummaries().get(0).getVisibility().value());
     }
-
+    
     @Test
-    public void testViewWork() {
-        Response response = serviceDelegator.viewWork("4444-4444-4444-4446", Long.valueOf("5"));
-        assertNotNull(response);
-        Work work = (Work) response.getEntity();
-        assertNotNull(work);
-        assertNotNull(work.getWorkTitle());
-        assertNotNull(work.getWorkTitle().getTitle());
-        assertEquals("Journal article A", work.getWorkTitle().getTitle().getContent());
-        assertEquals(Long.valueOf("5"), work.getPutCode());
-        assertEquals("/4444-4444-4444-4446/work/5", work.getPath());
-        assertEquals(WorkType.JOURNAL_ARTICLE, work.getWorkType());
-    }
-
-    @Test
-    public void testViewFunding() {
-        Response response = serviceDelegator.viewFunding("4444-4444-4444-4446", Long.valueOf("5"));
-        assertNotNull(response);
-        Funding funding = (Funding) response.getEntity();
-        assertNotNull(funding);
-        assertNotNull(funding.getTitle());
-        assertNotNull(funding.getTitle().getTitle());
-        assertEquals(Long.valueOf("5"), funding.getPutCode());
-        assertEquals("/4444-4444-4444-4446/funding/5", funding.getPath());
-        assertEquals("Public Funding", funding.getTitle().getTitle().getContent());
-        assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());
-    }
-
-    @Test
-    public void testViewEducation() {
-        Response response = serviceDelegator.viewEducation("4444-4444-4444-4446", Long.valueOf("7"));
-        assertNotNull(response);
-        Education education = (Education) response.getEntity();
-        assertNotNull(education);
-        assertEquals(Long.valueOf("7"), education.getPutCode());
-        assertEquals("/4444-4444-4444-4446/education/7", education.getPath());
-        assertEquals("Education Dept # 2", education.getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
-    }
-
-    @Test
-    public void testViewEmployment() {
-        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", Long.valueOf("8"));
-        assertNotNull(response);
-        Employment employment = (Employment) response.getEntity();
-        assertNotNull(employment);
-        assertEquals(Long.valueOf("8"), employment.getPutCode());
-        assertEquals("/4444-4444-4444-4446/employment/8", employment.getPath());
-        assertEquals("Employment Dept # 2", employment.getDepartmentName());
-        assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());
+    public void testFindRecord() {
+        fail();
     }
 }

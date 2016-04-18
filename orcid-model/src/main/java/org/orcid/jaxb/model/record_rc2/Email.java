@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.CreatedDate;
@@ -30,6 +31,8 @@ import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -58,6 +61,15 @@ public class Email implements Filterable, Serializable {
     protected String path;
     @XmlAttribute
     protected Visibility visibility;
+    @XmlTransient
+    @JsonIgnore
+    protected Boolean verified;
+    @XmlTransient
+    @JsonIgnore
+    protected Boolean current;
+    @XmlTransient
+    @JsonIgnore
+    protected Boolean primary;
 
     public String getEmail() {
         return email;
@@ -113,6 +125,30 @@ public class Email implements Filterable, Serializable {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }    
+    
+    public Boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    public Boolean isCurrent() {
+        return current;
+    }
+
+    public void setCurrent(boolean current) {
+        this.current = current;
+    }
+
+    public Boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
     }
 
     @Override

@@ -125,9 +125,7 @@
 			client_source_id="APP-5555555555555555"
 			display_index="2"
 			/>
-			
-			
-			
+									
 	<profile_funding 
 			id="8" 
 			orcid="4444-4444-4444-4446" 
@@ -158,5 +156,48 @@
 			display_index="4"
 			/>		
 			
-								  		    		
+	<profile_funding 
+			id="10" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="PUBLIC" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PUBLIC" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="0"
+			/>
+			
+	<profile_funding 
+			id="11" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="LIMITED" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="LIMITED" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="0"
+			/>
+			
+	<profile_funding 
+			id="12" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="PRIVATE" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="0"
+			/>			
 </dataset>
