@@ -21,11 +21,13 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 
 /**
  * 
@@ -50,12 +52,19 @@ public class BiographyManagerImpl implements BiographyManager {
             bio.setContent(profile.getBiographyEntity().getBiography());
             if(profile.getBiographyEntity().getVisibility() != null) {
                 bio.setVisibility(profile.getBiographyEntity().getVisibility());
-            }            
+            } 
+            //This should never be null
+            if(profile.getBiographyEntity().getLastModified() != null) {
+                bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getBiographyEntity().getLastModified())));
+            } else {
+                bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
+            }     
         } else {
             bio.setContent(profile.getBiography()); 
             if(profile.getBiographyVisibility() != null) {
                 bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getBiographyVisibility().value()));
-            }            
+            }
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
         }
         
         return bio;
@@ -83,7 +92,6 @@ public class BiographyManagerImpl implements BiographyManager {
         if (bio == null || PojoUtil.isEmpty(bio.getContent()) || bio.getVisibility() == null) {
             return;
         }
-
         biographyDao.createBiography(orcid, bio.getContent(), bio.getVisibility());
     }
 }

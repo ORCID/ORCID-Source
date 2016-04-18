@@ -1415,14 +1415,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         // only names names from bio with a visibility setting
         PersonalDetails minimalPersonalDetails = new PersonalDetails();
         minimalPersonalDetails.setOtherNames(null);
-        minimalPersonalDetails.setCreditName(new CreditName());
+        CreditName creditName = new CreditName();
+        creditName.setVisibility(Visibility.PUBLIC);
+        minimalPersonalDetails.setCreditName(creditName);
         minimalPersonalDetails.setGivenNames(new GivenNames("Given Names Deactivated"));
         minimalPersonalDetails.setFamilyName(new FamilyName("Family Name Deactivated"));
 
         for (Email email : minimalContactDetails.getEmail()) {
             setVisibilityToPrivate(email);
         }
-        setVisibilityToPrivate(minimalPersonalDetails.getCreditName());
         setVisibilityToPrivate(minimalPersonalDetails.getOtherNames());
         if (minimalPersonalDetails.getOtherNames() != null && minimalPersonalDetails.getOtherNames().getOtherName() != null){
             for (OtherName name : minimalPersonalDetails.getOtherNames().getOtherName())
