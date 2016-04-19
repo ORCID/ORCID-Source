@@ -3635,7 +3635,44 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertEquals(1, group.getPeerReviewSummary().size());
             PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
             assertNotNull(peerReview.getLastModifiedDate());
-            
+            assertNotNull(peerReview.getCompletionDate());
+            assertEquals("2016", peerReview.getCompletionDate().getYear().getValue());
+            assertEquals("02", peerReview.getCompletionDate().getMonth().getValue());
+            assertEquals("02", peerReview.getCompletionDate().getDay().getValue());
+            assertNotNull(peerReview.getExternalIdentifiers());
+            assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
+            assertEquals("agr", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+            if(peerReview.getPutCode().equals(Long.valueOf(9))) {
+                assertEquals("0", peerReview.getDisplayIndex());              
+                assertEquals("issn:0000009", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/9", peerReview.getPath());
+                assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), peerReview.getVisibility().value());
+            } else if(peerReview.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals("1", peerReview.getDisplayIndex());
+                assertEquals("issn:0000010", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/10", peerReview.getPath());
+                assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), peerReview.getVisibility().value());
+            } else if(peerReview.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("2", peerReview.getDisplayIndex());
+                assertEquals("issn:0000011", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/11", peerReview.getPath());
+                assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), peerReview.getVisibility().value());
+            } else if(peerReview.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("3", peerReview.getDisplayIndex());
+                assertEquals("issn:0000012", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/12", peerReview.getPath());
+                assertEquals("work:external-identifier-id#4", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("0000-0000-0000-0003", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), peerReview.getVisibility().value());
+            } else {
+                fail("Invalid peer review found: " + peerReview.getPutCode());
+            }            
         }
         
         assertNotNull(activities.getWorks());
@@ -3648,8 +3685,68 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
             assertNotNull(group.getWorkSummary());
             assertEquals(1, group.getWorkSummary().size());
+            WorkSummary work = group.getWorkSummary().get(0);
+            assertNotNull(work.getLastModifiedDate());
+            if(work.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("0", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+                assertEquals("PUBLIC", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.PUBLIC.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+            } else if(work.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("1", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("2", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+                assertEquals("LIMITED", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.LIMITED.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/12", work.getPath());
+            } else if(work.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("2", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("3", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+                assertEquals("PRIVATE", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.PRIVATE.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/13", work.getPath());
+            } else if(work.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals("3", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("4", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("0000-0000-0000-0003", work.getSource().retrieveSourcePath());
+                assertEquals("SELF LIMITED", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.LIMITED.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/14", work.getPath());
+            } else {
+                fail("Invalid work found: " + work.getPutCode());
+            }
         }
-        fail();
     }
     
     

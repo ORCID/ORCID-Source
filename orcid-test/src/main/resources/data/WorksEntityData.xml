@@ -183,6 +183,7 @@
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="PUBLIC"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;1&quot;}}],&quot;scope&quot;:null}"
+          display_index="0"
             />                                
     
     <work work_id="12"
@@ -198,6 +199,7 @@
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="LIMITED"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;2&quot;}}],&quot;scope&quot;:null}"
+          display_index="1"
             />
             
 	<work work_id="13"
@@ -213,6 +215,7 @@
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="PRIVATE"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;3&quot;}}],&quot;scope&quot;:null}"
+          display_index="2"
             />
             
 	<work work_id="14"
@@ -228,6 +231,7 @@
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="LIMITED"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;4&quot;}}],&quot;scope&quot;:null}"
+          display_index="3"
             />
 
 	<work work_id="15"
@@ -243,5 +247,6 @@
           added_to_profile_date="2016-04-01 11:09:28.636"
           visibility="PRIVATE"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;5&quot;}}],&quot;scope&quot;:null}"
+          display_index="4"
             />                  
 </dataset>
