@@ -3537,6 +3537,33 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, activities.getEmployments().getSummaries().size());
         for(EmploymentSummary employment : activities.getEmployments().getSummaries()) {
             assertNotNull(employment.getLastModifiedDate());
+            if(employment.getPutCode().equals(Long.valueOf(17))) {
+                assertEquals("PUBLIC Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
+                assertEquals("PUBLIC", employment.getRoleTitle());
+                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());
+            } else if(employment.getPutCode().equals(Long.valueOf(18))) {
+                assertEquals("LIMITED Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/18", employment.getPath());
+                assertEquals("LIMITED", employment.getRoleTitle());
+                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());                
+            } else if(employment.getPutCode().equals(Long.valueOf(19))) {
+                assertEquals("PRIVATE Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/19", employment.getPath());
+                assertEquals("PRIVATE", employment.getRoleTitle());
+                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
+            } else if(employment.getPutCode().equals(Long.valueOf(23))) {
+                assertEquals("SELF LIMITED Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/23", employment.getPath());
+                assertEquals("SELF LIMITED", employment.getRoleTitle());
+                assertEquals("0000-0000-0000-0003", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
+            } else {
+                fail("Invalid employment found: " + employment.getPutCode());
+            }
         }
                 
         assertNotNull(activities.getFundings());
@@ -3544,6 +3571,56 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, activities.getFundings().getFundingGroup().size());
         for(FundingGroup group : activities.getFundings().getFundingGroup()) {
             assertNotNull(group.getLastModifiedDate());
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getFundingSummary());
+            assertEquals(1, group.getFundingSummary().size());
+            FundingSummary funding = group.getFundingSummary().get(0);
+            assertNotNull(funding.getLastModifiedDate());
+            if(funding.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals("0", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("1", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/10", funding.getPath());
+                assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+                assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());   
+            } else if(funding.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("1", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("2", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/11", funding.getPath());
+                assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+                assertEquals("LIMITED", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.LIMITED.value(), funding.getVisibility().value());
+            } else if(funding.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("2", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("3", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/12", funding.getPath());
+                assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+                assertEquals("PRIVATE", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.PRIVATE.value(), funding.getVisibility().value());
+            } else if(funding.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("3", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("4", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/13", funding.getPath());
+                assertEquals("0000-0000-0000-0003", funding.getSource().retrieveSourcePath());
+                assertEquals("SELF LIMITED", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.LIMITED.value(), funding.getVisibility().value());
+            } else {
+                fail("Invalid funding found: " + funding.getPutCode());
+            }           
         }
         
         assertNotNull(activities.getPeerReviews());
@@ -3551,6 +3628,14 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, activities.getPeerReviews().getPeerReviewGroup().size());
         for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
             assertNotNull(group.getLastModifiedDate());
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getPeerReviewSummary());            
+            assertEquals(1, group.getPeerReviewSummary().size());
+            PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
+            assertNotNull(peerReview.getLastModifiedDate());
+            
         }
         
         assertNotNull(activities.getWorks());
@@ -3558,6 +3643,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, activities.getWorks().getWorkGroup().size());
         for(WorkGroup group : activities.getWorks().getWorkGroup()) {
             assertNotNull(group.getLastModifiedDate());
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getWorkSummary());
+            assertEquals(1, group.getWorkSummary().size());
         }
         fail();
     }
