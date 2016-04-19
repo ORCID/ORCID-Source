@@ -43,6 +43,8 @@ public interface OrcidSecurityManager {
     boolean isAdmin();
 
     boolean isPasswordConfirmationRequired();
+    
+    boolean hasScope(ScopePathType scope);
 
     String getClientIdFromAPIRequest();
     

@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.AccessControlException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -190,22 +191,34 @@ public class MemberV2ApiServiceDelegatorImpl
      */
     @Override
     public Response viewActivities(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-        if (profileDao.isProfileDeprecated(orcid)) {
-            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if (entity.getDeprecatedDate() != null) {
-                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);
+            ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+            if (profileDao.isProfileDeprecated(orcid)) {
+                StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
+                Map<String, String> params = new HashMap<String, String>();
+                params.put(OrcidDeprecatedException.ORCID, primary.toString());
+                if (entity.getDeprecatedDate() != null) {
+                    XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
+                    params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+                }
+                throw new OrcidDeprecatedException(params);
             }
-            throw new OrcidDeprecatedException(params);
+            ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);
+            ActivityUtils.cleanEmptyFields(as);
+            ActivityUtils.setPathToActivity(as, orcid);
+            return Response.ok(as).build();
+        } catch(AccessControlException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public activities.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                ActivitiesSummary as =profileEntityManager.getPublicActivitiesSummary(orcid);
+                ActivityUtils.cleanEmptyFields(as);
+                ActivityUtils.setPathToActivity(as, orcid);
+                return Response.ok(as).build();
+            } else {
+                throw e;
+            }
         }
-        ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);
-        ActivityUtils.cleanEmptyFields(as);
-        ActivityUtils.setPathToActivity(as, orcid);
-        return Response.ok(as).build();
     }
 
     @Override

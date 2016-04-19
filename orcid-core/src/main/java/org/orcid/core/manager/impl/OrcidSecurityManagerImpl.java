@@ -324,7 +324,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return null;
     }
 
-    private boolean hasScope(ScopePathType scope) {
+    public boolean hasScope(ScopePathType scope) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         if (oAuth2Authentication != null) {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
