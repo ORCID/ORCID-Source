@@ -3422,25 +3422,25 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
                 assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility());                   
+                assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());                   
             } else if(otherName.getPutCode().equals(Long.valueOf(14))) {
                 assertEquals("Other Name LIMITED", otherName.getContent());
                 assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/14", otherName.getPath());
                 assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility());                
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());                
             } else if(otherName.getPutCode().equals(Long.valueOf(15))) {
                 assertEquals("Other Name PRIVATE", otherName.getContent());
                 assertEquals(Long.valueOf(2), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/15", otherName.getPath());
                 assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
-                assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility());                
+                assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility().value());                
             } else if(otherName.getPutCode().equals(Long.valueOf(16))) {
                 assertEquals("Other Name SELF LIMITED", otherName.getContent());
                 assertEquals(Long.valueOf(3), otherName.getDisplayIndex());
                 assertEquals("/0000-0000-0000-0003/other-names/16", otherName.getPath());
                 assertEquals("0000-0000-0000-0003", otherName.getSource().retrieveSourcePath());
-                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility());                
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());                
             } else {
                 fail("Invalid other name found: " + otherName.getPutCode());
             }
@@ -3452,6 +3452,37 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, person.getResearcherUrls().getResearcherUrls().size());
         for(ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
             assertNotNull(rUrl.getLastModifiedDate());
+            if(rUrl.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=13", rUrl.getUrl().getValue());
+                assertEquals("public_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.PUBLIC.value(), rUrl.getVisibility().value());
+            } else if(rUrl.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals(Long.valueOf(1), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/14", rUrl.getPath());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=14", rUrl.getUrl().getValue());
+                assertEquals("limited_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.LIMITED.value(), rUrl.getVisibility().value());
+            } else if(rUrl.getPutCode().equals(Long.valueOf(15))) {
+                assertEquals(Long.valueOf(2), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/15", rUrl.getPath());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=15", rUrl.getUrl().getValue());
+                assertEquals("private_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.PRIVATE.value(), rUrl.getVisibility().value());
+            } else if(rUrl.getPutCode().equals(Long.valueOf(16))) {
+                assertEquals(Long.valueOf(3), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/16", rUrl.getPath());
+                assertEquals("0000-0000-0000-0003", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=16", rUrl.getUrl().getValue());
+                assertEquals("self_limited_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.LIMITED.value(), rUrl.getVisibility().value());
+            } else {
+                fail("Invalid researcher url found: " + rUrl.getPutCode());
+            }
         }
         
         //Validate activities
@@ -3464,6 +3495,41 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(4, activities.getEducations().getSummaries().size());
         for(EducationSummary education : activities.getEducations().getSummaries()) {
             assertNotNull(education.getLastModifiedDate());
+            assertNotNull(education.getStartDate());
+            assertEquals("2016", education.getStartDate().getYear().getValue());
+            assertEquals("04", education.getStartDate().getMonth().getValue());
+            assertEquals("01", education.getStartDate().getDay().getValue());                        
+            assertNotNull(education.getEndDate());
+            assertEquals("2030", education.getEndDate().getYear().getValue());
+            assertEquals("01", education.getEndDate().getMonth().getValue());
+            assertEquals("01", education.getEndDate().getDay().getValue());                        
+            if(education.getPutCode().equals(Long.valueOf(20))) {
+                assertEquals("PUBLIC Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
+                assertEquals("PUBLIC", education.getRoleTitle());
+                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
+            } else if(education.getPutCode().equals(Long.valueOf(21))) {
+                assertEquals("LIMITED Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/21", education.getPath());
+                assertEquals("LIMITED", education.getRoleTitle());
+                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
+            } else if(education.getPutCode().equals(Long.valueOf(22))) {
+                assertEquals("PRIVATE Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/22", education.getPath());
+                assertEquals("PRIVATE", education.getRoleTitle());
+                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
+            } else if(education.getPutCode().equals(Long.valueOf(25))) {
+                assertEquals("SELF LIMITED Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/25", education.getPath());
+                assertEquals("SELF LIMITED", education.getRoleTitle());
+                assertEquals("0000-0000-0000-0003", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
+            } else {
+                fail("Invalid education found: " + education.getPutCode());
+            }
         }
         
         assertNotNull(activities.getEmployments());
