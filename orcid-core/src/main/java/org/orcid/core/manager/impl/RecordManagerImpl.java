@@ -121,7 +121,7 @@ public class RecordManagerImpl implements RecordManager {
         }
         
         if(!PojoUtil.isEmpty(profile.getCreationMethod())) {
-            history.setCreationMethod(CreationMethod.valueOf(profile.getCreationMethod()));
+            history.setCreationMethod(CreationMethod.fromValue(profile.getCreationMethod()));
         }
         
         if(profile.getDeactivationDate() != null) {

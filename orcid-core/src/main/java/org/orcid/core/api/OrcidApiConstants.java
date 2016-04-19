@@ -35,7 +35,7 @@ public class OrcidApiConstants {
     public static final String CLIENT_PATH = "/client/{client_id:[^/]+}";
     public static final String PERMISSIONS_PATH = "/{orcid}/notification-permission";
     public static final String PERMISSIONS_VIEW_PATH = "/{orcid}/notification-permission/{id}";
-    public static final String RECORD = "/{orcid}/record";
+    public static final String RECORD = "/{orcid:[^/]+}{ignore:(/record)?}";
     public static final String ACTIVITIES = "/{orcid}/activities";
     public static final String WORK = "/{orcid}/work";
     public static final String WORK_SUMMARY = "/{orcid}/work/summary";
