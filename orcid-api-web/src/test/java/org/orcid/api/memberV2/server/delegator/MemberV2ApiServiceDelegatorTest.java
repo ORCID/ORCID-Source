@@ -27,6 +27,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.security.AccessControlException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -2776,8 +2777,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     @Test
     public void testViewOtherProfileDontWork() {
-        //Set all possible permissions to user 4444-4444-4444-4446
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
+        //Set all possible permissions to user 0000-0000-0000-0001
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
                 ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
                 ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
                 ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
@@ -2785,7 +2786,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
                 ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
         //Try to view anything on the user
-        String orcid = "4444-4444-4444-4442";
+        String orcid = "0000-0000-0000-0003";
         try {
             //Check activities
             serviceDelegator.viewActivities(orcid);
@@ -2797,7 +2798,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewAddress(orcid, 1L);
+            serviceDelegator.viewAddress(orcid, 9L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2815,7 +2816,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }                
         
         try {
-            serviceDelegator.viewEducation(orcid, 1L);
+            serviceDelegator.viewEducation(orcid, 20L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2824,7 +2825,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEducationSummary(orcid, 1L);
+            serviceDelegator.viewEducationSummary(orcid, 20L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2842,7 +2843,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmployment(orcid, 16L);
+            serviceDelegator.viewEmployment(orcid, 17L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2851,7 +2852,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, 16L);
+            serviceDelegator.viewEmploymentSummary(orcid, 17L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2860,7 +2861,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, 2L);
+            serviceDelegator.viewExternalIdentifier(orcid, 13L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2878,7 +2879,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFunding(orcid, 7L);
+            serviceDelegator.viewFunding(orcid, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2887,7 +2888,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFundingSummary(orcid, 7L);
+            serviceDelegator.viewFundingSummary(orcid, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2896,7 +2897,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewKeyword(orcid, 7L);
+            serviceDelegator.viewKeyword(orcid, 9L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2914,7 +2915,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewOtherName(orcid, 10L);
+            serviceDelegator.viewOtherName(orcid, 13L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2950,7 +2951,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewResearcherUrl(orcid, 9L);
+            serviceDelegator.viewResearcherUrl(orcid, 13L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -3013,10 +3014,232 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @Test
     public void testReadPublicScopeWorks() {
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        
+        //Check that lists returns only PUBLIC elements
+        //Check that only can see public items
+        
+        /**
+         * ACTIVITIES
+         * */        
+        try {
+            //Check you get only public activities
+            Response r = serviceDelegator.viewActivities(orcid);
+            ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
+            assertNotNull(as);
+            assertNotNull(as.getEducations());
+            assertEquals(1, as.getEducations().getSummaries().size());
+            assertEquals(Long.valueOf(17), as.getEducations().getSummaries().get(0).getPutCode());
+            assertNotNull(as.getEmployments());
+            assertEquals(1, as.getEmployments().getSummaries().size());
+            assertEquals(Long.valueOf(20), as.getEmployments().getSummaries().get(0).getPutCode());
+            assertNotNull(as.getFundings());
+            assertEquals(1, as.getFundings().getFundingGroup().size());
+            assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+            assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+            assertNotNull(as.getPeerReviews());
+            assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+            assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+            assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+            assertNotNull(as.getWorks());
+            assertEquals(1, as.getWorks().getWorkGroup().size());
+            assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+            assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        
+        //Check educations
+        //Public works
+        //Limited fails
+        try {
+            fail();
+        } catch(AccessControlException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Check employments
+        //Public works
+        //Limited fails
+        try {
+            fail();
+        } catch(AccessControlException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Check funding        
+        //Public works
+        //Limited fails
+        try {
+            fail();
+        } catch(AccessControlException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Check peer reviews
+        //Public works
+        //Limited fails
+        try {
+            fail();
+        } catch(AccessControlException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        // Check works
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        /**
+         * PERSON
+         */
+        fail();
+        // Check address
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Check other names
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Check keywords
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Check researcher urls
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Check external identifiers
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        // Check emails
+        // Public works
+        // Limited fails
+        try {
+            fail();
+        } catch (AccessControlException e) {
+
+        } catch (Exception e) {
+            fail();
+        }
+
+        /**
+         * RECORD
+         * */
+        fail();
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @Test    
     public void testAddWorkWithInvalidExtIdTypeFail() {
