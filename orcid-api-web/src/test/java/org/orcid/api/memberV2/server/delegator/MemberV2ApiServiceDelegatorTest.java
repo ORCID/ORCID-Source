@@ -2783,10 +2783,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
                 ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
                 ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
-                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED, ScopePathType.READ_PUBLIC);
+                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
         //Try to view anything on the user
         String orcid = "4444-4444-4444-4442";
-        Long putCode = 1L;
         try {
             //Check activities
             serviceDelegator.viewActivities(orcid);
@@ -2798,7 +2797,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewAddress(orcid, putCode);
+            serviceDelegator.viewAddress(orcid, 1L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2813,10 +2812,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertEquals("Access token is for a different record", ou.getMessage());
         } catch(Exception e) {
             fail();
-        }
+        }                
         
         try {
-            serviceDelegator.viewBiography(orcid);
+            serviceDelegator.viewEducation(orcid, 1L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2825,16 +2824,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEducation(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEducationSummary(orcid, putCode);
+            serviceDelegator.viewEducationSummary(orcid, 1L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2852,7 +2842,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmployment(orcid, putCode);
+            serviceDelegator.viewEmployment(orcid, 16L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2861,7 +2851,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, putCode);
+            serviceDelegator.viewEmploymentSummary(orcid, 16L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2870,7 +2860,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, putCode);
+            serviceDelegator.viewExternalIdentifier(orcid, 2L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2888,7 +2878,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFunding(orcid, putCode);
+            serviceDelegator.viewFunding(orcid, 7L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2897,7 +2887,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewFundingSummary(orcid, putCode);
+            serviceDelegator.viewFundingSummary(orcid, 7L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2906,7 +2896,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewKeyword(orcid, putCode);
+            serviceDelegator.viewKeyword(orcid, 7L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2924,7 +2914,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewOtherName(orcid, putCode);
+            serviceDelegator.viewOtherName(orcid, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2942,7 +2932,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewPeerReview(orcid, putCode);
+            serviceDelegator.viewPeerReview(orcid, 9L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2951,7 +2941,52 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         
         try {
-            serviceDelegator.viewPeerReviewSummary(orcid, putCode);
+            serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 9L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewResearcherUrls(orcid);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWork(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWorkSummary(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("Access token is for a different record", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        try {
+            serviceDelegator.viewBiography(orcid);
             fail();
         } catch(OrcidUnauthorizedException ou) {
             assertEquals("Access token is for a different record", ou.getMessage());
@@ -2976,42 +3011,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }
-        
-        try {
-            serviceDelegator.viewResearcherUrl(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewResearcherUrls(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWork(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWorkSummary(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+    }
+    
+    @Test
+    public void testReadPublicScopeWorks() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_PUBLIC);
     }
     
     @Test    

@@ -158,31 +158,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
-    }
-
-    @Override
-    public void checkVisibility(OtherName otherName, String orcid) {
-        checkIsCorrectUser(orcid);
-        if (Visibility.PRIVATE.equals(otherName.getVisibility())) {
-            OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-            String clientId = null;
-
-            if (oAuth2Authentication != null) {
-                OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-                clientId = authorizationRequest.getClientId();
-            }
-
-            if (clientId == null || otherName.getSource() == null || !clientId.equals(otherName.getSource().retrieveSourcePath())) {
-                throw new OrcidVisibilityException();
-            }
-        }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
-        if (!hasReadLimitedScope) {
-            if (Visibility.LIMITED.equals(otherName.getVisibility())) {
-                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
-            }
-        }
-    }
+    }    
 
     @Override
     public void checkSource(SourceEntity existingSource) {
@@ -392,5 +368,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
         return false;
+    }
+
+    @Override
+    public void checkIsPublic(Filterable filterable) {
+        if(!org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+            throw new OrcidUnauthorizedException("The activity is not public");
+        }
     }
 }
