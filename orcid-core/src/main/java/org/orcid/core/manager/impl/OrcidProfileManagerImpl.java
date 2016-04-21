@@ -397,9 +397,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         ProfileEntity profileEntity = adapter.toProfileEntity(orcidProfile, existingProfileEntity);
         profileEntity.setLastModified(new Date());
         profileEntity.setIndexingStatus(IndexingStatus.PENDING);
-        ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);
-
         profileDao.flush();
+        ProfileEntity updatedProfileEntity = profileDao.merge(profileEntity);        
         profileDao.refresh(updatedProfileEntity);
         OrcidProfile updatedOrcidProfile = convertToOrcidProfile(updatedProfileEntity, LoadOptions.ALL);
 
