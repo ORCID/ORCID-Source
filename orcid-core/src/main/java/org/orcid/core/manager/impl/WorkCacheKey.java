@@ -28,12 +28,10 @@ public class WorkCacheKey implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private long id;
-    private long lastModified;
     private String releaseName;
 
-    public WorkCacheKey(Long id, long lastModified, String releaseName) {
+    public WorkCacheKey(Long id, String releaseName) {
         this.id = id;
-        this.lastModified = lastModified;
         this.releaseName = releaseName;
     }
 
@@ -42,7 +40,6 @@ public class WorkCacheKey implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (id ^ (id >>> 32));
-        result = prime * result + (int) (lastModified ^ (lastModified >>> 32));
         result = prime * result + ((releaseName == null) ? 0 : releaseName.hashCode());
         return result;
     }
@@ -57,8 +54,6 @@ public class WorkCacheKey implements Serializable {
             return false;
         WorkCacheKey other = (WorkCacheKey) obj;
         if (id != other.id)
-            return false;
-        if (lastModified != other.lastModified)
             return false;
         if (releaseName == null) {
             if (other.releaseName != null)
