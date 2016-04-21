@@ -3035,19 +3035,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     
     
-    
-    
-    
-    
-    
     @Test
-    public void testReadPublicScopeWorks() {
+    public void testReadPublicScope_Activities() {
         String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
         
         //Check that lists returns only PUBLIC elements
-        //Check that only can see public items
-        
         /**
          * ACTIVITIES
          * */        
@@ -3058,10 +3051,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertNotNull(as);
             assertNotNull(as.getEducations());
             assertEquals(1, as.getEducations().getSummaries().size());
-            assertEquals(Long.valueOf(17), as.getEducations().getSummaries().get(0).getPutCode());
+            assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
             assertNotNull(as.getEmployments());
             assertEquals(1, as.getEmployments().getSummaries().size());
-            assertEquals(Long.valueOf(20), as.getEmployments().getSummaries().get(0).getPutCode());
+            assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
             assertNotNull(as.getFundings());
             assertEquals(1, as.getFundings().getFundingGroup().size());
             assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
@@ -3077,138 +3070,195 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }
+    }
+    
+    @Test
+    public void testReadPublicScope_Educations() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEducation(orcid, 20L);
+        assertNotNull(r);
+        assertEquals(Education.class.getName(), r.getEntity().getClass().getName());
         
+        r = serviceDelegator.viewEducationSummary(orcid, 20L);
+        assertNotNull(r);
+        assertEquals(EducationSummary.class.getName(), r.getEntity().getClass().getName());        
         
-        //Check educations
-        //Public works
         //Limited fails
         try {
+            serviceDelegator.viewEducation(orcid, 21L);
             fail();
-        } catch(AccessControlException e) {
+        } catch(OrcidUnauthorizedException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Check employments
-        //Public works
-        //Limited fails
         try {
+            serviceDelegator.viewEducationSummary(orcid, 21L);
             fail();
-        } catch(AccessControlException e) {
+        } catch(OrcidUnauthorizedException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Check funding        
-        //Public works
-        //Limited fails
+        //Private fails
         try {
+            serviceDelegator.viewEducation(orcid, 22L);
             fail();
-        } catch(AccessControlException e) {
+        } catch(OrcidUnauthorizedException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        //Check peer reviews
-        //Public works
+        try {
+            serviceDelegator.viewEducationSummary(orcid, 22L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Employments() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEmployment(orcid, 17L);
+        assertNotNull(r);
+        assertEquals(Education.class.getName(), r.getEntity().getClass().getName());
+        
+        r = serviceDelegator.viewEmploymentSummary(orcid, 17L);
+        assertNotNull(r);
+        assertEquals(EducationSummary.class.getName(), r.getEntity().getClass().getName());        
+        
         //Limited fails
         try {
+            serviceDelegator.viewEmployment(orcid, 18L);
             fail();
-        } catch(AccessControlException e) {
+        } catch(OrcidUnauthorizedException e) {
             
         } catch(Exception e) {
             fail();
         }
         
-        // Check works
-        // Public works
-        // Limited fails
         try {
+            serviceDelegator.viewEmploymentSummary(orcid, 18L);
             fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
             fail();
         }
-
-        /**
-         * PERSON
-         */
-        fail();
-        // Check address
-        // Public works
-        // Limited fails
+        
+        //Private fails
         try {
+            serviceDelegator.viewEmployment(orcid, 19L);
             fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
             fail();
         }
-
-        // Check other names
-        // Public works
-        // Limited fails
+        
         try {
+            serviceDelegator.viewEmploymentSummary(orcid, 19L);
             fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
             fail();
         }
-
-        // Check keywords
-        // Public works
-        // Limited fails
-        try {
-            fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        // Check researcher urls
-        // Public works
-        // Limited fails
-        try {
-            fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        // Check external identifiers
-        // Public works
-        // Limited fails
-        try {
-            fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        // Check emails
-        // Public works
-        // Limited fails
-        try {
-            fail();
-        } catch (AccessControlException e) {
-
-        } catch (Exception e) {
-            fail();
-        }
-
-        /**
-         * RECORD
-         * */
+    }
+    
+    @Test
+    public void testReadPublicScope_Funding() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
         fail();
     }
+    
+    @Test
+    public void testReadPublicScope_PeerReview() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_Works() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_Person() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_PersonalDetails() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_OtherNames() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_Keywords() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_Address() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_ExternalIdentifiers() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_Emails() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_ResearcherUrls() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+    @Test
+    public void testReadPublicScope_Biography() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        fail();
+    }
+    
+
     
     
     
