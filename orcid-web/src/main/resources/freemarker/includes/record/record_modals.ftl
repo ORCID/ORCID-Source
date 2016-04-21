@@ -166,8 +166,8 @@
 				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
 						<!-- <@orcid.msg ''/> -->
-						Edit Keywords
-					</h1>
+						Edit Keywords						
+					</h1>					
 				</div>			
 			</div>
 			<div class="row">
@@ -176,7 +176,7 @@
 						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords | orderBy:'displayIndex'">		
 								<div class="col-md-6">
-									<div class="aka">
+									<div class="aka">										
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId || keyword.source == null" focus-me="newInput"></input>
 										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
 									</div>
