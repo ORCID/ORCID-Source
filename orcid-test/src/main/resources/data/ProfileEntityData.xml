@@ -471,6 +471,7 @@
             orcid_type="USER" 
             claimed="false"
             reviewed="true"
+            client_source_id="APP-5555555555555555"
             />
 
 	<profile

@@ -3521,6 +3521,174 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         } 
     }    
+    
+    @Test
+    public void testOrcidProfileCreate_CAN_CRUDOnUnclaimedAccounts() {
+        String orcid = "0000-0000-0000-0001";
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly();
+        //Test address
+        Response response = serviceDelegator.createAddress(orcid, getAddress());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Long putCode = getPutCode(response);
+        response = serviceDelegator.viewAddress(orcid, putCode);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        address.getCountry().setValue(Iso3166Country.ZW);
+        response = serviceDelegator.updateAddress(orcid, putCode, address);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        response = serviceDelegator.deleteAddress(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test education
+        response = serviceDelegator.createEducation(orcid, getEducation());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewEducation(orcid, putCode);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        education.setDepartmentName("Updated department name");
+        response = serviceDelegator.updateEducation(orcid, putCode, education);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        response = serviceDelegator.deleteAffiliation(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test employment
+        response = serviceDelegator.createEmployment(orcid, getEmployment());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewEmployment(orcid, putCode);
+        assertNotNull(response);        
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        employment.setDepartmentName("Updated department name");
+        response = serviceDelegator.updateEmployment(orcid, putCode, employment);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        response = serviceDelegator.deleteAffiliation(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test external identifiers
+        response = serviceDelegator.createExternalIdentifier(orcid, getPersonExternalIdentifier());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewExternalIdentifier(orcid, putCode);
+        assertNotNull(response);        
+        PersonExternalIdentifier externalIdentifier = (PersonExternalIdentifier) response.getEntity();
+        assertNotNull(externalIdentifier);
+        response = serviceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deleteExternalIdentifier(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test funding
+        response = serviceDelegator.createFunding(orcid, getFunding());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewFunding(orcid, putCode);
+        assertNotNull(response);        
+        Funding funding = (Funding) response.getEntity();
+        assertNotNull(funding);
+        response = serviceDelegator.updateFunding(orcid, putCode, funding);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deleteFunding(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test keyword
+        response = serviceDelegator.createKeyword(orcid, getKeyword());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewKeyword(orcid, putCode);
+        assertNotNull(response);        
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        response = serviceDelegator.updateKeyword(orcid, putCode, keyword);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deleteKeyword(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test other names
+        response = serviceDelegator.createOtherName(orcid, getOtherName());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewOtherName(orcid, putCode);
+        assertNotNull(response);        
+        OtherName otherName = (OtherName) response.getEntity();
+        assertNotNull(otherName);
+        response = serviceDelegator.updateOtherName(orcid, putCode, otherName);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deleteOtherName(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test peer review
+        response = serviceDelegator.createPeerReview(orcid, getPeerReview());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewPeerReview(orcid, putCode);
+        assertNotNull(response);        
+        PeerReview peerReview = (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        response = serviceDelegator.updatePeerReview(orcid, putCode, peerReview);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deletePeerReview(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test researcher url
+        response = serviceDelegator.createResearcherUrl(orcid, getResearcherUrl());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewResearcherUrl(orcid, putCode);
+        assertNotNull(response);        
+        ResearcherUrl rUrl = (ResearcherUrl) response.getEntity();
+        assertNotNull(rUrl);
+        response = serviceDelegator.updateResearcherUrl(orcid, putCode, rUrl);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deleteResearcherUrl(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+        
+        //Test work
+        response = serviceDelegator.createWork(orcid, getWork());
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        putCode = getPutCode(response);
+        response = serviceDelegator.viewWork(orcid, putCode);
+        assertNotNull(response);        
+        Work work = (Work) response.getEntity();
+        assertNotNull(work);
+        response = serviceDelegator.updateWork(orcid, putCode, work);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        response = serviceDelegator.deleteWork(orcid, putCode);
+        assertNotNull(response);
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
             
     private Address getAddress() {
         Address address = new Address();
@@ -3652,5 +3820,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         newRecord.setDescription("TestDescription5");
         newRecord.setType("publisher");
         return newRecord;
+    }
+    
+    private Long getPutCode(Response response) {
+        Map<?, ?> map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List<?> resultWithPutCode = (List<?>) map.get("Location");
+        return Long.valueOf(String.valueOf(resultWithPutCode.get(0)));
     }
 }
