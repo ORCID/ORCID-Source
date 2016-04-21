@@ -292,9 +292,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             // Check if the record is unclaimed and the client is the source
             ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
             Boolean claimed = profile.getClaimed();
-            String originalSourceId = profile.getSource().getSourceId();
+            SourceEntity source = profile.getSource();
             String clientId = sourceManager.retrieveSourceOrcid();
-            if (!(claimed == null || !claimed) && clientId.equals(originalSourceId)) {
+            if (!((claimed == null || !claimed) && source != null && clientId.equals(source.getSourceId()))) {
                 throw new OrcidUnauthorizedException("Incorrect token for claimed record");
             }
         }
