@@ -286,6 +286,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
                 }
             }
         }
+        throw new OrcidUnauthorizedException("No user authentication found");
     }
 
     private OAuth2Authentication getOAuth2Authentication() {
