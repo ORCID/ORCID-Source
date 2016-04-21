@@ -583,7 +583,7 @@ public class MemberV2ApiServiceDelegatorImpl
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 otherNames = otherNameManager.getPublicOtherNames(orcid, lastModified);
             } else {
-                    throw e;
+                throw e;
             }
         }
         ElementUtils.setPathToOtherNames(otherNames, orcid);
@@ -830,15 +830,15 @@ public class MemberV2ApiServiceDelegatorImpl
             bio = biographyManager.getBiography(orcid);
             orcidSecurityManager.checkVisibility(bio, orcid);            
         } catch(AccessControlException e) {
-                //If the user have the READ_PUBLIC scope, return him the list of public elements.
-                if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
-                    bio = biographyManager.getPublicBiography(orcid);
-                    if(bio == null) {
-                        throw new OrcidUnauthorizedException("The biography is not public");
-                    }
-                } else {
-                        throw e;
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                bio = biographyManager.getPublicBiography(orcid);
+                if(bio == null) {
+                    throw new OrcidUnauthorizedException("The biography is not public");
                 }
+            } else {
+                throw e;
+            }
         }
         ElementUtils.setPathToBiography(bio, orcid);
         return Response.ok(bio).build();
