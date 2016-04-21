@@ -57,7 +57,9 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
 
     private LockerObjectsManager lockers = new LockerObjectsManager();
 
-    private LockerObjectsManager publicLockers = new LockerObjectsManager();
+    private LockerObjectsManager publicWorkLastModifiedListLockers = new LockerObjectsManager();
+
+    private LockerObjectsManager lockerMinimizedWork = new LockerObjectsManager();
 
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
@@ -85,7 +87,7 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
         List<WorkLastModifiedEntity> workLastModifiedList = toWorkLastModifiedList(publicWorkLastModifiedCache.get(key));
         if (workLastModifiedList == null) {
             try {
-                synchronized (publicLockers.obtainLock(orcid)) {
+                synchronized (publicWorkLastModifiedListLockers.obtainLock(orcid)) {
                     workLastModifiedList = toWorkLastModifiedList(publicWorkLastModifiedCache.get(key));
                     if (workLastModifiedList == null) {
                         workLastModifiedList = workDao.getPublicWorkLastModifiedList(orcid);
@@ -93,7 +95,7 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
                     }
                 }
             } finally {
-                publicLockers.releaseLock(orcid);
+                publicWorkLastModifiedListLockers.releaseLock(orcid);
             }
         }
         return workLastModifiedList;
@@ -101,11 +103,20 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
 
     @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
-        Object key = new WorkCacheKey(workId, workLastModified, releaseName);
+        Object key = new WorkCacheKey(workId, releaseName);
         MinimizedWorkEntity minimizedWorkEntity = toMinimizedWork(minimizedWorkCache.get(key));
-        if (minimizedWorkEntity == null) {
-            minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
-            minimizedWorkCache.put(new Element(key, minimizedWorkEntity));
+        if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
+            try {
+                synchronized (lockerMinimizedWork.obtainLock(Long.toString(workId))) {
+                    minimizedWorkEntity = toMinimizedWork(minimizedWorkCache.get(key));
+                    if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
+                        minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
+                        minimizedWorkCache.put(new Element(key, minimizedWorkEntity));
+                    }
+                }
+            } finally {
+                publicWorkLastModifiedListLockers.releaseLock(Long.toString(workId));
+            }
         }
         return minimizedWorkEntity;
     }
