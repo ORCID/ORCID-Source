@@ -2743,7 +2743,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewOtherProfileDontWork() {
+    public void testViewPublicDataUsingOtherUserToken() {
         //Set all possible permissions to user 0000-0000-0000-0001
         SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
                 ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
@@ -2754,231 +2754,389 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
                 ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
         //Try to view anything on the user
         String orcid = "0000-0000-0000-0003";
-        try {
-            //Check activities
-            serviceDelegator.viewActivities(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+        Response r = serviceDelegator.viewActivities(orcid);
+        ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
+        testActivities(as, orcid);
         
-        try {
-            serviceDelegator.viewAddress(orcid, 9L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+        //Get only public address
+        r = serviceDelegator.viewAddresses(orcid);
+        Addresses addresses = (Addresses) r.getEntity();
+        assertNotNull(addresses);
+        assertEquals(1, addresses.getAddress().size());
+        assertEquals(Long.valueOf(9L), addresses.getAddress().get(0).getPutCode());
         
+        //View public address works
+        serviceDelegator.viewAddress(orcid, 9L);
         try {
-            serviceDelegator.viewAddresses(orcid);
+            //Limited fail
+            serviceDelegator.viewAddress(orcid, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }                
-        
-        try {
-            serviceDelegator.viewEducation(orcid, 20L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEducationSummary(orcid, 20L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEmails(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEmployment(orcid, 17L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewEmploymentSummary(orcid, 17L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewExternalIdentifier(orcid, 13L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewExternalIdentifiers(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewFunding(orcid, 10L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewFundingSummary(orcid, 10L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewKeyword(orcid, 9L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewKeywords(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewOtherName(orcid, 13L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewOtherNames(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPeerReview(orcid, 9L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPeerReviewSummary(orcid, 9L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewResearcherUrl(orcid, 13L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewResearcherUrls(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWork(orcid, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWorkSummary(orcid, 11L);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
                 
+        //Public works
+        serviceDelegator.viewEducation(orcid, 20L);
+        serviceDelegator.viewEducationSummary(orcid, 20L);
+        
         try {
-            serviceDelegator.viewBiography(orcid);
+            //Limited fail
+            serviceDelegator.viewEducation(orcid, 21L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewPerson(orcid);
+            //Limited fail
+            serviceDelegator.viewEducationSummary(orcid, 21L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewPersonalDetails(orcid);
+            //Private fail
+            serviceDelegator.viewEducation(orcid, 22L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
+        
+        try {
+            //Private fail
+            serviceDelegator.viewEducationSummary(orcid, 22L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+
+        r = serviceDelegator.viewEmails(orcid);
+        Emails emails = (Emails) r.getEntity();
+        assertNotNull(emails);
+        assertEquals(1, emails.getEmails().size());
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
+                
+        //Public works
+        serviceDelegator.viewEmployment(orcid, 17L);
+        serviceDelegator.viewEmploymentSummary(orcid, 17L);
+                        
+        try {
+            //Limited fail
+            serviceDelegator.viewEmployment(orcid, 18L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmploymentSummary(orcid, 18L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            //Private fail
+            serviceDelegator.viewEmployment(orcid, 19L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmploymentSummary(orcid, 19L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewExternalIdentifiers(orcid);
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
+        assertNotNull(extIds);
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifier().get(0).getPutCode());
+        
+        //Public works
+        serviceDelegator.viewExternalIdentifier(orcid, 13L);
+        
+        //Limited fails
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fails
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Public works
+        serviceDelegator.viewFunding(orcid, 10L);
+        serviceDelegator.viewFundingSummary(orcid, 10L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewFunding(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFundingSummary(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewFunding(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFundingSummary(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewKeywords(orcid);
+        Keywords k = (Keywords) r.getEntity();
+        assertNotNull(k);
+        assertEquals(1, k.getKeywords().size());
+        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        
+        //Public works 
+        serviceDelegator.viewKeyword(orcid, 9L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewKeyword(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewKeyword(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewOtherNames(orcid);
+        OtherNames o = (OtherNames) r.getEntity();
+        assertNotNull(o);
+        assertEquals(1, o.getOtherNames().size());
+        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        
+        //Public work
+        serviceDelegator.viewOtherName(orcid, 13L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewOtherName(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewOtherName(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                                
+        //Public works
+        serviceDelegator.viewPeerReview(orcid, 9L);
+        serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewPeerReview(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPeerReviewSummary(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewPeerReview(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPeerReviewSummary(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewResearcherUrls(orcid);
+        ResearcherUrls rUrls = (ResearcherUrls) r.getEntity();
+        assertNotNull(rUrls);
+        assertEquals(1, rUrls.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), rUrls.getResearcherUrls().get(0).getPutCode());
+        
+        //Public works
+        serviceDelegator.viewResearcherUrl(orcid, 13L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        //Public work
+        serviceDelegator.viewWork(orcid, 11L);
+        serviceDelegator.viewWorkSummary(orcid, 11L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewWork(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWorkSummary(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        //Private fail
+        try {
+            serviceDelegator.viewWork(orcid, 13L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWorkSummary(orcid, 13L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //View public bio works
+        serviceDelegator.viewBiography(orcid);
+        
+        //View limited bio fails
+        try {
+            serviceDelegator.viewBiography("0000-0000-0000-0002");
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The biography is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewPersonalDetails(orcid);
+        PersonalDetails _003details = (PersonalDetails) r.getEntity();
+        assertNotNull(_003details);
+        assertEquals("Biography for 0000-0000-0000-0003", _003details.getBiography().getContent());
+        assertEquals("Credit Name", _003details.getName().getCreditName().getContent());
+        assertEquals("Family Name", _003details.getName().getFamilyName().getContent());
+        assertEquals("Given Names", _003details.getName().getGivenNames().getContent());
+        assertEquals(1, _003details.getOtherNames().getOtherNames().size());
+        assertEquals(Long.valueOf(13), _003details.getOtherNames().getOtherNames().get(0).getPutCode());
+        
+        r = serviceDelegator.viewPerson(orcid);
+        Person p = (Person) r.getEntity();
+        testPerson(p, orcid);                              
     }
     
     @Test
@@ -2994,28 +3152,34 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             //Check you get only public activities
             Response r = serviceDelegator.viewActivities(orcid);
             ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
-            assertNotNull(as);
-            assertNotNull(as.getEducations());
-            assertEquals(1, as.getEducations().getSummaries().size());
-            assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
-            assertNotNull(as.getEmployments());
-            assertEquals(1, as.getEmployments().getSummaries().size());
-            assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
-            assertNotNull(as.getFundings());
-            assertEquals(1, as.getFundings().getFundingGroup().size());
-            assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
-            assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
-            assertNotNull(as.getPeerReviews());
-            assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
-            assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
-            assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
-            assertNotNull(as.getWorks());
-            assertEquals(1, as.getWorks().getWorkGroup().size());
-            assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
-            assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+            testActivities(as, orcid);
         } catch(Exception e) {
             fail();
         }
+    }
+    
+    private void testActivities(ActivitiesSummary as, String orcid) {
+        //This is more an utility that will work only for 0000-0000-0000-0003
+        assertEquals("0000-0000-0000-0003", orcid);
+        assertNotNull(as);
+        assertNotNull(as.getEducations());
+        assertEquals(1, as.getEducations().getSummaries().size());
+        assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+        assertNotNull(as.getEmployments());
+        assertEquals(1, as.getEmployments().getSummaries().size());
+        assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+        assertNotNull(as.getFundings());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertNotNull(as.getPeerReviews());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(as.getWorks());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
     }
     
     @Test
@@ -3541,6 +3705,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(r);
         assertEquals(Person.class.getName(), r.getEntity().getClass().getName());
         Person p = (Person) r.getEntity();
+        testPerson(p, orcid);
+    }
+    
+    private void testPerson(Person p, String orcid) {
+        //This is more an utility that will work only for 0000-0000-0000-0003
+        assertEquals("0000-0000-0000-0003", orcid);
         assertNotNull(p);
         //Address
         assertNotNull(p.getAddresses());
@@ -3549,8 +3719,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(a.getLastModifiedDate());
         assertEquals(1, a.getAddress().size());
         assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
-        
-        
+                
         //Biography
         assertNotNull(p.getBiography());
         Biography b = p.getBiography();
@@ -3603,9 +3772,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(1, ru.getResearcherUrls().size());
         assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
         
-        
         assertNotNull(p.getPath());
     }
+    
     
     @Test    
     public void testAddWorkWithInvalidExtIdTypeFail() {
