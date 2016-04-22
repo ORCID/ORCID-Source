@@ -193,7 +193,7 @@ public class MemberV2ApiServiceDelegatorImpl
         try {
             orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);
             as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public activities.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 as = profileEntityManager.getPublicActivitiesSummary(orcid);                
@@ -495,7 +495,7 @@ public class MemberV2ApiServiceDelegatorImpl
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);            
             researcherUrls = researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime);
             researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls(), orcid));
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);            
@@ -555,7 +555,7 @@ public class MemberV2ApiServiceDelegatorImpl
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);            
             emails = emailManager.getEmails(orcid, lastModified);
             emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 emails = emailManager.getPublicEmails(orcid, lastModified);
@@ -578,7 +578,7 @@ public class MemberV2ApiServiceDelegatorImpl
             List<OtherName> allOtherNames = otherNames.getOtherNames();
             List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames, orcid);
             otherNames.setOtherNames(filterdOtherNames);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 otherNames = otherNameManager.getPublicOtherNames(orcid, lastModified);
@@ -642,7 +642,7 @@ public class MemberV2ApiServiceDelegatorImpl
             List<PersonExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
             List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
             extIds.setExternalIdentifiers(filteredExtIds);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModified);
@@ -705,7 +705,7 @@ public class MemberV2ApiServiceDelegatorImpl
             List<Keyword> allKeywords = keywords.getKeywords();
             List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords, orcid);
             keywords.setKeywords(filterdKeywords);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 keywords = keywordsManager.getPublicKeywords(orcid, lastModified);
@@ -769,7 +769,7 @@ public class MemberV2ApiServiceDelegatorImpl
             List<Address> allAddresses = addresses.getAddress();
             List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses, orcid);
             addresses.setAddress(filteredAddresses);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 addresses = addressManager.getPublicAddresses(orcid, lastModified);
@@ -829,7 +829,7 @@ public class MemberV2ApiServiceDelegatorImpl
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
             bio = biographyManager.getBiography(orcid);
             orcidSecurityManager.checkVisibility(bio, orcid);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the list of public elements.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 bio = biographyManager.getPublicBiography(orcid);
@@ -851,7 +851,7 @@ public class MemberV2ApiServiceDelegatorImpl
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
             personalDetails = personalDetailsManager.getPersonalDetails(orcid);
             personalDetails = visibilityFilter.filter(personalDetails, orcid);            
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the public element.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);                
@@ -870,7 +870,7 @@ public class MemberV2ApiServiceDelegatorImpl
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
             person = profileEntityManager.getPersonDetails(orcid);
             person = visibilityFilter.filter(person, orcid);
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, return him the public element.
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 person = profileEntityManager.getPublicPersonDetails(orcid);                
@@ -886,7 +886,7 @@ public class MemberV2ApiServiceDelegatorImpl
         try {
             orcidSecurityManager.checkPermissions(requiredScope, orcid);
             orcidSecurityManager.checkVisibility(element, orcid);
-        } catch(AccessControlException e) {
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
             //If the user have the READ_PUBLIC scope, check that the work is public
             if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
                 orcidSecurityManager.checkIsPublic(element);
