@@ -74,6 +74,7 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Citation;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
@@ -94,6 +95,7 @@ import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -2741,244 +2743,1038 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
 
     @Test
-    public void testViewOtherProfileDontWork() {
-        //Set all possible permissions to user 4444-4444-4444-4446
-        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
+    public void testViewPublicDataUsingOtherUserToken() {
+        //Set all possible permissions to user 0000-0000-0000-0001
+        SecurityContextTestUtils.setUpSecurityContext("0000-0000-0000-0001", ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE,
                 ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE,
                 ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
                 ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED,
                 ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
                 ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED,
-                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED, ScopePathType.READ_PUBLIC);
+                ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);
         //Try to view anything on the user
-        String orcid = "4444-4444-4444-4442";
-        Long putCode = 1L;
+        String orcid = "0000-0000-0000-0003";
+        Response r = serviceDelegator.viewActivities(orcid);
+        ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
+        testActivities(as, orcid);
+        
+        //Get only public address
+        r = serviceDelegator.viewAddresses(orcid);
+        Addresses addresses = (Addresses) r.getEntity();
+        assertNotNull(addresses);
+        assertEquals(1, addresses.getAddress().size());
+        assertEquals(Long.valueOf(9L), addresses.getAddress().get(0).getPutCode());
+        
+        //View public address works
+        serviceDelegator.viewAddress(orcid, 9L);
         try {
-            //Check activities
-            serviceDelegator.viewActivities(orcid);
+            //Limited fail
+            serviceDelegator.viewAddress(orcid, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        //Public works
+        serviceDelegator.viewEducation(orcid, 20L);
+        serviceDelegator.viewEducationSummary(orcid, 20L);
+        
+        try {
+            //Limited fail
+            serviceDelegator.viewEducation(orcid, 21L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewAddress(orcid, putCode);
+            //Limited fail
+            serviceDelegator.viewEducationSummary(orcid, 21L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewAddresses(orcid);
+            //Private fail
+            serviceDelegator.viewEducation(orcid, 22L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewBiography(orcid);
+            //Private fail
+            serviceDelegator.viewEducationSummary(orcid, 22L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+
+        r = serviceDelegator.viewEmails(orcid);
+        Emails emails = (Emails) r.getEntity();
+        assertNotNull(emails);
+        assertEquals(1, emails.getEmails().size());
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
+                
+        //Public works
+        serviceDelegator.viewEmployment(orcid, 17L);
+        serviceDelegator.viewEmploymentSummary(orcid, 17L);
+                        
+        try {
+            //Limited fail
+            serviceDelegator.viewEmployment(orcid, 18L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewEducation(orcid, putCode);
+            serviceDelegator.viewEmploymentSummary(orcid, 18L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewEducationSummary(orcid, putCode);
+            //Private fail
+            serviceDelegator.viewEmployment(orcid, 19L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewEmails(orcid);
+            serviceDelegator.viewEmploymentSummary(orcid, 19L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewExternalIdentifiers(orcid);
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
+        assertNotNull(extIds);
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifier().get(0).getPutCode());
+        
+        //Public works
+        serviceDelegator.viewExternalIdentifier(orcid, 13L);
+        
+        //Limited fails
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fails
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Public works
+        serviceDelegator.viewFunding(orcid, 10L);
+        serviceDelegator.viewFundingSummary(orcid, 10L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewFunding(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewEmployment(orcid, putCode);
+            serviceDelegator.viewFundingSummary(orcid, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewFunding(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewEmploymentSummary(orcid, putCode);
+            serviceDelegator.viewFundingSummary(orcid, 12L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewKeywords(orcid);
+        Keywords k = (Keywords) r.getEntity();
+        assertNotNull(k);
+        assertEquals(1, k.getKeywords().size());
+        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        
+        //Public works 
+        serviceDelegator.viewKeyword(orcid, 9L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewKeyword(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewKeyword(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewOtherNames(orcid);
+        OtherNames o = (OtherNames) r.getEntity();
+        assertNotNull(o);
+        assertEquals(1, o.getOtherNames().size());
+        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        
+        //Public work
+        serviceDelegator.viewOtherName(orcid, 13L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewOtherName(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewOtherName(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                                
+        //Public works
+        serviceDelegator.viewPeerReview(orcid, 9L);
+        serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewPeerReview(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewExternalIdentifier(orcid, putCode);
+            serviceDelegator.viewPeerReviewSummary(orcid, 10L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewPeerReview(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewExternalIdentifiers(orcid);
+            serviceDelegator.viewPeerReviewSummary(orcid, 11L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        r = serviceDelegator.viewResearcherUrls(orcid);
+        ResearcherUrls rUrls = (ResearcherUrls) r.getEntity();
+        assertNotNull(rUrls);
+        assertEquals(1, rUrls.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), rUrls.getResearcherUrls().get(0).getPutCode());
+        
+        //Public works
+        serviceDelegator.viewResearcherUrl(orcid, 13L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        //Public work
+        serviceDelegator.viewWork(orcid, 11L);
+        serviceDelegator.viewWorkSummary(orcid, 11L);
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewWork(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewFunding(orcid, putCode);
+            serviceDelegator.viewWorkSummary(orcid, 12L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
+        } catch(Exception e) {
+            fail();
+        }
+                
+        //Private fail
+        try {
+            serviceDelegator.viewWork(orcid, 13L);
+            fail();
+        } catch(OrcidUnauthorizedException ou) {
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
         try {
-            serviceDelegator.viewFundingSummary(orcid, putCode);
+            serviceDelegator.viewWorkSummary(orcid, 13L);
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The activity is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
+        //View public bio works
+        serviceDelegator.viewBiography(orcid);
+        
+        //View limited bio fails
         try {
-            serviceDelegator.viewKeyword(orcid, putCode);
+            serviceDelegator.viewBiography("0000-0000-0000-0002");
             fail();
         } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            assertEquals("The biography is not public", ou.getMessage());
         } catch(Exception e) {
             fail();
         }
         
-        try {
-            serviceDelegator.viewKeywords(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+        r = serviceDelegator.viewPersonalDetails(orcid);
+        PersonalDetails _003details = (PersonalDetails) r.getEntity();
+        assertNotNull(_003details);
+        assertEquals("Biography for 0000-0000-0000-0003", _003details.getBiography().getContent());
+        assertEquals("Credit Name", _003details.getName().getCreditName().getContent());
+        assertEquals("Family Name", _003details.getName().getFamilyName().getContent());
+        assertEquals("Given Names", _003details.getName().getGivenNames().getContent());
+        assertEquals(1, _003details.getOtherNames().getOtherNames().size());
+        assertEquals(Long.valueOf(13), _003details.getOtherNames().getOtherNames().get(0).getPutCode());
         
-        try {
-            serviceDelegator.viewOtherName(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+        r = serviceDelegator.viewPerson(orcid);
+        Person p = (Person) r.getEntity();
+        testPerson(p, orcid);                              
+    }
+    
+    @Test
+    public void testReadPublicScope_Activities() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
         
+        //Check that lists returns only PUBLIC elements
+        /**
+         * ACTIVITIES
+         * */        
         try {
-            serviceDelegator.viewOtherNames(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPeerReview(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPeerReviewSummary(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPerson(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewPersonalDetails(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewResearcherUrl(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewResearcherUrls(orcid);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWork(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
-        
-        try {
-            serviceDelegator.viewWorkSummary(orcid, putCode);
-            fail();
-        } catch(OrcidUnauthorizedException ou) {
-            assertEquals("Access token is for a different record", ou.getMessage());
+            //Check you get only public activities
+            Response r = serviceDelegator.viewActivities(orcid);
+            ActivitiesSummary as = (ActivitiesSummary) r.getEntity();
+            testActivities(as, orcid);
         } catch(Exception e) {
             fail();
         }
     }
+    
+    private void testActivities(ActivitiesSummary as, String orcid) {
+        //This is more an utility that will work only for 0000-0000-0000-0003
+        assertEquals("0000-0000-0000-0003", orcid);
+        assertNotNull(as);
+        assertNotNull(as.getEducations());
+        assertEquals(1, as.getEducations().getSummaries().size());
+        assertEquals(Long.valueOf(20), as.getEducations().getSummaries().get(0).getPutCode());
+        assertNotNull(as.getEmployments());
+        assertEquals(1, as.getEmployments().getSummaries().size());
+        assertEquals(Long.valueOf(17), as.getEmployments().getSummaries().get(0).getPutCode());
+        assertNotNull(as.getFundings());
+        assertEquals(1, as.getFundings().getFundingGroup().size());
+        assertEquals(1, as.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(Long.valueOf(10), as.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertNotNull(as.getPeerReviews());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().size());
+        assertEquals(1, as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertEquals(Long.valueOf(9), as.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(as.getWorks());
+        assertEquals(1, as.getWorks().getWorkGroup().size());
+        assertEquals(1, as.getWorks().getWorkGroup().get(0).getWorkSummary().size());
+        assertEquals(Long.valueOf(11), as.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+    }
+    
+    @Test
+    public void testReadPublicScope_Educations() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEducation(orcid, 20L);
+        assertNotNull(r);
+        assertEquals(Education.class.getName(), r.getEntity().getClass().getName());
+        
+        r = serviceDelegator.viewEducationSummary(orcid, 20L);
+        assertNotNull(r);
+        assertEquals(EducationSummary.class.getName(), r.getEntity().getClass().getName());        
+        
+        //Limited fails
+        try {
+            serviceDelegator.viewEducation(orcid, 21L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEducationSummary(orcid, 21L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fails
+        try {
+            serviceDelegator.viewEducation(orcid, 22L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEducationSummary(orcid, 22L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Employments() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEmployment(orcid, 17L);
+        assertNotNull(r);
+        assertEquals(Employment.class.getName(), r.getEntity().getClass().getName());
+        
+        r = serviceDelegator.viewEmploymentSummary(orcid, 17L);
+        assertNotNull(r);
+        assertEquals(EmploymentSummary.class.getName(), r.getEntity().getClass().getName());        
+        
+        //Limited fails
+        try {
+            serviceDelegator.viewEmployment(orcid, 18L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmploymentSummary(orcid, 18L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fails
+        try {
+            serviceDelegator.viewEmployment(orcid, 19L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewEmploymentSummary(orcid, 19L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Funding() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewFunding(orcid, 10L);
+        assertNotNull(r);
+        assertEquals(Funding.class.getName(), r.getEntity().getClass().getName());
+        
+        r = serviceDelegator.viewFundingSummary(orcid, 10L);
+        assertNotNull(r);
+        assertEquals(FundingSummary.class.getName(), r.getEntity().getClass().getName());        
+        
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewFunding(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFundingSummary(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewFunding(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewFundingSummary(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_PeerReview() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewPeerReview(orcid, 9L);
+        assertNotNull(r);
+        assertEquals(PeerReview.class.getName(), r.getEntity().getClass().getName());
+        
+        r = serviceDelegator.viewPeerReviewSummary(orcid, 9L);
+        assertNotNull(r);
+        assertEquals(PeerReviewSummary.class.getName(), r.getEntity().getClass().getName());        
+        
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewPeerReview(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPeerReviewSummary(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewPeerReview(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewPeerReviewSummary(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }    
+    }
+    
+    @Test
+    public void testReadPublicScope_Works() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewWork(orcid, 11L);
+        assertNotNull(r);
+        assertEquals(Work.class.getName(), r.getEntity().getClass().getName());
+        
+        r = serviceDelegator.viewWorkSummary(orcid, 11L);
+        assertNotNull(r);
+        assertEquals(WorkSummary.class.getName(), r.getEntity().getClass().getName());        
+        
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewWork(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWorkSummary(orcid, 12L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewWork(orcid, 13L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        try {
+            serviceDelegator.viewWork(orcid, 13L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_OtherNames() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewOtherNames(orcid);
+        assertNotNull(r);
+        assertEquals(OtherNames.class.getName(), r.getEntity().getClass().getName());
+        OtherNames o = (OtherNames) r.getEntity();
+        assertNotNull(o);
+        assertNotNull(o.getLastModifiedDate());
+        assertEquals(1, o.getOtherNames().size());
+        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        
+        r = serviceDelegator.viewOtherName(orcid, 13L);
+        assertNotNull(r);
+        assertEquals(OtherName.class.getName(), r.getEntity().getClass().getName());
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewOtherName(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewOtherName(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Keywords() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewKeywords(orcid);
+        assertNotNull(r);
+        assertEquals(Keywords.class.getName(), r.getEntity().getClass().getName());
+        Keywords k = (Keywords) r.getEntity();
+        assertNotNull(k);
+        assertNotNull(k.getLastModifiedDate());
+        assertEquals(1, k.getKeywords().size());
+        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        
+        r = serviceDelegator.viewKeyword(orcid, 9L);
+        assertNotNull(r);
+        assertEquals(Keyword.class.getName(), r.getEntity().getClass().getName());
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewKeyword(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewKeyword(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Address() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewAddresses(orcid);
+        assertNotNull(r);
+        assertEquals(Addresses.class.getName(), r.getEntity().getClass().getName());
+        Addresses a = (Addresses) r.getEntity();
+        assertNotNull(a);
+        assertNotNull(a.getLastModifiedDate());
+        assertEquals(1, a.getAddress().size());
+        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
+        
+        r = serviceDelegator.viewAddress(orcid, 9L);
+        assertNotNull(r);
+        assertEquals(Address.class.getName(), r.getEntity().getClass().getName());
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewAddress(orcid, 10L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewAddress(orcid, 11L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_ExternalIdentifiers() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewExternalIdentifiers(orcid);
+        assertNotNull(r);
+        assertEquals(PersonExternalIdentifiers.class.getName(), r.getEntity().getClass().getName());
+        PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
+        assertNotNull(p);
+        assertNotNull(p.getLastModifiedDate());
+        assertEquals(1, p.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(13), p.getExternalIdentifier().get(0).getPutCode());
+        
+        r = serviceDelegator.viewExternalIdentifier(orcid, 13L);
+        assertNotNull(r);
+        assertEquals(PersonExternalIdentifier.class.getName(), r.getEntity().getClass().getName());
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewExternalIdentifier(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Emails() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewEmails(orcid);
+        assertNotNull(r);
+        assertEquals(Emails.class.getName(), r.getEntity().getClass().getName());
+        Emails email = (Emails) r.getEntity();
+        assertNotNull(email);
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(1, email.getEmails().size());
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
+    }
+    
+    @Test
+    public void testReadPublicScope_ResearcherUrls() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        //Public works
+        Response r = serviceDelegator.viewResearcherUrls(orcid);
+        assertNotNull(r);
+        assertEquals(ResearcherUrls.class.getName(), r.getEntity().getClass().getName());
+        ResearcherUrls ru = (ResearcherUrls) r.getEntity();
+        assertNotNull(ru);
+        assertNotNull(ru.getLastModifiedDate());
+        assertEquals(1, ru.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
+        
+        r = serviceDelegator.viewResearcherUrl(orcid, 13L);
+        assertNotNull(r);
+        assertEquals(ResearcherUrl.class.getName(), r.getEntity().getClass().getName());
+        
+        //Limited fail
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 14L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Private fail
+        try {
+            serviceDelegator.viewResearcherUrl(orcid, 15L);
+            fail();
+        } catch(OrcidUnauthorizedException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+    }
+    
+    @Test
+    public void testReadPublicScope_Biography() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewBiography(orcid);
+        assertNotNull(r);
+        assertEquals(Biography.class.getName(), r.getEntity().getClass().getName());
+        
+        try {
+            //Bio for 0000-0000-0000-0002 should be limited
+            orcid = "0000-0000-0000-0002";
+            r = serviceDelegator.viewBiography(orcid);
+            fail();
+        } catch (OrcidUnauthorizedException e) {
+            
+        } 
+    }
+        
+    @Test
+    public void testReadPublicScope_PersonalDetails() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewPersonalDetails(orcid);
+        assertNotNull(r);
+        assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
+        PersonalDetails p = (PersonalDetails) r.getEntity();
+        assertEquals("Biography for 0000-0000-0000-0003", p.getBiography().getContent());
+        assertEquals("Credit Name", p.getName().getCreditName().getContent());
+        assertEquals("Given Names", p.getName().getGivenNames().getContent());
+        assertEquals("Family Name", p.getName().getFamilyName().getContent());
+        assertEquals(1, p.getOtherNames().getOtherNames().size());
+        assertEquals(Long.valueOf(13), p.getOtherNames().getOtherNames().get(0).getPutCode());
+        assertEquals("Other Name PUBLIC", p.getOtherNames().getOtherNames().get(0).getContent());
+        
+        orcid = "0000-0000-0000-0002";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        r = serviceDelegator.viewPersonalDetails(orcid);
+        assertNotNull(r);
+        assertEquals(PersonalDetails.class.getName(), r.getEntity().getClass().getName());
+        p = (PersonalDetails) r.getEntity();
+        assertNull(p.getBiography());
+        assertNull(p.getName());
+        assertNull(p.getOtherNames());
+    }
+    
+    @Test
+    public void testReadPublicScope_Person() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response r = serviceDelegator.viewPerson(orcid);
+        assertNotNull(r);
+        assertEquals(Person.class.getName(), r.getEntity().getClass().getName());
+        Person p = (Person) r.getEntity();
+        testPerson(p, orcid);
+    }
+    
+    private void testPerson(Person p, String orcid) {
+        //This is more an utility that will work only for 0000-0000-0000-0003
+        assertEquals("0000-0000-0000-0003", orcid);
+        assertNotNull(p);
+        //Address
+        assertNotNull(p.getAddresses());
+        Addresses a = p.getAddresses();
+        assertNotNull(a);
+        assertNotNull(a.getLastModifiedDate());
+        assertEquals(1, a.getAddress().size());
+        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
+                
+        //Biography
+        assertNotNull(p.getBiography());
+        Biography b = p.getBiography();
+        assertNotNull(b);
+        assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
+        
+        //Email
+        assertNotNull(p.getEmails());
+        Emails email = p.getEmails();
+        assertNotNull(email);
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(1, email.getEmails().size());
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
+        
+        //External identifiers
+        assertNotNull(p.getExternalIdentifiers());
+        PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getLastModifiedDate());
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifier().get(0).getPutCode());
+                
+        //Keywords
+        assertNotNull(p.getKeywords());
+        Keywords k = p.getKeywords();
+        assertNotNull(k);
+        assertNotNull(k.getLastModifiedDate());
+        assertEquals(1, k.getKeywords().size());
+        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        
+        //Name
+        assertNotNull(p.getName());
+        assertEquals("Credit Name", p.getName().getCreditName().getContent());
+        assertEquals("Given Names", p.getName().getGivenNames().getContent());
+        assertEquals("Family Name", p.getName().getFamilyName().getContent());
+        
+        //Other names
+        assertNotNull(p.getOtherNames());
+        OtherNames o = p.getOtherNames();
+        assertNotNull(o);
+        assertNotNull(o.getLastModifiedDate());
+        assertEquals(1, o.getOtherNames().size());
+        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        
+        //Researcher urls
+        assertNotNull(p.getResearcherUrls());
+        ResearcherUrls ru = p.getResearcherUrls();
+        assertNotNull(ru);
+        assertNotNull(ru.getLastModifiedDate());
+        assertEquals(1, ru.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
+        
+        assertNotNull(p.getPath());
+    }
+    
     
     @Test    
     public void testAddWorkWithInvalidExtIdTypeFail() {

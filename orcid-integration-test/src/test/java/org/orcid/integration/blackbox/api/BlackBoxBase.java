@@ -194,6 +194,15 @@ public class BlackBoxBase {
         return accessToken;
     }
     
+    public String getAccessToken(String userName, String userPassword, String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
+        webDriver = new FirefoxDriver();
+        webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);
+        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, userName, userPassword, clientRedirectUri);
+        webDriver.quit();
+        return accessToken;
+    }
+    
     public void adminSignIn(String adminUserName, String adminPassword) {
         webDriver = new FirefoxDriver();
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
