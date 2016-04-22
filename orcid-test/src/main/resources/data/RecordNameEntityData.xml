@@ -28,6 +28,7 @@
 		family_name="Family Name"
 		visibility="PUBLIC"		
 		/>
+		
 	<record_name
 		id="2" 
 		date_created="2016-04-01 00:00:00.00"
@@ -59,5 +60,5 @@
 		given_names="Given Names"
 		family_name="Family Name"
 		visibility="PUBLIC"	
-		/>					
+		/>	
 </dataset>

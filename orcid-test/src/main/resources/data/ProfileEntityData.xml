@@ -443,7 +443,6 @@
             reviewed="false"          
             />
 
-
 	<profile
             orcid="0000-0000-0000-0001"
             creation_method="API"
@@ -469,6 +468,7 @@
             orcid_type="USER" 
             claimed="false"
             reviewed="true"
+            client_source_id="APP-5555555555555555"
             />
 
 	<profile
@@ -497,7 +497,7 @@
             claimed="true"
             reviewed="true"
             />
-
+            
 	<profile
             orcid="0000-0000-0000-0003"
             creation_method="integration-test"
@@ -524,7 +524,7 @@
             claimed="true"
             reviewed="true"
             client_source_id="APP-5555555555555555"
-            />
+            />            
 
     <granted_authority
             authority="USER_ROLE"
@@ -561,7 +561,7 @@
             authority="USER_ROLE"
             orcid="4444-4444-4444-444X"
             />
-
+            
 	<granted_authority
             authority="USER_ROLE"
             orcid="0000-0000-0000-0001"
@@ -795,7 +795,7 @@
             last_modified="2011-07-02 15:31:00.00"
             display_index="4"
             />
-    
+
     <researcher_url
             id="1"
             url="www.4444-4444-4444-4441.com"
@@ -998,7 +998,7 @@
             date_created="2011-06-29 15:31:00.00"
             display_index="4"
             />
-    
+
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
@@ -1185,7 +1185,7 @@
             date_created="2016-04-01 15:31:00.00"
             display_index="4"
             />
-	
+
 	<address
             id="1"            
             iso2_country="US"
@@ -1650,8 +1650,8 @@
         visibility="PRIVATE"
         source_id="0000-0000-0000-0003"
         last_modified="2016-04-01 15:31:00.00"
-    />  
-    
+    />      
+
     <profile_keyword 
     	id="1"            
         profile_orcid="4444-4444-4444-4443"

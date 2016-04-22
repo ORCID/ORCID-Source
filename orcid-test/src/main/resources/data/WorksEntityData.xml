@@ -248,5 +248,6 @@
           visibility="PRIVATE"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;5&quot;}}],&quot;scope&quot;:null}"
           display_index="4"
-            />                             	
+            />                
+                
 </dataset>
