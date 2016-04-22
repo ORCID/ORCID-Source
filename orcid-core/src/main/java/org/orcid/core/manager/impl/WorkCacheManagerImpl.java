@@ -111,6 +111,8 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
                     minimizedWorkEntity = toMinimizedWork(minimizedWorkCache.get(key));
                     if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
                         minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
+                        workDao.detach(minimizedWorkEntity);
+                        minimizedWorkEntity.prepareForCache();
                         minimizedWorkCache.put(new Element(key, minimizedWorkEntity));
                     }
                 }
