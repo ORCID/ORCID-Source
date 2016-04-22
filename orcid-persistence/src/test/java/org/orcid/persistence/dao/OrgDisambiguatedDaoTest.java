@@ -62,7 +62,7 @@ public class OrgDisambiguatedDaoTest extends DBUnitTest {
         assertEquals(1, results.size());
         Pair<Long, Integer> pair = results.get(0);
         assertEquals(1, pair.getLeft().longValue());
-        assertEquals(3, pair.getRight().intValue());
+        assertEquals(13, pair.getRight().intValue());
     }
 
 }

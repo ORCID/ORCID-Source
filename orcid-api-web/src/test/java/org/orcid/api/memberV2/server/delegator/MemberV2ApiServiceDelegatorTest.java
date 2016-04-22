@@ -3571,39 +3571,75 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testReadPublicScope_Person() {
         String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
-        fail();
+        Response r = serviceDelegator.viewPerson(orcid);
+        assertNotNull(r);
+        assertEquals(Person.class.getName(), r.getEntity().getClass().getName());
+        Person p = (Person) r.getEntity();
+        assertNotNull(p);
+        //Address
+        assertNotNull(p.getAddresses());
+        Addresses a = p.getAddresses();
+        assertNotNull(a);
+        assertNotNull(a.getLastModifiedDate());
+        assertEquals(1, a.getAddress().size());
+        assertEquals(Long.valueOf(9), a.getAddress().get(0).getPutCode());
+        
+        
+        //Biography
+        assertNotNull(p.getBiography());
+        Biography b = p.getBiography();
+        assertNotNull(b);
+        assertEquals("Biography for 0000-0000-0000-0003", b.getContent());
+        
+        //Email
+        assertNotNull(p.getEmails());
+        Emails email = p.getEmails();
+        assertNotNull(email);
+        assertNotNull(email.getLastModifiedDate());
+        assertEquals(1, email.getEmails().size());
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", email.getEmails().get(0).getEmail());
+        
+        //External identifiers
+        assertNotNull(p.getExternalIdentifiers());
+        PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
+        assertNotNull(extIds);
+        assertNotNull(extIds.getLastModifiedDate());
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifier().get(0).getPutCode());
+                
+        //Keywords
+        assertNotNull(p.getKeywords());
+        Keywords k = p.getKeywords();
+        assertNotNull(k);
+        assertNotNull(k.getLastModifiedDate());
+        assertEquals(1, k.getKeywords().size());
+        assertEquals(Long.valueOf(9), k.getKeywords().get(0).getPutCode());
+        
+        //Name
+        assertNotNull(p.getName());
+        assertEquals("Credit Name", p.getName().getCreditName().getContent());
+        assertEquals("Given Names", p.getName().getGivenNames().getContent());
+        assertEquals("Family Name", p.getName().getFamilyName().getContent());
+        
+        //Other names
+        assertNotNull(p.getOtherNames());
+        OtherNames o = p.getOtherNames();
+        assertNotNull(o);
+        assertNotNull(o.getLastModifiedDate());
+        assertEquals(1, o.getOtherNames().size());
+        assertEquals(Long.valueOf(13), o.getOtherNames().get(0).getPutCode());
+        
+        //Researcher urls
+        assertNotNull(p.getResearcherUrls());
+        ResearcherUrls ru = p.getResearcherUrls();
+        assertNotNull(ru);
+        assertNotNull(ru.getLastModifiedDate());
+        assertEquals(1, ru.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), ru.getResearcherUrls().get(0).getPutCode());
+        
+        
+        assertNotNull(p.getPath());
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     @Test    
     public void testAddWorkWithInvalidExtIdTypeFail() {
