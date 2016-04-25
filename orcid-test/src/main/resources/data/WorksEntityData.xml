@@ -168,7 +168,7 @@
           added_to_profile_date="2013-10-22 11:09:28.636"
           visibility="PUBLIC"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;1&quot;}}],&quot;scope&quot;:null}"
-            />  
+            />
             
 	<work work_id="11"
           publication_year="2016"
@@ -248,5 +248,5 @@
           visibility="PRIVATE"     
           external_ids_json="{&quot;workExternalIdentifier&quot;:[{&quot;workExternalIdentifierType&quot;:&quot;DOI&quot;,&quot;workExternalIdentifierId&quot;:{&quot;content&quot;:&quot;5&quot;}}],&quot;scope&quot;:null}"
           display_index="4"
-            />                  
+            />
 </dataset>

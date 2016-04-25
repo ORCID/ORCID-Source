@@ -20,6 +20,7 @@ import static org.orcid.core.api.OrcidApiConstants.STATUS_OK_MESSAGE;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.AccessControlException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
+import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
@@ -52,6 +54,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -195,8 +198,18 @@ public class MemberV2ApiServiceDelegatorImpl
     
     @Override
     public Response viewActivities(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);        
-        ActivitiesSummary as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);
+        ActivitiesSummary as = null;
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ACTIVITIES_READ_LIMITED, orcid);
+            as = visibilityFilter.filter(profileEntityManager.getActivitiesSummary(orcid), orcid);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public activities.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                as = profileEntityManager.getPublicActivitiesSummary(orcid);                
+            } else {
+                throw e;
+            }
+        }
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
         return Response.ok(as).build();
@@ -204,22 +217,20 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewWork(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED, orcid);
         long lastModifiedTime = getLastModifiedTime(orcid);
         Work w = workManager.getWork(orcid, putCode, lastModifiedTime);
-        ActivityUtils.cleanEmptyFields(w);
-        orcidSecurityManager.checkVisibility(w, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_WORKS_READ_LIMITED, w);
+        ActivityUtils.cleanEmptyFields(w);        
         ActivityUtils.setPathToActivity(w, orcid);
         return Response.ok(w).build();
     }
 
     @Override
-    public Response viewWorkSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED, orcid);
+    public Response viewWorkSummary(String orcid, Long putCode) {        
         long lastModifiedTime = getLastModifiedTime(orcid);
         WorkSummary ws = workManager.getWorkSummary(orcid, putCode, lastModifiedTime);
-        ActivityUtils.cleanEmptyFields(ws);
-        orcidSecurityManager.checkVisibility(ws, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_WORKS_READ_LIMITED, ws);
+        ActivityUtils.cleanEmptyFields(ws);        
         ActivityUtils.setPathToActivity(ws, orcid);
         return Response.ok(ws).build();
     }
@@ -257,18 +268,16 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewFunding(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);
         Funding f = profileFundingManager.getFunding(orcid, putCode);
-        orcidSecurityManager.checkVisibility(f, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.FUNDING_READ_LIMITED, f);
         ActivityUtils.setPathToActivity(f, orcid);
         return Response.ok(f).build();
     }
 
     @Override    
     public Response viewFundingSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(fs, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.FUNDING_READ_LIMITED, fs);
         ActivityUtils.setPathToActivity(fs, orcid);
         return Response.ok(fs).build();
     }
@@ -306,18 +315,16 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEducation(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
-        Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);
-        orcidSecurityManager.checkVisibility(e, orcid);
+        Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);        
+        checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, e);
         ActivityUtils.setPathToActivity(e, orcid);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(es, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, es);
         ActivityUtils.setPathToActivity(es, orcid);
         return Response.ok(es).build();
     }
@@ -348,18 +355,16 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewEmployment(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
-        orcidSecurityManager.checkVisibility(e, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, e);
         ActivityUtils.setPathToActivity(e, orcid);
         return Response.ok(e).build();
     }
 
     @Override
     public Response viewEmploymentSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(es, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, es);
         ActivityUtils.setPathToActivity(es, orcid);
         return Response.ok(es).build();
     }
@@ -397,20 +402,18 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReview(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
-        PeerReview peerReview = peerReviewManager.getPeerReview(orcid, putCode);
-        orcidSecurityManager.checkVisibility(peerReview, orcid);
-        ActivityUtils.setPathToActivity(peerReview, orcid);
-        return Response.ok(peerReview).build();
+        PeerReview p = peerReviewManager.getPeerReview(orcid, putCode);
+        checkPermissionsOnElement(orcid, ScopePathType.PEER_REVIEW_READ_LIMITED, p);
+        ActivityUtils.setPathToActivity(p, orcid);
+        return Response.ok(p).build();
     }
 
     @Override
     public Response viewPeerReviewSummary(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
-        PeerReviewSummary summary = peerReviewManager.getPeerReviewSummary(orcid, putCode);
-        orcidSecurityManager.checkVisibility(summary, orcid);
-        ActivityUtils.setPathToActivity(summary, orcid);
-        return Response.ok(summary).build();
+        PeerReviewSummary ps = peerReviewManager.getPeerReviewSummary(orcid, putCode);        
+        checkPermissionsOnElement(orcid, ScopePathType.PEER_REVIEW_READ_LIMITED, ps);
+        ActivityUtils.setPathToActivity(ps, orcid);
+        return Response.ok(ps).build();
     }
 
     @Override
@@ -489,21 +492,33 @@ public class MemberV2ApiServiceDelegatorImpl
         return Response.ok(records).build();
     }
 
+    /**
+     * BIOGRAPHY ELEMENTS
+     * */
     @SuppressWarnings("unchecked")
     @Override
     public Response viewResearcherUrls(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
+        ResearcherUrls researcherUrls = null;
         long lastModifiedTime = getLastModifiedTime(orcid);
-        ResearcherUrls researcherUrls = researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime);
-        researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls(), orcid));
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);            
+            researcherUrls = researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime);
+            researcherUrls.setResearcherUrls((List<ResearcherUrl>) visibilityFilter.filter(researcherUrls.getResearcherUrls(), orcid));
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                researcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);            
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
         return Response.ok(researcherUrls).build();
     }
 
     public Response viewResearcherUrl(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
-        orcidSecurityManager.checkVisibility(researcherUrl, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
         return Response.ok(researcherUrl).build();
     }
@@ -543,10 +558,20 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewEmails(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Emails emails = emailManager.getEmails(orcid, lastModifiedTime);
-        emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));
+        Emails emails = null;
+        long lastModified = getLastModifiedTime(orcid);
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);            
+            emails = emailManager.getEmails(orcid, lastModified);
+            emails.setEmails((List<Email>) visibilityFilter.filter(emails.getEmails(), orcid));            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                emails = emailManager.getPublicEmails(orcid, lastModified);
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToEmail(emails, orcid);
         return Response.ok(emails).build();
     }
@@ -554,21 +579,30 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewOtherNames(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        OtherNames otherNames = otherNameManager.getOtherNames(orcid, lastModifiedTime);
-        List<OtherName> allOtherNames = otherNames.getOtherNames();
-        List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames, orcid);
-        otherNames.setOtherNames(filterdOtherNames);
+        OtherNames otherNames = null;
+        long lastModified = getLastModifiedTime(orcid);
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);        
+            otherNames = otherNameManager.getOtherNames(orcid, lastModified);
+            List<OtherName> allOtherNames = otherNames.getOtherNames();
+            List<OtherName> filterdOtherNames = (List<OtherName>) visibilityFilter.filter(allOtherNames, orcid);
+            otherNames.setOtherNames(filterdOtherNames);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                otherNames = otherNameManager.getPublicOtherNames(orcid, lastModified);
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToOtherNames(otherNames, orcid);
         return Response.ok(otherNames).build();
     }
 
     @Override
     public Response viewOtherName(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
-        orcidSecurityManager.checkVisibility(otherName, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
         return Response.ok(otherName).build();
     }
@@ -606,33 +640,33 @@ public class MemberV2ApiServiceDelegatorImpl
         return Response.noContent().build();
     }
 
-    @Override    
-    public Response viewPersonalDetails(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(orcid);
-        personalDetails = visibilityFilter.filter(personalDetails, orcid);
-        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);    
-        return Response.ok(personalDetails).build();
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public Response viewExternalIdentifiers(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        PersonExternalIdentifiers extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime);
-        List<PersonExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
-        List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
-        extIds.setExternalIdentifiers(filteredExtIds);
+        PersonExternalIdentifiers extIds = null;
+        long lastModified = getLastModifiedTime(orcid);
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);        
+            extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModified);
+            List<PersonExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
+            List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
+            extIds.setExternalIdentifiers(filteredExtIds);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                extIds = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModified);
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
         return Response.ok(extIds).build();
     }
 
     @Override
     public Response viewExternalIdentifier(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
-        orcidSecurityManager.checkVisibility(extId, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
         return Response.ok(extId).build();
     }
@@ -669,33 +703,33 @@ public class MemberV2ApiServiceDelegatorImpl
         return Response.noContent().build();
     }
 
-    @Override
-    public Response viewBiography(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        Biography bio = biographyManager.getBiography(orcid);
-        orcidSecurityManager.checkVisibility(bio, orcid);
-        ElementUtils.setPathToBiography(bio, orcid);
-        return Response.ok(bio).build();
-    }
-        
     @SuppressWarnings("unchecked")
     @Override
     public Response viewKeywords(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        long lastModifiedTime = getLastModifiedTime(orcid);
-        Keywords keywords = keywordsManager.getKeywords(orcid, lastModifiedTime);
-        List<Keyword> allKeywords = keywords.getKeywords();
-        List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords, orcid);
-        keywords.setKeywords(filterdKeywords);
+        Keywords keywords = null;
+        long lastModified = getLastModifiedTime(orcid);
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);        
+            keywords = keywordsManager.getKeywords(orcid, lastModified);
+            List<Keyword> allKeywords = keywords.getKeywords();
+            List<Keyword> filterdKeywords = (List<Keyword>) visibilityFilter.filter(allKeywords, orcid);
+            keywords.setKeywords(filterdKeywords);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                keywords = keywordsManager.getPublicKeywords(orcid, lastModified);
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToKeywords(keywords, orcid);
         return Response.ok(keywords).build();
     }
 
     @Override
     public Response viewKeyword(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
-        orcidSecurityManager.checkVisibility(keyword, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
         return Response.ok(keyword).build();
     }
@@ -736,20 +770,30 @@ public class MemberV2ApiServiceDelegatorImpl
     @SuppressWarnings("unchecked")
     @Override
     public Response viewAddresses(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        Addresses addresses = addressManager.getAddresses(orcid, getLastModifiedTime(orcid));
-        List<Address> allAddresses = addresses.getAddress();
-        List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses, orcid);
-        addresses.setAddress(filteredAddresses);
+        Addresses addresses = null;
+        long lastModified = getLastModifiedTime(orcid);
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
+            addresses = addressManager.getAddresses(orcid, lastModified);
+            List<Address> allAddresses = addresses.getAddress();
+            List<Address> filteredAddresses = (List<Address>) visibilityFilter.filter(allAddresses, orcid);
+            addresses.setAddress(filteredAddresses);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                addresses = addressManager.getPublicAddresses(orcid, lastModified);
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToAddresses(addresses, orcid);
         return Response.ok(addresses).build();
     }
 
     @Override
     public Response viewAddress(String orcid, Long putCode) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
         Address address = addressManager.getAddress(orcid, putCode);
-        orcidSecurityManager.checkVisibility(address, orcid);
+        checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, address);
         ElementUtils.setPathToAddress(address, orcid);
         return Response.ok(address).build();
     }
@@ -788,11 +832,76 @@ public class MemberV2ApiServiceDelegatorImpl
     }   
     
     @Override
+    public Response viewBiography(String orcid) {
+        Biography bio = null;
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
+            bio = biographyManager.getBiography(orcid);
+            orcidSecurityManager.checkVisibility(bio, orcid);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public elements.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                bio = biographyManager.getPublicBiography(orcid);
+                if(bio == null) {
+                    throw new OrcidUnauthorizedException("The biography is not public");
+                }
+            } else {
+                throw e;
+            }
+        }
+        ElementUtils.setPathToBiography(bio, orcid);
+        return Response.ok(bio).build();
+    }
+    
+    @Override    
+    public Response viewPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = null;
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
+            personalDetails = personalDetailsManager.getPersonalDetails(orcid);
+            personalDetails = visibilityFilter.filter(personalDetails, orcid);            
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the public element.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                personalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);                
+            } else {
+                throw e;
+            }
+        }
+        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);    
+        return Response.ok(personalDetails).build();
+    }
+    
+    @Override
     public Response viewPerson(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
-        Person person = profileEntityManager.getPersonDetails(orcid);
-        person = visibilityFilter.filter(person, orcid);
+        Person person = null;
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
+            person = profileEntityManager.getPersonDetails(orcid);
+            person = visibilityFilter.filter(person, orcid);
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the public element.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                person = profileEntityManager.getPublicPersonDetails(orcid);                
+            } else {
+                throw e;
+            }
+        }
         ElementUtils.setPathToPerson(person, orcid);
         return Response.ok(person).build();
+    }
+    
+    private void checkPermissionsOnElement(String orcid, ScopePathType requiredScope, Filterable element) {
+        try {
+            orcidSecurityManager.checkPermissions(requiredScope, orcid);
+            orcidSecurityManager.checkVisibility(element, orcid);
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, check that the work is public
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                orcidSecurityManager.checkIsPublic(element);
+            } else {
+                throw e;
+            }
+        }
     }
 }

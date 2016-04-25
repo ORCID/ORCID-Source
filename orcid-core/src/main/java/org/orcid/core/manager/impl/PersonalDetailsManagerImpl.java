@@ -144,9 +144,9 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             personalDetails.setName(name);
         }                               
         if(otherNames != null && otherNames.getOtherNames() != null) {
-        	XMLGregorianCalendar latest = LastModifiedDatesHelper.calculateLatest(otherNames);
-        	personalDetails.setLastModifiedDate(new LastModifiedDate(latest));
-        	personalDetails.setOtherNames(otherNames);
+            XMLGregorianCalendar latest = LastModifiedDatesHelper.calculateLatest(otherNames);
+            personalDetails.setLastModifiedDate(new LastModifiedDate(latest));
+            personalDetails.setOtherNames(otherNames);
         }
                 
         return personalDetails;
