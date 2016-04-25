@@ -25,8 +25,7 @@
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
-						<!-- <@orcid.msg ''/> -->
-						Edit also known as
+						<@orcid.msg 'manage_bio_settings.editOtherNames'/>
 					</h1>
 				</div>			
 			</div>
@@ -40,7 +39,7 @@
 										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
 										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.sourceName"></span>										
 									</div>
-									<div class="source" ng-show="otherName.sourceName">Source: {{otherName.sourceName}}</div>
+									<div class="source" ng-show="otherName.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{otherName.sourceName}}</div>
 								</div>							
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<ul class="record-settings pull-right">
@@ -64,8 +63,8 @@
 		                	     				elementId="$index" />	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="otherName.createdDate" ng-class="{'hidden-xs' : otherName.createdDate}">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
-									<span class="created-date pull-left" ng-show="otherName.createdDate" ng-class="{'visible-xs' : otherName.createdDate}">Created: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="otherName.createdDate" ng-class="{'hidden-xs' : otherName.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="otherName.createdDate" ng-class="{'visible-xs' : otherName.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{otherName.createdDate.year + '-' + otherName.createdDate.month + '-' + otherName.createdDate.day}}</span>
 								</div>
 							</div>
 						</div>
@@ -89,8 +88,7 @@
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
-						<!-- <@orcid.msg ''/> -->
-						Edit Country
+						<@orcid.msg 'manage_bio_settings.editCountry'/>
 					</h1>
 				</div>			
 			</div>
@@ -108,7 +106,7 @@
 							 	 			</#list>
 							 			</select>
 									</div> 
-						 			<div class="source" ng-show="country.sourceName">Source: {{country.sourceName}}</div>
+						 			<div class="source" ng-show="country.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{country.sourceName}}</div>
 								</div> 
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
@@ -134,8 +132,8 @@
 	                 	      					elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}">Created: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
-									<span class="created-date pull-left" ng-show="country.createdDate" ng-class="{'visible-xs' : country.createdDate}">Created: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="country.createdDate" ng-class="{'hidden-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="country.createdDate" ng-class="{'visible-xs' : country.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{country.createdDate.year + '-' + country.createdDate.month + '-' + country.createdDate.day}}</span>
 								</div>					 				
 							</div>											
 						</div>
@@ -165,9 +163,8 @@
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
-						<!-- <@orcid.msg ''/> -->
-						Edit Keywords
-					</h1>
+						<@orcid.msg 'manage_bio_settings.editKeywords'/>		
+					</h1>					
 				</div>			
 			</div>
 			<div class="row">
@@ -176,11 +173,11 @@
 						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords | orderBy:'displayIndex'">		
 								<div class="col-md-6">
-									<div class="aka">
+									<div class="aka">										
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId || keyword.source == null" focus-me="newInput"></input>
 										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
 									</div>
-									<div class="source" ng-show="keyword.sourceName">Source: {{keyword.sourceName}}</div>										
+									<div class="source" ng-show="keyword.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{keyword.sourceName}}</div>										
 								</div>
 								
 								<div class="col-md-6">
@@ -204,8 +201,8 @@
                 	      						elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="keyword.createdDate" ng-class="{'hidden-xs' : keyword.createdDate}">Created: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
-									<span class="created-date pull-left" ng-show="keyword.createdDate" ng-class="{'visible-xs' : keyword.createdDate}">Created: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="keyword.createdDate" ng-class="{'hidden-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="keyword.createdDate" ng-class="{'visible-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
 								</div>					 				
 							</div>											
 						</div>
@@ -230,8 +227,7 @@
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
-						<!-- <@orcid.msg ''/> -->
-						Edit Websites
+						<@orcid.msg 'manage_bio_settings.editWebsites'/>
 					</h1>
 				</div>			
 			</div>
@@ -246,7 +242,7 @@
 										<input type="text" ng-model="website.url" ng-show="website.source == orcidId || website.source == null" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
  										<a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId && website.sourceName" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>										
 									</div>
-									<div class="source" ng-show="website.sourceName">Source: {{website.sourceName}}</div>										
+									<div class="source" ng-show="website.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{website.sourceName}}</div>										
 								</div>
 								
 								<div class="col-md-6">
@@ -270,8 +266,8 @@
                 	      						elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="website.createdDate" ng-class="{'hidden-xs' : website.createdDate}">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
-									<span class="created-date pull-left" ng-show="website.createdDate" ng-class="{'visible-xs' : website.createdDate}">Created: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="website.createdDate" ng-class="{'hidden-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="website.createdDate" ng-class="{'visible-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
 								</div>								
 								<div ng-show="website.errors.length > 0" class="col-md-12">									
 									<div ng-repeat="error in website.errors">
@@ -301,8 +297,7 @@
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
 					<h1 class="lightbox-title pull-left">
-						<!-- <@orcid.msg ''/> -->
-						Edit External Identifiers
+						<@orcid.msg 'manage_bio_settings.editExternalIdentifiers'/>
 					</h1>
 				</div>			
 			</div>
@@ -318,7 +313,7 @@
 			        						<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
 										</p>										
 									</div>
-									<div class="source" ng-show="externalIdentifier.sourceName">Source: {{externalIdentifier.sourceName}}</div>										
+									<div class="source" ng-show="externalIdentifier.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{externalIdentifier.sourceName}}</div>										
 								</div>
 								
 								<div class="col-md-6">
@@ -342,8 +337,8 @@
                 	      						elementId="$index"/>	
 										</li>
 									</ul>
-									<span class="created-date pull-right" ng-show="externalIdentifier.createdDate" ng-class="{'hidden-xs' : externalIdentifier.createdDate}">Created: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
-									<span class="created-date pull-left" ng-show="externalIdentifier.createdDate" ng-class="{'visible-xs' : externalIdentifier.createdDate}">Created: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
+									<span class="created-date pull-right" ng-show="externalIdentifier.createdDate" ng-class="{'hidden-xs' : externalIdentifier.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
+									<span class="created-date pull-left" ng-show="externalIdentifier.createdDate" ng-class="{'visible-xs' : externalIdentifier.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{externalIdentifier.createdDate.year + '-' + externalIdentifier.createdDate.month + '-' + externalIdentifier.createdDate.day}}</span>
 								</div>								
 								<div ng-show="website.errors.length > 0" class="col-md-12">									
 									<div ng-repeat="error in externalIdentifier.errors">

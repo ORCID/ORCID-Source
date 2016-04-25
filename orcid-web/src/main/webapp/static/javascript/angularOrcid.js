@@ -2416,6 +2416,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.showElement = {};
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
+    $scope.orcidId = orcidVar.orcidId; //Do not remove
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2682,6 +2683,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.showElement = {};
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
+    $scope.orcidId = orcidVar.orcidId; //Do not remove
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2831,7 +2833,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     	$scope.showElement[elem] = false;
     }
     
-    $scope.openEditModal = function(){        
+    $scope.openEditModal = function(){
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-keyword').html())($scope),
