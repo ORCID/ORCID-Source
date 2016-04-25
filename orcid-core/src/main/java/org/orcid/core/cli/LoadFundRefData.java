@@ -41,6 +41,7 @@ import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -65,13 +66,15 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class LoadFundRefData {
 
     class RDFOrganization {
-        String doi, name, country, state, stateCode, city, type, subtype;
+        String doi, name, country, state, stateCode, city, type, subtype, status;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
     private static final String FUNDREF_SOURCE_TYPE = "FUNDREF";
     private static final String STATE_NAME = "STATE";
     private static final String STATE_ABBREVIATION = "abbr";
+    private static final String DEPRECATED_INDICATOR = "http://data.crossref.org/fundingdata/vocabulary/Deprecated";
+    
     private static String geonamesApiUrl;
     // Params
     @Option(name = "-f", usage = "Path to RDF file containing FundRef info to load into DB")
@@ -91,6 +94,7 @@ public class LoadFundRefData {
     private String orgStateExpression = itemExpression + "/state";
     private String orgTypeExpression = itemExpression + "/fundingBodyType";
     private String orgSubTypeExpression = itemExpression + "/fundingBodySubType";
+    private String status = itemExpression + "status";
     // xPath init
     private XPath xPath = XPathFactory.newInstance().newXPath();
     // Statistics
@@ -249,6 +253,16 @@ public class LoadFundRefData {
         return organization;
     }
 
+    /**
+     * Indicates if an organization has been marked as deprecated
+     * */
+    private boolean isDeprecated(RDFOrganization organization) {
+        if(!PojoUtil.isEmpty(organization.status)) {
+            return DEPRECATED_INDICATOR.equalsIgnoreCase(organization.status);
+        }
+        return false;
+    }
+    
     /**
      * GEONAMES FUNCTIONS
      * */
