@@ -508,31 +508,34 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
             addAffiliationToScope: function(path) {
                 if( serv.affiliationsToAddIds.length != 0 ) {
                     var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
+                    var url = getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds;
+                    
                     $.ajax({
-                        url: getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds,
-                        dataType: 'json',
+                        url: url,                        
+                        headers : {'Content-Type': 'application/json'},
+                        method: 'GET',
                         success: function(data) {
-                                for (i in data) {
+                            for (i in data) {
 
-                                    if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                            && data[i].affiliationType.value == 'education')
-                                        GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
-                                    else if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                            && data[i].affiliationType.value == 'employment')
-                                        GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
-                                };
-                                if (serv.affiliationsToAddIds.length == 0) {
-                                    serv.loading = false;
-                                    $rootScope.$apply();
-                                } else {
-                                    $rootScope.$apply();
-                                    setTimeout(function () {
-                                        serv.addAffiliationToScope(path);
-                                    },50);
-                                }
+                                if (data[i].affiliationType != null && data[i].affiliationType.value != null
+                                        && data[i].affiliationType.value == 'education')
+                                    GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+                                else if (data[i].affiliationType != null && data[i].affiliationType.value != null
+                                        && data[i].affiliationType.value == 'employment')
+                                    GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+                            };
+                            if (serv.affiliationsToAddIds.length == 0) {
+                                serv.loading = false;
+                                $rootScope.$apply();
+                            } else {
+                                $rootScope.$apply();
+                                setTimeout(function () {
+                                    serv.addAffiliationToScope(path);
+                                },50);
+                            }
                         }
-                    }).fail(function() {
-                        console.log("Error fetching affiliation: " + value);
+                    }).fail(function(e) {
+                        console.log(e.statusText);
                     });
                 } else {
                     serv.loading = false;
@@ -698,7 +701,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                                 }
                         }
                     }).fail(function() {
-                        console.log("Error fetching fundings: " + value);
+                        console.log("Error fetching fundings");
                     });
                 } else {
                     fundingSrvc.loading = false;
@@ -929,9 +932,9 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                             }
                         }
                     }).fail(function() {
-                        $rootScope.$apply(function() {
+                        //$rootScope.$apply(function() {
                             worksSrvc.loading = false;
-                        });
+                        //});
                         console.log("Error fetching works: " + workIds);
                     });
                 } else {
@@ -6713,9 +6716,9 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                             }
                         }
                     }).fail(function() {
-                        $rootScope.$apply(function() {
+                        //$rootScope.$apply(function() {
                         	peerReviewSrvc.loading = false;
-                        });
+                        //});
                         console.log("Error fetching Peer Review: " + peerReviewIds);
                     });
                 } else {

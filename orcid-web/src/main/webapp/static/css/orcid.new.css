@@ -1512,10 +1512,12 @@ ul.privacyHelp li.private {
 	top: 0;
 	left: 0;
 	z-index: 9999;
-	overflow: hidden; /* Do not change */
+	overflow: hidden; /* Do not change */	
 }
 
-
+#colorbox:focus{
+	outline: 0;
+}
 
 #cboxOverlay {
 	position: fixed;
