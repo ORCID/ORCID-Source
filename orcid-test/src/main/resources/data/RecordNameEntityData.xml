@@ -28,6 +28,7 @@
 		family_name="Family Name"
 		visibility="PUBLIC"		
 		/>
+		
 	<record_name
 		id="2" 
 		date_created="2016-04-01 00:00:00.00"
@@ -38,4 +39,26 @@
 		family_name="Family Name"
 		visibility="LIMITED"	
 		/>
+		
+	<record_name
+		id="3" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="0000-0000-0000-0002"
+		credit_name="Credit Name"
+		given_names="Given Names"
+		family_name="Family Name"
+		visibility="LIMITED"	
+		/>
+		
+	<record_name
+		id="4" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="0000-0000-0000-0003"
+		credit_name="Credit Name"
+		given_names="Given Names"
+		family_name="Family Name"
+		visibility="PUBLIC"	
+		/>	
 </dataset>

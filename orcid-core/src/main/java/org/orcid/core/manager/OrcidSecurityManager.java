@@ -16,11 +16,10 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.common_rc2.Filterable;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -34,15 +33,17 @@ public interface OrcidSecurityManager {
     
     void checkVisibility(Name name, String orcid);
     
-    void checkVisibility(Biography biography, String orcid);
+    void checkVisibility(Biography biography, String orcid);         
     
-    void checkVisibility(OtherName otherName, String orcid);
+    void checkIsPublic(Filterable filterable);
     
     void checkSource(SourceEntity existingSource);
 
     boolean isAdmin();
 
     boolean isPasswordConfirmationRequired();
+    
+    boolean hasScope(ScopePathType scope);
 
     String getClientIdFromAPIRequest();
     

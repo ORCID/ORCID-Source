@@ -16,10 +16,10 @@
     =============================================================================
 
 -->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-2.2.3.min.js"></script>
 <script type="text/javascript">
 if (typeof jQuery == 'undefined') {
-    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/1.9.1/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
+    document.write(unescape("%3Cscript src='${staticCdn}/javascript/jquery/2.2.3/jquery.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
 
@@ -40,10 +40,12 @@ if (typeof jQuery == 'undefined') {
 <script type="text/javascript" >
     // CSRF
     var token = $("meta[name='_csrf']").attr("content");
-    var header = $("meta[name='_csrf_header']").attr("content");
-    $(document).ajaxSend(function(e, xhr, options) {
-        xhr.setRequestHeader(header, token);
-    });
+    var header = $("meta[name='_csrf_header']").attr("content");    
+    if (header && token){
+	    $(document).ajaxSend(function(e, xhr, options) {
+	        xhr.setRequestHeader(header, token);
+	    });
+    }
 </script>
 
 <script type="text/javascript" src="${staticCdn}/javascript/typeahead/0.9.3/typeahead.min.js"></script>

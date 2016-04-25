@@ -896,7 +896,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setLastModifiedDate(latest);
         return person;
     }
-            
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

@@ -34,4 +34,22 @@
 		biography="Biography for 4444-4444-4444-4447"
 		visibility="LIMITED"	
 		/>
+		
+	<biography
+		id="3" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="0000-0000-0000-0002"
+		biography="Biography for 0000-0000-0000-0002"
+		visibility="LIMITED"	
+		/>
+		
+	<biography
+		id="4" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="0000-0000-0000-0003"
+		biography="Biography for 0000-0000-0000-0003"
+		visibility="PUBLIC"	
+		/>
 </dataset>

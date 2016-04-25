@@ -31,6 +31,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
@@ -85,12 +86,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Resource
     private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
 
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
 
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
-        checkIsCorrectUser(orcid);
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         // If it is null, it might be a call from the public API
         Set<String> readLimitedScopes = new HashSet<String>();
@@ -134,7 +137,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkVisibility(Name name, String orcid) {
-        checkIsCorrectUser(orcid);
         if (Visibility.PRIVATE.equals(name.getVisibility())) {
             throw new OrcidVisibilityException();
         }
@@ -148,37 +150,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkVisibility(Biography biography, String orcid) {
-        checkIsCorrectUser(orcid);
         if (Visibility.PRIVATE.equals(biography.getVisibility())) {
             throw new OrcidVisibilityException();
         }
         boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
         if (!hasReadLimitedScope) {
             if (Visibility.LIMITED.equals(biography.getVisibility())) {
-                throw new OrcidUnauthorizedException("You dont have permissions to view this element");
-            }
-        }
-    }
-
-    @Override
-    public void checkVisibility(OtherName otherName, String orcid) {
-        checkIsCorrectUser(orcid);
-        if (Visibility.PRIVATE.equals(otherName.getVisibility())) {
-            OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-            String clientId = null;
-
-            if (oAuth2Authentication != null) {
-                OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
-                clientId = authorizationRequest.getClientId();
-            }
-
-            if (clientId == null || otherName.getSource() == null || !clientId.equals(otherName.getSource().retrieveSourcePath())) {
-                throw new OrcidVisibilityException();
-            }
-        }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
-        if (!hasReadLimitedScope) {
-            if (Visibility.LIMITED.equals(otherName.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
             }
         }
@@ -216,10 +193,10 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         SecurityContext context = SecurityContextHolder.getContext();
         if (context != null && context.getAuthentication() != null) {
             return context.getAuthentication();
-        } 
+        }
         return null;
     }
-    
+
     private Set<String> getReadLimitedScopesThatTheClientHas(OAuth2Request authorizationRequest, Filterable filterable, String orcid) {
         Set<String> readLimitedScopes = new HashSet<>();
         Set<String> requestedScopes = ScopePathType.getCombinedScopesFromStringsAsStrings(authorizationRequest.getScope());
@@ -274,16 +251,28 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     private void checkIsCorrectUser(String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
-        if (oAuth2Authentication != null) {
-            Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
-            if (userAuthentication != null) {
-                Object principal = userAuthentication.getPrincipal();
-                if (principal instanceof ProfileEntity) {
-                    ProfileEntity profileEntity = (ProfileEntity) principal;
-                    if (!orcid.equals(profileEntity.getId())) {
-                        throw new OrcidUnauthorizedException("Access token is for a different record");
-                    }
+        if (oAuth2Authentication == null) {
+            throw new OrcidUnauthorizedException("No OAuth2 authentication found");
+        }
+        Authentication userAuthentication = oAuth2Authentication.getUserAuthentication();
+        if (userAuthentication != null) {
+            Object principal = userAuthentication.getPrincipal();
+            if (principal instanceof ProfileEntity) {
+                ProfileEntity profileEntity = (ProfileEntity) principal;
+                if (!orcid.equals(profileEntity.getId())) {
+                    throw new OrcidUnauthorizedException("Access token is for a different record");
                 }
+            } else {
+                throw new OrcidUnauthorizedException("Missing user authentication");
+            }
+        } else {
+            // Check if the record is unclaimed and the client is the source
+            ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+            Boolean claimed = profile.getClaimed();
+            SourceEntity source = profile.getSource();
+            String clientId = sourceManager.retrieveSourceOrcid();
+            if (!((claimed == null || !claimed) && source != null && clientId.equals(source.getSourceId()))) {
+                throw new OrcidUnauthorizedException("Incorrect token for claimed record");
             }
         }
     }
@@ -324,7 +313,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         return null;
     }
 
-    private boolean hasScope(ScopePathType scope) {
+    public boolean hasScope(ScopePathType scope) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         if (oAuth2Authentication != null) {
             OAuth2Request authorizationRequest = oAuth2Authentication.getOAuth2Request();
@@ -392,5 +381,12 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             }
         }
         return false;
+    }
+
+    @Override
+    public void checkIsPublic(Filterable filterable) {
+        if(!org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+            throw new OrcidUnauthorizedException("The activity is not public");
+        }
     }
 }

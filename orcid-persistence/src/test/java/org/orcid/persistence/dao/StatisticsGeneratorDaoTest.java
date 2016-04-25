@@ -63,10 +63,10 @@ public class StatisticsGeneratorDaoTest extends DBUnitTest {
     @Rollback(true)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void testStatistics() {
-        assertEquals(11, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
-        assertEquals(4, statisticsGeneratorDao.getAccountsWithWorks());
-        assertEquals(15, statisticsGeneratorDao.getLiveIds());
-        assertEquals(10, statisticsGeneratorDao.getNumberOfWorks());
+        assertEquals(12, statisticsGeneratorDao.getAccountsWithVerifiedEmails());
+        assertEquals(5, statisticsGeneratorDao.getAccountsWithWorks());
+        assertEquals(16, statisticsGeneratorDao.getLiveIds());
+        assertEquals(15, statisticsGeneratorDao.getNumberOfWorks());
         //TODO: Restore this test when we know how to make it work on HSQLDB
         //assertEquals(0, statisticsGeneratorDao.getNumberOfUniqueDOIs());
     }

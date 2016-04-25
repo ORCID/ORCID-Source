@@ -44,58 +44,86 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 public class ElementUtils {
 
     public static void setPathToResearcherUrls(ResearcherUrls researcherUrls, String orcid) {
-        researcherUrls.setPath(RESEARCHER_URLS.replace("{orcid}", orcid));
+        if(researcherUrls != null) {
+            researcherUrls.setPath(RESEARCHER_URLS.replace("{orcid}", orcid));
+        }        
     }
 
     public static void setPathToResearcherUrl(ResearcherUrl researcherUrl, String orcid) {
-        researcherUrl.setPath(RESEARCHER_URLS.replace("{orcid}", orcid) + '/' + researcherUrl.getPutCode());
+        if(researcherUrl != null) {
+            researcherUrl.setPath(RESEARCHER_URLS.replace("{orcid}", orcid) + '/' + researcherUrl.getPutCode());
+        }        
     }
 
     public static void setPathToPersonalDetails(PersonalDetails personalDetails, String orcid) {
-        personalDetails.setPath(PERSONAL_DETAILS.replace("{orcid}", orcid));
+        if(personalDetails != null) {
+            personalDetails.setPath(PERSONAL_DETAILS.replace("{orcid}", orcid));
+        }        
     }
 
     public static void setPathToExternalIdentifiers(PersonExternalIdentifiers extIds, String orcid) {
-        extIds.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid));
+        if(extIds != null) {
+            extIds.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid));
+        }        
     }
 
     public static void setPathToExternalIdentifier(PersonExternalIdentifier extId, String orcid) {
-        extId.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid) + '/' + extId.getPutCode());
+        if(extId != null) {
+            extId.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid) + '/' + extId.getPutCode());
+        }        
     }
 
     public static void setPathToBiography(Biography bio, String orcid) {
-        bio.setPath(BIOGRAPHY.replace("{orcid}", orcid));
+        if(bio != null) {
+            bio.setPath(BIOGRAPHY.replace("{orcid}", orcid));
+        }        
     }
 
     public static void setPathToOtherNames(OtherNames otherNames, String orcid) {
-        otherNames.setPath(OTHER_NAMES.replace("{orcid}", orcid));
+        if(otherNames != null) {
+            otherNames.setPath(OTHER_NAMES.replace("{orcid}", orcid));
+        }        
     }
 
     public static void setPathToOtherName(OtherName otherName, String orcid) {
-        otherName.setPath(OTHER_NAMES.replace("{orcid}", orcid) + '/' + otherName.getPutCode());
+        if(otherName != null) {
+            otherName.setPath(OTHER_NAMES.replace("{orcid}", orcid) + '/' + otherName.getPutCode());
+        }        
     }
 
     public static void setPathToKeywords(Keywords keywords, String orcid) {
-        keywords.setPath(KEYWORDS.replace("{orcid}", orcid));
+        if(keywords != null) {
+            keywords.setPath(KEYWORDS.replace("{orcid}", orcid));
+        }        
     }
 
     public static void setPathToKeyword(Keyword keyword, String orcid) {
-        keyword.setPath(KEYWORDS.replace("{orcid}", orcid) + '/' + keyword.getPutCode());
+        if(keyword != null) {
+            keyword.setPath(KEYWORDS.replace("{orcid}", orcid) + '/' + keyword.getPutCode());
+        }        
     }
     
     public static void setPathToAddresses(Addresses addresses, String orcid) {
-        addresses.setPath(ADDRESS.replace("{orcid}", orcid));
+        if(addresses != null) {
+            addresses.setPath(ADDRESS.replace("{orcid}", orcid));
+        }        
     }
     
     public static void setPathToAddress(Address address, String orcid) {
-        address.setPath(ADDRESS.replace("{orcid}", orcid) + '/' + address.getPutCode() );
+        if(address != null) {
+            address.setPath(ADDRESS.replace("{orcid}", orcid) + '/' + address.getPutCode());
+        }        
     }
     
     public static void setPathToPerson(Person person, String orcid) {
-        person.setPath(PERSON.replace("{orcid}", orcid) );
+        if(person != null) {
+            person.setPath(PERSON.replace("{orcid}", orcid) );
+        }
     }
     
     public static void setPathToEmail(Emails emails, String orcid) {
-        emails.setPath(EMAIL.replace("{orcid}", orcid) );
+        if(emails != null) {
+            emails.setPath(EMAIL.replace("{orcid}", orcid) );
+        }        
     }
 }

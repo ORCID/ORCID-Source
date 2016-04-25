@@ -125,9 +125,7 @@
 			client_source_id="APP-5555555555555555"
 			display_index="2"
 			/>
-			
-			
-			
+									
 	<profile_funding 
 			id="8" 
 			orcid="4444-4444-4444-4446" 
@@ -158,5 +156,83 @@
 			display_index="4"
 			/>		
 			
-								  		    		
+	<profile_funding 
+			id="10" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="PUBLIC" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PUBLIC" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="0"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;1&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/1.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			/>
+			
+	<profile_funding 
+			id="11" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="LIMITED" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="LIMITED" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="1"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;2&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/2.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			/>
+			
+	<profile_funding 
+			id="12" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="PRIVATE" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			client_source_id="APP-5555555555555555"
+			display_index="2"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;3&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/3.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			/>	
+			
+	<profile_funding 
+			id="13" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="SELF LIMITED" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="LIMITED" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			source_id="0000-0000-0000-0003"
+			display_index="3"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;4&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/4.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			/>	
+			
+	<profile_funding 
+			id="14" 
+			orcid="0000-0000-0000-0003" 
+			org_id="1" 
+			title="SELF PRIVATE" 
+			type="SALARY_AWARD" 
+			currency_code="USD" 
+			numeric_amount="2500" 
+			visibility="PRIVATE" 
+			date_created="2016-04-01 15:31:00.00"
+            last_modified="2016-04-01 15:31:00.00"
+			source_id="0000-0000-0000-0003"
+			display_index="4"
+			external_identifiers_json="{&quot;fundingExternalIdentifier&quot;:[{&quot;type&quot;:&quot;GRANT_NUMBER&quot;,&quot;value&quot;:&quot;5&quot;,&quot;url&quot;:{&quot;value&quot;:&quot;http://test.orcid.org/5.com&quot;},&quot;relationship&quot;:&quot;SELF&quot;}]}"
+			/>			
 </dataset>
