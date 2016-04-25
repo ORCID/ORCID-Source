@@ -33,6 +33,11 @@ import org.orcid.core.BaseTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
+/**
+* 
+* @author Angel Montenegro
+* 
+*/
 public class PersonalDetailsManagerTest extends BaseTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", 

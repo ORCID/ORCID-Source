@@ -52,6 +52,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.Organization;
 import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc2.Subtitle;
@@ -61,6 +62,9 @@ import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
@@ -86,6 +90,7 @@ import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
+import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -96,6 +101,7 @@ import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -3296,8 +3302,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         r = serviceDelegator.viewFundingSummary(orcid, 10L);
         assertNotNull(r);
         assertEquals(FundingSummary.class.getName(), r.getEntity().getClass().getName());        
-        
-        
+                
         //Limited fail
         try {
             serviceDelegator.viewFunding(orcid, 11L);
@@ -3326,16 +3331,583 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }
-        
-        try {
-            serviceDelegator.viewFundingSummary(orcid, 12L);
-            fail();
-        } catch(OrcidUnauthorizedException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }
     }
+    
+    
+    @Test
+    public void viewPersonalDetails() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.PERSON_READ_LIMITED);
+        Response response = serviceDelegator.viewPersonalDetails(orcid);
+        assertNotNull(response);
+        PersonalDetails personalDetails = (PersonalDetails) response.getEntity();
+        assertNotNull(personalDetails);
+        assertNotNull(personalDetails.getBiography());
+        assertEquals("Biography for 0000-0000-0000-0003", personalDetails.getBiography().getContent());
+        assertNotNull(personalDetails.getBiography().getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getBiography().getVisibility().value());
+        assertEquals("/0000-0000-0000-0003/biography", personalDetails.getBiography().getPath());
+        assertNotNull(personalDetails.getLastModifiedDate());
+        assertNotNull(personalDetails.getName());
+        assertNotNull(personalDetails.getName().getCreatedDate().getValue());
+        assertEquals("Credit Name", personalDetails.getName().getCreditName().getContent());
+        assertEquals("Family Name", personalDetails.getName().getFamilyName().getContent());
+        assertEquals("Given Names", personalDetails.getName().getGivenNames().getContent());
+        assertEquals(Visibility.PUBLIC.value(), personalDetails.getName().getVisibility().value());
+        assertNotNull(personalDetails.getName().getLastModifiedDate());
+        assertNotNull(personalDetails.getOtherNames());
+        assertNotNull(personalDetails.getOtherNames().getLastModifiedDate());
+        assertEquals(4, personalDetails.getOtherNames().getOtherNames().size());
+        
+        for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
+            if(otherName.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("Other Name PUBLIC", otherName.getContent());
+                assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());
+            } else if(otherName.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals("Other Name LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/14", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());
+            } else if(otherName.getPutCode().equals(Long.valueOf(15))) { 
+                assertEquals("Other Name PRIVATE", otherName.getContent());
+                assertEquals(Long.valueOf(2), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/15", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility().value());
+            } else if(otherName.getPutCode().equals(Long.valueOf(16))) { 
+                assertEquals("Other Name SELF LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(3), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/16", otherName.getPath());
+                assertEquals("0000-0000-0000-0003", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());
+            } else {
+                fail("Invalid put code found: " + otherName.getPutCode());
+            }
+        }
+        
+        assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
+        assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());        
+    }
+    
+    @Test
+    public void viewRecord() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
+        Response response = serviceDelegator.viewRecord(orcid);
+        assertNotNull(response);
+        Record record = (Record) response.getEntity();
+        assertNotNull(record);
+        assertNotNull(record.getHistory());
+        assertEquals(OrcidType.USER, record.getOrcidType());        
+        assertNotNull(record.getPreferences());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
+        assertNotNull(record.getLastModifiedDate());
+        History history = record.getHistory();
+        assertTrue(history.getClaimed());
+        assertNotNull(history.getCompletionDate());
+        assertEquals(CreationMethod.INTEGRATION_TEST, history.getCreationMethod());
+        assertNull(history.getDeactivationDate());
+        assertNotNull(history.getLastModifiedDate());
+        assertNotNull(history.getSource());
+        assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
+        assertNotNull(history.getSubmissionDate());                
+        assertNotNull(record.getOrcidIdentifier());
+        OrcidIdentifier id = record.getOrcidIdentifier();
+        assertEquals("0000-0000-0000-0003", id.getPath());
+        //Validate person
+        Person person = record.getPerson();
+        assertNotNull(person);
+        assertNotNull(person.getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/person", person.getPath());
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/address", person.getAddresses().getPath());
+        assertEquals(4, person.getAddresses().getAddress().size());
+        for(Address address : person.getAddresses().getAddress()) {
+            assertNotNull(address.getLastModifiedDate());
+            if(address.getPutCode().equals(Long.valueOf(9))) {                
+                assertEquals(Iso3166Country.US, address.getCountry().getValue());
+                assertEquals(Long.valueOf(0), address.getDisplayIndex());                
+                assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
+            } else if(address.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+                assertEquals(Long.valueOf(1), address.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/address/10", address.getPath());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), address.getVisibility().value());
+            } else if(address.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals(Iso3166Country.GB, address.getCountry().getValue());
+                assertEquals(Long.valueOf(2), address.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/address/11", address.getPath());
+                assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), address.getVisibility().value());
+            } else if(address.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals(Iso3166Country.MX, address.getCountry().getValue());
+                assertEquals(Long.valueOf(3), address.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/address/12", address.getPath());
+                assertEquals("0000-0000-0000-0003", address.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), address.getVisibility().value());
+            } else {
+                fail("Invalid address found with put code: " + address.getPutCode());
+            }
+        }
+        
+        assertNotNull(person.getBiography());
+        assertNotNull(person.getBiography().getLastModifiedDate());
+        assertEquals(Visibility.PUBLIC.value(), person.getBiography().getVisibility().value());
+        assertEquals("Biography for 0000-0000-0000-0003", person.getBiography().getContent());
+        
+        assertNotNull(person.getEmails());
+        assertNotNull(person.getEmails().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/email", person.getEmails().getPath());
+        assertEquals(4, person.getEmails().getEmails().size());
+        for(Email email : person.getEmails().getEmails()) {
+            assertNotNull(email.getLastModifiedDate());
+            if(email.getEmail().equals("public_0000-0000-0000-0003@test.orcid.org")) {                
+                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());
+            } else if(email.getEmail().equals("limited_0000-0000-0000-0003@test.orcid.org")) {
+                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+            } else if(email.getEmail().equals("private_0000-0000-0000-0003@test.orcid.org")) {
+                assertEquals("APP-5555555555555555", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), email.getVisibility().value());
+            } else if(email.getEmail().equals("self_limited_0000-0000-0000-0003@test.orcid.org")) {
+                assertEquals("0000-0000-0000-0003", email.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), email.getVisibility().value());
+            } else {
+                fail("Invalid email found: " + email.getEmail());
+            }
+        }
+        
+        assertNotNull(person.getExternalIdentifiers());
+        assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
+        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifier().size());
+        for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifier()) {
+            assertNotNull(extId.getLastModifiedDate());
+            if(extId.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals(Long.valueOf(0), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/13", extId.getPath());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("public_type", extId.getType());
+                assertEquals("http://ext-id/public_ref", extId.getUrl().getValue());
+                assertEquals("public_ref", extId.getValue());
+                assertEquals(Visibility.PUBLIC.value(), extId.getVisibility().value());
+            } else if(extId.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals(Long.valueOf(1), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/14", extId.getPath());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("limited_type", extId.getType());
+                assertEquals("http://ext-id/limited_ref", extId.getUrl().getValue());
+                assertEquals("limited_ref", extId.getValue());
+                assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+            } else if(extId.getPutCode().equals(Long.valueOf(15))) {
+                assertEquals(Long.valueOf(2), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/15", extId.getPath());
+                assertEquals("APP-5555555555555555", extId.getSource().retrieveSourcePath());
+                assertEquals("private_type", extId.getType());
+                assertEquals("http://ext-id/private_ref", extId.getUrl().getValue());
+                assertEquals("private_ref", extId.getValue());
+                assertEquals(Visibility.PRIVATE.value(), extId.getVisibility().value());
+            } else if(extId.getPutCode().equals(Long.valueOf(16))) {
+                assertEquals(Long.valueOf(3), extId.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/external-identifiers/16", extId.getPath());
+                assertEquals("0000-0000-0000-0003", extId.getSource().retrieveSourcePath());
+                assertEquals("self_limited_type", extId.getType());
+                assertEquals("http://ext-id/self/limited", extId.getUrl().getValue());
+                assertEquals("self_limited_ref", extId.getValue());
+                assertEquals(Visibility.LIMITED.value(), extId.getVisibility().value());
+            } else {
+                fail("Invalid external identifier found: " + extId.getPutCode());
+            }
+        }
+                
+        assertNotNull(person.getKeywords());
+        assertNotNull(person.getKeywords().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/keywords", person.getKeywords().getPath());
+        assertEquals(4, person.getKeywords().getKeywords().size());
+        for(Keyword keyword : person.getKeywords().getKeywords()) {
+            assertNotNull(keyword.getLastModifiedDate());
+            if(keyword.getPutCode().equals(Long.valueOf(9))) {
+                assertEquals("PUBLIC", keyword.getContent());
+                assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/9", keyword.getPath());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), keyword.getVisibility().value());
+            } else if(keyword.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals("LIMITED", keyword.getContent());
+                assertEquals(Long.valueOf(1), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/10", keyword.getPath());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), keyword.getVisibility().value());
+            } else if(keyword.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("PRIVATE", keyword.getContent());
+                assertEquals(Long.valueOf(2), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/11", keyword.getPath());
+                assertEquals("APP-5555555555555555", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), keyword.getVisibility().value());
+            } else if(keyword.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("SELF LIMITED", keyword.getContent());
+                assertEquals(Long.valueOf(3), keyword.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/keywords/12", keyword.getPath());
+                assertEquals("0000-0000-0000-0003", keyword.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), keyword.getVisibility().value());
+            } else {
+                fail("Invalid keyword found: " + keyword.getPutCode());
+            }
+        }
+        
+        assertNotNull(person.getName());
+        assertNotNull(person.getName().getLastModifiedDate());
+        assertEquals("Credit Name", person.getName().getCreditName().getContent());
+        assertEquals("Family Name", person.getName().getFamilyName().getContent());
+        assertEquals("Given Names", person.getName().getGivenNames().getContent());        
+        assertEquals(Visibility.PUBLIC.value(), person.getName().getVisibility().value());
+        
+        assertNotNull(person.getOtherNames());
+        assertNotNull(person.getOtherNames().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/other-names", person.getOtherNames().getPath());
+        assertEquals(4, person.getOtherNames().getOtherNames().size());
+        for(OtherName otherName : person.getOtherNames().getOtherNames()) {
+            assertNotNull(otherName.getLastModifiedDate());
+            if(otherName.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("Other Name PUBLIC", otherName.getContent());
+                assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/13", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), otherName.getVisibility().value());                   
+            } else if(otherName.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals("Other Name LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/14", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());                
+            } else if(otherName.getPutCode().equals(Long.valueOf(15))) {
+                assertEquals("Other Name PRIVATE", otherName.getContent());
+                assertEquals(Long.valueOf(2), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/15", otherName.getPath());
+                assertEquals("APP-5555555555555555", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), otherName.getVisibility().value());                
+            } else if(otherName.getPutCode().equals(Long.valueOf(16))) {
+                assertEquals("Other Name SELF LIMITED", otherName.getContent());
+                assertEquals(Long.valueOf(3), otherName.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/other-names/16", otherName.getPath());
+                assertEquals("0000-0000-0000-0003", otherName.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), otherName.getVisibility().value());                
+            } else {
+                fail("Invalid other name found: " + otherName.getPutCode());
+            }
+        }
+        
+        assertNotNull(person.getResearcherUrls());
+        assertNotNull(person.getResearcherUrls().getLastModifiedDate());
+        assertEquals("/0000-0000-0000-0003/researcher-urls", person.getResearcherUrls().getPath());
+        assertEquals(4, person.getResearcherUrls().getResearcherUrls().size());
+        for(ResearcherUrl rUrl : person.getResearcherUrls().getResearcherUrls()) {
+            assertNotNull(rUrl.getLastModifiedDate());
+            if(rUrl.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/13", rUrl.getPath());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=13", rUrl.getUrl().getValue());
+                assertEquals("public_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.PUBLIC.value(), rUrl.getVisibility().value());
+            } else if(rUrl.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals(Long.valueOf(1), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/14", rUrl.getPath());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=14", rUrl.getUrl().getValue());
+                assertEquals("limited_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.LIMITED.value(), rUrl.getVisibility().value());
+            } else if(rUrl.getPutCode().equals(Long.valueOf(15))) {
+                assertEquals(Long.valueOf(2), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/15", rUrl.getPath());
+                assertEquals("APP-5555555555555555", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=15", rUrl.getUrl().getValue());
+                assertEquals("private_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.PRIVATE.value(), rUrl.getVisibility().value());
+            } else if(rUrl.getPutCode().equals(Long.valueOf(16))) {
+                assertEquals(Long.valueOf(3), rUrl.getDisplayIndex());
+                assertEquals("/0000-0000-0000-0003/researcher-urls/16", rUrl.getPath());
+                assertEquals("0000-0000-0000-0003", rUrl.getSource().retrieveSourcePath());
+                assertEquals("http://www.researcherurl.com?id=16", rUrl.getUrl().getValue());
+                assertEquals("self_limited_rurl", rUrl.getUrlName());
+                assertEquals(Visibility.LIMITED.value(), rUrl.getVisibility().value());
+            } else {
+                fail("Invalid researcher url found: " + rUrl.getPutCode());
+            }
+        }
+        
+        //Validate activities
+        ActivitiesSummary activities = record.getActivitiesSummary();
+        assertNotNull(activities);
+        assertNotNull(activities.getLastModifiedDate());        
+        
+        assertNotNull(activities.getEducations());
+        assertNotNull(activities.getEducations().getLastModifiedDate());
+        assertEquals(4, activities.getEducations().getSummaries().size());
+        for(EducationSummary education : activities.getEducations().getSummaries()) {
+            assertNotNull(education.getLastModifiedDate());
+            assertNotNull(education.getStartDate());
+            assertEquals("2016", education.getStartDate().getYear().getValue());
+            assertEquals("04", education.getStartDate().getMonth().getValue());
+            assertEquals("01", education.getStartDate().getDay().getValue());                        
+            assertNotNull(education.getEndDate());
+            assertEquals("2030", education.getEndDate().getYear().getValue());
+            assertEquals("01", education.getEndDate().getMonth().getValue());
+            assertEquals("01", education.getEndDate().getDay().getValue());                        
+            if(education.getPutCode().equals(Long.valueOf(20))) {
+                assertEquals("PUBLIC Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/20", education.getPath());
+                assertEquals("PUBLIC", education.getRoleTitle());
+                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.PUBLIC.value(), education.getVisibility().value());
+            } else if(education.getPutCode().equals(Long.valueOf(21))) {
+                assertEquals("LIMITED Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/21", education.getPath());
+                assertEquals("LIMITED", education.getRoleTitle());
+                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
+            } else if(education.getPutCode().equals(Long.valueOf(22))) {
+                assertEquals("PRIVATE Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/22", education.getPath());
+                assertEquals("PRIVATE", education.getRoleTitle());
+                assertEquals("APP-5555555555555555", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.PRIVATE.value(), education.getVisibility().value());
+            } else if(education.getPutCode().equals(Long.valueOf(25))) {
+                assertEquals("SELF LIMITED Department", education.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/education/25", education.getPath());
+                assertEquals("SELF LIMITED", education.getRoleTitle());
+                assertEquals("0000-0000-0000-0003", education.getSource().retrieveSourcePath());                
+                assertEquals(Visibility.LIMITED.value(), education.getVisibility().value());
+            } else {
+                fail("Invalid education found: " + education.getPutCode());
+            }
+        }
+        
+        assertNotNull(activities.getEmployments());
+        assertNotNull(activities.getEmployments().getLastModifiedDate());
+        assertEquals(4, activities.getEmployments().getSummaries().size());
+        for(EmploymentSummary employment : activities.getEmployments().getSummaries()) {
+            assertNotNull(employment.getLastModifiedDate());
+            if(employment.getPutCode().equals(Long.valueOf(17))) {
+                assertEquals("PUBLIC Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/17", employment.getPath());
+                assertEquals("PUBLIC", employment.getRoleTitle());
+                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), employment.getVisibility().value());
+            } else if(employment.getPutCode().equals(Long.valueOf(18))) {
+                assertEquals("LIMITED Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/18", employment.getPath());
+                assertEquals("LIMITED", employment.getRoleTitle());
+                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());                
+            } else if(employment.getPutCode().equals(Long.valueOf(19))) {
+                assertEquals("PRIVATE Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/19", employment.getPath());
+                assertEquals("PRIVATE", employment.getRoleTitle());
+                assertEquals("APP-5555555555555555", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), employment.getVisibility().value());
+            } else if(employment.getPutCode().equals(Long.valueOf(23))) {
+                assertEquals("SELF LIMITED Department", employment.getDepartmentName());
+                assertEquals("/0000-0000-0000-0003/employment/23", employment.getPath());
+                assertEquals("SELF LIMITED", employment.getRoleTitle());
+                assertEquals("0000-0000-0000-0003", employment.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), employment.getVisibility().value());
+            } else {
+                fail("Invalid employment found: " + employment.getPutCode());
+            }
+        }
+                
+        assertNotNull(activities.getFundings());
+        assertNotNull(activities.getFundings().getLastModifiedDate());
+        assertEquals(4, activities.getFundings().getFundingGroup().size());
+        for(FundingGroup group : activities.getFundings().getFundingGroup()) {
+            assertNotNull(group.getLastModifiedDate());
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getFundingSummary());
+            assertEquals(1, group.getFundingSummary().size());
+            FundingSummary funding = group.getFundingSummary().get(0);
+            assertNotNull(funding.getLastModifiedDate());
+            if(funding.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals("0", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("1", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/10", funding.getPath());
+                assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+                assertEquals("PUBLIC", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.PUBLIC.value(), funding.getVisibility().value());   
+            } else if(funding.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("1", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("2", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/11", funding.getPath());
+                assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+                assertEquals("LIMITED", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.LIMITED.value(), funding.getVisibility().value());
+            } else if(funding.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("2", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("3", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/12", funding.getPath());
+                assertEquals("APP-5555555555555555", funding.getSource().retrieveSourcePath());
+                assertEquals("PRIVATE", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.PRIVATE.value(), funding.getVisibility().value());
+            } else if(funding.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("3", funding.getDisplayIndex());
+                assertNotNull(funding.getExternalIdentifiers());
+                assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("4", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());                
+                assertEquals("/0000-0000-0000-0003/funding/13", funding.getPath());
+                assertEquals("0000-0000-0000-0003", funding.getSource().retrieveSourcePath());
+                assertEquals("SELF LIMITED", funding.getTitle().getTitle().getContent());
+                assertEquals(FundingType.SALARY_AWARD.value(), funding.getType().value());
+                assertEquals(Visibility.LIMITED.value(), funding.getVisibility().value());
+            } else {
+                fail("Invalid funding found: " + funding.getPutCode());
+            }           
+        }
+        
+        assertNotNull(activities.getPeerReviews());
+        assertNotNull(activities.getPeerReviews().getLastModifiedDate());
+        assertEquals(4, activities.getPeerReviews().getPeerReviewGroup().size());
+        for(PeerReviewGroup group : activities.getPeerReviews().getPeerReviewGroup()) {
+            assertNotNull(group.getLastModifiedDate());
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getPeerReviewSummary());            
+            assertEquals(1, group.getPeerReviewSummary().size());
+            PeerReviewSummary peerReview = group.getPeerReviewSummary().get(0);
+            assertNotNull(peerReview.getLastModifiedDate());
+            assertNotNull(peerReview.getCompletionDate());
+            assertEquals("2016", peerReview.getCompletionDate().getYear().getValue());
+            assertEquals("02", peerReview.getCompletionDate().getMonth().getValue());
+            assertEquals("02", peerReview.getCompletionDate().getDay().getValue());
+            assertNotNull(peerReview.getExternalIdentifiers());
+            assertEquals(1, peerReview.getExternalIdentifiers().getExternalIdentifier().size());
+            assertEquals("agr", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+            if(peerReview.getPutCode().equals(Long.valueOf(9))) {
+                assertEquals("0", peerReview.getDisplayIndex());              
+                assertEquals("issn:0000009", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/9", peerReview.getPath());
+                assertEquals("work:external-identifier-id#1", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PUBLIC.value(), peerReview.getVisibility().value());
+            } else if(peerReview.getPutCode().equals(Long.valueOf(10))) {
+                assertEquals("1", peerReview.getDisplayIndex());
+                assertEquals("issn:0000010", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/10", peerReview.getPath());
+                assertEquals("work:external-identifier-id#2", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), peerReview.getVisibility().value());
+            } else if(peerReview.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("2", peerReview.getDisplayIndex());
+                assertEquals("issn:0000011", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/11", peerReview.getPath());
+                assertEquals("work:external-identifier-id#3", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("APP-5555555555555555", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.PRIVATE.value(), peerReview.getVisibility().value());
+            } else if(peerReview.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("3", peerReview.getDisplayIndex());
+                assertEquals("issn:0000012", peerReview.getGroupId());
+                assertEquals("/0000-0000-0000-0003/peer-review/12", peerReview.getPath());
+                assertEquals("work:external-identifier-id#4", peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("0000-0000-0000-0003", peerReview.getSource().retrieveSourcePath());
+                assertEquals(Visibility.LIMITED.value(), peerReview.getVisibility().value());
+            } else {
+                fail("Invalid peer review found: " + peerReview.getPutCode());
+            }            
+        }
+        
+        assertNotNull(activities.getWorks());
+        assertNotNull(activities.getWorks().getLastModifiedDate());
+        assertEquals(4, activities.getWorks().getWorkGroup().size());
+        for(WorkGroup group : activities.getWorks().getWorkGroup()) {
+            assertNotNull(group.getLastModifiedDate());
+            assertNotNull(group.getIdentifiers());
+            assertNotNull(group.getIdentifiers().getExternalIdentifier());
+            assertEquals(1, group.getIdentifiers().getExternalIdentifier().size());
+            assertNotNull(group.getWorkSummary());
+            assertEquals(1, group.getWorkSummary().size());
+            WorkSummary work = group.getWorkSummary().get(0);
+            assertNotNull(work.getLastModifiedDate());
+            if(work.getPutCode().equals(Long.valueOf(11))) {
+                assertEquals("0", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("1", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+                assertEquals("PUBLIC", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.PUBLIC.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/11", work.getPath());
+            } else if(work.getPutCode().equals(Long.valueOf(12))) {
+                assertEquals("1", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("2", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+                assertEquals("LIMITED", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.LIMITED.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/12", work.getPath());
+            } else if(work.getPutCode().equals(Long.valueOf(13))) {
+                assertEquals("2", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("3", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("APP-5555555555555555", work.getSource().retrieveSourcePath());
+                assertEquals("PRIVATE", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.PRIVATE.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/13", work.getPath());
+            } else if(work.getPutCode().equals(Long.valueOf(14))) {
+                assertEquals("3", work.getDisplayIndex());
+                assertNotNull(work.getExternalIdentifiers());
+                assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());
+                assertEquals("doi", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+                assertEquals("4", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+                assertEquals("2016", work.getPublicationDate().getYear().getValue());
+                assertEquals("01", work.getPublicationDate().getMonth().getValue());
+                assertEquals("01", work.getPublicationDate().getDay().getValue());
+                assertEquals("0000-0000-0000-0003", work.getSource().retrieveSourcePath());
+                assertEquals("SELF LIMITED", work.getTitle().getTitle().getContent());
+                assertEquals(WorkType.JOURNAL_ARTICLE.value(), work.getType().value());
+                assertEquals(Visibility.LIMITED.value(), work.getVisibility().value());
+                assertEquals("/0000-0000-0000-0003/work/14", work.getPath());
+            } else {
+                fail("Invalid work found: " + work.getPutCode());
+            }
+        }
+    }      
     
     @Test
     public void testReadPublicScope_PeerReview() {
@@ -4525,7 +5097,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         extIds.getExternalIdentifier().add(extId);
         work.setWorkExternalIdentifiers(extIds);
         return work;
-    }
+    }            
     
     private PeerReview getPeerReview() {
         PeerReview peerReview = new PeerReview();

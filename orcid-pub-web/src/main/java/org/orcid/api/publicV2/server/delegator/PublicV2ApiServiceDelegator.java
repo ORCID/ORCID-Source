@@ -84,4 +84,6 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewAddress(String orcid, Long putCode);
     
     Response viewPerson(String orcid);
+    
+    Response viewRecord(String orcid);
 }

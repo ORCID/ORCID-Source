@@ -45,6 +45,11 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 
+/**
+* 
+* @author Angel Montenegro
+* 
+*/
 public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
@@ -96,8 +101,96 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
     @Override
     public PersonalDetails getPersonalDetails(String orcid) {
         PersonalDetails personalDetails = new PersonalDetails();
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                        
         Name name = getName(orcid);
+        XMLGregorianCalendar nameLastModified = null;
+        if(name != null) {
+            personalDetails.setName(name);
+            if(name.getLastModifiedDate() != null) {
+                nameLastModified = name.getLastModifiedDate().getValue();
+            }
+        }                               
+        
+        Biography bio = getBiography(orcid);
+        XMLGregorianCalendar bioLastModified = null;
+        if(bio != null) {
+            personalDetails.setBiography(bio);
+            if(bio.getLastModifiedDate() != null) {
+                bioLastModified = bio.getLastModifiedDate().getValue();
+            }            
+        }
+        
+        
+        OtherNames otherNames = getOtherNames(orcid);
+        XMLGregorianCalendar otherNamesLatest = null;
+        if(otherNames != null && otherNames.getOtherNames() != null) {            
+            otherNamesLatest = LastModifiedDatesHelper.calculateLatest(otherNames);
+            otherNames.setLastModifiedDate(new LastModifiedDate(otherNamesLatest));
+            personalDetails.setOtherNames(otherNames);            
+        }               
+        
+        personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+                
+        return personalDetails;
+    }   
+    
+    @Override
+    public PersonalDetails getPublicPersonalDetails(String orcid) {
+        PersonalDetails personalDetails = new PersonalDetails();
+        
+        Biography bio = getBiography(orcid);
+        XMLGregorianCalendar bioLastModified = null;        
+        if(bio != null && !Visibility.PUBLIC.equals(bio.getVisibility())) {
+            personalDetails.setBiography(null);
+        } else {
+            personalDetails.setBiography(bio);
+            if(bio.getLastModifiedDate() != null) {
+                bioLastModified = bio.getLastModifiedDate().getValue();
+            }
+        }
+        
+        Name name = getName(orcid);        
+        XMLGregorianCalendar nameLastModified = null;
+        if(name != null && !Visibility.PUBLIC.equals(name.getVisibility())) {
+            personalDetails.setName(null);
+        } else {
+            personalDetails.setName(name);
+            if(name.getLastModifiedDate() != null) {
+                nameLastModified = name.getLastModifiedDate().getValue();
+            }
+        }
+        
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                
+        Date lastModified = profileEntity.getLastModified();
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        
+        OtherNames otherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
+        XMLGregorianCalendar otherNamesLatest = null;
+        if(otherNames != null && otherNames.getOtherNames() != null && !otherNames.getOtherNames().isEmpty()) {
+            List<OtherName> publicOtherNames = new ArrayList<OtherName>();
+            for(OtherName otherName : otherNames.getOtherNames()) {
+                if(Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                    publicOtherNames.add(otherName);
+                }
+            }
+            if(publicOtherNames.isEmpty()) {
+                personalDetails.setOtherNames(null);
+            } else {
+                otherNames.setOtherNames(publicOtherNames);
+                otherNamesLatest = LastModifiedDatesHelper.calculateLatest(otherNames);
+                otherNames.setLastModifiedDate(new LastModifiedDate(otherNamesLatest));
+                personalDetails.setOtherNames(otherNames);                
+            }            
+        } else {
+            personalDetails.setOtherNames(null);
+        }
+        
+        personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+        
+        return personalDetails;
+    }
+    
+    public Biography getBiography(String orcid) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);        
         Biography bio = new Biography();
         if(profileEntity.getBiographyEntity() != null) {
             BiographyEntity biograpyEntity = profileEntity.getBiographyEntity(); 
@@ -126,53 +219,14 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             }
             bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
         }                
-        
-        Date lastModified = profileEntity.getLastModified();
-        long lastMofieiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        
-        OtherNames otherNames = otherNameManager.getMinimizedOtherNames(orcid, lastMofieiedTime);
-        
-        if(bio != null) {
-            personalDetails.setBiography(bio);
-        }
-        if(name != null) {
-            personalDetails.setName(name);
-        }                               
-        if(otherNames != null && otherNames.getOtherNames() != null) {
-            XMLGregorianCalendar latest = LastModifiedDatesHelper.calculateLatest(otherNames);
-            personalDetails.setLastModifiedDate(new LastModifiedDate(latest));
-            personalDetails.setOtherNames(otherNames);
-        }
-                
-        return personalDetails;
-    }   
+        return bio;
+    }
     
-    @Override
-    public PersonalDetails getPublicPersonalDetails(String orcid) {
-        PersonalDetails personalDetails = getPersonalDetails(orcid);
-        if(personalDetails.getBiography() != null && !Visibility.PUBLIC.equals(personalDetails.getBiography().getVisibility())) {
-            personalDetails.setBiography(null);
-        }
+    public OtherNames getOtherNames(String orcid) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                
+        Date lastModified = profileEntity.getLastModified();
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         
-        if(personalDetails.getName() != null && !Visibility.PUBLIC.equals(personalDetails.getName().getVisibility())) {
-            personalDetails.setName(null);
-        }
-        
-        if(personalDetails.getOtherNames() != null && personalDetails.getOtherNames().getOtherNames() != null && !personalDetails.getOtherNames().getOtherNames().isEmpty()) {
-            List<OtherName> publicOtherNames = new ArrayList<OtherName>();
-            for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
-                if(Visibility.PUBLIC.equals(otherName.getVisibility())) {
-                    publicOtherNames.add(otherName);
-                }
-            }
-            if(publicOtherNames.isEmpty()) {
-                personalDetails.setOtherNames(null);
-            } else {
-                personalDetails.getOtherNames().setOtherNames(publicOtherNames);
-            }            
-        } else {
-            personalDetails.setOtherNames(null);
-        }
-        return personalDetails;
+        return otherNameManager.getOtherNames(orcid, lastModifiedTime);        
     }
 }

@@ -23,6 +23,7 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Group;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 
 /**
  * @author Will Simpson
@@ -39,4 +40,5 @@ public interface VisibilityFilterV2 {
     
     Person filter(Person person, String orcid);
 
+    Record filter(Record record, String orcid);
 }

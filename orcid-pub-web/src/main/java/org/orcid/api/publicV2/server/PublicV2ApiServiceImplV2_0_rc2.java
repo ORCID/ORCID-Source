@@ -35,8 +35,8 @@ import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW;
 import static org.orcid.core.api.OrcidApiConstants.PEER_REVIEW_SUMMARY;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
-import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
@@ -67,11 +67,11 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.springframework.beans.factory.annotation.Value;
 
 import io.swagger.annotations.Api;
@@ -104,17 +104,6 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
         this.serviceDelegator = serviceDelegator;
     }
 
-    @GET
-    @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
-    @Path(PROFILE_ROOT_PATH)
-    @ApiOperation(value = "Fetch record", response = ActivitiesSummary.class, authorizations = {
-            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
-    @ExternalDocs(value = "Activities XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd")
-    public Response viewRecord(@PathParam("orcid") String orcid) {
-        //TODO
-        return null;
-    }
-    
     /**
      * Serves the Swagger UI HTML page
      * 
@@ -331,5 +320,14 @@ public class PublicV2ApiServiceImplV2_0_rc2 {
     @ApiOperation(value = "Fetch person details")
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
+    }
+    
+    //Record 
+    @GET
+    @Path(RECORD)
+    @ApiOperation(value = "Fetch record details")
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/record-2.0_rc2.xsd")
+    public Response viewRecord(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewRecord(orcid);
     }
 }

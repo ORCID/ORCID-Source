@@ -31,11 +31,21 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Educations;
+import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Employments;
+import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Fundings;
+import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
@@ -43,10 +53,11 @@ import org.orcid.jaxb.model.record_rc2.Applications;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
 import org.orcid.jaxb.model.record_rc2.Delegation;
+import org.orcid.jaxb.model.record_rc2.Deprecated;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
+import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -54,12 +65,16 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.Preferences;
+import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.ScopePath;
-import org.orcid.jaxb.model.record_rc2.Deprecated;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -619,6 +634,266 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
     }
     
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testUnmarshallRecord() {
+        Record record = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
+        assertNotNull(record);
+        //Check activities
+        assertNotNull(record.getActivitiesSummary());
+        ActivitiesSummary activities = record.getActivitiesSummary();
+        assertNotNull(activities.getLastModifiedDate());
+        assertNotNull(activities.getEducations());
+        Educations educations = activities.getEducations();
+        assertNotNull(educations.getLastModifiedDate());
+        assertEquals(1, educations.getSummaries().size());
+        EducationSummary education = educations.getSummaries().get(0);
+        assertEquals(Long.valueOf(0), education.getPutCode());
+        assertEquals(Visibility.PRIVATE, education.getVisibility());
+        assertEquals("education:department-name", education.getDepartmentName());
+        assertEquals("education:role-title", education.getRoleTitle());
+        assertNotNull(education.getEndDate());
+        assertEquals("02", education.getEndDate().getDay().getValue());
+        assertEquals("02", education.getEndDate().getMonth().getValue());
+        assertEquals("1848", education.getEndDate().getYear().getValue());
+        assertNotNull(education.getStartDate());
+        assertEquals("02", education.getStartDate().getDay().getValue());
+        assertEquals("02", education.getStartDate().getMonth().getValue());
+        assertEquals("1848", education.getStartDate().getYear().getValue());
+        assertNotNull(education.getOrganization());
+        assertEquals("common:name", education.getOrganization().getName());
+        assertEquals("common:city", education.getOrganization().getAddress().getCity());        
+        assertEquals("common:region", education.getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, education.getOrganization().getAddress().getCountry());
+        
+        assertNotNull(activities.getEmployments());
+        Employments employments = activities.getEmployments();
+        assertNotNull(employments.getLastModifiedDate());
+        assertEquals(1, employments.getSummaries().size());
+        EmploymentSummary employment = employments.getSummaries().get(0);
+        assertEquals(Long.valueOf(0), employment.getPutCode());
+        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+        assertEquals("affiliation:department-name", employment.getDepartmentName());
+        assertEquals("affiliation:role-title", employment.getRoleTitle());
+        assertNotNull(employment.getEndDate());
+        assertEquals("02", employment.getEndDate().getDay().getValue());
+        assertEquals("02", employment.getEndDate().getMonth().getValue());
+        assertEquals("1848", employment.getEndDate().getYear().getValue());
+        assertNotNull(employment.getStartDate());
+        assertEquals("02", employment.getStartDate().getDay().getValue());
+        assertEquals("02", employment.getStartDate().getMonth().getValue());
+        assertEquals("1848", employment.getStartDate().getYear().getValue());
+        assertNotNull(employment.getOrganization());
+        assertEquals("common:name", employment.getOrganization().getName());
+        assertEquals("common:city", employment.getOrganization().getAddress().getCity());        
+        assertEquals("common:region", employment.getOrganization().getAddress().getRegion());
+        assertEquals(Iso3166Country.AF, employment.getOrganization().getAddress().getCountry());
+        
+        assertNotNull(activities.getFundings());
+        Fundings fundings = activities.getFundings();
+        assertNotNull(fundings.getLastModifiedDate());
+        assertEquals(1, fundings.getFundingGroup().size());
+        assertNotNull(fundings.getFundingGroup().get(0).getLastModifiedDate());
+        assertEquals(1, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        assertEquals(1, fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals("grant_number", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("external-id-value", fundings.getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(1, fundings.getFundingGroup().get(0).getFundingSummary().size());
+        FundingSummary funding = fundings.getFundingGroup().get(0).getFundingSummary().get(0);
+        assertEquals(Long.valueOf(0), funding.getPutCode());
+        assertEquals(Visibility.PRIVATE, funding.getVisibility());
+        assertNotNull(funding.getTitle());
+        assertEquals("common:title", funding.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", funding.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", funding.getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(funding.getExternalIdentifiers());
+        assertEquals(1, funding.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals(Relationship.SELF, funding.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("grant_number", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://tempuri.org", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-id-value", funding.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());        
+        assertNotNull(funding.getEndDate());
+        assertEquals("02", funding.getEndDate().getDay().getValue());
+        assertEquals("02", funding.getEndDate().getMonth().getValue());
+        assertEquals("1848", funding.getEndDate().getYear().getValue());
+        assertNotNull(funding.getStartDate());
+        assertEquals("02", funding.getStartDate().getDay().getValue());
+        assertEquals("02", funding.getStartDate().getMonth().getValue());
+        assertEquals("1848", funding.getStartDate().getYear().getValue());
+        
+        assertNotNull(activities.getWorks());
+        Works works = activities.getWorks();
+        assertNotNull(works.getLastModifiedDate());        
+        assertEquals(1, works.getWorkGroup().size());        
+        assertNotNull(works.getWorkGroup().get(0).getIdentifiers());
+        assertEquals(1, works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertEquals(Relationship.PART_OF, works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("agr", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://orcid.org", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-id-value", works.getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());        
+        assertEquals(1, works.getWorkGroup().get(0).getWorkSummary().size());
+        WorkSummary work = works.getWorkGroup().get(0).getWorkSummary().get(0);
+        assertEquals(Long.valueOf(0), work.getPutCode());
+        assertEquals(Visibility.PRIVATE, work.getVisibility());
+        assertNotNull(work.getTitle());
+        assertEquals("common:title", work.getTitle().getTitle().getContent());
+        assertEquals("common:translated-title", work.getTitle().getTranslatedTitle().getContent());
+        assertEquals("en", work.getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(work.getExternalIdentifiers());
+        assertEquals(1, work.getExternalIdentifiers().getExternalIdentifier().size());        
+        assertEquals(Relationship.SELF, work.getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertEquals("agr", work.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertEquals("http://tempuri.org", work.getExternalIdentifiers().getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals("external-id-value", work.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertEquals(WorkType.ARTISTIC_PERFORMANCE, work.getType());
+        assertNotNull(work.getPublicationDate());
+        assertEquals("02", work.getPublicationDate().getDay().getValue());
+        assertEquals("02", work.getPublicationDate().getMonth().getValue());
+        assertEquals("1848", work.getPublicationDate().getYear().getValue());
+        
+        //Check biography
+        Person person = record.getPerson();        
+        assertNotNull(person);
+        assertNotNull(person.getLastModifiedDate().getValue());
+        assertNotNull(person.getAddresses());
+        assertNotNull(person.getAddresses().getLastModifiedDate());
+        assertEquals(1, person.getAddresses().getAddress().size());
+        Address address = person.getAddresses().getAddress().get(0);
+        assertEquals(Long.valueOf(1), address.getPutCode());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Long.valueOf(0), address.getDisplayIndex());
+        assertNotNull(address.getLastModifiedDate());
+        
+        assertNotNull(person.getApplications());
+        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
+        assertEquals(1, person.getApplications().getApplicationSummary().size());
+        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
+        assertEquals("application-name", application.getApplicationName());
+        assertNotNull(application.getApplicationOrcid());
+        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
+        assertNotNull(application.getApprovalDate().getValue());
+        assertEquals("application-group-name", application.getGroupName());
+        assertNotNull(application.getGroupOrcid());
+        assertNotNull(application.getScopePaths());
+        assertNotNull(application.getScopePaths().getScopePath());
+        assertEquals(2, application.getScopePaths().getScopePath().size());
+        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
+        
+        assertNotNull(person.getBiography());
+        assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
+        assertEquals("biography", person.getBiography().getContent());
+        
+        assertNotNull(person.getDelegation());
+        assertNotNull(person.getDelegation().getLastModifiedDate().getValue());
+        assertNotNull(person.getDelegation().getGivenPermissionBy());
+        assertEquals(1, person.getDelegation().getGivenPermissionBy().size());
+        GivenPermissionBy by = person.getDelegation().getGivenPermissionBy().get(0);
+        assertNotNull(by.getLastModifiedDate().getValue());
+        assertNotNull(by.getDelegationDetails());
+        assertNotNull(by.getDelegationDetails().getApprovalDate().getValue());
+        assertNotNull(by.getDelegationDetails().getDelegateSummary());
+        assertNotNull(by.getDelegationDetails().getDelegateSummary().getCreditName());
+        assertEquals("credit-name", by.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, by.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(by.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
+        
+        assertNotNull(person.getDelegation().getGivenPermissionTo());
+        assertNotNull(person.getDelegation().getGivenPermissionTo());
+        assertEquals(1, person.getDelegation().getGivenPermissionTo().size());
+        GivenPermissionTo to = person.getDelegation().getGivenPermissionTo().get(0);
+        assertNotNull(to.getLastModifiedDate().getValue());
+        assertNotNull(to.getDelegationDetails());
+        assertNotNull(to.getDelegationDetails().getApprovalDate().getValue());
+        assertNotNull(to.getDelegationDetails().getDelegateSummary());
+        assertNotNull(to.getDelegationDetails().getDelegateSummary().getCreditName());
+        assertEquals("credit-name", to.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
+        assertEquals(Visibility.PUBLIC, to.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
+        assertNotNull(to.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
+        
+        assertNotNull(person.getEmails());      
+        assertTrue(StringUtils.isNotBlank(person.getEmails().getPath()));
+        assertNotNull(person.getEmails().getLastModifiedDate());
+        assertNotNull(person.getEmails().getEmails());
+        assertEquals(1, person.getEmails().getEmails().size());
+        Email email = person.getEmails().getEmails().get(0);
+        assertNotNull(email.getCreatedDate().getValue());
+        assertEquals("user1@email.com", email.getEmail());
+        assertNotNull(email.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(0), email.getPutCode());
+        assertNotNull(email.getSource());
+        assertEquals(Visibility.PUBLIC, email.getVisibility());
+        
+        assertNotNull(person.getExternalIdentifiers());
+        assertTrue(StringUtils.isNotBlank(person.getExternalIdentifiers().getPath()));
+        assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(extId.getCreatedDate().getValue());
+        assertNotNull(extId.getLastModifiedDate());
+        assertEquals(Long.valueOf(0), extId.getDisplayIndex());
+        assertEquals(Long.valueOf(1), extId.getPutCode());
+        assertEquals(Relationship.PART_OF, extId.getRelationship());
+        assertNotNull(extId.getSource());
+        assertEquals("type-1", extId.getType());
+        assertEquals("http://url.com/1", extId.getUrl().getValue());
+        assertEquals("value-1", extId.getValue());
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());        
+        
+        assertNotNull(person.getKeywords());
+        assertTrue(StringUtils.isNotBlank(person.getKeywords().getPath()));
+        assertNotNull(person.getKeywords().getLastModifiedDate().getValue());
+        assertNotNull(person.getKeywords().getKeywords());
+        assertEquals(1, person.getKeywords().getKeywords().size());
+        Keyword keyword = person.getKeywords().getKeywords().get(0);
+        assertEquals("keyword1", keyword.getContent());        
+        assertNotNull(keyword.getCreatedDate().getValue());
+        assertNotNull(keyword.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(0), keyword.getDisplayIndex());        
+        assertEquals(Long.valueOf(1), keyword.getPutCode());
+        assertNotNull(keyword.getSource());
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        
+        assertNotNull(person.getOtherNames());
+        assertTrue(StringUtils.isNotBlank(person.getOtherNames().getPath()));
+        assertNotNull(person.getOtherNames().getLastModifiedDate().getValue());
+        assertNotNull(person.getOtherNames().getOtherNames());
+        assertEquals(1, person.getOtherNames().getOtherNames().size());
+        OtherName otherName = person.getOtherNames().getOtherNames().get(0);
+        assertEquals("other-name-1", otherName.getContent());
+        assertNotNull(otherName.getCreatedDate().getValue());
+        assertNotNull(otherName.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+        assertEquals(Long.valueOf(1), otherName.getPutCode());
+        assertNotNull(otherName.getSource());
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+        
+        assertNotNull(person.getResearcherUrls());
+        assertTrue(StringUtils.isNotBlank(person.getResearcherUrls().getPath()));
+        assertNotNull(person.getResearcherUrls().getLastModifiedDate().getValue());
+        assertNotNull(person.getResearcherUrls().getResearcherUrls().size());
+        ResearcherUrl rUrl = person.getResearcherUrls().getResearcherUrls().get(0);
+        assertNotNull(rUrl.getCreatedDate().getValue());
+        assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
+        assertNotNull(rUrl.getLastModifiedDate().getValue());
+        assertEquals(Long.valueOf(1248), rUrl.getPutCode());
+        assertNotNull(rUrl.getSource());
+        assertEquals("http://url.com/", rUrl.getUrl().getValue());
+        assertEquals("url-name-1", rUrl.getUrlName());
+        assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
+        
+        assertNotNull(person.getName());
+        Name name = person.getName();
+        assertTrue(StringUtils.isNotBlank(name.getPath()));
+        assertEquals("credit-name", name.getCreditName().getContent());
+        assertEquals("family-name", name.getFamilyName().getContent());
+        assertEquals("give-names", name.getGivenNames().getContent());
+        assertNotNull(name.getLastModifiedDate().getValue());
+        assertEquals(Visibility.PUBLIC, name.getVisibility());        
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -667,6 +942,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (Preferences) obj;
             } else if (History.class.equals(type)) {
                 result = (History) obj;
+            } else if(Record.class.equals(type)) {
+                result = (Record) obj;
             }
             return result;
         } catch (IOException e) {

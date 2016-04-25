@@ -216,7 +216,7 @@
 		client_source_id="APP-5555555555555555"
 		date_created="2015-01-01 00:00:00.00"
 		last_modified="2015-01-01 00:00:00.00"
-		/>					
+		/>
 		
 	<peer_review 
 		id="9"
@@ -346,5 +346,5 @@
 		date_created="2015-01-01 00:00:00.00"
 		last_modified="2015-01-01 00:00:00.00"
 		display_index="4"
-		/>									
+		/>
 </dataset>

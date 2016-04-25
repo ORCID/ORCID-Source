@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
@@ -212,6 +213,22 @@ public class LastModifiedDatesHelper {
         }
         if (latest.getValue().compare(temp.getValue()) == -1) {
             return temp;
+        }
+        return latest;
+    }
+    
+    public static XMLGregorianCalendar calculateLatest(XMLGregorianCalendar ... dates) {
+        XMLGregorianCalendar latest = null;
+        for(XMLGregorianCalendar obj : dates) {
+            if(obj != null) {
+                if(latest == null) {
+                    latest = obj;
+                } else {
+                    if(latest.compare(obj) == DatatypeConstants.LESSER) {
+                        latest = obj;
+                    }
+                }
+            }            
         }
         return latest;
     }

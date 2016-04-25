@@ -40,6 +40,7 @@ import static org.orcid.core.api.OrcidApiConstants.PERMISSIONS_VIEW_PATH;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.PUTCODE;
+import static org.orcid.core.api.OrcidApiConstants.RECORD;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 import static org.orcid.core.api.OrcidApiConstants.VND_ORCID_JSON;
@@ -811,5 +812,15 @@ public class MemberV2ApiServiceImplV2_0_rc2 extends MemberV2ApiServiceImplHelper
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.PERSON_READ_LIMITED, description = "you need this") }) })
     public Response viewPerson(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPerson(orcid);
+    }
+    
+    //Record 
+    @GET
+    @Path(RECORD)
+    @ApiOperation(value = "Fetch record details", authorizations = {
+            @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
+    @ExternalDocs(value = "Record XML Schema", url = "https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0_rc2/record-2.0_rc2.xsd")
+    public Response viewRecord(@PathParam("orcid") String orcid) {
+        return serviceDelegator.viewRecord(orcid);
     }
 }
