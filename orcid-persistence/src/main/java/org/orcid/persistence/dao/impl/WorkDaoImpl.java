@@ -141,6 +141,12 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.getSingleResult();
     }
     
+    @Override
+    public void detach(MinimizedWorkEntity minimizedWorkEntity) {
+        entityManager.detach(minimizedWorkEntity);
+        minimizedWorkEntity.setDetached(true);
+    }
+    
     /**
      * Updates the visibility of an existing work
      * 

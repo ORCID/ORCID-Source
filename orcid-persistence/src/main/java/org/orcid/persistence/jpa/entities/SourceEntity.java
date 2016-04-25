@@ -38,6 +38,9 @@ public class SourceEntity implements Serializable {
 
     private ProfileEntity sourceProfile;
     private ClientDetailsEntity sourceClient;
+    private String cachedSourceId;
+    private String cachedSourceName;
+    private boolean isDetached;
 
     public SourceEntity() {
     }
@@ -83,27 +86,32 @@ public class SourceEntity implements Serializable {
 
     @Transient
     public String getSourceName() {
+        if (cachedSourceName != null) {
+            return cachedSourceName;
+        }
         if (sourceClient != null) {
             return sourceClient.getClientName();
         }
         if (sourceProfile != null) {
             // Set the source name
-            //Check if the record_name table already have the names
-            if(sourceProfile.getRecordNameEntity() != null) {
-                // If it is a user, check if it have a credit name and is visible
-                if(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(sourceProfile.getRecordNameEntity().getVisibility())) {
+            // Check if the record_name table already have the names
+            if (sourceProfile.getRecordNameEntity() != null) {
+                // If it is a user, check if it have a credit name and is
+                // visible
+                if (org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(sourceProfile.getRecordNameEntity().getVisibility())) {
                     if (!StringUtils.isEmpty(sourceProfile.getRecordNameEntity().getCreditName())) {
                         return sourceProfile.getRecordNameEntity().getCreditName();
                     } else {
-                        //If credit name is empty
-                        return sourceProfile.getRecordNameEntity().getGivenNames() + (StringUtils.isEmpty(sourceProfile.getRecordNameEntity().getFamilyName()) ? "" : " " + sourceProfile.getRecordNameEntity().getFamilyName());
-                    }                
+                        // If credit name is empty
+                        return sourceProfile.getRecordNameEntity().getGivenNames() + (StringUtils.isEmpty(sourceProfile.getRecordNameEntity().getFamilyName()) ? ""
+                                : " " + sourceProfile.getRecordNameEntity().getFamilyName());
+                    }
                 } else {
                     return null;
                 }
             } else {
-                if(Visibility.PUBLIC.equals(sourceProfile.getNamesVisibility())) {
-                    if(!StringUtils.isEmpty(sourceProfile.getCreditName())) {
+                if (Visibility.PUBLIC.equals(sourceProfile.getNamesVisibility())) {
+                    if (!StringUtils.isEmpty(sourceProfile.getCreditName())) {
                         return sourceProfile.getCreditName();
                     } else {
                         return sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
@@ -111,13 +119,16 @@ public class SourceEntity implements Serializable {
                 } else {
                     return null;
                 }
-            }                       
+            }
         }
         return null;
     }
 
     @Transient
     public String getSourceId() {
+        if (cachedSourceId != null) {
+            return cachedSourceId;
+        }
         if (sourceClient != null) {
             return sourceClient.getClientId();
         }
@@ -125,6 +136,32 @@ public class SourceEntity implements Serializable {
             return sourceProfile.getId();
         }
         return null;
+    }
+
+    @Transient
+    public boolean isDetached() {
+        return isDetached;
+    }
+
+    public void setDetached(boolean isDetached) {
+        this.isDetached = isDetached;
+    }
+
+    /**
+     * Call this method before storing in cache to prevent a whole profile or
+     * client being serialized.
+     * 
+     * WARNING: The entity must be detached (using DAO) so that the source is
+     * not made null in DB.
+     */
+    public void prepareForCache() {
+        if (!isDetached) {
+            throw new IllegalStateException("Must not prepare source entity for cache, unless it is detached");
+        }
+        cachedSourceId = getSourceId();
+        cachedSourceName = getSourceName();
+        sourceClient = null;
+        sourceProfile = null;
     }
 
 }
