@@ -169,7 +169,7 @@ public class LoadFundRefData {
                         existingEntity.setSourceType(FUNDREF_SOURCE_TYPE);
                         existingEntity.setSourceUrl(rdfOrganization.doi);
                         existingEntity.setLastModified(new Date());
-                        existingEntity.setIndexingStatus(IndexingStatus.REINDEX);
+                        existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         existingEntity.setStatus(rdfOrganization.status);
                         orgDisambiguatedDao.merge(existingEntity); 
                         updatedOrgs += 1;
@@ -181,7 +181,7 @@ public class LoadFundRefData {
                         //If the status changed, update the status
                         existingEntity.setStatus(rdfOrganization.status);
                         existingEntity.setLastModified(new Date());
-                        existingEntity.setIndexingStatus(IndexingStatus.REINDEX);
+                        existingEntity.setIndexingStatus(IndexingStatus.PENDING);
                         orgDisambiguatedDao.merge(existingEntity); 
                     }
                 } else {

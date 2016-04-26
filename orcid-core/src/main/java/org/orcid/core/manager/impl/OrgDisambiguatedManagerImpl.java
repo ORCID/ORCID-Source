@@ -86,10 +86,10 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity) {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
         OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-        if(!entity.getStatus().equals(OrganizationStatus.DEPRECATED)) {
-            orgDisambiguatedSolrDao.persist(document);
+        if(OrganizationStatus.DEPRECATED.name().equals(entity.getStatus())) {
+            orgDisambiguatedSolrDao.remove(document.getOrgDisambiguatedId());            
         } else {
-            orgDisambiguatedSolrDao.remove(document.getOrgDisambiguatedId());
+            orgDisambiguatedSolrDao.persist(document);
         }
         
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
