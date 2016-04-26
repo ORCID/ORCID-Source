@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.manager.OrgDisambiguatedManager;
+import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -85,7 +86,12 @@ public class OrgDisambiguatedManagerImpl implements OrgDisambiguatedManager {
     private void processDisambiguatedOrg(OrgDisambiguatedEntity entity) {
         LOGGER.info("About to index disambiguated org, id={}", entity.getId());
         OrgDisambiguatedSolrDocument document = convertEntityToDocument(entity);
-        orgDisambiguatedSolrDao.persist(document);
+        if(!entity.getStatus().equals(OrganizationStatus.DEPRECATED)) {
+            orgDisambiguatedSolrDao.persist(document);
+        } else {
+            orgDisambiguatedSolrDao.remove(document.getOrgDisambiguatedId());
+        }
+        
         orgDisambiguatedDao.updateIndexingStatus(entity.getId(), IndexingStatus.DONE);
     }
 

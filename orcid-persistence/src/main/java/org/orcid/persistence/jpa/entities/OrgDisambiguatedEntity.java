@@ -119,6 +119,7 @@ public class OrgDisambiguatedEntity extends BaseEntity<Long> {
         this.sourceType = sourceType;
     }
 
+    @Column(name = "status")
     public String getStatus() {
         return status;
     }
