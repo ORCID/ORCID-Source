@@ -53,11 +53,17 @@
 		            <#if (publicOtherNames)?? && (publicOtherNames.otherNames?size != 0)>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
-		                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span>
+		            			<ul class="inline-list workspace-section-heading">
+			            			<li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span></li>
+			            			<li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+		                		</ul>
 		                	</div>
-		                	<div id="public-other-names-div">
+		                	<div id="public-other-names-div">		                	
 				                <#list publicOtherNames.otherNames as otherName>
-				                	${otherName.content}<#if otherName_has_next>,</#if>
+				                	${otherName.content}				                					                	
+				                	<#if otherName_has_next>
+				                		<br/>
+				                	</#if>
 				                </#list>
 			                </div>
 		                </div>
@@ -66,7 +72,11 @@
 		            <#if (countryName)??>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
-		                		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
+		            			<ul class="inline-list workspace-section-heading">
+								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>
+								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>
+								</ul>
+		                		
 		                		<div id="public-country-div">
 		                			${(countryName)!}
 		                		</div>
@@ -77,7 +87,10 @@
 		            <#if (publicKeywords)?? && (publicKeywords.keywords?size != 0)>
 			            <div class="workspace-section">
 		            		<div class="workspace-section-header">
-		                		<span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span>
+		            			<ul class="inline-list workspace-section-heading">
+								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span></li>
+								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+								</ul>		                		
 		                		<div id="public-keywords-div"> 
 		                    		<#list publicKeywords.keywords as keyword>
 		                        		${keyword.content}<#if keyword_has_next>,</#if>	                    
@@ -89,8 +102,11 @@
 		            <!-- Researcher Urls -->       	            
 		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
 		           		<div class="workspace-section">
-		            		<div class="workspace-section-header">            
-				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span>
+		            		<div class="workspace-section-header">
+		            			<ul class="inline-list workspace-section-heading">
+								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
+								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+								</ul>
 				                <div id="public-researcher-urls-div">
 				                    <#list publicResearcherUrls.researcherUrls as url>
 				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
@@ -110,22 +126,28 @@
 		            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
-		            			 <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span>
-		            			 <div class="emails-box" id="public-emails-div">
+		            			<ul class="inline-list workspace-section-heading">
+								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
+								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+								</ul>		            			
+		            			<div class="emails-box" id="public-emails-div">
 			            			 <#list publicEmails.emails as email>
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
 			            					<div name="email">${email.email}</div>
 			        					</#if>    					 		
 			            			 </#list>
-		            			 </div>		            			
+		            			</div>		            			
 			                </div>
 	                    </div>
 		            </#if>          	            
 		            <!-- External Identifiers -->
 		            <#if (publicPersonExternalIdentifiers)?? && (publicPersonExternalIdentifiers.externalIdentifier?size != 0)>
 						<div class="workspace-section">
-		            		<div class="workspace-section-header">            
-				                <span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span>
+		            		<div class="workspace-section-header">
+			            		<ul class="inline-list workspace-section-heading">
+								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span></li>
+								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+								</ul>				                
 				                <div  id="public-external-identifiers-div">
 				                    <#list publicPersonExternalIdentifiers.externalIdentifier as external>
 				                        <#if (external.url.value)??>

@@ -6460,6 +6460,34 @@ a:hover .mozilla-badge{
 	overflow-x: initial;
 }
 
+.workspace-section .workspace-section-heading li:last-child{
+	float: right;
+}
+
+.workspace-section .workspace-section-heading li a{
+	float: right;
+	display:block;
+	width: 22px;
+}
+
+.workspace-section .workspace-section-heading li a i{
+	float: left;	
+}
+
+.workspace-section .workspace-section-heading li a:hover i:before{
+	color: rgb(166, 206, 57);
+}
+
+
+.workspace-section .workspace-section-heading li a i:before{
+	font: 20px/1em 'Glyphicons Regular';
+	color: #939598;
+}
+
+.glyphicons{
+	padding-left: 0;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
