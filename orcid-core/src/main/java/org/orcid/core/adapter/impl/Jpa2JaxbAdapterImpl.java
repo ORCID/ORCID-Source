@@ -196,9 +196,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         group.setGroupOrcid(profileEntity.getId());
         if(profileEntity.getRecordNameEntity() != null) {
             group.setGroupName(profileEntity.getRecordNameEntity().getCreditName());
-        } else {
-            group.setGroupName(profileEntity.getCreditName());
-        }
+        } 
         
         group.setType(profileEntity.getGroupType());
         Set<EmailEntity> emailEntities = profileEntity.getEmails();
@@ -576,8 +574,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Biography getBiography(ProfileEntity profileEntity) {
-        String biography = profileEntity.getBiography();
-        Visibility biographyVisibility = profileEntity.getBiographyVisibility();
+        String biography = null;
+        Visibility biographyVisibility = null;
         
         if(profileEntity.getBiographyEntity() != null) {
             if(!PojoUtil.isEmpty(profileEntity.getBiographyEntity().getBiography())) {
@@ -848,47 +846,28 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private String getGroupDisplayName(ProfileEntity groupProfile) {   
         RecordNameEntity recordName = groupProfile.getRecordNameEntity(); 
-        if(recordName != null) {
-            String creditName = recordName.getCreditName();
-            if (!PojoUtil.isEmpty(creditName)) {
-                if (groupProfile.getGroupType() != null) {
-                    // It's a member so, it will definitely have a credit name. Use
-                    // it regardless of privacy.
-                    return creditName;
-                }
-                org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = recordName.getVisibility();
-                if (Visibility.PUBLIC.equals(namesVisibilty)) {
-                    return creditName;
-                }
+        if(recordName == null) {
+            return StringUtils.EMPTY;
+        }
+        
+        String creditName = recordName.getCreditName();
+        if (!PojoUtil.isEmpty(creditName)) {
+            if (groupProfile.getGroupType() != null) {
+                // It's a member so, it will definitely have a credit name. Use
+                // it regardless of privacy.
+                return creditName;
             }
-            String displayName = recordName.getGivenNames();
-            String familyName = recordName.getFamilyName();
-            if (StringUtils.isNotBlank(familyName)) {
-                displayName += " " + familyName;
+            org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = recordName.getVisibility();
+            if (Visibility.PUBLIC.equals(namesVisibilty)) {
+                return creditName;
             }
-            return displayName; 
-        } else {
-            //TODO: remove this else when the names migration is done
-            String creditName = groupProfile.getCreditName();
-            if(!PojoUtil.isEmpty(creditName)) {
-                if (groupProfile.getGroupType() != null) {
-                    // It's a member so, it will definitely have a credit name. Use
-                    // it regardless of privacy.
-                    return creditName;
-                }
-                Visibility namesVisibilty = groupProfile.getNamesVisibility();
-                if (Visibility.PUBLIC.equals(namesVisibilty)) {
-                    return creditName;
-                }
-            }
-            
-            String displayName = groupProfile.getGivenNames();
-            String familyName = groupProfile.getFamilyName();
-            if (StringUtils.isNotBlank(familyName)) {
-                displayName += " " + familyName;
-            }
-            return displayName;
-        }               
+        }
+        String displayName = recordName.getGivenNames();
+        String familyName = recordName.getFamilyName();
+        if (StringUtils.isNotBlank(familyName)) {
+            displayName += " " + familyName;
+        }
+        return displayName;                       
     }
 
     public OrcidWork getOrcidWork(WorkEntity work) {
@@ -1054,13 +1033,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 names.setVisibility(recordName.getVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : Visibility.fromValue(recordName.getVisibility().value()));
                 return names;
             }
-        } else {
-            if(StringUtils.isNotBlank(profileEntity.getGivenNames())) {
-                GivenNames names = new GivenNames();
-                names.setContent(profileEntity.getGivenNames());
-                names.setVisibility(profileEntity.getNamesVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : profileEntity.getNamesVisibility());
-                return names;
-            }
         }        
         return null;
     }
@@ -1074,13 +1046,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 name.setVisibility(recordName.getVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : Visibility.fromValue(recordName.getVisibility().value()));
                 return name;
             }
-        } else {
-            if(StringUtils.isNotBlank(profileEntity.getFamilyName())) {
-                FamilyName name = new FamilyName();
-                name.setContent(profileEntity.getFamilyName());
-                name.setVisibility(profileEntity.getNamesVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : profileEntity.getNamesVisibility());
-                return name;
-            }
         }        
         return null;
     }
@@ -1092,13 +1057,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 CreditName name = new CreditName();
                 name.setContent(recordName.getCreditName());
                 name.setVisibility(recordName.getVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : Visibility.fromValue(recordName.getVisibility().value()));
-                return name;
-            }
-        } else {
-            if(StringUtils.isNotBlank(profileEntity.getCreditName())) {
-                CreditName name = new CreditName();
-                name.setContent(profileEntity.getCreditName());
-                name.setVisibility(profileEntity.getNamesVisibility() == null ? OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility() : profileEntity.getNamesVisibility());
                 return name;
             }
         }   

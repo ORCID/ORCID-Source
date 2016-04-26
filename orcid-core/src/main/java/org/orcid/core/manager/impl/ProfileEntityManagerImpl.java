@@ -220,14 +220,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional 
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        //Remove the biography
-        deprecatedProfile.setBiographyVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
         deprecatedProfile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE); 
-        deprecatedProfile.setBiography(new String());
-        deprecatedProfile.setGivenNames("Given Names Deactivated");
-        deprecatedProfile.setFamilyName("Family Name Deactivated");
-        deprecatedProfile.setCreditName(null);
-        
         boolean wasDeprecated = profileDao.deprecateProfile(deprecatedProfile, primaryProfile.getId());        
         // If it was successfully deprecated
         if (wasDeprecated) {
@@ -684,19 +677,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                         publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
                     }
                 }
-            } else {
-                Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
-                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-                if (Visibility.PUBLIC.equals(namesVisibility)) {
-                    if (!PojoUtil.isEmpty(profile.getCreditName())) {
-                        publicName = profile.getCreditName();
-                    } else {
-                        publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
-                        publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
-                    }
-                }
-            }
-            
+            } 
         }
         return publicName;
     }

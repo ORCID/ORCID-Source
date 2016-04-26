@@ -82,18 +82,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
                 
                 name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getDateCreated())));
                 name.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getLastModified())));
-            } else {                
-                name.setCreditName(new CreditName(profileEntity.getCreditName()));
-                name.setGivenNames(new GivenNames(profileEntity.getGivenNames()));
-                name.setFamilyName(new FamilyName(profileEntity.getFamilyName()));
-                if(profileEntity.getNamesVisibility() != null) {
-                    nameVisibility = Visibility.fromValue(profileEntity.getNamesVisibility().value());
-                }
-                name.setVisibility(nameVisibility);
-                
-                name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
-                name.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
-            }                                  
+            }                                   
         }
         return name;
     }
@@ -206,18 +195,6 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             }
             bio.setVisibility(bioVisibility);
             bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biograpyEntity.getLastModified())));
-        } else {
-            if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
-                bio.setContent(profileEntity.getBiography());
-                Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-                if(profileEntity.getBiographyVisibility() != null) {
-                    bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility().value());
-                } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
-                    bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
-                }
-                bio.setVisibility(bioVisibility);
-            }
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
         }                
         return bio;
     }

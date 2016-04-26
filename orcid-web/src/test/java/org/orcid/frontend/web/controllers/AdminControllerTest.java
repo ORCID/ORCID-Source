@@ -217,10 +217,7 @@ public class AdminControllerTest extends BaseControllerTest {
         if(deprecated.getRecordNameEntity() != null) {
             assertEquals("Given Names Deactivated", deprecated.getRecordNameEntity().getGivenNames());
             assertEquals("Family Name Deactivated", deprecated.getRecordNameEntity().getFamilyName());
-        } else {
-            assertEquals("Given Names Deactivated", deprecated.getGivenNames());
-            assertEquals("Family Name Deactivated", deprecated.getFamilyName());
-        }
+        } 
     }
 
     @Test         

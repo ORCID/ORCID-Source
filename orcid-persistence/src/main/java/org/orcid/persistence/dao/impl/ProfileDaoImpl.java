@@ -476,23 +476,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("orcid", toDeprecate.getId());
         query.setParameter("indexing_status", IndexingStatus.PENDING);
         query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
-        if(toDeprecate.getRecordNameEntity() != null) {
-            query.setParameter("givenNames", toDeprecate.getRecordNameEntity().getGivenNames());
-            query.setParameter("familyName", toDeprecate.getRecordNameEntity().getFamilyName());
-            query.setParameter("creditName", toDeprecate.getRecordNameEntity().getCreditName());            
-        } else {
-            query.setParameter("givenNames", toDeprecate.getGivenNames());
-            query.setParameter("familyName", toDeprecate.getFamilyName());
-            query.setParameter("creditName", toDeprecate.getCreditName());
-            
-        }
-        
-        if(toDeprecate.getBiographyEntity() != null) {
-            query.setParameter("bio", toDeprecate.getBiographyEntity().getBiography());
-        } else {
-            query.setParameter("bio", toDeprecate.getBiography());
-        }
-        
+        query.setParameter("givenNames", null);
+        query.setParameter("familyName", null);
+        query.setParameter("creditName", null);        
+        query.setParameter("bio", null);
         query.setParameter("namesVisibility", Visibility.PUBLIC);
         query.setParameter("defaultVisibility", Visibility.PRIVATE);
                 

@@ -43,7 +43,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
@@ -354,7 +353,6 @@ public class ProfileDaoTest extends DBUnitTest {
         List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
         assertNotNull(results);
         assertEquals(5, results.size());
-        assertEquals("Admin Admin", results.get(0).getVocativeName());
     }
 
     @Test
@@ -447,20 +445,6 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
         assertEquals(Long.valueOf(15), confirmedProfileCount);
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testUpdateBiography() {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
-        profile.setBiography("Updated Biography");
-        profile.setBiographyVisibility(Visibility.PRIVATE);
-        boolean result = profileDao.updateBiography(profile.getId(), profile.getBiography(), profile.getBiographyVisibility());
-        assertTrue(result);
-        profile = profileDao.find("4444-4444-4444-4441");
-        assertEquals("Updated Biography", profile.getBiography());
-        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());               
     }
 
     @Test

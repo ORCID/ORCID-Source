@@ -310,7 +310,7 @@ public class ManageProfileController extends BaseWorkspaceController {
             DelegateSummary summary = new DelegateSummary();
             details.setDelegateSummary(summary);
             summary.setOrcidIdentifier(new OrcidIdentifier(delegateOrcid));
-            String creditName = delegateProfile.getCreditName();
+            String creditName = null;
             if(delegateProfile.getRecordNameEntity() != null) {
                 creditName = delegateProfile.getRecordNameEntity().getCreditName();
             }        
@@ -1036,7 +1036,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         DelegateSummary summary = new DelegateSummary();
                         details.setDelegateSummary(summary);
                         summary.setOrcidIdentifier(new OrcidIdentifier(trustedOrcid));
-                        String creditName = delegateProfile.getCreditName();
+                        String creditName = null;
                         if(delegateProfile.getRecordNameEntity() != null) {
                             creditName = delegateProfile.getRecordNameEntity().getCreditName();
                         }
