@@ -32,8 +32,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
-    List<ProfileEntity> retrieveSelectableSponsors();
-
     public boolean exists(String orcid);
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);

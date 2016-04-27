@@ -81,7 +81,7 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         assertEquals(Long.valueOf(1), entity.getId());        
         assertNotNull(entity.getReceiver());        
         assertEquals("given-to-credit-name", entity.getReceiver().getRecordNameEntity().getCreditName());
-        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getReceiver().getRecordNameEntity().getVisibility());                
+        assertEquals(Visibility.PUBLIC, entity.getReceiver().getRecordNameEntity().getVisibility());                
         assertNotNull(entity.getApprovalDate());        
         assertNotNull(entity.getLastModified());
     }    

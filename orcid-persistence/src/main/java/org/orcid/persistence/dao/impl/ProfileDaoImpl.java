@@ -56,12 +56,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public List<ProfileEntity> retrieveSelectableSponsors() {
-        return (List<ProfileEntity>) entityManager.createQuery("from ProfileEntity where isSelectableSponsor=true order by vocativeName").getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST);
     }

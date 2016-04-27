@@ -267,8 +267,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         givenPermissionToClassMap.field("putCode", "id");
         givenPermissionToClassMap.field("approvalDate.value", "approvalDate");               
         givenPermissionToClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
-        givenPermissionToClassMap.field("delegateSummary.creditName.content", "receiver.creditName");
-        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.namesVisibility");                               
+        givenPermissionToClassMap.field("delegateSummary.creditName.content", "receiver.recordNameEntity.creditName");
+        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.recordNameEntity.visibility");                               
         
         givenPermissionToClassMap.field("delegateSummary.orcidIdentifier.path", "receiver.id").customize(new CustomMapper<DelegationDetails, GivenPermissionToEntity>(){
             @Override
@@ -290,8 +290,8 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         givenPermissionByClassMap.field("putCode", "id");
         givenPermissionByClassMap.field("approvalDate.value", "approvalDate");               
         givenPermissionByClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
-        givenPermissionByClassMap.field("delegateSummary.creditName.content", "giver.creditName");
-        givenPermissionByClassMap.field("delegateSummary.creditName.visibility", "giver.namesVisibility");                               
+        givenPermissionByClassMap.field("delegateSummary.creditName.content", "giver.recordNameEntity.creditName");
+        givenPermissionByClassMap.field("delegateSummary.creditName.visibility", "giver.recordNameEntity.visibility");                               
         
         givenPermissionByClassMap.field("delegateSummary.orcidIdentifier.path", "giver.id").customize(new CustomMapper<DelegationDetails, GivenPermissionByEntity>(){
             @Override

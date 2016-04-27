@@ -324,15 +324,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testOrcidExists() {
         assertTrue(profileDao.orcidExists("4444-4444-4444-4442"));
         assertFalse(profileDao.orcidExists("4445-4444-4444-4442"));
-    }
-
-    @Test
-    @Rollback(true)
-    public void testRetrieveSelectableSponsors() {
-        List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
-        assertNotNull(results);
-        assertEquals(5, results.size());
-    }
+    }    
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
