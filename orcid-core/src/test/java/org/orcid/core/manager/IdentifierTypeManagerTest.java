@@ -16,6 +16,11 @@
  */
 package org.orcid.core.manager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -25,26 +30,24 @@ import javax.annotation.Resource;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.junit.runners.MethodSorters;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.orcid.core.BaseTest;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.core.BaseTest;
-import org.orcid.core.manager.impl.*;
 import org.springframework.test.context.ContextConfiguration;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-core-context.xml" })
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IdentifierTypeManagerTest extends BaseTest{
 
-    private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_1_ID = "APP-6666666666666666";
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
             "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
@@ -67,21 +70,23 @@ public class IdentifierTypeManagerTest extends BaseTest{
     }
     
     @Test
-    public void testCreateIdentifier(){
+    public void test1CreateIdentifier(){
+        System.out.println("=== one");
         IdentifierType id = idTypeMan.createIdentifierType(createIdentifierType(1));
         assertNotNull(id);
         assertNotNull(id.getPutCode());
         assertTrue(new Date().after(id.getDateCreated()));
     }
     
+    
     @Test
-    public void testFetchIdentifier(){
+    public void test2FetchIdentifier(){
         IdentifierType id = idTypeMan.fetchIdentifierTypeByName("name1");
         assertEquals("name1",id.getName());
     }
 
     @Test
-    public void testUpdateIdentifier(){
+    public void test3UpdateIdentifier(){
         IdentifierType id = idTypeMan.fetchIdentifierTypeByName("name1");
         Date last = id.getLastModified();
         id.setValidationRegex("test");
@@ -96,7 +101,7 @@ public class IdentifierTypeManagerTest extends BaseTest{
     }
 
     @Test
-    public void testFetchEntities(){
+    public void test4FetchEntities(){
         Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypes();
         assertEquals(1, map.size());
         assertTrue(map.containsKey("name1"));

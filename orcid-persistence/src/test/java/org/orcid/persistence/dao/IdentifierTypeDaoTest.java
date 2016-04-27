@@ -20,8 +20,10 @@ import javax.annotation.Resource;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.test.DBUnitTest;
@@ -36,6 +38,7 @@ import java.util.List;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IdentifierTypeDaoTest extends DBUnitTest{
 
     @Resource
@@ -57,7 +60,7 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
     }
 
     @Test
-    public void testAddID(){
+    public void test1AddID(){
         IdentifierTypeEntity e1 = new IdentifierTypeEntity();
         e1.setName("name");
         e1.setResolutionPrefix("http://whatever.com/{id}");
@@ -68,7 +71,7 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
     }
     
     @Test
-    public void testFetchID(){
+    public void test2FetchID(){
         IdentifierTypeEntity e1 = idTypeDao.getEntityByName("name");
         assertEquals("name",e1.getName());
         assertEquals("http://whatever.com/{id}",e1.getResolutionPrefix());
@@ -82,7 +85,7 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
     }
 
     @Test
-    public void testUpdateID(){
+    public void test3UpdateID(){
         IdentifierTypeEntity e1 = idTypeDao.getEntityByName("name");
         Date last = e1.getLastModified();
         e1.setResolutionPrefix("http://whatever2.com/{id}");
@@ -96,11 +99,14 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         assertNotNull(e1.getId());
         assertEquals("APP-6666666666666666",e1.getSourceClient().getClientId());
         assertTrue((new Date()).after(e1.getDateCreated()));
-        assertTrue(last.before(e1.getLastModified()));        
+        assertTrue(last.before(e1.getLastModified()));
+        e1 = idTypeDao.getEntityByName("name");
+        e1 = idTypeDao.getEntityByName("name");
+        e1 = idTypeDao.getEntityByName("name");
     }
     
     @Test
-    public void testFetchIDList(){
+    public void test4FetchIDList(){
         IdentifierTypeEntity e1 = new IdentifierTypeEntity();
         e1.setName("aaa");
         ClientDetailsEntity sourceClient = new ClientDetailsEntity();

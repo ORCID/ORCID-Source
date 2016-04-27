@@ -22,7 +22,6 @@ import javax.persistence.TypedQuery;
 
 import org.orcid.persistence.dao.IdentifierTypeDao;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 public class IdentifierTypeDaoImpl extends GenericDaoImpl<IdentifierTypeEntity, Long> implements IdentifierTypeDao{
