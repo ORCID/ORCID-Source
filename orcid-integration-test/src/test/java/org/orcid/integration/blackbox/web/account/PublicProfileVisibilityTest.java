@@ -51,7 +51,7 @@ import org.orcid.integration.blackbox.client.SigninPage;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -747,7 +747,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID wExtId = new ExternalID();
         wExtId.setValue("Work Id " + time);
-        wExtId.setType(ExternalIDType.AGR.value());
+        wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
 

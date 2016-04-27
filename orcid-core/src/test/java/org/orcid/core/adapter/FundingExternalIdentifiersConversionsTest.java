@@ -24,7 +24,6 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.pojo.FundingExternalIdentifier;
 import org.orcid.pojo.FundingExternalIdentifiers;
@@ -86,19 +85,19 @@ public class FundingExternalIdentifiersConversionsTest {
     public void recordToCoreObjectTest() {
         ExternalIDs recordFei = new ExternalIDs();
         ExternalID f1 = new ExternalID();
-        f1.setType(ExternalIDType.GRANT_NUMBER.value());
+        f1.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
         f1.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f1.com"));
         f1.setValue("f1");
         recordFei.getExternalIdentifier().add(f1);
 
         ExternalID f2 = new ExternalID();
-        f2.setType(ExternalIDType.GRANT_NUMBER.value());
+        f2.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
         f2.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f2.com"));
         f2.setValue("f2");
         recordFei.getExternalIdentifier().add(f2);
 
         ExternalID f3 = new ExternalID();
-        f3.setType(ExternalIDType.GRANT_NUMBER.value());
+        f3.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
         f3.setUrl(new org.orcid.jaxb.model.common_rc2.Url("www.f3.com"));
         f3.setValue("f3");
         recordFei.getExternalIdentifier().add(f3);
@@ -174,15 +173,15 @@ public class FundingExternalIdentifiersConversionsTest {
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());
-                assertEquals(ExternalIDType.GRANT_NUMBER.value(), f.getType());
+                assertEquals(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value(), f.getType());
             } else if (f.getValue().equals("f2")) {
                 found2 = true;
                 assertEquals("www.f2.com", f.getUrl().getValue());
-                assertEquals(ExternalIDType.GRANT_NUMBER.value(), f.getType());
+                assertEquals(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value(), f.getType());
             } else if (f.getValue().equals("f3")) {
                 found3 = true;
                 assertEquals("www.f3.com", f.getUrl().getValue());
-                assertEquals(ExternalIDType.GRANT_NUMBER.value(), f.getType());
+                assertEquals(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value(), f.getType());
             } else {
                 fail();
             }
