@@ -16,6 +16,8 @@
  */
 package org.orcid.core.adapter.impl;
 
+import java.util.Date;
+
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
 
@@ -41,8 +43,8 @@ public class IdentifierTypeConverter {
         id.setDeprecated(entity.getIsDeprecated());
         id.setResolutionPrefix(entity.getResolutionPrefix());
         id.setValidationRegex(entity.getValidationRegex());   
-        id.setDateCreated(entity.getDateCreated());
-        id.setLastModified(entity.getLastModified());
+        id.setDateCreated(new Date(entity.getDateCreated().getTime()));
+        id.setLastModified(new Date(entity.getLastModified().getTime()));
         id.setSourceClient(entity.getSourceClient());
         return id;
     }

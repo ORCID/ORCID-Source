@@ -63,7 +63,6 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         e1.setResolutionPrefix("http://whatever.com/{id}");
         e1.setValidationRegex("blah");        
         e1.setSourceClient(clientDetailsDao.findByClientId("APP-6666666666666666",new Date().getTime()));  
-        System.out.println(e1.getSourceClient().getClientId());
         IdentifierTypeEntity e2 = idTypeDao.addIdentifierType(e1);
         assertNotNull(e2.getId());
     }
