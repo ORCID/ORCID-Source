@@ -14,20 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.dao;
+package org.orcid.core.manager;
 
-import java.util.List;
+import java.util.Map;
 
-import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
+import org.orcid.pojo.IdentifierType;
 
-public interface IdentifierTypeDao extends GenericDao<IdentifierTypeEntity, Long>{
+public interface IdentifierTypeManager {
 
-    public IdentifierTypeEntity addIdentifierType(IdentifierTypeEntity identifierType);
-
-    public IdentifierTypeEntity updateIdentifierType(IdentifierTypeEntity identifierType);
-    
-    public IdentifierTypeEntity getEntityByName(String idName);
-
-    public List<IdentifierTypeEntity> getEntities();
-    
+    public void setSourceManager(SourceManager manager);
+    public IdentifierType createIdentifierType(IdentifierType id);
+    public IdentifierType updateIdentifierType(IdentifierType id);
+    public IdentifierType fetchIdentifierTypeByName(String name);
+    public Map<String,IdentifierType> fetchIdentifierTypes();
 }

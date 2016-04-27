@@ -70,7 +70,7 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
     
     @Test
     public void testFetchID(){
-        IdentifierTypeEntity e1 = idTypeDao.getEntities("name");
+        IdentifierTypeEntity e1 = idTypeDao.getEntityByName("name");
         assertEquals("name",e1.getName());
         assertEquals("http://whatever.com/{id}",e1.getResolutionPrefix());
         assertEquals("blah",e1.getValidationRegex());
@@ -84,7 +84,7 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
 
     @Test
     public void testUpdateID(){
-        IdentifierTypeEntity e1 = idTypeDao.getEntities("name");
+        IdentifierTypeEntity e1 = idTypeDao.getEntityByName("name");
         Date last = e1.getLastModified();
         e1.setResolutionPrefix("http://whatever2.com/{id}");
         e1.setValidationRegex("blah2");
