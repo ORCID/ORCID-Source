@@ -119,6 +119,12 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         
         personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
                 
+        if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                
+            Date lastModified = profileEntity.getLastModified();            
+            personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
+        }
+        
         return personalDetails;
     }   
     
@@ -174,6 +180,10 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         }
         
         personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+        
+        if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {            
+            personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
+        }
         
         return personalDetails;
     }
