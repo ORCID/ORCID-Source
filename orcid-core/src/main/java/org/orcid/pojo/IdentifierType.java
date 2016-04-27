@@ -32,6 +32,11 @@ public class IdentifierType implements Serializable{
     private Date dateCreated;
     private Date lastModified;
     
+    @Override
+    public String toString() {
+        return "IdentifierType [name=" + name + ", id=" + id + ", validationRegex=" + validationRegex + ", resolutionPrefix=" + resolutionPrefix + ", dateCreated="
+                + dateCreated + ", lastModified=" + lastModified + ", sourceClient=" + sourceClient + ", deprecated=" + deprecated + "]";
+    }
     private ClientDetailsEntity sourceClient;
     
     public String getName() {

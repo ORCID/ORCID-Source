@@ -52,6 +52,7 @@ public class IdentifierTypeDaoImpl extends GenericDaoImpl<IdentifierTypeEntity, 
         id.setValidationRegex(identifierType.getValidationRegex());
         id.setIsDeprecated(identifierType.getIsDeprecated());
         id = this.merge(id);
+        this.flush();
         return id;
     }
 

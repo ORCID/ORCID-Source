@@ -50,7 +50,7 @@ public class DBUnitTest {
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent", "org_disambiguated",
             "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address", "institution",
             "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority", "orcid_props",
-            "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record"};
+            "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "identifier_type"};
 
     private static ApplicationContext context = new ClassPathXmlApplicationContext(CONTEXT);
 
