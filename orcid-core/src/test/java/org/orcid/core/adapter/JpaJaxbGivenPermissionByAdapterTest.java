@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -81,7 +82,7 @@ public class JpaJaxbGivenPermissionByAdapterTest {
         assertEquals(Long.valueOf(2), entity.getId());        
         assertNotNull(entity.getGiver());        
         assertEquals("given-by-credit-name", entity.getGiver().getRecordNameEntity().getCreditName());
-        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getGiver().getRecordNameEntity().getVisibility());                
+        assertEquals(Visibility.PUBLIC, entity.getGiver().getRecordNameEntity().getVisibility());                
         assertNotNull(entity.getApprovalDate());        
         assertNotNull(entity.getLastModified());
     }
@@ -133,6 +134,7 @@ public class JpaJaxbGivenPermissionByAdapterTest {
         RecordNameEntity name = new RecordNameEntity();
         name.setCreditName("credit-name");
         name.setVisibility(Visibility.PUBLIC);
+        name.setProfile(new ProfileEntity("9999-9999-9999-9999"));
         summary.setId("9999-9999-9999-9999");
         summary.setRecordNameEntity(name);
         entity.setGiver(summary);

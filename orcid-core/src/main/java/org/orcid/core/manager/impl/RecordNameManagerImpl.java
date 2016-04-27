@@ -23,6 +23,7 @@ import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * 
@@ -37,7 +38,8 @@ public class RecordNameManagerImpl implements RecordNameManager {
     private RecordNameDao recordNameDao;
     
     @Override
-    public RecordNameEntity getRecordName(String orcid) {
+    @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
+    public RecordNameEntity getRecordName(String orcid, long lastModified) {
         try {
             return recordNameDao.getRecordName(orcid);
         } catch(Exception e) {

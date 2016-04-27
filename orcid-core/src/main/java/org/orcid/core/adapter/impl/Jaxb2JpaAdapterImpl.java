@@ -39,6 +39,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
@@ -165,6 +166,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     protected SourceManager sourceManager;
+    
+    @Resource
+    protected RecordNameManager recordNameManager;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
@@ -994,10 +998,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     GivenPermissionToEntity givenPermissionToEntity = new GivenPermissionToEntity();
                     givenPermissionToEntity.setGiver(profileEntity.getId());
                     DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
-                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcidIdentifier().getPath());
-                    RecordNameEntity name = new RecordNameEntity();
-                    name.setCreditName(profileSummary.getCreditName() != null ? profileSummary.getCreditName().getContent() : null);
-                    name.setVisibility(profileSummary.getCreditName().getVisibility() == null ? null : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileSummary.getCreditName().getVisibility().value()));
+                    String delegateOrcid = profileSummary.getOrcidIdentifier().getPath();
+                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(delegateOrcid);  
+                    Date lastModified = profileEntityManager.getLastModified(delegateOrcid);
+                    RecordNameEntity name = recordNameManager.getRecordName(delegateOrcid, (lastModified == null ? 0 : lastModified.getTime()));
                     profileSummaryEntity.setRecordNameEntity(name);
                     givenPermissionToEntity.setReceiver(profileSummaryEntity);
                     ApprovalDate approvalDate = delegationDetails.getApprovalDate();

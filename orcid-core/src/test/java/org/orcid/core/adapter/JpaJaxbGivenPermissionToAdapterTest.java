@@ -35,6 +35,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -133,6 +134,7 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         RecordNameEntity name = new RecordNameEntity();
         name.setCreditName("credit-name");
         name.setVisibility(Visibility.PUBLIC);
+        name.setProfile(new ProfileEntity("9999-9999-9999-9999"));
         summary.setId("9999-9999-9999-9999");
         summary.setRecordNameEntity(name);
         entity.setReceiver(summary);
