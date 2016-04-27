@@ -193,19 +193,20 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);        
         Biography bio = new Biography();
         if(profileEntity.getBiographyEntity() != null) {
-            BiographyEntity biograpyEntity = profileEntity.getBiographyEntity(); 
-            if(!PojoUtil.isEmpty(biograpyEntity.getBiography())) {
-                bio.setContent(biograpyEntity.getBiography());
+            BiographyEntity biographyEntity = profileEntity.getBiographyEntity(); 
+            if(!PojoUtil.isEmpty(biographyEntity.getBiography())) {
+                bio.setContent(biographyEntity.getBiography());
             }      
             
             Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-            if(biograpyEntity.getVisibility() != null) {
-                bioVisibility = biograpyEntity.getVisibility();
+            if(biographyEntity.getVisibility() != null) {
+                bioVisibility = biographyEntity.getVisibility();
             } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
                 bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
             }
             bio.setVisibility(bioVisibility);
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biograpyEntity.getLastModified())));
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getLastModified())));
+            bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getDateCreated())));
         } else {
             if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
                 bio.setContent(profileEntity.getBiography());
