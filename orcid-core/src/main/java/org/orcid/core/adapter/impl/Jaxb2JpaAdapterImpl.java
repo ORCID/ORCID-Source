@@ -995,7 +995,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     givenPermissionToEntity.setGiver(profileEntity.getId());
                     DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
                     ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcidIdentifier().getPath());
-                    profileSummaryEntity.setCreditName(profileSummary.getCreditName() != null ? profileSummary.getCreditName().getContent() : null);
+                    RecordNameEntity name = new RecordNameEntity();
+                    name.setCreditName(profileSummary.getCreditName() != null ? profileSummary.getCreditName().getContent() : null);
+                    name.setVisibility(profileSummary.getCreditName().getVisibility() == null ? null : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileSummary.getCreditName().getVisibility().value()));
+                    profileSummaryEntity.setRecordNameEntity(name);
                     givenPermissionToEntity.setReceiver(profileSummaryEntity);
                     ApprovalDate approvalDate = delegationDetails.getApprovalDate();
                     if (approvalDate == null) {

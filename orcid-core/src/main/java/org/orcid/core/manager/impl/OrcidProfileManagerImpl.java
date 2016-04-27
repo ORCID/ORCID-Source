@@ -896,13 +896,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    @Transactional
-    public void updateBiography(OrcidProfile orcidProfile) {
-        profileDao.updateBiography(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getBiography().getContent(), orcidProfile.getOrcidBio()
-                .getBiography().getVisibility());
-    }
-
-    @Override
     @Transactional    
     public void updateNames(String orcid, org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails) {
         String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
@@ -926,9 +919,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             recordName.setProfile(new ProfileEntity(orcid));
             recordNameManager.createRecordName(recordName);
         }
-                
-        //TODO: remove when the names are fully migrated
-        profileDao.updateNames(orcid, givenNames, familyName, creditName, namesVisibility);
     }            
 
     @Override

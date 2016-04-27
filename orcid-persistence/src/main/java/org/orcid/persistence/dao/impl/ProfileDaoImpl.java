@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
@@ -60,23 +59,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Override
     public List<ProfileEntity> retrieveSelectableSponsors() {
         return (List<ProfileEntity>) entityManager.createQuery("from ProfileEntity where isSelectableSponsor=true order by vocativeName").getResultList();
-    }
-
-    @Override
-    public List<String> findOrcidsByName(String name) {
-        TypedQuery<String> query = entityManager.createQuery("select id from ProfileEntity where lower(givenNames) like lower(:name || '%') or lower"
-                + "(familyName) like lower(:name || '%') or lower(vocativeName) like lower(:name || " + "'%') or lower(creditName) like lower(:name || '%')",
-                String.class);
-        query.setParameter("name", name);
-        return query.getResultList();
-    }
-    
-    @Override
-    public String findOrcidByCreditName(String creditName) {
-        TypedQuery<String> query = entityManager.createQuery("select id from ProfileEntity where lower(creditName) like lower(:credit_name || '%')",
-                String.class);
-        query.setParameter("credit_name", creditName);
-        return query.getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -472,15 +454,10 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     @Transactional
     public boolean deprecateProfile(ProfileEntity toDeprecate, String primaryOrcid) {
         Query query = entityManager.createQuery(
-                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, givenNames = :givenNames, familyName = :familyName, creditName = :creditName, biography = :bio, biographyVisibility = :defaultVisibility, activitiesVisibilityDefault = :defaultVisibility, namesVisibility = :namesVisibility where orcid = :orcid");
+                "update ProfileEntity set lastModified = now(), deprecatedDate = now(), deactivationDate = now(), indexingStatus = :indexing_status, primaryRecord = :primary_record, activitiesVisibilityDefault = :defaultVisibility where orcid = :orcid");
         query.setParameter("orcid", toDeprecate.getId());
         query.setParameter("indexing_status", IndexingStatus.PENDING);
-        query.setParameter("primary_record", new ProfileEntity(primaryOrcid));
-        query.setParameter("givenNames", null);
-        query.setParameter("familyName", null);
-        query.setParameter("creditName", null);        
-        query.setParameter("bio", null);
-        query.setParameter("namesVisibility", Visibility.PUBLIC);
+        query.setParameter("primary_record", new ProfileEntity(primaryOrcid));        
         query.setParameter("defaultVisibility", Visibility.PRIVATE);
                 
         return query.executeUpdate() > 0 ? true : false;
@@ -521,7 +498,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     public void updatePreferences(String orcid, boolean sendChangeNotifications, boolean sendAdministrativeChangeNotifications, boolean sendOrcidNews,
             boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays) {
         Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, biographyVisibility = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
+                .createQuery("update ProfileEntity set lastModified = now(), sendChangeNotifications = :sendChangeNotifications, sendAdministrativeChangeNotifications = :sendAdministrativeChangeNotifications, sendOrcidNews = :sendOrcidNews, sendMemberUpdateRequests = :sendMemberUpdateRequests, activitiesVisibilityDefault = :activitiesVisibilityDefault, enableDeveloperTools = :enableDeveloperTools, sendEmailFrequencyDays = :sendEmailFrequencyDays where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.setParameter("sendChangeNotifications", sendChangeNotifications);
         updateQuery.setParameter("sendAdministrativeChangeNotifications", sendAdministrativeChangeNotifications);
@@ -530,30 +507,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         updateQuery.setParameter("activitiesVisibilityDefault", activitiesVisibilityDefault);
         updateQuery.setParameter("enableDeveloperTools", enableDeveloperTools);
         updateQuery.setParameter("sendEmailFrequencyDays", sendEmailFrequencyDays);
-        updateQuery.executeUpdate();
-    }
-
-    @Override
-    @Transactional
-    public boolean updateBiography(String orcid, String biography, Visibility visibility) {
-        Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), biography = :biography, biography_visibility = :visibility where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("biography", biography);
-        updateQuery.setParameter("visibility", visibility == null ? null : StringUtils.upperCase(visibility.value()));
-        return updateQuery.executeUpdate() > 0;
-    }
-
-    @Override
-    @Transactional
-    public void updateNames(String orcid, String givenNames, String familyName, String creditName, Visibility namesVisibility) {
-        Query updateQuery = entityManager
-                .createQuery("update ProfileEntity set lastModified = now(), family_name = :familyName, given_names = :givenNames, credit_name = :creditName, names_visibility=:namesVisibility where orcid = :orcid");
-        updateQuery.setParameter("orcid", orcid);
-        updateQuery.setParameter("givenNames", givenNames);
-        updateQuery.setParameter("familyName", familyName);
-        updateQuery.setParameter("creditName", creditName);
-        updateQuery.setParameter("namesVisibility", namesVisibility == null ? null : StringUtils.upperCase(namesVisibility.value()));
         updateQuery.executeUpdate();
     }
 
@@ -730,6 +683,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
     
     @Override
     @SuppressWarnings("unchecked")
+    @Deprecated
     public List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize) {
         Query query = entityManager.createNativeQuery("SELECT orcid, given_names, family_name, credit_name, names_visibility, biography, biography_visibility, activities_visibility_default FROM profile p WHERE NOT EXISTS (SELECT n.orcid FROM record_name n WHERE n.orcid = p.orcid) order by orcid limit :batchSize");
         query.setParameter("batchSize", batchSize);        

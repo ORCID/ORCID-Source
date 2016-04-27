@@ -186,7 +186,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     public String findByCreditName(String creditName) {
-        return profileDao.findOrcidByCreditName(creditName);
+        RecordNameEntity recordName = recordNameManager.findByCreditName(creditName);
+        if(recordName == null) {
+            return null;
+        }
+        return recordName.getProfile().getId();
     }
 
     @Override
@@ -682,16 +686,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return publicName;
     }
 
-    @Override    
-    @Deprecated
-    public void updateBiography(String orcid, Biography biography) {
-        org.orcid.jaxb.model.message.Visibility visibility = OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility();        
-        if(biography.getVisibility() != null) {
-            visibility = org.orcid.jaxb.model.message.Visibility.fromValue(biography.getVisibility().value());
-        }                
-        profileDao.updateBiography(orcid, biography.getContent(), visibility);
-    }
-    
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {

@@ -21,7 +21,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -108,27 +107,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
         assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
-    }
-    
-    @Test
-    public void testFindByCreditName() {
-        String orcid = profileDao.findOrcidByCreditName("Credit Name");
-        assertEquals("4444-4444-4444-4441", orcid);
-        try {
-            //Multiple profiles with the same credit name
-            profileDao.findOrcidByCreditName("Multi Cred Name");
-            fail();
-        } catch(Exception e) {
-            
-        }
-        
-        try {
-            profileDao.findOrcidByCreditName("Am not a credit name");
-            fail();
-        } catch (Exception e) {
-            
-        }
-    }
+    }        
 
     @Test
     @Rollback(true)
@@ -353,14 +332,6 @@ public class ProfileDaoTest extends DBUnitTest {
         List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
         assertNotNull(results);
         assertEquals(5, results.size());
-    }
-
-    @Test
-    public void testFindOrcidsByName() {
-        List<String> results = profileDao.findOrcidsByName("User");
-        assertNotNull(results);
-        assertEquals(1, results.size());
-        assertEquals("4444-4444-4444-4441", results.get(0));
     }
 
     @Test

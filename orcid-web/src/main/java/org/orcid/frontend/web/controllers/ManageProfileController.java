@@ -935,10 +935,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 biographyManager.updateBiography(getCurrentUserOrcid(), bio);
             } else {
                 biographyManager.createBiography(getCurrentUserOrcid(), bio);    
-            }
-            
-            //TODO: remove when the names migration is done
-            profileEntityManager.updateBiography(getCurrentUserOrcid(), bio);
+            }            
         }
         return bf;
     }    
