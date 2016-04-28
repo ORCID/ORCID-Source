@@ -17,17 +17,25 @@
 package org.orcid.integration.blackbox.api.security;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.collections.ListUtils;
 import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc2.OrcidError;
@@ -61,6 +69,7 @@ import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -245,8 +254,6 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
             }
         }
         
-        
-        
         r = memberV2ApiClient.viewActivities(orcid, accessToken);
         ActivitiesSummary summary = r.getEntity(ActivitiesSummary.class);
         if(summary != null) {
@@ -335,6 +342,118 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
         }        
     }
 
+    @Test
+    public void test2StepsTokensOnMemberApi() throws JSONException {
+        //Test each of the client credential scopes
+        testValid2StepsTokenRequest(ScopePathType.ORCID_PROFILE_CREATE);
+        testValid2StepsTokenRequest(ScopePathType.READ_PUBLIC);
+        testValid2StepsTokenRequest(ScopePathType.WEBHOOK);
+        testValid2StepsTokenRequest(ScopePathType.PREMIUM_NOTIFICATION);
+        testValid2StepsTokenRequest(ScopePathType.GROUP_ID_RECORD_READ);
+        testValid2StepsTokenRequest(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        
+        //Test each non client credential scope
+        testInvalid2StepsTokenRequest(ScopePathType.ACTIVITIES_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.ACTIVITIES_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.AFFILIATIONS_CREATE);
+        testInvalid2StepsTokenRequest(ScopePathType.AFFILIATIONS_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.AFFILIATIONS_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.AUTHENTICATE);
+        testInvalid2StepsTokenRequest(ScopePathType.BASIC_NOTIFICATION);
+        testInvalid2StepsTokenRequest(ScopePathType.FUNDING_CREATE);
+        testInvalid2StepsTokenRequest(ScopePathType.FUNDING_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.FUNDING_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.INTERNAL_PERSON_LAST_MODIFIED);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_BIO_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_BIO_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_PATENTS_CREATE);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_PATENTS_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_PATENTS_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_PROFILE_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_WORKS_CREATE);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_WORKS_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.ORCID_WORKS_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.PEER_REVIEW_CREATE);
+        testInvalid2StepsTokenRequest(ScopePathType.PEER_REVIEW_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.PEER_REVIEW_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.PERSON_READ_LIMITED);
+        testInvalid2StepsTokenRequest(ScopePathType.PERSON_UPDATE);
+        testInvalid2StepsTokenRequest(ScopePathType.READ_LIMITED); 
+        
+        //Test mixed scopes
+        List<ScopePathType> invalidScopes = new ArrayList<>(Arrays.asList(ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.AFFILIATIONS_CREATE, ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.BASIC_NOTIFICATION, ScopePathType.FUNDING_CREATE, ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE, ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PATENTS_CREATE, ScopePathType.ORCID_PATENTS_READ_LIMITED, ScopePathType.ORCID_PATENTS_UPDATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE, ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED, ScopePathType.PEER_REVIEW_UPDATE, ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
+        List<ScopePathType> validScopes = new ArrayList<>();
+        validScopes.add(ScopePathType.GROUP_ID_RECORD_READ);
+        testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(ListUtils.union(invalidScopes, validScopes), validScopes);
+        
+        validScopes.clear();
+        validScopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE);
+        testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(ListUtils.union(invalidScopes, validScopes), validScopes);
+        
+        validScopes.clear();
+        validScopes.add(ScopePathType.PREMIUM_NOTIFICATION);
+        testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(ListUtils.union(invalidScopes, validScopes), validScopes);
+        
+        validScopes.clear();
+        validScopes.add(ScopePathType.READ_PUBLIC);
+        testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(ListUtils.union(invalidScopes, validScopes), validScopes);
+        
+        validScopes.clear();
+        validScopes.add(ScopePathType.WEBHOOK);
+        testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(ListUtils.union(invalidScopes, validScopes), validScopes);
+        
+        validScopes.clear();
+        validScopes.add(ScopePathType.ORCID_PROFILE_CREATE);
+        testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(ListUtils.union(invalidScopes, validScopes), validScopes);
+    }
+    
+    private void testValid2StepsTokenRequest(ScopePathType ...scopes) throws JSONException {
+        List<ScopePathType> scopesList = new ArrayList<ScopePathType>();
+        for(ScopePathType scope : scopes) {
+            scopesList.add(scope);
+        }
+        ClientResponse response = oauthHelper.getClientCredentialsTokenResponse(getClient1ClientId(), getClient1ClientSecret(), scopesList, APIRequestType.MEMBER);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
+        assertFalse(PojoUtil.isEmpty(oauthHelper.getAccessTokenFromClientResponse(response)));
+    }
+    
+    private void testInvalid2StepsTokenRequest(ScopePathType ...scopes) throws JSONException {
+        List<ScopePathType> scopesList = new ArrayList<ScopePathType>();
+        for(ScopePathType scope : scopes) {
+            scopesList.add(scope);
+        }
+        ClientResponse response = oauthHelper.getClientCredentialsTokenResponse(getClient1ClientId(), getClient1ClientSecret(), scopesList, APIRequestType.MEMBER);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());                
+        String error = oauthHelper.getErrorFromClientResponse(response); 
+        assertNotNull(error);
+        assertTrue(error.contains("OAuth2 problem : One of the provided scopes is not allowed."));
+    }
+    
+    private void testValid2StepsTokenRequestWithMixedValidAndInvalidScopes(List<ScopePathType> allScopes, List<ScopePathType> validScopes) throws JSONException {        
+        ClientResponse response = oauthHelper.getClientCredentialsTokenResponse(getClient1ClientId(), getClient1ClientSecret(), allScopes, APIRequestType.MEMBER);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
+        String body = response.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        String accessToken = (String) jsonObject.get("access_token");
+        assertFalse(PojoUtil.isEmpty(accessToken));
+        String scopes = (String) jsonObject.get("scope");
+        assertFalse(PojoUtil.isEmpty(scopes));
+        for(ScopePathType validScope : validScopes) {
+            assertTrue(scopes.contains(validScope.value()));
+        }
+        //After this, allScopes will contains only the invalid scopes
+        @SuppressWarnings("unchecked")
+        List<ScopePathType> invalidScopes = ListUtils.subtract(allScopes, validScopes);
+        for(ScopePathType invalidScope : invalidScopes) {
+            assertFalse(scopes.contains(invalidScope.value()));
+        }
+        
+    }
+    
     private String getScopesString() {
         return ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.AFFILIATIONS_CREATE.value() + " "
                 + ScopePathType.AFFILIATIONS_READ_LIMITED.value() + " " + ScopePathType.AFFILIATIONS_UPDATE.value() + " " + ScopePathType.AUTHENTICATE.value() + " "
