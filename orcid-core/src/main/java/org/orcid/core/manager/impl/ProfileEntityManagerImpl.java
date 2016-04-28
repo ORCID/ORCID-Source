@@ -186,7 +186,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     public String findByCreditName(String creditName) {
-        return profileDao.findOrcidByCreditName(creditName);
+        RecordNameEntity recordName = recordNameManager.findByCreditName(creditName);
+        if(recordName == null) {
+            return null;
+        }
+        return recordName.getProfile().getId();
     }
 
     @Override
@@ -220,14 +224,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional 
     public boolean deprecateProfile(ProfileEntity deprecatedProfile, ProfileEntity primaryProfile) {
-        //Remove the biography
-        deprecatedProfile.setBiographyVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
         deprecatedProfile.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE); 
-        deprecatedProfile.setBiography(new String());
-        deprecatedProfile.setGivenNames("Given Names Deactivated");
-        deprecatedProfile.setFamilyName("Family Name Deactivated");
-        deprecatedProfile.setCreditName(null);
-        
         boolean wasDeprecated = profileDao.deprecateProfile(deprecatedProfile, primaryProfile.getId());        
         // If it was successfully deprecated
         if (wasDeprecated) {
@@ -684,33 +681,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                         publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
                     }
                 }
-            } else {
-                Visibility namesVisibility = (profile.getNamesVisibility() != null) ? Visibility.fromValue(profile.getNamesVisibility().value())
-                        : Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value());
-                if (Visibility.PUBLIC.equals(namesVisibility)) {
-                    if (!PojoUtil.isEmpty(profile.getCreditName())) {
-                        publicName = profile.getCreditName();
-                    } else {
-                        publicName = PojoUtil.isEmpty(profile.getGivenNames()) ? "" : profile.getGivenNames();
-                        publicName += PojoUtil.isEmpty(profile.getFamilyName()) ? "" : " " + profile.getFamilyName();
-                    }
-                }
-            }
-            
+            } 
         }
         return publicName;
     }
 
-    @Override    
-    @Deprecated
-    public void updateBiography(String orcid, Biography biography) {
-        org.orcid.jaxb.model.message.Visibility visibility = OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility();        
-        if(biography.getVisibility() != null) {
-            visibility = org.orcid.jaxb.model.message.Visibility.fromValue(biography.getVisibility().value());
-        }                
-        profileDao.updateBiography(orcid, biography.getContent(), visibility);
-    }
-    
     @Override
     @Transactional
     public Person getPersonDetails(String orcid) {

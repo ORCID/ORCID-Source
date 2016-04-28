@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
+import java.util.List;
 
 import javax.persistence.Query;
 
@@ -43,6 +44,19 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         return (RecordNameEntity) query.getSingleResult();
     }
 
+    @Override
+    public RecordNameEntity findByCreditName(String creditName) {
+        Query query = entityManager.createQuery("FROM RecordNameEntity WHERE creditName = :creditName");
+        query.setParameter("creditName", creditName);
+        @SuppressWarnings("unchecked")
+        List<RecordNameEntity> names = (List<RecordNameEntity>) query.getResultList();
+        if(names == null || names.isEmpty()) {
+            return null;
+        }
+        //Return the first result
+        return names.get(0);
+    }
+    
     @Override
     @Transactional
     public boolean updateRecordName(RecordNameEntity recordName) {

@@ -115,19 +115,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
                     String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
                     creditName = composedCreditName;
                 }
-            }
-            
-            //Check if it is still empty, if so, use the profile table fields
-            if(PojoUtil.isEmpty(creditName)) {
-                if(StringUtils.isNotBlank(profile.getCreditName())) {
-                    creditName = profile.getCreditName();
-                } else {
-                    String givenName = profile.getGivenNames();
-                    String familyName = profile.getFamilyName();
-                    String composedCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                    creditName = composedCreditName;
-                }
-            }
+            }                        
         }
                                           
         return creditName;
@@ -145,20 +133,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
                     String familyName = profile.getRecordNameEntity().getFamilyName();
                     publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
                 }
-            }
-            
-            //Check if it is still empty, if so, check the profile table fields
-            if(PojoUtil.isEmpty(publicCreditName)) {
-                if(Visibility.PUBLIC.equals(profile.getNamesVisibility())) {
-                    if(!PojoUtil.isEmpty(profile.getCreditName())) {
-                        publicCreditName = profile.getCreditName();
-                    } else {
-                        String givenName = profile.getGivenNames();
-                        String familyName = profile.getFamilyName();
-                        publicCreditName = (PojoUtil.isEmpty(givenName) ? "" : givenName) + " " + (PojoUtil.isEmpty(familyName) ? "" : familyName);
-                    }
-                }
-            }
+            }            
         }
         
         return publicCreditName;

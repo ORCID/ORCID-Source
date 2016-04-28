@@ -26,28 +26,27 @@
             submission_date="2011-06-29 15:31:00.00"
             last_indexed_date="2011-07-02 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"           
-            claimed="true"
-            given_names="Spike"
-            family_name="Milligan"
-            vocative_name="Spike Milligan"
-            credit_name="S. Milligan"
-            names_visibility="PUBLIC"
-            profile_address_visibility="PRIVATE"
-            external_identifiers_visibility="LIMITED"
-            biography_visibility="PUBLIC"
-            keywords_visibility="REGISTERED_ONLY"
-            other_names_visibility="PRIVATE"
-            researcher_urls_visibility="PUBLIC"
+            claimed="true"            
             is_selectable_sponsor="false"
             send_change_notifications="false"
             send_orcid_news="false"
-            activities_visibility_default='PRIVATE'
+            activities_visibility_default="PRIVATE"
             credentials_expiry="2013-02-01"
             indexing_status="DONE"
             iso2_country="GB"
             orcid_type="GROUP"
             group_type="PREMIUM_INSTITUTION"
             />
+            
+	<record_name 
+		id="1"
+		orcid="5555-5555-5555-0000"
+		given_names="Spike"
+        family_name="Milligan"
+        credit_name="S. Milligan"
+        visibility="PUBLIC"
+		/>     
+	       
 	<granted_authority
             authority="ROLE_GROUP"
             orcid="5555-5555-5555-0000"

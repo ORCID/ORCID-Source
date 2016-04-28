@@ -32,12 +32,6 @@ import org.orcid.persistence.jpa.entities.ProfileEventType;
 
 public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
-    List<ProfileEntity> retrieveSelectableSponsors();
-
-    List<String> findOrcidsByName(String name);
-
-    String findOrcidByCreditName(String creditName);
-
     public boolean exists(String orcid);
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
@@ -71,8 +65,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
     IndexingStatus retrieveIndexingStatus(String orcid);
 
     Long getConfirmedProfileCount();
-
-    boolean updateBiography(String orcid, String biography, Visibility visibility);
 
     Date retrieveLastModifiedDate(String orcid);
 
@@ -108,8 +100,6 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
             boolean sendMemberUpdateRequests, Visibility activitiesVisibilityDefault, boolean enableDeveloperTools, float sendEmailFrequencyDays);
 
     List<ProfileEntity> findProfilesByOrcidType(OrcidType type);
-
-    public void updateNames(String orcid, String givenName, String familyName, String creditName, Visibility namesVisibility);
 
     boolean updateDeveloperTools(String orcid, boolean enabled);
 

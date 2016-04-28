@@ -29,14 +29,15 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -80,8 +81,8 @@ public class JpaJaxbGivenPermissionByAdapterTest {
         assertNotNull(entity);                        
         assertEquals(Long.valueOf(2), entity.getId());        
         assertNotNull(entity.getGiver());        
-        assertEquals("given-by-credit-name", entity.getGiver().getCreditName());
-        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getGiver().getNamesVisibility());                
+        assertEquals("given-by-credit-name", entity.getGiver().getRecordNameEntity().getCreditName());
+        assertEquals(Visibility.PUBLIC, entity.getGiver().getRecordNameEntity().getVisibility());                
         assertNotNull(entity.getApprovalDate());        
         assertNotNull(entity.getLastModified());
     }
@@ -130,9 +131,12 @@ public class JpaJaxbGivenPermissionByAdapterTest {
         entity.setId(1L);
         entity.setLastModified(c.getTime());
         ProfileSummaryEntity summary = new ProfileSummaryEntity();
-        summary.setCreditName("credit-name");
-        summary.setNamesVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        RecordNameEntity name = new RecordNameEntity();
+        name.setCreditName("credit-name");
+        name.setVisibility(Visibility.PUBLIC);
+        name.setProfile(new ProfileEntity("9999-9999-9999-9999"));
         summary.setId("9999-9999-9999-9999");
+        summary.setRecordNameEntity(name);
         entity.setGiver(summary);
         return entity;
     }

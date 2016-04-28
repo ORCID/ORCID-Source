@@ -236,11 +236,6 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             groupProfileEntity.getRecordNameEntity().setCreditName(orcidClientGroup.getGroupName());
             groupProfileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
             
-            //TODO: remove after names migration
-            //Set the profile table credit name
-            groupProfileEntity.setCreditName(orcidClientGroup.getGroupName());
-            groupProfileEntity.setNamesVisibility(Visibility.PUBLIC);
-            
             groupProfileEntity.setSalesforeId(orcidClientGroup.getSalesforceId());
             // If group type changed
             if (!groupProfileEntity.getGroupType().equals(orcidClientGroup.getType())) {

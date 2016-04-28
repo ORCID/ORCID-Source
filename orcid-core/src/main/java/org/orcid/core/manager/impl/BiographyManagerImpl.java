@@ -59,13 +59,7 @@ public class BiographyManagerImpl implements BiographyManager {
             } else {
                 bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
             }     
-        } else {
-            bio.setContent(profile.getBiography()); 
-            if(profile.getBiographyVisibility() != null) {
-                bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getBiographyVisibility().value()));
-            }
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
-        }
+        } 
         
         return bio;
     }

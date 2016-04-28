@@ -86,9 +86,6 @@ public interface ProfileEntityManager {
     
     String retrivePublicDisplayName(String orcid);
     
-    @Deprecated
-    void updateBiography(String orcid, Biography biography);
-    
     Person getPersonDetails(String orcid);
     
     Person getPublicPersonDetails(String orcid);

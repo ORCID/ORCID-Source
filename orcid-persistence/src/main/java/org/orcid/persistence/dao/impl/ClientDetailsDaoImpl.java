@@ -175,7 +175,7 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
      * */
     public String getMemberName(String clientId) {
         TypedQuery<String> query = entityManager.createQuery(
-                "select creditName from ProfileEntity where id = (select groupProfileId from ClientDetailsEntity where id=:clientId)", String.class);
+                "select creditName from RecordNameEntity where profile.id = (select groupProfileId from ClientDetailsEntity where id=:clientId)", String.class);
         query.setParameter("clientId", clientId);
         return query.getSingleResult();
     }

@@ -41,6 +41,7 @@ import org.orcid.persistence.jpa.entities.ClientSecretEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.Client;
 import org.orcid.pojo.ajaxForm.Member;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
@@ -115,7 +116,9 @@ public class MembersManagerImpl implements MembersManager {
             } 
         }
 
-        if (orcid != null) {
+        if(PojoUtil.isEmpty(orcid)) {
+            member.getErrors().add(getMessage("manage_member.email_not_found"));            
+        } else {
             if (profileEntityManager.orcidExists(orcid)) {
                 MemberType groupType = profileEntityManager.getGroupType(orcid);
                 if (groupType != null) {

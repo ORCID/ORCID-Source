@@ -21,7 +21,6 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,7 +42,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidEntityIdComparator;
@@ -109,27 +107,7 @@ public class ProfileDaoTest extends DBUnitTest {
         assertEquals("Family Name", profile.getRecordNameEntity().getFamilyName());
         assertEquals("Credit Name", profile.getRecordNameEntity().getCreditName());
         assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC, profile.getRecordNameEntity().getVisibility());
-    }
-    
-    @Test
-    public void testFindByCreditName() {
-        String orcid = profileDao.findOrcidByCreditName("Credit Name");
-        assertEquals("4444-4444-4444-4441", orcid);
-        try {
-            //Multiple profiles with the same credit name
-            profileDao.findOrcidByCreditName("Multi Cred Name");
-            fail();
-        } catch(Exception e) {
-            
-        }
-        
-        try {
-            profileDao.findOrcidByCreditName("Am not a credit name");
-            fail();
-        } catch (Exception e) {
-            
-        }
-    }
+    }        
 
     @Test
     @Rollback(true)
@@ -346,24 +324,7 @@ public class ProfileDaoTest extends DBUnitTest {
     public void testOrcidExists() {
         assertTrue(profileDao.orcidExists("4444-4444-4444-4442"));
         assertFalse(profileDao.orcidExists("4445-4444-4444-4442"));
-    }
-
-    @Test
-    @Rollback(true)
-    public void testRetrieveSelectableSponsors() {
-        List<ProfileEntity> results = profileDao.retrieveSelectableSponsors();
-        assertNotNull(results);
-        assertEquals(5, results.size());
-        assertEquals("Admin Admin", results.get(0).getVocativeName());
-    }
-
-    @Test
-    public void testFindOrcidsByName() {
-        List<String> results = profileDao.findOrcidsByName("User");
-        assertNotNull(results);
-        assertEquals(1, results.size());
-        assertEquals("4444-4444-4444-4441", results.get(0));
-    }
+    }    
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
@@ -447,20 +408,6 @@ public class ProfileDaoTest extends DBUnitTest {
         profileDao.persist(profileEntity);
         confirmedProfileCount = profileDao.getConfirmedProfileCount();
         assertEquals(Long.valueOf(15), confirmedProfileCount);
-    }
-
-    @Test
-    @Rollback(true)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void testUpdateBiography() {
-        ProfileEntity profile = profileDao.find("4444-4444-4444-4441");
-        profile.setBiography("Updated Biography");
-        profile.setBiographyVisibility(Visibility.PRIVATE);
-        boolean result = profileDao.updateBiography(profile.getId(), profile.getBiography(), profile.getBiographyVisibility());
-        assertTrue(result);
-        profile = profileDao.find("4444-4444-4444-4441");
-        assertEquals("Updated Biography", profile.getBiography());
-        assertEquals(Visibility.PRIVATE.value(), profile.getBiographyVisibility().value());               
     }
 
     @Test

@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.ApplicationException;
+import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
@@ -302,7 +303,9 @@ public class SetUpClientsAndUsers {
     @Resource
     protected ProfileEntityManager profileEntityManager;
     @Resource
-    protected GivenPermissionToDao givenPermissionToDao;    
+    protected GivenPermissionToDao givenPermissionToDao;   
+    @Resource
+    protected BiographyManager biographyManager;
     
     @Before
     public void before() throws Exception {
@@ -569,11 +572,13 @@ public class SetUpClientsAndUsers {
             profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio
-            OrcidBio bio = new OrcidBio();
-            bio.setBiography(new Biography(params.get(BIO), OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility()));
-            existingProfile.setOrcidBio(bio);
-            orcidProfileManager.updateBiography(existingProfile);
-
+            org.orcid.jaxb.model.record_rc2.Biography bio = biographyManager.getBiography(orcid);
+            if(bio != null) {
+                bio.setContent("");
+                bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                biographyManager.updateBiography(orcid, bio);
+            } 
+            
             // Remove other names
             List<OtherNameEntity> otherNames = otherNameDao.getOtherNames(orcid, 0L);
             if(otherNames != null && !otherNames.isEmpty()) {

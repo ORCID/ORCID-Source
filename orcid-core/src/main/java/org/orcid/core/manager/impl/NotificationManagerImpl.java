@@ -739,14 +739,7 @@ public class NotificationManagerImpl implements NotificationManager {
                     result += " " + recordName.getFamilyName();
                 }
             }
-        } else {
-            if(!PojoUtil.isEmpty(profileEntity.getGivenNames())) {
-                result = profileEntity.getGivenNames();
-                if(!PojoUtil.isEmpty(profileEntity.getFamilyName())) {
-                    result += " " + profileEntity.getFamilyName();
-                }
-            }
-        }
+        } 
         return result;
     }
 
