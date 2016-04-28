@@ -111,6 +111,10 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 for (String remove : toRemove) {
                     scopes.remove(remove);
                 }
+                
+                if(scopes == null || scopes.isEmpty()) {
+                    throw new IllegalArgumentException("There are no legal scopes in this request");
+                }
             }
         } catch (IllegalArgumentException iae) {
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
