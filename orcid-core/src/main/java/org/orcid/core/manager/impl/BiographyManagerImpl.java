@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Biography;
@@ -58,9 +59,13 @@ public class BiographyManagerImpl implements BiographyManager {
                 bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getBiographyEntity().getLastModified())));
             } else {
                 bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
-            }     
-        } 
-        
+            }  
+            
+            //This should never be null
+            if(profile.getBiographyEntity().getDateCreated() != null) {
+                bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(profile.getBiographyEntity().getDateCreated())));
+            } 
+        }         
         return bio;
     }
     
