@@ -2087,6 +2087,22 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     profileEntity.setActivitiesVisibilityDefault(defaultVisibility);
                 }                
             }
+            
+            if(profileEntity.getRecordNameEntity() != null) {
+                if(profileEntity.getRecordNameEntity().getVisibility() == null) {
+                    profileEntity.getRecordNameEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
+                }
+            }
+            
+            if(profileEntity.getBiographyEntity() != null) {                
+                if(profileEntity.getBiographyEntity().getVisibility() == null) {
+                    if(defaultVisibility != null) {
+                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
+                    } else {
+                        profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                    }                    
+                }
+            }
         }
     }
 }
