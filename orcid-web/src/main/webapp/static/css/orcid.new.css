@@ -6480,12 +6480,16 @@ a:hover .mozilla-badge{
 
 
 .workspace-section .workspace-section-heading li a i:before{
-	font: 20px/1em 'Glyphicons Regular';
+	font: 17px/1em 'Glyphicons Regular';
 	color: #939598;
 }
 
 .glyphicons{
 	padding-left: 0;
+}
+
+.separator{	
+	border-bottom: 1px dotted #C3C3C3; 
 }
 
 

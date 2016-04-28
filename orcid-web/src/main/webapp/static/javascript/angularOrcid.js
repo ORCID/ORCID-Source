@@ -11183,6 +11183,14 @@ orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope,
 	
 }]);
 
+orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
+	$scope.showSources = new Array();	
+	$scope.toggleSourcesDisplay = function(section){
+		$scope.showSources[section] = !$scope.showSources[section];		
+	}
+	
+}]);
+
 orcidNgModule.directive('resize', function ($window) {
 	return function ($scope, element) {
 		var w = angular.element($window);

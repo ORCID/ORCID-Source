@@ -20,7 +20,7 @@
 <#escape x as x?html>
 <div class="row workspace-top public-profile">
     <div class="col-md-3 left-aside">
-        <div class="workspace-left workspace-profile">
+        <div class="workspace-left workspace-profile" ng-controller="PublicRecordCtrl">
         	<div class="id-banner">
 	            <h2 class="full-name">
 	            	<#if (locked)?? && locked>
@@ -55,31 +55,36 @@
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list workspace-section-heading">
 			            			<li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span></li>
-			            			<li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+			            			<li class="right"><a href="" ng-click="toggleSourcesDisplay('other-names')" class="right"><i ng-class="(showSources['other-names'] || showSources['other-names'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i></a></li>		                		
 		                		</ul>
 		                	</div>
 		                	<div id="public-other-names-div">		                	
-				                <#list publicOtherNames.otherNames as otherName>
-				                	${otherName.content}				                					                	
-				                	${otherName.source.sourceName.content}
-				                	<#if otherName_has_next>
-				                		<br/>
-				                	</#if>
+				                <#list publicOtherNames.otherNames as otherName>				               
+				                	${otherName.content}<#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
+				                	<div ng-if="showSources['other-names']" ng-init='source = "${otherName.source.sourceName.content?js_string}"; createdDate = "${otherName.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+				                		<p>Sources:<br />
+				                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
+				                		</p>				                						                			                						                			
+				                	</div>				                						                	
 				                </#list>
 			                </div>
 		                </div>
 		            </#if>
-		            <!-- Address -->    	            	           
+		            <!-- Countries -->    	            	           
 		            <#if (countryName)??>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list workspace-section-heading">
 								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>
-								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>
-								</ul>
-		                		
+								    <li class="right"><a href="" ng-click="toggleSourcesDisplay('countries')" class="right"><i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i></a></li>
+								</ul>		                		
 		                		<div id="public-country-div">
 		                			${(countryName)!}
+		                			<div ng-if="showSources['countries']" ng-init='source = "${countryName.source.sourceName.content?js_string}"; createdDate = "${countryName.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+				                		<p>Sources:<br />
+				                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
+				                		</p>				                						                			                						                			
+				                	</div>
 		                		</div>
 		                	</div>
 		                </div>
