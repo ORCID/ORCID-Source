@@ -197,13 +197,7 @@ public class OauthControllerBase extends BaseController {
                 } else {
                     creditName = PojoUtil.isEmpty(profile.getRecordNameEntity().getGivenNames()) ? profile.getRecordNameEntity().getFamilyName() : profile.getRecordNameEntity().getGivenNames() + " " + profile.getRecordNameEntity().getFamilyName();
                 }
-            } else {
-                if(!PojoUtil.isEmpty(profile.getCreditName())) {
-                    creditName = profile.getCreditName();
-                } else {
-                    creditName = PojoUtil.isEmpty(profile.getGivenNames()) ? profile.getFamilyName() : profile.getGivenNames() + " " + profile.getFamilyName(); 
-                }
-            }
+            } 
                                     
             if(!PojoUtil.isEmpty(creditName)) {
                 infoForm.setUserName(URLDecoder.decode(creditName, "UTF-8").trim());
@@ -251,9 +245,7 @@ public class OauthControllerBase extends BaseController {
             ProfileEntity groupProfile = profileEntityCacheManager.retrieve(clientDetails.getGroupProfileId());
             if(groupProfile.getRecordNameEntity() != null) {
                 memberName = groupProfile.getRecordNameEntity().getCreditName();
-            } else {
-                memberName = groupProfile.getCreditName();
-            }
+            } 
         }
         // If the group name is empty, use the same as the client
         // name, since it should be a SSO user

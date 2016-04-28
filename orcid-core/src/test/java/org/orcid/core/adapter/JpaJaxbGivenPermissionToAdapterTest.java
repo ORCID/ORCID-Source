@@ -29,14 +29,15 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -80,12 +81,11 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         assertNotNull(entity);                        
         assertEquals(Long.valueOf(1), entity.getId());        
         assertNotNull(entity.getReceiver());        
-        assertEquals("given-to-credit-name", entity.getReceiver().getCreditName());
-        assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getReceiver().getNamesVisibility());                
+        assertEquals("given-to-credit-name", entity.getReceiver().getRecordNameEntity().getCreditName());
+        assertEquals(Visibility.PUBLIC, entity.getReceiver().getRecordNameEntity().getVisibility());                
         assertNotNull(entity.getApprovalDate());        
         assertNotNull(entity.getLastModified());
-    }
-    
+    }    
     
     @Test
     public void fromGivenPermissionToEntityToDelegationDetailsTest() {
@@ -131,9 +131,12 @@ public class JpaJaxbGivenPermissionToAdapterTest {
         entity.setId(1L);
         entity.setLastModified(c.getTime());
         ProfileSummaryEntity summary = new ProfileSummaryEntity();
-        summary.setCreditName("credit-name");
-        summary.setNamesVisibility(org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        RecordNameEntity name = new RecordNameEntity();
+        name.setCreditName("credit-name");
+        name.setVisibility(Visibility.PUBLIC);
+        name.setProfile(new ProfileEntity("9999-9999-9999-9999"));
         summary.setId("9999-9999-9999-9999");
+        summary.setRecordNameEntity(name);
         entity.setReceiver(summary);
         return entity;
     }
