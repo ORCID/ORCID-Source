@@ -61,6 +61,7 @@
 		                	<div id="public-other-names-div">		                	
 				                <#list publicOtherNames.otherNames as otherName>
 				                	${otherName.content}				                					                	
+				                	${otherName.source.sourceName.content}
 				                	<#if otherName_has_next>
 				                		<br/>
 				                	</#if>
