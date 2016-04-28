@@ -121,17 +121,43 @@ public class OauthHelper {
     }
     
     public String getClientCredentialsAccessToken(String clientId, String clientSecret, ScopePathType scope, APIRequestType apiRequerstType) throws JSONException {
-        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
-        params.add("client_id", clientId);
-        params.add("client_secret", clientSecret);
-        params.add("grant_type", "client_credentials");
-        params.add("scope", scope.value());
-        ClientResponse clientResponse = getResponse(params, apiRequerstType);        
+        List<ScopePathType> scopes = new ArrayList<ScopePathType>();
+        scopes.add(scope);
+        ClientResponse clientResponse = getClientCredentialsTokenResponse(clientId, clientSecret, scopes, apiRequerstType);        
         assertEquals(200, clientResponse.getStatus());
         String body = clientResponse.getEntity(String.class);
         JSONObject jsonObject = new JSONObject(body);
         String accessToken = (String) jsonObject.get("access_token");
         return accessToken;
+    }
+    
+    public ClientResponse getClientCredentialsTokenResponse(String clientId, String clientSecret, List<ScopePathType> scopes, APIRequestType apiRequerstType) {
+        MultivaluedMap<String, String> params = new MultivaluedMapImpl();
+        params.add("client_id", clientId);
+        params.add("client_secret", clientSecret);
+        params.add("grant_type", "client_credentials");
+        String scopesString = "";
+        if(scopes != null) {
+            for(ScopePathType scope : scopes) {
+                scopesString += scope.value() + " ";
+            }
+        }
+        params.add("scope", scopesString);
+        return getResponse(params, apiRequerstType);     
+    }
+    
+    public String getAccessTokenFromClientResponse(ClientResponse response) throws JSONException {
+        String body = response.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        return (String) jsonObject.get("access_token");
+    }
+    
+    public String getErrorFromClientResponse(ClientResponse response) throws JSONException {
+        String body = response.getEntity(String.class);
+        JSONObject jsonObject = new JSONObject(body);
+        JSONObject errorObject = jsonObject.getJSONObject("error-desc");
+        
+        return (String) errorObject.get("value");         
     }
     
     public ClientResponse getResponse(MultivaluedMap<String, String> params, APIRequestType apiRequerstType) {
