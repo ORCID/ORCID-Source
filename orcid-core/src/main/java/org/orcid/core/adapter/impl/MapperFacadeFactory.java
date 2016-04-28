@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;
-import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.PublicationDate;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
@@ -41,7 +40,6 @@ import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Employment;
@@ -60,8 +58,6 @@ import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.GroupIdRecordEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
@@ -260,52 +256,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         return mapperFactory.getMapperFacade();
     }
     
-    public MapperFacade getGivenPermissionToMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<DelegationDetails, GivenPermissionToEntity> givenPermissionToClassMap = mapperFactory.classMap(DelegationDetails.class, GivenPermissionToEntity.class);
-        givenPermissionToClassMap.byDefault();
-        givenPermissionToClassMap.field("putCode", "id");
-        givenPermissionToClassMap.field("approvalDate.value", "approvalDate");               
-        givenPermissionToClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
-        givenPermissionToClassMap.field("delegateSummary.creditName.content", "receiver.creditName");
-        givenPermissionToClassMap.field("delegateSummary.creditName.visibility", "receiver.namesVisibility");                               
-        
-        givenPermissionToClassMap.field("delegateSummary.orcidIdentifier.path", "receiver.id").customize(new CustomMapper<DelegationDetails, GivenPermissionToEntity>(){
-            @Override
-            public void mapBtoA(GivenPermissionToEntity entity, DelegationDetails details, MappingContext context) {
-                OrcidIdentifier orcidIdentifier = details.getDelegateSummary().getOrcidIdentifier(); 
-                orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
-                orcidIdentifier.setUri(orcidUrlManager.getBaseUriHttp() + "/" + entity.getReceiver().getId());    
-            }
-        });
-        
-        givenPermissionToClassMap.register();
-        return mapperFactory.getMapperFacade();
-    }    
-    
-    public MapperFacade getGivenPermissionByMapperFacade() {
-        MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<DelegationDetails, GivenPermissionByEntity> givenPermissionByClassMap = mapperFactory.classMap(DelegationDetails.class, GivenPermissionByEntity.class);
-        givenPermissionByClassMap.byDefault();
-        givenPermissionByClassMap.field("putCode", "id");
-        givenPermissionByClassMap.field("approvalDate.value", "approvalDate");               
-        givenPermissionByClassMap.field("delegateSummary.lastModifiedDate.value", "lastModified");
-        givenPermissionByClassMap.field("delegateSummary.creditName.content", "giver.creditName");
-        givenPermissionByClassMap.field("delegateSummary.creditName.visibility", "giver.namesVisibility");                               
-        
-        givenPermissionByClassMap.field("delegateSummary.orcidIdentifier.path", "giver.id").customize(new CustomMapper<DelegationDetails, GivenPermissionByEntity>(){
-            @Override
-            public void mapBtoA(GivenPermissionByEntity entity, DelegationDetails details, MappingContext context) {
-                OrcidIdentifier orcidIdentifier = details.getDelegateSummary().getOrcidIdentifier(); 
-                orcidIdentifier.setHost(orcidUrlManager.getBaseHost());
-                orcidIdentifier.setUri(orcidUrlManager.getBaseUriHttp() + "/" + entity.getGiver().getId());    
-            }
-        });
-        
-        givenPermissionByClassMap.register();
-        return mapperFactory.getMapperFacade();
-    }
-                
     public MapperFacade getWorkMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
 

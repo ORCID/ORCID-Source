@@ -164,58 +164,6 @@
 						</common:source>
 					</external-identifier:external-identifier>
 				</external-identifier:external-identifiers>
-				<person:delegation>
-					<person:given-permission-to>
-						<person:delegation-details>
-							<person:approval-date>2001-12-31T12:00:00</person:approval-date>
-							<person:delegate-summary>
-								<common:orcid-identifier>
-									<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-									<common:path>8888-8888-8888-8880</common:path>
-									<common:host>orcid.org</common:host>
-								</common:orcid-identifier>
-								<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-								<person:credit-name visibility="public">credit-name</person:credit-name>
-							</person:delegate-summary>
-						</person:delegation-details>
-					</person:given-permission-to>
-					<person:given-permission-by>
-						<person:delegation-details>
-							<person:approval-date>2001-12-31T12:00:00</person:approval-date>
-							<person:delegate-summary>
-								<common:orcid-identifier>
-									<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-									<common:path>8888-8888-8888-8880</common:path>
-									<common:host>orcid.org</common:host>
-								</common:orcid-identifier>
-								<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
-								<person:credit-name visibility="public">credit-name</person:credit-name>
-							</person:delegate-summary>
-						</person:delegation-details>
-					</person:given-permission-by>
-				</person:delegation>	
-				<person:applications visibility="public">
-					<person:application-summary>
-						<common:application-orcid>
-							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-							<common:path>8888-8888-8888-8880</common:path>
-							<common:host>orcid.org</common:host>
-						</common:application-orcid>
-						<person:application-name>application-name</person:application-name>
-						<person:application-website>http://application.com</person:application-website>
-						<common:approval-date>2001-12-31T12:00:00</common:approval-date>
-						<person:scope-paths>
-							<person:scope-path>/authenticate</person:scope-path>
-							<person:scope-path>/read-limited</person:scope-path>
-						</person:scope-paths>
-						<common:application-group-orcid>
-							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
-							<common:path>8888-8888-8888-8880</common:path>
-							<common:host>orcid.org</common:host>
-						</common:application-group-orcid>
-						<person:application-group-name>application-group-name</person:application-group-name>
-					</person:application-summary>
-				</person:applications>								
 			</person:person>
 			<activities:activities-summary>
 				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>

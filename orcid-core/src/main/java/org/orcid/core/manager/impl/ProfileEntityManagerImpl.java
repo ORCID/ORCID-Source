@@ -28,8 +28,6 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
-import org.orcid.core.adapter.JpaJaxbGivenPermissionByAdapter;
-import org.orcid.core.adapter.JpaJaxbGivenPermissionToAdapter;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
@@ -72,11 +70,7 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Delegation;
-import org.orcid.jaxb.model.record_rc2.DelegationDetails;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
 import org.orcid.jaxb.model.record_rc2.GroupAble;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Name;
@@ -86,8 +80,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -156,12 +148,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private EmailManager emailManager;
-    
-    @Resource
-    private JpaJaxbGivenPermissionToAdapter jpaJaxbGivenPermissionToAdapter;
-
-    @Resource
-    private JpaJaxbGivenPermissionByAdapter jpaJaxbGivenPermissionByAdapter;
     
     @Resource
     private OrgAffiliationRelationDao orgRelationAffiliationDao;    
@@ -748,57 +734,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        //The rest should come from the ProfileEntity object              
-        Delegation delegation = null;
-        
-        Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
-        Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
-        
-        LastModifiedDate delLastModified = null;
-        if(givenPermissionTo != null || givenPermissionBy != null) {
-            delegation = new Delegation();
-            LastModifiedDate temp1 = null;
-            if(givenPermissionTo != null) {
-                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
-                List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
-                if(!detailsList.isEmpty()) {
-                	delLastModified = detailsList.get(0).getDelegateSummary().getLastModifiedDate();
-                }
-                for(DelegationDetails details : detailsList) {
-                    GivenPermissionTo to = new GivenPermissionTo();
-                    temp1 = details.getDelegateSummary().getLastModifiedDate();
-                    details.setLastModifiedDate(temp1);
-                    to.setLastModifiedDate(temp1);
-                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
-                    to.setDelegationDetails(details);
-                    givenPermissionToList.add(to);
-                }
-                delegation.setGivenPermissionTo(givenPermissionToList);
-            }
-            
-            if(givenPermissionBy != null) {
-                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
-                List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
-                
-                for(DelegationDetails details : detailsList) {
-                    GivenPermissionBy by = new GivenPermissionBy();
-                    temp1 = details.getDelegateSummary().getLastModifiedDate();
-                    details.setLastModifiedDate(temp1);
-                    by.setLastModifiedDate(temp1);
-                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
-                    by.setDelegationDetails(details);
-                    givenPermissionByList.add(by);
-                }
-                delegation.setGivenPermissionBy(givenPermissionByList);
-            }
-            delegation.setLastModifiedDate(delLastModified);
-        }
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, delLastModified);
-        person.setDelegation(delegation);
-        
-        // TODO: implement
-        person.setApplications(null);
-        
         person.setLastModifiedDate(latest);    
         return person;
     }
@@ -844,54 +779,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         temp = person.getEmails().getLastModifiedDate();
         latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
-        //The rest should come from the ProfileEntity object              
-        Delegation delegation = null;
-        
-        Set<GivenPermissionToEntity> givenPermissionTo = profile.getGivenPermissionTo();
-        Set<GivenPermissionByEntity> givenPermissionBy = profile.getGivenPermissionBy();
-        LastModifiedDate delLastModified = null;
-        if(givenPermissionTo != null || givenPermissionBy != null) {
-            delegation = new Delegation();
-            LastModifiedDate temp1 = null;
-            if(givenPermissionTo != null) {
-                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionToAdapter.toDelegationDetailsList(givenPermissionTo);
-                List<GivenPermissionTo> givenPermissionToList = new ArrayList<GivenPermissionTo>();
-                if(!detailsList.isEmpty()) {
-                	delLastModified = detailsList.get(0).getDelegateSummary().getLastModifiedDate();
-                }
-                for(DelegationDetails details : detailsList) {
-                	GivenPermissionTo to = new GivenPermissionTo();
-                    temp1 = details.getDelegateSummary().getLastModifiedDate();
-                    details.setLastModifiedDate(temp1);
-                    to.setLastModifiedDate(temp1);
-                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
-                    to.setDelegationDetails(details);
-                    givenPermissionToList.add(to);
-                }
-                delegation.setGivenPermissionTo(givenPermissionToList);
-            }
-            
-            if(givenPermissionBy != null) {
-                List<DelegationDetails> detailsList = jpaJaxbGivenPermissionByAdapter.toDelegationDetailsList(givenPermissionBy);
-                List<GivenPermissionBy> givenPermissionByList = new ArrayList<GivenPermissionBy>();
-                for(DelegationDetails details : detailsList) {
-                	GivenPermissionBy by = new GivenPermissionBy();
-                    temp1 = details.getDelegateSummary().getLastModifiedDate();
-                    details.setLastModifiedDate(temp1);
-                    by.setLastModifiedDate(temp1);
-                    delLastModified = LastModifiedDatesHelper.returnLatestLastModifiedDate(delLastModified, temp1);
-                    by.setDelegationDetails(details);
-                    givenPermissionByList.add(by);
-                }
-                delegation.setGivenPermissionBy(givenPermissionByList);
-            }
-            delegation.setLastModifiedDate(delLastModified);
-        }
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, delLastModified);
-        person.setDelegation(delegation);
-                                
-        // TODO: implement
-        person.setApplications(null);
         person.setLastModifiedDate(latest);
         return person;
     }
