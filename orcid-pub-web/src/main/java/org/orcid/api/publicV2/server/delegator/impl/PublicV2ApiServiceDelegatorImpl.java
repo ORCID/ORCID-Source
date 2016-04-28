@@ -235,12 +235,7 @@ public class PublicV2ApiServiceDelegatorImpl
             if (!entity.getRecordNameEntity().getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
                 creditName = entity.getRecordNameEntity().getCreditName();
             }
-        } else {
-            //TODO: remove when the names migration is done
-            if(entity.getNamesVisibility() != null && !entity.getNamesVisibility().isMoreRestrictiveThan(org.orcid.jaxb.model.message.Visibility.PUBLIC)) {
-                creditName = entity.getCreditName();
-            }            
-        }
+        } 
         
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName ,true);

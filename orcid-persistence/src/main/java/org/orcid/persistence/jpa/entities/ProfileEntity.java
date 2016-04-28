@@ -148,24 +148,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     
     private BiographyEntity biographyEntity;
     
-    //TODO: Remove this when the record name is fully populated
-    // Poor old vocative name :-(
-    @Deprecated
-    private String vocativeName;
-    @Deprecated
-    private String biography;
-    // Visibility settings
-    @Deprecated
-    private Visibility biographyVisibility;    
-    @Deprecated
-    private String givenNames;
-    @Deprecated
-    private String familyName;
-    @Deprecated
-    private String creditName;
-    @Deprecated
-    private Visibility namesVisibility;
-    
     @Id
     @Column(name = "orcid", length = 19)
     public String getId() {
@@ -845,97 +827,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     public void setActivitiesVisibilityDefault(Visibility activitesVisibilityDefault) {
         this.activitiesVisibilityDefault = activitesVisibilityDefault;
     }
-    
-    //TODO: Remove this when the record name is fully populated
-    /**
-     * @return the vocativeName
-     */
-    @Deprecated
-    @Column(name = "vocative_name", length = 450)
-    public String getVocativeName() {
-        return vocativeName;
-    }
-
-    /**
-     * @param vocativeName
-     *            the vocativeName to set
-     */
-    @Deprecated
-    public void setVocativeName(String vocativeName) {
-        this.vocativeName = vocativeName;
-    }
-
-    @Deprecated
-    @Column(name = "biography", length = 5000)
-    public String getBiography() {
-        return biography;
-    }
-
-    @Deprecated
-    public void setBiography(String biography) {
-        this.biography = biography;
-    }
-    
-    @Deprecated
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "biography_visibility")
-    public Visibility getBiographyVisibility() {
-        return biographyVisibility;
-    }
-
-    @Deprecated
-    public void setBiographyVisibility(Visibility biographyVisibility) {
-        this.biographyVisibility = biographyVisibility;
-    }
-        
-    @Deprecated
-    @Column(name = "given_names", length = 150)
-    public String getGivenNames() {
-        return givenNames;
-    }
-
-    @Deprecated
-    public void setGivenNames(String givenNames) {
-        this.givenNames = givenNames;
-    }
-
-    @Deprecated
-    @Column(name = "family_name", length = 150)
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    @Deprecated
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-
-    @Deprecated
-    @Column(name = "credit_name", length = 150)
-    public String getCreditName() {
-        return creditName;
-    }
-
-    @Deprecated
-    public void setCreditName(String creditName) {
-        this.creditName = creditName;
-    }
-
-    @Deprecated
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "names_visibility")
-    public Visibility getNamesVisibility() {
-        return namesVisibility;
-    }
-
-    @Deprecated
-    public void setNamesVisibility(Visibility namesVisibility) {
-        this.namesVisibility = namesVisibility;
-    }
-    //END TODO
-        
+            
     @Override
     public int hashCode() {
         final int prime = 31;

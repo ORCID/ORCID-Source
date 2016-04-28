@@ -1,0 +1,29 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="set_default_names_visibility_where_it_is_null" author="Angel Montenegro" dbms="postgresql">
+    	<sql>CREATE TEMP TABLE profiles_to_reindex AS (select orcid from record_name where visibility is null) order by orcid;</sql>
+		<sql>UPDATE record_name SET visibility='PUBLIC' WHERE visibility is null;</sql>
+		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
+		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>        
+    </changeSet>
+
+</databaseChangeLog>

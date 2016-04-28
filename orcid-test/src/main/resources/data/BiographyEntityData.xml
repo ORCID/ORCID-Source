@@ -19,6 +19,15 @@
 -->
 <dataset>
 	<biography 
+		id="0"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4441"
+		biography="This is my bio"            
+		visibility="PUBLIC"            	
+		/>
+
+	<biography 
 		id="1"
 		date_created="2016-04-01 00:00:00.00"
 		last_modified="2016-04-01 00:00:00.00"
@@ -26,8 +35,45 @@
 		biography="Biography for 4444-4444-4444-4442"
 		visibility="PUBLIC"		
 		/>
+	
+	<biography 
+		id="2"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4443"
+		biography="Richard Henry Sellers, CBE (8 September 1925 – 24 July 1980), known as Peter Sellers, was a British film actor, comedian and singer."            
+		visibility="LIMITED"		
+		/>
+
+	<biography 
+		id="3"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4444"		
+		biography="Sir Harry Donald Secombe, CBE (8 September 1921 – 11 April 2001) was a Welsh entertainer with a talent for comedy and a noted fine tenor singing voice."
+		visibility="PUBLIC"		
+		/>		
+	
+	<biography 
+		id="4"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4445"
+		biography="Andrew Timothy (1912–9 December 1990) was an Anglican priest and BBC Radio announcer, who is best remembered for being the original announcer of the comedy series The Goon Show."
+		visibility="PUBLIC"	
+		/>
+	
+	<biography 
+		id="5"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4446"
+		biography="Billie Holiday (born Eleanora Harris[1][4] April 7, 1915 – July 17, 1959) was an American jazz singer and songwriter."            
+		visibility="PUBLIC"	
+		/>		
+		
 	<biography
-		id="2" 
+		id="6" 
 		date_created="2016-04-01 00:00:00.00"
 		last_modified="2016-04-01 00:00:00.00"
 		orcid="4444-4444-4444-4447"
@@ -35,8 +81,62 @@
 		visibility="LIMITED"	
 		/>
 		
+	<biography 
+		id="7"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-444X"
+		biography="Otis Ray Redding, Jr. (September 9, 1941 – December 10, 1967) was an American soul singer-songwriter, record producer, arranger, and talent scout."
+		visibility="PUBLIC"		
+		/>	
+			
+	<biography 
+		id="8"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4440"
+		biography="Admin user will be used to execute admin actions on controllers."
+		visibility="PUBLIC"		
+		/>		
+	
+	<biography 
+		id="9"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4499"
+		biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+		visibility="PUBLIC"		
+		/>
+
+	<biography 
+		id="10"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4498"
+		biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+		visibility="PUBLIC"		
+		/>
+
+	<biography 
+		id="11"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="4444-4444-4444-4497"
+		biography="biog"
+		visibility="PUBLIC"			
+		/>
+			
 	<biography
-		id="3" 
+		id="12" 
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="0000-0000-0000-0001"
+		biography="Biography for 0000-0000-0000-0001"
+		visibility="PRIVATE"		
+		/>			
+				
+	<biography
+		id="13" 
 		date_created="2016-04-01 00:00:00.00"
 		last_modified="2016-04-01 00:00:00.00"
 		orcid="0000-0000-0000-0002"
@@ -45,7 +145,7 @@
 		/>
 		
 	<biography
-		id="4" 
+		id="14" 
 		date_created="2016-04-01 00:00:00.00"
 		last_modified="2016-04-01 00:00:00.00"
 		orcid="0000-0000-0000-0003"

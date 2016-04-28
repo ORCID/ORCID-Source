@@ -68,6 +68,16 @@ public class RecordNameDaoTest extends DBUnitTest {
     }
     
     @Test
+    public void testfindByCreditName() {
+        RecordNameEntity recordName = recordNameDao.findByCreditName("P. Sellers III");
+        assertNotNull(recordName);
+        assertEquals("P. Sellers III", recordName.getCreditName());
+        assertEquals("Peter", recordName.getGivenNames());
+        assertEquals("Sellers", recordName.getFamilyName());
+        assertEquals(Visibility.LIMITED, recordName.getVisibility());        
+    }
+    
+    @Test
     public void testUpdate() {
         RecordNameEntity recordName = recordNameDao.getRecordName("4444-4444-4444-4447");
         assertNotNull(recordName);

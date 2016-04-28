@@ -206,20 +206,14 @@ public class AdminController extends BaseController {
                     if(deprecated.getRecordNameEntity() != null) {
                         deprecatedDetails.setFamilyName(deprecated.getRecordNameEntity().getFamilyName());
                         deprecatedDetails.setGivenNames(deprecated.getRecordNameEntity().getGivenNames());
-                    } else {
-                        deprecatedDetails.setFamilyName(deprecated.getFamilyName());
-                        deprecatedDetails.setGivenNames(deprecated.getGivenNames());
-                    }
+                    } 
 
                     ProfileDetails primaryDetails = new ProfileDetails();
                     primaryDetails.setOrcid(primaryOrcid);
                     if(primary.getRecordNameEntity() != null) {
                         primaryDetails.setFamilyName(primary.getRecordNameEntity().getFamilyName());
                         primaryDetails.setGivenNames(primary.getRecordNameEntity().getGivenNames());
-                    } else {
-                        primaryDetails.setFamilyName(primary.getFamilyName());
-                        primaryDetails.setGivenNames(primary.getGivenNames());
-                    }
+                    } 
 
                     result.setDeprecatedAccount(deprecatedDetails);
                     result.setPrimaryAccount(primaryDetails);

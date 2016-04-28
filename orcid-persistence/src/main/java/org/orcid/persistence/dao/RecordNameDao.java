@@ -27,6 +27,8 @@ public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
     boolean exists(String orcid);
     
     RecordNameEntity getRecordName(String orcid);
+    
+    RecordNameEntity findByCreditName(String creditName);
 
     boolean updateRecordName(RecordNameEntity recordName);
 

@@ -16,12 +16,16 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.Collection;
+
+import org.apache.commons.lang3.StringUtils;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
-
-import java.util.Collection;
 
 /**
  * @author Declan Newman (declan) Date: 17/04/2012
@@ -160,6 +164,20 @@ public class OrcidOauth2UserAuthentication implements Authentication {
 
     @Override
     public String getName() {
-        return profileEntity.getVocativeName();
+        RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+        if(recordName == null) {
+            return StringUtils.EMPTY;
+        }
+        
+        if(Visibility.PUBLIC.value().equals(recordName.getVisibility())) {
+            if(!PojoUtil.isEmpty(recordName.getCreditName())) {
+                return recordName.getCreditName();
+            } else {
+                if(!PojoUtil.isEmpty(recordName.getFamilyName())) {
+                    return recordName.getGivenNames() + " " + recordName.getFamilyName();
+                }
+            }
+        }
+        return StringUtils.EMPTY;
     }
 }

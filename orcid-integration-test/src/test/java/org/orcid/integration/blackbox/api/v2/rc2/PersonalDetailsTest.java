@@ -153,7 +153,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetWithMemberAPI() throws Exception {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         assertNotNull(accessToken);
         ClientResponse getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);

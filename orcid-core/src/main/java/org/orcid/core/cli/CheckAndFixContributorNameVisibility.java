@@ -128,12 +128,7 @@ public class CheckAndFixContributorNameVisibility {
                                         if (!Visibility.PUBLIC.value().equals(contributorProfile.getRecordNameEntity().getVisibility().value())) {
                                             contributor.setCreditName(null);
                                         }
-                                    } else {
-                                        if (!Visibility.PUBLIC.value().equals(contributorProfile.getNamesVisibility().value())) {
-                                            contributor.setCreditName(null);
-                                        }
-                                    }
-                                    
+                                    } 
                                 }
                             }
                         }

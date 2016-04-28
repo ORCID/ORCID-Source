@@ -65,14 +65,7 @@ public class BiographyManagerImpl implements BiographyManager {
             if(profile.getBiographyEntity().getDateCreated() != null) {
                 bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(profile.getBiographyEntity().getDateCreated())));
             } 
-        } else {
-            bio.setContent(profile.getBiography()); 
-            if(profile.getBiographyVisibility() != null) {
-                bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getBiographyVisibility().value()));
-            }
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
-        }
-        
+        }         
         return bio;
     }
     
