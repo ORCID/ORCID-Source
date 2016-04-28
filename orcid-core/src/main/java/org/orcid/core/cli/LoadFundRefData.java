@@ -37,10 +37,13 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.persistence.constants.OrganizationStatus;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -65,13 +68,16 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class LoadFundRefData {
 
     class RDFOrganization {
-        String doi, name, country, state, stateCode, city, type, subtype;
+        String doi, name, country, state, stateCode, city, type, subtype, status;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoadFundRefData.class);
     private static final String FUNDREF_SOURCE_TYPE = "FUNDREF";
     private static final String STATE_NAME = "STATE";
     private static final String STATE_ABBREVIATION = "abbr";
+    private static final String DEPRECATED_INDICATOR = "http://data.crossref.org/fundingdata/vocabulary/Deprecated";
+    
+    
     private static String geonamesApiUrl;
     // Params
     @Option(name = "-f", usage = "Path to RDF file containing FundRef info to load into DB")
@@ -86,11 +92,12 @@ public class LoadFundRefData {
     // xPath queries
     private String conceptsExpression = "/RDF/ConceptScheme/hasTopConcept";
     private String itemExpression = "/RDF/Concept[@about='%s']";
-    private String orgNameExpression = itemExpression + "/prefLabel/Label/literalForm";
-    private String orgCountryExpression = itemExpression + "/country";
-    private String orgStateExpression = itemExpression + "/state";
-    private String orgTypeExpression = itemExpression + "/fundingBodyType";
-    private String orgSubTypeExpression = itemExpression + "/fundingBodySubType";
+    private String orgNameExpression = "prefLabel/Label/literalForm";
+    private String orgCountryExpression = "country";
+    private String orgStateExpression = "state";
+    private String orgTypeExpression = "fundingBodyType";
+    private String orgSubTypeExpression = "fundingBodySubType";
+    private String statusExpression = "status";
     // xPath init
     private XPath xPath = XPathFactory.newInstance().newXPath();
     // Statistics
@@ -110,7 +117,7 @@ public class LoadFundRefData {
             System.err.println(e.getMessage());
             parser.printUsage(System.err);
         }
-
+        System.exit(0);
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
@@ -143,9 +150,9 @@ public class LoadFundRefData {
             NodeList nodeList = (NodeList) xPath.compile(conceptsExpression).evaluate(xmlDocument, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 RDFOrganization rdfOrganization = getOrganization(xmlDocument, nodeList.item(i).getAttributes());
-                LOGGER.info("Processing organization from RDF, doi:{}, name:{}, country:{}, state:{}, stateCode:{}, type:{}, subtype:{}", new String[] {
+                LOGGER.info("Processing organization from RDF, doi:{}, name:{}, country:{}, state:{}, stateCode:{}, type:{}, subtype:{}, status:{}", new String[] {
                         rdfOrganization.doi, rdfOrganization.name, rdfOrganization.country, rdfOrganization.state, rdfOrganization.stateCode, rdfOrganization.type,
-                        rdfOrganization.subtype });
+                        rdfOrganization.subtype, rdfOrganization.status });
                 // #1: Look for an existing org
                 OrgDisambiguatedEntity existingEntity = findByDetails(rdfOrganization);
                 if(existingEntity != null) {
@@ -161,16 +168,25 @@ public class LoadFundRefData {
                         existingEntity.setSourceId(rdfOrganization.doi);
                         existingEntity.setSourceType(FUNDREF_SOURCE_TYPE);
                         existingEntity.setSourceUrl(rdfOrganization.doi);
+                        existingEntity.setLastModified(new Date());
+                        existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        existingEntity.setStatus(rdfOrganization.status);
                         orgDisambiguatedDao.merge(existingEntity); 
                         updatedOrgs += 1;
                     } else if(idChanged(rdfOrganization, existingEntity)){
                         // #3: If the ID changed, create an external identifier
                         createExternalIdentifier(existingEntity, rdfOrganization.doi);
                         addedExternalIdentifiers += 1;
+                    } else if(statusChanged(rdfOrganization, existingEntity)) {
+                        //If the status changed, update the status
+                        existingEntity.setStatus(rdfOrganization.status);
+                        existingEntity.setLastModified(new Date());
+                        existingEntity.setIndexingStatus(IndexingStatus.PENDING);
+                        orgDisambiguatedDao.merge(existingEntity); 
                     }
                 } else {
                     // #4: Else, create the new org
-                    OrgDisambiguatedEntity newOrg = createDisambiguatedOrg(rdfOrganization);                    
+                    createDisambiguatedOrg(rdfOrganization);                    
                     addedDisambiguatedOrgs += 1;  
                 }
             }
@@ -207,16 +223,34 @@ public class LoadFundRefData {
             Node node = attrs.getNamedItem("rdf:resource");
             String itemDoi = node.getNodeValue();
             LOGGER.info("Processing item {}", itemDoi);
+            
+            //Get item node
+            Node organizationNode = (Node) xPath.compile(itemExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
+            
             // Get organization name
-            String orgName = (String) xPath.compile(orgNameExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
+            String orgName = (String) xPath.compile(orgNameExpression).evaluate(organizationNode, XPathConstants.STRING);
+            
+            // Get status indicator
+            Node statusNode = (Node) xPath.compile(statusExpression).evaluate(organizationNode, XPathConstants.NODE);
+            String status = null;
+            if(statusNode != null) {
+                NamedNodeMap statusAttrs = statusNode.getAttributes();
+                if(statusAttrs != null) {
+                    String statusAttribute = statusAttrs.getNamedItem("rdf:resource").getNodeValue();
+                    if(isDeprecatedStatus(statusAttribute)) {
+                        status = OrganizationStatus.DEPRECATED.name();
+                    }
+                }
+            }
+                        
             // Get country code
-            Node countryNode = (Node) xPath.compile(orgCountryExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
+            Node countryNode = (Node) xPath.compile(orgCountryExpression).evaluate(organizationNode, XPathConstants.NODE);
             NamedNodeMap countryAttrs = countryNode.getAttributes();
             String countryGeonameUrl = countryAttrs.getNamedItem("rdf:resource").getNodeValue();
             String countryCode = fetchFromGeoNames(countryGeonameUrl, "countryCode");
 
             // Get state name
-            Node stateNode = (Node) xPath.compile(orgStateExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.NODE);
+            Node stateNode = (Node) xPath.compile(orgStateExpression).evaluate(organizationNode, XPathConstants.NODE);
             String stateName = null;
             String stateCode = null;
             if (stateNode != null) {
@@ -227,9 +261,9 @@ public class LoadFundRefData {
             }
 
             // Get type
-            String orgType = (String) xPath.compile(orgTypeExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
+            String orgType = (String) xPath.compile(orgTypeExpression).evaluate(organizationNode, XPathConstants.STRING);
             // Get subType
-            String orgSubType = (String) xPath.compile(orgSubTypeExpression.replace("%s", itemDoi)).evaluate(xmlDocument, XPathConstants.STRING);
+            String orgSubType = (String) xPath.compile(orgSubTypeExpression).evaluate(organizationNode, XPathConstants.STRING);
 
             // Fill the organization object
             organization.doi = itemDoi;
@@ -242,6 +276,7 @@ public class LoadFundRefData {
             organization.city = stateCode;
             organization.type = orgType;
             organization.subtype = orgSubType;
+            organization.status = status;
         } catch (XPathExpressionException xpe) {
             LOGGER.error("XPathExpressionException {}", xpe.getMessage());
         }
@@ -249,6 +284,16 @@ public class LoadFundRefData {
         return organization;
     }
 
+    /**
+     * Indicates if an organization has been marked as deprecated
+     * */
+    private boolean isDeprecatedStatus(String statusAttribute) {
+        if(!PojoUtil.isEmpty(statusAttribute)) {
+            return DEPRECATED_INDICATOR.equalsIgnoreCase(statusAttribute);
+        }
+        return false;
+    }
+    
     /**
      * GEONAMES FUNCTIONS
      * */
@@ -359,8 +404,15 @@ public class LoadFundRefData {
     }
 
     /**
-     * TODO
-     * */
+     * Indicates if an entity changed his name, country, state or city
+     * 
+     * @param org
+     *            The organization with the new values
+     * @param entity
+     *            The organization we have stored in the database
+     * 
+     * @return true if the entity has changed.
+     */
     private boolean entityChanged(RDFOrganization org, OrgDisambiguatedEntity entity) {
         // Check name
         if (StringUtils.isNotBlank(org.name)) {
@@ -398,6 +450,28 @@ public class LoadFundRefData {
     }
     
     /**
+     * Indicates if an entity status has changed
+     * 
+     * @param org
+     *            The organization with the new values
+     * @param entity
+     *            The organization we have stored in the database
+     * 
+     * @return true if the entity status has changed.
+     */
+    private boolean statusChanged(RDFOrganization org, OrgDisambiguatedEntity entity) {
+        if(!PojoUtil.isEmpty(org.status)) {
+            if(!org.status.equalsIgnoreCase(entity.getStatus())) {
+                return true;
+            }
+        } else if(!PojoUtil.isEmpty(entity.getStatus())) {
+            //If for some reason, the status of the updated organization is removed, remove it also from our data
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * TODO
      * */
     private boolean idChanged(RDFOrganization org, OrgDisambiguatedEntity entity) {
@@ -422,6 +496,9 @@ public class LoadFundRefData {
         orgDisambiguatedEntity.setSourceId(organization.doi);
         orgDisambiguatedEntity.setSourceUrl(organization.doi);
         orgDisambiguatedEntity.setSourceType(FUNDREF_SOURCE_TYPE);
+        if(!PojoUtil.isEmpty(organization.status)) {            
+            orgDisambiguatedEntity.setStatus(OrganizationStatus.DEPRECATED.name());            
+        }
         orgDisambiguatedDao.persist(orgDisambiguatedEntity);
         return orgDisambiguatedEntity;
     }

@@ -46,6 +46,7 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
+import org.orcid.core.manager.RecordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
@@ -77,6 +78,7 @@ import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
@@ -159,7 +161,6 @@ public class PublicV2ApiServiceDelegatorImpl
     @Resource
     private PersonalDetailsManager personalDetailsManager;
 
-    
     @Resource
     private ProfileKeywordManager keywordsManager;
     
@@ -168,7 +169,10 @@ public class PublicV2ApiServiceDelegatorImpl
     
     @Resource
     private BiographyManager biographyManager;
-        
+
+    @Resource
+    private RecordManager recordManager;
+    
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
@@ -460,5 +464,19 @@ public class PublicV2ApiServiceDelegatorImpl
         Person person = profileEntityManager.getPublicPersonDetails(orcid);
         ElementUtils.setPathToPerson(person, orcid);
         return Response.ok(person).build();
+    }
+    
+    @Override
+    @AccessControl(requiredScope = ScopePathType.READ_PUBLIC, enableAnonymousAccess = true)
+    public Response viewRecord(String orcid) {
+        Record record = recordManager.getPublicRecord(orcid);
+        if(record.getPerson() != null) {
+            ElementUtils.setPathToPerson(record.getPerson(), orcid);
+        }
+        if(record.getActivitiesSummary() != null) {
+            ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
+            ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
+        }         
+        return Response.ok(record).build();
     }
 }

@@ -16,18 +16,15 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Record;
 
 /**
-* 
-* @author Angel Montenegro
-* 
-*/
-public interface PersonalDetailsManager {
-    PersonalDetails getPersonalDetails(String orcid);
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+public interface RecordManager {
+    Record getPublicRecord(String orcid);
 
-    PersonalDetails getPublicPersonalDetails(String orcid);
-
-    Name getName(String orcid);
+    Record getRecord(String orcid);
 }

@@ -59,6 +59,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     }
 
     @Override
+    public Response viewRecord(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewRecord(orcid));
+    }
+    
+    @Override
     public Response viewActivities(String orcid) {
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewActivities(orcid));

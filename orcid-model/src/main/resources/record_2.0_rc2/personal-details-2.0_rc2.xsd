@@ -106,6 +106,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="given-names" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
 					<xs:documentation>The given (first and middle) name(s) of the

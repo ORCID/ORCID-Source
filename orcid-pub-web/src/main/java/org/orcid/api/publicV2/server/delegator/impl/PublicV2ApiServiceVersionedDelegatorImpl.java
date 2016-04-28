@@ -227,6 +227,13 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
         return downgradeResponse(publicV2ApiServiceDelegator.viewPerson(orcid));
     }
 
+    @Override
+    public Response viewRecord(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(publicV2ApiServiceDelegator.viewRecord(orcid));
+    }
+
+    
     private Response downgradeResponse(Response response) {
         Object entity = response.getEntity();
         V2Convertible result = null;

@@ -99,7 +99,6 @@ import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

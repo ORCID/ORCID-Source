@@ -14,20 +14,13 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
-
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+package org.orcid.persistence.constants;
 
 /**
-* 
-* @author Angel Montenegro
-* 
-*/
-public interface PersonalDetailsManager {
-    PersonalDetails getPersonalDetails(String orcid);
-
-    PersonalDetails getPublicPersonalDetails(String orcid);
-
-    Name getName(String orcid);
+ * 
+ * @author Angel Montenegro
+ * 
+ */
+public enum OrganizationStatus {
+    DEPRECATED;
 }
