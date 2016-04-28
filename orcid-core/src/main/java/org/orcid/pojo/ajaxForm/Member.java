@@ -51,9 +51,7 @@ public class Member implements ErrorsInterface, Serializable {
     	
     	if(profile.getRecordNameEntity() != null) {
     	    group.setGroupName(Text.valueOf(profile.getRecordNameEntity().getCreditName()));
-    	} else {
-    	    group.setGroupName(Text.valueOf(profile.getCreditName()));
-    	}
+    	} 
     	
     	group.setGroupOrcid(Text.valueOf(profile.getId()));
     	group.setType(Text.valueOf(profile.getGroupType().value()));

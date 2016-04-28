@@ -54,10 +54,6 @@
 					maxOccurs="1" />
 				<xs:element name="external-identifiers" type="person:external-identifiers"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="delegation" type="person:delegation" minOccurs="0"
-					maxOccurs="1" />
-				<xs:element name="applications" type="person:applications"
-					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -330,106 +326,6 @@
 			<xs:extension base="xs:anyURI" />
 		</xs:simpleContent>
 	</xs:complexType>
-    <xs:complexType name="delegation">
-        <xs:annotation>
-            <xs:documentation>(FUTURE) Container for functionality that has not
-                yet been built. The visibility attribute (private, limited or
-                public) can be set at record creation, and indicates who can see
-                this section of information.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element minOccurs="0" name="given-permission-to" type="person:given-permission-to" />
-            <xs:element minOccurs="0" name="given-permission-by" type="person:given-permission-by" />
-        </xs:sequence>
-        <xs:attribute name="visibility" type="common:visibility" />
-    </xs:complexType>
-    <xs:complexType name="given-permission-to">
-        <xs:annotation>
-            <xs:documentation>(FUTURE)</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element maxOccurs="unbounded" name="delegation-details"
-                type="person:delegation-details" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="given-permission-by">
-        <xs:annotation>
-            <xs:documentation>(FUTURE)</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element maxOccurs="unbounded" name="delegation-details"
-                type="person:delegation-details" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="delegation-details">
-        <xs:annotation>
-            <xs:documentation>(FUTURE)</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="approvalDate" type="person:approval-date" />
-            <xs:element name="delegateSummary" type="person:delegate-summary" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="approval-date">
-        <xs:annotation>
-            <xs:documentation>(FUTURE)</xs:documentation>
-        </xs:annotation>
-        <xs:simpleContent>
-            <xs:extension base="xs:dateTime" />
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="delegate-summary">
-        <xs:annotation>
-            <xs:documentation>(FUTURE)</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element ref="common:orcid-identifier"  />
-            <xs:element ref="common:last-modified-date"
-                minOccurs="1" maxOccurs="1" />
-            <xs:element name="creditName" type="common:credit-name"
-                minOccurs="0" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="applications">
-        <xs:annotation>
-            <xs:documentation>(FOR INTERNAL USE ONLY) Container for
-                Authorizations. Not used by the API.
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element maxOccurs="unbounded" name="application-summary"
-                type="person:application-summary" />
-        </xs:sequence>
-        <xs:attribute name="visibility" type="common:visibility" />
-    </xs:complexType>
-    <xs:complexType name="application-summary">
-        <xs:annotation>
-            <xs:documentation>(FOR INTERNAL USE ONLY)</xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element ref="common:application-orcid" />
-            <xs:element name="application-name" type="person:application-name" />
-            <xs:element name="application-website" type="person:application-website" />
-            <xs:element name="approval-date" type="person:approval-date" />
-            <xs:element name="scope-paths" type="person:scopePaths" />
-            <xs:element ref="common:application-group-orcid" />
-            <xs:element name="application-group-name" type="xs:string" />
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType mixed="true" name="application-name">
-        <xs:annotation>
-            <xs:documentation>(FOR INTERNAL USE ONLY)</xs:documentation>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="application-website">
-        <xs:annotation>
-            <xs:documentation>(FOR INTERNAL USE ONLY)</xs:documentation>
-        </xs:annotation>
-        <xs:simpleContent>
-            <xs:extension base="xs:anyURI" />
-        </xs:simpleContent>
-    </xs:complexType>
 
     <xs:complexType name="other-names">
         <xs:annotation>

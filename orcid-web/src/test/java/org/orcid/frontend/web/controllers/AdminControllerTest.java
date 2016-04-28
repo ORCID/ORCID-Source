@@ -95,7 +95,7 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @BeforeClass
     public static void beforeClass() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ClientDetailsEntityData.xml"));
     }
 
     @Before
@@ -107,7 +107,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml", "/data/ProfileEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
     
     @Override
@@ -136,8 +136,8 @@ public class AdminControllerTest extends BaseControllerTest {
         assertNotNull(profileDetails);
         assertEquals(0, profileDetails.getErrors().size());
         assertEquals("otis@reading.com", profileDetails.getEmail());
-        assertEquals("Redding", profileDetails.getFamilyName());
-        assertEquals("Otis", profileDetails.getGivenNames());
+        assertEquals("Family Name", profileDetails.getFamilyName());
+        assertEquals("Given Names", profileDetails.getGivenNames());
         assertEquals("4444-4444-4444-4447", profileDetails.getOrcid());
 
         //Must throw exception
@@ -217,10 +217,7 @@ public class AdminControllerTest extends BaseControllerTest {
         if(deprecated.getRecordNameEntity() != null) {
             assertEquals("Given Names Deactivated", deprecated.getRecordNameEntity().getGivenNames());
             assertEquals("Family Name Deactivated", deprecated.getRecordNameEntity().getFamilyName());
-        } else {
-            assertEquals("Given Names Deactivated", deprecated.getGivenNames());
-            assertEquals("Family Name Deactivated", deprecated.getFamilyName());
-        }
+        } 
     }
 
     @Test         

@@ -87,14 +87,6 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     OrcidProfile retrieveOrcidProfileWithNoInternal(String orcid);
 
     /**
-     * Persist the biography
-     * 
-     * * @param orcidProfile Profile containing the personal details, contact
-     * details and identifiers to replace those in the DB.
-     */
-    public void updateBiography(OrcidProfile orcidProfile);
-
-    /**
      * Like {@link #updatePersonalInformation(OrcidProfile)}, but for primary
      * institution and joint affiliation (not past institutions).
      * 

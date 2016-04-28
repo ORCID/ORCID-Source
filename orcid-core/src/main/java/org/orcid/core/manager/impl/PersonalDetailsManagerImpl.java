@@ -82,18 +82,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
                 
                 name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getDateCreated())));
                 name.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(recordName.getLastModified())));
-            } else {                
-                name.setCreditName(new CreditName(profileEntity.getCreditName()));
-                name.setGivenNames(new GivenNames(profileEntity.getGivenNames()));
-                name.setFamilyName(new FamilyName(profileEntity.getFamilyName()));
-                if(profileEntity.getNamesVisibility() != null) {
-                    nameVisibility = Visibility.fromValue(profileEntity.getNamesVisibility().value());
-                }
-                name.setVisibility(nameVisibility);
-                
-                name.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getDateCreated())));
-                name.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
-            }                                  
+            }                                   
         }
         return name;
     }
@@ -130,6 +119,12 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         
         personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
                 
+        if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {
+            ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                
+            Date lastModified = profileEntity.getLastModified();            
+            personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
+        }
+        
         return personalDetails;
     }   
     
@@ -186,6 +181,10 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         
         personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
         
+        if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {            
+            personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));
+        }
+        
         return personalDetails;
     }
     
@@ -193,32 +192,21 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);        
         Biography bio = new Biography();
         if(profileEntity.getBiographyEntity() != null) {
-            BiographyEntity biograpyEntity = profileEntity.getBiographyEntity(); 
-            if(!PojoUtil.isEmpty(biograpyEntity.getBiography())) {
-                bio.setContent(biograpyEntity.getBiography());
+            BiographyEntity biographyEntity = profileEntity.getBiographyEntity(); 
+            if(!PojoUtil.isEmpty(biographyEntity.getBiography())) {
+                bio.setContent(biographyEntity.getBiography());
             }      
             
             Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-            if(biograpyEntity.getVisibility() != null) {
-                bioVisibility = biograpyEntity.getVisibility();
+            if(biographyEntity.getVisibility() != null) {
+                bioVisibility = biographyEntity.getVisibility();
             } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
                 bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
             }
             bio.setVisibility(bioVisibility);
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biograpyEntity.getLastModified())));
-        } else {
-            if(!PojoUtil.isEmpty(profileEntity.getBiography())) {
-                bio.setContent(profileEntity.getBiography());
-                Visibility bioVisibility = Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value());
-                if(profileEntity.getBiographyVisibility() != null) {
-                    bioVisibility = Visibility.fromValue(profileEntity.getBiographyVisibility().value());
-                } else if(profileEntity.getActivitiesVisibilityDefault() != null) {
-                    bioVisibility = Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value());
-                }
-                bio.setVisibility(bioVisibility);
-            }
-            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profileEntity.getLastModified())));
-        }                
+            bio.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getLastModified())));
+            bio.setCreatedDate(new CreatedDate(DateUtils.convertToXMLGregorianCalendar(biographyEntity.getDateCreated())));
+        }                 
         return bio;
     }
     
