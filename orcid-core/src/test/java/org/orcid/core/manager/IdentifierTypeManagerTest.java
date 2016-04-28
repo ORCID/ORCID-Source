@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -55,6 +56,11 @@ public class IdentifierTypeManagerTest extends BaseTest{
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
+    }
+    
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        removeDBUnitData(DATA_FILES);
     }
     
     @Mock

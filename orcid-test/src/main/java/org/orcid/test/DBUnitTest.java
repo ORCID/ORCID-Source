@@ -101,6 +101,7 @@ public class DBUnitTest {
         dataSet.addTable("shibboleth_account");
         dataSet.addTable("group_id_record");
         dataSet.addTable("address");
+        dataSet.addTable("identifier_type");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);
