@@ -77,144 +77,15 @@
 					maxOccurs="1" />
 				<xs:element ref="external-identifier:external-identifiers"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="delegation" type="person:delegation"
-					minOccurs="0" maxOccurs="1" />
-				<xs:element name="applications" type="person:applications"
-					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
 			<xs:attribute name="path" type="common:person-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="delegation">
-		<xs:annotation>
-			<xs:documentation>TBD</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="person:delegation" />
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
-
-	<xs:element name="applications">
-		<xs:annotation>
-			<xs:documentation>TBD</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="person:applications" />
-			</xs:complexContent>
-		</xs:complexType>
-	</xs:element>
-
-
-	<xs:complexType name="delegation">
-		<xs:annotation>
-			<xs:documentation>Delegation
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="given-permission-to" type="person:given-permission-to"
-				minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="given-permission-by" type="person:given-permission-by"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="given-permission-to">
-		<xs:annotation>
-			<xs:documentation>Given permission to</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="delegation-details" type="person:delegation-details"
-				minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="given-permission-by">
-		<xs:annotation>
-			<xs:documentation>Given permission by</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="delegation-details" type="person:delegation-details"
-				minOccurs="1" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="delegation-details">
-		<xs:annotation>
-			<xs:documentation>Delegation details</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-			<xs:element name="approval-date" type="person:approval-date" />
-			<xs:element name="delegate-summary" type="person:delegate-summary" />
-		</xs:sequence>
-		<xs:attribute name="put-code" type="common:put-code" use="optional" />
-	</xs:complexType>
-
-	<xs:complexType name="approval-date">
-		<xs:annotation>
-			<xs:documentation>The date time when the element was approved.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="xs:dateTime" />
-		</xs:simpleContent>
-	</xs:complexType>
-
-	<xs:complexType name="delegate-summary">
-		<xs:annotation>
-			<xs:documentation>The date time when the element was approved.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="common:orcid-identifier" />
-			<xs:element ref="common:last-modified-date" />
-			<xs:element name="credit-name" type="person:credit-name"
-				minOccurs="0" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
-
 	<xs:complexType name="credit-name">
 		<xs:simpleContent>
 			<xs:extension base="personal-details:credit-name" />				
 		</xs:simpleContent>
-	</xs:complexType>
-
-	<xs:complexType name="applications">
-		<xs:annotation>
-			<xs:documentation>Applications
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="application-summary" type="person:application-summary"
-				minOccurs="1" maxOccurs="unbounded" />
-		</xs:sequence>
-		<xs:attribute name="visibility" type="common:visibility" />
-	</xs:complexType>
-
-	<xs:complexType name="application-summary">
-		<xs:annotation>
-			<xs:documentation>Application.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element ref="common:application-orcid" />
-			<xs:element name="application-name" type="common:short-text"
-				minOccurs="0" />
-			<xs:element name="application-website" type="common:url"
-				minOccurs="1" maxOccurs="1" />
-			<xs:element ref="common:approval-date" minOccurs="0" />
-			<xs:element name="scope-paths" type="person:scope-paths"
-				minOccurs="1" maxOccurs="1" />
-			<xs:element ref="common:application-group-orcid" />
-			<xs:element name="application-group-name" type="person:application-group-name" />
-		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="scope-paths">
@@ -224,7 +95,4 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:simpleType name="application-group-name">
-		<xs:restriction base="xs:string" />
-	</xs:simpleType>
 </xs:schema>

@@ -48,16 +48,11 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
-import org.orcid.jaxb.model.record_rc2.Applications;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
-import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.Deprecated;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -73,7 +68,6 @@ import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc2.ScopePath;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 
 public class ValidateV2RC2SamplesTest {
@@ -313,78 +307,6 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
-    public void testUnmarshallDelegation() {
-        Delegation delegation = (Delegation) unmarshallFromPath("/record_2.0_rc2/samples/delegation-2.0_rc2.xml", Delegation.class);
-        assertNotNull(delegation);
-        assertNotNull(delegation.getGivenPermissionBy());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2015, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("given-by-credit-name", delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2016, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(1, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(1, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        assertNotNull(delegation.getGivenPermissionTo());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2015, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("given-to-credit-name", delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2016, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(1, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(1, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testUnmarshallApplications() {
-        Applications applications = (Applications) unmarshallFromPath("/record_2.0_rc2/samples/applications-2.0_rc2.xml", Applications.class);
-        assertNotNull(applications);
-        assertEquals(Visibility.PUBLIC, applications.getVisibility());
-        assertNotNull(applications.getApplicationSummary());
-        assertEquals(1, applications.getApplicationSummary().size());
-        ApplicationSummary summary = applications.getApplicationSummary().get(0);
-        assertNotNull(summary.getApplicationOrcid());
-        assertEquals("8888-8888-8888-8880", summary.getApplicationOrcid().getPath());
-        assertEquals("application-name", summary.getApplicationName());
-        assertNotNull(summary.getApplicationWebsite());
-        assertEquals("http://application.com", summary.getApplicationWebsite().getValue());
-        assertNotNull(summary.getApprovalDate());
-        assertEquals(2015, summary.getApprovalDate().getValue().getYear());
-        assertEquals(12, summary.getApprovalDate().getValue().getMonth());
-        assertEquals(31, summary.getApprovalDate().getValue().getDay());
-        assertNotNull(summary.getScopePaths());
-        assertNotNull(summary.getScopePaths().getScopePath());
-        assertEquals(2, summary.getScopePaths().getScopePath().size());
-        for (ScopePath scope : summary.getScopePaths().getScopePath()) {
-            assertThat(scope.getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        }
-        assertNotNull(summary.getGroupOrcid());
-        assertEquals("8888-8888-8888-8880", summary.getGroupOrcid().getPath());
-        assertEquals("application-group-name", summary.getGroupName());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
     public void testUnmarshallPerson() {
         Person person = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
         assertNotNull(person);
@@ -510,67 +432,6 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, extId.getLastModifiedDate().getValue().getDay());
         assertNotNull(extId.getSource());
         assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
-        assertNotNull(person.getDelegation());
-        assertNotNull(person.getDelegation().getGivenPermissionBy());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        assertNotNull(person.getDelegation().getGivenPermissionTo());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        assertNotNull(person.getApplications());
-        assertNotNull(person.getApplications().getApplicationSummary());
-        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
-        assertEquals(1, person.getApplications().getApplicationSummary().size());
-
-        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
-        assertEquals("application-name", application.getApplicationName());
-        assertNotNull(application.getApplicationOrcid());
-        assertEquals("8888-8888-8888-8880", application.getApplicationOrcid().getPath());
-        assertNotNull(application.getApplicationWebsite());
-        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
-        assertNotNull(application.getApprovalDate());
-        assertNotNull(application.getApprovalDate().getValue());
-        assertEquals(2001, application.getApprovalDate().getValue().getYear());
-        assertEquals(12, application.getApprovalDate().getValue().getMonth());
-        assertEquals(31, application.getApprovalDate().getValue().getDay());
-        assertNotNull(application.getScopePaths());
-        assertNotNull(application.getScopePaths().getScopePath());
-        assertEquals(2, application.getScopePaths().getScopePath().size());
-        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        assertThat(application.getScopePaths().getScopePath().get(1).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        assertNotNull(application.getGroupOrcid());
-        assertEquals("8888-8888-8888-8880", application.getGroupOrcid().getPath());
-        assertEquals("application-group-name", application.getGroupName());
     }
 
     
@@ -634,7 +495,6 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallRecord() {
         Record record = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
@@ -765,52 +625,9 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Long.valueOf(0), address.getDisplayIndex());
         assertNotNull(address.getLastModifiedDate());
         
-        assertNotNull(person.getApplications());
-        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
-        assertEquals(1, person.getApplications().getApplicationSummary().size());
-        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
-        assertEquals("application-name", application.getApplicationName());
-        assertNotNull(application.getApplicationOrcid());
-        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
-        assertNotNull(application.getApprovalDate().getValue());
-        assertEquals("application-group-name", application.getGroupName());
-        assertNotNull(application.getGroupOrcid());
-        assertNotNull(application.getScopePaths());
-        assertNotNull(application.getScopePaths().getScopePath());
-        assertEquals(2, application.getScopePaths().getScopePath().size());
-        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
         assertEquals("biography", person.getBiography().getContent());
-        
-        assertNotNull(person.getDelegation());
-        assertNotNull(person.getDelegation().getLastModifiedDate().getValue());
-        assertNotNull(person.getDelegation().getGivenPermissionBy());
-        assertEquals(1, person.getDelegation().getGivenPermissionBy().size());
-        GivenPermissionBy by = person.getDelegation().getGivenPermissionBy().get(0);
-        assertNotNull(by.getLastModifiedDate().getValue());
-        assertNotNull(by.getDelegationDetails());
-        assertNotNull(by.getDelegationDetails().getApprovalDate().getValue());
-        assertNotNull(by.getDelegationDetails().getDelegateSummary());
-        assertNotNull(by.getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", by.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, by.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(by.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        
-        assertNotNull(person.getDelegation().getGivenPermissionTo());
-        assertNotNull(person.getDelegation().getGivenPermissionTo());
-        assertEquals(1, person.getDelegation().getGivenPermissionTo().size());
-        GivenPermissionTo to = person.getDelegation().getGivenPermissionTo().get(0);
-        assertNotNull(to.getLastModifiedDate().getValue());
-        assertNotNull(to.getDelegationDetails());
-        assertNotNull(to.getDelegationDetails().getApprovalDate().getValue());
-        assertNotNull(to.getDelegationDetails().getDelegateSummary());
-        assertNotNull(to.getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", to.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, to.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(to.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
         
         assertNotNull(person.getEmails());      
         assertTrue(StringUtils.isNotBlank(person.getEmails().getPath()));
@@ -930,10 +747,6 @@ public class ValidateV2RC2SamplesTest {
                 result = (Emails) obj;
             } else if (Email.class.equals(type)) {
                 result = (Email) obj;
-            } else if (Delegation.class.equals(type)) {
-                result = (Delegation) obj;
-            } else if (Applications.class.equals(type)) {
-                result = (Applications) obj;
             } else if (Person.class.equals(type)) {
                 result = (Person) obj;
             } else if (Deprecated.class.equals(type)) {
