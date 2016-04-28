@@ -33,7 +33,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
@@ -65,6 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 @Transactional
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class NotificationManagerTest extends BaseTest {
 
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";
@@ -110,21 +113,21 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test01SendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendWelcomeEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
 
     @Test
-    public void testSendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test02SendVerificationEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         notificationManager.sendVerificationEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
     }
 
     @Test
-    public void testResetEmail() throws Exception {
+    public void test03ResetEmail() throws Exception {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             orcidProfile.setPassword("r$nd0m");
@@ -144,7 +147,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test04AmendEmail() throws JAXBException, IOException, URISyntaxException {
         when(sourceManager.retrieveSourceOrcid()).thenReturn("8888-8888-8888-8880");
         String testOrcid = "4444-4444-4444-4446";
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
@@ -173,7 +176,7 @@ public class NotificationManagerTest extends BaseTest {
 	}
 
 	@Test
-    public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test05AddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
         String delegateOrcid = "1234-5678-1234-5678";
         ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
         EmailEntity delegateEmail = new EmailEntity();
@@ -202,7 +205,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testSendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test06SendDeactivateEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendOrcidDeactivateEmail(orcidProfile);
@@ -211,7 +214,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test07ApiCreatedRecordEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendApiRecordCreationEmail(orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue(), orcidProfile);
@@ -219,7 +222,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testSendServiceAnnouncement_1_For_2015() throws JAXBException, IOException, URISyntaxException {
+    public void test08SendServiceAnnouncement_1_For_2015() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendServiceAnnouncement_1_For_2015(orcidProfile);
@@ -227,7 +230,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testSendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test09SendVerificationReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendVerificationReminderEmail(orcidProfile, orcidProfile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
@@ -235,7 +238,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
+    public void test10ClaimReminderEmail() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendClaimReminderEmail(orcidProfile, 2);
@@ -243,7 +246,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testChangeEmailAddress() throws Exception {
+    public void test11ChangeEmailAddress() throws Exception {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             Email originalEmail = new Email("original@email.com");
@@ -252,7 +255,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
+    public void test12AdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendDelegationRequestEmail(orcidProfile, orcidProfile, "http://test.orcid.org");
@@ -260,7 +263,7 @@ public class NotificationManagerTest extends BaseTest {
     }
 
     @Test
-    public void testCreateCustomNotification() {
+    public void test13CreateCustomNotification() {
         String testOrcid = "4444-4444-4444-4446";
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
         profileDao.merge(testProfile);
