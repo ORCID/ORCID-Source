@@ -24,7 +24,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.message.Visibility;
 
 /**
  * 
@@ -94,7 +93,6 @@ public class SourceEntity implements Serializable {
         }
         if (sourceProfile != null) {
             // Set the source name
-            // Check if the record_name table already have the names
             if (sourceProfile.getRecordNameEntity() != null) {
                 // If it is a user, check if it have a credit name and is
                 // visible
@@ -109,17 +107,7 @@ public class SourceEntity implements Serializable {
                 } else {
                     return null;
                 }
-            } else {
-                if (Visibility.PUBLIC.equals(sourceProfile.getNamesVisibility())) {
-                    if (!StringUtils.isEmpty(sourceProfile.getCreditName())) {
-                        return sourceProfile.getCreditName();
-                    } else {
-                        return sourceProfile.getGivenNames() + (StringUtils.isEmpty(sourceProfile.getFamilyName()) ? "" : " " + sourceProfile.getFamilyName());
-                    }
-                } else {
-                    return null;
-                }
-            }
+            } 
         }
         return null;
     }

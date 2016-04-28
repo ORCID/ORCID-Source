@@ -28,14 +28,6 @@
             last_indexed_date="2014-07-03 15:31:00.00"
             last_modified="2014-07-03 15:31:00.00"
             claimed="true"
-            given_names="User"
-            family_name="To Test"
-            credit_name="User To Test"
-            external_identifiers_visibility="PRIVATE"
-            biography_visibility="PUBLIC"
-            keywords_visibility="REGISTERED_ONLY"
-            other_names_visibility="PRIVATE"
-            researcher_urls_visibility="PUBLIC"                       
             is_selectable_sponsor="false"
             encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
             security_question_id="1"
@@ -43,8 +35,7 @@
             encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
             send_change_notifications="false"
             send_orcid_news="false"
-            activities_visibility_default='PRIVATE'
-            biography="Bio for User To Test"
+            activities_visibility_default='PRIVATE'            
             indexing_status="DONE"
             orcid_type="USER"            
             />
@@ -56,7 +47,6 @@
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
             last_modified="2014-07-03 15:31:00.00"
-			credit_name="Group Member"
 			orcid_type="GROUP"
 			group_type="PREMIUM_INSTITUTION"
 			indexing_status="DONE"
@@ -70,7 +60,6 @@
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
             last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 1"
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
@@ -84,7 +73,6 @@
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
             last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 2"
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
@@ -97,8 +85,7 @@
             date_created="2014-07-03 15:31:00.00"
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
-            last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 3"
+            last_modified="2014-07-03 15:31:00.00"			
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
@@ -111,8 +98,7 @@
             date_created="2014-07-03 15:31:00.00"
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
-            last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 4"
+            last_modified="2014-07-03 15:31:00.00"			
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
@@ -125,8 +111,7 @@
             date_created="2014-07-03 15:31:00.00"
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
-            last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 5"
+            last_modified="2014-07-03 15:31:00.00"			
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
@@ -139,8 +124,7 @@
             date_created="2014-07-03 15:31:00.00"
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
-            last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 5"
+            last_modified="2014-07-03 15:31:00.00"			
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
@@ -153,13 +137,120 @@
             date_created="2014-07-03 15:31:00.00"
             submission_date="2014-07-03 15:31:00.00"
             last_indexed_date="2014-07-03 15:31:00.00"
-            last_modified="2014-07-03 15:31:00.00"
-			credit_name="Client # 5"
+            last_modified="2014-07-03 15:31:00.00"			
 			orcid_type="CLIENT"
 			client_type="PREMIUM_CREATOR"
 			indexing_status="DONE"
 			activities_visibility_default='PRIVATE'
 			/>			
+			
+	<record_name 
+		id="1"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9989"
+		given_names="User"
+        family_name="To Test"
+		credit_name="User To Test"            
+		visibility="PUBLIC"		
+		/>		
+	
+	<record_name 
+		id="2"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9990"
+		credit_name="Group Member"			
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>
+		
+	<record_name 
+		id="3"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9991"
+		credit_name="Client # 1"			
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>
+				
+	<record_name 
+		id="4"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9992"
+		credit_name="Client # 2"			
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>
+		
+	<record_name 
+		id="5"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9993"
+		credit_name="Client # 3"
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>
+		
+	<record_name 
+		id="6"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9994"
+		credit_name="Client # 4"
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>								
+			
+	<record_name 
+		id="7"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9995"
+		credit_name="Client # 5"
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>	
+		
+	<record_name 
+		id="8"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9996"			
+		credit_name="Client # 5"
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>						
+			
+	<record_name 
+		id="9"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9997"
+		credit_name="Client # 5"
+		given_names=""
+		family_name=""
+		visibility="PUBLIC"		
+		/>			
+			
+	<biography 
+		id="1"
+		date_created="2016-04-01 00:00:00.00"
+		last_modified="2016-04-01 00:00:00.00"
+		orcid="9999-9999-9999-9989"
+		biography="Bio for User To Test"
+		visibility="PUBLIC"		
+		/>					
 			
 	<email
         orcid="9999-9999-9999-9989"
