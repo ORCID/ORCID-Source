@@ -20,9 +20,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
@@ -54,7 +54,7 @@ public class Record implements Serializable {
     protected Person person;
     @XmlElement(namespace = "http://www.orcid.org/ns/activities", name = "activities-summary")
     protected ActivitiesSummary activitiesSummary;
-    @XmlAttribute
+    @XmlTransient
     protected OrcidType orcidType;
 
     public LastModifiedDate getLastModifiedDate() {
