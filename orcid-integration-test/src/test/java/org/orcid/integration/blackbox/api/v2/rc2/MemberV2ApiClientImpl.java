@@ -35,6 +35,7 @@ import static org.orcid.core.api.OrcidApiConstants.BIOGRAPHY;
 import static org.orcid.core.api.OrcidApiConstants.KEYWORDS;
 import static org.orcid.core.api.OrcidApiConstants.ADDRESS;
 import static org.orcid.core.api.OrcidApiConstants.PERSON;
+import static org.orcid.core.api.OrcidApiConstants.PROFILE_ROOT_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -350,6 +351,11 @@ public class MemberV2ApiClientImpl {
     
     public ClientResponse viewPerson(String orcid, String accessToken) {
         URI uri = UriBuilder.fromPath(PERSON).build(orcid);
+        return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
+    }
+    
+    public ClientResponse viewRecord(String orcid, String accessToken) {
+        URI uri = UriBuilder.fromPath(PROFILE_ROOT_PATH).build(orcid);
         return orcidClientHelper.getClientResponseWithToken(uri, VND_ORCID_XML, accessToken);        
     }
 }

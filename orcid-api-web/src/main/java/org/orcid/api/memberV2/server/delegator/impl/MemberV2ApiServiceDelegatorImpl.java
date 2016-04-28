@@ -184,15 +184,27 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewRecord(String orcid) {
-        orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED, orcid);
-        Record record = visibilityFilter.filter(recordManager.getRecord(orcid), orcid);
+        Record record = null;
+        try {
+            orcidSecurityManager.checkPermissions(ScopePathType.READ_LIMITED, orcid);
+            record = visibilityFilter.filter(recordManager.getRecord(orcid), orcid);             
+        } catch(AccessControlException | OrcidUnauthorizedException e) {
+            //If the user have the READ_PUBLIC scope, return him the list of public activities.
+            if(orcidSecurityManager.hasScope(ScopePathType.READ_PUBLIC)) {
+                record = recordManager.getPublicRecord(orcid);                
+            } else {
+                throw e;
+            }
+        }
+        
         if(record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
         }
         if(record.getActivitiesSummary() != null) {
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
-        }               
+        }  
+        
         return Response.ok(record).build();
     }
     
