@@ -78,7 +78,7 @@
 				<xs:element ref="external-identifier:external-identifiers"
 					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="path" type="common:person-path" use="optional" />
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 

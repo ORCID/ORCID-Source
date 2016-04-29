@@ -44,7 +44,7 @@
 				<xs:element name="address" type="address:address" minOccurs="1"
 					maxOccurs="unbounded" />
 			</xs:sequence>
-			<xs:attribute name="path" type="common:person-path" use="optional" />
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>	
 

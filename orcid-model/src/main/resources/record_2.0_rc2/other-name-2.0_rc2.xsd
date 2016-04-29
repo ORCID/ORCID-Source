@@ -49,7 +49,7 @@
 				<xs:element name="other-name" type="other-name:other-name"
 					minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
-			<xs:attribute name="path" type="common:person-path" use="optional" />
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 

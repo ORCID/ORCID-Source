@@ -40,7 +40,7 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "type", "value", "url", "relationship",  "createdDate", "lastModifiedDate", "source" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "type", "value", "url", "relationship" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
 public class PersonExternalIdentifier implements Serializable, Filterable {
     private static final long serialVersionUID = 8340033850223164314L;
@@ -52,8 +52,7 @@ public class PersonExternalIdentifier implements Serializable, Filterable {
     @XmlElement(name="external-id-relationship", namespace = "http://www.orcid.org/ns/common")
     protected Relationship relationship;
     @XmlElement(name="external-id-url", namespace = "http://www.orcid.org/ns/common")
-    protected Url url;
-    
+    protected Url url;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
     protected Source source;        
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")

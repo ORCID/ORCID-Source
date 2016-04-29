@@ -54,7 +54,7 @@
 				<xs:element name="biography" type="personal-details:biography"
 					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="path" type="common:person-path" use="optional" />
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 
@@ -151,7 +151,7 @@
 			</xs:element>
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
-		<xs:attribute name="path" type="common:person-path" use="optional" />
+		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="biography">
