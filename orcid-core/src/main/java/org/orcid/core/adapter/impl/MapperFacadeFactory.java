@@ -22,6 +22,11 @@ import java.net.URISyntaxException;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.adapter.impl.jsonidentifiers.ExternalIdentifierTypeConverter;
+import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIDsConverter;
+import org.orcid.core.adapter.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
+import org.orcid.core.adapter.impl.jsonidentifiers.SingleWorkExternalIdentifierFromJsonConverter;
+import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;

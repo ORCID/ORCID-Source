@@ -34,6 +34,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
+import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
@@ -125,7 +126,6 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
-import org.orcid.pojo.FundingExternalIdentifiers;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
@@ -1211,16 +1211,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return null;
         }
         //Transform the message external identifiers to core external identifiers
-        FundingExternalIdentifiers feis = FundingExternalIdentifiers.fromMessagePojo(fundingExternalIdentifiers);
+        FundingExternalIdentifiers feis = new FundingExternalIdentifiers(fundingExternalIdentifiers);
         if(feis != null && !feis.getFundingExternalIdentifier().isEmpty()) {
             //For all external identifiers, if the relationship is empty set it to self by default
-            for(org.orcid.pojo.FundingExternalIdentifier fei : feis.getFundingExternalIdentifier()) {
+            for(org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifier fei : feis.getFundingExternalIdentifier()) {
                 if(fei.getRelationship() == null) {
-                    fei.setRelationship(Relationship.SELF);
+                    fei.setRelationship(Relationship.SELF.value());
                 }
             }
         }
-        return JsonUtils.convertToJsonString(feis);
+        return feis.toDBJSONString();
     }
     
 

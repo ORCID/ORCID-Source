@@ -14,15 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter.impl;
+package org.orcid.core.adapter.impl.jsonidentifiers;
 
-import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.common_rc1.Url;
-import org.orcid.jaxb.model.record_rc1.Relationship;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -40,9 +33,9 @@ public class PeerReviewWorkExternalIDConverter extends BidirectionalConverter<Ex
      * 
      */
     @Override
-    public ExternalID convertFrom(String externalIdentifiersAsString, Type<ExternalID> arg1) {                
-        WorkExternalIdentifier id = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, WorkExternalIdentifier.class);        
-        return convertRC1toRC2(id);
+    public ExternalID convertFrom(String externalIdentifiersAsString, Type<ExternalID> arg1) {           
+        WorkExternalIdentifier id = WorkExternalIdentifier.fromDBJSONString(externalIdentifiersAsString);        
+        return id.toRecordPojo();
     }
 
     /** Currently transforms into rc1 format
@@ -50,15 +43,12 @@ public class PeerReviewWorkExternalIDConverter extends BidirectionalConverter<Ex
      */
     @Override
     public String convertTo(ExternalID externalID, Type<String> arg1) {
-        WorkExternalIdentifier id = this.convertRC2toRC1(externalID);
-        return JsonUtils.convertToJsonString(id);
+        WorkExternalIdentifier id = new WorkExternalIdentifier(externalID);
+        return id.toDBJSONString();
     }
     
     /** Transforms RC1 into RC2
-     * 
-     * @param id
-     * @return
-     */
+
     protected ExternalID convertRC1toRC2(WorkExternalIdentifier id){
         ExternalID result = new ExternalID();        
         if (id.getWorkExternalIdentifierType() != null){
@@ -97,6 +87,6 @@ public class PeerReviewWorkExternalIDConverter extends BidirectionalConverter<Ex
             }catch (IllegalArgumentException e){
             }
         return id;
-    }
+    }*/
 
 }

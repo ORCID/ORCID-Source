@@ -14,10 +14,9 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter.impl;
+package org.orcid.core.adapter.impl.jsonidentifiers;
 
 import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -27,9 +26,9 @@ public class FundingExternalIDsConverter extends BidirectionalConverter<External
 
     @Override
     public ExternalIDs convertFrom(String externalIdentifiersAsString, Type<ExternalIDs> type) {
-        org.orcid.pojo.FundingExternalIdentifiers jpaExtIds = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, org.orcid.pojo.FundingExternalIdentifiers.class);
+        FundingExternalIdentifiers jpaExtIds = FundingExternalIdentifiers.fromDBJSONString(externalIdentifiersAsString);
         ExternalIDs result = new ExternalIDs();
-        for(org.orcid.pojo.FundingExternalIdentifier jpaExtId : jpaExtIds.getFundingExternalIdentifier()) {
+        for(FundingExternalIdentifier jpaExtId : jpaExtIds.getFundingExternalIdentifier()) {
             result.getExternalIdentifier().add(jpaExtId.toRecordPojo());
         }
         return result;
@@ -38,8 +37,8 @@ public class FundingExternalIDsConverter extends BidirectionalConverter<External
     @Override
     public String convertTo(ExternalIDs fundingExternalIdentifiers, Type<String> arg1) {
         try {
-            org.orcid.pojo.FundingExternalIdentifiers jpaExternalIdentifiers = org.orcid.pojo.FundingExternalIdentifiers.fromRecordPojo(fundingExternalIdentifiers);
-            return JsonUtils.convertToJsonString(jpaExternalIdentifiers);
+            FundingExternalIdentifiers jpaExternalIdentifiers = new FundingExternalIdentifiers(fundingExternalIdentifiers);
+            return jpaExternalIdentifiers.toDBJSONString();
         } catch(IllegalArgumentException e) {
             throw new ActivityIdentifierValidationException(e); 
         }        

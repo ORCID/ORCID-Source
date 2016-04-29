@@ -14,12 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter.impl;
+package org.orcid.core.adapter.impl.jsonidentifiers;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
-/**
+/** Translates the API representation of identifier types (including relationships) into the DB representation.
+ * e.g. PART-OF becomes part_of, OTHER-ID becomes other_id
+ * 
  * 
  * @author Will Simpson
  *
@@ -33,6 +35,9 @@ public final class ExternalIdentifierTypeConverter extends BidirectionalConverte
 
     @Override
     public String convertFrom(String source, Type<String> destinationType) {
+        //annoying hack because grant_number does it different.
+        if (source.equalsIgnoreCase("grant_number"))
+            return source;
         return source.toLowerCase().replace("_", "-");
     }
 

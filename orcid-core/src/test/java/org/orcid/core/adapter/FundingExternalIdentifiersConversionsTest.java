@@ -22,11 +22,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifier;
+import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.pojo.FundingExternalIdentifier;
-import org.orcid.pojo.FundingExternalIdentifiers;
 
 public class FundingExternalIdentifiersConversionsTest {
 
@@ -53,7 +53,7 @@ public class FundingExternalIdentifiersConversionsTest {
         f3.setValue("f3");
         recordFei.getFundingExternalIdentifier().add(f3);
 
-        FundingExternalIdentifiers fei = FundingExternalIdentifiers.fromMessagePojo(recordFei);
+        FundingExternalIdentifiers fei = new FundingExternalIdentifiers(recordFei);
         assertNotNull(fei);
         assertEquals(3, fei.getFundingExternalIdentifier().size());
 
@@ -62,15 +62,15 @@ public class FundingExternalIdentifiersConversionsTest {
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER, f.getType());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value().toUpperCase(), f.getType());
             } else if (f.getValue().equals("f2")) {
                 found2 = true;
                 assertEquals("www.f2.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER, f.getType());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value().toUpperCase(), f.getType());
             } else if (f.getValue().equals("f3")) {
                 found3 = true;
                 assertEquals("www.f3.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER, f.getType());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value().toUpperCase(), f.getType());
             } else {
                 fail();
             }
@@ -102,7 +102,7 @@ public class FundingExternalIdentifiersConversionsTest {
         f3.setValue("f3");
         recordFei.getExternalIdentifier().add(f3);
 
-        FundingExternalIdentifiers fei = FundingExternalIdentifiers.fromRecordPojo(recordFei);
+        FundingExternalIdentifiers fei = new FundingExternalIdentifiers(recordFei);
         assertNotNull(fei);
         assertEquals(3, fei.getFundingExternalIdentifier().size());
 
@@ -111,15 +111,15 @@ public class FundingExternalIdentifiersConversionsTest {
             if (f.getValue().equals("f1")) {
                 found1 = true;
                 assertEquals("www.f1.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER, f.getType());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value().toUpperCase(), f.getType());
             } else if (f.getValue().equals("f2")) {
                 found2 = true;
                 assertEquals("www.f2.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER, f.getType());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value().toUpperCase(), f.getType());
             } else if (f.getValue().equals("f3")) {
                 found3 = true;
                 assertEquals("www.f3.com", f.getUrl().getValue());
-                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER, f.getType());
+                assertEquals(FundingExternalIdentifierType.GRANT_NUMBER.value().toUpperCase(), f.getType());
             } else {
                 fail();
             }
@@ -194,22 +194,13 @@ public class FundingExternalIdentifiersConversionsTest {
 
     private FundingExternalIdentifiers getFundingExternalIdentifiers() {
         FundingExternalIdentifiers fei = new FundingExternalIdentifiers();
-        FundingExternalIdentifier f1 = new FundingExternalIdentifier();
-        f1.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-        f1.setUrl(new org.orcid.jaxb.model.message.Url("www.f1.com"));
-        f1.setValue("f1");
+        FundingExternalIdentifier f1 = new FundingExternalIdentifier(FundingExternalIdentifierType.GRANT_NUMBER, "www.f1.com","f1");
         fei.getFundingExternalIdentifier().add(f1);
 
-        FundingExternalIdentifier f2 = new FundingExternalIdentifier();
-        f2.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-        f2.setUrl(new org.orcid.jaxb.model.message.Url("www.f2.com"));
-        f2.setValue("f2");
+        FundingExternalIdentifier f2 = new FundingExternalIdentifier(FundingExternalIdentifierType.GRANT_NUMBER, "www.f2.com","f2");
         fei.getFundingExternalIdentifier().add(f2);
 
-        FundingExternalIdentifier f3 = new FundingExternalIdentifier();
-        f3.setType(FundingExternalIdentifierType.GRANT_NUMBER);
-        f3.setUrl(new org.orcid.jaxb.model.message.Url("www.f3.com"));
-        f3.setValue("f3");
+        FundingExternalIdentifier f3 = new FundingExternalIdentifier(FundingExternalIdentifierType.GRANT_NUMBER, "www.f3.com","f3");
         fei.getFundingExternalIdentifier().add(f3);
         return fei;
     }
