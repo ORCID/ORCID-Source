@@ -385,8 +385,15 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkIsPublic(Filterable filterable) {
-        if(!org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+        if(filterable != null && !org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(filterable.getVisibility())) {
             throw new OrcidUnauthorizedException("The activity is not public");
+        }
+    }
+    
+    @Override
+    public void checkIsPublic(Biography biography) {
+        if(biography != null && !org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(biography.getVisibility())) {
+            throw new OrcidUnauthorizedException("The biography is not public");
         }
     }
 }
