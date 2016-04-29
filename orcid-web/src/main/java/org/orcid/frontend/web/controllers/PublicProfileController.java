@@ -77,6 +77,7 @@ import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.AddressForm;
 import org.orcid.pojo.ajaxForm.AffiliationForm;
 import org.orcid.pojo.ajaxForm.Contributor;
 import org.orcid.pojo.ajaxForm.FundingForm;
@@ -252,11 +253,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("publicOtherNames", publicOtherNames);
         
         //Fill country
-        Address publicPrimaryAddress = addressManager.getPrimaryAddress(orcid, lastModifiedTime);
-        String countryName = null;
+        Address publicPrimaryAddress = addressManager.getPrimaryAddress(orcid, lastModifiedTime);        
+        AddressForm publicAddressForm = AddressForm.valueOf(publicPrimaryAddress);
+        
         if(publicPrimaryAddress != null && publicPrimaryAddress.getCountry().getValue() != null && publicPrimaryAddress.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
-            countryName = getcountryName(publicPrimaryAddress.getCountry().getValue().value());
-            mav.addObject("countryName", countryName);
+        	publicAddressForm.setCountryName(getcountryName(publicPrimaryAddress.getCountry().getValue().value()));
+            mav.addObject("countryName", publicAddressForm);
         }
         
         //Fill keywords

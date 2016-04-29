@@ -79,8 +79,8 @@
 								    <li class="right"><a href="" ng-click="toggleSourcesDisplay('countries')" class="right"><i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i></a></li>
 								</ul>		                		
 		                		<div id="public-country-div">
-		                			${(countryName)!}
-		                			<div ng-if="showSources['countries']" ng-init='source = "${countryName.source.sourceName.content?js_string}"; createdDate = "${countryName.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+		                			${(countryName.countryName)!}
+		                			<div ng-if="showSources['countries']" ng-init='source = "${countryName.sourceName?js_string}"; createdDate = "${countryName.createdDate}"' class="source-line separator" ng-cloak>				                		
 				                		<p>Sources:<br />
 				                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
 				                		</p>				                						                			                						                			
@@ -95,16 +95,21 @@
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span></li>
-								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
-								</ul>		                		
-		                		<div id="public-keywords-div"> 
-		                    		<#list publicKeywords.keywords as keyword>
-		                        		${keyword.content}<#if keyword_has_next>,</#if>	                    
-	                    			</#list>
+								    <li class="right"><a ng-click="toggleSourcesDisplay('keywords')" class="right"><i ng-class="(showSources['keywords'] || showSources['keywords'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i></a></li>		                		
+								</ul>	
+		                		<div id="public-keywords-div">		                    		
+	                    			<#list publicKeywords.keywords as keyword>				               
+					                	${keyword.content}<#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>				                	
+					                	<div ng-if="showSources['keywords']" ng-init='source = "${keyword.source.sourceName.content?js_string}"; createdDate = "${keyword.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+					                		<p>Sources:<br />
+					                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
+					                		</p>				                						                			                						                			
+					                	</div>				                						                	
+					                </#list>
 	                        	</div>
 	                        </div>
-	                    </div>	                   
-		            </#if>	     
+	                    </div>
+		            </#if>
 		            <!-- Researcher Urls -->       	            
 		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
 		           		<div class="workspace-section">

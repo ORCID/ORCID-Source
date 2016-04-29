@@ -11185,7 +11185,7 @@ orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope,
 
 orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
 	$scope.showSources = new Array();	
-	$scope.toggleSourcesDisplay = function(section){
+	$scope.toggleSourcesDisplay = function(section){		
 		$scope.showSources[section] = !$scope.showSources[section];		
 	}
 	
