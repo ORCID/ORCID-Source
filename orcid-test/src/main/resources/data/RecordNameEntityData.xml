@@ -158,7 +158,7 @@
 		given_names="Leonardo"
 		family_name="da Vinci"
 		credit_name="Leonardo"            
-		visibility="LIMITED"	
+		visibility="PRIVATE"	
 		/>	
 			
 	<record_name
