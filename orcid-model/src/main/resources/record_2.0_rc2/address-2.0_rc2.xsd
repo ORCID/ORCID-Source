@@ -60,20 +60,14 @@
 		</xs:complexType>
 	</xs:element>
 
+
 	<xs:complexType name="address">
-		<xs:sequence>
-			<xs:element name="country" type="common:iso-3166-country-or-empty" />
-			<xs:element ref="common:created-date" minOccurs="0"
-				maxOccurs="1" />
-			<xs:element ref="common:last-modified-date" minOccurs="0"
-				maxOccurs="1" />
-			<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="path" type="common:person-path" use="optional" />
-		<xs:attribute name="visibility" type="common:visibility" />
-		<xs:attribute name="put-code" type="common:put-code" use="optional" />
-		<xs:attribute name="display-index" type="xs:string" use="optional" />
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence> 
+					<xs:element name="country" type="common:iso-3166-country-or-empty" />					
+				</xs:sequence>				
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
-
-
 </xs:schema>	

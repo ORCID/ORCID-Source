@@ -1571,7 +1571,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:complexType name="activity-summary">
+	<xs:complexType name="element-summary">
 		<xs:sequence>
 			<xs:element ref="common:created-date" minOccurs="0"
 				maxOccurs="1" />
