@@ -37,6 +37,8 @@ public interface OrcidSecurityManager {
     
     void checkIsPublic(Filterable filterable);
     
+    void checkIsPublic(Biography biography);
+    
     void checkSource(SourceEntity existingSource);
 
     boolean isAdmin();
