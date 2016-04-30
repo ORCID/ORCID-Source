@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -583,7 +582,7 @@ public class ValidateV2RC2SamplesTest {
     @Test
     public void testMarshallHistory() throws JAXBException, SAXException, URISyntaxException {
         History object = (History) unmarshallFromPath("/record_2.0_rc2/samples/history-2.0_rc2.xml", History.class);
-        marshall(object, "/record_2.0_rc2/history-2.0_rc2.xsd");
+        marshall(object, "/record_2.0_rc2/history-2.0_rc2.xsd");        
     }
     
     @Test
@@ -608,6 +607,7 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getCity());
         assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getCountry());
         assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getName());
         assertNotNull(activities.getEducations().getSummaries().get(0).getPutCode());
         assertNotNull(activities.getEducations().getSummaries().get(0).getRoleTitle());
         assertNotNull(activities.getEducations().getSummaries().get(0).getSource());
@@ -617,7 +617,6 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getMonth());
         assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getYear());
         assertNotNull(activities.getEducations().getSummaries().get(0).getVisibility());
-
 
         assertNotNull(activities.getEmployments());
         assertNotNull(activities.getEmployments().getLastModifiedDate());
@@ -637,9 +636,8 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getCity());
         assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getCountry());
         assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getRegion());
-        assertNotNull(activities.getEmployments().getSummaries().get(0).getPath());
-        assertNotNull(activities.getEmployments().getSummaries().get(0).getPutCode());
-        assertNotNull(activities.getEmployments().getSummaries().get(0).getPath());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getName());        
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getPutCode());        
         assertNotNull(activities.getEmployments().getSummaries().get(0).getRoleTitle());
         assertNotNull(activities.getEmployments().getSummaries().get(0).getSource());
         assertNotNull(activities.getEmployments().getSummaries().get(0).getSource().retrieveSourcePath());
@@ -648,80 +646,136 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getMonth());
         assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getYear());
         assertNotNull(activities.getEmployments().getSummaries().get(0).getVisibility());
-        
-        
+                
         assertNotNull(activities.getFundings());        
-        activities.getFundings().getLastModifiedDate();
-        activities.getFundings().getFundingGroup();
-        activities.getFundings().getFundingGroup().size();
-        activities.getFundings().getFundingGroup().get(0).getIdentifiers();
-        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier();
-        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size();
-        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType();
-        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().size();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getCreatedDate();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getDisplayIndex();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getDay();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getMonth();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getYear();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource().retrieveSourcePath();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getDay();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getMonth();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getYear();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getContent();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getType();
-        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility();
-        
+        assertNotNull(activities.getFundings().getLastModifiedDate());
+        assertNotNull(activities.getFundings().getFundingGroup());
+        assertEquals(1, activities.getFundings().getFundingGroup().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary());
+        assertEquals(1, activities.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getDay());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getMonth());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getYear());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getDay());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getMonth());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getYear());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getType());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility());
+
         assertNotNull(activities.getPeerReviews());
-        activities.getPeerReviews().getLastModifiedDate();
-        activities.getPeerReviews().getPeerReviewGroup();
-        activities.getPeerReviews().getPeerReviewGroup().size();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getGroupId();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getDay();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getMonth();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getYear();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate().getValue();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getDisplayIndex();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size();
-        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0);
-        
+        assertNotNull(activities.getPeerReviews().getLastModifiedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getDay());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getMonth());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getYear());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getName());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getSource());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+
         assertNotNull(activities.getWorks());
+        assertNotNull(activities.getWorks().getLastModifiedDate());
+        assertNotNull(activities.getWorks().getWorkGroup());
+        assertEquals(1, activities.getWorks().getWorkGroup().size());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0));
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate().getDay());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate().getMonth());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate().getYear());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getSource());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getSubtitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getSubtitle().getContent());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getType());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility());
         
         assertNotNull(activities.getLastModifiedDate());
-        fail();
     }
     
     @Test
-    public void testmarshallActivities() {
-        fail();
+    public void testmarshallActivities() throws JAXBException, SAXException, URISyntaxException {
+        ActivitiesSummary object = (ActivitiesSummary) unmarshallFromPath("/record_2.0_rc2/samples/activities-2.0_rc2.xml", ActivitiesSummary.class);
+        marshall(object, "/record_2.0_rc2/activities-2.0_rc2.xsd");
     }
     
     @Test
@@ -1019,6 +1073,6 @@ public class ValidateV2RC2SamplesTest {
         Schema schema = sf.newSchema(new File(getClass().getResource(path).toURI()));
 
         marshaller.setSchema(schema);
-        marshaller.marshal(object, new File("C:/test/result.xml"));
+        marshaller.marshal(object, System.out);
     }
 }
