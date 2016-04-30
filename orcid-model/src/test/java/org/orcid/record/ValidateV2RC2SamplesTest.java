@@ -22,14 +22,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URISyntaxException;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -69,6 +76,7 @@ import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.WorkType;
+import org.xml.sax.SAXException;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -97,6 +105,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(Visibility.LIMITED, personalDetails.getOtherNames().getOtherNames().get(1).getVisibility());
     }
+    
+    @Test
+    public void testMarshallPersonalDetails() throws JAXBException, SAXException, URISyntaxException {
+        PersonalDetails object = (PersonalDetails) unmarshallFromPath("/record_2.0_rc2/samples/personal-details-2.0_rc2.xml", PersonalDetails.class);        
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");                        
+    }
 
     @Test
     public void testUnmarshallResearcherUrl() {
@@ -123,6 +137,12 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(rUrl.getLastModifiedDate());
         assertNotNull(rUrl.getSource());
         assertEquals("8888-8888-8888-8880", rUrl.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testMarshallResearcherUrl() throws JAXBException, SAXException, URISyntaxException {
+        ResearcherUrls object = (ResearcherUrls) unmarshallFromPath("/record_2.0_rc2/samples/researcher-urls-2.0_rc2.xml", ResearcherUrls.class);
+        marshall(object, "/record_2.0_rc2/researcher-url-2.0_rc2.xsd");
     }
 
     @Test
@@ -154,6 +174,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
     }
+    
+    @Test
+    public void testMarshallAddress() throws JAXBException, SAXException, URISyntaxException {
+        Addresses object = (Addresses) unmarshallFromPath("/record_2.0_rc2/samples/addresses-2.0_rc2.xml", Addresses.class);
+        marshall(object, "/record_2.0_rc2/address-2.0_rc2.xsd");
+    }
 
     @Test
     public void testUnmarshallBiography() {
@@ -164,6 +190,12 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
+    public void testMarshallBiography() throws JAXBException, SAXException, URISyntaxException {
+        Biography object = (Biography) unmarshallFromPath("/record_2.0_rc2/samples/biography-2.0_rc2.xml", Biography.class);
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallCreditName() {
         CreditName creditName = (CreditName) unmarshallFromPath("/record_2.0_rc2/samples/credit-name-2.0_rc2.xml", CreditName.class);
         assertNotNull(creditName);
@@ -171,6 +203,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
     }
 
+    @Test
+    public void testMarshallCreditName() throws JAXBException, SAXException, URISyntaxException {
+        CreditName object = (CreditName) unmarshallFromPath("/record_2.0_rc2/samples/credit-name-2.0_rc2.xml", CreditName.class);
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallExternalIdentifiers() {
@@ -205,6 +243,13 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
     }
 
+    @Test
+    public void testMarshallExternalIdentifiers() throws JAXBException, SAXException, URISyntaxException {
+        PersonExternalIdentifiers object = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0_rc2/samples/external-identifiers-2.0_rc2.xml",
+                PersonExternalIdentifiers.class);
+        marshall(object, "/record_2.0_rc2/person-external-identifier-2.0_rc2.xsd");
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallKeyword() {
@@ -235,6 +280,12 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
+    public void testMarshallKeyword() throws JAXBException, SAXException, URISyntaxException {
+        Keywords object = (Keywords) unmarshallFromPath("/record_2.0_rc2/samples/keywords-2.0_rc2.xml", Keywords.class);
+        marshall(object, "/record_2.0_rc2/keyword-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallName() {
         Name name = (Name) unmarshallFromPath("/record_2.0_rc2/samples/name-2.0_rc2.xml", Name.class);
         assertNotNull(name);
@@ -248,6 +299,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, name.getVisibility());
     }
 
+    @Test
+    public void testMarshallName() throws JAXBException, SAXException, URISyntaxException {
+        Name object = (Name) unmarshallFromPath("/record_2.0_rc2/samples/name-2.0_rc2.xml", Name.class);
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallOtherNames() {
@@ -278,6 +335,12 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
+    public void testMarshallOtherNames() throws JAXBException, SAXException, URISyntaxException {
+        OtherNames object = (OtherNames) unmarshallFromPath("/record_2.0_rc2/samples/other-names-2.0_rc2.xml", OtherNames.class);
+        marshall(object, "/record_2.0_rc2/other-name-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallEmails() {
         Emails emails = (Emails) unmarshallFromPath("/record_2.0_rc2/samples/emails-2.0_rc2.xml", Emails.class);
         assertNotNull(emails);
@@ -306,6 +369,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("user1@email.com", email.getEmail());
     }
 
+    @Test
+    public void testMarshallEmails() throws JAXBException, SAXException, URISyntaxException {
+        Emails object = (Emails) unmarshallFromPath("/record_2.0_rc2/samples/emails-2.0_rc2.xml", Emails.class);
+        marshall(object, "/record_2.0_rc2/email-2.0_rc2.xsd");
+    }
+    
     @Test
     public void testUnmarshallPerson() {
         Person person = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
@@ -434,7 +503,11 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
     }
 
-    
+    @Test
+    public void testMarshallPerson() throws JAXBException, SAXException, URISyntaxException {
+        Person object = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
+        marshall(object, "/record_2.0_rc2/person-2.0_rc2.xsd");
+    }
     
     @Test
     public void testUnmarshallDeprecated() {
@@ -452,11 +525,23 @@ public class ValidateV2RC2SamplesTest {
     }
     
     @Test
+    public void testMarshallDeprecated() throws JAXBException, SAXException, URISyntaxException {
+        Deprecated object = (Deprecated) unmarshallFromPath("/record_2.0_rc2/samples/deprecated-2.0_rc2.xml", Deprecated.class);
+        marshall(object, "/record_2.0_rc2/deprecated-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallPreferences() {
         Preferences preferences = (Preferences) unmarshallFromPath("/record_2.0_rc2/samples/preferences-2.0_rc2.xml", Preferences.class);
         assertNotNull(preferences);   
         assertNotNull(preferences.getLocale());
         assertEquals(Locale.EN, preferences.getLocale());
+    }
+    
+    @Test
+    public void testMarshallPreferences() throws JAXBException, SAXException, URISyntaxException {
+        Preferences object = (Preferences) unmarshallFromPath("/record_2.0_rc2/samples/preferences-2.0_rc2.xml", Preferences.class);
+        marshall(object, "/record_2.0_rc2/preferences-2.0_rc2.xsd");
     }
     
     @Test
@@ -493,6 +578,150 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(2001, history.getSubmissionDate().getValue().getYear());
         assertEquals(12, history.getSubmissionDate().getValue().getMonth());
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
+    }
+    
+    @Test
+    public void testMarshallHistory() throws JAXBException, SAXException, URISyntaxException {
+        History object = (History) unmarshallFromPath("/record_2.0_rc2/samples/history-2.0_rc2.xml", History.class);
+        marshall(object, "/record_2.0_rc2/history-2.0_rc2.xsd");
+    }
+    
+    @Test
+    public void testUnmarshallActivities() {
+        ActivitiesSummary activities = (ActivitiesSummary) unmarshallFromPath("/record_2.0_rc2/samples/activities-2.0_rc2.xml", ActivitiesSummary.class);
+        assertNotNull(activities);
+        assertNotNull(activities.getEducations());
+        assertNotNull(activities.getEducations());
+        assertNotNull(activities.getEducations().getLastModifiedDate());
+        assertNotNull(activities.getEducations().getSummaries());
+        assertEquals(1, activities.getEducations().getSummaries().size());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getCreatedDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getDepartmentName());        
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate().getDay());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate().getMonth());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate().getYear());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getLastModifiedDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getPutCode());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getRoleTitle());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getSource());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getDay());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getMonth());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getYear());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getVisibility());
+
+
+        assertNotNull(activities.getEmployments());
+        assertNotNull(activities.getEmployments().getLastModifiedDate());
+        assertNotNull(activities.getEmployments().getLastModifiedDate().getValue());
+        assertNotNull(activities.getEmployments().getSummaries());
+        assertEquals(1, activities.getEmployments().getSummaries().size());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getCreatedDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getDepartmentName());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate().getYear());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate().getMonth());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate().getDay());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getLastModifiedDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getPath());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getPutCode());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getPath());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getRoleTitle());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getSource());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getDay());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getMonth());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getYear());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getVisibility());
+        
+        
+        assertNotNull(activities.getFundings());        
+        activities.getFundings().getLastModifiedDate();
+        activities.getFundings().getFundingGroup();
+        activities.getFundings().getFundingGroup().size();
+        activities.getFundings().getFundingGroup().get(0).getIdentifiers();
+        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier();
+        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size();
+        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType();
+        activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().size();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getCreatedDate();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getDisplayIndex();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getDay();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getMonth();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getYear();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource().retrieveSourcePath();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getDay();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getMonth();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getYear();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getContent();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getType();
+        activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility();
+        
+        assertNotNull(activities.getPeerReviews());
+        activities.getPeerReviews().getLastModifiedDate();
+        activities.getPeerReviews().getPeerReviewGroup();
+        activities.getPeerReviews().getPeerReviewGroup().size();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getGroupId();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getDay();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getMonth();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getYear();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate().getValue();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getDisplayIndex();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size();
+        activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0);
+        
+        assertNotNull(activities.getWorks());
+        
+        assertNotNull(activities.getLastModifiedDate());
+        fail();
+    }
+    
+    @Test
+    public void testmarshallActivities() {
+        fail();
     }
     
     @Test
@@ -711,6 +940,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, name.getVisibility());        
     }
     
+    @Test
+    public void testMarshallRecord() throws JAXBException, SAXException, URISyntaxException {
+        Record object = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
+        marshall(object, "/record_2.0_rc2/record-2.0_rc2.xsd");
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -757,6 +992,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (History) obj;
             } else if(Record.class.equals(type)) {
                 result = (Record) obj;
+            } else if(ActivitiesSummary.class.equals(type)) {
+                result = (ActivitiesSummary) obj;
             }
             return result;
         } catch (IOException e) {
@@ -772,5 +1009,16 @@ public class ValidateV2RC2SamplesTest {
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }
+    }
+    
+    private void marshall(Object object, String path) throws JAXBException, SAXException, URISyntaxException {
+        JAXBContext context = JAXBContext.newInstance(object.getClass());
+        Marshaller marshaller = context.createMarshaller();
+
+        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = sf.newSchema(new File(getClass().getResource(path).toURI()));
+
+        marshaller.setSchema(schema);
+        marshaller.marshal(object, new File("C:/test/result.xml"));
     }
 }

@@ -46,7 +46,7 @@ public class Biography implements Serializable {
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
     
-    @XmlElement(name = "content")
+    @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/personal-details")
     protected String content;
 
     @XmlAttribute
