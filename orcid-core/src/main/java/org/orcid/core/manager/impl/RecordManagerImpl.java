@@ -136,10 +136,6 @@ public class RecordManagerImpl implements RecordManager {
             history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(profile.getSubmissionDate())));
         }                
         
-        if(profile.getSource() != null) {
-            history.setSource(new Source(profile.getSource().getSourceId()));                
-        }
-        
         boolean verfiedEmail = false;
         boolean verfiedPrimaryEmail = false;
         
