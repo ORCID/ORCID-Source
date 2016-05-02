@@ -192,7 +192,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     @Override
     @Transactional
     public boolean updateToMaxDisplay(String orcid, Long id) {
-        Query query = entityManager.createNativeQuery("UPDATE profile_funding SET display_index = (select coalesce(MAX(display_index) + 1, 0) from profile_funding where orcid=:orcid and id != :id ) WHERE id = :id");
+        Query query = entityManager.createNativeQuery("UPDATE profile_funding SET display_index = (select coalesce(MAX(display_index) + 1, 0) from profile_funding where orcid=:orcid and id != :id ), last_modified=now() WHERE id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", id);
         return query.executeUpdate() > 0 ? true : false;

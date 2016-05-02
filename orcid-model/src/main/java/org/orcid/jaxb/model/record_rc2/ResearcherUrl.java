@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "urlName", "url", "createdDate", "lastModifiedDate", "source" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "urlName", "url" })
 @XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
 public class ResearcherUrl implements Filterable, Serializable, Comparable<ResearcherUrl> {
     private static final long serialVersionUID = 1047027166285177589L;    

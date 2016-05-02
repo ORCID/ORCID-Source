@@ -209,7 +209,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     @Override
     @Transactional
     public boolean updateToMaxDisplay(String orcid, Long workId) {
-        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=(select coalesce(MAX(display_index) + 1, 0) from work where orcid=:orcid and work_id != :workId ) WHERE work_id=:workId");        
+        Query query = entityManager.createNativeQuery("UPDATE work SET display_index=(select coalesce(MAX(display_index) + 1, 0) from work where orcid=:orcid and work_id != :workId ), last_modified=now() WHERE work_id=:workId");        
         query.setParameter("workId", workId);
         query.setParameter("orcid", orcid);
         return query.executeUpdate() > 0;

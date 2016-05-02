@@ -54,7 +54,7 @@
 				<xs:element name="biography" type="personal-details:biography"
 					minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="path" type="common:person-path" use="optional" />
+			<xs:attribute name="path" type="common:element-path" use="optional" />
 		</xs:complexType>
 	</xs:element>
 
@@ -97,8 +97,7 @@
 		</xs:complexType>
 	</xs:element>
 
-
-	<xs:complexType name="name">
+	<xs:complexType name="name"> 
 		<xs:annotation>
 			<xs:documentation>Container for the names of the
 				researcher or
@@ -106,6 +105,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:created-date" minOccurs="0" maxOccurs="1" />
 			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element name="given-names" minOccurs="0" maxOccurs="1">
 				<xs:annotation>
@@ -151,7 +151,7 @@
 			</xs:element>
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility"  use="optional"/>
-		<xs:attribute name="path" type="common:person-path" use="optional" />
+		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="biography">
@@ -163,19 +163,17 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
+			<xs:element ref="common:created-date" minOccurs="0" maxOccurs="1" />
+			<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 			<xs:element minOccurs="1" name="content" type="common:non-empty-string">
 				<xs:annotation>
 					<xs:documentation>A short display name describing the URL.
 					</xs:documentation>
 				</xs:annotation>
-			</xs:element>
-			<xs:element ref="common:created-date" minOccurs="0"
-				maxOccurs="1" />
-			<xs:element ref="common:last-modified-date" minOccurs="0"
-				maxOccurs="1" />			
+			</xs:element>				
 		</xs:sequence>
 		<xs:attribute name="visibility" type="common:visibility" use="optional"/>
-		<xs:attribute name="path" type="common:person-path" use="optional" />		
+		<xs:attribute name="path" type="common:element-path" use="optional" />		
 	</xs:complexType>
 
 	<xs:complexType name="credit-name">

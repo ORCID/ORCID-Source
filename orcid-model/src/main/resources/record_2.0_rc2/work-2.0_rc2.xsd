@@ -48,7 +48,7 @@
 				</xs:documentation>
 			</xs:annotation>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 
 						<xs:element name="title" type="work:work-title"
@@ -89,7 +89,7 @@
 	<xs:element name="work-summary">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 						<xs:element name="title" type="work:work-title"
 							minOccurs="1" />

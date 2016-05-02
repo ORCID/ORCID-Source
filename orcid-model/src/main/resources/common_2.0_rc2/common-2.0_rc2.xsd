@@ -883,25 +883,16 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
-	<xs:simpleType name="activity-path">
-		<xs:annotation>
-			<xs:documentation>The activity-path attribute is present only when reading
-				elements. It will be of the form /{orcid}/{activity-name}/{put-code}
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-		</xs:restriction>
-	</xs:simpleType>	
-
-	<xs:simpleType name="person-path">
-		<xs:annotation>
-			<xs:documentation>The person-path attribute is present only when reading
-				elements. It will be of the form /{orcid}/person/{element-name}/{put-code}
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:string">
-		</xs:restriction>
-	</xs:simpleType>
+	<xs:simpleType name="element-path">
+	<xs:annotation>
+		<xs:documentation>The activity-path attribute is present only when
+			reading elements. It will be of the form /{orcid}/{activity-name}/{put-code} for
+			activity elements or /{orcid}/person/{element-name}/{put-code} for person element
+		</xs:documentation>
+	</xs:annotation>
+	<xs:restriction base="xs:string">
+	</xs:restriction>
+</xs:simpleType>	
 
 	<xs:simpleType name="visibility">
 		<xs:annotation>
@@ -1571,7 +1562,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:complexType name="activity-summary">
+	<xs:complexType name="element-summary">
 		<xs:sequence>
 			<xs:element ref="common:created-date" minOccurs="0"
 				maxOccurs="1" />
@@ -1582,7 +1573,7 @@
 		<xs:attribute name="put-code" type="common:put-code" use="optional" />
 		<xs:attribute name="visibility" type="common:visibility" />
 		<xs:attribute name="display-index" type="xs:string" use="optional" />
-		<xs:attribute name="path" type="common:activity-path" use="optional" />
+		<xs:attribute name="path" type="common:element-path" use="optional" />
 	</xs:complexType>
 	
 	<xs:simpleType name="relationship-type">
@@ -1600,12 +1591,16 @@
 		<xs:annotation>
 			<xs:documentation>A reference to an external identifier, suitable for works, people and funding</xs:documentation>
 		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
-			<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />		
-			<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
-			<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
-		</xs:sequence>
+		<xs:complexContent>
+			<xs:extension base="common:element-summary">
+				<xs:sequence>
+					<xs:element name="external-id-type" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />
+					<xs:element name="external-id-value" type="common:non-empty-string" minOccurs="1" maxOccurs="1" />		
+					<xs:element name="external-id-url" type="xs:anyURI" minOccurs="0" maxOccurs="1" />
+					<xs:element name="external-id-relationship" minOccurs="0" maxOccurs="1" type="common:relationship-type" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 	 
 	 <xs:complexType name="external-ids">

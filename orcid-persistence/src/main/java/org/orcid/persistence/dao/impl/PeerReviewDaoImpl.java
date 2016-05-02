@@ -61,7 +61,7 @@ public class PeerReviewDaoImpl extends GenericDaoImpl<PeerReviewEntity, Long> im
     @Override
     @Transactional
     public boolean updateToMaxDisplay(String orcid, Long peerReviewId) {
-        Query query = entityManager.createNativeQuery("UPDATE peer_review SET display_index = (select coalesce(MAX(display_index) + 1, 0) from peer_review where orcid=:orcid and id != :id ) WHERE id = :id");
+        Query query = entityManager.createNativeQuery("UPDATE peer_review SET display_index = (select coalesce(MAX(display_index) + 1, 0) from peer_review where orcid=:orcid and id != :id ), last_modified=now() WHERE id = :id");
         query.setParameter("orcid", orcid);
         query.setParameter("id", peerReviewId);
         return query.executeUpdate() > 0 ? true : false;
