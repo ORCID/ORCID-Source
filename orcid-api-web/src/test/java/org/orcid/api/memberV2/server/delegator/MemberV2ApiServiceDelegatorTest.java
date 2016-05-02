@@ -3186,7 +3186,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(history.getLastModifiedDate());
         assertNotNull(history.getSource());
         assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
-        assertNotNull(history.getSubmissionDate());                
         assertNotNull(record.getOrcidIdentifier());
         OrcidIdentifier id = record.getOrcidIdentifier();
         assertEquals("0000-0000-0000-0003", id.getPath());   
@@ -3443,7 +3442,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(history.getLastModifiedDate());
         assertNotNull(history.getSource());
         assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
-        assertNotNull(history.getSubmissionDate());                
         assertNotNull(record.getOrcidIdentifier());
         OrcidIdentifier id = record.getOrcidIdentifier();
         assertEquals("0000-0000-0000-0003", id.getPath());

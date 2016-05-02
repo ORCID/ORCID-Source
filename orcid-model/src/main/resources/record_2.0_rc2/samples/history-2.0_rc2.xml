@@ -5,7 +5,6 @@
 	xsi:schemaLocation="http://www.orcid.org/ns/history ../history-2.0_rc2.xsd ">
 	<history:creation-method>API</history:creation-method>
 	<history:completion-date>2001-12-31T12:00:00</history:completion-date>
-	<history:submission-date>2001-12-31T12:00:00</history:submission-date>
 	<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 	<history:claimed>true</history:claimed>
 	<common:source>

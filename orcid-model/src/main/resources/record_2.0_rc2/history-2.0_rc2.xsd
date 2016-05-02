@@ -66,8 +66,6 @@
 				</xs:element>
 				<xs:element name="completion-date" type="history:completion-date"
 					minOccurs="0" maxOccurs="1" />
-				<xs:element name="submission-date" type="history:submission-date"
-					minOccurs="0" maxOccurs="1" />
 				<xs:element ref="common:last-modified-date"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="claimed" type="history:claimed" minOccurs="0"
@@ -99,17 +97,6 @@
 		<xs:annotation>
 			<xs:documentation>The date and time when the ORCID Record set up was
 				completed.
-			</xs:documentation>
-		</xs:annotation>
-		<xs:simpleContent>
-			<xs:extension base="xs:dateTime" />
-		</xs:simpleContent>
-	</xs:complexType>
-	
-	<xs:complexType name="submission-date">
-		<xs:annotation>
-			<xs:documentation>The date time when the ORCID Record and iD was
-				first created.
 			</xs:documentation>
 		</xs:annotation>
 		<xs:simpleContent>

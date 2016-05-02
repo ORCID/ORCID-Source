@@ -34,7 +34,7 @@ import org.orcid.jaxb.model.message.CreationMethod;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate", "verifiedEmail",
+@XmlType(propOrder = { "creationMethod", "completionDate", "lastModifiedDate", "claimed", "source", "deactivationDate", "verifiedEmail",
         "verifiedPrimaryEmail" })
 @XmlRootElement(name = "history", namespace = "http://www.orcid.org/ns/history")
 public class History implements Serializable {
@@ -43,8 +43,6 @@ public class History implements Serializable {
     protected CreationMethod creationMethod;
     @XmlElement(namespace = "http://www.orcid.org/ns/history", name = "completion-date")
     protected CompletionDate completionDate;
-    @XmlElement(namespace = "http://www.orcid.org/ns/history", name = "submission-date")
-    protected SubmissionDate submissionDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/history", name = "claimed")
@@ -72,14 +70,6 @@ public class History implements Serializable {
 
     public void setCompletionDate(CompletionDate completionDate) {
         this.completionDate = completionDate;
-    }
-
-    public SubmissionDate getSubmissionDate() {
-        return submissionDate;
-    }
-
-    public void setSubmissionDate(SubmissionDate submissionDate) {
-        this.submissionDate = submissionDate;
     }
 
     public LastModifiedDate getLastModifiedDate() {
@@ -140,7 +130,6 @@ public class History implements Serializable {
         result = prime * result + ((deactivationDate == null) ? 0 : deactivationDate.hashCode());
         result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
-        result = prime * result + ((submissionDate == null) ? 0 : submissionDate.hashCode());
         result = prime * result + (verifiedEmail ? 1231 : 1237);
         result = prime * result + (verifiedPrimaryEmail ? 1231 : 1237);
         return result;
@@ -181,11 +170,6 @@ public class History implements Serializable {
             if (other.source != null)
                 return false;
         } else if (!source.equals(other.source))
-            return false;
-        if (submissionDate == null) {
-            if (other.submissionDate != null)
-                return false;
-        } else if (!submissionDate.equals(other.submissionDate))
             return false;
         if (verifiedEmail != other.verifiedEmail)
             return false;
