@@ -31,5 +31,5 @@ public interface BiographyDao extends GenericDao<BiographyEntity, Long> {
 
     boolean updateBiography(String orcid, String biography, Visibility visibility);
 
-    void createBiography(String orcid, String biography, Visibility visibility);
+    void persistBiography(String orcid, String biography, Visibility visibility);
 }
