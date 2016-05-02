@@ -55,7 +55,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 						<xs:element name="type" type="funding:funding-type"
 							minOccurs="1" maxOccurs="1" />
@@ -96,7 +96,7 @@
 	<xs:element name="summary">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 						<xs:element name="title" type="funding:funding-title"
 							minOccurs="1" />

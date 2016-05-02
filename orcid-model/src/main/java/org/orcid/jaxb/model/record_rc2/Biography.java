@@ -35,7 +35,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "content", "createdDate", "lastModifiedDate" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "content" })
 @XmlRootElement(name = "biography", namespace = "http://www.orcid.org/ns/personal-details")
 public class Biography implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class Biography implements Serializable {
     @XmlElement(name = "created-date", namespace = "http://www.orcid.org/ns/common")
     protected CreatedDate createdDate;
     
-    @XmlElement(name = "content")
+    @XmlElement(name = "content", namespace = "http://www.orcid.org/ns/personal-details")
     protected String content;
 
     @XmlAttribute

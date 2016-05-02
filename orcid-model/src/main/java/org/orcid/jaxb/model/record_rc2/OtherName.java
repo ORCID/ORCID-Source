@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "content", "createdDate", "lastModifiedDate", "source" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "content" })
 @XmlRootElement(name = "other-name", namespace = "http://www.orcid.org/ns/other-name")
 public class OtherName implements Filterable, Serializable, Comparable<OtherName> {
     private static final long serialVersionUID = 1047027166285177589L;
