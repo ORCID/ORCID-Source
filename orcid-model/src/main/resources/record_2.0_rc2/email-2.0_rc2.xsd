@@ -41,7 +41,7 @@
 			</xs:annotation>
 			<xs:sequence>
 				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
-				<xs:element name="email" type="email:email" minOccurs="1"
+				<xs:element name="email" type="email:email" minOccurs="0"
 					maxOccurs="unbounded" />
 			</xs:sequence>
 			<xs:attribute name="path" type="common:element-path" use="optional" />
