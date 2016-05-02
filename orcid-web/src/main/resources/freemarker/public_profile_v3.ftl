@@ -80,9 +80,9 @@
 								</ul>		                		
 		                		<div id="public-country-div">
 		                			${(countryName.countryName)!}
-		                			<div ng-if="showSources['countries']" ng-init='source = "${countryName.sourceName?js_string}"; createdDate = "${countryName.createdDate}"' class="source-line separator" ng-cloak>				                		
+		                			<div ng-if="showSources['countries']" ng-init='source = "${countryName.sourceName?js_string}"; createdDate = "${countryName.createdDate.year}-${countryName.createdDate.month}-${countryName.createdDate.day}"' class="source-line separator" ng-cloak>				                		
 				                		<p>Sources:<br />
-				                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
+				                		{{source}} ({{createdDate}})
 				                		</p>				                						                			                						                			
 				                	</div>
 		                		</div>
@@ -110,24 +110,30 @@
 	                        </div>
 	                    </div>
 		            </#if>
-		            <!-- Researcher Urls -->       	            
+		            <!-- Websites -->       	            
 		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
-								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+								    <li class="right"><a href="" ng-click="toggleSourcesDisplay('websites')" class="right"><i ng-class="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i></a></li>		                		
 								</ul>
 				                <div id="public-researcher-urls-div">
 				                    <#list publicResearcherUrls.researcherUrls as url>
 				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
+				                        
 				                        	<#if (url.urlName)! != "">
 				                        		${url.urlName}
 				                        	<#else>
 				                        		${url.url.value}
 				                        	</#if>
-			                        	</a>
-			                        	<#if url_has_next><br/></#if>
+			                        	</a>			                	
+					                	<div ng-if="showSources['websites']" ng-init='source = "${url.source.sourceName.content?js_string}"; createdDate = "${url.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+					                		<p>Sources:<br />
+					                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
+					                		</p>				                						                			                						                			
+					                	</div>	
+					                	<#if url_has_next><br/></#if>
 				                    </#list>
 			                    </div>
 			                </div>
@@ -139,13 +145,18 @@
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
-								    <li class="right"><a href="" class="right"><i class="glyphicons expand"></i></a></li>		                		
+								    <li class="right"><a href="" ng-click="toggleSourcesDisplay('emails')" class="right"><i ng-class="(showSources['emails'] || showSources['emails'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i></a></li>		                		
 								</ul>		            			
 		            			<div class="emails-box" id="public-emails-div">
 			            			 <#list publicEmails.emails as email>
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
 			            					<div name="email">${email.email}</div>
-			        					</#if>    					 		
+			        					</#if>	
+			        					<div ng-if="showSources['emails']" ng-init='source = "${email.source.sourceName.content?js_string}"; createdDate = "${email.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+					                		<p>Sources:<br />
+					                		{{source}} ({{createdDate | date:'yyyy-MM-dd'}})
+					                		</p>				                						                			                						                			
+					                	</div>					 		
 			            			 </#list>
 		            			</div>		            			
 			                </div>
