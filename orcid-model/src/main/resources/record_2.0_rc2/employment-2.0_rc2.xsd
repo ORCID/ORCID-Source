@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:sch="http://purl.oclc.org/dsdl/schematron" elementFormDefault="qualified"
-	targetNamespace="http://www.orcid.org/ns/employment" xmlns:affiliation="http://www.orcid.org/ns/employment"
+	targetNamespace="http://www.orcid.org/ns/employment" xmlns:employment="http://www.orcid.org/ns/employment"
 	xmlns:common="http://www.orcid.org/ns/common">
-	<xs:annotation>
+	<xs:annotation> 
 		<xs:documentation>
 			=============================================================================
 
@@ -38,7 +38,7 @@
 
 	<xs:element name="employment">
 		<xs:annotation>
-			<xs:documentation>An affiliation associated with the researcher or
+			<xs:documentation>An employment associated with the researcher or
 				contributor.
 				* The visibility attribute (private, limited or public)
 				can be set at

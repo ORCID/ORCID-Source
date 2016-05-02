@@ -816,8 +816,8 @@ public class ValidateV2RC2SamplesTest {
         EmploymentSummary employment = employments.getSummaries().get(0);
         assertEquals(Long.valueOf(0), employment.getPutCode());
         assertEquals(Visibility.PRIVATE, employment.getVisibility());
-        assertEquals("affiliation:department-name", employment.getDepartmentName());
-        assertEquals("affiliation:role-title", employment.getRoleTitle());
+        assertEquals("employment:department-name", employment.getDepartmentName());
+        assertEquals("employment:role-title", employment.getRoleTitle());
         assertNotNull(employment.getEndDate());
         assertEquals("02", employment.getEndDate().getDay().getValue());
         assertEquals("02", employment.getEndDate().getMonth().getValue());
