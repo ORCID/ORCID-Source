@@ -23,9 +23,6 @@ import ma.glasnost.orika.metadata.Type;
 
 public class WorkExternalIDsConverter extends BidirectionalConverter<ExternalIDs, String> {
 
-    /** Uses rc1 as middle stage
-     * 
-     */
     @Override
     public ExternalIDs convertFrom(String externalIdentifiersAsString, Type<ExternalIDs> arg1) {
         WorkExternalIdentifiers ids = WorkExternalIdentifiers.fromDBJSONString(externalIdentifiersAsString);

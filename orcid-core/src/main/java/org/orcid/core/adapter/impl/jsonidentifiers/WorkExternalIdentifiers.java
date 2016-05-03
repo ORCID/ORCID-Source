@@ -24,6 +24,9 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties("scope")
 public class WorkExternalIdentifiers implements Serializable, JSONIdentifierAdapter<org.orcid.jaxb.model.message.WorkExternalIdentifiers, ExternalIDs> {
 
     private static final long serialVersionUID = 1L;
