@@ -547,8 +547,6 @@ public class ValidateV2RC2SamplesTest {
     public void testUnmarshallHistory() {
         History history = (History) unmarshallFromPath("/record_2.0_rc2/samples/history-2.0_rc2.xml", History.class);
         assertNotNull(history);           
-        assertNotNull(history.getSource());
-        assertEquals("http://orcid.org/8888-8888-8888-8880", history.getSource().retriveSourceUri());
         assertNotNull(history.getCreationMethod());
         assertEquals(CreationMethod.API, history.getCreationMethod());
         assertNotNull(history.getClaimed());

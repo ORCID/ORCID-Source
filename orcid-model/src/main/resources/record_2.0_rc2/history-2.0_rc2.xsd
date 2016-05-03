@@ -72,7 +72,6 @@
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="claimed" type="history:claimed" minOccurs="0"
 					maxOccurs="1" />
-				<xs:element ref="common:source" minOccurs="0" maxOccurs="1" />
 				<xs:element name="deactivation-date" type="history:deactivation-date"
 					minOccurs="0" maxOccurs="1" />
 				<xs:element name="verified-email" type="xs:boolean"
