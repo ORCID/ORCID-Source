@@ -91,6 +91,6 @@ public class BiographyManagerImpl implements BiographyManager {
         if (bio == null || PojoUtil.isEmpty(bio.getContent()) || bio.getVisibility() == null) {
             return;
         }
-        biographyDao.createBiography(orcid, bio.getContent(), bio.getVisibility());
+        biographyDao.persistBiography(orcid, bio.getContent(), bio.getVisibility());
     }
 }
