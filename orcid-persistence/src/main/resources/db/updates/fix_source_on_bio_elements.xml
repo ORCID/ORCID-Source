@@ -62,16 +62,5 @@
 		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
 		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>		
 	</changeSet>
-
-	<changeSet id="SET-SOURCE-TO-EXTERNAL-IDENTIFIERS" author="Angel Montenegro" dbms="postgresql">
-		<sql>CREATE TEMP TABLE profiles_to_reindex AS (SELECT orcid FROM external_identifier where source_id is null and client_source_id is null) order by orcid;</sql>
-		<sql>UPDATE external_identifier a 
-			SET source_id = (SELECT source_id FROM profile b where a.orcid = b.orcid), 
-			client_source_id = (SELECT client_source_id FROM profile b where a.orcid = b.orcid)
-			WHERE a.source_id is null and a.client_source_id is null</sql>
-		<sql>UPDATE external_identifier SET source_id=orcid WHERE source_id is null and client_source_id is null</sql>			
-		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
-		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>			
-	</changeSet>
-    
+	   
 </databaseChangeLog>
