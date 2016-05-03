@@ -45,7 +45,7 @@ public interface NotificationManager {
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
-    
+
     void sendAmendEmail(String orcid, AmendedSection amendedSection, Item item);
 
     void sendAmendEmail(OrcidProfile amendedProfile, AmendedSection amendedSection);
@@ -77,12 +77,13 @@ public interface NotificationManager {
     public Notification flagAsArchived(String orcid, Long id) throws OrcidNotificationAlreadyReadException;
 
     public Notification setActionedDate(String orcid, Long id);
-    
+
     public void addMessageParams(Map<String, Object> templateParams, OrcidProfile orcidProfile);
 
     public String getSubject(String code, OrcidProfile orcidProfile);
-    
+
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
-    
+
     public String createClaimVerificationUrl(String email, String baseUri);
+
 }
