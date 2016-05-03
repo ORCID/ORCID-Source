@@ -2082,6 +2082,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: hidden;
 }
 
+.inline-list.visible{	
+	overflow: visible;
+}
+
 .inline-list > li {
 	float: left;
 }
@@ -6458,6 +6462,66 @@ a:hover .mozilla-badge{
 
 .settings-table .table-responsive{
 	overflow-x: initial;
+}
+
+
+
+.workspace-section .workspace-section-heading li:last-child{
+	float: right;
+}
+
+.workspace-section .workspace-section-heading li span:first-child{
+	width: auto;
+}
+
+.workspace-section .workspace-section-heading li.right span.toggle{
+	float: right;
+	display:block;
+	width: 15px;
+	position: relative;
+	cursor: pointer;
+}
+
+.workspace-section .workspace-section-heading li span.toggle i{
+	float: left;
+}
+
+.workspace-section .workspace-section-heading li span.toggle:hover i:before{
+	color: rgb(166, 206, 57);
+}
+
+
+.workspace-section .workspace-section-heading li span i:before{
+	font: 17px/1em 'Glyphicons Regular';
+	color: #939598;
+}
+
+.glyphicons{
+	padding-left: 0;
+}
+
+.separator{	
+	border-bottom: 1px dotted #C3C3C3; 
+}
+
+.public-profile .workspace-section .public-content{
+	float:left;
+	width: 100%;
+}
+
+.public-profile .workspace-section .workspace-section-header .inline-list .right .popover{
+	top: -39px;
+	left: -49px;
+}
+
+.public-profile .workspace-section .workspace-section-header .inline-list .right .popover .popover-content{
+	white-space: nowrap;
+	color: #939598;	
+}
+
+
+.public-profile .workspace-section .workspace-section-header .inline-list .right .popover.top>.arrow{
+	left: 56px;
 }
 
 
