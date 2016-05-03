@@ -12,8 +12,8 @@
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:history="http://www.orcid.org/ns/history"
 	xmlns:internal="http://www.orcid.org/ns/internal" xmlns:person="http://www.orcid.org/ns/person"
 	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
-	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc2.xsd ">
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc2.xsd ">
 	<common:orcid-identifier>
 		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 		<common:path>8888-8888-8888-8880</common:path>
@@ -295,7 +295,59 @@
 					</common:end-date>
 				</funding:summary>
 			</activities:group>
-		</activities:fundings>
+		</activities:fundings>		
+		<activities:peer-reviews>
+			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+			<activities:group>
+				<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+				<common:external-ids>
+					<common:external-id>
+						<common:external-id-type>something</common:external-id-type>
+						<common:external-id-value>external-id-value</common:external-id-value>			
+						<common:external-id-url>http://orcid.org</common:external-id-url>
+						<common:external-id-relationship>self</common:external-id-relationship>
+					</common:external-id>
+				</common:external-ids>
+				<peer-review:summary put-code="12345" visibility="private" display-index="0">
+					<common:created-date>2001-12-31T12:00:00</common:created-date>
+					<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
+					<common:source>
+						<common:source-orcid>
+							<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+							<common:path>8888-8888-8888-8880</common:path>
+							<common:host>orcid.org</common:host>
+						</common:source-orcid>
+						<common:source-name/>
+					</common:source>
+					<common:external-ids>
+						<common:external-id>
+							<common:external-id-type>something</common:external-id-type>
+							<common:external-id-value>external-id-value</common:external-id-value>			
+							<common:external-id-url>http://orcid.org</common:external-id-url>
+							<common:external-id-relationship>self</common:external-id-relationship>
+						</common:external-id>
+					</common:external-ids>
+					<peer-review:completion-date>
+						<common:year>1848</common:year>
+						<common:month>02</common:month>
+						<common:day>02</common:day>
+					</peer-review:completion-date>
+					<peer-review:review-group-id>issn:1119191</peer-review:review-group-id>
+					<peer-review:convening-organization>
+						<common:name>common:name</common:name>
+						<common:address>
+							<common:city>common:city</common:city>
+							<common:region>common:region</common:region>
+							<common:country>AF</common:country>
+						</common:address>
+						<common:disambiguated-organization>
+							<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
+							<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
+						</common:disambiguated-organization>
+					</peer-review:convening-organization>
+				</peer-review:summary>
+			</activities:group>
+		</activities:peer-reviews>				
 		<activities:works>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>

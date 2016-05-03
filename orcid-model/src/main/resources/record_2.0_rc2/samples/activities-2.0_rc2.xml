@@ -135,7 +135,7 @@
 				</common:end-date>
 			</funding:summary>
 		</activities:group>
-	</activities:fundings>
+	</activities:fundings> 
 	<activities:peer-reviews>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<activities:group>

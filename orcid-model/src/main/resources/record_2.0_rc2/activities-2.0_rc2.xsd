@@ -167,32 +167,4 @@
 		</xs:sequence>
 	</xs:complexType>
 
-<!--
-	<xs:complexType name="identifiers">
-		<xs:sequence>
-			<xs:element name="identifier" type="common:external-ids"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="identifier">
-		<xs:sequence>
-			<xs:element name="external-identifier-type" type="activities:identifier-types"
-				maxOccurs="1" />
-			<xs:element name="external-identifier-id" maxOccurs="1"
-				type="common:non-empty-string">
-				<xs:annotation>
-					<xs:documentation>Value for the identifier</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-		</xs:sequence>
-	</xs:complexType>
-
- 
-	<xs:simpleType name="identifier-types">
-		<xs:union
-			memberTypes="work:external-identifier-type funding:external-identifier-type" />
-	</xs:simpleType>
-	 -->
-
 </xs:schema>
