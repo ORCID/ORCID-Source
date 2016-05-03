@@ -4364,6 +4364,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /* This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
         try {
             work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
             serviceDelegator.createWork(orcid, work);
@@ -4372,7 +4373,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         //Assert that it could be created with a valid value
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
@@ -4410,6 +4411,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /* This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
         try {
             peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
             serviceDelegator.createPeerReview(orcid, peerReview);
@@ -4418,7 +4420,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         //Set the ext id to a correct value to test the subject ext id
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
@@ -4433,6 +4435,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /*
         try {
             peerReview.getSubjectExternalIdentifier().setType("DOI");
             serviceDelegator.createPeerReview(orcid, peerReview);
@@ -4441,7 +4444,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         //Test it works with correct values
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
@@ -4477,6 +4480,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /*  This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
         try {
             funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("GRANT_NUMBER");
             serviceDelegator.createFunding(orcid, funding);
@@ -4485,7 +4489,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("grant_number");
         Response response = serviceDelegator.createFunding(orcid, funding);
