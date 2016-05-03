@@ -54,17 +54,12 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class ValidateV2rc3Identifiers {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateV2rc3Identifiers.class);
-
-    String[] sampleNames = { "funding", "person", "record", "work", "peer-review","activities" };
+    String[] sampleNames = { "funding", "person", "record", "work", "peer-review", "activities" };
 
     @Test
     public void Test() throws SAXException, IOException {
@@ -293,6 +288,7 @@ public class ValidateV2rc3Identifiers {
         return validator;
     }
     
+    @SuppressWarnings("unchecked")
     private <T> T unmarshallFromPath(String path, Class<T> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);

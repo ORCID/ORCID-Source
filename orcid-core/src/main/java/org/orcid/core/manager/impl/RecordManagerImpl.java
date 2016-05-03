@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Preferences;
 import org.orcid.jaxb.model.record_rc2.Record;
-import org.orcid.jaxb.model.record_rc2.SubmissionDate;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -131,10 +130,6 @@ public class RecordManagerImpl implements RecordManager {
         if(profile.getLastModified() != null) {            
             history.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified())));
         }
-        
-        if(profile.getSubmissionDate() != null) {
-            history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(profile.getSubmissionDate())));
-        }                
         
         if(profile.getSource() != null) {
             history.setSource(new Source(profile.getSource().getSourceId()));                

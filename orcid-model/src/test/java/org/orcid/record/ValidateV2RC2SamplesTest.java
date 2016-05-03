@@ -571,12 +571,7 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(history.getLastModifiedDate().getValue());
         assertEquals(2001, history.getLastModifiedDate().getValue().getYear());
         assertEquals(12, history.getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, history.getLastModifiedDate().getValue().getDay());        
-        assertNotNull(history.getSubmissionDate());
-        assertNotNull(history.getSubmissionDate().getValue());
-        assertEquals(2001, history.getSubmissionDate().getValue().getYear());
-        assertEquals(12, history.getSubmissionDate().getValue().getMonth());
-        assertEquals(31, history.getSubmissionDate().getValue().getDay());        
+        assertEquals(31, history.getLastModifiedDate().getValue().getDay());                       
     }
     
     @Test
