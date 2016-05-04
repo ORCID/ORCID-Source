@@ -11,9 +11,10 @@
 	xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:education="http://www.orcid.org/ns/education"
 	xmlns:funding="http://www.orcid.org/ns/funding" xmlns:history="http://www.orcid.org/ns/history"
 	xmlns:internal="http://www.orcid.org/ns/internal" xmlns:person="http://www.orcid.org/ns/person"
-	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record"
-	xmlns:work="http://www.orcid.org/ns/work" xmlns:peer-review="http://www.orcid.org/ns/peer-review"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc2.xsd ">
+	xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:record="http://www.orcid.org/ns/record" 
+	xmlns:peer-review="http://www.orcid.org/ns/peer-review"
+	xmlns:work="http://www.orcid.org/ns/work" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/record ../record-2.0_rc2.xsd ">
 	<common:orcid-identifier>
 		<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 		<common:path>8888-8888-8888-8880</common:path>
@@ -295,7 +296,7 @@
 					</common:end-date>
 				</funding:summary>
 			</activities:group>
-		</activities:fundings>		
+		</activities:fundings>
 		<activities:peer-reviews>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
@@ -332,7 +333,7 @@
 						<common:month>02</common:month>
 						<common:day>02</common:day>
 					</peer-review:completion-date>
-					<peer-review:review-group-id>issn:1119191</peer-review:review-group-id>
+					<peer-review:review-group-id>orcid-generated:12345</peer-review:review-group-id>
 					<peer-review:convening-organization>
 						<common:name>common:name</common:name>
 						<common:address>
@@ -347,7 +348,7 @@
 					</peer-review:convening-organization>
 				</peer-review:summary>
 			</activities:group>
-		</activities:peer-reviews>				
+		</activities:peer-reviews>
 		<activities:works>
 			<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 			<activities:group>
