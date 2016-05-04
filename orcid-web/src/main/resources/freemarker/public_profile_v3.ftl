@@ -244,7 +244,7 @@
 				                        </#if>				                        
 				                        <div ng-if="showSources['external-identifiers']" ng-init='createdDate = "${external.createdDate.value}"' class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                		 	<#if (external.source)?? && (external.source.sourceName)??>${external.source.sourceName.content?js_string}</#if>({{createdDate | date:'yyyy-MM-dd'}})
+					                		 	<#if (external.source)?? && (external.source.sourceName)??>${external.source.sourceName.content?js_string}</#if> ({{createdDate | date:'yyyy-MM-dd'}})
 					                		</p>				                						                			                						                			
 										</div>				                        			                       
 					                	<#if external_has_next><br/></#if>
