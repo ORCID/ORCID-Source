@@ -41,11 +41,13 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.IdentifierType;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-core-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+//@DirtiesContext
 public class IdentifierTypeManagerTest extends BaseTest{
 
     private static final String CLIENT_1_ID = "APP-6666666666666666";
@@ -76,56 +78,49 @@ public class IdentifierTypeManagerTest extends BaseTest{
     }
     
     @Test
-    public void test1CreateIdentifier(){
-        System.out.println("=== one");
+    public void test0FetchEntities(){
+        Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName();
+        assertEquals(34, map.size()); //default set is 34 
+        assertTrue(map.containsKey("other-id"));
+        assertEquals("other-id",map.get("other-id").getName());
+        assertNotNull(map.get("other-id").getPutCode());        
+    }
+    
+    @Test
+    public void test1FetchIdentifier(){
+        IdentifierType id = idTypeMan.fetchIdentifierTypeByDatabaseName("DOI");
+        assertEquals("doi",id.getName());
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("OTHER_ID");
+        assertEquals("other-id",id.getName());
+    }
+    
+    @Test
+    @Transactional
+    @Rollback
+    public void test2CreateAndUpdateIdentifier(){
         IdentifierType id = idTypeMan.createIdentifierType(createIdentifierType(1));
         assertNotNull(id);
         assertNotNull(id.getPutCode());
         assertTrue(new Date().after(id.getDateCreated()));
-    }
-    
-    
-    @Test
-    public void test2FetchIdentifier(){
-        IdentifierType id = idTypeMan.fetchIdentifierTypeByName("name1");
-        assertEquals("name1",id.getName());
-    }
-
-    @Test
-    public void test3UpdateIdentifier(){
-        IdentifierType id = idTypeMan.fetchIdentifierTypeByName("name1");
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1");
+        assertNotNull(id);
+        
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1");
         Date last = id.getLastModified();
         id.setValidationRegex("test");
         
         id = idTypeMan.updateIdentifierType(id);
         assertTrue(last.before(id.getLastModified()));  
         
-        id = idTypeMan.fetchIdentifierTypeByName("name1");
-        assertEquals("name1",id.getName());
+        id = idTypeMan.fetchIdentifierTypeByDatabaseName("TEST1");
+        assertEquals("test1",id.getName());
         assertEquals("test",id.getValidationRegex());
         assertTrue(last.getTime() < id.getLastModified().getTime()); 
     }
-
-    @Test
-    public void test4FetchEntities(){
-        Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypes();
-        assertEquals(1, map.size());
-        assertTrue(map.containsKey("name1"));
-        assertEquals("name1",map.get("name1").getName());
-        assertNotNull(map.get("name1").getSourceClient());
-        assertNotNull(map.get("name1").getPutCode());
-        IdentifierType id = idTypeMan.createIdentifierType(createIdentifierType(2));
-        map = idTypeMan.fetchIdentifierTypes();
-        assertEquals(2, map.size());
-        assertTrue(map.containsKey("name1"));
-        assertTrue(map.containsKey("name2"));
-        assertEquals("name2",map.get("name2").getName());
-    }
     
-
     private IdentifierType createIdentifierType(int seed){
         IdentifierType id = new IdentifierType();        
-        id.setName("name"+seed);
+        id.setName("test"+seed);
         id.setDeprecated(true);
         id.setResolutionPrefix("prefix"+seed);
         id.setValidationRegex("validation"+seed);   

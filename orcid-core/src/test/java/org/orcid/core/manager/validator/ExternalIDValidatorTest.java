@@ -18,7 +18,11 @@ package org.orcid.core.manager.validator;
 
 import static org.junit.Assert.*;
 
+import javax.annotation.Resource;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -26,18 +30,24 @@ import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
 
-public class ExternalIDValidatorTest {
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+public class ExternalIDValidatorTest{
 
+    @Resource
+    private ExternalIDValidator validator;
+    
     @Test
     public void testValidateWorkOrPeerReview(){
         //call for ExternalID and ExternalIDs
-        ExternalIDValidator validator = ExternalIDValidator.getInstance();
         
         //ID valid
         ExternalID id1 = new ExternalID();
         id1.setRelationship(Relationship.SELF);
-        id1.setType("DOI");
+        id1.setType("doi");
         id1.setValue("value1");
         id1.setUrl(new Url("http://value1.com"));
         validator.validateWorkOrPeerReview(id1);
@@ -49,7 +59,7 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type");
+                throw e;
         }
         
         //id null
@@ -59,7 +69,7 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type "+e.getClass());
+                throw e;
         }
 
         ExternalIDs ids = new ExternalIDs();
@@ -72,7 +82,7 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type");
+                throw e;
         }
 
         //IDS one valid (lowercase)
@@ -95,7 +105,7 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type");
+                throw e;
         }
         
         
@@ -103,7 +113,6 @@ public class ExternalIDValidatorTest {
 
     @Test
     public void testValidateFunding(){
-        ExternalIDValidator validator = ExternalIDValidator.getInstance();
         ExternalID id1 = new ExternalID();
         id1.setRelationship(Relationship.SELF);
         id1.setType("grant_number");
@@ -115,7 +124,7 @@ public class ExternalIDValidatorTest {
 
         ExternalID id2 = new ExternalID();
         id2.setRelationship(Relationship.SELF);
-        id2.setType("source-work-id");
+        id2.setType("INVALID");
         id2.setValue("value2");
         id2.setUrl(new Url("http://value1.com"));        
         ids.getExternalIdentifier().add(id2);
@@ -126,7 +135,7 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type");
+                throw e;
         }
 
         //both valid
@@ -140,19 +149,18 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type");
+                throw e;
         }
     }
 
     @Test
     public void testValidateNotificationItems(){
-        ExternalIDValidator validator = ExternalIDValidator.getInstance();
         Item i = new Item();
         Item i2 = new Item();
         Items items = new Items();  
         ExternalID id1 = new ExternalID();
         id1.setRelationship(Relationship.SELF);
-        id1.setType("DOI");
+        id1.setType("doi");
         id1.setValue("value1");
         id1.setUrl(new Url("http://value1.com"));
         ExternalID id2 = new ExternalID();
@@ -176,7 +184,7 @@ public class ExternalIDValidatorTest {
             fail("no exception thrown for invalid type");
         }catch(Exception e){
             if (!(e instanceof ActivityIdentifierValidationException))
-                fail("incorrect exception type");
+                throw e;
         }
         
         //IDS one valid, one VALID due to null (at least we have to do this if we want other tests to pass!)

@@ -40,19 +40,6 @@ public final class SingleWorkExternalIdentifierFromJsonConverter extends Bidirec
         eids.getExternalIdentifier().add(source);
         WorkExternalIdentifiers ids = new WorkExternalIdentifiers(eids);
         return ids.toDBJSONString();
-        
-        /*
-        WorkExternalIdentifiers workExternalIdentifiers = new WorkExternalIdentifiers();
-        WorkExternalIdentifier workExternalIdentifier = new WorkExternalIdentifier();
-        workExternalIdentifiers.getWorkExternalIdentifier().add(workExternalIdentifier);
-        workExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId(source.getValue()));
-        //TODO: work with non-schema types
-        try{
-            workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(source.getType()));
-        }catch (IllegalArgumentException e){
-            throw e;
-        }
-        return JsonUtils.convertToJsonString(workExternalIdentifiers);*/
     }
 
     @Override
@@ -60,17 +47,6 @@ public final class SingleWorkExternalIdentifierFromJsonConverter extends Bidirec
         WorkExternalIdentifiers ids = WorkExternalIdentifiers.fromDBJSONString(source);
         WorkExternalIdentifier id = ids.getWorkExternalIdentifier().get(0);
         return id.toRecordPojo();
-        /*
-        WorkExternalIdentifiers workExternalIdentifiers = JsonUtils.readObjectFromJsonString(source, WorkExternalIdentifiers.class);
-        List<WorkExternalIdentifier> workExternalIdentifierList = workExternalIdentifiers.getWorkExternalIdentifier();
-        if (workExternalIdentifierList.isEmpty()) {
-            return null;
-        }
-        WorkExternalIdentifier workExternalIdentifier = workExternalIdentifierList.get(0);
-        ExternalID extId = new ExternalID();
-        extId.setValue(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
-        extId.setType(workExternalIdentifier.getWorkExternalIdentifierType().value()); //should this be name?
-        return extId;*/
     }
 
 }

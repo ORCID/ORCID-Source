@@ -25,6 +25,6 @@ public interface IdentifierTypeManager {
     public void setSourceManager(SourceManager manager);
     public IdentifierType createIdentifierType(IdentifierType id);
     public IdentifierType updateIdentifierType(IdentifierType id);
-    public IdentifierType fetchIdentifierTypeByName(String name);
-    public Map<String,IdentifierType> fetchIdentifierTypes();
+    public IdentifierType fetchIdentifierTypeByDatabaseName(String name);
+    public Map<String,IdentifierType> fetchIdentifierTypesByAPITypeName();
 }

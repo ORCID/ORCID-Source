@@ -18,8 +18,11 @@ package org.orcid.core.manager.validator;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
+import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -29,22 +32,18 @@ import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 public class ExternalIDValidator {
 
-    private static ExternalIDValidator instance = new ExternalIDValidator();
+    @Resource
+    IdentifierTypeManager identifierTypeManager;
     
-    private ExternalIDValidator(){}
-    
-    public static ExternalIDValidator getInstance(){
-        return instance;
-    }
+    public ExternalIDValidator(){}
     
     public void validateWorkOrPeerReview(ExternalID id){
         if (id == null)
-            return;
-        try{
-            WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-        }catch (IllegalArgumentException | NullPointerException e ){
+            return;        
+        if (id.getType() == null || 
+                !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())){
             checkAndThrow(Lists.newArrayList(id.getType()));
-        }
+        }        
     }
 
     public void validateWorkOrPeerReview(ExternalIDs ids){     
@@ -52,9 +51,8 @@ public class ExternalIDValidator {
             return;
         List<String> errors = Lists.newArrayList();        
         for (ExternalID id : ids.getExternalIdentifier()){
-            try{
-                WorkExternalIdentifierType t = WorkExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException  | NullPointerException e){
+            if (id.getType() == null ||
+                    !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())){
                 errors.add(id.getType());
             }
         }            
@@ -66,9 +64,8 @@ public class ExternalIDValidator {
             return;
         List<String> errors = Lists.newArrayList();        
         for (ExternalID id : ids.getExternalIdentifier()){
-            try{
-                FundingExternalIdentifierType t = FundingExternalIdentifierType.fromValue(id.getType().toLowerCase());
-            }catch (IllegalArgumentException  | NullPointerException e ){
+            if (id.getType() == null ||
+                    !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())){
                 errors.add(id.getType());
             }
         }            
@@ -80,11 +77,11 @@ public class ExternalIDValidator {
             return;
         List<String> errors = Lists.newArrayList();
         for (Item i: items.getItems()){
-            try{
-                if (i.getExternalIdentifier() !=null && i.getExternalIdentifier().getType()!=null)
-                    WorkExternalIdentifierType.fromValue(i.getExternalIdentifier().getType().toLowerCase());
-            }catch (IllegalArgumentException  | NullPointerException e){
-                errors.add(i.getExternalIdentifier().getType());
+            if (i.getExternalIdentifier() !=null && i.getExternalIdentifier().getType()!=null){
+                if (i.getExternalIdentifier().getType() == null ||
+                        !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(i.getExternalIdentifier().getType())){
+                    errors.add(i.getExternalIdentifier().getType());
+                }
             }
         }
         checkAndThrow(errors);

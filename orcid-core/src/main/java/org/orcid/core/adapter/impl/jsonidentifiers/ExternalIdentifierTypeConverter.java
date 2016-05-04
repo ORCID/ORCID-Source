@@ -36,8 +36,8 @@ public final class ExternalIdentifierTypeConverter extends BidirectionalConverte
     @Override
     public String convertFrom(String source, Type<String> destinationType) {
         //annoying hack because grant_number does it different.
-        if (source.equalsIgnoreCase("grant_number"))
-            return source;
+        if (source.equals("GRANT_NUMBER"))
+            return "grant_number";
         return source.toLowerCase().replace("_", "-");
     }
 

@@ -316,6 +316,9 @@
     </bean>
 
     <bean id="notificationValidationManager" class="org.orcid.core.manager.impl.NotificationValidationManagerImpl" />
+    
+    <bean id="activityValidator" class="org.orcid.core.manager.validator.ActivityValidator" />
+    <bean id="externalIDValidator" class="org.orcid.core.manager.validator.ExternalIDValidator" />
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
@@ -437,7 +440,6 @@
         <constructor-arg value="true"/>
     </bean>   
 	
-	
 	<bean id="springCoreCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
 		<property name="cacheManager" ref="coreCacheManager" />
 	</bean>
@@ -507,8 +509,6 @@
 		<property name="strategy" value="NONE" />
 	</bean>
 
-
-
 	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="client-details-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
@@ -555,6 +555,7 @@
         <property name="copyOnWrite" value="false" />
     </bean>
     
+    <!-- 
     <bean id="identifierTypesCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="identifierTypes" />
         <property name="cacheManager" ref="coreCacheManager" />
@@ -569,7 +570,7 @@
         <property name="maxElementsInMemory" value="1" />
         <property name="maxElementsOnDisk" value="0" />
         <property name="strategy" value="NONE" />
-    </bean>
+    </bean> -->
 
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"

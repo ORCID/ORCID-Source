@@ -20,7 +20,8 @@ import java.util.Date;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.adapter.impl.IdentifierTypeConverter;
+import org.orcid.core.BaseTest;
+import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
@@ -28,15 +29,13 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import static org.junit.Assert.*;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-core-context.xml" })
-public class IdentifierTypeConverterTest {
+public class IdentifierTypeConverterTest extends BaseTest {
 
     @Test
     public void testFromPojo(){
         IdentifierType id = new IdentifierType();
         id.setPutCode(1l);
-        id.setName("name");
+        id.setName("name-test");
         id.setDeprecated(true);
         id.setResolutionPrefix("prefix");
         id.setValidationRegex("validation");   
@@ -46,9 +45,9 @@ public class IdentifierTypeConverterTest {
         client.setClientName("clientName");
         id.setSourceClient(client);
         
-        IdentifierTypeEntity entity = new IdentifierTypeConverter().fromPojo(id);
+        IdentifierTypeEntity entity = new IdentifierTypePOJOConverter().fromPojo(id);
         assertEquals(Long.valueOf(1l), entity.getId());
-        assertEquals("name",entity.getName());
+        assertEquals("NAME_TEST",entity.getName());
         assertEquals(true,entity.getIsDeprecated());
         assertEquals("prefix",entity.getResolutionPrefix());
         assertEquals("validation",entity.getValidationRegex());
@@ -61,7 +60,7 @@ public class IdentifierTypeConverterTest {
     public void testToPojo(){
         IdentifierTypeEntity entity1 = new IdentifierTypeEntity();
         entity1.setId(1l);
-        entity1.setName("name");
+        entity1.setName("NAME_TEST");
         entity1.setIsDeprecated(true);
         entity1.setResolutionPrefix("prefix");
         entity1.setValidationRegex("validation");   
@@ -71,9 +70,9 @@ public class IdentifierTypeConverterTest {
         client.setClientName("clientName");
         entity1.setSourceClient(client);
         
-        IdentifierType id = new IdentifierTypeConverter().fromEntity(entity1);
+        IdentifierType id = new IdentifierTypePOJOConverter().fromEntity(entity1);
         assertEquals(Long.valueOf(1l), id.getPutCode());
-        assertEquals("name",id.getName());
+        assertEquals("name-test",id.getName());
         assertEquals(true,id.getDeprecated());
         assertEquals("prefix",id.getResolutionPrefix());
         assertEquals("validation",id.getValidationRegex());

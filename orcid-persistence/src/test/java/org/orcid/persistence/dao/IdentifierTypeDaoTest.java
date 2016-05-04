@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,6 +29,8 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.*;
@@ -39,6 +42,7 @@ import java.util.List;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml" })
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@DirtiesContext
 public class IdentifierTypeDaoTest extends DBUnitTest{
 
     @Resource
@@ -60,20 +64,17 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
     }
 
     @Test
-    public void test1AddID(){
+    public void test1AddUpdateFetchID(){
         IdentifierTypeEntity e1 = new IdentifierTypeEntity();
-        e1.setName("name");
+        e1.setName("TEST_A");
         e1.setResolutionPrefix("http://whatever.com/{id}");
         e1.setValidationRegex("blah");        
         e1.setSourceClient(clientDetailsDao.findByClientId("APP-6666666666666666",new Date().getTime()));  
         IdentifierTypeEntity e2 = idTypeDao.addIdentifierType(e1);
         assertNotNull(e2.getId());
-    }
-    
-    @Test
-    public void test2FetchID(){
-        IdentifierTypeEntity e1 = idTypeDao.getEntityByName("name");
-        assertEquals("name",e1.getName());
+
+        e1 = idTypeDao.getEntityByName("TEST_A");
+        assertEquals("TEST_A",e1.getName());
         assertEquals("http://whatever.com/{id}",e1.getResolutionPrefix());
         assertEquals("blah",e1.getValidationRegex());
         assertFalse(e1.getIsDeprecated());
@@ -82,17 +83,15 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         assertTrue((new Date()).after(e1.getDateCreated()));
         assertTrue((new Date()).after(e1.getLastModified()));
         assertEquals("APP-6666666666666666",e1.getSourceClient().getId());
-    }
-
-    @Test
-    public void test3UpdateID(){
-        IdentifierTypeEntity e1 = idTypeDao.getEntityByName("name");
+        
+        //update
+        //e1 = idTypeDao.getEntityByName("TEST_A");
         Date last = e1.getLastModified();
         e1.setResolutionPrefix("http://whatever2.com/{id}");
         e1.setValidationRegex("blah2");
         e1.setIsDeprecated(true);
         e1 = idTypeDao.updateIdentifierType(e1);
-        assertEquals("name",e1.getName());
+        assertEquals("TEST_A",e1.getName());
         assertEquals("http://whatever2.com/{id}",e1.getResolutionPrefix());
         assertEquals("blah2",e1.getValidationRegex());
         assertTrue(e1.getIsDeprecated());
@@ -100,23 +99,22 @@ public class IdentifierTypeDaoTest extends DBUnitTest{
         assertEquals("APP-6666666666666666",e1.getSourceClient().getClientId());
         assertTrue((new Date()).after(e1.getDateCreated()));
         assertTrue(last.before(e1.getLastModified()));
-        e1 = idTypeDao.getEntityByName("name");
-        e1 = idTypeDao.getEntityByName("name");
-        e1 = idTypeDao.getEntityByName("name");
+        e1 = idTypeDao.getEntityByName("TEST_A");
+        e1 = idTypeDao.getEntityByName("TEST_A");
     }
     
     @Test
     public void test4FetchIDList(){
+        List<IdentifierTypeEntity> list = idTypeDao.getEntities();
+        int startSize = list.size();
         IdentifierTypeEntity e1 = new IdentifierTypeEntity();
-        e1.setName("aaa");
+        e1.setName("TEST_B");
         ClientDetailsEntity sourceClient = new ClientDetailsEntity();
         sourceClient.setId("APP-6666666666666666");
         e1.setSourceClient(sourceClient);
         idTypeDao.addIdentifierType(e1);
-        List<IdentifierTypeEntity> list = idTypeDao.getEntities();
-        assertEquals(2, list.size());
-        assertEquals("aaa",list.get(0).getName());        
-        assertEquals("name",list.get(1).getName());        
+        list = idTypeDao.getEntities();
+        assertEquals(startSize+1, list.size());        
     }
     
 }

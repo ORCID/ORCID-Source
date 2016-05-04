@@ -33,6 +33,7 @@ import org.junit.Ignore;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * Base class for testing using DBUnit.
@@ -50,7 +51,7 @@ public class DBUnitTest {
             "given_permission_to", "external_identifier", "email", "email_event", "biography", "record_name", "other_name", "profile_keyword", "profile_patent", "org_disambiguated",
             "org_disambiguated_external_identifier", "org", "org_affiliation_relation", "profile_funding", "funding_external_identifier", "address", "institution",
             "affiliation", "notification", "client_details", "client_secret", "oauth2_token_detail", "custom_email", "webhook", "granted_authority", "orcid_props",
-            "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record", "identifier_type"};
+            "peer_review", "peer_review_subject", "shibboleth_account", "group_id_record"};
 
     private static ApplicationContext context = new ClassPathXmlApplicationContext(CONTEXT);
 
@@ -101,7 +102,6 @@ public class DBUnitTest {
         dataSet.addTable("shibboleth_account");
         dataSet.addTable("group_id_record");
         dataSet.addTable("address");
-        dataSet.addTable("identifier_type");
         DatabaseOperation.DELETE.execute(connection, dataSet);
 
         QueryDataSet theRest = new QueryDataSet(connection);
