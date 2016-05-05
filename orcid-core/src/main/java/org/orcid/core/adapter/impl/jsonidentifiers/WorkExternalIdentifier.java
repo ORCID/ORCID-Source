@@ -27,7 +27,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/** Class used to serialise to/from JSON DB representation
+/**
+ * Class used to serialise to/from JSON DB representation
  * 
  * @author tom
  *
@@ -35,9 +36,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapter<org.orcid.jaxb.model.message.WorkExternalIdentifier, ExternalID> {
 
     private static final long serialVersionUID = 1L;
-    
-    //modeled as an RC1 external identifier for DB serialization
-    //test by creating this and a RC1 version and checking they serialise to the same JSON
+
+    // modeled as an RC1 external identifier for DB serialization
+    // test by creating this and a RC1 version and checking they serialise to
+    // the same JSON
     @JsonProperty("relationship")
     protected String relationship;
     @JsonProperty("url")
@@ -46,36 +48,40 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
     protected String workExternalIdentifierType;
     @JsonProperty("workExternalIdentifierId")
     protected WorkExternalIdentifierId workExternalIdentifierId;
-    
-    
-    public class WorkExternalIdentifierId implements Serializable{
+
+    public class WorkExternalIdentifierId implements Serializable {
         private static final long serialVersionUID = 1L;
         public String content;
-        public WorkExternalIdentifierId(){}
-        public WorkExternalIdentifierId(String value){this.content = value;}
+
+        public WorkExternalIdentifierId() {
+        }
+
+        public WorkExternalIdentifierId(String value) {
+            this.content = value;
+        }
     }
-    
+
     @JsonIgnore
     private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
-    
-    public WorkExternalIdentifier(){
-        
+
+    public WorkExternalIdentifier() {
+
     }
-    
-    public WorkExternalIdentifier(org.orcid.jaxb.model.message.WorkExternalIdentifier messagePojo){
+
+    public WorkExternalIdentifier(org.orcid.jaxb.model.message.WorkExternalIdentifier messagePojo) {
         if (messagePojo.getWorkExternalIdentifierType() != null) {
             this.setWorkExternalIdentifierType(messagePojo.getWorkExternalIdentifierType().value());
-        }        
+        }
         if (messagePojo.getWorkExternalIdentifierId() != null && !PojoUtil.isEmpty(messagePojo.getWorkExternalIdentifierId().getContent())) {
             this.setWorkExternalIdentifierId(new WorkExternalIdentifierId(messagePojo.getWorkExternalIdentifierId().getContent()));
         }
     }
-    
-    public WorkExternalIdentifier (ExternalID recordPojo) {
+
+    public WorkExternalIdentifier(ExternalID recordPojo) {
         if (recordPojo.getType() != null) {
             this.setWorkExternalIdentifierType(recordPojo.getType());
         }
-        
+
         if (recordPojo.getUrl() != null) {
             this.setUrl(new Url(recordPojo.getUrl().getValue()));
         }
@@ -83,17 +89,17 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
         if (!PojoUtil.isEmpty(recordPojo.getValue())) {
             this.setWorkExternalIdentifierId(new WorkExternalIdentifierId(recordPojo.getValue()));
         }
-        
-        if(recordPojo.getRelationship() != null) {
+
+        if (recordPojo.getRelationship() != null) {
             this.setRelationship(recordPojo.getRelationship().value());
         }
     }
-    
+
     public org.orcid.jaxb.model.message.WorkExternalIdentifier toMessagePojo() {
         org.orcid.jaxb.model.message.WorkExternalIdentifier messagePojo = new org.orcid.jaxb.model.message.WorkExternalIdentifier();
-        try{
-            messagePojo.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(conv.convertFrom(this.getWorkExternalIdentifierType(),null)));
-        }catch(Exception e){
+        try {
+            messagePojo.setWorkExternalIdentifierType(WorkExternalIdentifierType.fromValue(conv.convertFrom(this.getWorkExternalIdentifierType(), null)));
+        } catch (Exception e) {
             messagePojo.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
         }
         messagePojo.setWorkExternalIdentifierId(new org.orcid.jaxb.model.message.WorkExternalIdentifierId());
@@ -103,20 +109,20 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
 
     public ExternalID toRecordPojo() {
         ExternalID id = new ExternalID();
-        id.setType(conv.convertFrom(this.getWorkExternalIdentifierType(),null));
+        id.setType(conv.convertFrom(this.getWorkExternalIdentifierType(), null));
         id.setValue(this.getWorkExternalIdentifierId().content);
-        if (this.url!=null)
+        if (this.url != null)
             id.setUrl(new org.orcid.jaxb.model.common_rc2.Url(this.getUrl().value));
-        if (this.getRelationship()!=null)
-            id.setRelationship(Relationship.fromValue(conv.convertFrom(this.getRelationship(),null)));
+        if (this.getRelationship() != null)
+            id.setRelationship(Relationship.fromValue(conv.convertFrom(this.getRelationship(), null)));
         return id;
     }
-    
-    public String toDBJSONString(){
+
+    public String toDBJSONString() {
         return JsonUtils.convertToJsonString(this);
     }
-    
-    public static WorkExternalIdentifier fromDBJSONString(String dbJSON){
+
+    public static WorkExternalIdentifier fromDBJSONString(String dbJSON) {
         return JsonUtils.readObjectFromJsonString(dbJSON, WorkExternalIdentifier.class);
     }
 
@@ -126,7 +132,7 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
 
     public void setWorkExternalIdentifierType(String workExternalIdentifierType) {
         if (workExternalIdentifierType != null)
-            this.workExternalIdentifierType = conv.convertTo(workExternalIdentifierType,null);
+            this.workExternalIdentifierType = conv.convertTo(workExternalIdentifierType, null);
     }
 
     public WorkExternalIdentifierId getWorkExternalIdentifierId() {
@@ -142,8 +148,8 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
     }
 
     public void setRelationship(String relationship) {
-        if (relationship !=null)
-            this.relationship = conv.convertTo(relationship,null);
+        if (relationship != null)
+            this.relationship = conv.convertTo(relationship, null);
     }
 
     public Url getUrl() {

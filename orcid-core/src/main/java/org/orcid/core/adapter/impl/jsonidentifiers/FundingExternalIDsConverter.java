@@ -28,7 +28,7 @@ public class FundingExternalIDsConverter extends BidirectionalConverter<External
     public ExternalIDs convertFrom(String externalIdentifiersAsString, Type<ExternalIDs> type) {
         FundingExternalIdentifiers jpaExtIds = FundingExternalIdentifiers.fromDBJSONString(externalIdentifiersAsString);
         ExternalIDs result = new ExternalIDs();
-        for(FundingExternalIdentifier jpaExtId : jpaExtIds.getFundingExternalIdentifier()) {
+        for (FundingExternalIdentifier jpaExtId : jpaExtIds.getFundingExternalIdentifier()) {
             result.getExternalIdentifier().add(jpaExtId.toRecordPojo());
         }
         return result;
@@ -39,9 +39,9 @@ public class FundingExternalIDsConverter extends BidirectionalConverter<External
         try {
             FundingExternalIdentifiers jpaExternalIdentifiers = new FundingExternalIdentifiers(fundingExternalIdentifiers);
             return jpaExternalIdentifiers.toDBJSONString();
-        } catch(IllegalArgumentException e) {
-            throw new ActivityIdentifierValidationException(e); 
-        }        
+        } catch (IllegalArgumentException e) {
+            throw new ActivityIdentifierValidationException(e);
+        }
     }
-    
+
 }

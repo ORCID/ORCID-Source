@@ -18,17 +18,25 @@ package org.orcid.core.adapter.impl.jsonidentifiers;
 
 import java.io.Serializable;
 
-public interface JSONIdentifierAdapter<T,S> {
+public interface JSONIdentifierAdapter<T, S> {
 
     public String toDBJSONString();
+
     public T toMessagePojo();
+
     public S toRecordPojo();
-    
-    public class Url implements Serializable{
+
+    public class Url implements Serializable {
         private static final long serialVersionUID = 1L;
         public String value;
-        public Url(){}
-        public Url(String value){this.value = value;}
+
+        public Url() {
+        }
+
+        public Url(String value) {
+            this.value = value;
+        }
+
         public String getValue() {
             return value;
         }

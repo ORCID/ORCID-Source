@@ -23,8 +23,6 @@ import javax.annotation.Resource;
 import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.IdentifierTypeManager;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
@@ -34,52 +32,50 @@ public class ExternalIDValidator {
 
     @Resource
     IdentifierTypeManager identifierTypeManager;
-    
-    public ExternalIDValidator(){}
-    
-    public void validateWorkOrPeerReview(ExternalID id){
+
+    public ExternalIDValidator() {
+    }
+
+    public void validateWorkOrPeerReview(ExternalID id) {
         if (id == null)
-            return;        
-        if (id.getType() == null || 
-                !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())){
+            return;
+        if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
             checkAndThrow(Lists.newArrayList(id.getType()));
-        }        
+        }
     }
 
-    public void validateWorkOrPeerReview(ExternalIDs ids){     
-        if (ids==null) //yeuch
+    public void validateWorkOrPeerReview(ExternalIDs ids) {
+        if (ids == null) // yeuch
             return;
-        List<String> errors = Lists.newArrayList();        
-        for (ExternalID id : ids.getExternalIdentifier()){
-            if (id.getType() == null ||
-                    !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())){
+        List<String> errors = Lists.newArrayList();
+        for (ExternalID id : ids.getExternalIdentifier()) {
+            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
                 errors.add(id.getType());
             }
-        }            
+        }
         checkAndThrow(errors);
     }
 
-    public void validateFunding(ExternalIDs ids){
-        if (ids==null) //urgh
+    public void validateFunding(ExternalIDs ids) {
+        if (ids == null) // urgh
             return;
-        List<String> errors = Lists.newArrayList();        
-        for (ExternalID id : ids.getExternalIdentifier()){
-            if (id.getType() == null ||
-                    !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())){
+        List<String> errors = Lists.newArrayList();
+        for (ExternalID id : ids.getExternalIdentifier()) {
+            if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
                 errors.add(id.getType());
             }
-        }            
+        }
         checkAndThrow(errors);
     }
-    
-    public void validateNotificationItems(Items items){
+
+    public void validateNotificationItems(Items items) {
         if (items == null)
             return;
         List<String> errors = Lists.newArrayList();
-        for (Item i: items.getItems()){
-            if (i.getExternalIdentifier() !=null && i.getExternalIdentifier().getType()!=null){
-                if (i.getExternalIdentifier().getType() == null ||
-                        !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(i.getExternalIdentifier().getType())){
+        for (Item i : items.getItems()) {
+            if (i.getExternalIdentifier() != null && i.getExternalIdentifier().getType() != null) {
+                if (i.getExternalIdentifier().getType() == null
+                        || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(i.getExternalIdentifier().getType())) {
                     errors.add(i.getExternalIdentifier().getType());
                 }
             }
@@ -87,11 +83,11 @@ public class ExternalIDValidator {
         checkAndThrow(errors);
     }
 
-    private void checkAndThrow(List<String> errors){
-        if (!errors.isEmpty()){
+    private void checkAndThrow(List<String> errors) {
+        if (!errors.isEmpty()) {
             StringBuffer errorString = new StringBuffer();
-            errors.forEach(n -> errorString.append(" "+n));
-            throw new ActivityIdentifierValidationException("Invalid external-id "+errorString.toString());
+            errors.forEach(n -> errorString.append(" " + n));
+            throw new ActivityIdentifierValidationException("Invalid external-id " + errorString.toString());
         }
     }
 

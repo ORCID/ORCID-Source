@@ -26,34 +26,35 @@ import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 
 public class FundingExternalIdentifiers implements Serializable, JSONIdentifierAdapter<org.orcid.jaxb.model.message.FundingExternalIdentifiers, ExternalIDs> {
-    
+
     private static final long serialVersionUID = 1L;
     protected List<FundingExternalIdentifier> fundingExternalIdentifier;
 
-    public FundingExternalIdentifiers (){}
+    public FundingExternalIdentifiers() {
+    }
 
-    public FundingExternalIdentifiers (org.orcid.jaxb.model.message.FundingExternalIdentifiers messagePojo) {
-        if (messagePojo!=null && !messagePojo.getFundingExternalIdentifier().isEmpty()) {
+    public FundingExternalIdentifiers(org.orcid.jaxb.model.message.FundingExternalIdentifiers messagePojo) {
+        if (messagePojo != null && !messagePojo.getFundingExternalIdentifier().isEmpty()) {
             for (org.orcid.jaxb.model.message.FundingExternalIdentifier messageFei : messagePojo.getFundingExternalIdentifier()) {
                 this.getFundingExternalIdentifier().add(new FundingExternalIdentifier(messageFei));
             }
-            
-            for(FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
-                if(fei.getRelationship() == null) {
+
+            for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
+                if (fei.getRelationship() == null) {
                     fei.setRelationship(Relationship.SELF.value());
                 }
             }
         }
     }
 
-    public FundingExternalIdentifiers (ExternalIDs recordPojo) {
-        if (recordPojo!=null && !recordPojo.getExternalIdentifier().isEmpty()) {
-            for (ExternalID recordEi : recordPojo.getExternalIdentifier()) {                               
+    public FundingExternalIdentifiers(ExternalIDs recordPojo) {
+        if (recordPojo != null && !recordPojo.getExternalIdentifier().isEmpty()) {
+            for (ExternalID recordEi : recordPojo.getExternalIdentifier()) {
                 this.getFundingExternalIdentifier().add(new FundingExternalIdentifier(recordEi));
             }
         }
-    }    
-    
+    }
+
     public List<FundingExternalIdentifier> getFundingExternalIdentifier() {
         if (fundingExternalIdentifier == null)
             fundingExternalIdentifier = new ArrayList<FundingExternalIdentifier>();
@@ -83,8 +84,8 @@ public class FundingExternalIdentifiers implements Serializable, JSONIdentifierA
         } else {
             if (other.fundingExternalIdentifier == null)
                 return false;
-            else if (!(fundingExternalIdentifier.containsAll(other.fundingExternalIdentifier) && other.fundingExternalIdentifier.containsAll(fundingExternalIdentifier) && other.fundingExternalIdentifier
-                    .size() == fundingExternalIdentifier.size())) {
+            else if (!(fundingExternalIdentifier.containsAll(other.fundingExternalIdentifier) && other.fundingExternalIdentifier.containsAll(fundingExternalIdentifier)
+                    && other.fundingExternalIdentifier.size() == fundingExternalIdentifier.size())) {
                 return false;
             }
         }
@@ -110,12 +111,12 @@ public class FundingExternalIdentifiers implements Serializable, JSONIdentifierA
         }
         return result;
     }
-    
-    public String toDBJSONString(){
+
+    public String toDBJSONString() {
         return JsonUtils.convertToJsonString(this);
     }
-    
-    public static FundingExternalIdentifiers fromDBJSONString(String dbJSON){
+
+    public static FundingExternalIdentifiers fromDBJSONString(String dbJSON) {
         return JsonUtils.readObjectFromJsonString(dbJSON, FundingExternalIdentifiers.class);
     }
 

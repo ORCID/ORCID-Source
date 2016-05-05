@@ -41,10 +41,11 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
     protected String relationship;
     @JsonIgnore
     private ExternalIdentifierTypeConverter conv = new ExternalIdentifierTypeConverter();
-    
-    protected FundingExternalIdentifier (){}
-    
-    public FundingExternalIdentifier (org.orcid.jaxb.model.message.FundingExternalIdentifier messagePojo) {
+
+    protected FundingExternalIdentifier() {
+    }
+
+    public FundingExternalIdentifier(org.orcid.jaxb.model.message.FundingExternalIdentifier messagePojo) {
         if (messagePojo.getType() != null) {
             this.setType(messagePojo.getType().value());
         }
@@ -57,12 +58,12 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
             this.setValue(messagePojo.getValue());
         }
     }
-    
-    public FundingExternalIdentifier (org.orcid.jaxb.model.record_rc2.ExternalID recordPojo) {
+
+    public FundingExternalIdentifier(org.orcid.jaxb.model.record_rc2.ExternalID recordPojo) {
         if (recordPojo.getType() != null) {
             this.setType(recordPojo.getType());
         }
-        
+
         if (recordPojo.getUrl() != null) {
             this.setUrl(new Url(recordPojo.getUrl().getValue()));
         }
@@ -70,26 +71,26 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
         if (!PojoUtil.isEmpty(recordPojo.getValue())) {
             this.setValue(recordPojo.getValue());
         }
-        
-        if(recordPojo.getRelationship() != null) {
+
+        if (recordPojo.getRelationship() != null) {
             this.setRelationship(recordPojo.getRelationship().value());
         }
     }
-    
+
     public FundingExternalIdentifier(FundingExternalIdentifierType type, String url2, String value) {
         this.setType(type.value());
         this.setUrl(new Url(url2));
         this.setValue(value);
     }
 
-    public String toDBJSONString(){
+    public String toDBJSONString() {
         return JsonUtils.convertToJsonString(this);
     }
-    
-    public static FundingExternalIdentifier fromDBJSONString(String dbJSON){
+
+    public static FundingExternalIdentifier fromDBJSONString(String dbJSON) {
         return JsonUtils.readObjectFromJsonString(dbJSON, FundingExternalIdentifier.class);
     }
-    
+
     public String getType() {
         return type;
     }
@@ -114,14 +115,14 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
     public void setUrl(Url url) {
         this.url = url;
     }
-    
+
     public String getRelationship() {
         return relationship;
     }
 
     public void setRelationship(String relationship) {
-        if (relationship !=null)
-            this.relationship = conv.convertTo(relationship,null);
+        if (relationship != null)
+            this.relationship = conv.convertTo(relationship, null);
     }
 
     @Override
@@ -158,27 +159,28 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
             if (other.value != null)
                 return false;
         } else if (!value.equals(other.value))
-            return false;                
+            return false;
         if (relationship == null) {
             if (other.relationship != null)
                 return false;
         } else if (!relationship.equals(other.relationship))
-            return false;                
+            return false;
         return true;
     }
-    
+
     public org.orcid.jaxb.model.message.FundingExternalIdentifier toMessagePojo() {
         org.orcid.jaxb.model.message.FundingExternalIdentifier messagePojo = new org.orcid.jaxb.model.message.FundingExternalIdentifier();
-        try{
-            //note that funding identifiers use "_" in the api e.g. grant_number wheras works use "-".  Isn't that fun?
+        try {
+            // note that funding identifiers use "_" in the api e.g.
+            // grant_number wheras works use "-". Isn't that fun?
             messagePojo.setType(FundingExternalIdentifierType.fromValue(this.getType().toLowerCase()));
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             messagePojo.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         }
-        if (this.getUrl()!=null){
+        if (this.getUrl() != null) {
             org.orcid.jaxb.model.message.Url messageUrl = new org.orcid.jaxb.model.message.Url();
             messageUrl.setValue(this.getUrl().value);
-            messagePojo.setUrl(messageUrl);            
+            messagePojo.setUrl(messageUrl);
         }
         messagePojo.setValue(this.getValue());
         return messagePojo;
@@ -187,7 +189,8 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
     public ExternalID toRecordPojo() {
         ExternalID recordPojo = new ExternalID();
 
-        //note that funding identifiers use "_" in the api e.g. grant_number wheras works use "-".  Isn't that fun?
+        // note that funding identifiers use "_" in the api e.g. grant_number
+        // wheras works use "-". Isn't that fun?
         recordPojo.setType(this.getType().toLowerCase());
 
         if (this.getUrl() != null && !PojoUtil.isEmpty(this.getUrl().value)) {
@@ -198,9 +201,9 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
         if (!PojoUtil.isEmpty(this.getValue())) {
             recordPojo.setValue(this.getValue());
         }
-        
-        if (this.getRelationship()!=null)
-            recordPojo.setRelationship(Relationship.fromValue(conv.convertFrom(this.getRelationship(),null)));
+
+        if (this.getRelationship() != null)
+            recordPojo.setRelationship(Relationship.fromValue(conv.convertFrom(this.getRelationship(), null)));
 
         return recordPojo;
     }

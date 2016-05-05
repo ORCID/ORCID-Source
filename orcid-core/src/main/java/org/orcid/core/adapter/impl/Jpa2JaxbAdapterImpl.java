@@ -31,7 +31,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
-import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;

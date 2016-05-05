@@ -37,36 +37,38 @@ import org.orcid.pojo.IdentifierType;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
-/** Manages the map of external identifier types.  
+/**
+ * Manages the map of external identifier types.
  * 
  * Identifier types cannot be deleted, but they can be marked as deprecated.
  * 
- * Identifier types are fun!  In the API, they are (generally) lower case with hyphens.  In the DB they are (generally) upper case with underscores.
+ * Identifier types are fun! In the API, they are (generally) lower case with
+ * hyphens. In the DB they are (generally) upper case with underscores.
  * 
  * @author tom
  *
  */
-public class IdentifierTypeManagerImpl implements IdentifierTypeManager{
+public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
 
     @Resource
     private IdentifierTypeDao idTypeDao;
-    
+
     @Resource
     private ClientDetailsDao clientDetailsDao;
-    
+
     @Resource
     private SourceManager sourceManager;
-    
+
     @Resource
     private OrcidSecurityManager securityManager;
-        
+
     private IdentifierTypePOJOConverter adapter = new IdentifierTypePOJOConverter();
     private ExternalIdentifierTypeConverter externalIdentifierTypeConverter = new ExternalIdentifierTypeConverter();
 
-    public void setSourceManager(SourceManager manager){
+    public void setSourceManager(SourceManager manager) {
         this.sourceManager = manager;
     }
-    
+
     @Override
     @Cacheable("identifier-types")
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name) {
@@ -74,21 +76,22 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager{
         return adapter.fromEntity(entity);
     }
 
-    /** Returns an immutable map of API Type Name->identifierType objects.
+    /**
+     * Returns an immutable map of API Type Name->identifierType objects.
      * 
      */
     @Override
     @Cacheable("identifier-types-map")
     public Map<String, IdentifierType> fetchIdentifierTypesByAPITypeName() {
         List<IdentifierTypeEntity> entities = idTypeDao.getEntities();
-        Map<String,IdentifierType> ids = new HashMap<String,IdentifierType>();
-        for (IdentifierTypeEntity e: entities){
-            IdentifierType id = adapter.fromEntity(e);            
-            ids.put(id.getName(),id);
+        Map<String, IdentifierType> ids = new HashMap<String, IdentifierType>();
+        for (IdentifierTypeEntity e : entities) {
+            IdentifierType id = adapter.fromEntity(e);
+            ids.put(id.getName(), id);
         }
         return Collections.unmodifiableMap(ids);
     }
-    
+
     @Override
     @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
     public IdentifierType createIdentifierType(IdentifierType id) {
@@ -105,14 +108,14 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager{
     @Override
     @CacheEvict(value = { "identifier-types", "identifier-types-map" }, allEntries = true)
     public IdentifierType updateIdentifierType(IdentifierType id) {
-        IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName(),null)); 
+        IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName(), null));
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(entity.getSourceClient());
-        securityManager.checkSource(sourceEntity);        
+        securityManager.checkSource(sourceEntity);
         entity.setIsDeprecated(id.getDeprecated());
         entity.setResolutionPrefix(id.getResolutionPrefix());
         entity.setValidationRegex(id.getValidationRegex());
-        entity.setLastModified(new Date()); 
+        entity.setLastModified(new Date());
         entity = idTypeDao.updateIdentifierType(entity);
         return adapter.fromEntity(entity);
     }

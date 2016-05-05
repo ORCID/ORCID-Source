@@ -16,18 +16,21 @@
  */
 package org.orcid.core.adapter.impl.jsonidentifiers;
 
-import java.util.List;
-
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
-/** This class serializes a single ExternalID into a WorkExternalIdentifiers with one item - it is used in the works table.
- * On the way back, it takes a WorkExternalIdentifiers and returns the first WorkExternalIdentifier as an ExternalID
+/**
+ * This class serializes a single ExternalID into a WorkExternalIdentifiers with
+ * one item - it is used in the works table. On the way back, it takes a
+ * WorkExternalIdentifiers and returns the first WorkExternalIdentifier as an
+ * ExternalID
  * 
- * There is a similar class (ExternalIDConvertor) which does not wrap the workExternalIdentifier in a WorkExternalIdentifiers - that is used for peer reviews.
+ * There is a similar class (ExternalIDConvertor) which does not wrap the
+ * workExternalIdentifier in a WorkExternalIdentifiers - that is used for peer
+ * reviews.
  * 
  * @author Will Simpson
  *
