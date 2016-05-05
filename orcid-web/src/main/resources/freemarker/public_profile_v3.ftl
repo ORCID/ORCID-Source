@@ -57,14 +57,16 @@
 			            			<li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelAlsoknownas")}</span></li>
 			            			<li class="right">			            			
 				            			<span ng-click="toggleSourcesDisplay('other-names')" class="right toggle" ng-mouseenter="showPopover('other-names')" ng-mouseleave="hidePopover('other-names')">
-				            				<i ng-class="(showSources['other-names'] || showSources['other-names'] == 'null')? 'glyphicons collapse_top relative' : 'glyphicons expand relative'"></i>
-				            				<div class="popover top" ng-class="{'block' : showPopover['other-names']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['other-names'] == false  || showSources['other-names'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['other-names']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
+				            				<#if RequestParameters['v2']??>
+					            				<i ng-class="(showSources['other-names'] || showSources['other-names'] == 'null')? 'glyphicons collapse_top relative' : 'glyphicons expand relative'"></i>
+					            				<div class="popover top" ng-class="{'block' : showPopover['other-names']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['other-names'] == false  || showSources['other-names'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['other-names']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+											</#if>
 				            			</span>				            												  	
 			            			</li>		                		
 		                		</ul>
@@ -88,16 +90,18 @@
 		            			<ul class="inline-list visible workspace-section-heading">
 								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>
 								    <li class="right">
-								    	<span ng-click="toggleSourcesDisplay('countries')" class="right toggle" ng-mouseenter="showPopover('countries')" ng-mouseleave="hidePopover('countries')">
-								    		<i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['countries']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['countries'] == false  || showSources['countries'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['countries']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
+									    <#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('countries')" class="right toggle" ng-mouseenter="showPopover('countries')" ng-mouseleave="hidePopover('countries')">
+									    		<i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['countries']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['countries'] == false  || showSources['countries'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['countries']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
 								    </li>
 								</ul>		                		
 		                		<div id="public-country-div" class="public-content">
@@ -118,16 +122,18 @@
 		            			<ul class="inline-list visible workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelKeywords")}</span></li>
 								    <li class="right">
-								    	<span ng-click="toggleSourcesDisplay('keywords')" class="right toggle" ng-mouseenter="showPopover('keywords')" ng-mouseleave="hidePopover('keywords')">
-								    		<i ng-class="(showSources['keywords'] || showSources['keywords'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['keywords']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['keywords'] == false  || showSources['keywords'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['keywords']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
+									    <#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('keywords')" class="right toggle" ng-mouseenter="showPopover('keywords')" ng-mouseleave="hidePopover('keywords')">
+									    		<i ng-class="(showSources['keywords'] || showSources['keywords'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['keywords']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['keywords'] == false  || showSources['keywords'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['keywords']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
 								    </li>		                		
 								</ul>	
 		                		<div id="public-keywords-div" class="public-content">		                    		
@@ -150,16 +156,18 @@
 		            			<ul class="inline-list visible workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
 								    <li class="right">
-								    	<span ng-click="toggleSourcesDisplay('websites')" class="right toggle" ng-mouseenter="showPopover('websites')" ng-mouseleave="hidePopover('websites')">
-								    		<i ng-class="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['websites']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['websites'] == false  || showSources['websites'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['websites']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
+								    	<#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('websites')" class="right toggle" ng-mouseenter="showPopover('websites')" ng-mouseleave="hidePopover('websites')">
+									    		<i ng-class="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['websites']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['websites'] == false  || showSources['websites'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['websites']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
 								    </li>		                		
 								</ul>
 				                <div id="public-researcher-urls-div" class="public-content">
@@ -189,16 +197,18 @@
 		            			<ul class="inline-list visible workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
 								    <li class="right">
-								    	<span ng-click="toggleSourcesDisplay('emails')" class="right toggle" ng-mouseenter="showPopover('emails')" ng-mouseleave="hidePopover('emails')">
-								    		<i ng-class="(showSources['emails'] || showSources['emails'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['emails']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['emails'] == false  || showSources['emails'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['emails']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
+									    <#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('emails')" class="right toggle" ng-mouseenter="showPopover('emails')" ng-mouseleave="hidePopover('emails')">
+									    		<i ng-class="(showSources['emails'] || showSources['emails'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['emails']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['emails'] == false  || showSources['emails'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['emails']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
 								    </li>		                		
 								</ul>		            			
 		            			<div class="public-content" id="public-emails-div">
