@@ -282,8 +282,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotEmployment.getRoleTitle());
         
         //Save the original visibility
         Visibility originalVisibility = gotEmployment.getVisibility();
@@ -328,8 +328,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotEmployment.getRoleTitle());
         gotEmployment.setDepartmentName("updated dept. name");
         gotEmployment.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);

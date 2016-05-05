@@ -574,7 +574,7 @@ public class SetUpClientsAndUsers {
             // Set default bio
             org.orcid.jaxb.model.record_rc2.Biography bio = biographyManager.getBiography(orcid);
             if(bio != null) {
-                bio.setContent("");
+                bio.setContent(params.get(BIO));
                 bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.updateBiography(orcid, bio);
             } 
