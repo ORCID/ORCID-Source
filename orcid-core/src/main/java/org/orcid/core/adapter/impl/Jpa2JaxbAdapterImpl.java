@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
+import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
@@ -413,7 +414,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         funding.setVisibility(profileFundingEntity.getVisibility() != null ? profileFundingEntity.getVisibility() : Visibility.PRIVATE);
         funding.setPutCode(Long.toString(profileFundingEntity.getId()));
         funding.setFundingContributors(getFundingContributors(profileFundingEntity));
-        funding.setFundingExternalIdentifiers(getFundingExternalIdentifiers(profileFundingEntity));
+        
+        if (profileFundingEntity.getExternalIdentifiersJson() != null){
+            FundingExternalIdentifiers ids = FundingExternalIdentifiers.fromDBJSONString(profileFundingEntity.getExternalIdentifiersJson());
+            funding.setFundingExternalIdentifiers(ids.toMessagePojo());
+        }
 
         // Set organization
         Organization organization = new Organization();
@@ -440,22 +445,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return funding;
     }
 
-    /**
-     * Get external identifiers from a profileFundingEntity object
-     * 
-     * @param profileFundingEntity
-     * @return The external identifiers in the form of a
-     *         FundingExternalIdentifiers object
-     * */
-    private org.orcid.jaxb.model.message.FundingExternalIdentifiers getFundingExternalIdentifiers(ProfileFundingEntity profileFundingEntity) {
-        String externalIdsJson = profileFundingEntity.getExternalIdentifiersJson();
-        if (!PojoUtil.isEmpty(externalIdsJson)) {
-            FundingExternalIdentifiers fundingExternalIdentifiers = JsonUtils.readObjectFromJsonString(externalIdsJson, FundingExternalIdentifiers.class);
-            org.orcid.jaxb.model.message.FundingExternalIdentifiers result = fundingExternalIdentifiers.toMessagePojo();
-            return result;
-        }
-        return new org.orcid.jaxb.model.message.FundingExternalIdentifiers();
-    }
 
     /**
      * Get the funding contributors from a profileFundingEntity
@@ -882,7 +871,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         orcidWork.setUrl(StringUtils.isNotBlank(work.getWorkUrl()) ? new Url(work.getWorkUrl()) : null);
         orcidWork.setWorkCitation(getWorkCitation(work));
         orcidWork.setWorkContributors(getWorkContributors(work));
-        orcidWork.setWorkExternalIdentifiers(getWorkExternalIdentifiers(work));
+        if (work.getExternalIdentifiersJson() != null){
+            org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers extIds = org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers.fromDBJSONString(work.getExternalIdentifiersJson());        
+            orcidWork.setWorkExternalIdentifiers(extIds.toMessagePojo());            
+        }
         orcidWork.setSource(getSource(work));
         orcidWork.setWorkTitle(getWorkTitle(work));
         orcidWork.setJournalTitle(StringUtils.isNotBlank(work.getJournalTitle()) ? new Title(work.getJournalTitle()) : null);
@@ -942,15 +934,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (work.getTranslatedTitle() != null)
             workTitle.setTranslatedTitle(new TranslatedTitle(work.getTranslatedTitle(), work.getTranslatedTitleLanguageCode()));
         return workTitle;
-    }
-
-    private WorkExternalIdentifiers getWorkExternalIdentifiers(WorkEntity work) {
-        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
-        String externalIdentifiersJson = work.getExternalIdentifiersJson();
-        if (!PojoUtil.isEmpty(externalIdentifiersJson)) {
-            extIds = JsonUtils.readObjectFromJsonString(externalIdentifiersJson, WorkExternalIdentifiers.class);
-        }
-        return extIds;
     }
 
     private WorkContributors getWorkContributors(WorkEntity work) {

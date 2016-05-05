@@ -35,6 +35,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
+import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifier;
+import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIdentifiers;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
@@ -333,62 +335,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     private String getWorkExternalIdsJson(OrcidWork work) {
         if (work == null || work.getWorkExternalIdentifiers() == null) {
             return null;
-        }
-        //Transform the external id v1.2 into an external id v2.0 
-        //note uses rc1 format, rc2 no longer has WorkExternalIdentifiers, this is to maintain db compatibility
-        org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers recordExternalIdentifiers = org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers.valueOf(work.getWorkExternalIdentifiers());
-        
-        /**
-         * Transform the external identifiers according to the rules in: 
-         * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
-         * */
-        for(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier extId : recordExternalIdentifiers.getExternalIdentifier()) {
-            if(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.ISSN.equals(extId.getWorkExternalIdentifierType())) {
-                if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
-                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF);
-                } else {
-                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
-                }                
-            } else if(org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType.ISBN.equals(extId.getWorkExternalIdentifierType())) {
-                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
-                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF);
-                } else {
-                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
-                }
-            } else {
-                extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF);
-            }
-        }
-        
-        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
-        
-        /*
-        if (work == null || work.getWorkExternalIdentifiers() == null) {
-            return null;
-        }
-        
-        org.orcid.jaxb.model.record_rc2.ExternalIDs recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.ExternalIDs.valueOf(work.getWorkExternalIdentifiers());
-        
-        for(org.orcid.jaxb.model.record_rc2.ExternalID extId : recordExternalIdentifiers.getExternalIdentifiers()) {
-            if(ExternalIDType.ISSN.equals(extId.getType())) {
-                if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
-                    extId.setRelationship(Relationship.PART_OF);
-                } else {
-                    extId.setRelationship(Relationship.SELF);
-                }                
-            } else if(ExternalIDType.ISBN.equals(extId.getType())) {
-                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
-                    extId.setRelationship(Relationship.PART_OF);
-                } else {
-                    extId.setRelationship(Relationship.SELF);
-                }
-            } else {
-                extId.setRelationship(Relationship.SELF);
-            }
-        }
-        
-        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
-        */
+        }        
+        WorkExternalIdentifiers recordExternalIdentifiers = new WorkExternalIdentifiers(work.getWorkExternalIdentifiers(), work.getWorkType());        
+        return recordExternalIdentifiers.toDBJSONString();
     }
     
     
@@ -1147,7 +1096,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileFundingEntity.setContributorsJson(getFundingContributorsJson(funding.getFundingContributors()));
             profileFundingEntity.setDescription(StringUtils.isNotBlank(funding.getDescription()) ? funding.getDescription() : null);
             profileFundingEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
-            profileFundingEntity.setExternalIdentifiersJson(getFundingExternalIdentifiersJson(funding.getFundingExternalIdentifiers()));
+            FundingExternalIdentifiers recordExternalIdentifiers = new FundingExternalIdentifiers(funding.getFundingExternalIdentifiers());        
+            profileFundingEntity.setExternalIdentifiersJson(recordExternalIdentifiers.toDBJSONString());
             profileFundingEntity.setStartDate(startDate != null ? new StartDateEntity(startDate) : null);
 
             FundingTitle fundingTitle = funding.getTitle();
@@ -1183,29 +1133,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-    
-    /**
-     * Transforms the list of external identifiers into a json object
-     * @param fundingExternalIdentifiers
-     * @return a json string containig the external identifiers
-     * */
-    private String getFundingExternalIdentifiersJson(org.orcid.jaxb.model.message.FundingExternalIdentifiers fundingExternalIdentifiers) {
-        if (fundingExternalIdentifiers == null) {
-            return null;
-        }
-        //Transform the message external identifiers to core external identifiers
-        FundingExternalIdentifiers feis = new FundingExternalIdentifiers(fundingExternalIdentifiers);
-        if(feis != null && !feis.getFundingExternalIdentifier().isEmpty()) {
-            //For all external identifiers, if the relationship is empty set it to self by default
-            for(org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifier fei : feis.getFundingExternalIdentifier()) {
-                if(fei.getRelationship() == null) {
-                    fei.setRelationship(Relationship.SELF.value());
-                }
-            }
-        }
-        return feis.toDBJSONString();
-    }
-    
 
     /**
      * Transforms a string into a BigDecimal, it assumes the amount comes

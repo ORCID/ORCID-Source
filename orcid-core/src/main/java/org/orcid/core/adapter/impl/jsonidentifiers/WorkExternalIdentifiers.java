@@ -44,10 +44,35 @@ public class WorkExternalIdentifiers implements Serializable, JSONIdentifierAdap
         }
     }
     
-    public WorkExternalIdentifiers (org.orcid.jaxb.model.message.WorkExternalIdentifiers messagePojo){
+    public WorkExternalIdentifiers (org.orcid.jaxb.model.message.WorkExternalIdentifiers messagePojo, org.orcid.jaxb.model.message.WorkType workType){
         if (messagePojo!=null && !messagePojo.getWorkExternalIdentifier().isEmpty()) {
             for (org.orcid.jaxb.model.message.WorkExternalIdentifier messageFei : messagePojo.getWorkExternalIdentifier()) {
                 this.getWorkExternalIdentifier().add(new WorkExternalIdentifier(messageFei));
+            }
+            
+            /**
+             * Transform the external identifiers according to the rules in: 
+             * https://trello.com/c/pqboi7EJ/1368-activity-identifiers-add-self-or-part-of
+             * */
+            
+            for(WorkExternalIdentifier extId : this.getWorkExternalIdentifier()) {
+                org.orcid.jaxb.model.message.WorkExternalIdentifierType type = org.orcid.jaxb.model.message.WorkExternalIdentifierType.fromValue(extId.getWorkExternalIdentifierType());
+                
+                if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(type)) {
+                    if(!workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
+                        extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF.value());
+                    } else {
+                        extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
+                    }                
+                } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(type)) {
+                    if(workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || workType.equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
+                        extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.PART_OF.value());
+                    } else {
+                        extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
+                    }
+                } else {
+                    extId.setRelationship(org.orcid.jaxb.model.record_rc1.Relationship.SELF.value());
+                }
             }
         }
     }

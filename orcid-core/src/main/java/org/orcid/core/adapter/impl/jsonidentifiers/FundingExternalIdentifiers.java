@@ -23,6 +23,7 @@ import java.util.List;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 
 public class FundingExternalIdentifiers implements Serializable, JSONIdentifierAdapter<org.orcid.jaxb.model.message.FundingExternalIdentifiers, ExternalIDs> {
     
@@ -35,6 +36,12 @@ public class FundingExternalIdentifiers implements Serializable, JSONIdentifierA
         if (messagePojo!=null && !messagePojo.getFundingExternalIdentifier().isEmpty()) {
             for (org.orcid.jaxb.model.message.FundingExternalIdentifier messageFei : messagePojo.getFundingExternalIdentifier()) {
                 this.getFundingExternalIdentifier().add(new FundingExternalIdentifier(messageFei));
+            }
+            
+            for(FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
+                if(fei.getRelationship() == null) {
+                    fei.setRelationship(Relationship.SELF.value());
+                }
             }
         }
     }
