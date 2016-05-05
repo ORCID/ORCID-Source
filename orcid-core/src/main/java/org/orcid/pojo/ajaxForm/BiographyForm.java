@@ -46,14 +46,7 @@ public class BiographyForm implements ErrorsInterface, Serializable {
                 if(profile.getBiographyEntity().getVisibility() != null) {
                     bf.setVisiblity(Visibility.valueOf(profile.getBiographyEntity().getVisibility()));
                 }
-            } else {
-                if (!PojoUtil.isEmpty(profile.getBiography())) {
-                    bf.setBiography(Text.valueOf(profile.getBiography()));
-                }   
-                if(profile.getBiographyVisibility() != null) {
-                    bf.setVisiblity(Visibility.valueOf(profile.getBiographyVisibility()));
-                }
-            }
+            } 
             
             if(bf.getVisiblity() == null) {
                 if(profile.getActivitiesVisibilityDefault() != null) {

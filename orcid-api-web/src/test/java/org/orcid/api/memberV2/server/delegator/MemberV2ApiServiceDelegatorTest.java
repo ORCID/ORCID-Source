@@ -3165,6 +3165,35 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
     }
     
+    @Test
+    public void testReadPublicScope_Record() {
+        String orcid = "0000-0000-0000-0003";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_PUBLIC);
+        Response response = serviceDelegator.viewRecord(orcid);
+        assertNotNull(response);
+        Record record = (Record) response.getEntity();
+        testPerson(record.getPerson(), orcid);
+        testActivities(record.getActivitiesSummary(), orcid);
+        assertNotNull(record.getHistory());
+        assertEquals(OrcidType.USER, record.getOrcidType());        
+        assertNotNull(record.getPreferences());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());
+        assertNotNull(record.getLastModifiedDate());
+        History history = record.getHistory();
+        assertTrue(history.getClaimed());
+        assertNotNull(history.getCompletionDate());
+        assertEquals(CreationMethod.INTEGRATION_TEST, history.getCreationMethod());
+        assertNull(history.getDeactivationDate());
+        assertNotNull(history.getLastModifiedDate());
+        assertNotNull(history.getSource());
+        assertEquals("APP-5555555555555555", history.getSource().retrieveSourcePath());
+        assertNotNull(history.getSubmissionDate());                
+        assertNotNull(record.getOrcidIdentifier());
+        OrcidIdentifier id = record.getOrcidIdentifier();
+        assertEquals("0000-0000-0000-0003", id.getPath());   
+    }
+    
+    
     private void testActivities(ActivitiesSummary as, String orcid) {
         //This is more an utility that will work only for 0000-0000-0000-0003
         assertEquals("0000-0000-0000-0003", orcid);
@@ -3336,7 +3365,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     
     @Test
-    public void viewPersonalDetails() {
+    public void testViewPersonalDetails() {
         String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.PERSON_READ_LIMITED);
         Response response = serviceDelegator.viewPersonalDetails(orcid);
@@ -3392,10 +3421,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         assertEquals("/0000-0000-0000-0003/other-names", personalDetails.getOtherNames().getPath());
         assertEquals("/0000-0000-0000-0003/personal-details", personalDetails.getPath());        
-    }
+    }        
     
     @Test
-    public void viewRecord() {
+    public void testViewRecord() {
         String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewRecord(orcid);
@@ -4695,6 +4724,11 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
         try {
             serviceDelegator.viewWorkSummary(orcid, 11L);
+        } catch (OrcidUnauthorizedException e) {
+            assertEquals("Incorrect token for claimed record", e.getMessage());
+        }
+        try {
+            serviceDelegator.viewRecord(orcid);
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }

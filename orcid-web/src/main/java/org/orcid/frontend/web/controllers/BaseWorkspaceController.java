@@ -32,7 +32,6 @@ import org.orcid.core.manager.CrossRefManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SecurityQuestionManager;
-import org.orcid.core.manager.SponsorManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.frontend.web.util.YearsList;
 import org.orcid.jaxb.model.message.OrcidProfile;
@@ -50,9 +49,6 @@ public class BaseWorkspaceController extends BaseController {
     protected static final String PUBLIC_WORKS_RESULTS_ATTRIBUTE = "public_works_results_attribute";
 
     protected static final String ORCID_ID_HASH = "orcid_hash";
-
-    @Resource
-    protected SponsorManager sponsorManager;
 
     @Resource
     private EncryptionManager encryptionManager;

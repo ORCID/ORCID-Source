@@ -16,17 +16,17 @@
  */
 package org.orcid.persistence.jpa.entities;
 
-import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 
 /**
  * 
@@ -39,10 +39,7 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
 
     private static final long serialVersionUID = 1L;
     private String orcid;
-    private String givenNames;
-    private String familyName;
-    private String creditName;
-    private Visibility namesVisibility;
+    private RecordNameEntity recordNameEntity;
 
     public ProfileSummaryEntity() {
         super();
@@ -63,58 +60,32 @@ public class ProfileSummaryEntity extends BaseEntity<String> {
         this.orcid = orcid;
     }
 
-    @Column(name = "given_names", length = 150)
-    public String getGivenNames() {
-        return givenNames;
+    @OneToOne(mappedBy = "profile", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})    
+    public RecordNameEntity getRecordNameEntity() {
+        return recordNameEntity;
     }
 
-    public void setGivenNames(String givenNames) {
-        this.givenNames = givenNames;
-    }
-
-    @Column(name = "family_name", length = 150)
-    public String getFamilyName() {
-        return familyName;
-    }
-
-    public void setFamilyName(String familyName) {
-        this.familyName = familyName;
-    }
-
-    @Column(name = "credit_name", length = 150)
-    public String getCreditName() {
-        return creditName;
-    }
-
-    public void setCreditName(String creditName) {
-        this.creditName = creditName;
-    }
-
-    @Basic
-    @Enumerated(EnumType.STRING)
-    @Column(name = "names_visibility")
-    public Visibility getNamesVisibility() {
-        return namesVisibility;
-    }
-
-    public void setNamesVisibility(Visibility namesVisibility) {
-        this.namesVisibility = namesVisibility;
+    public void setRecordNameEntity(RecordNameEntity recordNameEntity) {
+        this.recordNameEntity = recordNameEntity;
     }
 
     @Transient
     public String getDisplayName() {
-        if (StringUtils.isNotBlank(creditName) && Visibility.PUBLIC.equals(namesVisibility)) {
-            return creditName;
+        if(recordNameEntity == null) {
+            return null;
+        }
+        if (StringUtils.isNotBlank(recordNameEntity.getCreditName()) && Visibility.PUBLIC.equals(recordNameEntity.getVisibility())) {
+            return recordNameEntity.getCreditName();
         }
         StringBuilder builder = new StringBuilder();
-        if (StringUtils.isNotBlank(givenNames)) {
-            builder.append(givenNames);
+        if (StringUtils.isNotBlank(recordNameEntity.getGivenNames())) {
+            builder.append(recordNameEntity.getGivenNames());
         }
-        if (StringUtils.isNotBlank(familyName)) {
+        if (StringUtils.isNotBlank(recordNameEntity.getFamilyName())) {
             if (builder.length() > 0) {
                 builder.append(" ");
             }
-            builder.append(familyName);
+            builder.append(recordNameEntity.getFamilyName());
         }
         return builder.length() > 0 ? builder.toString() : null;
     }

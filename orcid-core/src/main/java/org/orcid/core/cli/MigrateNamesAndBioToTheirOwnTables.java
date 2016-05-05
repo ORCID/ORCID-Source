@@ -111,7 +111,7 @@ public class MigrateNamesAndBioToTheirOwnTables {
                                 visibility = Visibility.fromValue(defaultVisibility);
                             }
                             
-                            biographyDao.createBiography(orcid, biography, visibility);
+                            biographyDao.persistBiography(orcid, biography, visibility);
                         }
                     }
                 });

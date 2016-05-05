@@ -48,7 +48,7 @@ import io.swagger.annotations.ApiModelProperty;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "country", "createdDate", "lastModifiedDate", "source" })
+@XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "country" })
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")
 public class Address implements Filterable, Serializable, Comparable<Address> {
     private final static long serialVersionUID = 1L;

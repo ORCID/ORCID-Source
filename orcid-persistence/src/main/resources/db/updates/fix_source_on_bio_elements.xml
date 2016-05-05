@@ -1,0 +1,90 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="SET-SOURCE-TO-ADDRESS" author="Angel Montenegro" dbms="postgresql">
+		<sql>CREATE TEMP TABLE profiles_to_reindex AS (SELECT orcid FROM address where source_id is null and client_source_id is null) order by orcid;</sql>
+		<sql>
+			<![CDATA[
+				UPDATE address a 
+				SET source_id = p.source_id, client_source_id = p.client_source_id
+				FROM profile p 
+				WHERE p.orcid = a.orcid 
+					AND a.date_created < p.completed_date 
+					AND (a.source_id is null AND a.client_source_id is null);
+			]]>
+		</sql>
+		<sql>UPDATE address SET source_id=orcid WHERE source_id is null and client_source_id is null</sql>			
+		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
+		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>        
+	</changeSet>
+
+	<changeSet id="SET-SOURCE-TO-KEYWORDS" author="Angel Montenegro" dbms="postgresql">
+		<sql>CREATE TEMP TABLE profiles_to_reindex AS (SELECT profile_orcid as orcid FROM profile_keyword where source_id is null and client_source_id is null) order by orcid;</sql>
+		<sql>
+			<![CDATA[
+				UPDATE profile_keyword k 
+				SET source_id = p.source_id, client_source_id = p.client_source_id 
+				FROM profile p 
+				WHERE p.orcid = k.profile_orcid 
+					AND k.date_created < p.completed_date 
+					AND (k.source_id is null AND k.client_source_id is null);
+			]]>
+		</sql>
+		<sql>UPDATE profile_keyword SET source_id=profile_orcid WHERE source_id is null and client_source_id is null</sql>
+		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
+		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>			
+	</changeSet>
+	
+	<changeSet id="SET-SOURCE-TO-OTHER-NAMES" author="Angel Montenegro" dbms="postgresql">
+		<sql>CREATE TEMP TABLE profiles_to_reindex AS (SELECT orcid FROM other_name where source_id is null and client_source_id is null) order by orcid;</sql>
+		<sql>
+			<![CDATA[
+				UPDATE other_name o 
+				SET source_id = p.source_id, client_source_id = p.client_source_id
+				FROM profile p 
+				WHERE p.orcid = o.orcid 
+					AND o.date_created < p.completed_date 
+					AND (o.source_id is null AND o.client_source_id is null);
+			]]>
+		</sql>
+		<sql>UPDATE other_name SET source_id=orcid WHERE source_id is null and client_source_id is null</sql>			
+		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
+		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>			
+	</changeSet>
+	
+	<changeSet id="SET-SOURCE-TO-RESEARCHER-URLS" author="Angel Montenegro" dbms="postgresql">
+		<sql>CREATE TEMP TABLE profiles_to_reindex AS (SELECT orcid FROM researcher_url where source_id is null and client_source_id is null) order by orcid;</sql>
+		<sql>
+			<![CDATA[
+				UPDATE researcher_url r 
+				SET source_id = p.source_id, client_source_id = p.client_source_id
+				FROM profile p 
+				WHERE p.orcid = r.orcid 
+					AND r.date_created < p.completed_date 
+					AND (r.source_id is null AND r.client_source_id is null);
+			]]>
+		</sql>
+		<sql>UPDATE researcher_url SET source_id=orcid WHERE source_id is null and client_source_id is null</sql>			
+		<sql>UPDATE profile SET last_modified=now(), indexing_status='REINDEX' WHERE orcid in (SELECT orcid FROM profiles_to_reindex);</sql>
+		<sql>DROP TABLE IF EXISTS profiles_to_reindex;</sql>		
+	</changeSet>
+	   
+</databaseChangeLog>

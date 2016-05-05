@@ -58,7 +58,7 @@ public class BiographyDaoImpl extends GenericDaoImpl<BiographyEntity, Long> impl
 
     @Override
     @Transactional
-    public void createBiography(String orcid, String biography, Visibility visibility) {
+    public void persistBiography(String orcid, String biography, Visibility visibility) {
         BiographyEntity bio = new BiographyEntity();
         bio.setVisibility(visibility);
         bio.setBiography(biography);

@@ -44,7 +44,7 @@
 	<xs:element name="peer-review">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 						<xs:element name="reviewer-role" type="peer-review:role" minOccurs="1" maxOccurs="1">
 							<xs:annotation>
@@ -138,7 +138,7 @@
 	<xs:element name="summary">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>						
 						<!-- orcid orgs doesn't match specification -->
 						<xs:element ref="common:external-ids"

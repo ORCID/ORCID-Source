@@ -196,4 +196,6 @@
     <include file="/db/updates/create_biography_table.xml" />   
     <include file="/db/updates/remove_old_works_related_tables.xml" />    
     <include file="/db/updates/identifier-type.xml" />    
+    <include file="/db/updates/set_default_visibility_on_names.xml" />
+    <include file="/db/updates/fix_source_on_bio_elements.xml" />
 </databaseChangeLog>

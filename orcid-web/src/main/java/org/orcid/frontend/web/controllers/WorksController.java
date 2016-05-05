@@ -346,8 +346,6 @@ public class WorksController extends BaseWorkspaceController {
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
                             } else if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() != null) {                                
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getRecordNameEntity().getVisibility()));
-                            } else if(profileEntity.getNamesVisibility() != null) {
-                                contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getNamesVisibility()));
                             } else {
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT
                                         .getVisibility()));

@@ -23,13 +23,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URISyntaxException;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -48,16 +54,11 @@ import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.ApplicationSummary;
-import org.orcid.jaxb.model.record_rc2.Applications;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.CreditName;
-import org.orcid.jaxb.model.record_rc2.Delegation;
 import org.orcid.jaxb.model.record_rc2.Deprecated;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionBy;
-import org.orcid.jaxb.model.record_rc2.GivenPermissionTo;
 import org.orcid.jaxb.model.record_rc2.History;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
@@ -73,8 +74,8 @@ import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc2.ScopePath;
 import org.orcid.jaxb.model.record_rc2.WorkType;
+import org.xml.sax.SAXException;
 
 public class ValidateV2RC2SamplesTest {
     @Test
@@ -103,6 +104,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(0).getVisibility());
         assertEquals(Visibility.LIMITED, personalDetails.getOtherNames().getOtherNames().get(1).getVisibility());
     }
+    
+    @Test
+    public void testMarshallPersonalDetails() throws JAXBException, SAXException, URISyntaxException {
+        PersonalDetails object = (PersonalDetails) unmarshallFromPath("/record_2.0_rc2/samples/personal-details-2.0_rc2.xml", PersonalDetails.class);        
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");                        
+    }
 
     @Test
     public void testUnmarshallResearcherUrl() {
@@ -129,6 +136,12 @@ public class ValidateV2RC2SamplesTest {
         assertNotNull(rUrl.getLastModifiedDate());
         assertNotNull(rUrl.getSource());
         assertEquals("8888-8888-8888-8880", rUrl.getSource().retrieveSourcePath());
+    }
+    
+    @Test
+    public void testMarshallResearcherUrl() throws JAXBException, SAXException, URISyntaxException {
+        ResearcherUrls object = (ResearcherUrls) unmarshallFromPath("/record_2.0_rc2/samples/researcher-urls-2.0_rc2.xml", ResearcherUrls.class);
+        marshall(object, "/record_2.0_rc2/researcher-url-2.0_rc2.xsd");
     }
 
     @Test
@@ -160,6 +173,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());
     }
+    
+    @Test
+    public void testMarshallAddress() throws JAXBException, SAXException, URISyntaxException {
+        Addresses object = (Addresses) unmarshallFromPath("/record_2.0_rc2/samples/addresses-2.0_rc2.xml", Addresses.class);
+        marshall(object, "/record_2.0_rc2/address-2.0_rc2.xsd");
+    }
 
     @Test
     public void testUnmarshallBiography() {
@@ -170,6 +189,12 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
+    public void testMarshallBiography() throws JAXBException, SAXException, URISyntaxException {
+        Biography object = (Biography) unmarshallFromPath("/record_2.0_rc2/samples/biography-2.0_rc2.xml", Biography.class);
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallCreditName() {
         CreditName creditName = (CreditName) unmarshallFromPath("/record_2.0_rc2/samples/credit-name-2.0_rc2.xml", CreditName.class);
         assertNotNull(creditName);
@@ -177,6 +202,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC.value(), creditName.getVisibility().value());
     }
 
+    @Test
+    public void testMarshallCreditName() throws JAXBException, SAXException, URISyntaxException {
+        CreditName object = (CreditName) unmarshallFromPath("/record_2.0_rc2/samples/credit-name-2.0_rc2.xml", CreditName.class);
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallExternalIdentifiers() {
@@ -211,6 +242,13 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
     }
 
+    @Test
+    public void testMarshallExternalIdentifiers() throws JAXBException, SAXException, URISyntaxException {
+        PersonExternalIdentifiers object = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0_rc2/samples/external-identifiers-2.0_rc2.xml",
+                PersonExternalIdentifiers.class);
+        marshall(object, "/record_2.0_rc2/person-external-identifier-2.0_rc2.xsd");
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallKeyword() {
@@ -241,6 +279,12 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
+    public void testMarshallKeyword() throws JAXBException, SAXException, URISyntaxException {
+        Keywords object = (Keywords) unmarshallFromPath("/record_2.0_rc2/samples/keywords-2.0_rc2.xml", Keywords.class);
+        marshall(object, "/record_2.0_rc2/keyword-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallName() {
         Name name = (Name) unmarshallFromPath("/record_2.0_rc2/samples/name-2.0_rc2.xml", Name.class);
         assertNotNull(name);
@@ -254,6 +298,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, name.getVisibility());
     }
 
+    @Test
+    public void testMarshallName() throws JAXBException, SAXException, URISyntaxException {
+        Name object = (Name) unmarshallFromPath("/record_2.0_rc2/samples/name-2.0_rc2.xml", Name.class);
+        marshall(object, "/record_2.0_rc2/personal-details-2.0_rc2.xsd");
+    }
+    
     @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshallOtherNames() {
@@ -284,6 +334,12 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
+    public void testMarshallOtherNames() throws JAXBException, SAXException, URISyntaxException {
+        OtherNames object = (OtherNames) unmarshallFromPath("/record_2.0_rc2/samples/other-names-2.0_rc2.xml", OtherNames.class);
+        marshall(object, "/record_2.0_rc2/other-name-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallEmails() {
         Emails emails = (Emails) unmarshallFromPath("/record_2.0_rc2/samples/emails-2.0_rc2.xml", Emails.class);
         assertNotNull(emails);
@@ -313,77 +369,11 @@ public class ValidateV2RC2SamplesTest {
     }
 
     @Test
-    public void testUnmarshallDelegation() {
-        Delegation delegation = (Delegation) unmarshallFromPath("/record_2.0_rc2/samples/delegation-2.0_rc2.xml", Delegation.class);
-        assertNotNull(delegation);
-        assertNotNull(delegation.getGivenPermissionBy());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2015, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("given-by-credit-name", delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2016, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(1, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(1, delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", delegation.getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        assertNotNull(delegation.getGivenPermissionTo());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2015, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("given-to-credit-name", delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2016, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(1, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(1, delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", delegation.getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
+    public void testMarshallEmails() throws JAXBException, SAXException, URISyntaxException {
+        Emails object = (Emails) unmarshallFromPath("/record_2.0_rc2/samples/emails-2.0_rc2.xml", Emails.class);
+        marshall(object, "/record_2.0_rc2/email-2.0_rc2.xsd");
     }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testUnmarshallApplications() {
-        Applications applications = (Applications) unmarshallFromPath("/record_2.0_rc2/samples/applications-2.0_rc2.xml", Applications.class);
-        assertNotNull(applications);
-        assertEquals(Visibility.PUBLIC, applications.getVisibility());
-        assertNotNull(applications.getApplicationSummary());
-        assertEquals(1, applications.getApplicationSummary().size());
-        ApplicationSummary summary = applications.getApplicationSummary().get(0);
-        assertNotNull(summary.getApplicationOrcid());
-        assertEquals("8888-8888-8888-8880", summary.getApplicationOrcid().getPath());
-        assertEquals("application-name", summary.getApplicationName());
-        assertNotNull(summary.getApplicationWebsite());
-        assertEquals("http://application.com", summary.getApplicationWebsite().getValue());
-        assertNotNull(summary.getApprovalDate());
-        assertEquals(2015, summary.getApprovalDate().getValue().getYear());
-        assertEquals(12, summary.getApprovalDate().getValue().getMonth());
-        assertEquals(31, summary.getApprovalDate().getValue().getDay());
-        assertNotNull(summary.getScopePaths());
-        assertNotNull(summary.getScopePaths().getScopePath());
-        assertEquals(2, summary.getScopePaths().getScopePath().size());
-        for (ScopePath scope : summary.getScopePaths().getScopePath()) {
-            assertThat(scope.getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        }
-        assertNotNull(summary.getGroupOrcid());
-        assertEquals("8888-8888-8888-8880", summary.getGroupOrcid().getPath());
-        assertEquals("application-group-name", summary.getGroupName());
-    }
-
-    @SuppressWarnings("unchecked")
+    
     @Test
     public void testUnmarshallPerson() {
         Person person = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
@@ -510,70 +500,13 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, extId.getLastModifiedDate().getValue().getDay());
         assertNotNull(extId.getSource());
         assertEquals("8888-8888-8888-8880", extId.getSource().retrieveSourcePath());
-        assertNotNull(person.getDelegation());
-        assertNotNull(person.getDelegation().getGivenPermissionBy());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", person.getDelegation().getGivenPermissionBy().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        assertNotNull(person.getDelegation().getGivenPermissionTo());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getApprovalDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue());
-        assertEquals(2001, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getYear());
-        assertEquals(12, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getMonth());
-        assertEquals(31, person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getLastModifiedDate().getValue().getDay());
-        assertNotNull(person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        assertEquals("8888-8888-8888-8880", person.getDelegation().getGivenPermissionTo().get(0).getDelegationDetails().getDelegateSummary().getOrcidIdentifier().getPath());
-        assertNotNull(person.getApplications());
-        assertNotNull(person.getApplications().getApplicationSummary());
-        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
-        assertEquals(1, person.getApplications().getApplicationSummary().size());
-
-        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
-        assertEquals("application-name", application.getApplicationName());
-        assertNotNull(application.getApplicationOrcid());
-        assertEquals("8888-8888-8888-8880", application.getApplicationOrcid().getPath());
-        assertNotNull(application.getApplicationWebsite());
-        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
-        assertNotNull(application.getApprovalDate());
-        assertNotNull(application.getApprovalDate().getValue());
-        assertEquals(2001, application.getApprovalDate().getValue().getYear());
-        assertEquals(12, application.getApprovalDate().getValue().getMonth());
-        assertEquals(31, application.getApprovalDate().getValue().getDay());
-        assertNotNull(application.getScopePaths());
-        assertNotNull(application.getScopePaths().getScopePath());
-        assertEquals(2, application.getScopePaths().getScopePath().size());
-        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        assertThat(application.getScopePaths().getScopePath().get(1).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        assertNotNull(application.getGroupOrcid());
-        assertEquals("8888-8888-8888-8880", application.getGroupOrcid().getPath());
-        assertEquals("application-group-name", application.getGroupName());
     }
 
-    
+    @Test
+    public void testMarshallPerson() throws JAXBException, SAXException, URISyntaxException {
+        Person object = (Person) unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);
+        marshall(object, "/record_2.0_rc2/person-2.0_rc2.xsd");
+    }
     
     @Test
     public void testUnmarshallDeprecated() {
@@ -591,11 +524,23 @@ public class ValidateV2RC2SamplesTest {
     }
     
     @Test
+    public void testMarshallDeprecated() throws JAXBException, SAXException, URISyntaxException {
+        Deprecated object = (Deprecated) unmarshallFromPath("/record_2.0_rc2/samples/deprecated-2.0_rc2.xml", Deprecated.class);
+        marshall(object, "/record_2.0_rc2/deprecated-2.0_rc2.xsd");
+    }
+    
+    @Test
     public void testUnmarshallPreferences() {
         Preferences preferences = (Preferences) unmarshallFromPath("/record_2.0_rc2/samples/preferences-2.0_rc2.xml", Preferences.class);
         assertNotNull(preferences);   
         assertNotNull(preferences.getLocale());
         assertEquals(Locale.EN, preferences.getLocale());
+    }
+    
+    @Test
+    public void testMarshallPreferences() throws JAXBException, SAXException, URISyntaxException {
+        Preferences object = (Preferences) unmarshallFromPath("/record_2.0_rc2/samples/preferences-2.0_rc2.xml", Preferences.class);
+        marshall(object, "/record_2.0_rc2/preferences-2.0_rc2.xsd");
     }
     
     @Test
@@ -634,7 +579,205 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(31, history.getSubmissionDate().getValue().getDay());        
     }
     
-    @SuppressWarnings("unchecked")
+    @Test
+    public void testMarshallHistory() throws JAXBException, SAXException, URISyntaxException {
+        History object = (History) unmarshallFromPath("/record_2.0_rc2/samples/history-2.0_rc2.xml", History.class);
+        marshall(object, "/record_2.0_rc2/history-2.0_rc2.xsd");        
+    }
+    
+    @Test
+    public void testUnmarshallActivities() {
+        ActivitiesSummary activities = (ActivitiesSummary) unmarshallFromPath("/record_2.0_rc2/samples/activities-2.0_rc2.xml", ActivitiesSummary.class);
+        assertNotNull(activities);
+        assertNotNull(activities.getEducations());
+        assertNotNull(activities.getEducations());
+        assertNotNull(activities.getEducations().getLastModifiedDate());
+        assertNotNull(activities.getEducations().getSummaries());
+        assertEquals(1, activities.getEducations().getSummaries().size());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getCreatedDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getDepartmentName());        
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate().getDay());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate().getMonth());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getEndDate().getYear());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getLastModifiedDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getOrganization().getName());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getPutCode());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getRoleTitle());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getSource());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getDay());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getMonth());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getStartDate().getYear());
+        assertNotNull(activities.getEducations().getSummaries().get(0).getVisibility());
+
+        assertNotNull(activities.getEmployments());
+        assertNotNull(activities.getEmployments().getLastModifiedDate());
+        assertNotNull(activities.getEmployments().getLastModifiedDate().getValue());
+        assertNotNull(activities.getEmployments().getSummaries());
+        assertEquals(1, activities.getEmployments().getSummaries().size());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getCreatedDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getDepartmentName());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate().getYear());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate().getMonth());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getEndDate().getDay());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getLastModifiedDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getOrganization().getName());        
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getPutCode());        
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getRoleTitle());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getSource());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getDay());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getMonth());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getStartDate().getYear());
+        assertNotNull(activities.getEmployments().getSummaries().get(0).getVisibility());
+                
+        assertNotNull(activities.getFundings());        
+        assertNotNull(activities.getFundings().getLastModifiedDate());
+        assertNotNull(activities.getFundings().getFundingGroup());
+        assertEquals(1, activities.getFundings().getFundingGroup().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary());
+        assertEquals(1, activities.getFundings().getFundingGroup().get(0).getFundingSummary().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getDay());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getMonth());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getEndDate().getYear());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getPutCode());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getDay());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getMonth());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getStartDate().getYear());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTitle().getContent());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getType());
+        assertNotNull(activities.getFundings().getFundingGroup().get(0).getFundingSummary().get(0).getVisibility());
+
+        assertNotNull(activities.getPeerReviews());
+        assertNotNull(activities.getPeerReviews().getLastModifiedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getDay());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getMonth());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getYear());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getName());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getSource());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+
+        assertNotNull(activities.getWorks());
+        assertNotNull(activities.getWorks().getLastModifiedDate());
+        assertNotNull(activities.getWorks().getWorkGroup());
+        assertEquals(1, activities.getWorks().getWorkGroup().size());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0));
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate().getDay());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate().getMonth());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPublicationDate().getYear());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getPutCode());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getSource());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getSubtitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getSubtitle().getContent());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTitle().getContent());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getContent());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getTitle().getTranslatedTitle().getLanguageCode());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getType());
+        assertNotNull(activities.getWorks().getWorkGroup().get(0).getWorkSummary().get(0).getVisibility());
+        
+        assertNotNull(activities.getLastModifiedDate());
+    }
+    
+    @Test
+    public void testmarshallActivities() throws JAXBException, SAXException, URISyntaxException {
+        ActivitiesSummary object = (ActivitiesSummary) unmarshallFromPath("/record_2.0_rc2/samples/activities-2.0_rc2.xml", ActivitiesSummary.class);
+        marshall(object, "/record_2.0_rc2/activities-2.0_rc2.xsd");
+    }
+    
     @Test
     public void testUnmarshallRecord() {
         Record record = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
@@ -673,8 +816,8 @@ public class ValidateV2RC2SamplesTest {
         EmploymentSummary employment = employments.getSummaries().get(0);
         assertEquals(Long.valueOf(0), employment.getPutCode());
         assertEquals(Visibility.PRIVATE, employment.getVisibility());
-        assertEquals("affiliation:department-name", employment.getDepartmentName());
-        assertEquals("affiliation:role-title", employment.getRoleTitle());
+        assertEquals("employment:department-name", employment.getDepartmentName());
+        assertEquals("employment:role-title", employment.getRoleTitle());
         assertNotNull(employment.getEndDate());
         assertEquals("02", employment.getEndDate().getDay().getValue());
         assertEquals("02", employment.getEndDate().getMonth().getValue());
@@ -721,6 +864,46 @@ public class ValidateV2RC2SamplesTest {
         assertEquals("02", funding.getStartDate().getMonth().getValue());
         assertEquals("1848", funding.getStartDate().getYear().getValue());
         
+        assertNotNull(activities.getPeerReviews());
+        assertNotNull(activities.getPeerReviews().getLastModifiedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getDay());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getMonth());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCompletionDate().getYear());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getCreatedDate().getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getDisplayIndex());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getType());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getUrl());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getExternalIdentifiers().getExternalIdentifier().get(0).getRelationship());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getGroupId());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getLastModifiedDate());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCity());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getCountry());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getAddress().getRegion());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getOrganization().getName());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getPutCode());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getSource());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getSource().retrieveSourcePath());
+        assertNotNull(activities.getPeerReviews().getPeerReviewGroup().get(0).getPeerReviewSummary().get(0).getVisibility());
+                
         assertNotNull(activities.getWorks());
         Works works = activities.getWorks();
         assertNotNull(works.getLastModifiedDate());        
@@ -765,52 +948,9 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Long.valueOf(0), address.getDisplayIndex());
         assertNotNull(address.getLastModifiedDate());
         
-        assertNotNull(person.getApplications());
-        assertEquals(Visibility.PUBLIC, person.getApplications().getVisibility());
-        assertEquals(1, person.getApplications().getApplicationSummary().size());
-        ApplicationSummary application = person.getApplications().getApplicationSummary().get(0);
-        assertEquals("application-name", application.getApplicationName());
-        assertNotNull(application.getApplicationOrcid());
-        assertEquals("http://application.com", application.getApplicationWebsite().getValue());
-        assertNotNull(application.getApprovalDate().getValue());
-        assertEquals("application-group-name", application.getGroupName());
-        assertNotNull(application.getGroupOrcid());
-        assertNotNull(application.getScopePaths());
-        assertNotNull(application.getScopePaths().getScopePath());
-        assertEquals(2, application.getScopePaths().getScopePath().size());
-        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        assertThat(application.getScopePaths().getScopePath().get(0).getContent(), anyOf(is("/authenticate"), is("/read-limited")));
-        
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC, person.getBiography().getVisibility());
         assertEquals("biography", person.getBiography().getContent());
-        
-        assertNotNull(person.getDelegation());
-        assertNotNull(person.getDelegation().getLastModifiedDate().getValue());
-        assertNotNull(person.getDelegation().getGivenPermissionBy());
-        assertEquals(1, person.getDelegation().getGivenPermissionBy().size());
-        GivenPermissionBy by = person.getDelegation().getGivenPermissionBy().get(0);
-        assertNotNull(by.getLastModifiedDate().getValue());
-        assertNotNull(by.getDelegationDetails());
-        assertNotNull(by.getDelegationDetails().getApprovalDate().getValue());
-        assertNotNull(by.getDelegationDetails().getDelegateSummary());
-        assertNotNull(by.getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", by.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, by.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(by.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
-        
-        assertNotNull(person.getDelegation().getGivenPermissionTo());
-        assertNotNull(person.getDelegation().getGivenPermissionTo());
-        assertEquals(1, person.getDelegation().getGivenPermissionTo().size());
-        GivenPermissionTo to = person.getDelegation().getGivenPermissionTo().get(0);
-        assertNotNull(to.getLastModifiedDate().getValue());
-        assertNotNull(to.getDelegationDetails());
-        assertNotNull(to.getDelegationDetails().getApprovalDate().getValue());
-        assertNotNull(to.getDelegationDetails().getDelegateSummary());
-        assertNotNull(to.getDelegationDetails().getDelegateSummary().getCreditName());
-        assertEquals("credit-name", to.getDelegationDetails().getDelegateSummary().getCreditName().getContent());
-        assertEquals(Visibility.PUBLIC, to.getDelegationDetails().getDelegateSummary().getCreditName().getVisibility());
-        assertNotNull(to.getDelegationDetails().getDelegateSummary().getOrcidIdentifier());
         
         assertNotNull(person.getEmails());      
         assertTrue(StringUtils.isNotBlank(person.getEmails().getPath()));
@@ -894,6 +1034,12 @@ public class ValidateV2RC2SamplesTest {
         assertEquals(Visibility.PUBLIC, name.getVisibility());        
     }
     
+    @Test
+    public void testMarshallRecord() throws JAXBException, SAXException, URISyntaxException {
+        Record object = (Record) unmarshallFromPath("/record_2.0_rc2/samples/record-2.0_rc2.xml", Record.class);
+        marshall(object, "/record_2.0_rc2/record-2.0_rc2.xsd");
+    }
+    
     private Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
             Object obj = unmarshall(reader, type);
@@ -930,10 +1076,6 @@ public class ValidateV2RC2SamplesTest {
                 result = (Emails) obj;
             } else if (Email.class.equals(type)) {
                 result = (Email) obj;
-            } else if (Delegation.class.equals(type)) {
-                result = (Delegation) obj;
-            } else if (Applications.class.equals(type)) {
-                result = (Applications) obj;
             } else if (Person.class.equals(type)) {
                 result = (Person) obj;
             } else if (Deprecated.class.equals(type)) {
@@ -944,6 +1086,8 @@ public class ValidateV2RC2SamplesTest {
                 result = (History) obj;
             } else if(Record.class.equals(type)) {
                 result = (Record) obj;
+            } else if(ActivitiesSummary.class.equals(type)) {
+                result = (ActivitiesSummary) obj;
             }
             return result;
         } catch (IOException e) {
@@ -959,5 +1103,16 @@ public class ValidateV2RC2SamplesTest {
         } catch (JAXBException e) {
             throw new RuntimeException("Unable to unmarshall orcid message" + e);
         }
+    }
+    
+    private void marshall(Object object, String path) throws JAXBException, SAXException, URISyntaxException {
+        JAXBContext context = JAXBContext.newInstance(object.getClass());
+        Marshaller marshaller = context.createMarshaller();
+
+        SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = sf.newSchema(new File(getClass().getResource(path).toURI()));
+
+        marshaller.setSchema(schema);
+        marshaller.marshal(object, System.out);
     }
 }

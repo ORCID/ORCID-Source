@@ -33,7 +33,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers", "delegation", "applications" })
+@XmlType(propOrder = { "lastModifiedDate", "name", "otherNames", "biography", "researcherUrls", "emails", "addresses", "keywords", "externalIdentifiers" })
 @XmlRootElement(name = "person", namespace = "http://www.orcid.org/ns/person")
 public class Person implements Serializable {
     private static final long serialVersionUID = 2200160976598223346L;
@@ -54,10 +54,6 @@ public class Person implements Serializable {
     Keywords keywords;
     @XmlElement(name = "external-identifiers", namespace = "http://www.orcid.org/ns/external-identifier")
     PersonExternalIdentifiers externalIdentifiers;
-    @XmlElement(name = "delegation", namespace = "http://www.orcid.org/ns/person")
-    Delegation delegation;
-    @XmlElement(name = "applications", namespace = "http://www.orcid.org/ns/person")
-    Applications applications;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
     protected LastModifiedDate lastModifiedDate;
 
@@ -128,22 +124,6 @@ public class Person implements Serializable {
         this.externalIdentifiers = externalIdentifiers;
     }
 
-    public Delegation getDelegation() {
-        return delegation;
-    }
-
-    public void setDelegation(Delegation delegation) {
-        this.delegation = delegation;
-    }
-
-    public Applications getApplications() {
-        return applications;
-    }
-
-    public void setApplications(Applications applications) {
-        this.applications = applications;
-    }
-
     public String getPath() {
         return path;
     }
@@ -157,9 +137,7 @@ public class Person implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((addresses == null) ? 0 : addresses.hashCode());
-        result = prime * result + ((applications == null) ? 0 : applications.hashCode());
         result = prime * result + ((biography == null) ? 0 : biography.hashCode());
-        result = prime * result + ((delegation == null) ? 0 : delegation.hashCode());
         result = prime * result + ((emails == null) ? 0 : emails.hashCode());
         result = prime * result + ((externalIdentifiers == null) ? 0 : externalIdentifiers.hashCode());
         result = prime * result + ((keywords == null) ? 0 : keywords.hashCode());
@@ -184,20 +162,10 @@ public class Person implements Serializable {
                 return false;
         } else if (!addresses.equals(other.addresses))
             return false;
-        if (applications == null) {
-            if (other.applications != null)
-                return false;
-        } else if (!applications.equals(other.applications))
-            return false;
         if (biography == null) {
             if (other.biography != null)
                 return false;
         } else if (!biography.equals(other.biography))
-            return false;
-        if (delegation == null) {
-            if (other.delegation != null)
-                return false;
-        } else if (!delegation.equals(other.delegation))
             return false;
         if (emails == null) {
             if (other.emails != null)

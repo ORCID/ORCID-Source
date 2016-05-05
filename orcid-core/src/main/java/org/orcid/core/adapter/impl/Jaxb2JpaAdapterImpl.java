@@ -40,6 +40,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
@@ -165,6 +166,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     protected SourceManager sourceManager;
+    
+    @Resource
+    protected RecordNameManager recordNameManager;
 
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
@@ -523,11 +527,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileEntity.setRecordNameEntity(new RecordNameEntity());
                 profileEntity.getRecordNameEntity().setProfile(profileEntity);
             }
-            profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());
-            
-            //TODO: remove when the names migration is done
-            //Save also the profile table
-            profileEntity.setGivenNames(givenNames.getContent());
+            profileEntity.getRecordNameEntity().setGivenNames(givenNames.getContent());            
         }
     }
 
@@ -537,11 +537,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileEntity.setRecordNameEntity(new RecordNameEntity());
                 profileEntity.getRecordNameEntity().setProfile(profileEntity);
             }
-            profileEntity.getRecordNameEntity().setFamilyName(familyName.getContent());
-            
-            //TODO: remove when the names migration is done
-            //Save also the profile table
-            profileEntity.setFamilyName(familyName.getContent());
+            profileEntity.getRecordNameEntity().setFamilyName(familyName.getContent());                        
         }
     }
 
@@ -552,21 +548,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 profileEntity.getRecordNameEntity().setProfile(profileEntity);
             }
             
-            RecordNameEntity recordName = profileEntity.getRecordNameEntity();            
-            
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity();                        
             //Save the record name entity
             if(creditName.getVisibility() != null) {
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(creditName.getVisibility().value()));
             } else {
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility().value()));
-            }
-            
-            recordName.setCreditName(creditName.getContent());
-            
-            //TODO: remove when the names migration is done
-            //Save also the profile table
-            profileEntity.setCreditName(creditName.getContent());
-            profileEntity.setNamesVisibility(creditName.getVisibility());
+            }            
+            recordName.setCreditName(creditName.getContent());            
         }
     }
 
@@ -881,15 +870,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             } else {
                 profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
             }
-            
-            //TODO: remove when the names migration is done
-            //Save also the profile table
-            if (biography.getVisibility() != null) {
-                profileEntity.setBiographyVisibility(biography.getVisibility());
-            } else {
-                profileEntity.setBiographyVisibility(profileEntity.getActivitiesVisibilityDefault());
-            }
-            profileEntity.setBiography(biography.getContent());
         }
     }
 
@@ -1018,8 +998,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     GivenPermissionToEntity givenPermissionToEntity = new GivenPermissionToEntity();
                     givenPermissionToEntity.setGiver(profileEntity.getId());
                     DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
-                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(profileSummary.getOrcidIdentifier().getPath());
-                    profileSummaryEntity.setCreditName(profileSummary.getCreditName() != null ? profileSummary.getCreditName().getContent() : null);
+                    String delegateOrcid = profileSummary.getOrcidIdentifier().getPath();
+                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(delegateOrcid);  
+                    Date lastModified = profileEntityManager.getLastModified(delegateOrcid);
+                    RecordNameEntity name = recordNameManager.getRecordName(delegateOrcid, (lastModified == null ? 0 : lastModified.getTime()));
+                    profileSummaryEntity.setRecordNameEntity(name);
                     givenPermissionToEntity.setReceiver(profileSummaryEntity);
                     ApprovalDate approvalDate = delegationDetails.getApprovalDate();
                     if (approvalDate == null) {

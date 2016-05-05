@@ -24,8 +24,10 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
  * 
  */
 public interface RecordNameManager {
-    RecordNameEntity getRecordName(String orcid);
+    RecordNameEntity getRecordName(String orcid, long lastModified);
 
+    RecordNameEntity findByCreditName(String creditName);
+    
     boolean updateRecordName(RecordNameEntity recordName);
 
     void createRecordName(RecordNameEntity recordName);

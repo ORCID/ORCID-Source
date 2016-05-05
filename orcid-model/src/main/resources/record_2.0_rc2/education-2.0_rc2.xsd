@@ -54,7 +54,7 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 						<xs:element name="department-name" type="common:non-empty-string"
 							minOccurs="0" maxOccurs="1" />
@@ -75,7 +75,7 @@
 	<xs:element name="education-summary">
 		<xs:complexType>
 			<xs:complexContent>
-				<xs:extension base="common:activity-summary">
+				<xs:extension base="common:element-summary">
 					<xs:sequence>
 						<xs:element name="department-name" type="common:non-empty-string"
 							minOccurs="0" maxOccurs="1" />

@@ -27,8 +27,6 @@
             last_indexed_date="2011-07-02 15:31:00.00"            
             last_modified="2011-07-02 15:31:00.00"           
             claimed="true"
-            credit_name="Source Client Group 1"
-            names_visibility="PUBLIC"
             profile_address_visibility="PRIVATE"
             external_identifiers_visibility="LIMITED"
             biography_visibility="PUBLIC"
@@ -44,12 +42,29 @@
             send_orcid_news="false"
             activities_visibility_default='PRIVATE'
             credentials_expiry="2013-02-01"
-            biography="This is just a group of clients."
             indexing_status="DONE"
             iso2_country="GB"
             orcid_type="GROUP"
             group_type="PREMIUM_INSTITUTION"
             />
+            
+	<record_name 
+		id="100"
+		date_created="2016-04-27 00:00:00.00"
+		last_modified="2016-04-27 00:00:00.00"
+		orcid="5555-5555-5555-5558"
+		credit_name="Source Client Group 1"
+		visibility="PUBLIC"            
+		/>  
+		
+	<biography
+		id="100"
+		date_created="2016-04-27 00:00:00.00"
+		last_modified="2016-04-27 00:00:00.00"
+		orcid="5555-5555-5555-5558"		 
+		biography="This is just a group of clients."
+		visibility="PUBLIC"
+		/>          
             
 	<email
         orcid="5555-5555-5555-5558"

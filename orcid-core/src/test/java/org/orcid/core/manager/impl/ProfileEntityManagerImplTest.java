@@ -73,11 +73,7 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         if(profileEntity.getRecordNameEntity() != null) {
             assertEquals("Harry", profileEntity.getRecordNameEntity().getGivenNames());
             assertEquals("Secombe", profileEntity.getRecordNameEntity().getFamilyName());
-        } else {
-            assertEquals("Harry", profileEntity.getGivenNames());
-            assertEquals("Secombe", profileEntity.getFamilyName());
-        }
-        
+        } 
         assertEquals(harrysOrcid, profileEntity.getId());
     }
 
