@@ -233,16 +233,18 @@
 			            		<ul class="inline-list visible workspace-section-heading">
 								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelOtherIDs")}</span></li>
 								    <li class="right">
-								    	<span ng-click="toggleSourcesDisplay('external-identifiers')" class="right toggle" ng-mouseenter="showPopover('external-identifiers')" ng-mouseleave="hidePopover('external-identifiers')">
-								    		<i ng-class="(showSources['external-identifiers'] || showSources['external-identifiers'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['external-identifiers']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['external-identifiers'] == false  || showSources['external-identifiers'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['external-identifiers']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
+									    <#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('external-identifiers')" class="right toggle" ng-mouseenter="showPopover('external-identifiers')" ng-mouseleave="hidePopover('external-identifiers')">
+									    		<i ng-class="(showSources['external-identifiers'] || showSources['external-identifiers'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['external-identifiers']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['external-identifiers'] == false  || showSources['external-identifiers'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['external-identifiers']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
 								    </li>		                		
 								</ul>				                
 				                <div  id="public-external-identifiers-div" class="public-content">
