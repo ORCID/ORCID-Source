@@ -211,7 +211,7 @@ public class PeerReviewsControllerTest extends BaseControllerTest {
         form.setRegion(Text.valueOf("The Region"));
         form.setRole(Text.valueOf("reviewer"));
         form.setType(Text.valueOf("evaluation"));
-        form.setUrl(Text.valueOf("http://url.com"));
+        form.setUrl(Text.valueOf("http://orcid.org"));
         form.setVisibility(Visibility.LIMITED);
 
         Date completionDate = new Date();
