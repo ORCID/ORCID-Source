@@ -41,6 +41,8 @@ public class AddressForm implements ErrorsInterface, Serializable {
     public static AddressForm valueOf(Address address) {
         AddressForm form = new AddressForm();
 
+        if (address == null) return form;
+
         if (address.getCountry() != null && address.getCountry().getValue() != null) {
             form.setIso2Country(Iso2Country.valueOf(address.getCountry().getValue()));
         }

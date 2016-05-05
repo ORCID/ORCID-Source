@@ -472,6 +472,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ClassMapBuilder<PeerReviewSummary, PeerReviewEntity> peerReviewSummaryClassMap = mapperFactory.classMap(PeerReviewSummary.class, PeerReviewEntity.class);
         addV2CommonFields(peerReviewSummaryClassMap);
         peerReviewSummaryClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("workExternalIdentifiersConverterId").add();
+        peerReviewSummaryClassMap.field("organization.name", "org.name");
+        peerReviewSummaryClassMap.field("organization.address.city", "org.city");
+        peerReviewSummaryClassMap.field("organization.address.region", "org.region");
+        peerReviewSummaryClassMap.field("organization.address.country", "org.country");
+        peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
+        peerReviewSummaryClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");        
         peerReviewSummaryClassMap.register();
 
         mapperFactory.classMap(FuzzyDate.class, CompletionDateEntity.class).field("year.value", "year").field("month.value", "month").field("day.value", "day")
