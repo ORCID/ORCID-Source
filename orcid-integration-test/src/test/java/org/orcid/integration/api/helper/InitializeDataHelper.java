@@ -242,11 +242,11 @@ public class InitializeDataHelper {
     }
 
     public boolean lockProfile(String orcid) throws Exception {
-        return profileEntityManager.lockProfile(orcid);
+        return orcidProfileManager.lockProfile(orcid);
     }
     
     public boolean unlockProfile(String orcid) throws Exception {
-        return profileEntityManager.unlockProfile(orcid);
+        return orcidProfileManager.unlockProfile(orcid);
     }
     
     private OrcidProfile toProfile(Registration reg) {

@@ -97,6 +97,8 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String CLAIM_NOTIFY_ORCID_ORG = "claim@notify.orcid.org";
 
     private static final String DEACTIVATE_NOTIFY_ORCID_ORG = "deactivate@notify.orcid.org";
+    
+    private static final String LOCKED_NOTIFY_ORCID_ORG = "locked@notify.orcid.org";
 
     private static final String AMEND_NOTIFY_ORCID_ORG = "amend@notify.orcid.org";
 
@@ -274,6 +276,31 @@ public class NotificationManagerImpl implements NotificationManager {
         String html = templateManager.processTemplate("deactivate_orcid_email_html.ftl", templateParams);
 
         mailGunManager.sendEmail(DEACTIVATE_NOTIFY_ORCID_ORG, email, subject, body, html);
+    }
+
+    @Override
+    public void sendOrcidLockedEmail(OrcidProfile orcidToLock) {
+
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+
+        String subject = getSubject("email.subject.locked", orcidToLock);
+        String email = orcidToLock.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
+
+        String emailFriendlyName = deriveEmailFriendlyName(orcidToLock);
+        templateParams.put("emailName", emailFriendlyName);
+        templateParams.put("orcid", orcidToLock.getOrcidIdentifier().getPath());
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
+        templateParams.put("subject", subject);
+
+        addMessageParams(templateParams, orcidToLock);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("locked_orcid_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("locked_orcid_email_html.ftl", templateParams);
+
+        mailGunManager.sendEmail(LOCKED_NOTIFY_ORCID_ORG, email, subject, body, html);
     }
 
     // look like the following is our best best for i18n emails

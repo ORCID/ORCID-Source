@@ -42,7 +42,7 @@ public class CheckNonLockedAspect {
     
     @Before("@annotation(nonLocked) && (args(orcid))")
     public void checkPermissionsWithAll(NonLocked nonLocked, String orcid) {        
-        if(profileEntityManager.isLocked(orcid)) {            
+        if(orcidProfileManager.isLocked(orcid)) {            
             throw new LockedException("The given account " + orcid + " is locked", orcid);
         }
     }

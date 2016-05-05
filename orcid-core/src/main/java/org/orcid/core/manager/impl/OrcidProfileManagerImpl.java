@@ -1427,6 +1427,48 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
+    
+    /**
+     * Set the locked status of an account to true
+     * 
+     * @param orcid
+     *            the id of the profile that should be locked
+     * @return true if the account was locked
+     */
+    @Override
+    public boolean lockProfile(String orcid) {
+        boolean wasLocked = profileDao.lockProfile(orcid);
+        if (wasLocked) {
+            notificationManager.sendOrcidLockedEmail(retrieveOrcidProfile(orcid, LoadOptions.BIO_AND_INTERNAL_ONLY));
+        }
+        return wasLocked;
+    }
+    
+    /**
+     * Set the locked status of an account to false
+     * 
+     * @param orcid
+     *            the id of the profile that should be unlocked
+     * @return true if the account was unlocked
+     */
+    @Override
+    public boolean unlockProfile(String orcid) {
+        return profileDao.unlockProfile(orcid);
+    }
+
+    /**
+     * Check if a profile is locked
+     * 
+     * @param orcid
+     *            the id of the profile to check
+     * @return true if the account is locked
+     */
+    @Override
+    public boolean isLocked(String orcid) {
+        if (PojoUtil.isEmpty(orcid))
+            return false;
+        return profileDao.isLocked(orcid);
+    }
 
     /**
      * Reactivate an inactive profile

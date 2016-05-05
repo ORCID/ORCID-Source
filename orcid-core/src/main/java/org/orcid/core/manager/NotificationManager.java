@@ -54,6 +54,8 @@ public interface NotificationManager {
 
     void sendOrcidDeactivateEmail(OrcidProfile orcidToDeactivate);
 
+    void sendOrcidLockedEmail(OrcidProfile orcidToLock);
+
     void sendApiRecordCreationEmail(String toEmail, OrcidProfile createdProfile);
 
     void sendEmailAddressChangedNotification(OrcidProfile updatedProfile, Email oldEmail);
