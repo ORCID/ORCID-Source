@@ -376,7 +376,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
         if (existingProfileEntity != null) {
-            profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
+            //Dont delete the existing elements anymore
+            //profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
             setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());

@@ -422,32 +422,52 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
-        if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {
-            Map<Pair<String, String>, ResearcherUrlEntity> existingResearcherUrl = createResearcherUrlsMap(profileEntity.getResearcherUrls());
-                    
-            //TODO: Continue here
-                    
+        if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {            
             List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
-            SortedSet<ResearcherUrlEntity> researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
+            SortedSet<ResearcherUrlEntity> existingResearcherlUrlsEntities = profileEntity.getResearcherUrls();
+            SortedSet<ResearcherUrlEntity> researcherUrlEntities = null;
+            Map<Pair<String, String>, ResearcherUrlEntity> existingResearcherUrl = createResearcherUrlsMap(profileEntity.getResearcherUrls());
+            
+            if(existingResearcherlUrlsEntities == null) {
+                researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
+            } else {
+                existingResearcherlUrlsEntities.clear();
+                researcherUrlEntities = existingResearcherlUrlsEntities; 
+            }
+            
+            
             for (ResearcherUrl researcherUrl : researcherUrlList) {
                 ResearcherUrlEntity researcherUrlEntity = new ResearcherUrlEntity();
-                researcherUrlEntity.setUrl(researcherUrl.getUrl() != null ? researcherUrl.getUrl().getValue() : null);
-                researcherUrlEntity.setUrlName(researcherUrl.getUrlName() != null ? researcherUrl.getUrlName().getContent() : null);
-                researcherUrlEntity.setUser(profileEntity);
-
-                if (researcherUrl.getVisibility() != null){
-                    researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(researcherUrl.getVisibility().value()));                    
+                String url = researcherUrl.getUrl() != null ? researcherUrl.getUrl().getValue() : null;
+                String urlName = researcherUrl.getUrlName() != null ? researcherUrl.getUrlName().getContent() : null;
+                Pair<String, String> key = Pair.of(url, urlName);
+                
+                if(existingResearcherUrl.containsKey(key)) {
+                    researcherUrlEntity = existingResearcherUrl.get(key); 
                 } else {
-                    researcherUrlEntity
-                            .setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
+                    researcherUrlEntity.setUrl(url);
+                    researcherUrlEntity.setUrlName(urlName);
+                    researcherUrlEntity.setUser(profileEntity);
                 }
                 
-                Source source = researcherUrl.getSource();
-                if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                    researcherUrlEntity.setSource(getSource(source));
-                } else {
+                boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();
+                if(claimed) {
+                    if(researcherUrlEntity.getVisibility() == null) {
+                        if(profileEntity.getActivitiesVisibilityDefault() != null) {                
+                            researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+                        }else{
+                            researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
+                        }
+                    } 
+                    
+                    if(researcherUrlEntity.getSource() == null) {
+                        researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
+                    }
+                } else {                    
+                    Visibility defaultVisibility = researcherUrl.getVisibility() != null ? researcherUrl.getVisibility() : Visibility.PRIVATE;                     
+                    researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));                    
                     researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
-                }
+                }                                
                                 
                 researcherUrlEntities.add(researcherUrlEntity);
             }
@@ -468,35 +488,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private Pair<String, String> createPairForKey(ResearcherUrlEntity entity) {
-        String left = entity.getUrl();
-        String right = entity.getUrlName();
-        Pair<String, String> pair = Pair.of(left, right);
+        String url = entity.getUrl();
+        String urlName = entity.getUrlName();
+        Pair<String, String> pair = Pair.of(url, urlName);
         return pair;
     }                                                            
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     private void setPersonalDetails(ProfileEntity profileEntity, PersonalDetails personalDetails) {
         if (personalDetails != null) {
@@ -512,16 +508,24 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
-    private void setOtherNames(ProfileEntity profileEntity, Map<String, OtherNameEntity> existingOtherNames, OtherNames otherNames) {        
+    private void setOtherNames(ProfileEntity profileEntity, Map<String, OtherNameEntity> existingOtherNamesMap, OtherNames otherNames) {        
         if (otherNames != null) {
             List<OtherName> otherNameList = otherNames.getOtherName();
             if (otherNameList != null && !otherNameList.isEmpty()) {
-                SortedSet<OtherNameEntity> otherNameEntities = new TreeSet<OtherNameEntity>();
+                SortedSet<OtherNameEntity> otherNameEntities = null;
+                SortedSet<OtherNameEntity> existingOtherNamesEntities = profileEntity.getOtherNames();
+                if(existingOtherNamesEntities == null) {
+                    otherNameEntities = new TreeSet<OtherNameEntity>();
+                } else {
+                    existingOtherNamesEntities.clear();
+                    otherNameEntities = existingOtherNamesEntities;
+                }
+                
                 for (OtherName otherName : otherNameList) {
                     OtherNameEntity otherNameEntity = new OtherNameEntity();
                     
-                    if(existingOtherNames.containsKey(otherName.getContent())) {
-                        otherNameEntity = existingOtherNames.get(otherName.getContent());
+                    if(existingOtherNamesMap.containsKey(otherName.getContent())) {
+                        otherNameEntity = existingOtherNamesMap.get(otherName.getContent());
                     } else {
                         otherNameEntity.setDisplayName(otherName.getContent());
                         otherNameEntity.setProfile(profileEntity);
@@ -650,7 +654,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                       
         boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();        
         if(claimed) {
-            if(keyword.getVisibility() == null) {
+            if(entity.getVisibility() == null) {
                 if(profileEntity.getActivitiesVisibilityDefault() != null) {                
                     entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
                 }else{
@@ -658,7 +662,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 }
             }
             
-            if(keyword.getSource() == null) {
+            if(entity.getSource() == null) {
                 entity.setSource(sourceManager.retrieveSourceEntity());                
             }
         } else {
@@ -789,42 +793,42 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         
         //Set the info in the address table
         if(country != null) {
-            AddressEntity address = new AddressEntity();
-            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+            AddressEntity addressEntity = new AddressEntity();
+            addressEntity.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
             if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
             	Iterator<AddressEntity> iterator = profileEntity.getAddresses().iterator();
             	while (iterator.hasNext()) {
             		AddressEntity temp = iterator.next();
             	    if(temp.getPrimary()) {
-            	    	address = temp;
+            	        addressEntity = temp;
             	    	break;
             	    }
             	}
             }
-            address.setPrimary(true);
-            address.setDisplayIndex(-1L);
+            addressEntity.setPrimary(true);
+            addressEntity.setDisplayIndex(-1L);
             boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();            
             if(claimed) {
-                if(address.getVisibility() == null) {
+                if(addressEntity.getVisibility() == null) {
                     if(profileEntity.getActivitiesVisibilityDefault() != null) {                
-                        address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
+                        addressEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
                     }else{
-                        address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
+                        addressEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
                     }
                 }  
                 
-                if(address.getSource() == null) {                    
-                    address.setSource(sourceManager.retrieveSourceEntity());                    
+                if(addressEntity.getSource() == null) {                    
+                    addressEntity.setSource(sourceManager.retrieveSourceEntity());                    
                 }
             } else {
                 Visibility countryVisibility = (contactCountry != null &&  contactCountry.getVisibility() != null) ? contactCountry.getVisibility() : Visibility.PRIVATE;
-                address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(countryVisibility.value()));
-                address.setSource(sourceManager.retrieveSourceEntity());                
+                addressEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(countryVisibility.value()));
+                addressEntity.setSource(sourceManager.retrieveSourceEntity());                
             }                                                            
             
-            address.setUser(profileEntity);
+            addressEntity.setUser(profileEntity);
             HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();
-            addresses.add(address);
+            addresses.add(addressEntity);
             profileEntity.setAddresses(addresses);
         }        
     }
