@@ -24,7 +24,7 @@ Steps to be completed before each release
 3. Add an also know as name: Other Name
 4. Add a country: US
 5. Add a keyword: keyword
-6. Add a URL: https://qa.orcid.org
+6. Add a Researcher URL: URL https://qa.orcid.org, Description: "ORCID"
 7. Add a biography: Bio
 8. Add an education item: Institution "ORCID" (select from dropdown list)
 9. Add a funding item: type "grant", title "ma fund test", funding agency "Wellcome Trust" (select from dropdown list)
@@ -34,9 +34,13 @@ Steps to be completed before each release
 1. Visit https://qa.orcid.org/account
 2. Ensure email ma_test_[DD][month][YYYY]@mailinator.com is marked as private
 3. Add new email ma_test_[DD][month][YYYY]_01@mailinator.com and mark as public
-4. Visit public page (http://qa.orcid.org/[XXXX-XXXX-XXXX-XXXX])
-      * Verify ma_test_[DD][month][YYYY]@mailinator.com is not visible
-      * Verify ma_test_[DD][month][YYYY]_01@mailinator.com is visible
+
+###Verify Public ORCID record
+1. Visit public page (http://qa.orcid.org/[XXXX-XXXX-XXXX-XXXX])
+2. Verify ma_test_[DD][month][YYYY]@mailinator.com is not visible
+3. Verify ma_test_[DD][month][YYYY]_01@mailinator.com is visible
+4. Verify all the fields added to my-ORCID are visible
+5. Verify the source of all fields is correctly recorded as Published Name
 5. Visit https://qa.orcid.org/signout
 
 ###Reset password
@@ -96,15 +100,15 @@ Steps to be completed before each release
     curl -H 'Content-Type: application/xml' 'http://pub.qa.orcid.org/v1.2/[ma id2]/orcid-profile' -L -i -k
     ```
 
-###Member Activities 1.2
-1. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited&redirect_uri=https://developers.google.com/oauthplayground
+###Member 1.2
+1. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
 
 2. Log into the account created for testing today and grant short lived authorization
 
 3. Exchange the authorization code:
  
     ```
-    curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token'
+    curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token' -k
     ```
 
 4. Post the ma test work:
@@ -149,47 +153,42 @@ Steps to be completed before each release
 
 12. Check that the education is updated and the manually added education is not affected
 
-13. Attempt to access the wrong record with:
-    ```
-     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/[ma id 2]/orcid-works' -L -i -k
-    ```
-This should fail
-
-14. Attempt to post to a record without a token
-```
-curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i -k
-```
-Check that this fails
-
-15. Wait 1 hour Run the call: 
-    ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i -k
-    ```
-This should fail
-16. Visit https://qa.orcid.org/signout
-
-###Member Bio 1.2
-1. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
-
-2. Log into the account created for testing today and grant short lived authorization
-
-3. Exchange the authorization code: 
-
-    ```
-    curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token'
-    ```
-
-4. Read the biography:
+13. Read the biography:
  
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [bio 1.2 token]' 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-bio' -L -i -k
     ```
 
-5. Update the biography:
+14. Update the biography:
  
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [bio 1.2 token]' -H 'Accept: application/xml' -d '@/ma_bio.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-bio' -L -i -k
     ```
+
+13. Attempt to access the wrong record:
+    
+    ```
+     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/[ma id 2]/orcid-works' -L -i -k
+    ```
+Check that this fail
+
+14. Attempt to post to a record without a token:
+
+```
+curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i -k
+```
+
+Check that this fails
+
+15. Wait 1 hour Run the call (or use the UI to revoke the token): 
+    
+    ```
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 1.2 token]' -H 'Accept: application/xml' -d '@/ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[ma id]/orcid-works' -L -i -k
+    
+    ```
+This should fail
+
+16. Visit https://qa.orcid.org/signout
 
 ###Member 2.0
 1. Log into the account created for testing today 
@@ -201,7 +200,7 @@ This should fail
 4. Exchange the authorization code: 
 
     ```
-    curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token'
+    curl -i -L -H 'Accept: application/json' --data 'client_id=[client id]&client_secret=[client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://api.qa.orcid.org/oauth/token' -k
     ```
 
 5. Post the ma test work 2: 
@@ -222,7 +221,7 @@ This should fail
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 2.0 token]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[ma id]/work/[put-code]' -L -i -k
     ```
 
-8. Delete with work:
+8. Delete the work:
  
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 2.0 token]' -H 'Accept: application/xml' -X DELETE 'https://api.qa.orcid.org/v2.0_rc2/[ma id]/work/[put-code]' -L -i -k
@@ -245,21 +244,28 @@ This should fail
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 2.0 token]' -H 'Accept: application/xml' -d '@/ma2_peer.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[ma id]/peer-review' -L -i -k
     ```
+    
 12. Attempt to post to a record without a token
+	
 	```
 	curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@/ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[ma id]/work' -L -i -k
 	```
 check that this fails
+
 13. Attempt to update and item without a token
+
 	```
     curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@/ma2_work2.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/v2.0_rc2/[ma id]/work/[put-code]' -L -i -k
     ```
+    
 check that this fails
 
 14. Attempt to update an item you are not the source of
+
     ```
-    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 2.0 token]' -H 'Accept: application/xml' -d '@/ma2_work2.xml' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/v2.0_rc2/[ma id]/work/[manually-added-work-put-code]' -L -i -k
+    curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [activities 2.0 token]' -H 'Accept: application/xml' -d '@/ma2_work2.xml' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/v2.0_rc2/[ma id]/work/[manually-added-work-put-code (usually put-code from above -1)]' -L -i -k
     ```
+    
 check that this fails
 
 ##Privacy Check
@@ -613,44 +619,43 @@ Check that nothing is returned in the affiliations, funding, peer-review, and wo
 Check that nothing is returned
 
 ###Check scopes and methods
+
 1. Attempt to get a /read-limited token with a public client
+
 ```
 Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/read-limited&redirect_uri=https://developers.google.com/oauthplayground
 ```
 
 2. Attempt to get an /activities/update token with a public client
+
 ```
 Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/activities/update&redirect_uri=https://developers.google.com/oauthplayground
 ```
 
 3. Attempt to get a /read-limited token via 2 step OAuth
+
 ```
 curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/read-limited' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 ```
 
 4. Attempt to get an /activities/update token via 2 step
+
 ```
 curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/activities/update' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 
 ```
 
 5. Attempt to get a /webhooks token with a basic client
+
 ```
 curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/web-hook' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 ```
 
 6. Attempt to get a /orcid-profile/create token with a non-institution client
+
 ```
 curl -i -L -H 'Accept: application/json' -d '[client id]' -d 'client_secret=[client secret]' -d 'scope=/orcid-profile/create' -d 'grant_type=client_credentials' 'http://api.qa.orcid.org/oauth/token'
 ```
-
-###Post and Put check
-
-
-    
-
-
-3. Attempt to update an item you are not the source of 1.2
 
 
 * Finally help out by improving these instructions!      
