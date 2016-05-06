@@ -114,8 +114,15 @@ public class AddWorksTest {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//option[text()='Conference paper']")));
         Select typeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workType.value']")));
         typeSel.selectByVisibleText("Conference paper");
+        
+        Select idTypeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='workExternalIdentifier.workExternalIdentifierType.value']")));
+        idTypeSel.selectByVisibleText("doi: Digital object identifier");
+        WebElement idValue = webDriver.findElement(By.xpath("//input[@ng-model='workExternalIdentifier.workExternalIdentifierId.value']"));
+        idValue.sendKeys("10.10/"+System.currentTimeMillis());
+        
         WebElement title = webDriver.findElement(By.xpath("//input[@ng-model='editWork.title.value']"));
         title.sendKeys(workName);
+        
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
         buttonEl.click();
         SigninTest.colorBoxIsClosed(wait);
