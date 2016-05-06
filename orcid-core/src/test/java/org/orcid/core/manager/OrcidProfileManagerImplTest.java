@@ -409,7 +409,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile.getOrcidBio().setExternalIdentifiers(ii);
         profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);
         
-        profile = orcidProfileManager.createOrcidProfile(profile, false, false);
+        profile = orcidProfileManager.createOrcidProfile(profile, true, false);
 
         assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
@@ -421,8 +421,11 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
         
         profile.getOrcidBio().getKeywords().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getKeywords().getKeyword().get(0).setContent("kk - updated");
         profile.getOrcidBio().getResearcherUrls().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().setValue("http://whatever.com/updated");
         profile.getOrcidBio().getExternalIdentifiers().setVisibility(Visibility.PUBLIC);
+        
         profile.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.PUBLIC);
         profile = orcidProfileManager.updateOrcidProfile(profile);
         
