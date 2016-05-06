@@ -33,6 +33,7 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
@@ -422,6 +423,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
         if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {
+            Map<Pair<String, String>, ResearcherUrlEntity> existingResearcherUrl = createResearcherUrlsMap(profileEntity.getResearcherUrls());
+                    
+            //TODO: Continue here
+                    
             List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
             SortedSet<ResearcherUrlEntity> researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
             for (ResearcherUrl researcherUrl : researcherUrlList) {
@@ -450,6 +455,49 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
     }
 
+    
+    private Map<Pair<String, String>, ResearcherUrlEntity> createResearcherUrlsMap(Set<ResearcherUrlEntity> existingResearcherUrls) {
+        Map<Pair<String, String>, ResearcherUrlEntity> map = new HashMap<>();
+        if (existingResearcherUrls != null) {
+            for (ResearcherUrlEntity entity : existingResearcherUrls) {
+                Pair<String, String> pair = createPairForKey(entity);
+                map.put(pair, entity);
+            }
+        }
+        return map;
+    }
+
+    private Pair<String, String> createPairForKey(ResearcherUrlEntity entity) {
+        String left = entity.getUrl();
+        String right = entity.getUrlName();
+        Pair<String, String> pair = Pair.of(left, right);
+        return pair;
+    }                                                            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private void setPersonalDetails(ProfileEntity profileEntity, PersonalDetails personalDetails) {
         if (personalDetails != null) {
             if(profileEntity.getRecordNameEntity() == null) {
@@ -707,15 +755,13 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 existingExternalIdentifierEntity.clean();
                 externalIdentifierEntity = existingExternalIdentifierEntity;
             }
-            
-            if(externalIdentifierEntity.getVisibility() == null) {
-                if (externalIdVisibility != null){
-                    externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(externalIdVisibility.value()));            
-                } else {
-                    externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value()));
-                }
+                        
+            if (externalIdVisibility != null){
+                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(externalIdVisibility.value()));            
+            } else {
+                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value()));
             }
-            
+                        
             externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
             externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
             externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
@@ -771,7 +817,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     address.setSource(sourceManager.retrieveSourceEntity());                    
                 }
             } else {
-                Visibility countryVisibility = contactCountry != null ? contactCountry.getVisibility() : Visibility.PRIVATE;
+                Visibility countryVisibility = (contactCountry != null &&  contactCountry.getVisibility() != null) ? contactCountry.getVisibility() : Visibility.PRIVATE;
                 address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(countryVisibility.value()));
                 address.setSource(sourceManager.retrieveSourceEntity());                
             }                                                            
