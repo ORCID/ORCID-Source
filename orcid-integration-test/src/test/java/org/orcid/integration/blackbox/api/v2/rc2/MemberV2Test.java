@@ -283,8 +283,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotEmployment.getRoleTitle());
         
         //Save the original visibility
         Visibility originalVisibility = gotEmployment.getVisibility();
@@ -329,8 +329,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Employment gotEmployment = getResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotEmployment.getRoleTitle());
         gotEmployment.setDepartmentName("updated dept. name");
         gotEmployment.setRoleTitle("updated role title");
         String profileCreateToken = oauthHelper.getClientCredentialsAccessToken(this.getClient2ClientId(), this.getClient2ClientSecret(), ScopePathType.ORCID_PROFILE_CREATE);
@@ -339,8 +339,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         ClientResponse getAfterUpdateResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getAfterUpdateResponse.getStatus());
         Employment gotAfterUpdateEmployment = getAfterUpdateResponse.getEntity(Employment.class);
-        assertEquals("affiliation:department-name", gotAfterUpdateEmployment.getDepartmentName());
-        assertEquals("affiliation:role-title", gotAfterUpdateEmployment.getRoleTitle());
+        assertEquals("employment:department-name", gotAfterUpdateEmployment.getDepartmentName());
+        assertEquals("employment:role-title", gotAfterUpdateEmployment.getRoleTitle());
         ClientResponse deleteResponse = memberV2ApiClient.deleteEmploymentXml(this.getUser1OrcidId(), gotEmployment.getPutCode(), accessToken);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
     }
@@ -751,8 +751,8 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         assertFalse(activities.getEmployments().getSummaries().isEmpty());        
         found = false;
         for(EmploymentSummary summary : activities.getEmployments().getSummaries()) {
-            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("affiliation:role-title")) {
-                assertEquals("affiliation:department-name", summary.getDepartmentName());
+            if(summary.getRoleTitle() != null && summary.getRoleTitle().equals("employment:role-title")) {
+                assertEquals("employment:department-name", summary.getDepartmentName());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getStartDate());
                 assertEquals(FuzzyDate.valueOf(1848, 2, 2), summary.getEndDate());
                 found = true;
