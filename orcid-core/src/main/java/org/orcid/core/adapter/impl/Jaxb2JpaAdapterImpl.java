@@ -689,105 +689,114 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }                
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
-        if (externalIdentifiers != null) {
-            
-            Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
-            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
-            Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
+        String sourceId = getSourceId();
 
-            if (existingExternalIdentifiers == null) {
-                externalIdentifierEntities = new TreeSet<ExternalIdentifierEntity>();
-            } else {
-                // To allow for orphan deletion
-                existingExternalIdentifiers.clear();
-                externalIdentifierEntities = existingExternalIdentifiers;
-            }
-
-            List<ExternalIdentifier> externalIdentifierList = externalIdentifiers.getExternalIdentifier();
-
-            if (externalIdentifierList != null && !externalIdentifierList.isEmpty()) {
-                for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
-                    //Discard the ext ids that comes without external id reference, which is a required field
-                    if(externalIdentifier.getExternalIdReference() != null) {
-                        ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity, externalIdentifier, existingExternalIdentifiersMap, externalIdentifiers.getVisibility());
-                        if (externalIdentifierEntity != null) {
-                            externalIdentifierEntity.setOwner(profileEntity);
-                            externalIdentifierEntities.add(externalIdentifierEntity);
+        Set<ExternalIdentifierEntity> existingExternalIdentifierEntities = profileEntity.getExternalIdentifiers();
+        Iterator<ExternalIdentifierEntity> existingIt = null;
+        if(existingExternalIdentifierEntities != null){
+            existingIt = existingExternalIdentifierEntities.iterator();
+            //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+            if(existingIt != null) {
+                while(existingIt.hasNext()) {
+                    ExternalIdentifierEntity existing = existingIt.next();
+                    String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                    if(sourceId != null && !sourceId.equals(existingElementSource)){
+                        //If am not the source of this element, do nothing
+                    } else {
+                        //If am the source, check if the element exists in the list of incoming elements
+                        Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existing);
+                        boolean found = false;
+                        if(externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
+                            for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()){
+                                Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
+                                if(Objects.equals(existingTriplet, newExternalIdentifierTriplet)) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        //If it doesn't exists, remove it from the existing elements
+                        if(!found) {
+                                existingIt.remove();
                         }
                     }
                 }
             }
-
-            profileEntity.setExternalIdentifiers(externalIdentifierEntities);
+        }
+        
+        //Iterate over the list of all new ones and add the ones that doesn't exists yet
+        if(externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
+            for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()) {
+                boolean exists = false;
+                Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
+                if(existingExternalIdentifierEntities != null) {
+                    for(ExternalIdentifierEntity existingEntity : existingExternalIdentifierEntities) {
+                        Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
+                        if(Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
+                                exists = true;
+                                break;
+                        }
+                    }
+                }
+                
+                if(!exists) {
+                    ExternalIdentifierEntity newEntity = new ExternalIdentifierEntity();
+                    newEntity.setOwner(profileEntity);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    newEntity.setDisplayIndex(-1L);
+                    if(newExternalIdentifier.getExternalIdCommonName() != null) {
+                        newEntity.setExternalIdCommonName(newExternalIdentifier.getExternalIdCommonName().getContent());
+                    }
+                    if(newExternalIdentifier.getExternalIdReference() != null) {
+                        newEntity.setExternalIdReference(newExternalIdentifier.getExternalIdReference().getContent());
+                    }
+                    if(newExternalIdentifier.getExternalIdUrl() != null) {
+                        newEntity.setExternalIdUrl(newExternalIdentifier.getExternalIdUrl().getValue());
+                    }                    
+                    Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault(); 
+                    newEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
+                    existingExternalIdentifierEntities.add(newEntity);
+                }
+            }               
         }
     }
 
-    private Map<Triplet<String, String, String>, ExternalIdentifierEntity> createExternalIdentifiersMap(Set<ExternalIdentifierEntity> existingExternalIdentifiers) {
-        Map<Triplet<String, String, String>, ExternalIdentifierEntity> map = new HashMap<>();
-        if (existingExternalIdentifiers != null) {
-            for (ExternalIdentifierEntity entity : existingExternalIdentifiers) {
-                Triplet<String, String, String> triplet = createTripletForKey(entity);
-                map.put(triplet, entity);
-            }
-        }
-        return map;
-    }
-
-    private Triplet<String, String, String> createTripletForKey(ExternalIdentifierEntity entity) {
-        String first = entity.getOwner().getId();
+    private Triplet<String, String, String> createTripletForExternalIdentifier(ExternalIdentifierEntity entity) {
+        String first = entity.getExternalIdUrl();
         String second = entity.getExternalIdReference();
         String third = entity.getExternalIdCommonName();
         Triplet<String, String, String> triplet = new Triplet<String, String, String>(first, second, third);        
         return triplet;
     }
-
-    private ExternalIdentifierEntity getExternalIdentifierEntity(ProfileEntity profileEntity, ExternalIdentifier externalIdentifier,
-            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap, Visibility requestVisibility) {
-        if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
-            ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
-            ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
-            String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
-            ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
-            Visibility externalIdVisibility = externalIdentifier.getVisibility();
-            
-            String first = profileEntity.getId();            
-            
-            String second = null;
-            if(externalIdentifier.getExternalIdReference() != null)
-                second = externalIdentifier.getExternalIdReference().getContent();
-            
-            String third = null;
-            if(externalIdentifier.getExternalIdCommonName() != null)
-                third = externalIdentifier.getExternalIdCommonName().getContent(); 
-                    
-
-            Triplet<String, String, String> key = new Triplet<>(first, second, third);
-            ExternalIdentifierEntity existingExternalIdentifierEntity = existingExternalIdentifiersMap.get(key);
-            
-            ExternalIdentifierEntity externalIdentifierEntity = null;
-            if (existingExternalIdentifierEntity == null) {
-                externalIdentifierEntity = new ExternalIdentifierEntity();
-                externalIdentifierEntity.setSource(sourceManager.retrieveSourceEntity());
-                externalIdentifierEntity.setExternalIdReference(referenceValue);
-            } else {
-                existingExternalIdentifierEntity.clean();
-                externalIdentifierEntity = existingExternalIdentifierEntity;
-            }
-                        
-            if (externalIdVisibility != null){
-                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(externalIdVisibility.value()));            
-            } else {
-                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value()));
-            }
-                        
-            externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
-            externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
-            externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
-            
-            return externalIdentifierEntity;
-        }
-        return null;
+    
+    private Triplet<String, String, String> createTripletForExternalIdentifier(ExternalIdentifier entity) {
+        String first = entity.getExternalIdUrl() == null ? "" : entity.getExternalIdUrl().getValue();
+        String second = entity.getExternalIdReference() == null ? "" : entity.getExternalIdReference().getContent();
+        String third = entity.getExternalIdCommonName() == null ? "" : entity.getExternalIdCommonName().getContent();
+        Triplet<String, String, String> triplet = new Triplet<String, String, String>(first, second, third);        
+        return triplet;
     }
 
     private void setDelegations(ProfileEntity profileEntity, Delegation delegation) {
