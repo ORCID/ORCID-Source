@@ -171,7 +171,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     protected RecordNameManager recordNameManager;
-
+    
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
         Assert.notNull(profile, "Cannot convert a null OrcidProfile");
@@ -423,72 +423,85 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
-        if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {            
-            List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
-            SortedSet<ResearcherUrlEntity> existingResearcherlUrlsEntities = profileEntity.getResearcherUrls();
-            SortedSet<ResearcherUrlEntity> researcherUrlEntities = null;
-            Map<Pair<String, String>, ResearcherUrlEntity> existingResearcherUrl = createResearcherUrlsMap(profileEntity.getResearcherUrls());
-            
-            if(existingResearcherlUrlsEntities == null) {
-                researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
-            } else {
-                existingResearcherlUrlsEntities.clear();
-                researcherUrlEntities = existingResearcherlUrlsEntities; 
-            }
-            
-            
-            for (ResearcherUrl researcherUrl : researcherUrlList) {
-                ResearcherUrlEntity researcherUrlEntity = new ResearcherUrlEntity();
-                String url = researcherUrl.getUrl() != null ? researcherUrl.getUrl().getValue() : null;
-                String urlName = researcherUrl.getUrlName() != null ? researcherUrl.getUrlName().getContent() : null;
-                Pair<String, String> key = Pair.of(url, urlName);
-                
-                if(existingResearcherUrl.containsKey(key)) {
-                    researcherUrlEntity = existingResearcherUrl.get(key); 
+        String sourceId = getSourceId();
+        SortedSet<ResearcherUrlEntity> existingResearcherUrlEntities = profileEntity.getResearcherUrls();
+        
+        Iterator<ResearcherUrlEntity> existingIt = null;
+        if(existingResearcherUrlEntities != null) {
+            existingIt = existingResearcherUrlEntities.iterator();
+        }
+        
+        //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+        if(existingIt != null) {
+            while(existingIt.hasNext()) {
+                ResearcherUrlEntity existing = existingIt.next();
+                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                if(sourceId != null && !sourceId.equals(existingElementSource)) {
+                    //If am not the source of this element, do nothing
                 } else {
-                    researcherUrlEntity.setUrl(url);
-                    researcherUrlEntity.setUrlName(urlName);
-                    researcherUrlEntity.setUser(profileEntity);
+                    //If am the source, check if the element exists in the list of incoming elements
+                    Pair<String, String> existingPair = createResearcherUrlPair(existing);
+                    boolean found = false;
+                    if(researcherUrls != null && researcherUrls.getResearcherUrl() != null) {
+                        for(ResearcherUrl newResearcherUrl : researcherUrls.getResearcherUrl()){
+                            Pair<String, String> newResearcherUrlPair = createResearcherUrlPair(newResearcherUrl);
+                            if(Objects.equals(existingPair, newResearcherUrlPair)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    //If it doesn't exists, remove it from the existing elements
+                    if(!found) {
+                        existingIt.remove();
+                    }
+                }
+            }
+        }
+        
+        //Iterate over the list of all new ones and add the ones that doesn't exists yet
+        if(researcherUrls != null && researcherUrls.getResearcherUrl() != null) {
+            for(ResearcherUrl newResearcherUrl : researcherUrls.getResearcherUrl()) {
+                boolean exists = false;
+                Pair<String, String> newResearcherUrlPair = createResearcherUrlPair(newResearcherUrl);
+                if(existingResearcherUrlEntities != null) {
+                    for(ResearcherUrlEntity existingEntity : existingResearcherUrlEntities) {
+                        Pair<String, String> existingPair = createResearcherUrlPair(existingEntity);
+                        if(Objects.equals(newResearcherUrlPair, existingPair)) {
+                            exists = true;
+                            break;
+                        }
+                    }
                 }
                 
-                boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();
-                if(claimed) {
-                    if(researcherUrlEntity.getVisibility() == null) {
-                        if(profileEntity.getActivitiesVisibilityDefault() != null) {                
-                            researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
-                        }else{
-                            researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
-                        }
-                    } 
-                    
-                    if(researcherUrlEntity.getSource() == null) {
-                        researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
+                if(!exists) {
+                    ResearcherUrlEntity newEntity = new ResearcherUrlEntity();
+                    newEntity.setUser(profileEntity);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    newEntity.setDisplayIndex(-1L);
+                    if(newResearcherUrl.getUrl() != null) {
+                        newEntity.setUrl(newResearcherUrl.getUrl().getValue());
                     }
-                } else {                    
-                    Visibility defaultVisibility = researcherUrl.getVisibility() != null ? researcherUrl.getVisibility() : Visibility.PRIVATE;                     
-                    researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));                    
-                    researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
-                }                                
-                                
-                researcherUrlEntities.add(researcherUrlEntity);
+                    if(newResearcherUrl.getUrlName() != null) {
+                        newEntity.setUrlName(newResearcherUrl.getUrlName().getContent());
+                    }                    
+                    Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault(); 
+                    newEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
+                    existingResearcherUrlEntities.add(newEntity);
+                }
             }
-            profileEntity.setResearcherUrls(researcherUrlEntities);
         }
     }
 
-    
-    private Map<Pair<String, String>, ResearcherUrlEntity> createResearcherUrlsMap(Set<ResearcherUrlEntity> existingResearcherUrls) {
-        Map<Pair<String, String>, ResearcherUrlEntity> map = new HashMap<>();
-        if (existingResearcherUrls != null) {
-            for (ResearcherUrlEntity entity : existingResearcherUrls) {
-                Pair<String, String> pair = createPairForKey(entity);
-                map.put(pair, entity);
-            }
-        }
-        return map;
+    private Pair<String, String> createResearcherUrlPair(ResearcherUrl rUrl) {
+        String url = rUrl.getUrl() == null ? "" : rUrl.getUrl().getValue();
+        String urlName = rUrl.getUrlName() == null ? "" : rUrl.getUrlName().getContent();
+        Pair<String, String> pair = Pair.of(url, urlName);
+        return pair;
     }
 
-    private Pair<String, String> createPairForKey(ResearcherUrlEntity entity) {
+    private Pair<String, String> createResearcherUrlPair(ResearcherUrlEntity entity) {
         String url = entity.getUrl();
         String urlName = entity.getUrlName();
         Pair<String, String> pair = Pair.of(url, urlName);
@@ -509,8 +522,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setOtherNames(ProfileEntity profileEntity, OtherNames otherNames) {        
-        SourceEntity source = sourceManager.retrieveSourceEntity();
-        String sourceId = source.getSourceId();
+        String sourceId = getSourceId();
         
         SortedSet<OtherNameEntity> existingOtherNameEntities = profileEntity.getOtherNames();
         
@@ -524,7 +536,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             while(existingIt.hasNext()) {
                 OtherNameEntity existing = existingIt.next();
                 String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
-                if(!sourceId.equals(existingElementSource)) {
+                if(sourceId != null && !sourceId.equals(existingElementSource)) {
                     //If am not the source of this element, do nothing
                 } else {
                     //If am the source, check if the element exists in the list of incoming elements
@@ -563,7 +575,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if(!exists) {
                     OtherNameEntity newEntity = new OtherNameEntity();
                     newEntity.setProfile(profileEntity);
-                    newEntity.setSource(source);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setDisplayName(newOtherName.getContent());
                     Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault(); 
@@ -613,8 +625,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
-        SourceEntity source = sourceManager.retrieveSourceEntity();
-        String sourceId = source.getSourceId();
+        String sourceId = getSourceId();
         
         SortedSet<ProfileKeywordEntity> existingProfileKeywordEntities = profileEntity.getKeywords();
         
@@ -628,7 +639,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             while(existingIt.hasNext()) {
                 ProfileKeywordEntity existing = existingIt.next();
                 String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
-                if(!sourceId.equals(existingElementSource)){
+                if(sourceId != null && !sourceId.equals(existingElementSource)){
                     //If am not the source of this element, do nothing
                 } else {
                     //If am the source, check if the element exists in the list of incoming elements
@@ -667,7 +678,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if(!exists) {
                     ProfileKeywordEntity newEntity = new ProfileKeywordEntity();
                     newEntity.setProfile(profileEntity);
-                    newEntity.setSource(source);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setKeywordName(newKeyword.getContent());
                     Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault(); 
@@ -1358,6 +1369,16 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             return gregorianCalendar.getTime();
         }
         return null;
+    }
+    
+    private String getSourceId() {
+        SourceEntity source = sourceManager.retrieveSourceEntity();
+        String sourceId = null;
+        //source mananger should never return null, but for some unit tests it does, so, we return the user id
+        if(source != null) {
+            sourceId = source.getSourceId();
+        }         
+        return sourceId;        
     }
 
 }
