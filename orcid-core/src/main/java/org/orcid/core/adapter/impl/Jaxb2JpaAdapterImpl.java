@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -132,6 +133,8 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
+
+import com.ctc.wstx.util.StringUtil;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapterImpl
@@ -595,27 +598,67 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
-        SortedSet<ProfileKeywordEntity> profileKeywordEntities = null;
+        SourceEntity source = sourceManager.retrieveSourceEntity();
+        String sourceId = source.getSourceId();
+        
         SortedSet<ProfileKeywordEntity> existingProfileKeywordEntities = profileEntity.getKeywords();
-        Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap = createProfileKeyworkEntitiesMap(existingProfileKeywordEntities);
-        if (existingProfileKeywordEntities == null) {
-            profileKeywordEntities = new TreeSet<>();
-        } else {
-            // To allow for orphan deletion
-            existingProfileKeywordEntities.clear();
-            profileKeywordEntities = existingProfileKeywordEntities;
+        
+        Iterator<ProfileKeywordEntity> existingIt = null;
+        if(existingProfileKeywordEntities != null){
+            existingIt = existingProfileKeywordEntities.iterator();
         }
-        if (keywords != null) {
-            List<Keyword> keywordList = keywords.getKeyword();
-            if (keywordList != null && !keywordList.isEmpty()) {
-                for (Keyword keyword : keywordList) {
-                    if (StringUtils.isNotBlank(keyword.getContent())) {
-                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap, keywords.getVisibility()));                        
+        
+        //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+        if(existingIt != null) {
+            while(existingIt.hasNext()) {
+                ProfileKeywordEntity existing = existingIt.next();
+                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                if(!sourceId.equals(existingElementSource)){
+                    //If am not the source of this element, do nothing
+                } else {
+                    //If am the source, check if the element exists in the list of incoming elements
+                    String value = existing.getKeywordName();
+                    boolean found = false;
+                    if(keywords != null && keywords.getKeyword() != null) {
+                        for(Keyword newKeyword : keywords.getKeyword()) {
+                            if(Objects.equals(value, newKeyword.getContent())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    //If it doesn't exists, remove it from the existing elements
+                    if(!found) {
+                        existingIt.remove();
                     }
                 }
             }
         }
-        profileEntity.setKeywords(profileKeywordEntities);
+        
+        //Iterate over the list of all new ones and add the ones that doenst exists yet
+        if(keywords != null && keywords.getKeyword() != null) {
+            for(Keyword newKeyword : keywords.getKeyword()) {
+                boolean exists = false;
+                for(ProfileKeywordEntity existingEntity : existingProfileKeywordEntities) {
+                    if(Objects.equals(newKeyword.getContent(), existingEntity.getKeywordName())) {
+                        exists = true;
+                        break;
+                    }
+                }
+                
+                if(!exists) {
+                    ProfileKeywordEntity newEntity = new ProfileKeywordEntity();
+                    newEntity.setProfile(profileEntity);
+                    newEntity.setSource(source);
+                    newEntity.setDisplayIndex(-1L);
+                    newEntity.setKeywordName(newKeyword.getContent());
+                    Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault(); 
+                    newEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
+                    existingProfileKeywordEntities.add(newEntity);
+                }
+            }
+        }                
     }
 
     private Map<String, ProfileKeywordEntity> createProfileKeyworkEntitiesMap(SortedSet<ProfileKeywordEntity> profileKeywordEntities) {
