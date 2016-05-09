@@ -474,8 +474,8 @@ orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
                 $scope.bulkEditMap = {};
                 $scope.bulkChecked = false;
                 $scope.bulkDisplayToggle = false;
-                $scope.toggleSelectMenu = function(){
-                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;
+                $scope.toggleSelectMenu = function(){                	
+                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
                 };
             }
     };
@@ -1503,7 +1503,6 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
         },
         swapbulkChangeAll: function(){        	
             serv.bulkChecked = !serv.bulkChecked;
-            
             if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
             else
@@ -5550,6 +5549,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     $scope.bulkChangeAll = function(bool) {
         $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
         for (var idx in worksSrvc.groups)
             $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
     };
