@@ -370,6 +370,8 @@ public class BaseController {
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
+        System.out.println("-------------------------------");
+        System.out.println("isEmailOkForCurrentUser: " + decryptedEmail);
         OrcidProfileUserDetails userDetails = getCurrentUser();
         if (userDetails == null) {
             return true;
@@ -379,7 +381,9 @@ public class BaseController {
             return true;
         }
         List<Email> emails = orcidProfile.getOrcidBio().getContactDetails().getEmail();
+        System.out.println("isEmailOkForCurrentUser: " + emails.size());
         for (Email email : emails) {
+            System.out.println("isEmailOkForCurrentUser: " + email.getValue());
             if (decryptedEmail.equalsIgnoreCase(email.getValue())) {
                 return true;
             }
