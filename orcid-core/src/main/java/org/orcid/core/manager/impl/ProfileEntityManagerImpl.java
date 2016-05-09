@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,7 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -77,9 +79,11 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -90,6 +94,7 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
+import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -756,6 +761,73 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         person.setLastModifiedDate(latest);
         return person;
+    }
+
+    @Override
+    @Transactional
+    public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
+        //Verify the email
+        boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
+        if(!emailVerified) {
+            throw new InvalidParameterException("Unable to claim and verify email: " + email + " for user: " + orcid);
+        }
+        
+        //Update the profile entity fields
+        ProfileEntity profile = profileDao.find(orcid);
+        profile.setLastModified(new Date());
+        profile.setIndexingStatus(IndexingStatus.REINDEX);
+        profile.setClaimed(true);
+        profile.setCompletedDate(new Date());
+        profile.setLocale(locale);
+        if(claim != null) {
+            profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
+            profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
+            profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility());
+        }
+                
+        //Update the visibility for every bio element to the visibility selected by the user
+        //Update the bio
+        org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        if(profile.getBiographyEntity() != null) {
+            profile.getBiographyEntity().setVisibility(defaultVisibility);
+        }
+        //Update address
+        if(profile.getAddresses() != null) {
+            for(AddressEntity a : profile.getAddresses()) {
+                a.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the keywords
+        if(profile.getKeywords() != null) {
+            for(ProfileKeywordEntity k : profile.getKeywords()) {
+                k.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the other names
+        if(profile.getOtherNames() != null) {
+            for(OtherNameEntity o : profile.getOtherNames()) {
+                o.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the researcher urls
+        if(profile.getResearcherUrls() != null) {
+            for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
+                r.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the external identifiers
+        if(profile.getExternalIdentifiers() != null) {
+            for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
+                e.setVisibility(defaultVisibility);
+            }
+        }
+        profileDao.merge(profile);
+        profileDao.flush();
+        return true;
     }
 }
 

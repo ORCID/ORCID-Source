@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -36,12 +37,16 @@ import javax.validation.Valid;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.orcid.core.constants.DefaultPreferences;
+import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RegistrationManager;
 import org.orcid.core.manager.SecurityQuestionManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
@@ -57,10 +62,8 @@ import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.frontend.web.util.RecaptchaVerifier;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreationMethod;
-import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
@@ -84,6 +87,7 @@ import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.DupicateResearcher;
 import org.orcid.pojo.Redirect;
 import org.orcid.pojo.ajaxForm.Checkbox;
@@ -105,6 +109,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.MapBindingResult;
@@ -185,6 +190,15 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private OrcidProfileCacheManager orcidProfileCacheManager;
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -945,8 +959,17 @@ public class RegistrationController extends BaseController {
             claim.setUrl(getBaseUri() + "/claim/wrong_user");
             return claim;
         }
-        OrcidProfile profileToClaim = orcidProfileManager.retrieveOrcidProfileByEmail(decryptedEmail);
-        if (profileToClaim.getOrcidHistory().isClaimed()) {
+                
+        Map<String, String> emails = emailManager.findIdByEmail(decryptedEmail); 
+        String orcid = emails.get(decryptedEmail);
+        
+        if(PojoUtil.isEmpty(orcid)) {
+            throw new OrcidBadRequestException("Unable to find an ORCID ID for the given email: " + decryptedEmail);
+        }
+        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+        
+        if (profile != null && profile.getClaimed() != null && profile.getClaimed()) {
             // Already claimed so send to sign in page
             claim.setUrl(getBaseUri() + "/signin?alreadyClaimed");
             return claim;
@@ -963,7 +986,7 @@ public class RegistrationController extends BaseController {
         if (claim.getErrors().size() > 0) {
             return claim;
         }
-        OrcidProfile orcidProfile = confirmEmailAndClaim(decryptedEmail, profileToClaim, claim, request);
+        OrcidProfile orcidProfile = confirmEmailAndClaim(orcid, decryptedEmail, claim, request);
         orcidProfile.setPassword(claim.getPassword().getValue());
         orcidProfileManager.updatePasswordInformation(orcidProfile);
         automaticallyLogin(request, claim.getPassword().getValue(), orcidProfile);
@@ -997,38 +1020,18 @@ public class RegistrationController extends BaseController {
         return new ModelAndView("redirect:/my-orcid");
     }
 
-    private OrcidProfile confirmEmailAndClaim(String decryptedEmail, OrcidProfile orcidProfile, Claim claim, HttpServletRequest request)
+    @Transactional
+    private OrcidProfile confirmEmailAndClaim(String orcid, String email, Claim claim, HttpServletRequest request)
             throws NoSuchRequestHandlingMethodException {
-        if (orcidProfile == null) {
-            throw new NoSuchRequestHandlingMethodException(request);
+        Locale requestLocale = RequestContextUtils.getLocale(request);        
+        org.orcid.jaxb.model.message.Locale userLocale = requestLocale == null ? null : org.orcid.jaxb.model.message.Locale.fromValue(requestLocale.toString());
+        boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, email, userLocale, claim);
+        if(!claimed) {
+            throw new IllegalStateException("Unable to claim record " + orcid);
         }
-        orcidProfileManager.addLocale(orcidProfile, RequestContextUtils.getLocale(request));
-        Email email = orcidProfile.getOrcidBio().getContactDetails().getEmailByString(decryptedEmail);
-        email.setVerified(true);
-        email.setCurrent(true);
-        OrcidHistory orcidHistory = orcidProfile.getOrcidHistory();
-        orcidHistory.setClaimed(new Claimed(true));
-        CompletionDate completionDate = orcidHistory.getCompletionDate();
-        if (completionDate == null) {
-            orcidHistory.setCompletionDate(new CompletionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        }
-        if (claim != null) {
-            Preferences preferences = orcidProfile.getOrcidInternal().getPreferences();
-            if (preferences == null) {
-                preferences = new Preferences();
-            }
-            preferences.setSendChangeNotifications(new SendChangeNotifications(claim.getSendChangeNotifications().getValue()));
-            preferences.setSendOrcidNews(new SendOrcidNews(claim.getSendOrcidNews().getValue()));
-            preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility()));
-
-            // Set the default visibility to the bio
-            if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getBiography() != null) {
-                orcidProfile.getOrcidBio().getBiography().setVisibility(Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value()));
-            }
-        }
-
-        OrcidProfile profileToReturn = orcidProfileManager.updateOrcidProfile(orcidProfile);
-        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
+        
+        OrcidProfile profileToReturn = orcidProfileCacheManager.retrieve(orcid);
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);        
         return profileToReturn;
     }
 

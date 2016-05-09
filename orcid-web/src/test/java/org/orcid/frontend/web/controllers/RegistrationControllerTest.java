@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -29,7 +30,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -37,7 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -52,27 +57,47 @@ import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.EmailAddressForm;
 import org.orcid.frontend.web.forms.OneTimeResetPasswordForm;
 import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
+import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidInternal;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.pojo.ajaxForm.Checkbox;
+import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.google.common.collect.Lists;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-frontend-web-servlet.xml", "classpath:orcid-core-context.xml" })
-public class RegistrationControllerTest {
+public class RegistrationControllerTest extends DBUnitTest {
 
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+    
     @Resource(name = "registrationController")
     RegistrationController registrationController;
 
@@ -93,6 +118,17 @@ public class RegistrationControllerTest {
     
     @Mock
     private HttpServletResponse servletResponse;
+    
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
+    
+    @AfterClass
+    public static void afterClass() throws Exception {
+        removeDBUnitData(Lists.reverse(DATA_FILES));
+    }
     
     @Before
     public void before() {
@@ -335,6 +371,36 @@ public class RegistrationControllerTest {
         registrationController.resetPasswordConfirmValidate(form);
     }
     
+    @Test
+    @Transactional
+    public void testClaim() {
+        String email = "public_0000-0000-0000-0001@test.orcid.org";
+        when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn(email);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE)).thenReturn(null);
+        when(request.getLocale()).thenReturn(java.util.Locale.US);
+                
+        Claim claim = new Claim();
+        claim.setActivitiesVisibilityDefault(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PRIVATE));
+        claim.setPassword(Text.valueOf("passwordTest1"));
+        claim.setPasswordConfirm(Text.valueOf("passwordTest1"));
+        Checkbox checked = new Checkbox();
+        checked.setValue(true);
+        claim.setSendChangeNotifications(checked);
+        claim.setSendOrcidNews(checked);
+        claim.setTermsOfUse(checked);
+        try {
+            claim = registrationController.submitClaimJson(request, email, claim);
+            assertNotNull(claim);
+            assertTrue(claim.getErrors().isEmpty());
+            assertTrue(claim.getUrl().endsWith("/my-orcid?recordClaimed"));
+        } catch (NoSuchRequestHandlingMethodException e) {
+            fail();
+        } catch (UnsupportedEncodingException e) {
+            fail();
+        }
+    }
+    
     private OrcidProfile orcidWithSecurityQuestion() {
         OrcidProfile orcidProfile = new OrcidProfile();
         orcidProfile.setSecurityQuestionAnswer("Answer");
@@ -363,6 +429,30 @@ public class RegistrationControllerTest {
         orcidBio.setContactDetails(contactDetails);
         orcidProfile.setOrcidBio(orcidBio);
         return orcidProfile;
+    }
+    
+    protected OrcidProfile createBasicProfile() {
+        OrcidProfile profile = new OrcidProfile();
+        profile.setPassword("password");
+        profile.setVerificationCode("1234");
+        profile.setSecurityQuestionAnswer("random answer");
+
+        OrcidBio bio = new OrcidBio();
+        ContactDetails contactDetails = new ContactDetails();
+        contactDetails.addOrReplacePrimaryEmail(new Email("will@semantico.com"));
+        bio.setContactDetails(contactDetails);
+        profile.setOrcidBio(bio);
+        PersonalDetails personalDetails = new PersonalDetails();
+        bio.setPersonalDetails(personalDetails);
+        personalDetails.setGivenNames(new GivenNames("Will"));
+        personalDetails.setFamilyName(new FamilyName("Simpson"));        
+        bio.setBiography(new Biography("Will is a software developer"));        
+        ResearcherUrls researcherUrls = new ResearcherUrls();
+        bio.setResearcherUrls(researcherUrls);
+        researcherUrls.getResearcherUrl().add(new ResearcherUrl(new Url("http://www.wjrs.co.uk"),null));
+        OrcidWorks orcidWorks = new OrcidWorks();
+        profile.setOrcidWorks(orcidWorks);        
+        return profile;
     }
 
 }

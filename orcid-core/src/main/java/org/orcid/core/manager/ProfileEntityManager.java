@@ -22,14 +22,15 @@ import java.util.List;
 
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
+import org.orcid.pojo.ajaxForm.Claim;
 
 /**
  * User: Declan Newman (declan) Date: 10/02/2012 </p>
@@ -89,4 +90,6 @@ public interface ProfileEntityManager {
     Person getPersonDetails(String orcid);
     
     Person getPublicPersonDetails(String orcid);
+    
+    boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim);
 }

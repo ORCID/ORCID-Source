@@ -665,6 +665,45 @@
             display_index="4"
             />
 
+	<external_identifier
+            id="18"
+            external_id_reference="public"
+            external_id_type="public"
+            orcid="0000-0000-0000-0001"
+            external_id_url="http://ext-id/self/public"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="1"
+            />
+
+	<external_identifier
+            id="19"
+            external_id_reference="limited"
+            external_id_type="limited"
+            orcid="0000-0000-0000-0001"
+            external_id_url="http://ext-id/self/limited"
+            client_source_id="APP-5555555555555555"
+            visibility="LIMITED"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="2"
+            />
+
+	<external_identifier
+            id="20"
+            external_id_reference="private"
+            external_id_type="private"
+            orcid="0000-0000-0000-0001"
+            external_id_url="http://ext-id/self/private"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            date_created="2011-06-29 15:31:00.00"            
+            last_modified="2011-07-02 15:31:00.00"
+            display_index="2"
+            />
+
     <researcher_url
             id="1"
             url="www.4444-4444-4444-4441.com"
@@ -868,6 +907,43 @@
             display_index="4"
             />
 
+
+	<researcher_url
+            id="18"
+            url="http://www.researcherurl.com?id=18"
+            url_name="public"
+            orcid="0000-0000-0000-0001"
+            client_source_id="APP-5555555555555555"
+            visibility="PUBLIC"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            display_index="1"
+            />
+
+	<researcher_url
+            id="19"
+            url="http://www.researcherurl.com?id=19"
+            url_name="limited"
+            orcid="0000-0000-0000-0001"
+            client_source_id="APP-5555555555555555"
+            visibility="LIMITED"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            display_index="1"
+            />
+
+	<researcher_url
+            id="20"
+            url="http://www.researcherurl.com?id=20"
+            url_name="private"
+            orcid="0000-0000-0000-0001"
+            client_source_id="APP-5555555555555555"
+            visibility="PRIVATE"
+            last_modified="2011-07-02 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+            display_index="1"
+            />
+
     <other_name
             other_name_id="1"
             display_name="Slibberdy Slabinah"
@@ -1055,6 +1131,39 @@
             display_index="4"
             />
 
+	<other_name
+            other_name_id="18"
+            display_name="PUBLIC"
+            orcid="0000-0000-0000-0001"
+            visibility="PUBLIC"
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-04-01 15:31:00.00"
+            date_created="2016-04-01 15:31:00.00"
+            display_index="1"
+            />
+
+	<other_name
+            other_name_id="19"
+            display_name="LIMITED"
+            orcid="0000-0000-0000-0001"
+            visibility="LIMITED"
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-04-01 15:31:00.00"
+            date_created="2016-04-01 15:31:00.00"
+            display_index="2"
+            />
+
+	<other_name
+            other_name_id="20"
+            display_name="PRIVATE"
+            orcid="0000-0000-0000-0001"
+            visibility="PRIVATE"
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-04-01 15:31:00.00"
+            date_created="2016-04-01 15:31:00.00"
+            display_index="3"
+            />
+
 	<address
             id="1"            
             iso2_country="US"
@@ -1211,6 +1320,42 @@
             date_created="2016-01-02 15:31:00.00"
             display_index="4"            
             />        
+         
+	<address
+            id="14"            
+            iso2_country="US"
+            orcid="0000-0000-0000-0001"
+            visibility="PUBLIC"
+            is_primary="true"
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="4"            
+            />
+                  
+	<address
+            id="15"            
+            iso2_country="CR"
+            orcid="0000-0000-0000-0001"
+            visibility="LIMITED"
+            is_primary="false"
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="4"            
+            />                  
+       
+	<address
+            id="16"            
+            iso2_country="PE"
+            orcid="0000-0000-0000-0001"
+            visibility="PRIVATE"
+            is_primary="false"
+            client_source_id="APP-5555555555555555"
+            last_modified="2016-01-02 15:31:00.00"
+            date_created="2016-01-02 15:31:00.00"
+            display_index="4"            
+            />         
                           		  
     <given_permission_to
             given_permission_to_id="1"
@@ -1467,6 +1612,17 @@
     />        
       
 	<email
+        orcid="0000-0000-0000-0001"
+        email="public_0000-0000-0000-0001@test.orcid.org"
+        is_primary="true"
+        is_current="true"
+        is_verified="true"
+        visibility="PUBLIC"
+        client_source_id="APP-5555555555555555"
+        last_modified="2016-04-01 15:31:00.00"
+    />        
+      
+	<email
         orcid="0000-0000-0000-0003"
         email="public_0000-0000-0000-0003@test.orcid.org"
         is_primary="true"
@@ -1660,5 +1816,39 @@
         last_modified="2016-04-01 15:31:00.00"
 		date_created="2016-04-01 15:31:00.00"
 		display_index="4"
-    />                        
+    /> 
+    
+    <profile_keyword 
+    	id="14"
+        profile_orcid="0000-0000-0000-0001"
+        keywords_name="PUBLIC"
+        visibility="PUBLIC"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2016-04-01 15:31:00.00"
+		date_created="2016-04-01 15:31:00.00"
+		display_index="4"
+    />
+    
+    <profile_keyword 
+    	id="15"
+        profile_orcid="0000-0000-0000-0001"
+        keywords_name="LIMITED"
+        visibility="LIMITED"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2016-04-01 15:31:00.00"
+		date_created="2016-04-01 15:31:00.00"
+		display_index="4"
+    />  
+                           
+    <profile_keyword 
+    	id="16"
+        profile_orcid="0000-0000-0000-0001"
+        keywords_name="PRIVATE"
+        visibility="PRIVATE"            
+        client_source_id="APP-5555555555555555"
+        last_modified="2016-04-01 15:31:00.00"
+		date_created="2016-04-01 15:31:00.00"
+		display_index="4"
+    /> 
+                           
 </dataset>

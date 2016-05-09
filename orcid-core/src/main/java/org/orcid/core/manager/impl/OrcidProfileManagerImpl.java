@@ -924,7 +924,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }            
 
     @Override
-    @Transactional
+    @Transactional    
     public void updatePreferences(String orcid, Preferences preferences) {
         boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
                 .getSendChangeNotifications().isValue();

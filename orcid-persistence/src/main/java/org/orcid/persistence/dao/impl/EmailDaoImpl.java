@@ -197,4 +197,13 @@ public class EmailDaoImpl extends GenericDaoImpl<EmailEntity, String> implements
         List<EmailEntity> results = query.getResultList();
         return results.isEmpty() ? null : results;
     }
+
+    @Override
+    @Transactional
+    public boolean verifySetCurrentAndPrimary(String orcid, String email) {
+        Query query = entityManager.createQuery("update EmailEntity set current = true, primary = true, verified = true where orcid = :orcid and email = :email");
+        query.setParameter("orcid", orcid);
+        query.setParameter("email", email);
+        return query.executeUpdate() > 0;
+    }
 }
