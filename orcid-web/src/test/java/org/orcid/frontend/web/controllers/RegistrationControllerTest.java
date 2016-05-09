@@ -414,7 +414,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     
     private OrcidProfile getOrcidToTestClaimResend(boolean claimed) {
         OrcidProfile orcidProfile = new OrcidProfile();
-        OrcidIdentifier orcid = new OrcidIdentifier("0000-0000-0000-0001");        
+        OrcidIdentifier orcid = new OrcidIdentifier("0000-0000-0000-000X");        
         orcidProfile.setOrcidIdentifier(orcid);
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(claimed));
@@ -429,7 +429,8 @@ public class RegistrationControllerTest extends DBUnitTest {
         orcidBio.setContactDetails(contactDetails);
         orcidProfile.setOrcidBio(orcidBio);
         return orcidProfile;
-    }
+    }    
+    
     
     protected OrcidProfile createBasicProfile() {
         OrcidProfile profile = new OrcidProfile();
