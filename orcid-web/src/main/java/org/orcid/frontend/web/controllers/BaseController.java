@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -80,8 +79,6 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -370,8 +367,6 @@ public class BaseController {
     }
 
     protected boolean isEmailOkForCurrentUser(String decryptedEmail) {
-        System.out.println("-------------------------------");
-        System.out.println("isEmailOkForCurrentUser: " + decryptedEmail);
         OrcidProfileUserDetails userDetails = getCurrentUser();
         if (userDetails == null) {
             return true;
@@ -381,9 +376,7 @@ public class BaseController {
             return true;
         }
         List<Email> emails = orcidProfile.getOrcidBio().getContactDetails().getEmail();
-        System.out.println("isEmailOkForCurrentUser: " + emails.size());
         for (Email email : emails) {
-            System.out.println("isEmailOkForCurrentUser: " + email.getValue());
             if (decryptedEmail.equalsIgnoreCase(email.getValue())) {
                 return true;
             }

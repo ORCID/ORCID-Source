@@ -1378,6 +1378,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     @Transactional
+    @Deprecated
     public OrcidProfile deactivateOrcidProfile(OrcidProfile existingOrcidProfile) {
         OrcidProfile blankedOrcidProfile = new OrcidProfile();
 

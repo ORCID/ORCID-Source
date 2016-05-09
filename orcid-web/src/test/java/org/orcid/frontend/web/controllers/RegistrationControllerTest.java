@@ -375,6 +375,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Transactional
     public void testClaim() {
         String email = "public_0000-0000-0000-0001@test.orcid.org";
+        when(orcidProfileManager.retrieveOrcidProfileByEmail("public_0000-0000-0000-0001@test.orcid.org")).thenReturn(getOrcidToTestClaim(false));
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn(email);
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE)).thenReturn(null);
@@ -431,6 +432,24 @@ public class RegistrationControllerTest extends DBUnitTest {
         return orcidProfile;
     }    
     
+    private OrcidProfile getOrcidToTestClaim(boolean claimed) {
+        OrcidProfile orcidProfile = new OrcidProfile();
+        OrcidIdentifier orcid = new OrcidIdentifier("0000-0000-0000-0001");        
+        orcidProfile.setOrcidIdentifier(orcid);
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidHistory.setClaimed(new Claimed(claimed));
+        orcidProfile.setOrcidHistory(orcidHistory);
+        OrcidBio orcidBio = new OrcidBio();
+        ContactDetails contactDetails = new ContactDetails();
+        List<Email> emails = new ArrayList<Email>();
+        Email email = new Email("public_0000-0000-0000-0001@test.orcid.org");
+        email.setPrimary(true);
+        emails.add(email);
+        contactDetails.setEmail(emails);
+        orcidBio.setContactDetails(contactDetails);
+        orcidProfile.setOrcidBio(orcidBio);
+        return orcidProfile;
+    }
     
     protected OrcidProfile createBasicProfile() {
         OrcidProfile profile = new OrcidProfile();

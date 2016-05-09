@@ -626,7 +626,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         String primaryEmail = profile.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
         if (decryptedEmail.equals(primaryEmail)) {
-            orcidProfileManager.deactivateOrcidProfile(profile);
+            profileEntityManager.deactivateRecord(getCurrentUserOrcid());
             logoutCurrentUser(request, response);
             result = new ModelAndView("redirect:/signin#deactivated");
         } else {
