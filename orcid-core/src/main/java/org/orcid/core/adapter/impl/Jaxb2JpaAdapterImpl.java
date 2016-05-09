@@ -844,53 +844,60 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         
         //Set the info in the address table
         if(country != null) {
-            AddressEntity addressEntity = new AddressEntity();
-            addressEntity.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
-            if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
-            	Iterator<AddressEntity> iterator = profileEntity.getAddresses().iterator();
-            	while (iterator.hasNext()) {
-            	    AddressEntity temp = iterator.next();
-            	    if(temp.getPrimary()) {
-            	        addressEntity = temp;
-            	    	break;
-            	    }
-            	}
-            }
-            addressEntity.setPrimary(true);
-            addressEntity.setDisplayIndex(-1L);
-            
-            //Check if the value changed
-            if(addressEntity.getIso2Country() != null) {
-                //If the country changed, update the country and the source
-                if(!country.value().equals(addressEntity.getIso2Country().value())) {
-                    addressEntity.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
-                    addressEntity.setSource(sourceManager.retrieveSourceEntity());
-                }
+            Set<AddressEntity> addresses = profileEntity.getAddresses();
+            if(addresses == null) {
+                addresses = new TreeSet<AddressEntity>();
             }
             
-            boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();            
-            if(claimed) {
-                if(addressEntity.getVisibility() == null) {
-                    if(profileEntity.getActivitiesVisibilityDefault() != null) {                
-                        addressEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
-                    }else{
-                        addressEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
-                    }
-                }  
-                
-                if(addressEntity.getSource() == null) {                    
-                    addressEntity.setSource(sourceManager.retrieveSourceEntity());                    
-                }
+            boolean addNew = false;
+            
+            //If there isnt any address, just create it
+            if(addresses.isEmpty()) {
+                addNew = true;                
             } else {
-                Visibility countryVisibility = (contactCountry != null &&  contactCountry.getVisibility() != null) ? contactCountry.getVisibility() : Visibility.PRIVATE;
-                addressEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(countryVisibility.value()));
-                addressEntity.setSource(sourceManager.retrieveSourceEntity());                
-            }                                                            
+                //Else look for the primary address and update it
+                SourceEntity source = sourceManager.retrieveSourceEntity();
+                Iterator<AddressEntity> addressIt = addresses.iterator();
+                boolean found = false;
+                
+                while(addressIt.hasNext()) {
+                    AddressEntity address = addressIt.next();
+                    //Update the primary
+                    if(address.getPrimary() != null && address.getPrimary()) {
+                        found = true;
+                        String existingSource = address.getSource() == null ? null : address.getSource().getSourceId();
+                        //If the primary is from the same source, overwrite it
+                        if(source != null && Objects.equals(source.getSourceId(), existingSource)) {
+                            address.setLastModified(new Date());
+                            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+                        } else {
+                            //If the primary is not from the same source, set is as non primary
+                            address.setLastModified(new Date());
+                            address.setPrimary(false);
+                            //And add the new address
+                            addNew = true;                            
+                        }
+                        break;
+                    }
+                }
+                //If couldn't find the primary address, add this one as primary
+                if(!found) {
+                    addNew = true;
+                }
+            } 
             
-            addressEntity.setUser(profileEntity);
-            HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();
-            addresses.add(addressEntity);
-            profileEntity.setAddresses(addresses);
+            if(addNew) {
+                AddressEntity newAddress = new AddressEntity();
+                newAddress.setDateCreated(new Date());
+                newAddress.setDisplayIndex(-1L);
+                newAddress.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+                newAddress.setLastModified(new Date());
+                newAddress.setPrimary(true);
+                newAddress.setUser(profileEntity);
+                newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
+                newAddress.setSource(sourceManager.retrieveSourceEntity());
+                addresses.add(newAddress);
+            }
         }        
     }
 

@@ -26,6 +26,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Shobhit Tyagi
@@ -72,6 +73,7 @@ public class UserConnectionDaoImpl extends GenericDaoImpl<UserconnectionEntity, 
     }
 
     @Override
+    @Transactional
     public void deleteByOrcid(String orcid) {
         Query query = entityManager.createQuery("delete from UserconnectionEntity where orcid = :orcid");
         query.setParameter("orcid", orcid);

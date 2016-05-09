@@ -843,20 +843,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Transactional
     public boolean deactivateRecord(String orcid) {
         //Clear the record
-        clearRecord(orcid);
-        
-        //Delete all connections
-        userConnectionDao.deleteByOrcid(orcid);
-        
-        OrcidProfile deactivated = orcidProfileManager.retrieveOrcidProfile(orcid);
-        
-        notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
-        return false;
-    }
-    
-    
-    private void clearRecord(String orcid) {
         ProfileEntity toClear = profileDao.find(orcid);
+        toClear.setLastModified(new Date());
+        toClear.setDeactivationDate(new Date());
+        toClear.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        toClear.setIndexingStatus(IndexingStatus.REINDEX);
+        
         // Remove works
         if (toClear.getWorks() != null) {
             toClear.getWorks().clear();
@@ -864,7 +856,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         // Remove funding
         if (toClear.getProfileFunding() != null) {
-            toClear.getOrgAffiliationRelations().clear();
+            toClear.getProfileFunding().clear();
         }
         
         // Remove affiliations
@@ -890,8 +882,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         // Remove keywords
         if(toClear.getKeywords() != null) {
             toClear.getKeywords().clear();                                                        
-        }
+        }        
         
+        // Remove address
+        if(toClear.getAddresses() != null) {
+            toClear.getAddresses().clear();
+        }
         
         BiographyEntity bioEntity = toClear.getBiographyEntity();
         if(bioEntity != null) {
@@ -918,7 +914,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         profileDao.merge(toClear);
         profileDao.flush();
-    }
+        
+        //Delete all connections
+        userConnectionDao.deleteByOrcid(orcid);                
+        
+        OrcidProfile deactivated = orcidProfileManager.retrieveOrcidProfile(orcid);
+        
+        notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
+        return false;
+    }        
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

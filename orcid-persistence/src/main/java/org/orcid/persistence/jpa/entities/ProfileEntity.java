@@ -474,7 +474,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.peerReviews = peerReviews;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public Set<AddressEntity> getAddresses() {
         return addresses;
     }
