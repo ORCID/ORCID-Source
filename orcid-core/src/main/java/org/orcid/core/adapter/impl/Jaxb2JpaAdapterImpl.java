@@ -847,6 +847,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             Set<AddressEntity> addresses = profileEntity.getAddresses();
             if(addresses == null) {
                 addresses = new HashSet<AddressEntity>();
+                profileEntity.setAddresses(addresses);
             }
             
             boolean addNew = false;
@@ -897,7 +898,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
                 newAddress.setSource(sourceManager.retrieveSourceEntity());
                 addresses.add(newAddress);
-            }
+            }                        
         }        
     }
 
