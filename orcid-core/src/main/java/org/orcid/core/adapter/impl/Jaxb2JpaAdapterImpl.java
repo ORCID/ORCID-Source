@@ -846,7 +846,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(country != null) {
             Set<AddressEntity> addresses = profileEntity.getAddresses();
             if(addresses == null) {
-                addresses = new TreeSet<AddressEntity>();
+                addresses = new HashSet<AddressEntity>();
             }
             
             boolean addNew = false;

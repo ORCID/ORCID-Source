@@ -375,7 +375,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Transactional
     public void testClaim() {
         String email = "public_0000-0000-0000-0001@test.orcid.org";
-        when(orcidProfileManager.retrieveOrcidProfileByEmail("public_0000-0000-0000-0001@test.orcid.org")).thenReturn(getOrcidToTestClaim(false));
+        when(orcidProfileManager.retrieveOrcidProfileByEmail(any(String.class))).thenReturn(getOrcidToTestClaim(false));
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn(email);
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE)).thenReturn(null);
