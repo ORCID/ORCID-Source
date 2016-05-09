@@ -18,6 +18,7 @@
 -->
 <@public >
 <#escape x as x?html>
+<#setting date_format="yyyy-MM-dd">
 <div class="row workspace-top public-profile">
     <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile" ng-controller="PublicRecordCtrl">
@@ -74,15 +75,17 @@
 		                	<div id="public-other-names-div" class="public-content">		                	
 				                <#list publicOtherNames.otherNames as otherName>				               
 				                	${otherName.content}<#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
-				                	<div ng-if="showSources['other-names']" ng-init=' createdDate = "${otherName.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>		                		
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-				                		   <#if (otherName.source)?? && (otherName.source.sourceName)??>${otherName.source.sourceName.content}</#if> ({{createdDate | date:'yyyy-MM-dd'}})
+				                		   <#if (otherName.source)?? && (otherName.source.sourceName)??>${otherName.source.sourceName.content!}</#if> <#if (otherName.createdDate)??>(${otherName.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if>				                		   
 				                		</p>				                						                			                						                			
 				                	</div>				                						                	
 				                </#list>
 			                </div>
 		                </div>
 		            </#if>
+		            
+		            
 		            <!-- Countries -->    	            	           
 		            <#if (countryName)??>
 		            	<div class="workspace-section">
@@ -105,16 +108,18 @@
 								    </li>
 								</ul>		                		
 		                		<div id="public-country-div" class="public-content">
-		                			${(countryName.countryName)!}
-		                			<div ng-if="showSources['countries']" ng-init='createdDate = "${countryName.createdDate.year}-${countryName.createdDate.month}-${countryName.createdDate.day}"' class="source-line separator" ng-cloak>				                		
-				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-				                		<#if (countryName.sourceName??)>${countryName.sourceName}</#if>  ({{createdDate}})
-				                		</p>				                						                			                						                			
-				                	</div>
+		                			${(countryName)!}		                			  			
+		                			<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>		                							                		
+										<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+											${publicAddresses.source.sourceName.content}											
+											<#if (publicAddresses.sourceName??)>${publicAddresses.sourceName}</#if> <#if (publicAddresses.createdDate)??>(${(publicAddresses.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+										</p>				                						                			                						                						                						                			                						                			
+									</div>
 		                		</div>
 		                	</div>
 		                </div>
 		            </#if>
+		            
 		            <!-- Keywords -->
 		            <#if (publicKeywords)?? && (publicKeywords.keywords?size != 0)>
 			            <div class="workspace-section">
@@ -139,9 +144,9 @@
 		                		<div id="public-keywords-div" class="public-content">		                    		
 	                    			<#list publicKeywords.keywords as keyword>				               
 					                	${keyword.content}<#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>				                	
-					                	<div ng-if="showSources['keywords']" ng-init='createdDate = "${keyword.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+					                	<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                		<#if (keyword.source)?? && (keyword.source.sourceName)??>${keyword.source.sourceName.content}</#if> ({{createdDate | date:'yyyy-MM-dd'}})
+					                			<#if (keyword.source)?? && (keyword.source.sourceName)??>${keyword.source.sourceName.content}</#if> <#if (keyword.createdDate)??>(${(keyword.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                		</p>				                						                			                						                			
 					                	</div>				                						                	
 					                </#list>
@@ -149,6 +154,7 @@
 	                        </div>
 	                    </div>
 		            </#if>
+		            
 		            <!-- Websites -->       	            
 		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
 		           		<div class="workspace-section">
@@ -179,9 +185,9 @@
 				                        		${url.url.value}
 				                        	</#if>
 			                        	</a>			                	
-					                	<div ng-if="showSources['websites']" ng-init='createdDate = "${url.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+					                	<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                		<#if (url.source)?? && (url.source.sourceName)??>${url.source.sourceName.content}</#if> ({{createdDate | date:'yyyy-MM-dd'}})
+					                			<#if (url.source)?? && (url.source.sourceName)??>${url.source.sourceName.content}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                		</p>				                						                			                						                			
 					                	</div>	
 					                	<#if url_has_next><br/></#if>
@@ -189,7 +195,8 @@
 			                    </div>
 			                </div>
 	                    </div>
-		            </#if>	  
+		            </#if>	
+		              
 		            <!-- Email -->
 		            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
 		           		<div class="workspace-section">
@@ -216,16 +223,17 @@
 			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
 			            					<div name="email">${email.email}</div>
 			        					</#if>	
-			        					<div ng-if="showSources['emails']" ng-init='createdDate = "${email.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+			        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                		<#if (email.source)?? && (email.source.sourceName)??>${email.source.sourceName.content}</#if> ({{createdDate | date:'yyyy-MM-dd'}})
+					                			<#if (email.source)?? && (email.source.sourceName)??>${email.source.sourceName.content}</#if> <#if (email.createdDate)??>(${(email.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                		</p>				                						                			                						                			
 					                	</div>					 		
 			            			 </#list>
 		            			</div>		            			
 			                </div>
 	                    </div>
-		            </#if>          	            
+		            </#if>          	           
+		             
 		            <!-- External Identifiers -->
 		            <#if (publicPersonExternalIdentifiers)?? && (publicPersonExternalIdentifiers.externalIdentifier?size != 0)>
 						<div class="workspace-section">
@@ -254,9 +262,9 @@
 				                        <#else>
 				                            ${(external.type)!}: ${(external.value)!}<#if external_has_next><br/></#if>
 				                        </#if>				                        
-				                        <div ng-if="showSources['external-identifiers']" ng-init='createdDate = "${external.createdDate.value}"' class="source-line separator" ng-cloak>				                		
+				                        <div ng-if="showSources['external-identifiers']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                		 	<#if (external.source)?? && (external.source.sourceName)??>${external.source.sourceName.content}</#if> ({{createdDate | date:'yyyy-MM-dd'}})
+					                		 	<#if (external.source)?? && (external.source.sourceName)??>${external.source.sourceName.content}</#if> <#if (external.createdDate)??>(${(external.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                		</p>				                						                			                						                			
 										</div>				                        			                       
 					                	<#if external_has_next><br/></#if>
