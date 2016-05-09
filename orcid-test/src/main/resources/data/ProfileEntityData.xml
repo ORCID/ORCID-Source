@@ -1616,7 +1616,7 @@
         email="public_0000-0000-0000-0001@test.orcid.org"
         is_primary="true"
         is_current="true"
-        is_verified="true"
+        is_verified="false"
         visibility="PUBLIC"
         client_source_id="APP-5555555555555555"
         last_modified="2016-04-01 15:31:00.00"

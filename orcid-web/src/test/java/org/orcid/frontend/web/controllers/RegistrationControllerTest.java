@@ -393,7 +393,7 @@ public class RegistrationControllerTest extends DBUnitTest {
             claim = registrationController.submitClaimJson(request, email, claim);
             assertNotNull(claim);
             assertTrue(claim.getErrors().isEmpty());
-            assertTrue(claim.getUrl().endsWith("/my-orcid?recordClaimed"));
+            assertTrue("Value was: " + claim.getUrl(), claim.getUrl().endsWith("/my-orcid?recordClaimed"));
         } catch (NoSuchRequestHandlingMethodException e) {
             fail();
         } catch (UnsupportedEncodingException e) {
