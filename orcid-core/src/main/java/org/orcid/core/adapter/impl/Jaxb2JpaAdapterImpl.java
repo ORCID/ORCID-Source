@@ -97,7 +97,6 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.TranslatedTitle;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.Relationship;
@@ -468,6 +467,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         Pair<String, String> existingPair = createResearcherUrlPair(existingEntity);
                         if(Objects.equals(newResearcherUrlPair, existingPair)) {
                             exists = true;
+                            //If the profile is not claimed, you can update the visibility
+                            if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                //Update the visibility of existing elements if the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                String listVisibilityValue = researcherUrls.getVisibility() == null ? null : researcherUrls.getVisibility().value();                                                                
+                                if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                }                                                                
+                            }
                             break;
                         }
                     }
@@ -488,7 +496,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     if(newResearcherUrl.getUrlName() != null) {
                         newEntity.setUrlName(newResearcherUrl.getUrlName().getContent());
                     }                    
-                    newEntity.setVisibility(getDefaultVisibility(profileEntity, newResearcherUrl, researcherUrls.getVisibility(), OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT));
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, researcherUrls.getVisibility(), OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT));
                     existingResearcherUrlEntities.add(newEntity);
                 }
             }
@@ -568,6 +576,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     for(OtherNameEntity existingEntity : existingOtherNameEntities) {
                         if(Objects.equals(newOtherName.getContent(), existingEntity.getDisplayName())) {
                             exists = true;
+                            //If the profile is not claimed, you can update the visibility
+                            if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                //Update the visibility of existing elements if the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                String listVisibilityValue = otherNames.getVisibility() == null ? null : otherNames.getVisibility().value();                                                                
+                                if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                }                                                                
+                            }
                             break;
                         }
                     }
@@ -583,7 +600,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     newEntity.setSource(sourceManager.retrieveSourceEntity());
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setDisplayName(newOtherName.getContent());
-                    newEntity.setVisibility(getDefaultVisibility(profileEntity, newOtherName, otherNames.getVisibility(), OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT));
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, otherNames.getVisibility(), OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT));
                     existingOtherNameEntities.add(newEntity);
                 }                
             }
@@ -674,13 +691,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     for(ProfileKeywordEntity existingEntity : existingProfileKeywordEntities) {
                         if(Objects.equals(newKeyword.getContent(), existingEntity.getKeywordName())) {
                             exists = true;
-                            //Check the visibility to see if it changed
-                            //If it is not claimed, you can update the visibility
+                            //If the profile is not claimed, you can update the visibility
                             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
-                                //TODO!!! Update the visibility of existing elements if the profile is not claimed
-                                String existingVisibilityValue = existingEntity.getVisibility() == null ? "" : existingEntity.getVisibility().value();                                 
-                                newKeyword.getVisibility();
-                                keywords.getVisibility();
+                                //Update the visibility of existing elements if the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                String listVisibilityValue = keywords.getVisibility() == null ? null : keywords.getVisibility().value();                                                                
+                                if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                }                                                                
                             }
                             break;
                         }
@@ -697,7 +715,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     newEntity.setSource(sourceManager.retrieveSourceEntity());
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setKeywordName(newKeyword.getContent());
-                    newEntity.setVisibility(getDefaultVisibility(profileEntity, newKeyword, keywords.getVisibility(), OrcidVisibilityDefaults.KEYWORD_DEFAULT));
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, keywords.getVisibility(), OrcidVisibilityDefaults.KEYWORD_DEFAULT));
                     existingProfileKeywordEntities.add(newEntity);
                 }
             }
@@ -752,6 +770,15 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
                         if(Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
                                 exists = true;
+                                //If the profile is not claimed, you can update the visibility
+                                if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                    //Update the visibility of existing elements if the profile is not claimed
+                                    String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                    String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();                                                                
+                                    if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                        existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                    }                                                                
+                                }
                                 break;
                         }
                     }
@@ -776,7 +803,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         newEntity.setExternalIdUrl(newExternalIdentifier.getExternalIdUrl().getValue());
                     }
                     
-                    newEntity.setVisibility(getDefaultVisibility(profileEntity, newExternalIdentifier, externalIdentifiers.getVisibility(), OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT));
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, externalIdentifiers.getVisibility(), OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT));
                     existingExternalIdentifierEntities.add(newEntity);
                 }
             }               
@@ -1391,15 +1418,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return sourceId;        
     }
     
-    private org.orcid.jaxb.model.common_rc2.Visibility getDefaultVisibility(ProfileEntity profile, VisibilityType element, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
-        Visibility defaultVisibility = elementDefault.getVisibility();                    
+    private org.orcid.jaxb.model.common_rc2.Visibility getDefaultVisibility(ProfileEntity profile, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
+        Visibility defaultVisibility = elementDefault.getVisibility();
+        
+        //If the profile is not claimed, set the list visibility
         if(profile.getClaimed() == null || !profile.getClaimed()) {
             if(listVisibility != null) {
                 defaultVisibility = listVisibility;
-            } else if(element.getVisibility() != null) {
-                defaultVisibility = element.getVisibility();
-            } 
+            } else {
+                defaultVisibility = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();
+            }
         } else {
+            //If it is claimed, set the default profile visibility 
             if(profile.getActivitiesVisibilityDefault() != null) {
                 defaultVisibility = profile.getActivitiesVisibilityDefault(); 
             }

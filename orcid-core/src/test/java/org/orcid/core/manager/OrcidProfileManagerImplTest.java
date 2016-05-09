@@ -424,14 +424,14 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile.getOrcidBio().getKeywords().getKeyword().get(0).setContent("kk - updated");
         profile.getOrcidBio().getResearcherUrls().setVisibility(Visibility.PUBLIC);
         profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().setValue("http://whatever.com/updated");
-        profile.getOrcidBio().getExternalIdentifiers().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getExternalIdentifiers().setVisibility(Visibility.PUBLIC);        
         
         profile.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.PUBLIC);
         profile = orcidProfileManager.updateOrcidProfile(profile);
         
-        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals("kk - updated",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
-        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(new Url("http://whatever.com/updated"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
         assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
@@ -440,7 +440,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         
-        assertEquals(new Url("http://whatever.com"),resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(new Url("http://whatever.com/updated"),resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
         assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
         assertEquals("cn",resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
         assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
@@ -448,7 +448,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
 
         Keyword kw = resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next();
-        assertEquals("word",kw.getContent());
+        assertEquals("kk - updated",kw.getContent());
         assertEquals(Visibility.PUBLIC,kw.getVisibility());        
 
     }
@@ -1760,7 +1760,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.LIMITED, updatedBio.getBiography().getVisibility());
         assertEquals("Updated biography", updatedBio.getBiography().getContent());
         assertEquals(Visibility.LIMITED, updatedBio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(Iso3166Country.US , updatedBio.getContactDetails().getAddress().getCountry().getValue());               
+        assertEquals(Iso3166Country.CR, updatedBio.getContactDetails().getAddress().getCountry().getValue());               
         assertEquals(Visibility.LIMITED, updatedBio.getExternalIdentifiers().getVisibility());
         assertEquals(2, updatedBio.getExternalIdentifiers().getExternalIdentifier().size());        
         assertEquals(Visibility.LIMITED, updatedBio.getKeywords().getVisibility());
