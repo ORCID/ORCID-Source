@@ -511,8 +511,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private Pair<String, String> createResearcherUrlPair(ResearcherUrlEntity entity) {
-        String url = entity.getUrl();
-        String urlName = entity.getUrlName();
+        String url = entity.getUrl() == null ? "" : entity.getUrl();
+        String urlName = entity.getUrlName() == null ? "" : entity.getUrlName();
         Pair<String, String> pair = Pair.of(url, urlName);
         return pair;
     }                                                            
