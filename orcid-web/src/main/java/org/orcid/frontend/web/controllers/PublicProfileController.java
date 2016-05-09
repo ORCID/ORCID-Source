@@ -254,11 +254,9 @@ public class PublicProfileController extends BaseWorkspaceController {
         
         //Fill country
         Address publicPrimaryAddress = addressManager.getPrimaryAddress(orcid, lastModifiedTime);        
-        AddressForm publicAddressForm = AddressForm.valueOf(publicPrimaryAddress);
-        
         if(publicPrimaryAddress != null && publicPrimaryAddress.getCountry().getValue() != null && publicPrimaryAddress.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
-        	publicAddressForm.setCountryName(getcountryName(publicPrimaryAddress.getCountry().getValue().value()));
-            mav.addObject("countryName", publicAddressForm);
+            mav.addObject("publicAddresses", publicPrimaryAddress);
+            mav.addObject("countryName", getcountryName(publicPrimaryAddress.getCountry().getValue().value()));
         }
         
         //Fill keywords

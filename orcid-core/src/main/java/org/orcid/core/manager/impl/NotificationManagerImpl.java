@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
 import org.orcid.core.exception.OrcidNotFoundException;
@@ -145,6 +146,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private ProfileEntityManager profileEntityManager;
+
+    @Resource
+    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
     private NotificationDao notificationDao;
@@ -392,11 +396,19 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
+    public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
+        return deriveEmailFriendlyName(jpa2JaxbAdapter.toOrcidProfile(profileEntity));
+    }
+
+    @Override
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile) {
         if (orcidProfile.getOrcidBio() != null && orcidProfile.getOrcidBio().getPersonalDetails() != null) {
             PersonalDetails personalDetails = orcidProfile.getOrcidBio().getPersonalDetails();
             // all this should never be null as given names are required for
             // all...
+            if (personalDetails.getCreditName()!=null)
+                if (!PojoUtil.isEmpty(personalDetails.getCreditName().getContent()))
+                   return personalDetails.getCreditName().getContent();
             if (personalDetails.getGivenNames() != null) {
                 String givenName = personalDetails.getGivenNames().getContent();
                 String familyName = personalDetails.getFamilyName() != null && !StringUtils.isBlank(personalDetails.getFamilyName().getContent()) ? " "
@@ -723,24 +735,6 @@ public class NotificationManagerImpl implements NotificationManager {
             LOGGER.debug("Not sending claim reminder email, because API record creation email option is disabled. Message would have been: {}", body);
         }
 
-    }
-
-    /**
-     * 
-     * 
-     * */
-    public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
-        String result = LAST_RESORT_ORCID_USER_EMAIL_NAME;
-        if(profileEntity.getRecordNameEntity() != null) {
-            RecordNameEntity recordName = profileEntity.getRecordNameEntity(); 
-            if (!PojoUtil.isEmpty(recordName.getGivenNames())) {
-                result = recordName.getGivenNames();
-                if (!PojoUtil.isEmpty(recordName.getFamilyName())) {
-                    result += " " + recordName.getFamilyName();
-                }
-            }
-        } 
-        return result;
     }
 
     private String extractAmenderName(OrcidProfile orcidProfile, String amenderId) {
