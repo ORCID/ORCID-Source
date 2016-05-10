@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -123,6 +124,12 @@ public class AddWorksTest {
         WebElement title = webDriver.findElement(By.xpath("//input[@ng-model='editWork.title.value']"));
         title.sendKeys(workName);
         
+        //wait for angular to register that values have been typed.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
         buttonEl.click();
         SigninTest.colorBoxIsClosed(wait);
