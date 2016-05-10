@@ -81,6 +81,7 @@ import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -375,6 +376,7 @@ public class RegistrationControllerTest extends DBUnitTest {
     @Transactional
     public void testClaim() {
         String email = "public_0000-0000-0000-0001@test.orcid.org";
+        SecurityContextHolder.getContext().setAuthentication(null);
         when(orcidProfileManager.retrieveOrcidProfileByEmail(any(String.class))).thenReturn(getOrcidToTestClaim(false));
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn(email);
         HttpServletRequest request = mock(HttpServletRequest.class);
