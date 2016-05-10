@@ -1676,7 +1676,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.LIMITED, updatedBio.getBiography().getVisibility());
         assertEquals("Updated biography", updatedBio.getBiography().getContent());
         assertEquals(Visibility.LIMITED, updatedBio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(Iso3166Country.CR, updatedBio.getContactDetails().getAddress().getCountry().getValue());               
+        assertEquals(Iso3166Country.US, updatedBio.getContactDetails().getAddress().getCountry().getValue());               
         assertEquals(Visibility.LIMITED, updatedBio.getExternalIdentifiers().getVisibility());
         assertEquals(2, updatedBio.getExternalIdentifiers().getExternalIdentifier().size());        
         assertEquals(Visibility.LIMITED, updatedBio.getKeywords().getVisibility());
