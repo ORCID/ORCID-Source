@@ -476,7 +476,7 @@
 	            <p>
 	            	<@orcid.msg 'manage_signin_subtitle' />
 	            	<br>
-	            	<a href="${springMacroRequestContext.getMessage("common.support_url")}"
+	            	<a href="http://support.orcid.org/knowledgebase/articles/892920"
                 target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
 	            </p>
 	            <div>
@@ -499,7 +499,7 @@
 	                                ng-click="confirmRevoke(socialAccount.id)"
 	                                ng-hide="isPasswordConfirmationRequired"
 	                                class="glyphicon glyphicon-trash grey"
-	                                title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+	                                title="${springMacroRequestContext.getMessage("manage_signin_unlink")}"></a>
 	                            </td>
 	                        </tr>
 	                    </tbody>
