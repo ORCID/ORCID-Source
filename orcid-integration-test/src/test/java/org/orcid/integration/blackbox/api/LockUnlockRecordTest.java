@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.integration.api.pub.PublicV1ApiClientImpl;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
@@ -70,6 +71,7 @@ public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
     private boolean checkIfLockedUI() {
         webDriver = new FirefoxDriver();
         webDriver.get(this.getWebBaseUrl() + "/" + getUser1OrcidId());
+        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
         if (webDriver.findElements(By.id("error_locked")).size() != 0) {
             webDriver.quit();
             return true;

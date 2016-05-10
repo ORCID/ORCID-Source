@@ -66,8 +66,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
-    private static final int TIMEOUT_SECONDS = 10;
-    private static final int SLEEP_MILLISECONDS = 100;
     private WebDriver webDriver;
     private OrcidUi orcidUi;
 

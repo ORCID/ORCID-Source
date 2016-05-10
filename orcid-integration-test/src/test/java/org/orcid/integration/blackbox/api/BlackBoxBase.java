@@ -46,6 +46,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
+    public static final int TIMEOUT_SECONDS = 10;
+    public static final int SLEEP_MILLISECONDS = 100;
+        
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
     private String adminUserName;
@@ -216,7 +219,7 @@ public class BlackBoxBase {
         adminSignIn(adminUserName, adminPassword);
         try {
             // Unlock the account
-            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("unlockProfileDiv")));
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
             WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
             unLockProfileLink.click();
             WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
@@ -224,7 +227,7 @@ public class BlackBoxBase {
                     
             WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
             unLockButton.click();
-            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
             WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
             confirmUnLockButton.click();
         } catch(TimeoutException t) {
@@ -239,7 +242,7 @@ public class BlackBoxBase {
         adminSignIn(adminUserName, adminPassword);
         try {
             // Lock the account
-            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.visibilityOfElementLocated(By.id("lockProfileDiv")));
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
             WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
             lockProfileLink.click();
             WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
@@ -247,7 +250,7 @@ public class BlackBoxBase {
             WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
             lockButton.click();
 
-            (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
             WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
             confirmLockButton.click();
         } catch (TimeoutException t) {
