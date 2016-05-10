@@ -376,7 +376,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         ProfileEntity existingProfileEntity = profileDao.find(orcidProfile.getOrcidIdentifier().getPath());
 
         if (existingProfileEntity != null) {
-            profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
+            //Dont delete the existing elements anymore
+            //profileDao.removeChildrenWithGeneratedIds(existingProfileEntity);
             setWorkPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
             setAffiliationPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
             setFundingPrivacy(orcidProfile, existingProfileEntity.getActivitiesVisibilityDefault());
@@ -923,7 +924,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }            
 
     @Override
-    @Transactional
+    @Transactional    
     public void updatePreferences(String orcid, Preferences preferences) {
         boolean sendChangeNotifications = preferences.getSendChangeNotifications() == null ? DefaultPreferences.SEND_CHANGE_NOTIFICATIONS_DEFAULT : preferences
                 .getSendChangeNotifications().isValue();
@@ -1377,6 +1378,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     @Transactional
+    @Deprecated
     public OrcidProfile deactivateOrcidProfile(OrcidProfile existingOrcidProfile) {
         OrcidProfile blankedOrcidProfile = new OrcidProfile();
 

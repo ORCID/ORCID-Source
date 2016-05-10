@@ -127,7 +127,7 @@ public class InitializeDataHelper {
     private Map<String, OrcidClient> clients = new HashMap<String, OrcidClient>();
     
     public void deleteProfile(String orcid) throws Exception {        
-        orcidProfileManager.deactivateOrcidProfile(orcidProfileManager.retrieveOrcidProfile(orcid));
+        profileEntityManager.deactivateRecord(orcid);
         orcidProfileManager.deleteProfile(orcid);
     }
 

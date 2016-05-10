@@ -49,7 +49,6 @@ import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
-import org.orcid.jaxb.model.message.CompletionDate;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.Country;
@@ -115,6 +114,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
@@ -409,7 +409,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile.getOrcidBio().setExternalIdentifiers(ii);
         profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);
         
-        profile = orcidProfileManager.createOrcidProfile(profile, false, false);
+        profile = orcidProfileManager.createOrcidProfile(profile, true, false);
 
         assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
@@ -421,14 +421,17 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PRIVATE,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
         
         profile.getOrcidBio().getKeywords().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getKeywords().getKeyword().get(0).setContent("kk - updated");
         profile.getOrcidBio().getResearcherUrls().setVisibility(Visibility.PUBLIC);
-        profile.getOrcidBio().getExternalIdentifiers().setVisibility(Visibility.PUBLIC);
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().setValue("http://whatever.com/updated");
+        profile.getOrcidBio().getExternalIdentifiers().setVisibility(Visibility.PUBLIC);        
+        
         profile.getOrcidBio().getPersonalDetails().getOtherNames().setVisibility(Visibility.PUBLIC);
         profile = orcidProfileManager.updateOrcidProfile(profile);
         
-        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
+        assertEquals("kk - updated",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
-        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(new Url("http://whatever.com/updated"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
         assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
         assertEquals(Visibility.PUBLIC,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
@@ -437,7 +440,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         OrcidProfile resultProfile = orcidProfileManager.retrieveOrcidProfile(TEST_ORCID);
         
-        assertEquals(new Url("http://whatever.com"),resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
+        assertEquals(new Url("http://whatever.com/updated"),resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
         assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
         assertEquals("cn",resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
         assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
@@ -445,7 +448,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PUBLIC,resultProfile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());        
 
         Keyword kw = resultProfile.getOrcidBio().getKeywords().getKeyword().iterator().next();
-        assertEquals("word",kw.getContent());
+        assertEquals("kk - updated",kw.getContent());
         assertEquals(Visibility.PUBLIC,kw.getVisibility());        
 
     }
@@ -456,13 +459,40 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     public void testDefaultVisibilityForItemsAppliedOnUpdate() {
         OrcidProfile profile = createBasicProfile();
 
-        profile = orcidProfileManager.createOrcidProfile(profile, false, false);
-        
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
         orcidHistory.setCreationMethod(CreationMethod.DIRECT);
         orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
         profile.setOrcidHistory(orcidHistory);
+        
+        Keyword k = new Keyword("word",null);
+        Keywords kk = new Keywords();
+        kk.getKeyword().add(k);
+        kk.setVisibility(Visibility.LIMITED);
+        
+        ResearcherUrl r = new ResearcherUrl(new Url("http://whatever.com"),null);
+        ResearcherUrls rr = new ResearcherUrls();
+        rr.getResearcherUrl().add(r);
+        rr.setVisibility(Visibility.LIMITED);
+        
+        ExternalIdentifier i = new ExternalIdentifier(null);
+        i.setExternalIdReference(new ExternalIdReference("ref"));
+        i.setExternalIdCommonName(new ExternalIdCommonName("cn"));
+        ExternalIdentifiers ii = new ExternalIdentifiers();
+        ii.getExternalIdentifier().add(i);
+        ii.setVisibility(Visibility.LIMITED);
+        
+        OtherNames oo = new OtherNames();
+        oo.addOtherName("other", null);
+        oo.setVisibility(Visibility.LIMITED);
+        
+        profile.getOrcidBio().setKeywords(kk);
+        profile.getOrcidBio().setResearcherUrls(rr);
+        profile.getOrcidBio().setExternalIdentifiers(ii);
+        profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);        
+        
+        //Create the profile
+        profile = orcidProfileManager.createOrcidProfile(profile, true, false);
         
         Preferences preferences = new Preferences();
         preferences.setSendChangeNotifications(new SendChangeNotifications(true));
@@ -475,41 +505,10 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         OrcidInternal internal = new OrcidInternal();
         internal.setPreferences(preferences);
         profile.setOrcidInternal(internal);
-        
-        profile.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));        
-       
-        Keyword k = new Keyword("word",null);
-        Keywords kk = new Keywords();
-        kk.getKeyword().add(k);
-        
-        ResearcherUrl r = new ResearcherUrl(new Url("http://whatever.com"),null);
-        ResearcherUrls rr = new ResearcherUrls();
-        rr.getResearcherUrl().add(r);
-        
-        ExternalIdentifier i = new ExternalIdentifier(null);
-        i.setExternalIdReference(new ExternalIdReference("ref"));
-        i.setExternalIdCommonName(new ExternalIdCommonName("cn"));
-        ExternalIdentifiers ii = new ExternalIdentifiers();
-        ii.getExternalIdentifier().add(i);
-        
-        OtherNames oo = new OtherNames();
-        oo.addOtherName("other", null);
-        
-        profile.getOrcidBio().setKeywords(kk);
-        profile.getOrcidBio().setResearcherUrls(rr);
-        profile.getOrcidBio().setExternalIdentifiers(ii);
-        profile.getOrcidBio().getPersonalDetails().setOtherNames(oo);        
+        profile.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));
 
+        //Claim the profile
         profile = orcidProfileManager.updateOrcidProfile(profile);
-        
-        assertEquals("word",profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getContent());
-        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getKeywords().getKeyword().iterator().next().getVisibility());
-        assertEquals(new Url("http://whatever.com"),profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getUrl());
-        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getResearcherUrls().getResearcherUrl().iterator().next().getVisibility());
-        assertEquals("cn",profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getExternalIdCommonName().getContent());
-        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().iterator().next().getVisibility());
-        assertEquals("other",profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getContent());
-        assertEquals(Visibility.LIMITED,profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().iterator().next().getVisibility());
         
         //now attempt to alter privacy.  It should fail as record has been claimed.
         profile.getOrcidBio().getKeywords().setVisibility(Visibility.PUBLIC);
@@ -1578,87 +1577,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.PRIVATE, bio.getKeywords().getVisibility());
         assertEquals(Visibility.PRIVATE, bio.getResearcherUrls().getVisibility());
                 
-    }
-    
-    @Test
-    @Transactional
-    public void testUserCreateOrcidProfileSetUserSelectedVisibilityOnBioElements() {
-        OrcidProfile profile = createBasicProfile();
-        String orcidIdentifier = null;
-        profile.setOrcidIdentifier(orcidIdentifier);
-        setBio(profile, Visibility.LIMITED);        
-        
-        OrcidHistory orcidHistory = new OrcidHistory();
-        orcidHistory.setClaimed(new Claimed(true));
-        orcidHistory.setCreationMethod(CreationMethod.DIRECT);
-        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile.setOrcidHistory(orcidHistory);
-        
-        Preferences preferences = new Preferences();
-        preferences.setSendChangeNotifications(new SendChangeNotifications(true));
-        preferences.setSendOrcidNews(new SendOrcidNews(true));
-        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-        preferences.setNotificationsEnabled(DefaultPreferences.NOTIFICATIONS_ENABLED);
-        preferences.setSendEmailFrequencyDays(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS);
-        preferences.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
-        OrcidInternal internal = new OrcidInternal();
-        internal.setPreferences(preferences);
-        profile.setOrcidInternal(internal);
-        
-        profile = orcidProfileManager.createOrcidProfile(profile, false, true);
-        assertNotNull(profile);
-        assertNotNull(profile.getOrcidIdentifier());
-        assertNotNull(profile.getOrcidIdentifier().getPath());
-        OrcidProfile newProfile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
-        assertNotNull(newProfile);
-        assertNotNull(newProfile.getOrcidBio());
-        OrcidBio bio = newProfile.getOrcidBio();
-        assertEquals(Visibility.PUBLIC, bio.getBiography().getVisibility());
-        assertEquals(Visibility.PUBLIC, bio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(Visibility.PUBLIC, bio.getExternalIdentifiers().getVisibility());
-        assertEquals(Visibility.PUBLIC, bio.getKeywords().getVisibility());        
-        assertEquals(Visibility.PUBLIC, bio.getPersonalDetails().getOtherNames().getVisibility());
-        assertEquals(Visibility.PUBLIC, bio.getResearcherUrls().getVisibility());
-    }
-    
-    @Test
-    @Transactional
-    public void testClaimOrcidProfileSetUserSelectedVisibilityToBioElements() {
-        //Create it and set everything to LIMITED
-        OrcidProfile profile = createBasicProfile();
-        String orcidIdentifier = null;
-        profile.setOrcidIdentifier(orcidIdentifier);
-        setBio(profile, Visibility.LIMITED);        
-        profile = orcidProfileManager.createOrcidProfile(profile, true, false);
-        
-        //Update it setting it to PUBLIC and check
-        profile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
-        assertNotNull(profile);
-        assertNotNull(profile.getOrcidBio());
-        OrcidBio bio = profile.getOrcidBio();
-        assertEquals(Visibility.LIMITED, bio.getBiography().getVisibility());
-        assertEquals(Visibility.LIMITED, bio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(Visibility.LIMITED, bio.getExternalIdentifiers().getVisibility());
-        assertEquals(Visibility.LIMITED, bio.getKeywords().getVisibility());        
-        assertEquals(Visibility.LIMITED, bio.getPersonalDetails().getOtherNames().getVisibility());
-        assertEquals(Visibility.LIMITED, bio.getResearcherUrls().getVisibility());
-        
-        profile.getOrcidHistory().setClaimed(new Claimed(true));
-        profile.getOrcidHistory().setCompletionDate(new CompletionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
-        profile.getOrcidInternal().getPreferences().setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.PUBLIC));
-        orcidProfileManager.updateOrcidProfile(profile);
-        
-        OrcidProfile newProfile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
-        assertNotNull(newProfile);
-        assertNotNull(newProfile.getOrcidBio());
-        OrcidBio newBio = newProfile.getOrcidBio();
-        assertEquals(Visibility.PUBLIC, newBio.getBiography().getVisibility());
-        assertEquals(Visibility.PUBLIC, newBio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(Visibility.PUBLIC, newBio.getExternalIdentifiers().getVisibility());
-        assertEquals(Visibility.PUBLIC, newBio.getKeywords().getVisibility());        
-        assertEquals(Visibility.PUBLIC, newBio.getPersonalDetails().getOtherNames().getVisibility());
-        assertEquals(Visibility.PUBLIC, newBio.getResearcherUrls().getVisibility());        
-    }
+    }           
     
     @Test
     @Transactional
@@ -1757,7 +1676,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.LIMITED, updatedBio.getBiography().getVisibility());
         assertEquals("Updated biography", updatedBio.getBiography().getContent());
         assertEquals(Visibility.LIMITED, updatedBio.getContactDetails().getAddress().getCountry().getVisibility());
-        assertEquals(Iso3166Country.US , updatedBio.getContactDetails().getAddress().getCountry().getValue());               
+        assertEquals(Iso3166Country.US, updatedBio.getContactDetails().getAddress().getCountry().getValue());               
         assertEquals(Visibility.LIMITED, updatedBio.getExternalIdentifiers().getVisibility());
         assertEquals(2, updatedBio.getExternalIdentifiers().getExternalIdentifier().size());        
         assertEquals(Visibility.LIMITED, updatedBio.getKeywords().getVisibility());
@@ -1766,6 +1685,189 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(2, updatedBio.getPersonalDetails().getOtherNames().getOtherName().size());
         assertEquals(Visibility.LIMITED, updatedBio.getResearcherUrls().getVisibility());
         assertEquals(2, updatedBio.getResearcherUrls().getResearcherUrl().size());
+    }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testAddressDontChangeOnClaimedRecords() {
+        OrcidProfile profile = createBasicProfile();
+        String orcidIdentifier = null;
+        profile.setOrcidIdentifier(orcidIdentifier);
+        setBio(profile, Visibility.PUBLIC);   
+        String email = profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue();
+        profile = orcidProfileManager.createOrcidProfile(profile, true, false);
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidIdentifier());
+        assertFalse(PojoUtil.isEmpty(profile.getOrcidIdentifier().getPath()));
+        profile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidBio());
+        assertNotNull(profile.getOrcidBio().getBiography());
+        assertEquals("This is my biography", profile.getOrcidBio().getBiography().getContent());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getBiography().getVisibility());
+        assertNotNull(profile.getOrcidBio().getContactDetails());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getAddress());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getAddress().getCountry());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
+        assertEquals(Iso3166Country.US, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getEmail());
+        assertEquals(1, profile.getOrcidBio().getContactDetails().getEmail().size());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
+        assertEquals(email, profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
+        assertNotNull(profile.getOrcidBio().getExternalIdentifiers());
+        assertNotNull(profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getExternalIdentifiers().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("common-name", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("ext-id-reference", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdReference().getContent());
+        assertEquals("http://orcid.org/ext-id", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdUrl().getValue());
+        assertNotNull(profile.getOrcidBio().getKeywords());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getKeywords().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getKeywords().getKeyword().size());
+        assertEquals("k1", profile.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
+        assertNotNull(profile.getOrcidBio().getPersonalDetails());        
+        assertNotNull(profile.getOrcidBio().getPersonalDetails().getOtherNames());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("o1", profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertNotNull(profile.getOrcidBio().getResearcherUrls());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getResearcherUrls().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://orcid.org/researcher-url-1", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals("url-name-1", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
+    
+        //Update all values
+        profile.getOrcidBio().getBiography().setContent("This is my biography # 2");
+        profile.getOrcidBio().getContactDetails().getAddress().setSource(null);
+        profile.getOrcidBio().getContactDetails().getAddress().setCountry(new Country(Iso3166Country.CR));        
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setSource(null);
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdCommonName(new ExternalIdCommonName("common-name-2"));
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdReference(new ExternalIdReference("ext-id-reference-2"));
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdUrl(new ExternalIdUrl("http://orcid.org/ext-id-2"));
+        profile.getOrcidBio().getKeywords().getKeyword().get(0).setSource(null);
+        profile.getOrcidBio().getKeywords().getKeyword().get(0).setContent("k2");
+        profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).setSource(null);
+        profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).setContent("o2");
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).setSource(null);
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).setUrl(new Url("http://orcid.org/researcher-url-2"));
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).setUrlName(new UrlName("url-name-2"));
+        
+        orcidProfileManager.updateOrcidBio(profile);
+        
+        //Everything should be updated
+        profile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidBio());
+        assertNotNull(profile.getOrcidBio().getBiography());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getBiography().getVisibility());
+        assertEquals("This is my biography # 2", profile.getOrcidBio().getBiography().getContent());
+        assertNotNull(profile.getOrcidBio().getContactDetails());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getAddress());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getAddress().getCountry());
+        assertEquals(Iso3166Country.CR, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getEmail());
+        assertEquals(1, profile.getOrcidBio().getContactDetails().getEmail().size());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
+        assertEquals(email, profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
+        assertNotNull(profile.getOrcidBio().getExternalIdentifiers());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getExternalIdentifiers().getVisibility());
+        assertNotNull(profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("common-name-2", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("ext-id-reference-2", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdReference().getContent());
+        assertEquals("http://orcid.org/ext-id-2", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdUrl().getValue());
+        assertNotNull(profile.getOrcidBio().getKeywords());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getKeywords().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getKeywords().getKeyword().size());
+        assertEquals("k2", profile.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
+        assertNotNull(profile.getOrcidBio().getPersonalDetails());        
+        assertNotNull(profile.getOrcidBio().getPersonalDetails().getOtherNames());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("o2", profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertNotNull(profile.getOrcidBio().getResearcherUrls());
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getResearcherUrls().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://orcid.org/researcher-url-2", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals("url-name-2", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
+    
+        //Claim the record
+        OrcidHistory orcidHistory = new OrcidHistory();
+        orcidHistory.setClaimed(new Claimed(true));
+        orcidHistory.setCreationMethod(CreationMethod.DIRECT);
+        orcidHistory.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(new Date())));
+        profile.setOrcidHistory(orcidHistory);
+        
+        Preferences preferences = new Preferences();
+        preferences.setSendChangeNotifications(new SendChangeNotifications(true));
+        preferences.setSendOrcidNews(new SendOrcidNews(true));
+        //Default visibility for user will be LIMITED
+        preferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(Visibility.LIMITED));
+        preferences.setNotificationsEnabled(DefaultPreferences.NOTIFICATIONS_ENABLED);
+        preferences.setSendEmailFrequencyDays(DefaultPreferences.SEND_EMAIL_FREQUENCY_DAYS);
+        preferences.setSendMemberUpdateRequests(DefaultPreferences.SEND_MEMBER_UPDATE_REQUESTS);
+        OrcidInternal internal = new OrcidInternal();
+        internal.setPreferences(preferences);
+        profile.setOrcidInternal(internal);
+        
+        orcidProfileManager.updateOrcidProfile(profile);
+        
+        //Everything should be updated but the address, because the record is claimed
+        profile.getOrcidBio().getBiography().setContent("This is my biography # 3");
+        profile.getOrcidBio().getContactDetails().getAddress().setSource(null);
+        profile.getOrcidBio().getContactDetails().getAddress().setCountry(new Country(Iso3166Country.PE));        
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setSource(null);
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdCommonName(new ExternalIdCommonName("common-name-3"));
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdReference(new ExternalIdReference("ext-id-reference-3"));
+        profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdUrl(new ExternalIdUrl("http://orcid.org/ext-id-3"));
+        profile.getOrcidBio().getKeywords().getKeyword().get(0).setSource(null);
+        profile.getOrcidBio().getKeywords().getKeyword().get(0).setContent("k3");
+        profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).setSource(null);
+        profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).setContent("o3");
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).setSource(null);
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).setUrl(new Url("http://orcid.org/researcher-url-3"));
+        profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).setUrlName(new UrlName("url-name-3"));
+        
+        orcidProfileManager.updateOrcidBio(profile);
+        
+        profile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
+        assertNotNull(profile);
+        assertNotNull(profile.getOrcidBio());
+        assertNotNull(profile.getOrcidBio().getBiography());
+        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getBiography().getVisibility());
+        assertEquals("This is my biography # 3", profile.getOrcidBio().getBiography().getContent());
+        assertNotNull(profile.getOrcidBio().getContactDetails());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getAddress());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getAddress().getCountry());
+        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getEmail());
+        assertEquals(1, profile.getOrcidBio().getContactDetails().getEmail().size());
+        assertNotNull(profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
+        assertEquals(email, profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
+        assertNotNull(profile.getOrcidBio().getExternalIdentifiers());
+        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getExternalIdentifiers().getVisibility());
+        assertNotNull(profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier());
+        assertEquals(1, profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("common-name-3", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("ext-id-reference-3", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdReference().getContent());
+        assertEquals("http://orcid.org/ext-id-3", profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdUrl().getValue());
+        assertNotNull(profile.getOrcidBio().getKeywords());
+        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getKeywords().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getKeywords().getKeyword().size());
+        assertEquals("k3", profile.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
+        assertNotNull(profile.getOrcidBio().getPersonalDetails());        
+        assertNotNull(profile.getOrcidBio().getPersonalDetails().getOtherNames());
+        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getPersonalDetails().getOtherNames().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("o3", profile.getOrcidBio().getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertNotNull(profile.getOrcidBio().getResearcherUrls());
+        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getResearcherUrls().getVisibility());
+        assertEquals(1, profile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://orcid.org/researcher-url-3", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals("url-name-3", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
+        //Address should still be the same
+        assertEquals(Iso3166Country.CR, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());        
     }
     
     private void setBio(OrcidProfile profile, Visibility defaultVisibility) {
