@@ -71,7 +71,18 @@
 								</div>
 					            <!-- SOCIAL LOGIN -->					            
 				                <div class="social-login">
-				                    <p class="title">${springMacroRequestContext.getMessage("login.signinwithasocialaccount")} <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+				                    <div class="title">
+				                        ${springMacroRequestContext.getMessage("login.signinwithasocialaccount")}
+				                        <div class="popover-help-container">
+                                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                            <div id="social-login-help" class="popover bottom">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
+                                                </div>
+                                            </div>
+                                        </div>
+				                    </div>
 				                    <ul class="social-icons">
 				                        <li>
 				                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
@@ -109,8 +120,19 @@
 					<div class="row institution-login" ng-show="personalLogin == false"  ng-cloak>
 						<div class="col-md-12">
 							<div class="login-box">
-								<div class="federate-login">
-									<p class="title">${springMacroRequestContext.getMessage('login.signinviayourinstitution')} <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+								<div class="institution-login">
+									<div class="title">
+									    ${springMacroRequestContext.getMessage('login.signinviayourinstitution')}
+									    <div class="popover-help-container">
+                                            <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                                            <div id="institution-login-help" class="popover bottom">
+                                                <div class="arrow"></div>
+                                                <div class="popover-content">
+                                                    <p><@orcid.msg 'login.signinviayourinstitution.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinviayourinstitution.help.2'/></a><@orcid.msg 'login.signinviayourinstitution.help.3'/></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 					                <div id="idpSelectContainer">                  
 					                    <div id="idpSelectInner">
 					                    	<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
