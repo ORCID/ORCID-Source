@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
@@ -46,7 +48,10 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ActivityValidator {
 
-    public static void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    @Resource
+    private ExternalIDValidator externalIDValidator;
+
+    public void validateWork(Work work, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
         WorkTitle title = work.getWorkTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -64,17 +69,18 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
-        
-        //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
+
+        // Check that we are not changing the visibility
+        if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = work.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
-        
-        ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
+
+        externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
     }
 
-    public static void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    public void validateFunding(Funding funding, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
+            org.orcid.jaxb.model.message.Visibility originalVisibility) {
         FundingTitle title = funding.getTitle();
         if (title == null || title.getTitle() == null || StringUtils.isEmpty(title.getTitle().getContent())) {
             throw new ActivityTitleValidationException();
@@ -94,17 +100,18 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
-        
-        //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
+
+        // Check that we are not changing the visibility
+        if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = funding.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
-        
-        ExternalIDValidator.getInstance().validateFunding(funding.getExternalIdentifiers());
+
+        externalIDValidator.validateFunding(funding.getExternalIdentifiers());
     }
 
-    public static void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    public void validateEmployment(Employment employment, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
+            org.orcid.jaxb.model.message.Visibility originalVisibility) {
         if (employment.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -112,15 +119,16 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
-        
-        //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
+
+        // Check that we are not changing the visibility
+        if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = employment.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
     }
 
-    public static void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    public void validateEducation(Education education, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
+            org.orcid.jaxb.model.message.Visibility originalVisibility) {
         if (education.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
@@ -128,15 +136,16 @@ public class ActivityValidator {
             }
             throw new InvalidPutCodeException(params);
         }
-        
-        //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
+
+        // Check that we are not changing the visibility
+        if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = education.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
     }
 
-    public static void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, org.orcid.jaxb.model.message.Visibility originalVisibility) {
+    public void validatePeerReview(PeerReview peerReview, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest,
+            org.orcid.jaxb.model.message.Visibility originalVisibility) {
         if (peerReview.getExternalIdentifiers() == null || peerReview.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();
         }
@@ -150,22 +159,22 @@ public class ActivityValidator {
         if (peerReview.getType() == null) {
             throw new ActivityTypeValidationException();
         }
-        
-        ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
-        
-        if (peerReview.getSubjectExternalIdentifier() != null){
-            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());            
+
+        externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+
+        if (peerReview.getSubjectExternalIdentifier() != null) {
+            externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
-        
-        //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
+
+        // Check that we are not changing the visibility
+        if (isApiRequest && !createFlag) {
             Visibility updatedVisibility = peerReview.getVisibility();
             validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
         }
     }
 
-    public static void validateGroupIdRecord(GroupIdRecord groupIdRecord, boolean createFlag, SourceEntity sourceEntity) {
-        if(createFlag) {
+    public void validateGroupIdRecord(GroupIdRecord groupIdRecord, boolean createFlag, SourceEntity sourceEntity) {
+        if (createFlag) {
             if (groupIdRecord.getPutCode() != null) {
                 Map<String, String> params = new HashMap<String, String>();
                 if (sourceEntity != null) {
@@ -174,21 +183,19 @@ public class ActivityValidator {
                 throw new InvalidPutCodeException(params);
             }
         }
-        
+
         Pattern validGroupIdRegexPattern = Pattern.compile("(ringgold:|issn:|orcid-generated:|fundref:|publons:)([0-9a-zA-Z\\^._~:/?#\\[\\]@!$&amp;'()*+,;=-]){2,}");
         Matcher matcher = validGroupIdRegexPattern.matcher(groupIdRecord.getGroupId());
-        if(!matcher.matches()) {
+        if (!matcher.matches()) {
             throw new OrcidValidationException("Invalid group-id: '" + groupIdRecord.getGroupId() + "'");
-        }        
+        }
     }
 
-    public static void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
-            SourceEntity sourceEntity) {
+    public void checkExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                   if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
-                            && newId.equals(existingId)  
+                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
@@ -198,8 +205,8 @@ public class ActivityValidator {
             }
         }
     }
-    
-    private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2){
+
+    private static boolean areRelationshipsSameButNotBothPartOf(Relationship r1, Relationship r2) {
         if (r1 == null && r2 == null)
             return true;
         if (r1 != null && r1.equals(r2) && !r1.equals(Relationship.PART_OF))
@@ -207,13 +214,11 @@ public class ActivityValidator {
         return false;
     }
 
-    public static void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource,
-            SourceEntity sourceEntity) {
+    public void checkFundingExternalIdentifiersForDuplicates(ExternalIDs newExtIds, ExternalIDs existingExtIds, Source existingSource, SourceEntity sourceEntity) {
         if (existingExtIds != null && newExtIds != null) {
             for (ExternalID existingId : existingExtIds.getExternalIdentifier()) {
                 for (ExternalID newId : newExtIds.getExternalIdentifier()) {
-                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship())
-                            && newId.equals(existingId) 
+                    if (areRelationshipsSameButNotBothPartOf(existingId.getRelationship(), newId.getRelationship()) && newId.equals(existingId)
                             && sourceEntity.getSourceId().equals(getExistingSource(existingSource))) {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("clientName", sourceEntity.getSourceName());
@@ -231,15 +236,15 @@ public class ActivityValidator {
         }
         return null;
     }
-    
+
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, org.orcid.jaxb.model.message.Visibility originalVisibility) {
-        if(updatedVisibility != null) {
-            if(originalVisibility == null) {
+        if (updatedVisibility != null) {
+            if (originalVisibility == null) {
                 throw new VisibilityMismatchException();
             }
-            if(!updatedVisibility.value().equals(originalVisibility.value())) {
+            if (!updatedVisibility.value().equals(originalVisibility.value())) {
                 throw new VisibilityMismatchException();
             }
-        }        
+        }
     }
 }

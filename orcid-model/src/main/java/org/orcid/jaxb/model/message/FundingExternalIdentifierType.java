@@ -63,7 +63,7 @@ public enum FundingExternalIdentifierType implements Serializable {
     
     public static FundingExternalIdentifierType fromValue(String v) {
         for (FundingExternalIdentifierType c : FundingExternalIdentifierType.values()) {
-            if (c.value.equals(v)) {
+            if (c.value.equalsIgnoreCase((v))) {
                 return c;
             }
         }

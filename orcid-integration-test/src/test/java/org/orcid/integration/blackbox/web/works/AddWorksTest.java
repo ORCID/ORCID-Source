@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -114,8 +115,21 @@ public class AddWorksTest {
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//option[text()='Conference paper']")));
         Select typeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workType.value']")));
         typeSel.selectByVisibleText("Conference paper");
+        
+        Select idTypeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='workExternalIdentifier.workExternalIdentifierType.value']")));
+        idTypeSel.selectByVisibleText("doi: Digital object identifier");
+        WebElement idValue = webDriver.findElement(By.xpath("//input[@ng-model='workExternalIdentifier.workExternalIdentifierId.value']"));
+        idValue.sendKeys("10.10/"+System.currentTimeMillis());
+        
         WebElement title = webDriver.findElement(By.xpath("//input[@ng-model='editWork.title.value']"));
         title.sendKeys(workName);
+        
+        //wait for angular to register that values have been typed.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
         buttonEl.click();
         SigninTest.colorBoxIsClosed(wait);

@@ -104,6 +104,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
+ * Usually run with -Xmx2g -Dorg.orcid.config.file=classpath:staging-persistence.properties
  * 
  * @author Angel Montenegro
  * 

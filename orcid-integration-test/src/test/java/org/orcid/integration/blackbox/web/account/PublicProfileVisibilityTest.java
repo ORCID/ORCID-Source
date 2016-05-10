@@ -51,7 +51,7 @@ import org.orcid.integration.blackbox.client.SigninPage;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -455,6 +455,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
+        //wait for angular to register that values have been typed.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
         noSpinners(webDriver);
         noCboxOverlay(webDriver);
@@ -528,6 +534,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
+        //wait for angular to register that values have been typed.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
         angularHasFinishedProcessing();
         noSpinners(webDriver);
@@ -613,6 +625,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
         selectBox.selectByVisibleText("United States");
         angularHasFinishedProcessing();
+        //wait for angular to register that values have been typed.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ngAwareClick(webDriver.findElement(By.id("save-funding")), webDriver);
         noSpinners(webDriver);
         
@@ -682,7 +700,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         WebElement title = webDriver.findElement(By.id("work-title"));
         title.sendKeys(workTitle);
         angularHasFinishedProcessing();
-
+        //wait for angular to register that values have been typed.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         ngAwareClick(webDriver.findElement(By.id("save-new-work")), webDriver);
         noSpinners(webDriver);
         
@@ -747,7 +770,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID wExtId = new ExternalID();
         wExtId.setValue("Work Id " + time);
-        wExtId.setType(ExternalIDType.AGR.value());
+        wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
 
