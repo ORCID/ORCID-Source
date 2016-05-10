@@ -842,8 +842,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 : null;        
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         
-        //Set the info in the address table
-        if(country != null) {
+        //Set the info in the address table if the profile has not been claimed yet
+        if(country != null && (profileEntity.getClaimed() == null || !profileEntity.getClaimed())) {
             Set<AddressEntity> addresses = profileEntity.getAddresses();
             if(addresses == null) {
                 addresses = new HashSet<AddressEntity>();
