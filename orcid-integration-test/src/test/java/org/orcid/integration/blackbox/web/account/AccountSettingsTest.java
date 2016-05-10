@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Delegate;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.DelegateSearchResult;
@@ -111,8 +113,10 @@ public class AccountSettingsTest {
         SigninPage signinPage = orcidUi.getSigninPage();
         signinPage.visit();
         signinPage.signIn(user1UserName, user1Password);
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         DelegatesSection delegatesSection = accountSettingsPage.getDelegatesSection();
         // If user 2 is already a delegate, then delete and add again - just to
         // make sure we can!
@@ -140,6 +144,7 @@ public class AccountSettingsTest {
         // Got to account settings page as delegate
         accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         // Check that add email section is not there
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();
