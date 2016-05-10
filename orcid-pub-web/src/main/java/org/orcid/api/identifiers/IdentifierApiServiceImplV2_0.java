@@ -53,7 +53,7 @@ public class IdentifierApiServiceImplV2_0 {
     @Path("")
     @ApiOperation(value = "Fetch identifier type map.  Defaults to English descriptions", authorizations = { @Authorization(value = "orcid_two_legs", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_PUBLIC, description = "you need this") }) })
     @ApiResponses(value = { @ApiResponse(code = 200, message = "")})
-    public Response viewStatsSummary(@ApiParam() @QueryParam("locale") String locale) {
+    public Response viewIdentifierTypes(@ApiParam() @QueryParam("locale") String locale) {
         if (locale == null || locale.isEmpty())
             locale = "en";
         return serviceDelegator.getIdentifierTypes(locale);
