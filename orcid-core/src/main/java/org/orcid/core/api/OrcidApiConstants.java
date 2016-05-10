@@ -52,6 +52,7 @@ public class OrcidApiConstants {
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
     public static final String GROUP_ID_RECORD = "/group-id-record";
     public static final String STATS_PATH = "/statistics";
+    public static final String IDENTIFIER_PATH = "/identifiers";
     public static final String STATS = "/{type}";
     public static final String STATS_ALL = "/all";
     public static final String CERIF_PATH = "/cerif/1_0";
