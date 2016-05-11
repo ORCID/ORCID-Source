@@ -34,6 +34,7 @@ import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -217,6 +218,15 @@ public class EmailManagerImpl implements EmailManager {
         }
                 
         return form;
+    }
+
+    @Override
+    public boolean verifySetCurrentAndPrimary(String orcid, String email) {
+        if(PojoUtil.isEmpty(orcid) || PojoUtil.isEmpty(email)) {
+            throw new IllegalArgumentException("orcid or email param is empty or null");
+        }
+        
+        return emailDao.verifySetCurrentAndPrimary(orcid, email);
     }
     
 }

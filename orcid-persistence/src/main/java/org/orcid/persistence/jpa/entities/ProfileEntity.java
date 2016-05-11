@@ -309,7 +309,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the otherNames
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = PROFILE, orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public SortedSet<OtherNameEntity> getOtherNames() {
         return otherNames;
@@ -474,7 +474,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
         this.peerReviews = peerReviews;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public Set<AddressEntity> getAddresses() {
         return addresses;
     }
@@ -486,7 +486,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     /**
      * @return the researcherUrls
      */
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user", orphanRemoval = true)
     @Sort(type = SortType.NATURAL)
     public SortedSet<ResearcherUrlEntity> getResearcherUrls() {
         return researcherUrls;

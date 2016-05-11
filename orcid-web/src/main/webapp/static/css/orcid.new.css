@@ -6218,6 +6218,10 @@ a:hover .mozilla-badge{
     margin-bottom: 50px;
 }
 
+.login .social-login .title{
+	margin-bottom: 10px;
+}
+
 .login .social-login .btn-facebook{
     background: url('../img/svg/fb.svg') transparent no-repeat;
     background-size: 40px 40px;
@@ -6255,6 +6259,10 @@ a:hover .mozilla-badge{
     width: auto;
     float: left !important; /*Overwrite Bootstrap defaults*/
     display: block;
+}
+
+.login .institution-login .title{
+    margin-bottom: 10px;
 }
 
 

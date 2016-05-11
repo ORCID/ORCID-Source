@@ -468,16 +468,16 @@
 											<label><@orcid.msg 'workspace.bulkedit.select'/></label>
 											<div id="custom-control-x">
 												<div class="custom-control-x" >	
-													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu()">										
+													<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu();$event.stopPropagation()">										
 														<span class="custom-checkbox-parent">
-															<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked == true}"></div>
+															<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked}"></div>
 														</span>										
-														<div class="custom-control-arrow" ng-click="toggleSelectMenu(); $event.stopPropagation();"></div>
+														<div class="custom-control-arrow" ng-click="toggleSelectMenu(); $event.stopPropagation()"></div>														
 													</div>
 													<div>
-														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle == true}">
-												          <li><a href="" ng-click="bulkChangeAll(true); bulkDisplayToggle = false;"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
-												          <li><a href="" ng-click="bulkChangeAll(false); bulkDisplayToggle = false;"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>							          							          
+														<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle}">
+												          <li><a ng-click="bulkChangeAll(true)"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
+												          <li><a ng-click="bulkChangeAll(false)"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>							          							          
 												        </ul>			
 													</div>
 												</div>

@@ -111,8 +111,7 @@
 		                			${(countryName)!}		                			  			
 		                			<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>		                							                		
 										<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-											${publicAddresses.source.sourceName.content}											
-											<#if (publicAddresses.sourceName??)>${publicAddresses.sourceName}</#if> <#if (publicAddresses.createdDate)??>(${(publicAddresses.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+											<#if (publicAddresses.source??) && (publicAddresses.source.sourceName??) && (publicAddresses.source.sourceName.content??)>${publicAddresses.source.sourceName.content}</#if> <#if (publicAddresses.createdDate)??>(${(publicAddresses.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 										</p>				                						                			                						                						                						                			                						                			
 									</div>
 		                		</div>
