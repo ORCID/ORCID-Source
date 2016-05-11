@@ -10672,25 +10672,21 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
         $scope.personalLogin = false; //Hide Personal Login
         
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
-            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js?v=' + orcidVar.version, '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js?v=' + orcidVar.version];            
-            angular.forEach(scripts, function(key) {                
-                $scope.addShibbolethScript(key);                
+            $scope.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', function(){
+                $scope.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', function(){
+                    $scope.scriptsInjected = true;
+                    $scope.$apply();
+                    addShibbolethGa($scope.gaString);
+                });
             });
         };
     };
     
-    $scope.addShibbolethScript = function(url){        
+    $scope.addScript = function(url, onLoadFunction){        
         var head = document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
-        script.src = getBaseUri() + url;
-        script.onload =  function() {           
-            $scope.counter ++;
-            if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
-                $scope.scriptsInjected = true;
-                $scope.$apply();
-                addShibbolethGa($scope.gaString);
-            }
-        };
+        script.src = getBaseUri() + url + '?v=' + orcidVar.version;
+        script.onload =  onLoadFunction;
         head.appendChild(script); //Inject the script
     };
     
@@ -10713,25 +10709,21 @@ orcidNgModule.controller('LoginLayoutController',['$scope', function ($scope){
         $scope.personalLogin = false; //Hide Personal Login
         
         if(!$scope.scriptsInjected){ //If shibboleth scripts haven't been loaded yet.            
-            var scripts = ['/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js?v=' + orcidVar.version, '/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js?v=' + orcidVar.version];            
-            angular.forEach(scripts, function(key) {                
-                $scope.addShibbolethScript(key);                
+            $scope.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect_config.js', function(){
+                $scope.addScript('/static/javascript/shibboleth-embedded-ds/1.1.0/idpselect.js', function(){
+                    $scope.scriptsInjected = true;
+                    $scope.$apply();
+                    addShibbolethGa($scope.gaString);
+                });
             });
         };
     };
     
-    $scope.addShibbolethScript = function(url){        
+    $scope.addScript = function(url, onLoadFunction){        
         var head = document.getElementsByTagName('head')[0];
         var script = document.createElement('script');
-        script.src = getBaseUri() + url;
-        script.onload =  function() {           
-            $scope.counter ++;
-            if ((!script.readyState || script.readyState == 'complete') && $scope.counter == 2){ //Second script will hide the spinner              
-                $scope.scriptsInjected = true;
-                $scope.$apply();
-                addShibbolethGa();
-            }
-        };
+        script.src = getBaseUri() + url + '?v=' + orcidVar.version;
+        script.onload =  onLoadFunction;
         head.appendChild(script); //Inject the script
     };
     
