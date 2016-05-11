@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +35,8 @@ import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
+import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -52,8 +55,10 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;
@@ -77,9 +82,12 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
@@ -90,6 +98,7 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
+import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,6 +169,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private BiographyManager biographyManager;
+    
+    @Resource
+    private UserConnectionDao userConnectionDao;
+    
+    @Resource
+    private OrcidProfileManager orcidProfileManager;
+    
+    @Resource
+    private NotificationManager notificationManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -293,9 +311,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
                 recordName.setProfile(new ProfileEntity(deprecatedOrcid));
                 recordNameManager.updateRecordName(recordName);                
-            } else {
-                
-            }
+            } 
                                                         
             // Move all emails to the primary email
             Set<EmailEntity> deprecatedAccountEmails = deprecated.getEmails();
@@ -636,8 +652,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     @Override
     @Transactional
-    public Person getPersonDetails(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+    public Person getPersonDetails(String orcid) {        
         Date lastModified = getLastModified(orcid);
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
         Person person = new Person();
@@ -678,7 +693,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     @Transactional
     public Person getPublicPersonDetails(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         Person person = new Person();
         
         Biography bio = biographyManager.getPublicBiography(orcid);        
@@ -719,6 +733,158 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         person.setLastModifiedDate(latest);
         return person;
     }
+
+    @Override
+    @Transactional
+    public boolean claimProfileAndUpdatePreferences(String orcid, String email, Locale locale, Claim claim) {
+        //Verify the email
+        boolean emailVerified = emailManager.verifySetCurrentAndPrimary(orcid, email);
+        if(!emailVerified) {
+            throw new InvalidParameterException("Unable to claim and verify email: " + email + " for user: " + orcid);
+        }
+        
+        //Update the profile entity fields
+        ProfileEntity profile = profileDao.find(orcid);
+        profile.setLastModified(new Date());
+        profile.setIndexingStatus(IndexingStatus.REINDEX);
+        profile.setClaimed(true);
+        profile.setCompletedDate(new Date());
+        profile.setLocale(locale);
+        if(claim != null) {
+            profile.setSendChangeNotifications(claim.getSendChangeNotifications().getValue());
+            profile.setSendOrcidNews(claim.getSendOrcidNews().getValue());
+            profile.setActivitiesVisibilityDefault(claim.getActivitiesVisibilityDefault().getVisibility());
+        }
+                
+        //Update the visibility for every bio element to the visibility selected by the user
+        //Update the bio
+        org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        if(profile.getBiographyEntity() != null) {
+            profile.getBiographyEntity().setVisibility(defaultVisibility);
+        }
+        //Update address
+        if(profile.getAddresses() != null) {
+            for(AddressEntity a : profile.getAddresses()) {
+                a.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the keywords
+        if(profile.getKeywords() != null) {
+            for(ProfileKeywordEntity k : profile.getKeywords()) {
+                k.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the other names
+        if(profile.getOtherNames() != null) {
+            for(OtherNameEntity o : profile.getOtherNames()) {
+                o.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the researcher urls
+        if(profile.getResearcherUrls() != null) {
+            for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
+                r.setVisibility(defaultVisibility);
+            }
+        }
+        
+        //Update the external identifiers
+        if(profile.getExternalIdentifiers() != null) {
+            for(ExternalIdentifierEntity e : profile.getExternalIdentifiers()) {
+                e.setVisibility(defaultVisibility);
+            }
+        }
+        profileDao.merge(profile);
+        profileDao.flush();
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean deactivateRecord(String orcid) {
+        //Clear the record
+        ProfileEntity toClear = profileDao.find(orcid);
+        toClear.setLastModified(new Date());
+        toClear.setDeactivationDate(new Date());
+        toClear.setActivitiesVisibilityDefault(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+        toClear.setIndexingStatus(IndexingStatus.REINDEX);
+        
+        // Remove works
+        if (toClear.getWorks() != null) {
+            toClear.getWorks().clear();
+        }
+        
+        // Remove funding
+        if (toClear.getProfileFunding() != null) {
+            toClear.getProfileFunding().clear();
+        }
+        
+        // Remove affiliations
+        if (toClear.getOrgAffiliationRelations() != null) {
+            toClear.getOrgAffiliationRelations().clear();
+        }
+        
+        // Remove external identifiers
+        if (toClear.getExternalIdentifiers() != null) {
+            toClear.getExternalIdentifiers().clear();
+        }
+
+        // Remove researcher urls
+        if(toClear.getResearcherUrls() != null) {
+            toClear.getResearcherUrls().clear();
+        }
+        
+        // Remove other names
+        if(toClear.getOtherNames() != null) {
+            toClear.getOtherNames().clear();      
+        }
+        
+        // Remove keywords
+        if(toClear.getKeywords() != null) {
+            toClear.getKeywords().clear();                                                        
+        }        
+        
+        // Remove address
+        if(toClear.getAddresses() != null) {
+            toClear.getAddresses().clear();
+        }
+        
+        BiographyEntity bioEntity = toClear.getBiographyEntity();
+        if(bioEntity != null) {
+            bioEntity.setBiography("");
+            bioEntity.setVisibility(Visibility.PRIVATE);
+        } 
+                
+        //Set the deactivated names
+        RecordNameEntity recordName = toClear.getRecordNameEntity();
+        if(recordName != null) {
+            recordName.setCreditName(null);
+            recordName.setGivenNames("Given Names Deactivated");
+            recordName.setFamilyName("Family Name Deactivated");
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);                                      
+        }
+        
+        Set<EmailEntity> emails = toClear.getEmails();
+        if (emails != null) {
+            // For each email in the deprecated profile                            
+            for (EmailEntity email : emails) {
+                email.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);
+            }        
+        }
+        
+        profileDao.merge(toClear);
+        profileDao.flush();
+        
+        //Delete all connections
+        userConnectionDao.deleteByOrcid(orcid);                
+        
+        OrcidProfile deactivated = orcidProfileManager.retrieveOrcidProfile(orcid);
+        
+        notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
+        return false;
+    }        
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

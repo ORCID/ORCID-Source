@@ -66,7 +66,7 @@
         <!-- Created Date -->
         <div class="col-md-6">
         	<strong><@orcid.msg 'groups.common.created'/></strong>
-        	<div>{{group.getActive().createdDate.year}}-{{group.getActive().createdDate.month}}-{{group.getActive().createdDate.day}}</div>
+        	<div ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></div>
         </div>
     </div>
 </div>

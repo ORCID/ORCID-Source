@@ -59,6 +59,7 @@ import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -273,6 +274,21 @@ public class NotificationManagerTest extends BaseTest {
         NotificationCustom customResult = (NotificationCustom) result;
         assertEquals("Test subject", customResult.getSubject());
         assertEquals("en-gb", customResult.getLang());
+    }
+
+    @Test
+    public void deriveEmailFriendlyNameTest() {
+        ProfileEntity testProfile = new ProfileEntity("4444-4444-4444-4446");
+        profileDao.merge(testProfile);
+        assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
+        testProfile.setRecordNameEntity(new RecordNameEntity());
+        assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
+        testProfile.getRecordNameEntity().setGivenNames("Given Name");
+        assertEquals("Given Name", notificationManager.deriveEmailFriendlyName(testProfile));
+        testProfile.getRecordNameEntity().setFamilyName("Family Name");
+        assertEquals("Given Name Family Name", notificationManager.deriveEmailFriendlyName(testProfile));
+        testProfile.getRecordNameEntity().setCreditName("Credit Name");
+        assertEquals("Credit Name", notificationManager.deriveEmailFriendlyName(testProfile));
     }
 
 }

@@ -573,11 +573,15 @@ public class SetUpClientsAndUsers {
             
             // Set default bio
             org.orcid.jaxb.model.record_rc2.Biography bio = biographyManager.getBiography(orcid);
-            if(bio != null) {
-                bio.setContent("");
+            if (bio == null || bio.getContent() == null) {
+                bio = new org.orcid.jaxb.model.record_rc2.Biography(params.get(BIO)); 
+                bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
+                biographyManager.createBiography(orcid, bio);
+            } else {
+                bio.setContent(params.get(BIO));
                 bio.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.updateBiography(orcid, bio);
-            } 
+            }
             
             // Remove other names
             List<OtherNameEntity> otherNames = otherNameDao.getOtherNames(orcid, 0L);

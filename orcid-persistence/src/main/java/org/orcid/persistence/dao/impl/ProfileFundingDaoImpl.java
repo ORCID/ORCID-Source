@@ -230,7 +230,7 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
     
     @Override
     public List<ProfileFundingEntity> getByUser(String userOrcid) {
-        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid", ProfileFundingEntity.class);
+        TypedQuery<ProfileFundingEntity> query = entityManager.createQuery("from ProfileFundingEntity where profile.id=:userOrcid order by displayIndex desc, dateCreated asc", ProfileFundingEntity.class);
         query.setParameter("userOrcid", userOrcid);
         return query.getResultList();
     }

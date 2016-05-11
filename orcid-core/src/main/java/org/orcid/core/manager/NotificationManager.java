@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
 
@@ -43,6 +44,8 @@ public interface NotificationManager {
     public String createVerificationUrl(String email, String baseUri);
 
     public String deriveEmailFriendlyName(OrcidProfile orcidProfile);
+
+    public String deriveEmailFriendlyName(ProfileEntity profileEntity);
 
     void sendNotificationToAddedDelegate(OrcidProfile grantingUser, List<DelegationDetails> delegatesGrantedByUser);
 

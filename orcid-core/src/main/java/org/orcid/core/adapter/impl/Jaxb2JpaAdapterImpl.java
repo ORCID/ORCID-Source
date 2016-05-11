@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,6 +34,7 @@ import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.locale.LocaleManager;
@@ -59,9 +61,6 @@ import org.orcid.jaxb.model.message.DelegateSummary;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdCommonName;
-import org.orcid.jaxb.model.message.ExternalIdReference;
-import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
@@ -169,12 +168,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     
     @Resource
     protected RecordNameManager recordNameManager;
-
+    
     @Override
     public ProfileEntity toProfileEntity(OrcidProfile profile, ProfileEntity existingProfileEntity) { 
         Assert.notNull(profile, "Cannot convert a null OrcidProfile");
         ProfileEntity profileEntity = existingProfileEntity == null ? new ProfileEntity() : existingProfileEntity;
-
+        
         // if orcid-id exist us it
         String orcidString = profile.getOrcidIdentifier().getPath();
         if (profile.retrieveOrcidUriAsString() != null && !profile.retrieveOrcidUriAsString().isEmpty()) {
@@ -360,35 +359,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
         }
         
-        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
-        
-        /*
-        if (work == null || work.getWorkExternalIdentifiers() == null) {
-            return null;
-        }
-        
-        org.orcid.jaxb.model.record_rc2.ExternalIDs recordExternalIdentifiers = org.orcid.jaxb.model.record_rc2.ExternalIDs.valueOf(work.getWorkExternalIdentifiers());
-        
-        for(org.orcid.jaxb.model.record_rc2.ExternalID extId : recordExternalIdentifiers.getExternalIdentifiers()) {
-            if(ExternalIDType.ISSN.equals(extId.getType())) {
-                if(!work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK)){
-                    extId.setRelationship(Relationship.PART_OF);
-                } else {
-                    extId.setRelationship(Relationship.SELF);
-                }                
-            } else if(ExternalIDType.ISBN.equals(extId.getType())) {
-                if(work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.BOOK_CHAPTER) || work.getWorkType().equals(org.orcid.jaxb.model.message.WorkType.CONFERENCE_PAPER)) {
-                    extId.setRelationship(Relationship.PART_OF);
-                } else {
-                    extId.setRelationship(Relationship.SELF);
-                }
-            } else {
-                extId.setRelationship(Relationship.SELF);
-            }
-        }
-        
-        return JsonUtils.convertToJsonString(recordExternalIdentifiers);
-        */
+        return JsonUtils.convertToJsonString(recordExternalIdentifiers);                
     }
     
     
@@ -449,35 +420,103 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setResearcherUrls(ProfileEntity profileEntity, ResearcherUrls researcherUrls) {
-        if (researcherUrls != null && researcherUrls.getResearcherUrl() != null && !researcherUrls.getResearcherUrl().isEmpty()) {
-            List<ResearcherUrl> researcherUrlList = researcherUrls.getResearcherUrl();
-            SortedSet<ResearcherUrlEntity> researcherUrlEntities = new TreeSet<ResearcherUrlEntity>();
-            for (ResearcherUrl researcherUrl : researcherUrlList) {
-                ResearcherUrlEntity researcherUrlEntity = new ResearcherUrlEntity();
-                researcherUrlEntity.setUrl(researcherUrl.getUrl() != null ? researcherUrl.getUrl().getValue() : null);
-                researcherUrlEntity.setUrlName(researcherUrl.getUrlName() != null ? researcherUrl.getUrlName().getContent() : null);
-                researcherUrlEntity.setUser(profileEntity);
-
-                if (researcherUrl.getVisibility() != null){
-                    researcherUrlEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(researcherUrl.getVisibility().value()));                    
+        String sourceId = getSourceId();
+        SortedSet<ResearcherUrlEntity> existingResearcherUrlEntities = profileEntity.getResearcherUrls();
+        
+        Iterator<ResearcherUrlEntity> existingIt = null;
+        if(existingResearcherUrlEntities != null) {
+            existingIt = existingResearcherUrlEntities.iterator();
+        } 
+        
+        //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+        if(existingIt != null) {
+            while(existingIt.hasNext()) {
+                ResearcherUrlEntity existing = existingIt.next();
+                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                if(sourceId != null && !sourceId.equals(existingElementSource)) {
+                    //If am not the source of this element, do nothing
                 } else {
-                    researcherUrlEntity
-                            .setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility().value()));
+                    //If am the source, check if the element exists in the list of incoming elements
+                    Pair<String, String> existingPair = createResearcherUrlPair(existing);
+                    boolean found = false;
+                    if(researcherUrls != null && researcherUrls.getResearcherUrl() != null) {
+                        for(ResearcherUrl newResearcherUrl : researcherUrls.getResearcherUrl()){
+                            Pair<String, String> newResearcherUrlPair = createResearcherUrlPair(newResearcherUrl);
+                            if(Objects.equals(existingPair, newResearcherUrlPair)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    //If it doesn't exists, remove it from the existing elements
+                    if(!found) {
+                        existingIt.remove();
+                    }
+                }
+            }
+        }
+        
+        //Iterate over the list of all new ones and add the ones that doesn't exists yet
+        if(researcherUrls != null && researcherUrls.getResearcherUrl() != null) {
+            for(ResearcherUrl newResearcherUrl : researcherUrls.getResearcherUrl()) {
+                boolean exists = false;
+                Pair<String, String> newResearcherUrlPair = createResearcherUrlPair(newResearcherUrl);
+                if(existingResearcherUrlEntities != null) {
+                    for(ResearcherUrlEntity existingEntity : existingResearcherUrlEntities) {
+                        Pair<String, String> existingPair = createResearcherUrlPair(existingEntity);
+                        if(Objects.equals(newResearcherUrlPair, existingPair)) {
+                            exists = true;
+                            //If the profile is not claimed, you can update the visibility
+                            if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                //Update the visibility of existing elements if the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                String listVisibilityValue = researcherUrls.getVisibility() == null ? null : researcherUrls.getVisibility().value();                                                                
+                                if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                }                                                                
+                            }
+                            break;
+                        }
+                    }
                 }
                 
-                Source source = researcherUrl.getSource();
-                if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                    researcherUrlEntity.setSource(getSource(source));
-                } else {
-                    researcherUrlEntity.setSource(sourceManager.retrieveSourceEntity());
+                if(!exists) {
+                    if (existingResearcherUrlEntities == null) {
+                        existingResearcherUrlEntities = new TreeSet<ResearcherUrlEntity>(); 
+                        profileEntity.setResearcherUrls(existingResearcherUrlEntities);
+                    }
+                    ResearcherUrlEntity newEntity = new ResearcherUrlEntity();
+                    newEntity.setUser(profileEntity);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    newEntity.setDisplayIndex(-1L);
+                    if(newResearcherUrl.getUrl() != null) {
+                        newEntity.setUrl(newResearcherUrl.getUrl().getValue());
+                    }
+                    if(newResearcherUrl.getUrlName() != null) {
+                        newEntity.setUrlName(newResearcherUrl.getUrlName().getContent());
+                    }                    
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, researcherUrls.getVisibility(), OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT));
+                    existingResearcherUrlEntities.add(newEntity);
                 }
-                                
-                researcherUrlEntities.add(researcherUrlEntity);
             }
-            profileEntity.setResearcherUrls(researcherUrlEntities);
         }
     }
 
+    private Pair<String, String> createResearcherUrlPair(ResearcherUrl rUrl) {
+        String url = rUrl.getUrl() == null ? "" : rUrl.getUrl().getValue();
+        String urlName = rUrl.getUrlName() == null ? "" : rUrl.getUrlName().getContent();
+        Pair<String, String> pair = Pair.of(url, urlName);
+        return pair;
+    }
+
+    private Pair<String, String> createResearcherUrlPair(ResearcherUrlEntity entity) {
+        String url = entity.getUrl() == null ? "" : entity.getUrl();
+        String urlName = entity.getUrlName() == null ? "" : entity.getUrlName();
+        Pair<String, String> pair = Pair.of(url, urlName);
+        return pair;
+    }                                                            
+    
     private void setPersonalDetails(ProfileEntity profileEntity, PersonalDetails personalDetails) {
         if (personalDetails != null) {
             if(profileEntity.getRecordNameEntity() == null) {
@@ -486,41 +525,88 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.getRecordNameEntity().setProfile(profileEntity);
             setCreditNameDetails(profileEntity, personalDetails.getCreditName());
             setFamilyName(profileEntity, personalDetails.getFamilyName());
-            setGivenNames(profileEntity, personalDetails.getGivenNames());
+            setGivenNames(profileEntity, personalDetails.getGivenNames());            
             setOtherNames(profileEntity, personalDetails.getOtherNames());
         }
     }
 
-    private void setOtherNames(ProfileEntity profileEntity, OtherNames otherNames) {
-        if (otherNames != null) {
-            List<OtherName> otherNameList = otherNames.getOtherName();
-            if (otherNameList != null && !otherNameList.isEmpty()) {
-                SortedSet<OtherNameEntity> otherNameEntities = new TreeSet<OtherNameEntity>();
-                for (OtherName otherName : otherNameList) {
-                    OtherNameEntity otherNameEntity = new OtherNameEntity();
-                    otherNameEntity.setDisplayName(otherName.getContent());
-                    otherNameEntity.setProfile(profileEntity);
-                    
-                    if (otherName.getVisibility() != null){
-                        otherNameEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(otherName.getVisibility().value()));                    
-                    } else {
-                        otherNameEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT.getVisibility().value()));
+    private void setOtherNames(ProfileEntity profileEntity, OtherNames otherNames) {        
+        String sourceId = getSourceId();
+        
+        SortedSet<OtherNameEntity> existingOtherNameEntities = profileEntity.getOtherNames();
+        
+        Iterator<OtherNameEntity> existingIt = null;
+        if(existingOtherNameEntities != null) {
+            existingIt = existingOtherNameEntities.iterator();
+        } 
+        
+        //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+        if(existingIt != null) {
+            while(existingIt.hasNext()) {
+                OtherNameEntity existing = existingIt.next();
+                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                if(sourceId != null && !sourceId.equals(existingElementSource)) {
+                    //If am not the source of this element, do nothing
+                } else {
+                    //If am the source, check if the element exists in the list of incoming elements
+                    String value = existing.getDisplayName();
+                    boolean found = false;
+                    if(otherNames != null && otherNames.getOtherName() != null) {
+                        for(OtherName newOtherName : otherNames.getOtherName()){
+                            if(Objects.equals(value, newOtherName.getContent())) {
+                                found = true;
+                                break;
+                            }
+                        }
                     }
                     
-                    Source source = otherName.getSource();
-                    if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                        otherNameEntity.setSource(getSource(source));
-                    } else {
-                        otherNameEntity.setSource(sourceManager.retrieveSourceEntity());
+                    //If it doesn't exists, remove it from the existing elements
+                    if(!found) {
+                        existingIt.remove();
                     }
-                                        
-                    otherNameEntities.add(otherNameEntity);
                 }
-                profileEntity.setOtherNames(otherNameEntities);
             }
         }
-    }
-
+        
+        //Iterate over the list of all new ones and add the ones that doesn't exists yet
+        if(otherNames != null && otherNames.getOtherName() != null) {
+            for(OtherName newOtherName : otherNames.getOtherName()) {
+                boolean exists = false;
+                if(existingOtherNameEntities != null) {
+                    for(OtherNameEntity existingEntity : existingOtherNameEntities) {
+                        if(Objects.equals(newOtherName.getContent(), existingEntity.getDisplayName())) {
+                            exists = true;
+                            //If the profile is not claimed, you can update the visibility
+                            if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                //Update the visibility of existing elements if the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                String listVisibilityValue = otherNames.getVisibility() == null ? null : otherNames.getVisibility().value();                                                                
+                                if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                }                                                                
+                            }
+                            break;
+                        }
+                    }
+                }
+                
+                if(!exists) {
+                    if(existingOtherNameEntities == null) {
+                        existingOtherNameEntities = new TreeSet<OtherNameEntity>();
+                        profileEntity.setOtherNames(existingOtherNameEntities);
+                    }
+                    OtherNameEntity newEntity = new OtherNameEntity();
+                    newEntity.setProfile(profileEntity);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    newEntity.setDisplayIndex(-1L);
+                    newEntity.setDisplayName(newOtherName.getContent());
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, otherNames.getVisibility(), OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT));
+                    existingOtherNameEntities.add(newEntity);
+                }                
+            }
+        }
+    }   
+    
     private void setGivenNames(ProfileEntity profileEntity, GivenNames givenNames) {
         if (givenNames != null && StringUtils.isNotBlank(givenNames.getContent())) {
             if(profileEntity.getRecordNameEntity() == null) {
@@ -560,162 +646,184 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
     }
 
     private void setKeywords(ProfileEntity profileEntity, Keywords keywords) {
-        SortedSet<ProfileKeywordEntity> profileKeywordEntities = null;
+        String sourceId = getSourceId();
+        
         SortedSet<ProfileKeywordEntity> existingProfileKeywordEntities = profileEntity.getKeywords();
-        Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap = createProfileKeyworkEntitiesMap(existingProfileKeywordEntities);
-        if (existingProfileKeywordEntities == null) {
-            profileKeywordEntities = new TreeSet<>();
-        } else {
-            // To allow for orphan deletion
-            existingProfileKeywordEntities.clear();
-            profileKeywordEntities = existingProfileKeywordEntities;
+        
+        Iterator<ProfileKeywordEntity> existingIt = null;
+        if(existingProfileKeywordEntities != null){
+            existingIt = existingProfileKeywordEntities.iterator();
         }
-        if (keywords != null) {
-            List<Keyword> keywordList = keywords.getKeyword();
-            if (keywordList != null && !keywordList.isEmpty()) {
-                for (Keyword keyword : keywordList) {
-                    if (StringUtils.isNotBlank(keyword.getContent())) {
-                        profileKeywordEntities.add(getProfileKeywordEntity(keyword, profileEntity, existingProfileKeywordEntitiesMap, keywords.getVisibility()));                        
+        
+        //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+        if(existingIt != null) {
+            while(existingIt.hasNext()) {
+                ProfileKeywordEntity existing = existingIt.next();
+                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                if(sourceId != null && !sourceId.equals(existingElementSource)){
+                    //If am not the source of this element, do nothing
+                } else {
+                    //If am the source, check if the element exists in the list of incoming elements
+                    String value = existing.getKeywordName();
+                    boolean found = false;
+                    if(keywords != null && keywords.getKeyword() != null) {
+                        for(Keyword newKeyword : keywords.getKeyword()) {
+                            if(Objects.equals(value, newKeyword.getContent())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    //If it doesn't exists, remove it from the existing elements
+                    if(!found) {
+                        existingIt.remove();
                     }
                 }
             }
         }
-        profileEntity.setKeywords(profileKeywordEntities);
-    }
-
-    private Map<String, ProfileKeywordEntity> createProfileKeyworkEntitiesMap(SortedSet<ProfileKeywordEntity> profileKeywordEntities) {
-        Map<String, ProfileKeywordEntity> map = new HashMap<>();
-        if (profileKeywordEntities != null) {
-            for (ProfileKeywordEntity entity : profileKeywordEntities) {
-                String keyword = entity.getKeywordName();
-                map.put(keyword, entity);
-            }
-        }
-        return map;
-    }
-
-    private ProfileKeywordEntity getProfileKeywordEntity(Keyword keyword, ProfileEntity profileEntity, Map<String, ProfileKeywordEntity> existingProfileKeywordEntitiesMap, Visibility requestVisibility) {
-        String keywordContent = keyword.getContent();
         
-        ProfileKeywordEntity entity = new ProfileKeywordEntity();
-        entity.setProfile(profileEntity);
-        entity.setKeywordName(keywordContent);
-
-        if (keyword.getVisibility() != null){
-            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(keyword.getVisibility().value()));
-        } else {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility().value()));
-        }
-                        
-        Source source = keyword.getSource();
-        if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-            entity.setSource(getSource(source));
-        } else {
-            entity.setSource(sourceManager.retrieveSourceEntity());
-        }
-        
-        return entity;
-    }
-
-    private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
-        if (externalIdentifiers != null) {
-            
-            Set<ExternalIdentifierEntity> existingExternalIdentifiers = profileEntity.getExternalIdentifiers();
-            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap = createExternalIdentifiersMap(existingExternalIdentifiers);
-            Set<ExternalIdentifierEntity> externalIdentifierEntities = null;
-
-            if (existingExternalIdentifiers == null) {
-                externalIdentifierEntities = new TreeSet<ExternalIdentifierEntity>();
-            } else {
-                // To allow for orphan deletion
-                existingExternalIdentifiers.clear();
-                externalIdentifierEntities = existingExternalIdentifiers;
-            }
-
-            List<ExternalIdentifier> externalIdentifierList = externalIdentifiers.getExternalIdentifier();
-
-            if (externalIdentifierList != null && !externalIdentifierList.isEmpty()) {
-                for (ExternalIdentifier externalIdentifier : externalIdentifierList) {
-                    //Discard the ext ids that comes without external id reference, which is a required field
-                    if(externalIdentifier.getExternalIdReference() != null) {
-                        ExternalIdentifierEntity externalIdentifierEntity = getExternalIdentifierEntity(profileEntity, externalIdentifier, existingExternalIdentifiersMap, externalIdentifiers.getVisibility());
-                        if (externalIdentifierEntity != null) {
-                            externalIdentifierEntity.setOwner(profileEntity);
-                            externalIdentifierEntities.add(externalIdentifierEntity);
+        //Iterate over the list of all new ones and add the ones that doesn't exists yet
+        if(keywords != null && keywords.getKeyword() != null) {
+            for(Keyword newKeyword : keywords.getKeyword()) {
+                boolean exists = false;
+                if(existingProfileKeywordEntities != null) {
+                    for(ProfileKeywordEntity existingEntity : existingProfileKeywordEntities) {
+                        if(Objects.equals(newKeyword.getContent(), existingEntity.getKeywordName())) {
+                            exists = true;
+                            //If the profile is not claimed, you can update the visibility
+                            if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                //Update the visibility of existing elements if the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                String listVisibilityValue = keywords.getVisibility() == null ? null : keywords.getVisibility().value();                                                                
+                                if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                }                                                                
+                            }
+                            break;
                         }
                     }
                 }
+                
+                if(!exists) {
+                    if(existingProfileKeywordEntities == null) {
+                        existingProfileKeywordEntities = new TreeSet<ProfileKeywordEntity>();
+                        profileEntity.setKeywords(existingProfileKeywordEntities);
+                    }
+                    ProfileKeywordEntity newEntity = new ProfileKeywordEntity();
+                    newEntity.setProfile(profileEntity);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    newEntity.setDisplayIndex(-1L);
+                    newEntity.setKeywordName(newKeyword.getContent());
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, keywords.getVisibility(), OrcidVisibilityDefaults.KEYWORD_DEFAULT));
+                    existingProfileKeywordEntities.add(newEntity);
+                }
             }
+        }                 
+    }
+    
+    private void setExternalIdentifiers(ProfileEntity profileEntity, ExternalIdentifiers externalIdentifiers) {
+        String sourceId = getSourceId();
 
-            profileEntity.setExternalIdentifiers(externalIdentifierEntities);
+        Set<ExternalIdentifierEntity> existingExternalIdentifierEntities = profileEntity.getExternalIdentifiers();
+        Iterator<ExternalIdentifierEntity> existingIt = null;
+        if(existingExternalIdentifierEntities != null){
+            existingIt = existingExternalIdentifierEntities.iterator();
+        } 
+        
+        //Iterate over the list of existing elements, to see which ones still exists but preserving all the ones where the calling client is not the source of
+        if(existingIt != null) {
+            while(existingIt.hasNext()) {
+                ExternalIdentifierEntity existing = existingIt.next();
+                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                if(sourceId != null && !sourceId.equals(existingElementSource)){
+                    //If am not the source of this element, do nothing
+                } else {
+                    //If am the source, check if the element exists in the list of incoming elements
+                    Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existing);
+                    boolean found = false;
+                    if(externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
+                        for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()){
+                            Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
+                            if(Objects.equals(existingTriplet, newExternalIdentifierTriplet)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    //If it doesn't exists, remove it from the existing elements
+                    if(!found) {
+                            existingIt.remove();
+                    }
+                }
+            }
         }
+        
+        
+        //Iterate over the list of all new ones and add the ones that doesn't exists yet
+        if(externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
+            for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()) {
+                boolean exists = false;
+                Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
+                if(existingExternalIdentifierEntities != null) {
+                    for(ExternalIdentifierEntity existingEntity : existingExternalIdentifierEntities) {
+                        Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
+                        if(Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
+                                exists = true;
+                                //If the profile is not claimed, you can update the visibility
+                                if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                    //Update the visibility of existing elements if the profile is not claimed
+                                    String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
+                                    String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();                                                                
+                                    if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                        existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
+                                    }                                                                
+                                }
+                                break;
+                        }
+                    }
+                }
+                
+                if(!exists) {
+                    if(existingExternalIdentifierEntities == null) {
+                        existingExternalIdentifierEntities = new TreeSet<ExternalIdentifierEntity>();
+                        profileEntity.setExternalIdentifiers(existingExternalIdentifierEntities);
+                    }
+                    ExternalIdentifierEntity newEntity = new ExternalIdentifierEntity();
+                    newEntity.setOwner(profileEntity);
+                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    newEntity.setDisplayIndex(-1L);
+                    if(newExternalIdentifier.getExternalIdCommonName() != null) {
+                        newEntity.setExternalIdCommonName(newExternalIdentifier.getExternalIdCommonName().getContent());
+                    }
+                    if(newExternalIdentifier.getExternalIdReference() != null) {
+                        newEntity.setExternalIdReference(newExternalIdentifier.getExternalIdReference().getContent());
+                    }
+                    if(newExternalIdentifier.getExternalIdUrl() != null) {
+                        newEntity.setExternalIdUrl(newExternalIdentifier.getExternalIdUrl().getValue());
+                    }
+                    
+                    newEntity.setVisibility(getDefaultVisibility(profileEntity, externalIdentifiers.getVisibility(), OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT));
+                    existingExternalIdentifierEntities.add(newEntity);
+                }
+            }               
+        }                
     }
 
-    private Map<Triplet<String, String, String>, ExternalIdentifierEntity> createExternalIdentifiersMap(Set<ExternalIdentifierEntity> existingExternalIdentifiers) {
-        Map<Triplet<String, String, String>, ExternalIdentifierEntity> map = new HashMap<>();
-        if (existingExternalIdentifiers != null) {
-            for (ExternalIdentifierEntity entity : existingExternalIdentifiers) {
-                Triplet<String, String, String> triplet = createTripletForKey(entity);
-                map.put(triplet, entity);
-            }
-        }
-        return map;
-    }
-
-    private Triplet<String, String, String> createTripletForKey(ExternalIdentifierEntity entity) {
-        String first = entity.getOwner().getId();
-        String second = entity.getExternalIdReference();
-        String third = entity.getExternalIdCommonName();
+    private Triplet<String, String, String> createTripletForExternalIdentifier(ExternalIdentifierEntity entity) {
+        String first = entity.getExternalIdUrl() == null ? "" : entity.getExternalIdUrl();
+        String second = entity.getExternalIdReference() == null ? "" : entity.getExternalIdReference();
+        String third = entity.getExternalIdCommonName() == null ? "" : entity.getExternalIdCommonName();
         Triplet<String, String, String> triplet = new Triplet<String, String, String>(first, second, third);        
         return triplet;
     }
-
-    private ExternalIdentifierEntity getExternalIdentifierEntity(ProfileEntity profileEntity, ExternalIdentifier externalIdentifier,
-            Map<Triplet<String, String, String>, ExternalIdentifierEntity> existingExternalIdentifiersMap, Visibility requestVisibility) {
-        if (externalIdentifier != null && externalIdentifier.getExternalIdReference() != null) {
-            ExternalIdCommonName externalIdCommonName = externalIdentifier.getExternalIdCommonName();
-            ExternalIdReference externalIdReference = externalIdentifier.getExternalIdReference();
-            String referenceValue = externalIdReference != null ? externalIdReference.getContent() : null;
-            ExternalIdUrl externalIdUrl = externalIdentifier.getExternalIdUrl();
-            Visibility externalIdVisibility = externalIdentifier.getVisibility();
-            
-            String first = profileEntity.getId();            
-            
-            String second = null;
-            if(externalIdentifier.getExternalIdReference() != null)
-                second = externalIdentifier.getExternalIdReference().getContent();
-            
-            String third = null;
-            if(externalIdentifier.getExternalIdCommonName() != null)
-                third = externalIdentifier.getExternalIdCommonName().getContent(); 
-                    
-
-            Triplet<String, String, String> key = new Triplet<>(first, second, third);
-            ExternalIdentifierEntity existingExternalIdentifierEntity = existingExternalIdentifiersMap.get(key);
-            
-            ExternalIdentifierEntity externalIdentifierEntity = null;
-            if (existingExternalIdentifierEntity == null) {
-                externalIdentifierEntity = new ExternalIdentifierEntity();
-                externalIdentifierEntity.setSource(sourceManager.retrieveSourceEntity());
-                externalIdentifierEntity.setExternalIdReference(referenceValue);
-            } else {
-                existingExternalIdentifierEntity.clean();
-                externalIdentifierEntity = existingExternalIdentifierEntity;
-            }
-            
-            if (externalIdVisibility != null){
-                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(externalIdVisibility.value()));            
-            }else {
-                externalIdentifierEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT.getVisibility().value()));
-            }
-            
-            externalIdentifierEntity.setExternalIdCommonName(externalIdCommonName != null ? externalIdCommonName.getContent() : null);
-            externalIdentifierEntity.setExternalIdUrl(externalIdUrl != null ? externalIdUrl.getValue() : null);
-            externalIdentifierEntity.setExternalIdReference(externalIdReference != null ? externalIdReference.getContent() : null);
-            
-            return externalIdentifierEntity;
-        }
-        return null;
+    
+    private Triplet<String, String, String> createTripletForExternalIdentifier(ExternalIdentifier entity) {
+        String first = entity.getExternalIdUrl() == null ? "" : entity.getExternalIdUrl().getValue();
+        String second = entity.getExternalIdReference() == null ? "" : entity.getExternalIdReference().getContent();
+        String third = entity.getExternalIdCommonName() == null ? "" : entity.getExternalIdCommonName().getContent();
+        Triplet<String, String, String> triplet = new Triplet<String, String, String>(first, second, third);        
+        return triplet;
     }
 
     private void setDelegations(ProfileEntity profileEntity, Delegation delegation) {
@@ -731,57 +839,66 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {        
         Country contactCountry = contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null ? contactDetails.getAddress().getCountry()
-                : null;
-        
-        Source source = null;
-        if(contactDetails.getAddress() != null && contactDetails.getAddress().getSource() != null) {
-            source = contactDetails.getAddress().getSource();
-        }        
-        
+                : null;        
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         
-        //Set the info in the address table
-        if(country != null) {
-            AddressEntity address = new AddressEntity();
-            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
-            if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
-            	Iterator<AddressEntity> iterator = profileEntity.getAddresses().iterator();
-            	while (iterator.hasNext()) {
-            		AddressEntity temp = iterator.next();
-            	    if(temp.getPrimary()) {
-            	    	address = temp;
-            	    	break;
-            	    }
-            	}
-            }
-            address.setPrimary(true);
-            address.setDisplayIndex(-1L);
-            boolean claimed = profileEntity.getClaimed() == null ? false : profileEntity.getClaimed();
-            if(claimed) {
-                if(profileEntity.getActivitiesVisibilityDefault() != null) {                
-                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
-                }else{
-                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility().value()));
-                }
-            } else {
-                Visibility countryVisibility = contactCountry != null ? contactCountry.getVisibility() : Visibility.PRIVATE;
-                if(countryVisibility != null) {
-                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(countryVisibility.value()));
-                } else {
-                    address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
-                }
-            }
-                                                
-            address.setUser(profileEntity);
-            if (source != null && !PojoUtil.isEmpty(source.retrieveSourcePath())) {
-                address.setSource(getSource(source));
-            } else {
-                address.setSource(sourceManager.retrieveSourceEntity());
+        //Set the info in the address table if the profile has not been claimed yet
+        if(country != null && (profileEntity.getClaimed() == null || !profileEntity.getClaimed())) {
+            Set<AddressEntity> addresses = profileEntity.getAddresses();
+            if(addresses == null) {
+                addresses = new HashSet<AddressEntity>();
+                profileEntity.setAddresses(addresses);
             }
             
-            HashSet<AddressEntity> addresses = new HashSet<AddressEntity>();
-            addresses.add(address);
-            profileEntity.setAddresses(addresses);
+            boolean addNew = false;
+            
+            //If there isnt any address, just create it
+            if(addresses.isEmpty()) {
+                addNew = true;                
+            } else {
+                //Else look for the primary address and update it
+                SourceEntity source = sourceManager.retrieveSourceEntity();
+                Iterator<AddressEntity> addressIt = addresses.iterator();
+                boolean found = false;
+                
+                while(addressIt.hasNext()) {
+                    AddressEntity address = addressIt.next();
+                    //Update the primary
+                    if(address.getPrimary() != null && address.getPrimary()) {
+                        found = true;
+                        String existingSource = address.getSource() == null ? null : address.getSource().getSourceId();
+                        //If the primary is from the same source, overwrite it
+                        if(source != null && Objects.equals(source.getSourceId(), existingSource)) {
+                            address.setLastModified(new Date());
+                            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+                        } else {
+                            //If the primary is not from the same source, set is as non primary
+                            address.setLastModified(new Date());
+                            address.setPrimary(false);
+                            //And add the new address
+                            addNew = true;                            
+                        }
+                        break;
+                    }
+                }
+                //If couldn't find the primary address, add this one as primary
+                if(!found) {
+                    addNew = true;
+                }
+            } 
+            
+            if(addNew) {
+                AddressEntity newAddress = new AddressEntity();
+                newAddress.setDateCreated(new Date());
+                newAddress.setDisplayIndex(-1L);
+                newAddress.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
+                newAddress.setLastModified(new Date());
+                newAddress.setPrimary(true);
+                newAddress.setUser(profileEntity);
+                newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
+                newAddress.setSource(sourceManager.retrieveSourceEntity());
+                addresses.add(newAddress);
+            }                        
         }        
     }
 
@@ -865,11 +982,14 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             }
                         
             profileEntity.getBiographyEntity().setBiography(biography.getContent());
-            if (biography.getVisibility() != null) {
-                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));
-            } else {
-                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profileEntity.getActivitiesVisibilityDefault().value()));
-            }
+            if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {                
+                if (biography.getVisibility() != null) {
+                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));
+                } else {
+                    Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault();
+                    profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
+                }                
+            }                       
         }
     }
 
@@ -1295,5 +1415,34 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         }
         return null;
     }
-
+    
+    private String getSourceId() {
+        SourceEntity source = sourceManager.retrieveSourceEntity();
+        String sourceId = null;
+        //source mananger should never return null, but for some unit tests it does, so, we return the user id
+        if(source != null) {
+            sourceId = source.getSourceId();
+        }         
+        return sourceId;        
+    }
+    
+    private org.orcid.jaxb.model.common_rc2.Visibility getDefaultVisibility(ProfileEntity profile, Visibility listVisibility, OrcidVisibilityDefaults elementDefault) {
+        Visibility defaultVisibility = elementDefault.getVisibility();
+        
+        //If the profile is not claimed, set the list visibility
+        if(profile.getClaimed() == null || !profile.getClaimed()) {
+            if(listVisibility != null) {
+                defaultVisibility = listVisibility;
+            } else {
+                defaultVisibility = OrcidVisibilityDefaults.CREATED_BY_MEMBER_DEFAULT.getVisibility();
+            }
+        } else {
+            //If it is claimed, set the default profile visibility 
+            if(profile.getActivitiesVisibilityDefault() != null) {
+                defaultVisibility = profile.getActivitiesVisibilityDefault(); 
+            }
+        }
+        
+        return org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value());
+    }
 }

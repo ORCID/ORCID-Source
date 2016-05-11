@@ -474,8 +474,8 @@ orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
                 $scope.bulkEditMap = {};
                 $scope.bulkChecked = false;
                 $scope.bulkDisplayToggle = false;
-                $scope.toggleSelectMenu = function(){
-                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;
+                $scope.toggleSelectMenu = function(){                	
+                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
                 };
             }
     };
@@ -1503,7 +1503,6 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
         },
         swapbulkChangeAll: function(){        	
             serv.bulkChecked = !serv.bulkChecked;
-            
             if(serv.bulkChecked == false)
                 serv.bulkArchiveMap.length = 0;
             else
@@ -1648,18 +1647,22 @@ orcidNgModule.filter('latex', function(){
 
 orcidNgModule.filter('ajaxFormDateToISO8601', function(){
     return function(input){
-        var str = '';
-        if (input.year) str += input.year;
-        if (input.month) {
-            if (str.length > 0) str += '-';
-            str += Number(input.month).pad(2);
-        }
-        if (input.day) {
-            if (str.length > 0)
-                str += '-';
-            str += Number(input.day).pad(2);
-        }
-        return str;
+    	if (typeof input != 'undefined'){
+	        var str = '';
+	        if (input.year) str += input.year;
+	        if (input.month) {
+	            if (str.length > 0) str += '-';
+	            str += Number(input.month).pad(2);
+	        }
+	        if (input.day) {
+	            if (str.length > 0)
+	                str += '-';
+	            str += Number(input.day).pad(2);
+	        }
+	        return str;
+    	} else {
+    		return false;
+    	}
     };
 });
 
@@ -5546,6 +5549,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     $scope.bulkChangeAll = function(bool) {
         $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
         for (var idx in worksSrvc.groups)
             $scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value] = bool;
     };
@@ -11191,8 +11195,7 @@ orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($sco
 	}
 	
 	$scope.showPopover = function(section){
-		$scope.showPopover[section] = true;	
-		console.log('hey');
+		$scope.showPopover[section] = true;
 	}	
 	
 	$scope.hidePopover = function(section){

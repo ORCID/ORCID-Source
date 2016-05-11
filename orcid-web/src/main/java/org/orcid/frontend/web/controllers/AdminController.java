@@ -382,7 +382,7 @@ public class AdminController extends BaseController {
                     if (profile.isDeactivated()) {
                         deactivatedIds.add(orcid);
                     } else {
-                        orcidProfileManager.deactivateOrcidProfile(profile);
+                        profileEntityManager.deactivateRecord(orcid);
                         successIds.add(orcid);
                     }
                 }

@@ -30,7 +30,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 
 /**

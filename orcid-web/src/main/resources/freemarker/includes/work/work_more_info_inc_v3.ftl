@@ -139,7 +139,7 @@
 			<div class="col-md-6">
 				<div class="bottomBuffer">
 					<strong><@orcid.msg 'groups.common.created'/></strong><br />
-	                <div>{{worksSrvc.details[work.putCode.value].createdDate.year}}-{{worksSrvc.details[work.putCode.value].createdDate.month}}-{{worksSrvc.details[work.putCode.value].createdDate.day}}</div>
+					<div ng-bind="worksSrvc.details[work.putCode.value].createdDate | ajaxFormDateToISO8601"></div>
 				</div>		
 			</div>
 			<div class="col-md-12">
