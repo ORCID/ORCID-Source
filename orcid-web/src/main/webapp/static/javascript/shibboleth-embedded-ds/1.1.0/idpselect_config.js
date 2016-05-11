@@ -55,3 +55,7 @@ function IdPSelectUIParms(){
     this.maxHeight = 69;
     this.bestRatio = Math.log(80 / 60);
 }
+// Stop ugly error alerts. The error will be displayed inline anyway.
+window.alert = function(message) {
+    console.log("Alert: " + message);
+};
