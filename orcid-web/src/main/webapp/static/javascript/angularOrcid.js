@@ -7355,14 +7355,14 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', functi
         }
     };
 
-    $scope.confirmRevoke = function(id) {
+    $scope.confirmRevoke = function(socialAccount) {
         $scope.errors = [];
-        $scope.socialRemoteUserToRevoke = id.providerid;
-        $scope.idToManage = id;
+        $scope.socialAccount = socialAccount;
+        $scope.idToManage = socialAccount.id;
         $.colorbox({
             html : $compile($('#revoke-social-account-modal').html())($scope),            
             onComplete: function() {
-                $.colorbox.resize();        
+                $.colorbox.resize({height:"200px"});        
             }
         });
         
