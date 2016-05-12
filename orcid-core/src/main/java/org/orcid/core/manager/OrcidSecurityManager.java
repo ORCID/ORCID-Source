@@ -20,6 +20,7 @@ import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -50,4 +51,6 @@ public interface OrcidSecurityManager {
     String getClientIdFromAPIRequest();
     
     void checkPermissions(ScopePathType requiredScope, String orcid);
+    
+    boolean isAvailable(ProfileEntity profile);
 }

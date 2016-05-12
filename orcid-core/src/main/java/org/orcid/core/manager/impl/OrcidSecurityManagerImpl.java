@@ -64,6 +64,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -92,6 +93,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
 
+    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
+    private int claimWaitPeriodDays;
+    
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
@@ -396,4 +400,30 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }
+    
+    @Override
+    public boolean isAvailable(ProfileEntity profile) {
+        if(profile == null) {
+            throw new IllegalArgumentException("Profile cannot be null");
+        }
+        
+        if(Boolean.TRUE.equals(profile.getClaimed())) {
+            return true;
+        }
+        
+        //Let the creator access the profile even if it is not claimed
+        SourceEntity source = profile.getSource();
+        if(source != null) {
+            SourceEntity currentSource = sourceManager.retrieveSourceEntity();
+            if(currentSource != null && source.getSourceId().equals(currentSource.getSourceId())) {
+                return true;
+            }
+        }
+        
+        return isOldEnough(profile);
+    }
+        
+    private boolean isOldEnough(ProfileEntity profile) {
+        return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
+    }        
 }

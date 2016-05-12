@@ -46,6 +46,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
@@ -96,12 +97,15 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -178,6 +182,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private NotificationManager notificationManager;
+    
+    @Resource
+    private SourceManager sourceManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -922,7 +929,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
-    }        
+    }    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

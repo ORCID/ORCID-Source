@@ -25,7 +25,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 import org.orcid.persistence.dao.ProfileDao;
@@ -47,8 +49,11 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     private ProfileDao profileDao;
 
     @Resource
-    private ProfileEntityManager profileEntityManager;
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
+    
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
 
@@ -244,7 +249,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     private void checkProfileStatus(String orcid) {
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
+        ProfileEntity entity = profileEntityCacheManager.retrieve(orcid);
         if (profileDao.isProfileDeprecated(orcid)) {
             StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
             Map<String, String> params = new HashMap<String, String>();
@@ -254,6 +259,8 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
                 params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
             }
             throw new OrcidDeprecatedException(params);
+        } else if(!orcidSecurityManager.isAvailable(entity)) {
+            throw new OrcidNotClaimedException();
         }
     }
 
