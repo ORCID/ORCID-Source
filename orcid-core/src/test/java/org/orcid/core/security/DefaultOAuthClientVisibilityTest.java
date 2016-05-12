@@ -51,8 +51,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class DefaultOAuthClientVisibilityTest extends BaseTest {
 
     @Resource(name = "defaultPermissionChecker")

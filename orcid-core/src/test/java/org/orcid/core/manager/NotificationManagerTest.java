@@ -34,7 +34,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.jaxb.model.message.CreditName;
@@ -61,12 +63,15 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+@RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 @Transactional
-public class NotificationManagerTest extends BaseTest {
+public class NotificationManagerTest {
 
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";
 
@@ -104,12 +109,18 @@ public class NotificationManagerTest extends BaseTest {
 
     @Before
     public void initMocks() throws Exception {
+        MockitoAnnotations.initMocks(this);
         NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
         notificationManagerImpl.setEncryptionManager(encryptionManager);
         notificationManagerImpl.setProfileEventDao(profileEventDao);
         notificationManagerImpl.setSourceManager(sourceManager);
     }
 
+    @SuppressWarnings( { "unchecked" })
+    protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
+        return TargetProxyHelper.getTargetObject(proxy, targetClass);
+    }
+    
     @Test
     public void testSendWelcomeEmail() throws JAXBException, IOException, URISyntaxException {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));

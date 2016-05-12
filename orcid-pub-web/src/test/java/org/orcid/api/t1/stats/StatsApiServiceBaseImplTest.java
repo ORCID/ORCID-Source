@@ -49,7 +49,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-core-context.xml", "classpath:orcid-t1-security-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-t1-web-context.xml", "classpath:orcid-t1-security-context.xml" })
 @SuppressWarnings("deprecation")
 public class StatsApiServiceBaseImplTest {
 
