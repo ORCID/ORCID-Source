@@ -120,7 +120,7 @@
 		            </#if>
 		            
 		            <!-- Keywords -->
-		            <#if (publicKeywords)?? && (publicKeywords.keywords?size != 0)>
+		            <#if (publicGroupedKeywords)?? && (publicGroupedKeywords?size != 0)>
 			            <div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list visible workspace-section-heading">
@@ -140,14 +140,17 @@
 									    </#if>
 								    </li>		                		
 								</ul>	
-		                		<div id="public-keywords-div" class="public-content">		                    		
-	                    			<#list publicKeywords.keywords as keyword>				               
-					                	${keyword.content}<#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>				                	
-					                	<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>				                		
-					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                			<#if (keyword.source)?? && (keyword.source.sourceName)??>${keyword.source.sourceName.content}</#if> <#if (keyword.createdDate)??>(${(keyword.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-					                		</p>				                						                			                						                			
-					                	</div>				                						                	
+		                		<div id="public-keywords-div" class="public-content">	                    			
+	                    			<#list publicGroupedKeywords?keys as keyword>                    							               
+										${keyword}<#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>
+										<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>
+											<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+												<#list publicGroupedKeywords[keyword] as keywordSource>
+													${keywordSource.source.sourceName.content}
+													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)??>${keywordSource.source.sourceName.content}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+												</#list>
+											</p>
+										</div>
 					                </#list>
 	                        	</div>
 	                        </div>

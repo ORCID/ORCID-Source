@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -67,6 +68,7 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
@@ -260,7 +262,10 @@ public class PublicProfileController extends BaseWorkspaceController {
         
         //Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
-        mav.addObject("publicKeywords", publicKeywords);
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
+        
+        mav.addObject("publicGroupedKeywords", groupedKeywords);
+        
         
         //Fill researcher urls
         ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
@@ -349,6 +354,26 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return mav;
     }
+    
+    private Map<String, List<Keyword>> groupKeywords(Keywords keywords){
+    	if (keywords == null || keywords.getKeywords() == null){
+    		return null;
+    	}
+    	Map<String, List<Keyword>> groups = new TreeMap<String, List<Keyword>>();    	
+    	for (Keyword k : keywords.getKeywords()) {
+    		if (groups.containsKey(k.getContent())) {
+    			groups.get(k.getContent()).add(k);
+    		} else {
+    			List<Keyword> list = new ArrayList<Keyword>();
+    			list.add(k);
+    			groups.put(k.getContent(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    }
+    
+    
 
     private boolean isProfileValidForIndex(ProfileEntity profile) {
         String orcid = profile.getId();
