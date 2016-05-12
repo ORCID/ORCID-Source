@@ -496,7 +496,7 @@
 	                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
 	                            <td width="10%">
 	                                <a
-	                                ng-click="confirmRevoke(socialAccount.id)"
+	                                ng-click="confirmRevoke(socialAccount)"
 	                                ng-hide="isPasswordConfirmationRequired"
 	                                class="glyphicon glyphicon-trash grey"
 	                                title="${springMacroRequestContext.getMessage("manage_signin_unlink")}"></a>
@@ -665,20 +665,11 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 	        	<h3><@orcid.msg 'social.revoke'/></h3>
-        		<p>{{socialRemoteUserToRevoke}}</p>
+	        	<p><@orcid.msg 'social.revoke.body.1'/></p>
+        		<p><@orcid.msg 'social.revoke.body.2'/>{{socialAccount.idpName}}<@orcid.msg 'social.revoke.body.3'/>{{socialAccount.accountIdForDisplay}}<@orcid.msg 'social.revoke.body.4'/></p>
         		<form ng-submit="revoke()">
-		            <div ng-show="isPasswordConfirmationRequired">
-                		<h3><@orcid.msg 'check_password_modal.confirm_password' /></h3>
-                		<div class="form-group">
-		                    <label for="confirm_add_delegate_modal.password" class=""><@orcid.msg 'check_password_modal.password' /></label><span class="required">*</span>
-                    		<input id="confirm_add_delegate_modal.password" type="password" name="confirm_add_delegate_modal.password" ng-model="password" class="form-control"/>
-                		</div>
-                		<span class="orcid-error" ng-show="errors.length > 0">
-		                    <span ng-repeat='error in errors' ng-bind-html="error"></span>
-                		</span>
-            		</div>
-            		<button class="btn btn-danger"><@orcid.msg 'manage_delegation.btnrevokeaccess'/></button>
-            		<a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btnclose'/></a>
+            		<button class="btn btn-danger"><@orcid.msg 'social.revoke.button'/></button>
+            		<a href="" ng-click="closeModal()"><@orcid.msg 'social.revoke.cancel'/></a>
         		</form>
 			</div>
 		</div>        

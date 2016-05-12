@@ -20,7 +20,16 @@
 <#include "sandbox_warning.ftl"/>
     <div ng-controller="LinkAccountController" ng-init="setEntityId('${providerId}')">
         <#if unsupportedInstitution??>
-            <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3 alert">${springMacroRequestContext.getMessage("social.link.unsupported.1")}<a href="mailto:${institutionContactEmail!}?cc=support@orcid.org&amp;subject=${springMacroRequestContext.getMessage("social.link.unsupported.email.subject")?url}&amp;body=${springMacroRequestContext.getMessage("social.link.unsupported.email.body")?url}">${springMacroRequestContext.getMessage("social.link.unsupported.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.3")}</div>
+            <div class="col-md-9 col-sm-9 col-sm-push-3 col-md-push-3">
+                <p class="alert">${springMacroRequestContext.getMessage("social.link.unsupported.sorry.1")}${accountId}${springMacroRequestContext.getMessage("social.link.unsupported.sorry.2")}</p>
+                <p>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.1")}<a href="mailto:${institutionContactEmail!}?cc=support@orcid.org&amp;subject=${springMacroRequestContext.getMessage("social.link.unsupported.email.subject")?url}&amp;body=${springMacroRequestContext.getMessage("social.link.unsupported.email.body")?url}">${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.3")}<a href="<@orcid.rootPath "/signin" />">${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.4")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.we_have_made_a_note.5")}</p>
+                <p class="see-more">
+                    ${springMacroRequestContext.getMessage("social.link.unsupported.why_cant_i")}
+                </p>
+                <p>
+                    ${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.1")}<a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank">${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.2")}</a>${springMacroRequestContext.getMessage("social.link.unsupported.you_can_find_out.3")}
+                </p>
+            </div>
         <#else>
             <div ng-hide="loadedFeed" class="text-center">
                 <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
@@ -48,7 +57,7 @@
                 
                 <div class="row">
                 	<div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                			                		
-						${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${emailId!}&firstName=${firstName!}&lastName=${lastName!}">${springMacroRequestContext.getMessage("login.needOrcidId")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("social.link.no_thanks")} <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
+						${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${emailId!}&firstName=${firstName!}&lastName=${lastName!}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("social.link.no_thanks")} <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
 						<hr />
                 	</div>                	
                     <@spring.bind "loginForm" />             

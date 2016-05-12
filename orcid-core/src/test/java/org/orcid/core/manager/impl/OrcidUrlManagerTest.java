@@ -40,7 +40,6 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Will Simpson
  *
  */
-@ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 public class OrcidUrlManagerTest extends BaseTest {
 
     @Resource

@@ -97,6 +97,8 @@ public class ShibbolethController extends BaseController {
         mav.setViewName("social_link_signin");
         String shibIdentityProvider = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
         mav.addObject("providerId", shibIdentityProvider);
+        String displayName = retrieveDisplayName(headers);
+        mav.addObject("accountId", displayName);
         RemoteUser remoteUser = retrieveRemoteUser(headers);
         if (remoteUser == null) {
             LOGGER.info("Failed federated log in for {}", shibIdentityProvider);
@@ -105,7 +107,6 @@ public class ShibbolethController extends BaseController {
             mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;
         }
-        String displayName = retrieveDisplayName(headers);
 
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
@@ -127,7 +128,6 @@ public class ShibbolethController extends BaseController {
             return new ModelAndView("redirect:" + calculateRedirectUrl(request, response));
         } else {
             // To avoid confusion, force the user to login to ORCID again
-            mav.addObject("accountId", displayName);
             mav.addObject("linkType", "shibboleth");
             mav.addObject("firstName", (headers.get(GIVEN_NAME_HEADER) == null) ? "" : headers.get(GIVEN_NAME_HEADER));
             mav.addObject("lastName", (headers.get(SN_HEADER) == null) ? "" : headers.get(SN_HEADER));

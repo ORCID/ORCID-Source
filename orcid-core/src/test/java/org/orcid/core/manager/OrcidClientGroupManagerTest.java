@@ -58,7 +58,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Will Simpson
  * 
  */
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidClientGroupManagerTest extends BaseTest {
 
     public static final String CLIENT_GROUP = "/orcid-client-group-request.xml";
