@@ -35,19 +35,12 @@
 						<#include "includes/workspace/workspace_act_sort_menu.ftl"/>
 						<#if !(isPublicProfile??)>
                 			<ul class="workspace-bar-menu">
-                			  	<li class="hidden-xs">
+                			  	<li class="hidden-xs" ng-if="noLinkFlag">
 									<div class="menu-container" >
 										<ul class="toggle-menu">
 									        <li> 
 									            <span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addPeerReview'/>
-									            <ul class="menu-options works">
-									            	<#if RequestParameters['addpeer']??>
-									            		<li>
-				                                            <a class="action-option manage-button" ng-click="addPeerReviewModal()">
-				                                                <span class="glyphicon glyphicon-plus"></span> Add manually 
-															</a>
-				                                         </li>
-									            	</#if>
+									            <ul class="menu-options works">									            	
 			                                    	<!-- Search & Link -->
 			                                        <li ng-if="noLinkFlag" ng-cloak>
 			                                            <a class="action-option manage-button" ng-click="showPeerReviewImportWizard()">
