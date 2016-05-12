@@ -713,7 +713,8 @@
 	<!-- enable the configuration of jms on annotations -->
 	<jms:annotation-driven/>
 	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-    	<property name="brokerURL" value="tcp://localhost:61616"/>
+		<!-- lets use an embedded broker for now (easier to test!) -->
+    	<property name="brokerURL" value="${org.orcid.core.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
 	</bean>
 	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
     	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
