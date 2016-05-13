@@ -6532,7 +6532,9 @@ a:hover .mozilla-badge{
 	left: 56px;
 }
 
-
+.form-social-sign-in hr{
+	margin-top: 5px;
+}
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
