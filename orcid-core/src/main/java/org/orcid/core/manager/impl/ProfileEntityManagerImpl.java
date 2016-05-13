@@ -100,10 +100,8 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -114,9 +112,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
-    
-    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
-    private int claimWaitPeriodDays;
     
     @Resource
     private ProfileDao profileDao;
@@ -928,23 +923,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
     }
-
-    @Override
-    public boolean isAvailable(ProfileEntity profile) {
-        if(profile == null || profile.getLastModified() == null) {
-            throw new IllegalArgumentException("Profile cannot be null");
-        }
-        
-        if(Boolean.TRUE.equals(profile.getClaimed())) {
-            return true;
-        }
-        
-        return isOldEnough(profile);
-    }
-        
-    private boolean isOldEnough(ProfileEntity profile) {
-        return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
-    }        
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

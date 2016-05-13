@@ -41,7 +41,7 @@
     </div>
     
     <div class="col-md-9 right-aside">
-        <div class="workspace-right" ng-controller="PersonalInfoCtrl">
+        <div class="workspace-right">
         	<#if (locked)?? && locked>
         		<div class="alert alert-error readme">
 		        	<p><b id="error_locked"><@orcid.msg 'public-layout.locked'/></b></p>

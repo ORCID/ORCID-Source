@@ -38,6 +38,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.AddressManager;
@@ -46,6 +48,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -55,6 +58,7 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
@@ -163,6 +167,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
+
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -185,14 +192,16 @@ public class PublicProfileController extends BaseWorkspaceController {
         }        
                 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        //Check if the profile is ready to be displayed
-        if(!isReady(profile)) {
-            ModelAndView mav = null;
-            mav = new ModelAndView("public_profile_unavailable");
+        
+        try {
+            //Check if the profile is deprecated, non claimed or locked
+            orcidSecurityManager.checkProfile(profile);
+        } catch(OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
+            ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("orcidId", orcid);
             String displayName = "";
             
-            if(profile.getPrimaryRecord() != null && !PojoUtil.isEmpty(profile.getPrimaryRecord().getId())) {
+            if(e instanceof OrcidDeprecatedException) {
                 PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
                 if(publicPersonalDetails.getName() != null) {
                     Name name = publicPersonalDetails.getName();
@@ -211,11 +220,11 @@ public class PublicProfileController extends BaseWorkspaceController {
                 }
                 mav.addObject("deprecated", true);
                 mav.addObject("primaryRecord", profile.getPrimaryRecord().getId());
-            } else if (!profileEntManager.isAvailable(profile)) {
-                displayName = localeManager.resolveMessage("orcid.reserved_for_claim");                
-            } else if (!profile.isAccountNonLocked()) {
+            } else if(e instanceof OrcidNotClaimedException) {
+                displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
+            } else {
                 mav.addObject("locked", true);
-                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name");                 
+                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name");
             }
             
             if(!PojoUtil.isEmpty(displayName)) {
@@ -223,8 +232,8 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("displayName", displayName);
             }            
             return mav;
-        }                
-        
+        }
+                
         Date lastModified = profile.getLastModified();
         long lastModifiedTime = 0;
         if(lastModified != null) {
@@ -762,24 +771,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
-    }
-    
-    /**
-     * Checks a record status and indicates if it is ready to be displayed in the public profile page
-     * A record is ready if all the following conditions are meet:
-     * - The record is claimed
-     * - It is not locked
-     * - It is not deprecated
-     * - It is not deactivated
-     * 
-     * @return true if the profile is ready to be displayed in the public page, false otherwise
-     * */
-    private boolean isReady(ProfileEntity profile) {
-        if(!profileEntManager.isAvailable(profile) || !profile.isAccountNonLocked() || profile.getPrimaryRecord() != null|| profile.getDeactivationDate() != null) {
-            return false;
-        }
-        return true;
-    }
+    }       
 }
 
 class OrcidInfo {
