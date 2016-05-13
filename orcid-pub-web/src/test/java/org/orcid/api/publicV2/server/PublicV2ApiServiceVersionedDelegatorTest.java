@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
@@ -61,6 +62,7 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private ProfileDao profileDao;
     
+    private String nonExistingUser = "0000-0000-0000-000X";    
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
     private String lockedUserOrcid = "0000-0000-0000-0005";
@@ -88,6 +90,165 @@ public class PublicV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
      * Security checks
      */
 
+    /**
+     * 404 for invalid orcids
+     * */
+    @Test(expected = NoResultException.class)
+    public void test00ViewRecord() {
+        serviceDelegator.viewRecord(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewActivities() {
+        serviceDelegator.viewActivities(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewWork() {
+        serviceDelegator.viewWork(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewWorkSummary() {
+        serviceDelegator.viewWorkSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewFunding() {
+        serviceDelegator.viewFunding(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewFundingSummary() {
+        serviceDelegator.viewFundingSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEducation() {
+        serviceDelegator.viewEducation(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEducationSummary() {
+        serviceDelegator.viewEducationSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEmployment() {
+        serviceDelegator.viewEmployment(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEmploymentSummary() {
+        serviceDelegator.viewEmploymentSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPeerReview() {
+        serviceDelegator.viewPeerReview(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPeerReviewSummary() {
+        serviceDelegator.viewPeerReviewSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewResearcherUrls() {
+        serviceDelegator.viewResearcherUrls(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewResearcherUrl() {
+        serviceDelegator.viewResearcherUrl(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEmails() {
+        serviceDelegator.viewEmails(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewOtherNames() {
+        serviceDelegator.viewOtherNames(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewOtherName() {
+        serviceDelegator.viewOtherName(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPersonalDetails() {
+        serviceDelegator.viewPersonalDetails(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewExternalIdentifiers() {
+        serviceDelegator.viewExternalIdentifiers(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewExternalIdentifier() {
+        serviceDelegator.viewExternalIdentifier(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewBiography() {
+        serviceDelegator.viewBiography(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewKeywords() {
+        serviceDelegator.viewKeywords(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewKeyword() {
+        serviceDelegator.viewKeyword(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewAddresses() {
+        serviceDelegator.viewAddresses(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewAddress() {
+        serviceDelegator.viewAddress(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPerson() {
+        serviceDelegator.viewPerson(nonExistingUser);
+        fail();
+    }
+    
     /**
      * Locked account throws an exception
      */

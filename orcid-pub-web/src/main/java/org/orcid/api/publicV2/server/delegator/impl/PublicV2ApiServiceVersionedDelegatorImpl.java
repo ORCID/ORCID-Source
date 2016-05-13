@@ -24,7 +24,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
@@ -234,8 +233,7 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     }
 
     private void checkProfileStatus(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        orcidSecurityManager.checkProfile(profile);
+        orcidSecurityManager.checkProfile(orcid);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

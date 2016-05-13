@@ -24,7 +24,6 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements
         MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
@@ -449,8 +448,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         return result.getObjectToConvert();
     }
 
-    private void checkProfileStatus(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        orcidSecurityManager.checkProfile(profile);
+    private void checkProfileStatus(String orcid) {        
+        orcidSecurityManager.checkProfile(orcid);
     }
 }

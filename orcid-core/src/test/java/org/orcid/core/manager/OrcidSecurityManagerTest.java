@@ -24,6 +24,7 @@ import java.security.AccessControlException;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
@@ -64,10 +65,14 @@ public class OrcidSecurityManagerTest extends BaseTest {
     
     @Mock
     private SourceManager sourceManager;
+    
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManager;
             
     @Before
     public void before() {
         orcidSecurityManager.setSourceManager(sourceManager);
+        orcidSecurityManager.setProfileEntityCacheManager(profileEntityCacheManager);
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
     }
     
@@ -313,8 +318,9 @@ public class OrcidSecurityManagerTest extends BaseTest {
     @Test(expected = LockedException.class)
     public void testLockedRecord() {
         ProfileEntity entity = createProfileEntity();
-        entity.setRecordLocked(true);
-        orcidSecurityManager.checkProfile(entity);
+        entity.setRecordLocked(true);        
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);        
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
         fail();
     }
     
@@ -322,7 +328,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
     public void testDeprecatedRecord() {
         ProfileEntity entity = createProfileEntity();
         entity.setPrimaryRecord(new ProfileEntity("0000-0000-0000-0001"));
-        orcidSecurityManager.checkProfile(entity);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0001")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0001");
         fail();
     }
     
@@ -332,7 +339,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
         ProfileEntity entity = createProfileEntity();
         entity.setSubmissionDate(new Date());
         entity.setClaimed(false);
-        orcidSecurityManager.checkProfile(entity);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
         fail();
     }
     
@@ -342,7 +350,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
         ProfileEntity entity = createProfileEntity();
         entity.setSubmissionDate(DateUtils.addDays(new Date(), -11));
         entity.setClaimed(false);
-        orcidSecurityManager.checkProfile(entity);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
     }
     
     @Test
@@ -352,7 +361,8 @@ public class OrcidSecurityManagerTest extends BaseTest {
         ProfileEntity entity = createProfileEntity();
         entity.setSubmissionDate(new Date());
         entity.setClaimed(false);
-        orcidSecurityManager.checkProfile(entity);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
     }
     
     @Test(expected = OrcidNotClaimedException.class)
@@ -362,7 +372,15 @@ public class OrcidSecurityManagerTest extends BaseTest {
         ProfileEntity entity = createProfileEntity();
         entity.setSubmissionDate(new Date());
         entity.setClaimed(false);
-        orcidSecurityManager.checkProfile(entity);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+        fail();
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void testNoResultException() {
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenThrow(new IllegalArgumentException());
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
         fail();
     }
     

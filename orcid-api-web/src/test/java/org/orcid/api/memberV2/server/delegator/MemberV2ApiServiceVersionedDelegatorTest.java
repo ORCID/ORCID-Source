@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
@@ -66,6 +67,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
     @Resource
     private ProfileDao profileDao;
 
+    private String nonExistingUser = "0000-0000-0000-000X";
     private String unclaimedUserOrcid = "0000-0000-0000-0001";
     private String deprecatedUserOrcid = "0000-0000-0000-0004";
     private String lockedUserOrcid = "0000-0000-0000-0005";
@@ -90,6 +92,340 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
      * Security checks
      */
 
+    /**
+     * 404 for invalid orcids
+     * */
+    @Test(expected = NoResultException.class)
+    public void test00ViewRecord() {
+        serviceDelegator.viewRecord(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewActivities() {
+        serviceDelegator.viewActivities(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewWork() {
+        serviceDelegator.viewWork(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewWorkSummary() {
+        serviceDelegator.viewWorkSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateWork() {
+        serviceDelegator.createWork(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateWork() {
+        serviceDelegator.updateWork(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteWork() {
+        serviceDelegator.deleteWork(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewFunding() {
+        serviceDelegator.viewFunding(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewFundingSummary() {
+        serviceDelegator.viewFundingSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateFunding() {
+        serviceDelegator.createFunding(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateFunding() {
+        serviceDelegator.updateFunding(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteFunding() {
+        serviceDelegator.deleteFunding(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEducation() {
+        serviceDelegator.viewEducation(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEducationSummary() {
+        serviceDelegator.viewEducationSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateEducation() {
+        serviceDelegator.createEducation(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateEducation() {
+        serviceDelegator.updateEducation(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEmployment() {
+        serviceDelegator.viewEmployment(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEmploymentSummary() {
+        serviceDelegator.viewEmploymentSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateEmployment() {
+        serviceDelegator.createEmployment(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateEmployment() {
+        serviceDelegator.updateEmployment(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteAffiliation() {
+        serviceDelegator.deleteAffiliation(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPeerReview() {
+        serviceDelegator.viewPeerReview(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPeerReviewSummary() {
+        serviceDelegator.viewPeerReviewSummary(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreatePeerReview() {
+        serviceDelegator.createPeerReview(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdatePeerReview() {
+        serviceDelegator.updatePeerReview(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeletePeerReview() {
+        serviceDelegator.deletePeerReview(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewResearcherUrls() {
+        serviceDelegator.viewResearcherUrls(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewResearcherUrl() {
+        serviceDelegator.viewResearcherUrl(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateResearcherUrl() {
+        serviceDelegator.updateResearcherUrl(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateResearcherUrl() {
+        serviceDelegator.createResearcherUrl(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteResearcherUrl() {
+        serviceDelegator.deleteResearcherUrl(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewEmails() {
+        serviceDelegator.viewEmails(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewOtherNames() {
+        serviceDelegator.viewOtherNames(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewOtherName() {
+        serviceDelegator.viewOtherName(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateOtherName() {
+        serviceDelegator.createOtherName(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateOtherName() {
+        serviceDelegator.updateOtherName(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteOtherName() {
+        serviceDelegator.deleteOtherName(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPersonalDetails() {
+        serviceDelegator.viewPersonalDetails(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewExternalIdentifiers() {
+        serviceDelegator.viewExternalIdentifiers(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewExternalIdentifier() {
+        serviceDelegator.viewExternalIdentifier(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateExternalIdentifier() {
+        serviceDelegator.updateExternalIdentifier(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateExternalIdentifier() {
+        serviceDelegator.createExternalIdentifier(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteExternalIdentifier() {
+        serviceDelegator.deleteExternalIdentifier(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewBiography() {
+        serviceDelegator.viewBiography(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewKeywords() {
+        serviceDelegator.viewKeywords(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewKeyword() {
+        serviceDelegator.viewKeyword(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateKeyword() {
+        serviceDelegator.createKeyword(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateKeyword() {
+        serviceDelegator.updateKeyword(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteKeyword() {
+        serviceDelegator.deleteKeyword(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewAddresses() {
+        serviceDelegator.viewAddresses(nonExistingUser);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewAddress() {
+        serviceDelegator.viewAddress(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00CreateAddress() {
+        serviceDelegator.createAddress(nonExistingUser, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00UpdateAddress() {
+        serviceDelegator.updateAddress(nonExistingUser, 0L, null);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00DeleteAddress() {
+        serviceDelegator.deleteAddress(nonExistingUser, 0L);
+        fail();
+    }
+
+    @Test(expected = NoResultException.class)
+    public void test00ViewPerson() {
+        serviceDelegator.viewPerson(nonExistingUser);
+        fail();
+    }
+
+    
     /**
      * Locked account throws an exception
      */
