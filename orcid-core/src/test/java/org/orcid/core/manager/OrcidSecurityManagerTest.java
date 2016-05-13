@@ -72,7 +72,7 @@ public class OrcidSecurityManagerTest extends BaseTest {
     }
     
     @After
-    public vid after() {
+    public void after() {
         SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
     
