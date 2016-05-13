@@ -6532,6 +6532,10 @@ a:hover .mozilla-badge{
 	left: 56px;
 }
 
+
+.form-social-sign-in h2{
+    margin-bottom: 35px;
+}
 .form-social-sign-in hr{
 	margin-top: 5px;
 }
