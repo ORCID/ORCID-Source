@@ -498,10 +498,10 @@
 	<bean id="statisticsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="statistics-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:5000}" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
 		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:86400}" />
 		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:86400}" />
-		<property name="maxElementsOnDisk" value="0" />
+		<property name="maxElementsOnDisk" value="1000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
