@@ -27,12 +27,14 @@ import javax.annotation.Resource;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
+import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
 import org.orcid.jaxb.model.record_rc1.Education;
 import org.orcid.jaxb.model.record_rc1.Employment;
@@ -73,6 +75,11 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
         initDBUnitData(DATA_FILES);
     }
 
+    @Before
+    public void before() {
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-6666666666666666");
+    }
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);

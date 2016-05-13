@@ -37,6 +37,7 @@ import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidClientGroupManagementException;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
+import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -45,7 +46,6 @@ import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +86,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         removeDBUnitData(Collections.<String> emptyList());
         OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
         orcidProfileManagerImpl.setOrcidIndexManager(orcidIndexManager);
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
 
     @Test    

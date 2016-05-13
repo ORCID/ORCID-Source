@@ -25,6 +25,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -49,7 +51,6 @@ import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.apache.commons.lang.time.DateUtils;
 
 /**
  * 
@@ -68,6 +69,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
     public void before() {
         orcidSecurityManager.setSourceManager(sourceManager);
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+    }
+    
+    @After
+    public vid after() {
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
     }
     
     @Test
