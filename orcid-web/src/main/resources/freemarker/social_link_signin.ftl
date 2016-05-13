@@ -48,7 +48,7 @@
         			        	${springMacroRequestContext.getMessage("social.link.to_finish")} ${springMacroRequestContext.getMessage("social.link.account_to_orcid")}
         		            </p>
         		            <p>
-        		            	<i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="http://support.orcid.org" target="_blank" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
+        		            	<i>${springMacroRequestContext.getMessage("social.link.you_will_only.1")}<span ng-bind="idpName"></span> ${springMacroRequestContext.getMessage("social.link.you_will_only.2")} <a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank" >${springMacroRequestContext.getMessage("social.link.visit_knowledgebase_link")}</a></i>
         		            </p>
         	            </div>
                     </div>
@@ -57,7 +57,7 @@
                 
                 <div class="row">
                 	<div class="col-md-offset-3 col-md-9 col-sm-9 col-sm-offset-3 col-xs-12">                			                		
-						${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${emailId!}&firstName=${firstName!}&lastName=${lastName!}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; ${springMacroRequestContext.getMessage("social.link.no_thanks")} <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
+						${springMacroRequestContext.getMessage("social.link.link_this_account")} &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/register'/>?linkRequest=${linkType}&emailId=${emailId!}&firstName=${firstName!}&lastName=${lastName!}">${springMacroRequestContext.getMessage("login.registerOrcidId")}</a> &nbsp;&#124;&nbsp; <a class="reg" href="<@orcid.rootPath '/signin'/>">${springMacroRequestContext.getMessage("social.link.return_to_signin")}</a>
 						<hr />
                 	</div>                	
                     <@spring.bind "loginForm" />             
