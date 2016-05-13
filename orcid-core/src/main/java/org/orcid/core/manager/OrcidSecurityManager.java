@@ -16,6 +16,9 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
@@ -52,5 +55,5 @@ public interface OrcidSecurityManager {
     
     void checkPermissions(ScopePathType requiredScope, String orcid);
     
-    boolean isAvailable(ProfileEntity profile);
+    void checkProfile(ProfileEntity profile) throws OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
 }

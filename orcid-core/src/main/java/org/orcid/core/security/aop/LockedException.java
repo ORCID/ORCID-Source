@@ -25,6 +25,10 @@ public class LockedException extends ApplicationException {
     private static final long serialVersionUID = -6900432299998784418L;
     private String orcid;
 
+    public LockedException() {
+        
+    }
+    
     public LockedException(String msg) {
         super(msg);
     }

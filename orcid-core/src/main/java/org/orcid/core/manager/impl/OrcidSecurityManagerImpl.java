@@ -23,10 +23,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
@@ -36,6 +40,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -95,6 +100,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Value("${org.orcid.core.claimWaitPeriodDays:10}")
     private int claimWaitPeriodDays;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
     
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
@@ -402,25 +410,39 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
     
     @Override
-    public boolean isAvailable(ProfileEntity profile) {
-        if(profile == null) {
-            throw new IllegalArgumentException("Profile cannot be null");
+    public void checkProfile(ProfileEntity profile) throws OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
+        //Check if the profile is not claimed and not old enough
+        if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
+            //Let the creator access the profile even if it is not claimed and not old enough
+            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
+            
+            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
+            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+            
+            //If the profile doesn't have source or the current source is not the profile source, throw an exception
+            if(profileSource == null || !Objects.equals(profileSource, currentSource)) {
+                throw new OrcidNotClaimedException();
+            }                        
         }
         
-        if(Boolean.TRUE.equals(profile.getClaimed())) {
-            return true;
-        }
-        
-        //Let the creator access the profile even if it is not claimed
-        SourceEntity source = profile.getSource();
-        if(source != null) {
-            SourceEntity currentSource = sourceManager.retrieveSourceEntity();
-            if(currentSource != null && source.getSourceId().equals(currentSource.getSourceId())) {
-                return true;
+        // Check if the user record is deprecated
+        if(profile.getPrimaryRecord() != null) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if (profile.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
             }
+            throw new OrcidDeprecatedException(params);
         }
         
-        return isOldEnough(profile);
+        //Check if the record is locked
+        if(!profile.isAccountNonLocked()) {
+            LockedException lockedException = new LockedException();
+            lockedException.setOrcid(profile.getId());
+            throw lockedException;
+        }
     }
         
     private boolean isOldEnough(ProfileEntity profile) {
