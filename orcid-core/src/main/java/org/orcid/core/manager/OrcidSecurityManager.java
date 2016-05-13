@@ -33,6 +33,8 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
  */
 public interface OrcidSecurityManager {
 
+    void setSourceManager(SourceManager sourceManager);
+    
     void checkVisibility(Filterable filterable, String orcid);   
     
     void checkVisibility(Name name, String orcid);

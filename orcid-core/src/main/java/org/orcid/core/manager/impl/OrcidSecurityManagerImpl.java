@@ -105,6 +105,11 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     private String baseUrl;
     
     @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    } 
+    
+    @Override
     public void checkVisibility(Filterable filterable, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
         // If it is null, it might be a call from the public API
@@ -447,5 +452,5 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         
     private boolean isOldEnough(ProfileEntity profile) {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
-    }        
+    }          
 }

@@ -24,9 +24,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.springframework.beans.factory.annotation.Value;
 
 public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
@@ -39,17 +37,11 @@ public class PublicV2ApiServiceVersionedDelegatorImpl implements PublicV2ApiServ
     private V2VersionConverterChain v2VersionConverterChain;
 
     @Resource
-    private ProfileDao profileDao;
-
-    @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
     
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
     @Override
     public Response viewStatusText() {
         return publicV2ApiServiceDelegator.viewStatusText();
