@@ -1613,6 +1613,9 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
                     return name;
                 }
             }
+            if(entityId === "facebook" || entityId === "google"){
+                return entityId.charAt(0).toUpperCase() + entityId.slice(1);
+            }
             return entityId;
         }
     };
