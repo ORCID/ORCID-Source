@@ -665,8 +665,7 @@
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 	        	<h3><@orcid.msg 'social.revoke'/></h3>
-	        	<p><@orcid.msg 'social.revoke.body.1'/></p>
-        		<p><@orcid.msg 'social.revoke.body.2'/>{{socialAccount.idpName}}<@orcid.msg 'social.revoke.body.3'/>{{socialAccount.accountIdForDisplay}}<@orcid.msg 'social.revoke.body.4'/></p>
+        		<p><@orcid.msg 'social.revoke.body.1'/>{{socialAccount.idpName}}<@orcid.msg 'social.revoke.body.2'/>{{socialAccount.accountIdForDisplay}}<@orcid.msg 'social.revoke.body.3'/></p>
         		<form ng-submit="revoke()">
             		<button class="btn btn-danger"><@orcid.msg 'social.revoke.button'/></button>
             		<a href="" ng-click="closeModal()"><@orcid.msg 'social.revoke.cancel'/></a>

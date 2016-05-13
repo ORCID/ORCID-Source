@@ -4241,7 +4241,7 @@ orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', 
             close: '',
             scrolling: false
                     });
-        $.colorbox.resize({width:"500px", height:"200px"});
+        $.colorbox.resize({height:"200px", width:"500px"});
     };
 
     $scope.closeColorBox = function() {
@@ -7362,7 +7362,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', functi
         $.colorbox({
             html : $compile($('#revoke-social-account-modal').html())($scope),            
             onComplete: function() {
-                $.colorbox.resize({height:"200px"});        
+                $.colorbox.resize({height:"200px", width:"500px"});        
             }
         });
         
