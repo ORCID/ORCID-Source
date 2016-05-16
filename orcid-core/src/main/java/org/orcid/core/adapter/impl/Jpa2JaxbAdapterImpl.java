@@ -272,6 +272,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidDeprecated;
     }
 
+    
+    public OrcidIdBase getOrcidIdBase(MinimizedSourceEntity sourceEntity) {
+        OrcidIdBase orcidId = new OrcidIdBase();
+        String correctedBaseUri = baseUri.replace("https", "http");
+        try {
+            URI uri = new URI(correctedBaseUri);
+            orcidId.setHost(uri.getHost());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Error parsing base uri", e);
+        }
+        if (sourceEntity.isAMember()) {
+            correctedBaseUri += "/client";
+        }
+        orcidId.setUri(correctedBaseUri + "/" + sourceEntity.getId());
+        orcidId.setPath(sourceEntity.getId());
+        return orcidId;
+    }
+    
     @Override
     public OrcidIdBase getOrcidIdBase(String id) {
         OrcidIdBase orcidId = new OrcidIdBase();
@@ -785,11 +803,12 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 Source sponsor = new Source();
                 SourceName sponsorName = new SourceName(sourceEntity.getName());
                 sponsor.setSourceName(sponsorName);
+                OrcidIdBase orcidIdBase = getOrcidIdBase(sourceEntity);
                 if (sourceEntity.isAMember()) {
-                    SourceClientId sourceClientId = new SourceClientId(getOrcidIdBase(sourceEntity.getId()));
+                    SourceClientId sourceClientId = new SourceClientId(orcidIdBase);
                     sponsor.setSourceClientId(sourceClientId);
                 } else {
-                    SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getId())) : null;
+                    SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getId()) ? new SourceOrcid(orcidIdBase) : null;
                     sponsor.setSourceOrcid(sponsorOrcid);
                 }
                 return sponsor;

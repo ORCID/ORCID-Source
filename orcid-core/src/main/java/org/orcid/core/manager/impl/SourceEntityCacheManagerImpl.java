@@ -73,6 +73,11 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
                     sourceEntity = toMinimizedSourceEntity(sourceEntityCache.get(key));
                     if (needsFresh(dbDate, sourceEntity)) {
                         BaseEntity<String> entity = getEntity(id);
+                        if(entity == null)
+                            throw new IllegalArgumentException("Invalid source " + id);  
+                        if(sourceEntity == null) {
+                            sourceEntity = new MinimizedSourceEntity();
+                        }
                         sourceEntity.setId(id);
                         sourceEntity.setLastModified(entity.getLastModified());
                         if(entity instanceof ClientDetailsEntity) {

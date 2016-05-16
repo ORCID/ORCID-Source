@@ -16,17 +16,23 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author Angel Montenegro
  * */
-public class MinimizedSourceEntity {
+public class MinimizedSourceEntity implements Serializable {    
+    private static final long serialVersionUID = 2254308941388840641L;
     private String id;
     private String name;
     private boolean isAMember = false;
     private Date lastModified;
         
+    public MinimizedSourceEntity() {
+        
+    }
+    
     public MinimizedSourceEntity(String id, String name, boolean isAMember) {
         this.setId(id);
         this.setName(name);
