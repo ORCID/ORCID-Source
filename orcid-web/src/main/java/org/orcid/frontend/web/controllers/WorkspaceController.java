@@ -525,10 +525,10 @@ public class WorkspaceController extends BaseWorkspaceController {
     ThirdPartyRedirect getSourceGrantReadWizard() {
         ThirdPartyRedirect tpr = new ThirdPartyRedirect();
         ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());        
-        if(profile.getSource() == null || profile.getSource().getSourceId() == null) {
+        if(PojoUtil.isEmpty(profile.getElementSourceId())) {
             return tpr;
         }        
-        String sourcStr = profile.getSource().getSourceId();     
+        String sourcStr = profile.getElementSourceId();     
         // Check that the cache is up to date
         evictThirdPartyLinkManagerCacheIfNeeded();
         // Get list of clients

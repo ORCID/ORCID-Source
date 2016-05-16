@@ -62,7 +62,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "profile")
-public class ProfileEntity extends BaseEntity<String> implements UserDetails {
+public class ProfileEntity extends BaseEntity<String> implements UserDetails, SourceIdAware {
 
     private static final long serialVersionUID = 7215593667128405456L;
 
@@ -934,7 +934,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     }
     
     @Transient
-    public String getSourceElementId() {
+    public String getElementSourceId() {
         if(StringUtils.isNotEmpty(this.clientSourceId)) {
             return this.clientSourceId;
         }

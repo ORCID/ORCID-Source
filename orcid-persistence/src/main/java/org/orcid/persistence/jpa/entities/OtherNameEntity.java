@@ -29,7 +29,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 
 /**
@@ -43,16 +45,18 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  **/
 @Entity
 @Table(name = "other_name")
-public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware, SourceAware {
+public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware, SourceIdAware {
 
     private static final long serialVersionUID = -3227122865862310024L;
 
     private Long id;
     private String displayName;
-    private ProfileEntity profile;
-    private SourceEntity source;
+    private ProfileEntity profile;    
     private Visibility visibility;
     private Long displayIndex;
+    //Source fields
+    private String sourceId;
+    private String clientSourceId;
 
     /**
      * @return the id of the other_name
@@ -106,14 +110,6 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
         this.profile = profile;
     }
     
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-
     @Basic
     @Enumerated(EnumType.STRING)
     public Visibility getVisibility() {
@@ -131,6 +127,32 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
 
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
+    }
+    
+    @Column(name = "source_id")
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    @Column(name = "client_source_id")
+    public String getClientSourceId() {
+        return clientSourceId;
+    }
+
+    public void setClientSourceId(String clientSourceId) {
+        this.clientSourceId = clientSourceId;
+    }
+    
+    @Transient
+    public String getElementSourceId() {
+        if(StringUtils.isNotEmpty(this.clientSourceId)) {
+            return this.clientSourceId;
+        }
+        return this.sourceId;
     }
     
     @Override

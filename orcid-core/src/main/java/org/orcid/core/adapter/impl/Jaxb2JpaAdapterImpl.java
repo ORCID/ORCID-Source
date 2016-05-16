@@ -544,7 +544,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 OtherNameEntity existing = existingIt.next();
-                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                String existingElementSource = PojoUtil.isEmpty(existing.getElementSourceId()) ? null : existing.getElementSourceId();
                 if(sourceId != null && !sourceId.equals(existingElementSource)) {
                     //If am not the source of this element, do nothing
                 } else {
@@ -597,7 +597,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     }
                     OtherNameEntity newEntity = new OtherNameEntity();
                     newEntity.setProfile(profileEntity);
-                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    SourceEntity source = sourceManager.retrieveSourceEntity(); 
+                    if(source.getSourceClient() != null) {
+                        newEntity.setClientSourceId(source.getSourceClient().getClientId());
+                    } else {
+                        newEntity.setSourceId(source.getSourceProfile().getId());
+                    }
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setDisplayName(newOtherName.getContent());
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, otherNames.getVisibility(), OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT));
@@ -965,11 +970,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             profileEntity.setCreationMethod(creationMethod != null ? creationMethod.value() : null);
             Source source = orcidHistory.getSource();
             if (source != null) {
-                SourceEntity sourceEntity = new SourceEntity();
-                ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
-                clientDetailsEntity.setId(source.retrieveSourcePath());
-                sourceEntity.setSourceClient(clientDetailsEntity);
-                profileEntity.setSource(sourceEntity);
+                profileEntity.setClientSourceId(source.retrieveSourcePath());
             }
         }
     }

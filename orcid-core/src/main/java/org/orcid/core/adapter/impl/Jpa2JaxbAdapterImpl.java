@@ -777,7 +777,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Source getSponsor(ProfileEntity profileEntity) {
-        String sourceId = profileEntity.getSourceElementId();
+        String sourceId = profileEntity.getElementSourceId();
         
         if(sourceId != null) {
             MinimizedSourceEntity sourceEntity = sourceEntityCacheManager.retrieve(sourceId);
@@ -1012,17 +1012,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Visibility mostRestrictive = Visibility.PUBLIC;
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
-            for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
-                
+            for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {                
                 //will only be null if there's an issue with the data or you're using this layer directly
                 Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
                 if (vis.isMoreRestrictiveThan(mostRestrictive))
                     mostRestrictive = vis;
-
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
-                if(otherNameEntity.getSource() != null) {
-                    Source source = createSource(otherNameEntity.getSource().getSourceId());
+                if(!PojoUtil.isEmpty(otherNameEntity.getElementSourceId())) {
+                    Source source = createSource(otherNameEntity.getSourceId(), otherNameEntity.getClientSourceId());
                     otherName.setSource(source);
                 }
                 otherNames.getOtherName().add(otherName);
@@ -1125,6 +1123,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
         return DateUtils.convertToXMLGregorianCalendar(date);
+    }
+    
+    private Source createSource(String sourceId, String clientSourceId) {
+        Source source = new Source();
+        if(!PojoUtil.isEmpty(clientSourceId)) {
+            source.setSourceClientId(new SourceClientId(clientSourceId));
+            source.setSourceOrcid(null);
+        } else {
+            source.setSourceOrcid(new SourceOrcid(sourceId));
+            source.setSourceClientId(null);
+        }                
+        return source;
     }
     
     private Source createSource(String amenderOrcid) {

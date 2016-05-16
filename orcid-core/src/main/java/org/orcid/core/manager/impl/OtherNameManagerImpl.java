@@ -120,8 +120,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
         
         if(checkSource) {
-            SourceEntity existingSource = otherNameEntity.getSource();
-            orcidSecurityManager.checkSource(existingSource);
+            orcidSecurityManager.checkSource(otherNameEntity.getElementSourceId());
         }        
 
         try {
@@ -152,7 +151,15 @@ public class OtherNameManagerImpl implements OtherNameManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);
+        
+        if(sourceEntity.getSourceClient() != null) {
+            newEntity.setClientSourceId(sourceEntity.getSourceId());
+            newEntity.setSourceId(null);
+        } else {
+            newEntity.setSourceId(sourceEntity.getSourceId());
+            newEntity.setClientSourceId(null);
+        }
+                
         setIncomingPrivacy(newEntity, profile);
         otherNameDao.persist(newEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(newEntity);
@@ -177,11 +184,13 @@ public class OtherNameManagerImpl implements OtherNameManager {
             }
         }
        
-        SourceEntity existingSource = updatedOtherNameEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(updatedOtherNameEntity.getElementSourceId());        
+        String existingSourceId = updatedOtherNameEntity.getSourceId();
+        String existingClientSourceId = updatedOtherNameEntity.getClientSourceId();                        
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
-        updatedOtherNameEntity.setLastModified(new Date());        
-        updatedOtherNameEntity.setSource(existingSource);
+        updatedOtherNameEntity.setLastModified(new Date());           
+        updatedOtherNameEntity.setClientSourceId(existingClientSourceId);
+        updatedOtherNameEntity.setSourceId(existingSourceId);
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
     }
@@ -231,7 +240,15 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newOtherName.setProfile(profile);
                     newOtherName.setDateCreated(new Date());
-                    newOtherName.setSource(sourceEntity);
+                    
+                    if(sourceEntity.getSourceClient() != null) {
+                        newOtherName.setClientSourceId(sourceEntity.getSourceId());
+                        newOtherName.setSourceId(null);
+                    } else {
+                        newOtherName.setClientSourceId(null);
+                        newOtherName.setSourceId(sourceEntity.getSourceId());
+                    }
+                                        
                     newOtherName.setVisibility(updatedOrNew.getVisibility());
                     newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);
@@ -245,8 +262,9 @@ public class OtherNameManagerImpl implements OtherNameManager {
 
     private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, SourceEntity source) {
         if (!existing.getId().equals(otherName.getPutCode())) {
-            if (existing.getSource() != null) {
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
+            if (!PojoUtil.isEmpty(existing.getElementSourceId())) {
+                String elementSource = existing.getElementSourceId();
+                if (elementSource.equals(source.getSourceId())) {
                     if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
                         return true;
                     }

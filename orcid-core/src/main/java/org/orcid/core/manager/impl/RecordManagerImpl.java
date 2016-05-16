@@ -25,6 +25,8 @@ import org.orcid.core.manager.RecordManager;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.SourceClientId;
+import org.orcid.jaxb.model.common_rc2.SourceOrcid;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record_rc2.CompletionDate;
@@ -136,8 +138,14 @@ public class RecordManagerImpl implements RecordManager {
             history.setSubmissionDate(new SubmissionDate(DateUtils.convertToXMLGregorianCalendar(profile.getSubmissionDate())));
         }                
         
-        if(profile.getSource() != null) {
-            history.setSource(new Source(profile.getSource().getSourceId()));                
+        if(!PojoUtil.isEmpty(profile.getElementSourceId())) {
+            Source source = new Source();
+            if(!PojoUtil.isEmpty(profile.getClientSourceId())) {                
+                source.setSourceClientId(new SourceClientId(profile.getClientSourceId()));                
+            } else {
+                source.setSourceOrcid(new SourceOrcid(profile.getSourceId()));
+            }   
+            history.setSource(source);
         }
         
         boolean verfiedEmail = false;
