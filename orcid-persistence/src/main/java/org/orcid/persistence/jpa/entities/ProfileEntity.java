@@ -108,7 +108,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private Date submissionDate = new Date();
     private Date lastIndexedDate;
     private Boolean claimed;
-    private SourceEntity source;
     private Boolean isSelectableSponsor;
     private Collection<OrcidGrantedAuthority> authorities;
     private Set<GivenPermissionToEntity> givenPermissionTo;
@@ -131,6 +130,10 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
     private float sendEmailFrequencyDays;
     private Boolean enableNotifications = Boolean.TRUE;
 
+    //Source fields
+    private String sourceId;
+    private String clientSourceId;
+    
     // Salesfore ID
     private String salesforeId;
 
@@ -283,18 +286,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
      */
     public void setClaimed(Boolean claimed) {
         this.claimed = claimed;
-    }
-
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    /**
-     * @param source
-     *            the sponsor to set
-     */
-    public void setSource(SourceEntity source) {
-        this.source = source;
     }
 
     @Column(name = "is_selectable_sponsor")
@@ -922,5 +913,31 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails {
 
     public void setBiographyEntity(BiographyEntity biographyEntity) {
         this.biographyEntity = biographyEntity;
+    }
+
+    @Column(name = "source_id")
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    @Column(name = "client_source_id")
+    public String getClientSourceId() {
+        return clientSourceId;
+    }
+
+    public void setClientSourceId(String clientSourceId) {
+        this.clientSourceId = clientSourceId;
+    }
+    
+    @Transient
+    public String getSourceElementId() {
+        if(StringUtils.isNotEmpty(this.clientSourceId)) {
+            return this.clientSourceId;
+        }
+        return this.sourceId;
     }
 }

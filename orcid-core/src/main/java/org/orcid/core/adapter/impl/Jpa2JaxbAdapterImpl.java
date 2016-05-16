@@ -36,6 +36,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.SourceEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -56,6 +57,7 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
+import org.orcid.persistence.jpa.entities.MinimizedSourceEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -112,11 +114,14 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
-
+    ProfileEntityCacheManager profileEntityCacheManager;    
+    
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceEntityCacheManager sourceEntityCacheManager;
+    
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
         return toOrcidProfile(profileEntity, LoadOptions.ALL);
@@ -772,21 +777,24 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Source getSponsor(ProfileEntity profileEntity) {
-        SourceEntity sourceEntity = profileEntity.getSource();
-        if (sourceEntity != null) {
-            Source sponsor = new Source();
-            SourceName sponsorName = new SourceName(sourceEntity.getSourceName());
-            sponsor.setSourceName(sponsorName);
-            ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
-            if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
-                SourceClientId sourceClientId = new SourceClientId(getOrcidIdBase(sourceClient.getId()));
-                sponsor.setSourceClientId(sourceClientId);
-            } else {
-                SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getSourceId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())) : null;
-                sponsor.setSourceOrcid(sponsorOrcid);
+        String sourceId = profileEntity.getSourceElementId();
+        
+        if(sourceId != null) {
+            MinimizedSourceEntity sourceEntity = sourceEntityCacheManager.retrieve(sourceId);
+            if (sourceEntity != null) {
+                Source sponsor = new Source();
+                SourceName sponsorName = new SourceName(sourceEntity.getName());
+                sponsor.setSourceName(sponsorName);
+                if (sourceEntity.isAMember()) {
+                    SourceClientId sourceClientId = new SourceClientId(getOrcidIdBase(sourceEntity.getId()));
+                    sponsor.setSourceClientId(sourceClientId);
+                } else {
+                    SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getId())) : null;
+                    sponsor.setSourceOrcid(sponsorOrcid);
+                }
+                return sponsor;
             }
-            return sponsor;
-        }
+        }     
         return null;
     }
 
