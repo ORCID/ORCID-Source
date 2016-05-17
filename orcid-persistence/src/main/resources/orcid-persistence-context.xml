@@ -31,8 +31,13 @@
 
     <tx:annotation-driven />
     
+    <context:spring-configured />
+    
     <context:component-scan
-		base-package="org.orcid.persistence.aop" />
+		base-package="org.orcid.persistence.jpa.entities,org.orcid.persistence.aop" />
+		
+	<context:load-time-weaver aspectj-weaving="on" />
+	
     <aop:aspectj-autoproxy />
 
     <!-- ${org.orcid.persistence.properties} gets replaced during the Maven

@@ -32,6 +32,7 @@ the software.
         <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
         <jena.version>3.0.0</jena.version>
+		<spring.aspects.version>4.2.2.RELEASE</spring.aspects.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
@@ -857,7 +858,14 @@ the software.
                 <version>${aspectj.version}</version>
                 <scope>compile</scope>
             </dependency>
-
+			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aspects</artifactId>
+				<version>${spring.aspects.version}</version>
+                <scope>compile</scope>
+			</dependency>
+			
             <!-- Utilities -->
             <dependency>
                 <groupId>commons-io</groupId>

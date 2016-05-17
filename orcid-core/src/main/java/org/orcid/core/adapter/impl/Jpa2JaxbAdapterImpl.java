@@ -36,7 +36,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.SourceEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -57,7 +56,6 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.MinimizedSourceEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -114,14 +112,11 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     private OrcidOauth2TokenDetailService orcidOauth2TokenService;
 
     @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;    
-    
+    ProfileEntityCacheManager profileEntityCacheManager;
+
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
-    @Resource
-    private SourceEntityCacheManager sourceEntityCacheManager;
-    
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
         return toOrcidProfile(profileEntity, LoadOptions.ALL);
@@ -272,24 +267,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return orcidDeprecated;
     }
 
-    
-    public OrcidIdBase getOrcidIdBase(MinimizedSourceEntity sourceEntity) {
-        OrcidIdBase orcidId = new OrcidIdBase();
-        String correctedBaseUri = baseUri.replace("https", "http");
-        try {
-            URI uri = new URI(correctedBaseUri);
-            orcidId.setHost(uri.getHost());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Error parsing base uri", e);
-        }
-        if (sourceEntity.isAMember()) {
-            correctedBaseUri += "/client";
-        }
-        orcidId.setUri(correctedBaseUri + "/" + sourceEntity.getId());
-        orcidId.setPath(sourceEntity.getId());
-        return orcidId;
-    }
-    
     @Override
     public OrcidIdBase getOrcidIdBase(String id) {
         OrcidIdBase orcidId = new OrcidIdBase();
@@ -795,25 +772,21 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private Source getSponsor(ProfileEntity profileEntity) {
-        String sourceId = profileEntity.getElementSourceId();
-        
-        if(sourceId != null) {
-            MinimizedSourceEntity sourceEntity = sourceEntityCacheManager.retrieve(sourceId);
-            if (sourceEntity != null) {
-                Source sponsor = new Source();
-                SourceName sponsorName = new SourceName(sourceEntity.getName());
-                sponsor.setSourceName(sponsorName);
-                OrcidIdBase orcidIdBase = getOrcidIdBase(sourceEntity);
-                if (sourceEntity.isAMember()) {
-                    SourceClientId sourceClientId = new SourceClientId(orcidIdBase);
-                    sponsor.setSourceClientId(sourceClientId);
-                } else {
-                    SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getId()) ? new SourceOrcid(orcidIdBase) : null;
-                    sponsor.setSourceOrcid(sponsorOrcid);
-                }
-                return sponsor;
+        SourceEntity sourceEntity = profileEntity.getSource();
+        if (sourceEntity != null) {
+            Source sponsor = new Source();
+            SourceName sponsorName = new SourceName(sourceEntity.getSourceName());
+            sponsor.setSourceName(sponsorName);
+            ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
+            if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
+                SourceClientId sourceClientId = new SourceClientId(getOrcidIdBase(sourceClient.getId()));
+                sponsor.setSourceClientId(sourceClientId);
+            } else {
+                SourceOrcid sponsorOrcid = StringUtils.isNotBlank(sourceEntity.getSourceId()) ? new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())) : null;
+                sponsor.setSourceOrcid(sponsorOrcid);
             }
-        }     
+            return sponsor;
+        }
         return null;
     }
 
@@ -1031,15 +1004,17 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Visibility mostRestrictive = Visibility.PUBLIC;
         Set<OtherNameEntity> otherNamesEntitiy = profile.getOtherNames();
         if (otherNamesEntitiy != null && otherNamesEntitiy.size() > 0) {
-            for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {                
+            for (OtherNameEntity otherNameEntity : otherNamesEntitiy) {
+                
                 //will only be null if there's an issue with the data or you're using this layer directly
                 Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
                 if (vis.isMoreRestrictiveThan(mostRestrictive))
                     mostRestrictive = vis;
+
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
-                if(!PojoUtil.isEmpty(otherNameEntity.getElementSourceId())) {
-                    Source source = createSource(otherNameEntity.getSourceId(), otherNameEntity.getClientSourceId());
+                if(otherNameEntity.getSource() != null) {
+                    Source source = createSource(otherNameEntity.getSource().getSourceId());
                     otherName.setSource(source);
                 }
                 otherNames.getOtherName().add(otherName);
@@ -1142,18 +1117,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
         return DateUtils.convertToXMLGregorianCalendar(date);
-    }
-    
-    private Source createSource(String sourceId, String clientSourceId) {
-        Source source = new Source();
-        if(!PojoUtil.isEmpty(clientSourceId)) {
-            source.setSourceClientId(new SourceClientId(clientSourceId));
-            source.setSourceOrcid(null);
-        } else {
-            source.setSourceOrcid(new SourceOrcid(sourceId));
-            source.setSourceClientId(null);
-        }                
-        return source;
     }
     
     private Source createSource(String amenderOrcid) {

@@ -170,16 +170,6 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new WrongSourceException(params);
         }
     }
-    
-    @Override
-    public void checkSource(String existingSourceId) {
-        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (PojoUtil.isEmpty(existingSourceId) || !sourceIdOfUpdater.equals(existingSourceId))) {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("activity", "work");
-            throw new WrongSourceException(params);
-        }
-    }
 
     @Override
     public boolean isAdmin() {
@@ -279,9 +269,9 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             // Check if the record is unclaimed and the client is the source
             ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
             Boolean claimed = profile.getClaimed();
-            String elementSourceId = profile.getElementSourceId();
+            SourceEntity source = profile.getSource();
             String clientId = sourceManager.retrieveSourceOrcid();
-            if (!((claimed == null || !claimed) && elementSourceId != null && clientId.equals(elementSourceId))) {
+            if (!((claimed == null || !claimed) && source != null && clientId.equals(source.getSourceId()))) {
                 throw new OrcidUnauthorizedException("Incorrect token for claimed record");
             }
         }
@@ -405,5 +395,5 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if(biography != null && !org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
-    }    
+    }
 }

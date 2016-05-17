@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +52,7 @@ import org.springframework.util.StringUtils;
  */
 @Entity
 @Table(name = "client_details")
-public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, ProfileAware {
+public class ClientDetailsEntity extends BaseEntity<String> implements ClientDetails, ProfileAware, Serializable {
     
     private static final long serialVersionUID = 1L;
 

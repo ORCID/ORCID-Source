@@ -846,7 +846,7 @@ public class SetUpClientsAndUsers {
         o1.setDisplayName("other-name-1");
         o1.setLastModified(new Date());
         o1.setProfile(new ProfileEntity(orcid));
-        o1.setClientSourceId(client1ClientId);
+        o1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         o1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         otherNameDao.persist(o1);
         
@@ -856,7 +856,7 @@ public class SetUpClientsAndUsers {
         o2.setDisplayName("other-name-2");
         o2.setLastModified(new Date());
         o2.setProfile(new ProfileEntity(orcid));
-        o2.setClientSourceId(client1ClientId);
+        o2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
         o2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         otherNameDao.persist(o2);
         

@@ -22,15 +22,12 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.SourceEntityCacheManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.MinimizedSourceEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +49,7 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
 
     LockerObjectsManager pubLocks = new LockerObjectsManager();
 
-    @Resource(name = "SourceEntityCache")
+    @Resource(name = "sourceEntityCache")
     private Cache sourceEntityCache;
 
     LockerObjectsManager lockers = new LockerObjectsManager();
@@ -63,42 +60,27 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
     
     @Override
     @Transactional
-    public MinimizedSourceEntity retrieve(String id) throws IllegalArgumentException {
+    public SourceEntity retrieve(String id) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(id, releaseName);
         Date dbDate = retrieveLastModifiedDate(id);
-        MinimizedSourceEntity sourceEntity = toMinimizedSourceEntity(sourceEntityCache.get(key));
+        SourceEntity sourceEntity = toSourceEntity(sourceEntityCache.get(key));
         if (needsFresh(dbDate, sourceEntity))
             try {
                 synchronized (lockers.obtainLock(id)) {
-                    sourceEntity = toMinimizedSourceEntity(sourceEntityCache.get(key));
+                    sourceEntity = toSourceEntity(sourceEntityCache.get(key));
                     if (needsFresh(dbDate, sourceEntity)) {
                         BaseEntity<String> entity = getEntity(id);
                         if(entity == null)
                             throw new IllegalArgumentException("Invalid source " + id);  
                         if(sourceEntity == null) {
-                            sourceEntity = new MinimizedSourceEntity();
+                            sourceEntity = new SourceEntity();
                         }
-                        sourceEntity.setId(id);
-                        sourceEntity.setLastModified(entity.getLastModified());
+                        
                         if(entity instanceof ClientDetailsEntity) {
-                            ClientDetailsEntity clientDetails = (ClientDetailsEntity) entity;                            
-                            sourceEntity.setIsAMember(true);                            
-                            sourceEntity.setName(clientDetails.getClientName());
+                            sourceEntity.setSourceClient((ClientDetailsEntity) entity);
                         } else {
-                            ProfileEntity profile = (ProfileEntity) entity;
-                            sourceEntity.setIsAMember(false);
-                            RecordNameEntity recordName = profile.getRecordNameEntity();
-                            if(recordName != null && Visibility.PUBLIC.equals(recordName.getVisibility())) {
-                                String publicName = null;
-                                if (!PojoUtil.isEmpty(recordName.getCreditName())) {
-                                    publicName = recordName.getCreditName();
-                                } else {
-                                    publicName = PojoUtil.isEmpty(recordName.getGivenNames()) ? "" : recordName.getGivenNames();
-                                    publicName += PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName();
-                                }
-                                sourceEntity.setName(publicName);
-                            }
-                        }
+                            sourceEntity.setSourceProfile((ProfileEntity) entity);
+                        }                            
                         
                         sourceEntityCache.put(new Element(key, sourceEntity));
                     }
@@ -110,10 +92,10 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
     }
 
     @Override
-    public void put(MinimizedSourceEntity entity) {
-        put(entity.getId(), entity);
+    public void put(SourceEntity entity) {
+        put(entity.getSourceId(), entity);
     }
-    public void put(String id, MinimizedSourceEntity entity) {
+    public void put(String id, SourceEntity entity) {
         try {
             synchronized (lockers.obtainLock(id)) {
                 sourceEntityCache.put(new Element(new OrcidCacheKey(id, releaseName), entity));
@@ -133,8 +115,8 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
         sourceEntityCache.remove(new OrcidCacheKey(id, releaseName));
     }
     
-    private MinimizedSourceEntity toMinimizedSourceEntity(Element element) {
-        return (MinimizedSourceEntity) (element != null ? element.getObjectValue() : null);
+    private SourceEntity toSourceEntity(Element element) {
+        return (SourceEntity) (element != null ? element.getObjectValue() : null);
     }
     
     private BaseEntity<String> getEntity(String id) {
@@ -183,12 +165,13 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
         return lastModified;
     }
     
-    static public boolean needsFresh(Date dbDate, MinimizedSourceEntity entity) {
-        if (entity == null)
+    static public boolean needsFresh(Date dbDate, SourceEntity entity) {
+        if (entity == null || (entity.getSourceClient() == null && entity.getSourceProfile() == null))
             return true;
         if (dbDate == null) // is this possible?
             return true;
-        if (entity.getLastModified().getTime() != dbDate.getTime())
+        Date lastModified = entity.getSourceClient() == null ? entity.getSourceProfile().getLastModified() : entity.getSourceClient().getLastModified();
+        if (lastModified.getTime() != dbDate.getTime())
             return true;
         return false;
     }

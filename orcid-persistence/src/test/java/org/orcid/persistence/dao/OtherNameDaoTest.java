@@ -37,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -97,7 +98,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         OtherNameEntity entity = new OtherNameEntity();
         entity.setDisplayName("The other name");
         entity.setProfile(new ProfileEntity("4444-4444-4444-4441"));
-        entity.setSourceId("4444-4444-4444-4441");
+        entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4441")));
         entity.setVisibility(Visibility.PUBLIC);
         otherNameDao.persist(entity);
         assertEquals(4, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());

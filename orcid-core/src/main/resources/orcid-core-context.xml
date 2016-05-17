@@ -142,10 +142,21 @@
 	</bean>
 	
 	<bean id="profileEntityCacheManager" class="org.orcid.core.manager.impl.ProfileEntityCacheManagerImpl"/>
-	
-	<bean id="SourceEntityCacheManager" class="org.orcid.core.manager.impl.SourceEntityCacheManagerImpl"/>
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
+	
+	
+	
+	
+	
+	<bean id="sourceEntityCacheManager" class="org.orcid.core.manager.impl.SourceEntityCacheManagerImpl"/>
+	
+	
+	
+	
+	
+	
+	
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
 
@@ -494,17 +505,7 @@
 		<property name="maxElementsOnDisk" value="0" />
 		<property name="strategy" value="NONE" />
 	</bean>
-		
-	<bean id="SourceEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
-		<property name="cacheName" value="minimized-source-entity" />
-		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
-		<property name="maxElementsOnDisk" value="0" />
-		<property name="strategy" value="NONE" />
-	</bean>
-			
+	
 	<bean id="statisticsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="statistics-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
@@ -516,6 +517,22 @@
 	</bean>
 
 
+
+
+	<bean id="sourceEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+		<property name="cacheName" value="source-entity" />
+		<property name="cacheManager" ref="coreCacheManager" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
+		<property name="maxElementsOnDisk" value="0" />
+		<property name="strategy" value="NONE" />
+	</bean>
+	
+	
+	
+	
+	
 
 	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="client-details-entity" />

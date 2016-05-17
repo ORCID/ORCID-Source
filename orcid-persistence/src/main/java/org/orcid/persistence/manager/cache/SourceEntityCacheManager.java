@@ -14,18 +14,18 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.persistence.manager.cache;
 
-import org.orcid.persistence.jpa.entities.MinimizedSourceEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
  * @author Angel Montenegro
  * */
 public interface SourceEntityCacheManager {
 
-    public MinimizedSourceEntity retrieve(String id) throws IllegalArgumentException;
+    public SourceEntity retrieve(String id) throws IllegalArgumentException;
     
-    public void put(MinimizedSourceEntity sourceEntity);
+    public void put(SourceEntity sourceEntity);
     
     public void removeAll();
     

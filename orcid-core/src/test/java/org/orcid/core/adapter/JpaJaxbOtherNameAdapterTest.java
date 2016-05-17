@@ -56,8 +56,8 @@ public class JpaJaxbOtherNameAdapterTest {
         assertNotNull(otherNameEntity.getDateCreated());
         assertNotNull(otherNameEntity.getLastModified());
         assertEquals("Other Name #1", otherNameEntity.getDisplayName());
-        assertNotNull(otherNameEntity.getElementSourceId());
-        assertEquals("8888-8888-8888-8880", otherNameEntity.getElementSourceId());
+        assertNotNull(otherNameEntity.getSource());
+        assertEquals("8888-8888-8888-8880", otherNameEntity.getSource().getSourceId());
     }
     
     @Test
@@ -90,7 +90,7 @@ public class JpaJaxbOtherNameAdapterTest {
         result.setDisplayName("display-name");
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC);
-        result.setClientSourceId("APP-000000001");
+        result.setSource(new SourceEntity("APP-000000001"));
         return result;
     }
 }

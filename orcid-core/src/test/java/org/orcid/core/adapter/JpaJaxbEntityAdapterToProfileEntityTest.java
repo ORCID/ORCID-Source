@@ -214,7 +214,8 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals("1111-1111-1111-1115", retrievedGivenPermissionToEntity.getReceiver().getId());
         assertEquals(DateUtils.convertToDate("2012-11-10T13:18:51"), retrievedGivenPermissionToEntity.getApprovalDate());
         assertNull(profileEntity.getGivenPermissionBy());
-        retrievedProfileEntity.setSourceId(profileEntity.getId());
+        retrievedProfileEntity.getSource().setSourceClient(null);
+        retrievedProfileEntity.getSource().setSourceProfile(profileEntity);
         adapter.toOrcidProfile(retrievedProfileEntity);
     }
 

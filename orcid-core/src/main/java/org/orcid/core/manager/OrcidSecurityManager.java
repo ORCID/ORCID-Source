@@ -40,8 +40,6 @@ public interface OrcidSecurityManager {
     void checkIsPublic(Biography biography);
     
     void checkSource(SourceEntity existingSource);
-    
-    void checkSource(String existingSourceId);
 
     boolean isAdmin();
 
