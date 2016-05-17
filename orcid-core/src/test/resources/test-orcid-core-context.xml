@@ -30,7 +30,4 @@
         <property name="apiRecordCreationEmailEnabled" value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
 	</bean>	
 	
-	<bean id="echo2" class="org.orcid.core.messaging.EchoTestMessageListener2"/>
-	<bean id="echo3" class="org.orcid.core.messaging.EchoTestMessageListener3"/>
-		
 </beans>
