@@ -114,13 +114,11 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
-        <!-- http://mvnrepository.com/artifact/org.springframework/spring-aspects -->
 		<dependency>
     		<groupId>org.springframework</groupId>
     		<artifactId>spring-aspects</artifactId>
     	</dependency>
         
-
         <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
