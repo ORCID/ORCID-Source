@@ -38,10 +38,16 @@ _NOTE:<br />API calls for member to ORCID iD holder authorization using OAuth ar
 
 #### XSD release candidate(s)
 
-_None available_
+* **[ORCID Message 2.0_rc2](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc2)** - _Contains: Person section, migrates all identifiers to external-identifier_ <br/> 
+* **[ORCID Message 2.0_rc1](https://github.com/ORCID/ORCID-Source/tree/master/orcid-model/src/main/resources/record_2.0_rc1)** - _Contains: Peer-review, new format XSD for activities_ <br/><br/>
+    * API Base URLs - PRODUCTION (replace 'X' in the URL with the rc version)
+        * Public API:   http://pub.orcid.org/v2.0_rcX/
+        * Member API:   https://api.orcid.org/v2.0_rcX/
+    * API Base URLs - SANDBOX
+        * Public API:   http://pub.sandbox.orcid.org/v2.0_rcX/
+        * Member API:   http://api.sandbox.orcid.org/v2.0_rcX/
 
 #### XSD deprecated versions
-
 
 * **[ORCID Message 1.1](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd)** <br>_Read the [change log from the previous version (ORCID Message 1.0.23)](http://support.orcid.org/knowledgebase/articles/268952-xsd-1-1-update)_
     * API Base URLs - PRODUCTION
