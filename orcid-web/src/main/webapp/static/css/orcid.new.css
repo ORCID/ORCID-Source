@@ -7799,6 +7799,12 @@ a:hover .mozilla-badge{
 		height: auto;
 	}
 	
+	.login .btn-group-justified a{
+		font-size: 12px;
+		font-size: 3.5vw;
+		vertical-align: initial;		
+	}
+	
 
 }
 
