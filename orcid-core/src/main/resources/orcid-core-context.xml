@@ -145,18 +145,7 @@
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
-	
-	
-	
-	
 	<bean id="sourceEntityCacheManager" class="org.orcid.core.manager.impl.SourceEntityCacheManagerImpl"/>
-	
-	
-	
-	
-	
-	
-	
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
 
@@ -516,9 +505,6 @@
 		<property name="strategy" value="NONE" />
 	</bean>
 
-
-
-
 	<bean id="sourceEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="source-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
@@ -529,11 +515,6 @@
 		<property name="strategy" value="NONE" />
 	</bean>
 	
-	
-	
-	
-	
-
 	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="client-details-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />

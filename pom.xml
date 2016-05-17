@@ -863,7 +863,7 @@ the software.
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aspects</artifactId>
 				<version>${spring.aspects.version}</version>
-                <scope>compile</scope>
+				<scope>compile</scope>
 			</dependency>
 			
             <!-- Utilities -->
