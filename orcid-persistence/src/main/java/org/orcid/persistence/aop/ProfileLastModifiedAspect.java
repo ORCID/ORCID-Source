@@ -24,11 +24,15 @@ import org.aspectj.lang.annotation.Aspect;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.messaging.JmsMessageSender;
+import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -43,6 +47,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
 
     @Resource
     private ProfileDao profileDao;
+    
+    @Resource 
+    JmsMessageSender messaging;
 
     private boolean enabled = true;
 
@@ -77,6 +84,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             }
         }
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName()+"."+joinPoint.getSignature().getName()), JmsDestination.UPDATED_ORCIDS);
     }
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")

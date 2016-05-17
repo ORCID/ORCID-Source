@@ -178,6 +178,17 @@
             <groupId>org.jasypt</groupId>
             <artifactId>jasypt-hibernate4</artifactId>
         </dependency>
+         <!-- Messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>            
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.13.3</version>
+        </dependency>
         
         <!-- Test -->
         <dependency>

@@ -708,37 +708,7 @@
 	<bean id="v1xDisabled" class="java.lang.Boolean">
 		<constructor-arg value="${org.orcid.core.v1_x.disabled}"/>
 	</bean>
-
-	<!-- JMS Messaging -->
-	<!-- enable the configuration of jms on annotations -->
-	<jms:annotation-driven/>
-	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-		<!-- lets use an embedded broker for now (easier to test!) -->
-    	<property name="brokerURL" value="${org.orcid.core.messaging.brokerURL:vm://localhost?broker.persistent=false}"/>
-	</bean>
-	<bean id="cachingJmsConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
-    	<property name="targetConnectionFactory" ref="jmsConnectionFactory"/>
-	</bean>
 	
-	<!-- so we can listen to queues -->
-	<bean id="jmsListenerContainerFactory" class="org.springframework.jms.config.DefaultJmsListenerContainerFactory">
-	    <property name="connectionFactory" ref="jmsConnectionFactory" />
-	    <property name="concurrency" value="1-10"/>
-	</bean>
-	
-	<!-- Default Destination Queue Definition -->
-	<bean id="defaultJmsDestination" class="org.apache.activemq.command.ActiveMQQueue">
-	  <!-- name of the queue -->
-	  <constructor-arg index="0" value="test" />
-	</bean>
-	 
-	<!-- JmsTemplate Definition so we can send to queues -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-	  <property name="connectionFactory" ref="jmsConnectionFactory" />
-	  <property name="defaultDestination" ref="defaultJmsDestination" />
-	</bean>
-	
-	<!-- We add our Jms Message Sending Resource via @component - the whole package works like that-->
-	<!-- <bean id="jmsMessageSender" class="org.orcid.core.messaging.JmsMessageSender" /> -->
+	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 	
 </beans>
