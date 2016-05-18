@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml","classpath:orcid-persistence-context.xml" })
 public class VisibilityFilterV2ImplTest {
 
     private Unmarshaller unmarshaller;
