@@ -44,7 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml","classpath:orcid-persistence-context.xml"  })
+@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml"  })
 public class OrcidOauth2AuthoriziationCodeDetailDaoTest extends DBUnitTest {
 
     @Resource(name = "orcidOauth2AuthoriziationCodeDetailDao")

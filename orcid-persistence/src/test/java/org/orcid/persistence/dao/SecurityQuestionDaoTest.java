@@ -31,7 +31,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml","classpath:orcid-persistence-context.xml"  })
+@ContextConfiguration(locations = { "classpath:orcid-persistence-context.xml"  })
 public class SecurityQuestionDaoTest extends DBUnitTest {
 
     @Resource(name = "securityQuestionDao")
