@@ -16,8 +16,9 @@
  */
 package org.orcid.core.adapter;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
 import java.util.Date;
@@ -27,14 +28,27 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.orcid.core.BaseTest;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.impl.SourceEntityCacheManagerImpl;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -43,10 +57,20 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbOtherNameAdapterTest {
+@ContextConfiguration(locations = { "classpath:test-context.xml" })
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     @Resource
-    private JpaJaxbOtherNameAdapter adapter;
+    private JpaJaxbOtherNameAdapter adapter;        
+    
+    @Resource 
+    private SourceEntityCacheManager sourceEntityCacheManager;
+    
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Mock
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Test
     public void fromOtherNameToOtherNameEntityTest() throws JAXBException {

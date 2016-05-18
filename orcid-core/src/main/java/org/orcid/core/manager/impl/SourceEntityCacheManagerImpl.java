@@ -27,6 +27,7 @@ import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.manager.cache.EntityCacheManager;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -58,6 +59,18 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceEntityCacheManagerImpl.class);
     
+    public void setProfileEntityCacheManager(EntityCacheManager entityCacheManager) {
+        if(entityCacheManager instanceof ProfileEntityCacheManager) {
+            this.profileEntityCacheManager = (ProfileEntityCacheManager) profileEntityCacheManager;
+        }
+    }
+
+    public void setClientDetailsEntityCacheManager(EntityCacheManager entityCacheManager) {
+        if(entityCacheManager instanceof ClientDetailsEntityCacheManager) {
+            this.clientDetailsEntityCacheManager = (ClientDetailsEntityCacheManager) clientDetailsEntityCacheManager;
+        }
+    }
+
     @Override
     @Transactional
     public SourceEntity retrieve(String id) throws IllegalArgumentException {

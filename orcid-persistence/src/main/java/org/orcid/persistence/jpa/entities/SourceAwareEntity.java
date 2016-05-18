@@ -37,7 +37,7 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
     private static final long serialVersionUID = -5397119397438830995L;
     private String sourceId;
     private String clientSourceId;
-    private static SourceEntityCacheManager sourceEntityCacheManager;
+    private SourceEntityCacheManager sourceEntityCacheManager;
 
     @Column(name = "source_id")
     public String getSourceId() {

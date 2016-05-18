@@ -23,6 +23,10 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
  * */
 public interface SourceEntityCacheManager {
 
+    void setProfileEntityCacheManager(EntityCacheManager profileEntityCacheManager);
+    
+    void setClientDetailsEntityCacheManager(EntityCacheManager clientDetailsEntityCacheManager);
+    
     public SourceEntity retrieve(String id) throws IllegalArgumentException;
     
     public void put(SourceEntity sourceEntity);
