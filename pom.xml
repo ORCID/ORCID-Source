@@ -32,7 +32,7 @@ the software.
         <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
         <jena.version>3.0.0</jena.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
@@ -120,12 +120,12 @@ the software.
                     <target>1.8</target>
                 </configuration>
             </plugin>
-			<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT</argLine>					
+                    <argLine>-Duser.timezone=GMT</argLine>
                     <runOrder>alphabetical</runOrder>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 
@@ -857,8 +857,8 @@ the software.
                 <version>${aspectj.version}</version>
                 <scope>compile</scope>
             </dependency>
-			
-			<!-- Utilities -->
+
+            <!-- Utilities -->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>

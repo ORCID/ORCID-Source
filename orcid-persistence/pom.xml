@@ -114,7 +114,7 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
-		
+
         <!-- Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -184,7 +184,8 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
-        </dependency>        
+        </dependency>
+
     </dependencies>
 
     <profiles>
