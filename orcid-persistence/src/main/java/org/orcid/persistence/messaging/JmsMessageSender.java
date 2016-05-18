@@ -16,15 +16,12 @@
  */
 package org.orcid.persistence.messaging;
 
-import java.net.ConnectException;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.persistence.dao.impl.StatisticsDaoImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -53,8 +50,7 @@ public class JmsMessageSender {
     
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessageSender.class);
     
-    private @Value("${org.orcid.persistence.messaging.enabled}") boolean enabled = false;
-    
+    private boolean enabled = false;    
     private boolean discardForAWhile = false;
     
     public enum JmsDestination{
@@ -72,7 +68,7 @@ public class JmsMessageSender {
     
     public void sendText(final String text, JmsDestination dest ) {
         try{
-            if (enabled && !discardForAWhile)
+            if (isEnabled() && !discardForAWhile)
                 jmsTemplate.convertAndSend(dest.value, text);
         }catch (JmsException e){
             flagConnectionProblem(e);
@@ -81,7 +77,7 @@ public class JmsMessageSender {
     
     public void sendMap(final Map<String,String> map, JmsDestination dest) {
         try{
-            if (enabled && !discardForAWhile)
+            if (isEnabled() && !discardForAWhile)
                 jmsTemplate.convertAndSend(dest.value, map);
         }catch(JmsException e){
             flagConnectionProblem(e);
@@ -92,8 +88,16 @@ public class JmsMessageSender {
      * 
      */
     public void flagConnectionProblem(Exception e){
-        LOG.error("JMS connection problem found "+e.getMessage());
+        LOG.error("JMS connection problem found, pausing messaging. "+e.getMessage());
         discardForAWhile = true;
+    }
+    
+    public boolean isEnabled(){
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled){
+        this.enabled = enabled;
     }
     
     /** retry connecting if bad after every couple of minutes
