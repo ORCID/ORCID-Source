@@ -51,7 +51,7 @@
 					        
 				<#if (locked)?? && !locked>
 					<!-- Other Names -->
-		            <#if (publicOtherNames)?? && (publicOtherNames.otherNames?size != 0)>
+		            <#if (publicGroupedOtherNames)?? && (publicGroupedOtherNames?size != 0)>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list visible workspace-section-heading">
@@ -72,14 +72,16 @@
 			            			</li>		                		
 		                		</ul>
 		                	</div>
-		                	<div id="public-other-names-div" class="public-content">		                	
-				                <#list publicOtherNames.otherNames as otherName>				               
-				                	${otherName.content}<#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
-				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>		                		
+		                	<div id="public-other-names-div" class="public-content">
+				                <#list publicGroupedOtherNames?keys as otherName>
+				                	${otherName}<#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
+				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-				                		   <#if (otherName.source)?? && (otherName.source.sourceName)??>${otherName.source.sourceName.content!}</#if> <#if (otherName.createdDate)??>(${otherName.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if>				                		   
-				                		</p>				                						                			                						                			
-				                	</div>				                						                	
+				                			<#list publicGroupedOtherNames[otherName] as otherNameSource>
+												<#if (otherNameSource.source)?? && (otherNameSource.source.sourceName)??>${otherNameSource.source.sourceName.content!}</#if>  <#if (otherNameSource.createdDate)??>(${otherNameSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if otherNameSource_has_next>,</#if>
+				                		    </#list>
+				                		</p>
+				                	</div>
 				                </#list>
 			                </div>
 		                </div>
@@ -145,9 +147,8 @@
 										${keyword}<#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>
 										<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>
 											<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-												<#list publicGroupedKeywords[keyword] as keywordSource>
-													${keywordSource.source.sourceName.content}
-													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)??>${keywordSource.source.sourceName.content}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+												<#list publicGroupedKeywords[keyword] as keywordSource>																									
+													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)??>${keywordSource.source.sourceName.content}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if keywordSource_has_next>,</#if>
 												</#list>
 											</p>
 										</div>
@@ -158,7 +159,7 @@
 		            </#if>
 		            
 		            <!-- Websites -->       	            
-		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
+		            <#if (publicGroupedResearcherUrls)?? && (publicGroupedResearcherUrls?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list visible workspace-section-heading">
@@ -178,29 +179,32 @@
 									    </#if>
 								    </li>		                		
 								</ul>
-				                <div id="public-researcher-urls-div" class="public-content">
-				                    <#list publicResearcherUrls.researcherUrls as url>
-				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
-				                        	<#if (url.urlName)! != "">
-				                        		${url.urlName}
-				                        	<#else>
-				                        		${url.url.value}
-				                        	</#if>
-			                        	</a>			                	
-					                	<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>				                		
-					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                			<#if (url.source)?? && (url.source.sourceName)??>${url.source.sourceName.content}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-					                		</p>				                						                			                						                			
-					                	</div>	
-					                	<#if url_has_next><br/></#if>
-				                    </#list>
+				                <div id="public-researcher-urls-div" class="public-content">				                					                
+				                	<#list publicGroupedResearcherUrls?keys as url>
+				                		<#assign i = 1>
+				                		<#list publicGroupedResearcherUrls[url] as researcherUrl>				                							                		
+				                			<#if (i == 1)>
+				                				  <a href="<@orcid.absUrl researcherUrl.url/>" target="_blank" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName}<#else>${researcherUrl.url.value}</#if></a><#if researcherUrl_has_next><span ng-if="showSources['websites'] == false || showSources['websites'] == null">,</span></#if>
+											</#if>			
+											<#if (i == 1)>								
+					                			<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>
+					                		</#if>					                			
+					                			<#if (i == 1)>					                					                		
+						                			<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+						                		</#if>			                																											
+												<#if (researcherUrl.source)?? && (researcherUrl.source.sourceName)??>${researcherUrl.source.sourceName.content}</#if> <#if (researcherUrl.createdDate)??>(${(researcherUrl.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if researcherUrl_has_next>,</#if>
+												<#assign i = i + 1>	
+					                	</#list>
+					                	</p>
+					                	</div>					                	
+				                    </#list>    
 			                    </div>
 			                </div>
 	                    </div>
 		            </#if>	
 		              
 		            <!-- Email -->
-		            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
+		            <#if (publicGroupedEmails)?? && (publicGroupedEmails?size != 0)>
 		           		<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list visible workspace-section-heading">
@@ -221,16 +225,17 @@
 								    </li>		                		
 								</ul>		            			
 		            			<div class="public-content" id="public-emails-div">
-			            			 <#list publicEmails.emails as email>
-			        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
-			            					<div name="email">${email.email}</div>
-			        					</#if>	
+			            			 <#list publicGroupedEmails?keys as email>      			 				            			 	
+			            				<div name="email">${email}</div>	
 			        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                			<#if (email.source)?? && (email.source.sourceName)??>${email.source.sourceName.content}</#if> <#if (email.createdDate)??>(${(email.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-					                		</p>				                						                			                						                			
+					                			<#list publicGroupedEmails[email] as emailSource>					                																	
+													<#if (emailSource.source)?? && (emailSource.source.sourceName)??>${emailSource.source.sourceName.content}</#if> <#if (emailSource.createdDate)??>(${(emailSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+												</#list>
+					                		</p>
 					                	</div>					 		
-			            			 </#list>
+			            			 </#list>			            			 
+			            			 
 		            			</div>		            			
 			                </div>
 	                    </div>

@@ -66,15 +66,19 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -251,32 +255,34 @@ public class PublicProfileController extends BaseWorkspaceController {
         //Fill biography elements
         //Fill other names
         OtherNames publicOtherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
-        mav.addObject("publicOtherNames", publicOtherNames);
+        //mav.addObject("publicOtherNames", publicOtherNames);
+        Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
+        mav.addObject("publicGroupedOtherNames", groupedOtherNames);
         
         //Fill country
-        Address publicPrimaryAddress = addressManager.getPrimaryAddress(orcid, lastModifiedTime);        
-        if(publicPrimaryAddress != null && publicPrimaryAddress.getCountry().getValue() != null && publicPrimaryAddress.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+        Address publicPrimaryAddress = addressManager.getPrimaryAddress(orcid, lastModifiedTime);
+        if(publicPrimaryAddress != null && publicPrimaryAddress.getCountry().getValue() != null && publicPrimaryAddress.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {        	
             mav.addObject("publicAddresses", publicPrimaryAddress);
             mav.addObject("countryName", getcountryName(publicPrimaryAddress.getCountry().getValue().value()));
         }
         
         //Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
-        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);
-        
-        mav.addObject("publicGroupedKeywords", groupedKeywords);
-        
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);        
+        mav.addObject("publicGroupedKeywords", groupedKeywords);        
         
         //Fill researcher urls
         ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
-        mav.addObject("publicResearcherUrls", publicResearcherUrls);
+        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
+        mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
         
         //Fill emails
         Emails publicEmails = emailManager.getPublicEmails(orcid, lastModifiedTime);
-        mav.addObject("publicEmails", publicEmails);
+        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
+        mav.addObject("publicGroupedEmails", groupedEmails);
         
         //Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);        
         mav.addObject("publicPersonExternalIdentifiers", publicPersonExternalIdentifiers);
         
         // Fill activities
@@ -373,8 +379,67 @@ public class PublicProfileController extends BaseWorkspaceController {
     	return groups;
     }
     
+    private Map<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
+    	
+    	if (otherNames == null || otherNames.getOtherNames() == null){
+    		return null;
+    	}
+    	Map<String, List<OtherName>> groups = new TreeMap<String, List<OtherName>>();    	
+    	for (OtherName o : otherNames.getOtherNames()) {
+    		if (groups.containsKey(o.getContent())) {    			
+    			groups.get(o.getContent()).add(o);
+    		} else {
+    			List<OtherName> list = new ArrayList<OtherName>();
+    			list.add(o);
+    			groups.put(o.getContent(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    } 
     
-
+    private Map<String, List<Email>> groupEmails(Emails emails){    	
+    	if (emails == null || emails.getEmails() == null){
+    		return null;
+    	}
+    	Map<String, List<Email>> groups = new TreeMap<String, List<Email>>();    	
+    	for (Email e : emails.getEmails()) {    		
+    		if (groups.containsKey(e.getEmail())) {
+    			groups.get(e.getEmail()).add(e);
+    		} else {
+    			List<Email> list = new ArrayList<Email>();
+    			list.add(e);
+    			groups.put(e.getEmail(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    }    
+    
+    private Map<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls){    	
+    	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
+    		return null;
+    	}    	
+    	Map<String, List<ResearcherUrl>> groups = new TreeMap<String, List<ResearcherUrl>>();
+    	
+    	for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {
+    		
+    		String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();
+    		
+    		if (groups.containsKey(urlValue)) {
+    			groups.get(urlValue).add(r);
+    		} else {
+    			List<ResearcherUrl> list = new ArrayList<ResearcherUrl>();
+    			list.add(r);
+    			groups.put(urlValue, list);
+    		}
+    	}    	
+    	return groups;
+    }
+    
+    
+    
+    
     private boolean isProfileValidForIndex(ProfileEntity profile) {
         String orcid = profile.getId();
         if (orcid != null) {
