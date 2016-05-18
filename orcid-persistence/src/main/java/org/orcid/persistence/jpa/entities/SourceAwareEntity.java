@@ -18,13 +18,13 @@ package org.orcid.persistence.jpa.entities;
 
 import java.io.Serializable;
 
-import javax.annotation.Resource;
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 /**
@@ -39,7 +39,7 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
     private String sourceId;
     private String clientSourceId;
     
-    @Resource
+    @Autowired(required = false)
     private SourceEntityCacheManager sourceEntityCacheManager;
 
     @Column(name = "source_id")
@@ -61,7 +61,10 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
     }
 
     @Transient
-    public SourceEntity getSource() {        
+    public SourceEntity getSource() {
+        if(sourceEntityCacheManager == null) {
+            throw new IllegalStateException("The Source Entity Cache manager has not been initialized");
+        }
         return sourceEntityCacheManager.retrieve(getElementSourceId());
     }
 
