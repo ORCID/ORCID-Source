@@ -65,7 +65,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Declan Newman (declan)
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-persistence-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     public static final String ORCID_PROTECTED_FULL_XML = "/orcid-protected-full-message-latest.xml";
