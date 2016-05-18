@@ -47,6 +47,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,7 +58,7 @@ import org.springframework.test.context.ContextConfiguration;
  * 
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-context.xml" })
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     @Resource
@@ -71,6 +72,31 @@ public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     
     @Mock
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Before
+    public void init() throws Exception {
+        assertNotNull(sourceEntityCacheManager);
+
+        when(profileEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ProfileEntity>(){
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                String id = (String)invocation.getArguments()[0];
+                return new ProfileEntity(id);
+            }
+            
+        });  
+        
+        when(clientDetailsEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
+            @Override
+            public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
+                String id = (String)invocation.getArguments()[0];
+                return new ClientDetailsEntity(id);
+            }            
+        });
+        
+        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "profileEntityCacheManager", profileEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
+    }
     
     @Test
     public void fromOtherNameToOtherNameEntityTest() throws JAXBException {
