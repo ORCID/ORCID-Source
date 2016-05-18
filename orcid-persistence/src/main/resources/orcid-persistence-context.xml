@@ -31,13 +31,9 @@
 
     <tx:annotation-driven />
     
-    <context:spring-configured />
-    
     <context:component-scan
-		base-package="org.orcid.persistence.jpa.entities,org.orcid.persistence.aop" />
+		base-package="org.orcid.persistence.aop" />
 		
-	<context:load-time-weaver aspectj-weaving="on" />
-	
     <aop:aspectj-autoproxy />
 
     <!-- ${org.orcid.persistence.properties} gets replaced during the Maven
@@ -46,6 +42,9 @@
     <context:property-placeholder location="\${org.orcid.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
     <context:property-placeholder location="classpath:${org.orcid.persistence.properties}" ignore-resource-not-found="true"
         ignore-unresolvable="true" />
+
+	<bean id="applicationContextProvder"
+                        class="org.orcid.persistence.spring.ApplicationContextProvider"/>
 
     <bean id="profileDao" class="org.orcid.persistence.dao.impl.ProfileDaoImpl" />
     

@@ -32,8 +32,7 @@ the software.
         <solr.version>4.10.4</solr.version>
         <aspectj.version>1.8.4</aspectj.version>
         <jena.version>3.0.0</jena.version>
-		<spring.aspects.version>4.2.2.RELEASE</spring.aspects.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
@@ -121,36 +120,12 @@ the software.
                     <target>1.8</target>
                 </configuration>
             </plugin>
-			
-			
 			<plugin>
-				<groupId>com.github.veithen.alta</groupId>
-				<artifactId>alta-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate-properties</goal>
-						</goals>
-						<configuration>
-							<name>spring-instrument</name>
-							<value>%file%</value>
-							<artifacts>
-								<artifact>
-									<groupId>org.springframework</groupId>
-									<artifactId>spring-instrument</artifactId>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>																		
-			
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- argLine>-Duser.timezone=America/Los_Angeles</argLine -->
-                    <argLine>-Duser.timezone=GMT -javaagent:${spring-instrument}</argLine>					
+                    <argLine>-Duser.timezone=GMT</argLine>					
                     <runOrder>alphabetical</runOrder>
                     <!-- we need to rewrite our unit test
                     to be runOrder random and take avantage 
@@ -883,20 +858,7 @@ the software.
                 <scope>compile</scope>
             </dependency>
 			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-aspects</artifactId>
-				<version>${spring.aspects.version}</version>
-				<scope>compile</scope>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-instrument</artifactId>
-				<version>4.2.2.RELEASE</version>
-			</dependency>
-			
-            <!-- Utilities -->
+			<!-- Utilities -->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>

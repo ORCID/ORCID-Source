@@ -24,8 +24,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.orcid.persistence.spring.ApplicationContextProvider;
+import org.springframework.context.ApplicationContext;
 
 /**
  * 
@@ -33,14 +33,11 @@ import org.springframework.beans.factory.annotation.Configurable;
  * 
  */
 @MappedSuperclass
-@Configurable
 public abstract class SourceAwareEntity<T extends Serializable> extends BaseEntity<T> {
     private static final long serialVersionUID = -5397119397438830995L;
     private String sourceId;
     private String clientSourceId;
-    
-    @Autowired(required = false)
-    private SourceEntityCacheManager sourceEntityCacheManager;
+    private static SourceEntityCacheManager sourceEntityCacheManager;
 
     @Column(name = "source_id")
     public String getSourceId() {
@@ -62,8 +59,13 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
 
     @Transient
     public SourceEntity getSource() {
+        if(getElementSourceId() == null){
+            return null;
+        }
+        
         if(sourceEntityCacheManager == null) {
-            throw new IllegalStateException("The Source Entity Cache manager has not been initialized");
+            ApplicationContext ctx = ApplicationContextProvider.getApplicationContext();
+            sourceEntityCacheManager = (SourceEntityCacheManager)ctx.getBean("sourceEntityCacheManager");
         }
         return sourceEntityCacheManager.retrieve(getElementSourceId());
     }
