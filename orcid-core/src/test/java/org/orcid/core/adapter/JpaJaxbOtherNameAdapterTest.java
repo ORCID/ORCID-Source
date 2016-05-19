@@ -38,7 +38,6 @@ import org.mockito.stubbing.Answer;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.core.manager.impl.SourceEntityCacheManagerImpl;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -49,7 +48,6 @@ import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -59,7 +57,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@DirtiesContext
 public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     @Resource
     private JpaJaxbOtherNameAdapter adapter;        
