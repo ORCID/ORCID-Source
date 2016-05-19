@@ -44,8 +44,8 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.springframework.test.context.ContextConfiguration;
@@ -98,7 +98,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
             workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
             ExternalID wExtId = new ExternalID();
             wExtId.setValue("Work Id " + i + " " + time);
-            wExtId.setType(ExternalIDType.AGR.value());
+            wExtId.setType(WorkExternalIdentifierType.AGR.value());
             wExtId.setRelationship(Relationship.SELF);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
             String accessToken = getAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());

@@ -83,6 +83,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
     
+    @Resource 
+    private ActivityValidator activityValidator;
+    
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
@@ -265,14 +268,14 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional
     public Funding createFunding(String orcid, Funding funding, boolean isApiRequest) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
+    	activityValidator.validateFunding(funding, sourceEntity, true, isApiRequest, null);
 
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
         if(fundings != null) {
             for(Funding exstingFunding : fundings) {
-            	ActivityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
+                activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
             			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
             }
         }
@@ -320,13 +323,13 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
         
-    	ActivityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
+        activityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
     	if(!isApiRequest) {
     	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
             for(ProfileFundingEntity existingFunding : existingFundings) {
                 Funding existing = jpaJaxbFundingAdapter.toFunding(existingFunding);
                 if(!existing.getPutCode().equals(funding.getPutCode())) {
-                     ActivityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
+                    activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
                                      existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }

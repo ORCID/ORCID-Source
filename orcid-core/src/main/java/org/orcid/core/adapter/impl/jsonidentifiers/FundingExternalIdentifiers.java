@@ -14,18 +14,46 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.adapter.impl.jsonidentifiers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 
-public class FundingExternalIdentifiers implements Serializable {
+public class FundingExternalIdentifiers implements Serializable, JSONIdentifierAdapter<org.orcid.jaxb.model.message.FundingExternalIdentifiers, ExternalIDs> {
+
     private static final long serialVersionUID = 1L;
     protected List<FundingExternalIdentifier> fundingExternalIdentifier;
+
+    public FundingExternalIdentifiers() {
+    }
+
+    public FundingExternalIdentifiers(org.orcid.jaxb.model.message.FundingExternalIdentifiers messagePojo) {
+        if (messagePojo != null && !messagePojo.getFundingExternalIdentifier().isEmpty()) {
+            for (org.orcid.jaxb.model.message.FundingExternalIdentifier messageFei : messagePojo.getFundingExternalIdentifier()) {
+                this.getFundingExternalIdentifier().add(new FundingExternalIdentifier(messageFei));
+            }
+
+            for (FundingExternalIdentifier fei : this.getFundingExternalIdentifier()) {
+                if (fei.getRelationship() == null) {
+                    fei.setRelationship(Relationship.SELF.value());
+                }
+            }
+        }
+    }
+
+    public FundingExternalIdentifiers(ExternalIDs recordPojo) {
+        if (recordPojo != null && !recordPojo.getExternalIdentifier().isEmpty()) {
+            for (ExternalID recordEi : recordPojo.getExternalIdentifier()) {
+                this.getFundingExternalIdentifier().add(new FundingExternalIdentifier(recordEi));
+            }
+        }
+    }
 
     public List<FundingExternalIdentifier> getFundingExternalIdentifier() {
         if (fundingExternalIdentifier == null)
@@ -56,8 +84,8 @@ public class FundingExternalIdentifiers implements Serializable {
         } else {
             if (other.fundingExternalIdentifier == null)
                 return false;
-            else if (!(fundingExternalIdentifier.containsAll(other.fundingExternalIdentifier) && other.fundingExternalIdentifier.containsAll(fundingExternalIdentifier) && other.fundingExternalIdentifier
-                    .size() == fundingExternalIdentifier.size())) {
+            else if (!(fundingExternalIdentifier.containsAll(other.fundingExternalIdentifier) && other.fundingExternalIdentifier.containsAll(fundingExternalIdentifier)
+                    && other.fundingExternalIdentifier.size() == fundingExternalIdentifier.size())) {
                 return false;
             }
         }
@@ -84,30 +112,12 @@ public class FundingExternalIdentifiers implements Serializable {
         return result;
     }
 
-    public static FundingExternalIdentifiers fromMessagePojo(org.orcid.jaxb.model.message.FundingExternalIdentifiers messagePojo) {
-        if (messagePojo == null)
-            return null;
-        FundingExternalIdentifiers result = new FundingExternalIdentifiers();
-        if (!messagePojo.getFundingExternalIdentifier().isEmpty()) {
-            for (org.orcid.jaxb.model.message.FundingExternalIdentifier messageFei : messagePojo.getFundingExternalIdentifier()) {
-                result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromMessagePojo(messageFei));
-            }
-        }
-
-        return result;
+    public String toDBJSONString() {
+        return JsonUtils.convertToJsonString(this);
     }
 
-    public static FundingExternalIdentifiers fromRecordPojo(ExternalIDs recordPojo) {
-        if (recordPojo == null)
-            return null;
-        FundingExternalIdentifiers result = new FundingExternalIdentifiers();
-        if (!recordPojo.getExternalIdentifier().isEmpty()) {
-            for (ExternalID recordEi : recordPojo.getExternalIdentifier()) {                               
-                result.getFundingExternalIdentifier().add(FundingExternalIdentifier.fromRecordPojo(recordEi));
-            }
-        }
-
-        return result;
+    public static FundingExternalIdentifiers fromDBJSONString(String dbJSON) {
+        return JsonUtils.readObjectFromJsonString(dbJSON, FundingExternalIdentifiers.class);
     }
 
 }

@@ -14,9 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.core.adapter.impl;
+package org.orcid.core.adapter.impl.jsonidentifiers;
 
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 
 import ma.glasnost.orika.converter.BidirectionalConverter;
@@ -26,15 +25,12 @@ public class FundingExternalIDConverter extends BidirectionalConverter<ExternalI
 
     @Override
     public ExternalID convertFrom(String externalIdentifiersAsString, Type<ExternalID> arg1) {
-        org.orcid.pojo.FundingExternalIdentifier jpaExtId = JsonUtils.readObjectFromJsonString(externalIdentifiersAsString, org.orcid.pojo.FundingExternalIdentifier.class);
-        ExternalID result = jpaExtId.toRecordPojo();
-        return result;
+        return FundingExternalIdentifier.fromDBJSONString(externalIdentifiersAsString).toRecordPojo();
     }
 
     @Override
     public String convertTo(ExternalID externalID, Type<String> arg1) {
-        org.orcid.pojo.FundingExternalIdentifier jpaExternalIdentifier = org.orcid.pojo.FundingExternalIdentifier.fromRecordPojo(externalID);
-        return JsonUtils.convertToJsonString(jpaExternalIdentifier);
+        return new FundingExternalIdentifier(externalID).toDBJSONString();
     }
 
 }

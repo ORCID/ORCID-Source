@@ -314,6 +314,9 @@
     </bean>
 
     <bean id="notificationValidationManager" class="org.orcid.core.manager.impl.NotificationValidationManagerImpl" />
+    
+    <bean id="activityValidator" class="org.orcid.core.manager.validator.ActivityValidator" />
+    <bean id="externalIDValidator" class="org.orcid.core.manager.validator.ExternalIDValidator" />
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
@@ -383,6 +386,8 @@
 	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
+	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages" />
@@ -432,7 +437,6 @@
         <constructor-arg value="true"/>
         <constructor-arg value="true"/>
     </bean>   
-	
 	
 	<bean id="springCoreCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
 		<property name="cacheManager" ref="coreCacheManager" />
@@ -503,8 +507,6 @@
 		<property name="strategy" value="NONE" />
 	</bean>
 
-
-
 	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="client-details-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
@@ -550,6 +552,23 @@
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
     </bean>
+    
+    <!-- 
+    <bean id="identifierTypesCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="identifierTypes" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="maxElementsOnDisk" value="0" />
+        <property name="strategy" value="NONE" />
+    </bean>
+
+    <bean id="identifierTypesMapCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="identifierTypesMap" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1" />
+        <property name="maxElementsOnDisk" value="0" />
+        <property name="strategy" value="NONE" />
+    </bean> -->
 
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"
