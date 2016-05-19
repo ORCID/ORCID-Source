@@ -884,7 +884,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
-    }        
+    }
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {
