@@ -811,70 +811,46 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             setCountry(profileEntity, contactDetails);
         }
     }
-
+    
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {        
         Country contactCountry = contactDetails.getAddress() != null && contactDetails.getAddress().getCountry() != null ? contactDetails.getAddress().getCountry()
                 : null;        
         Iso3166Country country = contactCountry != null ? contactCountry.getValue() : null;
         
-        //Set the info in the address table if the profile has not been claimed yet
-        if(country != null && (profileEntity.getClaimed() == null || !profileEntity.getClaimed())) {
+        if(country != null) {
             Set<AddressEntity> addresses = profileEntity.getAddresses();
             if(addresses == null) {
                 addresses = new HashSet<AddressEntity>();
                 profileEntity.setAddresses(addresses);
             }
             
-            boolean addNew = false;
-            
-            //If there isnt any address, just create it
-            if(addresses.isEmpty()) {
-                addNew = true;                
-            } else {
-                //Else look for the primary address and update it
-                SourceEntity source = sourceManager.retrieveSourceEntity();
-                Iterator<AddressEntity> addressIt = addresses.iterator();
-                boolean found = false;
-                
-                while(addressIt.hasNext()) {
-                    AddressEntity address = addressIt.next();
-                    //Update the primary
-                    if(address.getPrimary() != null && address.getPrimary()) {
-                        found = true;
-                        String existingSource = address.getSource() == null ? null : address.getSource().getSourceId();
-                        //If the primary is from the same source, overwrite it
-                        if(source != null && Objects.equals(source.getSourceId(), existingSource)) {
-                            address.setLastModified(new Date());
-                            address.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
-                        } else {
-                            //If the primary is not from the same source, set is as non primary
-                            address.setLastModified(new Date());
-                            address.setPrimary(false);
-                            //And add the new address
-                            addNew = true;                            
-                        }
-                        break;
-                    }
+            boolean addIt = true;
+                                   
+            //If the address exists, don't add it
+            for(AddressEntity address : addresses) {
+                if(Objects.equals(country.value(), address.getIso2Country().value())) {
+                    addIt = false;
+                    break;
                 }
-                //If couldn't find the primary address, add this one as primary
-                if(!found) {
-                    addNew = true;
-                }
-            } 
+            }            
             
-            if(addNew) {
+            if(addIt) {
                 AddressEntity newAddress = new AddressEntity();
                 newAddress.setDateCreated(new Date());
                 newAddress.setDisplayIndex(-1L);
                 newAddress.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
                 newAddress.setLastModified(new Date());
-                newAddress.setPrimary(true);
                 newAddress.setUser(profileEntity);
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
-                newAddress.setSource(sourceManager.retrieveSourceEntity());
+                newAddress.setSource(sourceManager.retrieveSourceEntity());                
+                if(addresses.isEmpty()) {
+                    newAddress.setPrimary(true);
+                } else {
+                    newAddress.setPrimary(false);
+                }
                 addresses.add(newAddress);
             }                        
-        }        
+        }
     }
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
