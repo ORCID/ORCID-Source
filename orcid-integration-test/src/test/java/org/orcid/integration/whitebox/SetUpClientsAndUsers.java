@@ -531,7 +531,7 @@ public class SetUpClientsAndUsers {
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         
         if(params.containsKey(LOCKED)) {
-            profileEntityManager.lockProfile(params.get(ORCID));               
+            orcidProfileManager.lockProfile(params.get(ORCID));               
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {
