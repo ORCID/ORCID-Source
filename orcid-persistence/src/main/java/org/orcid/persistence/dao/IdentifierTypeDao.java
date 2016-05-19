@@ -14,10 +14,20 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.persistence.dao;
 
-import org.orcid.test.DBUnitTest;
+import java.util.List;
 
-public class StatisticsGeneratorManagerImplTest extends DBUnitTest {
+import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 
+public interface IdentifierTypeDao extends GenericDao<IdentifierTypeEntity, Long>{
+
+    public IdentifierTypeEntity addIdentifierType(IdentifierTypeEntity identifierType);
+
+    public IdentifierTypeEntity updateIdentifierType(IdentifierTypeEntity identifierType);
+    
+    public IdentifierTypeEntity getEntityByName(String idName);
+
+    public List<IdentifierTypeEntity> getEntities();
+    
 }

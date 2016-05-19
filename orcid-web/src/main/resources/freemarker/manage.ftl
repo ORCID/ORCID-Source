@@ -468,47 +468,45 @@
                 <div id="no-results-alert" class="orcid-hide alert alert-error no-delegate-matches"><@spring.message "orcid.frontend.web.no_results"/></div>
             </#if>
         </div>
-        <#if ((RequestParameters['social'])?? ||(RequestParameters['shibboleth'])?? || (RequestParameters['newlogin'])??)>
-	        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
-	            <h1>
-	                <@orcid.msg 'manage_signin_title' />
-	            </h1>
-	            <p>
-	            	<@orcid.msg 'manage_signin_subtitle' />
-	            	<br>
-	            	<a href="http://support.orcid.org/knowledgebase/articles/892920"
-                target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
-	            </p>
-	            <div>
-	                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
-	                    <thead>
-	                        <tr>
-	                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
-	                            <th width="30%" ng-click="changeSorting('idpName')"><@orcid.msg 'manage_signin_table_header2' /></th>
-	                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
-	                            <td width="10%"></td>
-	                        </tr>
-	                    </thead>
-	                    <tbody>
-	                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
-	                            <td width="40%" style="word-break:break-all">{{socialAccount.accountIdForDisplay}}</a></td>
-	                            <td width="30%" style="word-break:break-all">{{socialAccount.idpName}}</a></td>
-	                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
-	                            <td width="10%">
-	                                <a
-	                                ng-click="confirmRevoke(socialAccount)"
-	                                ng-hide="isPasswordConfirmationRequired"
-	                                class="glyphicon glyphicon-trash grey"
-	                                title="${springMacroRequestContext.getMessage("manage_signin_unlink")}"></a>
-	                            </td>
-	                        </tr>
-	                    </tbody>
-	                </table>
-                    <#if isPasswordConfirmationRequired>
-                        <@orcid.msg 'manage_signin_not_allowed' />
-                    </#if>
-	            </div>
-        	</#if>
+        <div ng-controller="SocialCtrl" id="SocialCtrl" ng-cloak>
+            <h1>
+                <@orcid.msg 'manage_signin_title' />
+            </h1>
+            <p>
+            	<@orcid.msg 'manage_signin_subtitle' />
+            	<br>
+            	<a href="http://support.orcid.org/knowledgebase/articles/892920"
+            target=_blank"">${springMacroRequestContext.getMessage("manage.findoutmore")}</a>
+            </p>
+            <div>
+                <table class="table table-bordered settings-table normal-width" ng-show="socialAccounts">
+                    <thead>
+                        <tr>
+                            <th width="40%" ng-click="changeSorting('accountIdForDisplay')"><@orcid.msg 'manage_signin_table_header1' /></th>
+                            <th width="30%" ng-click="changeSorting('idpName')"><@orcid.msg 'manage_signin_table_header2' /></th>
+                            <th width="20%" ng-click="changeSorting('dateCreated')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
+                            <td width="10%"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="socialAccount in socialAccounts | orderBy:sort.column:sort.descending">
+                            <td width="40%" style="word-break:break-all">{{socialAccount.accountIdForDisplay}}</a></td>
+                            <td width="30%" style="word-break:break-all">{{socialAccount.idpName}}</a></td>
+                            <td width="20%" style="word-break:break-all">{{socialAccount.dateCreated|date:'yyyy-MM-dd'}}</td>
+                            <td width="10%">
+                                <a
+                                ng-click="confirmRevoke(socialAccount)"
+                                ng-hide="isPasswordConfirmationRequired"
+                                class="glyphicon glyphicon-trash grey"
+                                title="${springMacroRequestContext.getMessage("manage_signin_unlink")}"></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <#if isPasswordConfirmationRequired>
+                    <@orcid.msg 'manage_signin_not_allowed' />
+                </#if>
+            </div>
         </div>
 	</div>
 </div>

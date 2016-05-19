@@ -67,4 +67,6 @@ final public class ScopeConstants {
     
     // Internal API
     public static final String INTERNAL_PERSON_LAST_MODIFIED = "/orcid-internal/person/last_modified";
+    public static final String IDENTIFIER_TYPES_CREATE = "/identifier-types/create";
+    
 }

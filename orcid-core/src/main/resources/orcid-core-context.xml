@@ -314,6 +314,9 @@
     </bean>
 
     <bean id="notificationValidationManager" class="org.orcid.core.manager.impl.NotificationValidationManagerImpl" />
+    
+    <bean id="activityValidator" class="org.orcid.core.manager.validator.ActivityValidator" />
+    <bean id="externalIDValidator" class="org.orcid.core.manager.validator.ExternalIDValidator" />
 
     <bean id="localeManager" class="org.orcid.core.locale.LocaleManagerImpl" />
 
@@ -383,6 +386,8 @@
 	
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
+	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages" />
@@ -433,7 +438,6 @@
         <constructor-arg value="true"/>
     </bean>   
 	
-	
 	<bean id="springCoreCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
 		<property name="cacheManager" ref="coreCacheManager" />
 	</bean>
@@ -459,7 +463,7 @@
         <property name="maxElementsInMemory" value="500" />
         <property name="timeToLiveSeconds" value="604800" />
         <property name="timeToIdleSeconds" value="86400" />
-        <property name="maxElementsOnDisk" value="500000" />
+        <property name="maxElementsOnDisk" value="250000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
     
@@ -486,24 +490,26 @@
 	<bean id="profileEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="profile-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
-		<property name="maxElementsOnDisk" value="0" />
-		<property name="strategy" value="NONE" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:5000}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:3600}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:3600}" />
+		<property name="maxElementsOnDisk" value="10000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
 	</bean>
 	
 	<bean id="statisticsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="statistics-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:10000}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:600}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:600}" />
-		<property name="maxElementsOnDisk" value="0" />
-		<property name="strategy" value="NONE" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:86400}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:86400}" />
+		<property name="maxElementsOnDisk" value="1000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
 	</bean>
-
-
 
 	<bean id="clientDetailsEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
 		<property name="cacheName" value="client-details-entity" />
@@ -550,6 +556,23 @@
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
     </bean>
+    
+    <!-- 
+    <bean id="identifierTypesCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="identifierTypes" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="maxElementsOnDisk" value="0" />
+        <property name="strategy" value="NONE" />
+    </bean>
+
+    <bean id="identifierTypesMapCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="identifierTypesMap" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1" />
+        <property name="maxElementsOnDisk" value="0" />
+        <property name="strategy" value="NONE" />
+    </bean> -->
 
 	<!-- HTTP client connection beans -->
 	<bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory"

@@ -24,7 +24,7 @@
 	<@spring.showErrors "<br/>" "error" />
 	
 	<div class="login" ng-controller="LoginLayoutController">
-		<#if (RequestParameters['newlogin'])??>
+		<#if !(RequestParameters['oldlogin'])??>
 			<div class="row">
 				<div class="col-md-12">
 					<p class="title">${springMacroRequestContext.getMessage("login.signinusingyour")}</p>

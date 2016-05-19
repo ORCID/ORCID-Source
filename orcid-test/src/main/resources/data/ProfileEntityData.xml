@@ -43,6 +43,7 @@
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             reviewed="false"
+            record_locked="false"
             />
             
     <profile
@@ -66,7 +67,8 @@
             credentials_expiry="2013-02-01"
             indexing_status="DONE"
             orcid_type="USER"
-            reviewed="true"                
+            reviewed="true"  
+            record_locked="false"              
             />
 
     <profile
@@ -93,6 +95,7 @@
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             reviewed="false"
+            record_locked="false"
             />
 
     <profile
@@ -118,6 +121,7 @@
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             reviewed="false"
+            record_locked="false"
             />
 
     <profile
@@ -143,6 +147,7 @@
             orcid_type="CLIENT"
             client_type="PREMIUM_CREATOR"
             reviewed="false"
+            record_locked="false"
             />
 
     <profile
@@ -168,6 +173,7 @@
             orcid_type="GROUP"
             group_type="PREMIUM_INSTITUTION"
             reviewed="false"
+            record_locked="false"
             />
 
     <profile
@@ -192,6 +198,7 @@
             indexing_status="DONE"
             orcid_type="USER"
             reviewed="false"
+            record_locked="false"
             />
 	
 	<profile
@@ -217,6 +224,7 @@
             primary_record="4444-4444-4444-4441"
             deprecated_date="2013-08-29 15:31:00.00"
             reviewed="false"
+            record_locked="false"
             />
 
 	<profile
@@ -240,7 +248,8 @@
             credentials_expiry="2013-02-01"            
             indexing_status="DONE"
             orcid_type="ADMIN" 
-            reviewed="false"          
+            reviewed="false"     
+            record_locked="false"     
             />            
 
 	<profile
@@ -264,7 +273,8 @@
             credentials_expiry="2013-02-01"            
             indexing_status="DONE"
             orcid_type="USER"
-            reviewed="false"          
+            reviewed="false"     
+            record_locked="false"     
             />
             
 	<profile
@@ -291,6 +301,7 @@
             orcid_type="CLIENT" 
             client_type="PREMIUM_CREATOR"
             reviewed="false"
+            record_locked="false"
             />
             
 	<profile
@@ -314,7 +325,8 @@
             credentials_expiry="2013-02-01"            
             indexing_status="DONE"
             orcid_type="USER"
-            reviewed="false"          
+            reviewed="false"     
+            record_locked="false"     
             />
 
 	<profile
@@ -336,8 +348,9 @@
             indexing_status="DONE"
             orcid_type="USER" 
             claimed="false"
-            reviewed="true"
+            reviewed="true"            
             client_source_id="APP-5555555555555555"
+            record_locked="false"
             />
 
 	<profile
@@ -365,6 +378,7 @@
             orcid_type="USER" 
             claimed="true"
             reviewed="true"
+            record_locked="false"
             />
             
 	<profile
@@ -392,6 +406,66 @@
             orcid_type="USER" 
             claimed="true"
             reviewed="true"
+            client_source_id="APP-5555555555555555"
+            record_locked="false"
+            />
+
+	<profile
+            orcid="0000-0000-0000-0004"
+            creation_method="integration-test"
+            completed_date="2016-03-29 15:31:00.00"
+            date_created="2016-03-29 15:31:00.00"
+            submission_date="2016-03-29 15:31:00.00"
+            last_indexed_date="2016-03-29 15:31:00.00"
+            last_modified="2016-03-29 15:31:00.00"
+            given_names="Deprecated User"
+            family_name="Test User"
+            credit_name="ORCID"
+            biography_visibility="PUBLIC"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default="PUBLIC"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="true"
+            reviewed="true"
+            primary_record="0000-0000-0000-0003"
+            client_source_id="APP-5555555555555555"
+            record_locked="false"
+            />
+
+	<profile
+            orcid="0000-0000-0000-0005"
+            creation_method="integration-test"
+            completed_date="2016-03-29 15:31:00.00"
+            date_created="2016-03-29 15:31:00.00"
+            submission_date="2016-03-29 15:31:00.00"
+            last_indexed_date="2016-03-29 15:31:00.00"
+            last_modified="2016-03-29 15:31:00.00"
+            given_names="Deprecated User"
+            family_name="Test User"
+            credit_name="ORCID"
+            biography_visibility="PUBLIC"
+            is_selectable_sponsor="false"
+            encrypted_password="e9adO9I4UpBwqI5tGR+qDodvAZ7mlcISn+T+kyqXPf2Z6PPevg7JijqYr6KGO8VOskOYqVOEK2FEDwebxWKGDrV/TQ9gRfKWZlzxssxsOnA="
+            security_question_id="1"
+            encrypted_security_answer="iTlIoR2JsFl5guE56cazmg=="
+            encrypted_verification_code="1vLkD2Lm8c24TyALcW0Brg=="
+            send_change_notifications="false"
+            send_orcid_news="false"
+            activities_visibility_default="PUBLIC"
+            biography="Michael Bentine CBE (26 January 1922[1] – 26 November 1996[2]) was a British comedian, comic actor and founding member of the Goons."
+            indexing_status="DONE"
+            orcid_type="USER" 
+            claimed="true"
+            reviewed="true"
+            record_locked="true"            
             client_source_id="APP-5555555555555555"
             />
 
@@ -1675,7 +1749,7 @@
         visibility="PRIVATE"
         source_id="0000-0000-0000-0003"
         last_modified="2016-04-01 15:31:00.00"
-    />
+    />        
     
     <profile_keyword 
     	id="1"            

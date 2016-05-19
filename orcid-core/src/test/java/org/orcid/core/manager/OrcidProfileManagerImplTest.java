@@ -16,10 +16,13 @@
  */
 package org.orcid.core.manager;
 
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -106,6 +109,7 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
@@ -1687,10 +1691,11 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(2, updatedBio.getResearcherUrls().getResearcherUrl().size());
     }
     
+    @SuppressWarnings("unchecked")
     @Test
     @Transactional
     @Rollback(true)
-    public void testAddressDontChangeOnClaimedRecords() {
+    public void testPrimaryAddressDontChangeOnClaimedRecords() {
         OrcidProfile profile = createBasicProfile();
         String orcidIdentifier = null;
         profile.setOrcidIdentifier(orcidIdentifier);
@@ -1737,6 +1742,12 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals("http://orcid.org/researcher-url-1", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals("url-name-1", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
     
+        ProfileEntity profileEntity = profileDao.find(profile.getOrcidIdentifier().getPath());
+        assertNotNull(profileEntity);
+        assertNotNull(profileEntity.getAddresses());
+        assertEquals(1, profileEntity.getAddresses().size());
+        assertEquals(org.orcid.jaxb.model.common_rc2.Iso3166Country.US, profileEntity.getAddresses().iterator().next().getIso2Country());
+        
         //Update all values
         profile.getOrcidBio().getBiography().setContent("This is my biography # 2");
         profile.getOrcidBio().getContactDetails().getAddress().setSource(null);
@@ -1755,7 +1766,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         orcidProfileManager.updateOrcidBio(profile);
         
-        //Everything should be updated
+        //Everything should be updated but the primary address that was already set
         profile = orcidProfileManager.retrieveOrcidProfile(profile.getOrcidIdentifier().getPath());
         assertNotNull(profile);
         assertNotNull(profile.getOrcidBio());
@@ -1765,7 +1776,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(profile.getOrcidBio().getContactDetails());
         assertNotNull(profile.getOrcidBio().getContactDetails().getAddress());
         assertNotNull(profile.getOrcidBio().getContactDetails().getAddress().getCountry());
-        assertEquals(Iso3166Country.CR, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
         assertNotNull(profile.getOrcidBio().getContactDetails().getEmail());
         assertEquals(1, profile.getOrcidBio().getContactDetails().getEmail().size());
         assertNotNull(profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
@@ -1791,7 +1801,18 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(1, profile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("http://orcid.org/researcher-url-2", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals("url-name-2", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
-    
+        //Primary address should remain
+        assertEquals(Iso3166Country.US, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
+                
+        profileEntity = profileDao.find(profile.getOrcidIdentifier().getPath());
+        assertNotNull(profileEntity);
+        assertNotNull(profileEntity.getAddresses());
+        assertEquals(2, profileEntity.getAddresses().size());
+        Iterator<AddressEntity> it = profileEntity.getAddresses().iterator();
+        while(it.hasNext()) {
+            assertThat(it.next().getIso2Country(), anyOf(is(org.orcid.jaxb.model.common_rc2.Iso3166Country.US), is(org.orcid.jaxb.model.common_rc2.Iso3166Country.CR)));
+        }        
+        
         //Claim the record
         OrcidHistory orcidHistory = new OrcidHistory();
         orcidHistory.setClaimed(new Claimed(true));
@@ -1840,7 +1861,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertNotNull(profile.getOrcidBio().getContactDetails());
         assertNotNull(profile.getOrcidBio().getContactDetails().getAddress());
         assertNotNull(profile.getOrcidBio().getContactDetails().getAddress().getCountry());
-        assertEquals(Visibility.LIMITED, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
         assertNotNull(profile.getOrcidBio().getContactDetails().getEmail());
         assertEquals(1, profile.getOrcidBio().getContactDetails().getEmail().size());
         assertNotNull(profile.getOrcidBio().getContactDetails().getEmail().get(0).getValue());
@@ -1866,8 +1886,19 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(1, profile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("http://orcid.org/researcher-url-3", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
         assertEquals("url-name-3", profile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
-        //Address should still be the same
-        assertEquals(Iso3166Country.CR, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());        
+        
+        profileEntity = profileDao.find(profile.getOrcidIdentifier().getPath());
+        assertNotNull(profileEntity);
+        assertNotNull(profileEntity.getAddresses());
+        assertEquals(3, profileEntity.getAddresses().size());        
+        it = profileEntity.getAddresses().iterator();
+        while(it.hasNext()) {
+            assertThat(it.next().getIso2Country(), anyOf(is(org.orcid.jaxb.model.common_rc2.Iso3166Country.US), is(org.orcid.jaxb.model.common_rc2.Iso3166Country.CR), is(org.orcid.jaxb.model.common_rc2.Iso3166Country.PE)));
+        }  
+        
+        //Primary address should remain
+        assertEquals(Visibility.PUBLIC, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
+        assertEquals(Iso3166Country.US, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());        
     }
     
     private void setBio(OrcidProfile profile, Visibility defaultVisibility) {

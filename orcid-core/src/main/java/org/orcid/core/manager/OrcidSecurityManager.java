@@ -16,10 +16,14 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
@@ -50,4 +54,6 @@ public interface OrcidSecurityManager {
     String getClientIdFromAPIRequest();
     
     void checkPermissions(ScopePathType requiredScope, String orcid);
+    
+    void checkProfile(ProfileEntity profile) throws OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
 }

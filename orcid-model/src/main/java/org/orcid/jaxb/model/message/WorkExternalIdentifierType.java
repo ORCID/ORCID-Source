@@ -100,7 +100,7 @@ public enum WorkExternalIdentifierType implements Serializable {
 
     public static WorkExternalIdentifierType fromValue(String value) {
         for (WorkExternalIdentifierType wit : WorkExternalIdentifierType.values()) {
-            if (wit.value.equals(value)) {
+            if (wit.value.equalsIgnoreCase(value)) {
                 return wit;
             }
         }

@@ -23,12 +23,8 @@
     <div class="col-md-3 left-aside">
         <div class="workspace-left workspace-profile" ng-controller="PublicRecordCtrl">
         	<div class="id-banner">
-	            <h2 class="full-name">
-	            	<#if (locked)?? && locked>
-	            		<@orcid.msg 'public_profile.deactivated.given_names' /> <@orcid.msg 'public_profile.deactivated.family_name' />
-	            	<#else>
-		                ${(displayName)!}		                
-	                </#if>
+	            <h2 class="full-name">	            	
+					${(displayName)!}	                
 	            </h2>	            	            
 	            
 	            <div class="oid">
@@ -40,15 +36,10 @@
 					    	<span class="mini-orcid-icon"></span>
 					    	<!-- Reference: orcid.js:removeProtocolString() -->
 				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(orcidId)!}</span>
-						</div>
-						<@security.authorize ifAnyGranted="ROLE_USER, ROLE_ADMIN, ROLE_BASIC, ROLE_PREMIUM, ROLE_BASIC_INSTITUTION, ROLE_PREMIUM_INSTITUTION">
-							<div class="orcid-id-options">
-								<a href="<@orcid.rootPath '/my-orcid'/>" class="gray-button"><@orcid.msg 'public-layout.return' /></a>
-							</div>
-						</@security.authorize>
+						</div>						
 					</div>
-				</div>
-					        
+				</div>					        
+
 				<#if (locked)?? && !locked>
 					<!-- Other Names -->
 		            <#if (publicGroupedOtherNames)?? && (publicGroupedOtherNames?size != 0)>
@@ -83,41 +74,86 @@
 				                		</p>
 				                	</div>
 				                </#list>
-			                </div>
+                        	</div>
+                        </div>
+                    </div>
+	            </#if>
+	            
+	            <!-- Websites -->       	            
+	            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
+	           		<div class="workspace-section">
+	            		<div class="workspace-section-header">
+	            			<ul class="inline-list visible workspace-section-heading">
+							    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
+							    <li class="right">
+							    	<#if RequestParameters['v2']??>
+								    	<span ng-click="toggleSourcesDisplay('websites')" class="right toggle" ng-mouseenter="showPopover('websites')" ng-mouseleave="hidePopover('websites')">
+								    		<i ng-class="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+								    		<div class="popover top" ng-class="{'block' : showPopover['websites']}">
+											    <div class="arrow"></div>
+											    <div class="popover-content">
+											        <span ng-show="showSources['websites'] == false  || showSources['websites'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+											        <span ng-show="showSources['websites']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+											    </div>
+											</div>
+								    	</span>
+								    </#if>
+							    </li>		                		
+							</ul>
+			                <div id="public-researcher-urls-div" class="public-content">
+			                    <#list publicResearcherUrls.researcherUrls as url>
+			                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
+			                        	<#if (url.urlName)! != "">
+			                        		${url.urlName}
+			                        	<#else>
+			                        		${url.url.value}
+			                        	</#if>
+		                        	</a>			                	
+				                	<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>				                		
+				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+				                			<#if (url.source)?? && (url.source.sourceName)??>${url.source.sourceName.content}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+				                		</p>				                						                			                						                			
+				                	</div>	
+				                	<#if url_has_next><br/></#if>
+			                    </#list>
+		                    </div>
 		                </div>
-		            </#if>
-		            
-		            
-		            <!-- Countries -->    	            	           
-		            <#if (countryName)??>
-		            	<div class="workspace-section">
-		            		<div class="workspace-section-header">
-		            			<ul class="inline-list visible workspace-section-heading">
-								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>
-								    <li class="right">
-									    <#if RequestParameters['v2']??>
-									    	<span ng-click="toggleSourcesDisplay('countries')" class="right toggle" ng-mouseenter="showPopover('countries')" ng-mouseleave="hidePopover('countries')">
-									    		<i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-									    		<div class="popover top" ng-class="{'block' : showPopover['countries']}">
-												    <div class="arrow"></div>
-												    <div class="popover-content">
-												        <span ng-show="showSources['countries'] == false  || showSources['countries'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-												        <span ng-show="showSources['countries']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-												    </div>
-												</div>
-									    	</span>
-									    </#if>
-								    </li>
-								</ul>		                		
-		                		<div id="public-country-div" class="public-content">
-		                			${(countryName)!}		                			  			
-		                			<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>		                							                		
-										<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-											<#if (publicAddresses.source??) && (publicAddresses.source.sourceName??) && (publicAddresses.source.sourceName.content??)>${publicAddresses.source.sourceName.content}</#if> <#if (publicAddresses.createdDate)??>(${(publicAddresses.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-										</p>				                						                			                						                						                						                			                						                			
-									</div>
-		                		</div>
-		                	</div>
+                    </div>
+	            </#if>	
+	              
+	            <!-- Email -->
+	            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
+	           		<div class="workspace-section">
+	            		<div class="workspace-section-header">
+	            			<ul class="inline-list visible workspace-section-heading">
+							    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
+							    <li class="right">
+								    <#if RequestParameters['v2']??>
+								    	<span ng-click="toggleSourcesDisplay('emails')" class="right toggle" ng-mouseenter="showPopover('emails')" ng-mouseleave="hidePopover('emails')">
+								    		<i ng-class="(showSources['emails'] || showSources['emails'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+								    		<div class="popover top" ng-class="{'block' : showPopover['emails']}">
+											    <div class="arrow"></div>
+											    <div class="popover-content">
+											        <span ng-show="showSources['emails'] == false  || showSources['emails'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+											        <span ng-show="showSources['emails']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+											    </div>
+											</div>
+								    	</span>
+								    </#if>
+							    </li>		                		
+							</ul>		            			
+	            			<div class="public-content" id="public-emails-div">
+		            			 <#list publicEmails.emails as email>
+		        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
+		            					<div name="email">${email.email}</div>
+		        					</#if>	
+		        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
+				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+				                			<#if (email.source)?? && (email.source.sourceName)??>${email.source.sourceName.content}</#if> <#if (email.createdDate)??>(${(email.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+				                		</p>				                						                			                						                			
+				                	</div>					 		
+		            			 </#list>
+	            			</div>		            			
 		                </div>
 		            </#if>
 		            
@@ -293,17 +329,7 @@
     
     <div class="col-md-9 right-aside">
         <div class="workspace-right" ng-controller="PersonalInfoCtrl">
-        	<#if (locked)?? && locked>
-        		<div class="alert alert-error readme">
-		        	<p><b id="error_locked"><@orcid.msg 'public-layout.locked'/></b></p>
-		        </div>        		
-        	<#else>
-	        	<#if (deprecated)??>
-		        	<div class="alert alert-error readme">
-		        		<p><b><@orcid.msg 'public_profile.deprecated_account.1'/>&nbsp;<a href="${baseUriHttp}/${primaryRecord}">${baseUriHttp}/${primaryRecord}</a>&nbsp;<@orcid.msg 'public_profile.deprecated_account.2'/></b></p>
-		        	</div>
-	        	</#if>
-	        	<div class="workspace-inner-public workspace-public workspace-accordion">
+        		<div class="workspace-inner-public workspace-public workspace-accordion">
 	        		<#if (isProfileEmpty)?? && isProfileEmpty>
 	        			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
 	        		<#else>	            
@@ -324,8 +350,7 @@
 		                <#assign publicProfile = true />
 		                <#include "workspace_preview_activities_v3.ftl"/>	                    	
 	        		</#if>
-	        	</div>
-	        </#if>            
+	        	</div>	                   
         </div>
     </div>
 </div>
