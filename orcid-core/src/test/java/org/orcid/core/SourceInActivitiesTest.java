@@ -80,12 +80,14 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@DirtiesContext
 public class SourceInActivitiesTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";
