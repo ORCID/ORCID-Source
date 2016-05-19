@@ -43,6 +43,7 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.frontend.web.util.NumberList;
 import org.orcid.frontend.web.util.YearsList;
@@ -66,6 +67,7 @@ import org.orcid.jaxb.model.record_rc2.WorkCategory;
 import org.orcid.jaxb.model.record_rc2.WorkType;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.IdentifierType;
 import org.orcid.pojo.ThirdPartyRedirect;
 import org.orcid.pojo.ajaxForm.ExternalIdentifierForm;
 import org.orcid.pojo.ajaxForm.ExternalIdentifiersForm;
@@ -78,6 +80,7 @@ import org.orcid.pojo.ajaxForm.Visibility;
 import org.orcid.pojo.ajaxForm.WebsiteForm;
 import org.orcid.pojo.ajaxForm.WebsitesForm;
 import org.orcid.utils.FunctionsOverCollections;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -129,6 +132,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private IdentifierTypeManager identifierTypeManager;
     
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
@@ -261,25 +267,32 @@ public class WorkspaceController extends BaseWorkspaceController {
      * */
     @ModelAttribute("idTypes")
     public Map<String, String> retrieveIdTypesAsMap() {
-        Map<String, String> map = new TreeMap<String, String>();
-
-        //For now we will just use rc1 work types.
-        //TODO: move to an identifier service
-        for (WorkExternalIdentifierType type : WorkExternalIdentifierType.values()) {
-            map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type.value()).toString()), type.value());
-        }
-
-        return FunctionsOverCollections.sortMapsByValues(map);
+        
+        Map<String,String> map = new TreeMap<String,String>();
+            Map<String,IdentifierType> types = identifierTypeManager.fetchIdentifierTypesByAPITypeName();
+            for (String type : types.keySet()) {
+                try{
+                    map.put(getMessage(new StringBuffer("org.orcid.jaxb.model.record.WorkExternalIdentifierType.").append(type).toString()), type);
+                }catch (NoSuchMessageException e){
+                    //we will skip these from UI for now.
+                    //map.put(type, type);                    
+                }
+            }
+            return FunctionsOverCollections.sortMapsByValues(map);
     }
 
     @ModelAttribute("roles")
     public Map<String, String> retrieveRolesAsMap() {
         Map<String, String> map = new TreeMap<String, String>();
-
-        for (ContributorRole contributorRole : ContributorRole.values()) {
-            map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+        try{
+            for (ContributorRole contributorRole : ContributorRole.values()) {
+                map.put(contributorRole.value(), getMessage(buildInternationalizationKey(ContributorRole.class, contributorRole.value())));
+            }
+            return FunctionsOverCollections.sortMapsByValues(map);
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        return FunctionsOverCollections.sortMapsByValues(map);
+        return map;
     }
 
     @ModelAttribute("fundingRoles")

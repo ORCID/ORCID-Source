@@ -400,44 +400,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return profileDao.getGroupType(orcid);
     }
 
-    /**
-     * Set the locked status of an account to true
-     * 
-     * @param orcid
-     *            the id of the profile that should be locked
-     * @return true if the account was locked
-     */
-    @Override
-    public boolean lockProfile(String orcid) {
-        return profileDao.lockProfile(orcid);
-    }
-
-    /**
-     * Set the locked status of an account to false
-     * 
-     * @param orcid
-     *            the id of the profile that should be unlocked
-     * @return true if the account was unlocked
-     */
-    @Override
-    public boolean unlockProfile(String orcid) {
-        return profileDao.unlockProfile(orcid);
-    }
-
-    /**
-     * Check if a profile is locked
-     * 
-     * @param orcid
-     *            the id of the profile to check
-     * @return true if the account is locked
-     */
-    @Override
-    public boolean isLocked(String orcid) {
-        if (PojoUtil.isEmpty(orcid))
-            return false;
-        return profileDao.isLocked(orcid);
-    }
-
     @Override
     @Transactional
     public ActivitiesSummary getActivitiesSummary(String orcid) {
@@ -922,7 +884,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
-    }        
+    }
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

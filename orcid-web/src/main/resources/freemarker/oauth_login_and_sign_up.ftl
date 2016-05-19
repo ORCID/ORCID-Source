@@ -39,7 +39,7 @@
 			<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 		</div>
 		
-		<#if (RequestParameters['newlogin'])??>
+		<#if !(RequestParameters['oldlogin'])??>
 			<div class="login">
 				<div class="row">
 					<div class="col-md-12">

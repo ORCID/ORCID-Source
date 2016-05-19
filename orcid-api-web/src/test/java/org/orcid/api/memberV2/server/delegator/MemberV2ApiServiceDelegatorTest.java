@@ -62,10 +62,12 @@ import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
@@ -85,7 +87,6 @@ import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
@@ -477,7 +478,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ExternalIDs extIds = new ExternalIDs();
         ExternalID extId = new ExternalID();
         extId.setRelationship(Relationship.PART_OF);
-        extId.setType(ExternalIDType.AGR.value());
+        extId.setType(WorkExternalIdentifierType.AGR.value());
         extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
         
@@ -654,7 +655,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         funding.setDescription("This is an updated description");
         ExternalID fExtId = new ExternalID();
         fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
         ExternalIDs fExtIds = new ExternalIDs();
@@ -690,7 +691,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         funding.getTitle().getTitle().setContent("Updated funding title");
         ExternalID fExtId = new ExternalID();
         fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
         ExternalIDs fExtIds = new ExternalIDs();
@@ -1349,7 +1350,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ExternalID wei1 = new ExternalID();
         wei1.setRelationship(null);
         wei1.setValue("same_but_different_type");
-        wei1.setType(ExternalIDType.DOI.value());
+        wei1.setType(WorkExternalIdentifierType.DOI.value());
         weis1.getExternalIdentifier().add(wei1);
         peerReview1.setExternalIdentifiers(weis1);
         peerReview1.setGroupId("issn:0000003");
@@ -1377,7 +1378,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ExternalID wei2 = new ExternalID();
         wei2.setRelationship(null);
         wei2.setValue("same_but_different_type"); // Same value
-        wei2.setType(ExternalIDType.ARXIV.value()); // But different type
+        wei2.setType(WorkExternalIdentifierType.ARXIV.value()); // But different type
         weis2.getExternalIdentifier().add(wei2);
         peerReview2.setExternalIdentifiers(weis2);
         peerReview2.setGroupId("issn:0000003");
@@ -4392,6 +4393,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /* This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
         try {
             work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
             serviceDelegator.createWork(orcid, work);
@@ -4400,7 +4402,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         //Assert that it could be created with a valid value
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
@@ -4438,6 +4440,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /* This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
         try {
             peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
             serviceDelegator.createPeerReview(orcid, peerReview);
@@ -4446,7 +4449,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         //Set the ext id to a correct value to test the subject ext id
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
@@ -4461,6 +4464,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /*
         try {
             peerReview.getSubjectExternalIdentifier().setType("DOI");
             serviceDelegator.createPeerReview(orcid, peerReview);
@@ -4469,7 +4473,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         //Test it works with correct values
         peerReview.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
@@ -4505,6 +4509,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             fail();
         }
         
+        /*  This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
         try {
             funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("GRANT_NUMBER");
             serviceDelegator.createFunding(orcid, funding);
@@ -4513,7 +4518,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             
         } catch(Exception e) {
             fail();
-        }
+        }*/
         
         funding.getExternalIdentifiers().getExternalIdentifier().get(0).setType("grant_number");
         Response response = serviceDelegator.createFunding(orcid, funding);
@@ -5125,7 +5130,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         ExternalIDs extIds = new ExternalIDs();
         ExternalID extId = new ExternalID();
         extId.setRelationship(Relationship.PART_OF);
-        extId.setType(ExternalIDType.AGR.value());
+        extId.setType(WorkExternalIdentifierType.AGR.value());
         extId.setValue("ext-id-" + System.currentTimeMillis());
         extId.setUrl(new Url("http://thisIsANewUrl.com"));
         extIds.getExternalIdentifier().add(extId);
@@ -5140,7 +5145,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         wei1.setRelationship(Relationship.PART_OF);
         wei1.setUrl(new Url("http://myUrl.com"));
         wei1.setValue("work-external-identifier-id");
-        wei1.setType(ExternalIDType.DOI.value());
+        wei1.setType(WorkExternalIdentifierType.DOI.value());
         weis.getExternalIdentifier().add(wei1);
         peerReview.setExternalIdentifiers(weis);
         peerReview.setGroupId("issn:0000003");
@@ -5164,7 +5169,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         newFunding.setType(FundingType.AWARD);
         ExternalID fExtId = new ExternalID();
         fExtId.setRelationship(Relationship.PART_OF);
-        fExtId.setType(ExternalIDType.GRANT_NUMBER.value());
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
         fExtId.setUrl(new Url("http://fundingExtId.com"));
         fExtId.setValue("new-funding-ext-id");
         ExternalIDs fExtIds = new ExternalIDs();

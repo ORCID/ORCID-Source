@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Title;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 
@@ -330,13 +329,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
             switch(i) {
             case 1:
                 ExternalID f1 = new ExternalID();
-                f1.setType(ExternalIDType.GRANT_NUMBER.value());
+                f1.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f1.setValue("A");
                 ExternalID f2 = new ExternalID();
-                f2.setType(ExternalIDType.GRANT_NUMBER.value());
+                f2.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f2.setValue("B");
                 ExternalID f3 = new ExternalID();
-                f3.setType(ExternalIDType.GRANT_NUMBER.value());
+                f3.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f3.setValue("C");
                 fei.getExternalIdentifier().add(f1);
                 fei.getExternalIdentifier().add(f2);
@@ -344,13 +343,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 break;
             case 2:
                 ExternalID f4 = new ExternalID();
-                f4.setType(ExternalIDType.GRANT_NUMBER.value());
+                f4.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f4.setValue("C");
                 ExternalID f5 = new ExternalID();
-                f5.setType(ExternalIDType.GRANT_NUMBER.value());
+                f5.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f5.setValue("D");
                 ExternalID f6 = new ExternalID();
-                f6.setType(ExternalIDType.GRANT_NUMBER.value());
+                f6.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f6.setValue("E");
                 fei.getExternalIdentifier().add(f4);
                 fei.getExternalIdentifier().add(f5);
@@ -358,13 +357,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 break;
             case 3:
                 ExternalID f7 = new ExternalID();
-                f7.setType(ExternalIDType.GRANT_NUMBER.value());
+                f7.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f7.setValue("X");
                 ExternalID f8 = new ExternalID();
-                f8.setType(ExternalIDType.GRANT_NUMBER.value());
+                f8.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f8.setValue("Y");
                 ExternalID f9 = new ExternalID();
-                f9.setType(ExternalIDType.GRANT_NUMBER.value());
+                f9.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f9.setValue("Z");
                 fei.getExternalIdentifier().add(f7);
                 fei.getExternalIdentifier().add(f8);
@@ -372,13 +371,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 break;
             case 4:
                 ExternalID f10 = new ExternalID();
-                f10.setType(ExternalIDType.GRANT_NUMBER.value());
+                f10.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f10.setValue("Y");
                 ExternalID f11 = new ExternalID();
-                f11.setType(ExternalIDType.GRANT_NUMBER.value());
+                f11.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f11.setValue("B");
                 ExternalID f12 = new ExternalID();
-                f12.setType(ExternalIDType.GRANT_NUMBER.value());
+                f12.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f12.setValue("1");
                 fei.getExternalIdentifier().add(f10);
                 fei.getExternalIdentifier().add(f11);
@@ -386,13 +385,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 break;
             case 5:
                 ExternalID f13 = new ExternalID();
-                f13.setType(ExternalIDType.GRANT_NUMBER.value());
+                f13.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f13.setValue("M");
                 ExternalID f14 = new ExternalID();
-                f14.setType(ExternalIDType.GRANT_NUMBER.value());
+                f14.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f14.setValue("N");
                 ExternalID f15 = new ExternalID();
-                f15.setType(ExternalIDType.GRANT_NUMBER.value());
+                f15.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f15.setValue("O");
                 fei.getExternalIdentifier().add(f13);
                 fei.getExternalIdentifier().add(f14);
@@ -400,13 +399,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 break;
             case 6:
                 ExternalID f16 = new ExternalID();
-                f16.setType(ExternalIDType.GRANT_NUMBER.value());
+                f16.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f16.setValue("O");
                 ExternalID f17 = new ExternalID();
-                f17.setType(ExternalIDType.GRANT_NUMBER.value());
+                f17.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f17.setValue("P");
                 ExternalID f18 = new ExternalID();
-                f18.setType(ExternalIDType.GRANT_NUMBER.value());
+                f18.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f18.setValue("Q");
                 fei.getExternalIdentifier().add(f16);
                 fei.getExternalIdentifier().add(f17);
@@ -414,13 +413,13 @@ public class ActivitiesGroupGenerator_GroupingFundingsTest extends ActivitiesGro
                 break;
             case 7:
                 ExternalID f19 = new ExternalID();
-                f19.setType(ExternalIDType.GRANT_NUMBER.value());
+                f19.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f19.setValue("1");
                 ExternalID f20 = new ExternalID();
-                f20.setType(ExternalIDType.GRANT_NUMBER.value());
+                f20.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f20.setValue("2");
                 ExternalID f21 = new ExternalID();
-                f21.setType(ExternalIDType.GRANT_NUMBER.value());
+                f21.setType(org.orcid.jaxb.model.message.FundingExternalIdentifierType.GRANT_NUMBER.value());
                 f21.setValue("B");
                 fei.getExternalIdentifier().add(f19);
                 fei.getExternalIdentifier().add(f20);

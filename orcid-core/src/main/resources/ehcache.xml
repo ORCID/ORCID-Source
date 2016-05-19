@@ -162,12 +162,6 @@
 		eternal="false">
 		<persistence strategy="none" />
 	</cache>
-
-	<cache name="profile-entity" maxElementsInMemory="5000"
-		maxElementsOnDisk="20000" timeToLiveSeconds="86400" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
 	
 	<cache name="source-entity" maxElementsInMemory="5000"
 		maxElementsOnDisk="20000" timeToLiveSeconds="86400" copyOnRead="false"
@@ -175,12 +169,6 @@
 		<persistence strategy="localTempSwap" />
 	</cache>
 	
-	<cache name="statistics-entity" maxElementsInMemory="100"
-		maxElementsOnDisk="1000" timeToLiveSeconds="86400" copyOnRead="false"
-		copyOnWrite="false" eternal="false">
-		<persistence strategy="localTempSwap" />
-	</cache>
-					
 	<cache name="educations-summaries" maxElementsInMemory="2000" timeToLiveSeconds="86400"
 		maxElementsOnDisk="50000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
@@ -371,5 +359,14 @@
 		maxElementsOnDisk="5000" copyOnRead="false" copyOnWrite="false"
 		eternal="false">
 		<persistence strategy="localTempSwap" />
-	</cache>																
+	</cache>	
+	
+	<cache name="identifier-types" maxElementsInMemory="500" eternal="true"
+		copyOnRead="true" copyOnWrite="true">
+		<persistence strategy="localTempSwap" />
+	</cache>
+	<cache name="identifier-types-map" maxElementsInMemory="500" eternal="true"
+		copyOnRead="true" copyOnWrite="true">
+		<persistence strategy="localTempSwap" />
+	</cache>						
 </ehcache>

@@ -1,0 +1,314 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+            
+    <changeSet id="CREATE-IDENTIFIER-TYPE-TABLE" author="Tom D">
+        <preConditions onFail="MARK_RAN">
+            <!-- Only perform the initial database create if key table doesn't exist -->
+            <not>
+                <tableExists tableName="identifier_type"/>
+            </not>
+		</preConditions>
+		
+		<createTable tableName="identifier_type">
+           <column name="id" type="bigint">
+				<constraints nullable="false" primaryKey="true"
+					primaryKeyName="identifier_type_pkey" />
+			</column>
+			<column name="id_name" type="VARCHAR(255)">
+				<constraints nullable="false" unique="true" />
+			</column>		
+			<column name="id_validation_regex" type="VARCHAR(255)">
+				<constraints nullable="true" />
+			</column>	
+			<column name="id_resolution_prefix" type="VARCHAR(255)">
+				<constraints nullable="true" />
+			</column>			
+			<column name="id_deprecated" type="BOOLEAN" defaultValue="false">
+				<constraints nullable="false" />
+			</column>
+			<column name="client_source_id" type="VARCHAR(20)"/>
+			<column name="date_created" type="TIMESTAMP WITH TIME ZONE" />
+			<column name="last_modified" type="TIMESTAMP WITH TIME ZONE" />	
+        </createTable>
+    </changeSet>
+    
+   <changeSet id="ADD-SEQUENCE-FOR-IDENTIFIER-TYPE" author="Tom D" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="identifer_type_seq" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="identifer_type_seq" />
+    </changeSet>
+    
+    <changeSet id="CREATE-AUTOCOLS" author="Tom D" dbms="hsqldb">    	
+        <addAutoIncrement tableName="identifier_type" columnName="id" columnDataType="bigint"/>
+    </changeSet>
+    
+    <changeSet id="INSERT-DEFAULT-IDENTIFIER-TYPES" author="Tom D">
+    	<preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="identifier_type"/>
+                <sqlCheck expectedResult="0">select count(*) from identifier_type;</sqlCheck>
+            </and>
+        </preConditions>
+        <insert tableName="identifier_type">
+        	<column name="id" value="0"/>
+        	<column name="id_name" value="OTHER_ID"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="1"/>
+            <column name="id_name" value="ASIN"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="2"/>
+            <column name="id_name" value="ASIN_TLD"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="3"/>
+            <column name="id_name" value="ARXIV"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="4"/>
+            <column name="id_name" value="BIBCODE"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="5"/>
+            <column name="id_name" value="DOI"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="6"/>
+            <column name="id_name" value="EID"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="7"/>
+            <column name="id_name" value="ISBN"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="8"/>
+            <column name="id_name" value="ISSN"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="9"/>
+            <column name="id_name" value="JFM"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="10"/>        
+            <column name="id_name" value="JSTOR"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+        	<column name="id" value="11"/>
+            <column name="id_name" value="LCCN"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="12"/>
+            <column name="id_name" value="MR"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="13"/>
+            <column name="id_name" value="OCLC"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="14"/>
+            <column name="id_name" value="OL"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="15"/>
+            <column name="id_name" value="OSTI"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="16"/>
+            <column name="id_name" value="PMC"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="17"/>
+            <column name="id_name" value="PMID"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="18"/>
+            <column name="id_name" value="RFC"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+            <column name="id" value="19"/>
+            <column name="id_name" value="SSRN"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="20"/>
+            <column name="id_name" value="ZBL"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="21"/>
+            <column name="id_name" value="AGR"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="22"/>
+            <column name="id_name" value="CBA"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="23"/>
+            <column name="id_name" value="CIT"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="24"/>
+            <column name="id_name" value="CTX"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="25"/>
+            <column name="id_name" value="ETHOS"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="26"/>
+            <column name="id_name" value="HANDLE"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="27"/>
+            <column name="id_name" value="HIR"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="28"/>
+            <column name="id_name" value="PAT"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="29"/>
+            <column name="id_name" value="SOURCE_WORK_ID"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="30"/>
+            <column name="id_name" value="URI"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="31"/>
+            <column name="id_name" value="URN"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="32"/>
+            <column name="id_name" value="WOSUID"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+        <insert tableName="identifier_type">
+			<column name="id" value="33"/>
+            <column name="id_name" value="GRANT_NUMBER"/>
+            <column name="id_deprecated" value="false"/>
+            <column name="date_created" valueComputed="now()"/>
+            <column name="last_modified" valueComputed="now()"/>
+        </insert>
+
+    </changeSet>
+    
+</databaseChangeLog>

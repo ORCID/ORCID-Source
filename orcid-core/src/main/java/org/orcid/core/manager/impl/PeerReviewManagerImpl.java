@@ -84,6 +84,12 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Resource
     private NotificationManager notificationManager;
 
+    @Resource
+    private ExternalIDValidator externalIDValidator;
+    
+    @Resource 
+    private ActivityValidator activityValidator;
+    
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
@@ -124,7 +130,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         // If request comes from the API, perform the validations
         if (isApiRequest) {
             // Validate it have at least one ext id
-            ActivityValidator.validatePeerReview(peerReview, sourceEntity, true, isApiRequest, null);
+            activityValidator.validatePeerReview(peerReview, sourceEntity, true, isApiRequest, null);
 
             List<PeerReviewEntity> peerReviews = peerReviewDao.getByUser(orcid);
             // If it is the user adding the peer review, allow him to add
@@ -133,14 +139,14 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
                 if (peerReviews != null) {
                     for (PeerReviewEntity entity : peerReviews) {
                         PeerReview existing = jpaJaxbPeerReviewAdapter.toPeerReview(entity);
-                        ActivityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                        activityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
                     }
                 }
             }else{
                 //check vocab of external identifiers
-                ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
-                ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
+                externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+                externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
             }
 
             validateGroupId(peerReview);
@@ -170,20 +176,20 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         
         // If request comes from the API perform validations
         if (isApiRequest) {
-            ActivityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, originalVisibility);
+            activityValidator.validatePeerReview(peerReview, sourceEntity, false, isApiRequest, originalVisibility);
             validateGroupId(peerReview);
             List<PeerReview> existingReviews = this.findPeerReviews(orcid, System.currentTimeMillis());
             for (PeerReview existing : existingReviews) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(peerReview.getPutCode())) {
-                    ActivityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                    activityValidator.checkExternalIdentifiersForDuplicates(peerReview.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                             sourceManager.retrieveSourceEntity());
                 }
             }
         }else{
             //check vocab of external identifiers
-            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
-            ExternalIDValidator.getInstance().validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
+            externalIDValidator.validateWorkOrPeerReview(peerReview.getExternalIdentifiers());
+            externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
         PeerReviewEntity updatedEntity = new PeerReviewEntity();        
         SourceEntity existingSource = existingEntity.getSource();

@@ -309,7 +309,7 @@ public class AdminController extends BaseController {
             tempObj.setEmail(entry.getKey());
             if (!profileEntityManager.isProfileClaimed(entry.getValue())) {
                 tempObj.setStatus("Unclaimed");
-            } else if (profileEntityManager.isLocked(entry.getValue())) {
+            } else if (orcidProfileManager.isLocked(entry.getValue())) {
                 tempObj.setStatus("Locked");
             } else if (profileEntityManager.isDeactivated(entry.getValue())) {
                 tempObj.setStatus("Deactivated");
@@ -509,7 +509,7 @@ public class AdminController extends BaseController {
                     mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is unclaimed.").toString());
                 } else if (profileEntityManager.isDeactivated(orcid)) {
                     mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is deactivated.").toString());
-                } else if (profileEntityManager.isLocked(orcid)) {
+                } else if (orcidProfileManager.isLocked(orcid)) {
                     mapOrcid.put("errorMessg", new StringBuffer("Account for user ").append(orcidOrEmail).append(" is locked.").toString());
                 } else {
                     mapOrcid.put("errorMessg", null);
@@ -748,7 +748,7 @@ public class AdminController extends BaseController {
      */
     @RequestMapping(value = "/lock-account.json", method = RequestMethod.POST)
     public @ResponseBody String lockAccount(@RequestBody String orcid) {
-        if (profileEntityManager.lockProfile(orcid)) {
+        if (orcidProfileManager.lockProfile(orcid)) {
             return getMessage("admin.lock_profile.success", orcid);
         }
         return getMessage("admin.lock_profile.error.couldnt_lock_account", orcid);
@@ -763,7 +763,7 @@ public class AdminController extends BaseController {
      */
     @RequestMapping(value = "/unlock-account.json", method = RequestMethod.POST)
     public @ResponseBody String unlockAccount(@RequestBody String orcid) {
-        if (profileEntityManager.unlockProfile(orcid)) {
+        if (orcidProfileManager.unlockProfile(orcid)) {
             return getMessage("admin.unlock_profile.success", orcid);
         }
         return getMessage("admin.unlock_profile.error.couldnt_unlock_account", orcid);

@@ -16,8 +16,8 @@
  */
 package org.orcid.api.common.cerif;
 
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.WorkType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 
 /**
@@ -54,7 +54,7 @@ public class CerifTypeTranslator {
      */
     public CerifClassEnum translate(String type) {
         try{
-        ExternalIDType t = ExternalIDType.valueOf(type);
+        WorkExternalIdentifierType t = WorkExternalIdentifierType.valueOf(type);
         switch (t) {
             case DOI:
                 return CerifClassEnum.DOI;

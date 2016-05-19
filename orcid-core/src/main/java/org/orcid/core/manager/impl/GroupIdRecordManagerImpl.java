@@ -56,6 +56,9 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    @Resource 
+    private ActivityValidator activityValidator;
 
     @Override
     public GroupIdRecord getGroupIdRecord(Long putCode) {
@@ -79,7 +82,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     @Override
     public GroupIdRecord createGroupIdRecord(GroupIdRecord groupIdRecord) {
     	SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-    	ActivityValidator.validateGroupIdRecord(groupIdRecord, true, sourceEntity);
+    	activityValidator.validateGroupIdRecord(groupIdRecord, true, sourceEntity);
     	validateDuplicate(groupIdRecord);    	
         if (sourceEntity != null) {
             Source source = new Source();
@@ -103,7 +106,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
             throw new GroupIdRecordNotFoundException();
         }        
         SourceEntity existingSource = existingEntity.getSource();
-        ActivityValidator.validateGroupIdRecord(groupIdRecord, false, existingSource);        
+        activityValidator.validateGroupIdRecord(groupIdRecord, false, existingSource);        
         validateDuplicate(groupIdRecord);
         
         orcidSecurityManager.checkSource(existingSource);

@@ -100,7 +100,7 @@ public class ExternalID implements GroupAble,Cloneable,Serializable{
             return false;
 
         // Dont work works by ISSN identifier
-        if (ExternalIDType.ISSN.value().equals(this.getType()))
+        if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value().equals(this.getType()))
             return false;
         
         return true;
