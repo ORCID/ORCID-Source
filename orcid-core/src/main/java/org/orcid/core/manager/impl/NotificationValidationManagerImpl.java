@@ -19,6 +19,8 @@ package org.orcid.core.manager.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.manager.NotificationValidationManager;
@@ -28,6 +30,9 @@ import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 
 public class NotificationValidationManagerImpl implements NotificationValidationManager {
 
+    @Resource
+    private ExternalIDValidator externalIDValidator;
+    
     @Override
     public void validateNotificationPermission(NotificationPermission notification) {
         AuthorizationUrl authorizationUrl = notification.getAuthorizationUrl();
@@ -40,7 +45,7 @@ public class NotificationValidationManagerImpl implements NotificationValidation
             }
         }
         
-        ExternalIDValidator.getInstance().validateNotificationItems(notification.getItems());
+        externalIDValidator.validateNotificationItems(notification.getItems());
     }
 
 }

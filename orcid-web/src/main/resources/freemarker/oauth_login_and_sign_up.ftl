@@ -39,7 +39,7 @@
 			<p><@orcid.msg 'orcid.frontend.web.oauth_is_secure'/>.&nbsp;<a href="${aboutUri}/footer/privacy-policy" target="_blank"><@orcid.msg 'public-layout.privacy_policy'/></a>.</p>
 		</div>
 		
-		<#if (RequestParameters['newlogin'])??>
+		<#if !(RequestParameters['oldlogin'])??>
 			<div class="login">
 				<div class="row">
 					<div class="col-md-12">
@@ -50,14 +50,14 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="btn-group btn-group-justified" role="group" ng-show="!showRegisterForm" ng-cloak>
-			  				<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> Personal Account</a>
-			  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> Institution Account</a>
+							<a ng-click="showPersonalLogin()" class="btn btn-default" ng-class="{active: personalLogin == true}" role="button"><span class="glyphicon glyphicon-user"></span> ${springMacroRequestContext.getMessage("login.personalaccount")}</a>
+			  				<a ng-click="showInstitutionLogin()" class="btn btn-default" ng-class="{active: personalLogin == false}" role="button"><span class="glyphicons bank"></span> ${springMacroRequestContext.getMessage("login.institutionaccount")}</a>
 						</div>
 						<!-- Personal Login -->
 						<!-- Login form -->
 						<div class="personal-account-login" ng-show="personalLogin && !showRegisterForm" ng-init="loadAndInitLoginForm()" ng-cloak>
 							<div class="login-box">
-								<p class="title">Sign in with your ORCID account</p>
+								<p class="title">${springMacroRequestContext.getMessage("login.signinwithyourorcidaccount")}</p>
 								<div class="row personal-login">
 									<div class="form-group">
 									    <label for="userId" class="control-label"><@orcid.msg 'oauth_sign_in.labelemailorID'/> *</label>									   
@@ -85,8 +85,19 @@
 					            </div>
 							</div>
 							<!-- SOCIAL LOGIN -->					            
-			                <div class="social-login">
-			                    <p class="title">Sign in with a social account <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
+							<div class="social-login">
+								<div class="title">
+								 	${springMacroRequestContext.getMessage("login.signinwithasocialaccount")}
+									<div class="popover-help-container">
+										<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+										<div id="social-login-help" class="popover bottom">
+											<div class="arrow"></div>
+											<div class="popover-content">
+												<p><@orcid.msg 'login.signinwithasocialaccount.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinwithasocialaccount.help.2'/></a><@orcid.msg 'login.signinwithasocialaccount.help.3'/></p>
+											</div>
+										</div>
+									</div>
+								</div>
 			                    <ul class="social-icons">
 			                        <li>
 			                            <form action="<@orcid.rootPath '/signin/facebook'/>" method="POST" ng-submit="loginSocial('facebook')">
@@ -119,17 +130,28 @@
 							<div class="row institution-login">
 								<div class="col-md-12">
 									<div class="login-box">
-										<div class="federate-login">
-											<p class="title">Sign in via your institution <a href="${springMacroRequestContext.getMessage('common.support_url')}" target="_blank" class="shibboleth-help"><i class="glyphicon glyphicon-question-sign"></i></a></p>
-							                <div id="idpSelectContainer">                  
-							                    <div id="idpSelectInner">
-							                    	<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
-													    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>											    
+										<div class="institution-login">
+											<div class="title">
+												${springMacroRequestContext.getMessage('login.signinviayourinstitution')}
+												<div class="popover-help-container">
+													<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+													<div id="institution-login-help" class="popover bottom">
+														<div class="arrow"></div>
+														<div class="popover-content">
+															<p><@orcid.msg 'login.signinviayourinstitution.help.1'/><a href="http://support.orcid.org/knowledgebase/articles/892920" target="_blank"><@orcid.msg 'login.signinviayourinstitution.help.2'/></a><@orcid.msg 'login.signinviayourinstitution.help.3'/></p>
+														</div>
 													</div>
-							                        <!-- Where the widget is going to be injected -->
-							                        <div id="idpSelect"></div>
-							                    </div>                  
-							                </div>
+												</div>
+											</div>
+											<div id="idpSelectContainer">				  
+												<div id="idpSelectInner">
+													<div ng-show="scriptsInjected == false;" class="text-center" ng-cloak>
+														<i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>												
+													</div>
+													<!-- Where the widget is going to be injected -->
+													<div id="idpSelect"></div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>

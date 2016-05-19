@@ -6533,6 +6533,12 @@ a:hover .mozilla-badge{
 }
 
 
+.form-social-sign-in h2{
+    margin-bottom: 35px;
+}
+.form-social-sign-in hr{
+	margin-top: 5px;
+}
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
@@ -7791,6 +7797,12 @@ a:hover .mozilla-badge{
 	
 	#edit-affiliation{
 		height: auto;
+	}
+	
+	.login .btn-group-justified a{
+		font-size: 12px;
+		font-size: 3.5vw;
+		vertical-align: initial;		
 	}
 	
 

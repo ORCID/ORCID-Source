@@ -97,15 +97,12 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -405,44 +402,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
-    }
-
-    /**
-     * Set the locked status of an account to true
-     * 
-     * @param orcid
-     *            the id of the profile that should be locked
-     * @return true if the account was locked
-     */
-    @Override
-    public boolean lockProfile(String orcid) {
-        return profileDao.lockProfile(orcid);
-    }
-
-    /**
-     * Set the locked status of an account to false
-     * 
-     * @param orcid
-     *            the id of the profile that should be unlocked
-     * @return true if the account was unlocked
-     */
-    @Override
-    public boolean unlockProfile(String orcid) {
-        return profileDao.unlockProfile(orcid);
-    }
-
-    /**
-     * Check if a profile is locked
-     * 
-     * @param orcid
-     *            the id of the profile to check
-     * @return true if the account is locked
-     */
-    @Override
-    public boolean isLocked(String orcid) {
-        if (PojoUtil.isEmpty(orcid))
-            return false;
-        return profileDao.isLocked(orcid);
     }
 
     @Override

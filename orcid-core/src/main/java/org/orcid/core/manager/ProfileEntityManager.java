@@ -63,12 +63,6 @@ public interface ProfileEntityManager {
 
     MemberType getGroupType(String orcid);
 
-    boolean lockProfile(String orcid);
-
-    boolean unlockProfile(String orcid);
-
-    boolean isLocked(String orcid);
-
     ActivitiesSummary getActivitiesSummary(String orcid);
 
     ActivitiesSummary getPublicActivitiesSummary(String orcid);

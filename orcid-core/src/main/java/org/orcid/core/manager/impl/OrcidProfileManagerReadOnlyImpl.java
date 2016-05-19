@@ -248,6 +248,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
         return profileDao.retrieveLastModifiedDate(orcid);
     }
 
+    @Deprecated
     protected boolean isOldEnough(OrcidProfile orcidProfile) {
         return DateUtils.olderThan(orcidProfile.getOrcidHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime(), claimWaitPeriodDays);
     }

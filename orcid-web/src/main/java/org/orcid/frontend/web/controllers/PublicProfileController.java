@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +38,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ActivityCacheManager;
 import org.orcid.core.manager.AddressManager;
@@ -45,6 +48,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
 import org.orcid.core.manager.GroupIdRecordManager;
 import org.orcid.core.manager.OrcidProfileCacheManager;
+import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.PersonalDetailsManager;
@@ -54,6 +58,7 @@ import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
@@ -65,10 +70,12 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
@@ -160,6 +167,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     
     @Resource
     private ExternalIdentifierManager externalIdentifierManager;
+
+    @Resource
+    private OrcidSecurityManager orcidSecurityManager;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -180,8 +190,51 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!profileEntManager.orcidExists(orcid)) {
             return new ModelAndView("error-404");
         }        
+               
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
-        Date lastModified = profileEntManager.getLastModified(orcid);
+        try {
+            //Check if the profile is deprecated, non claimed or locked
+            orcidSecurityManager.checkProfile(orcid);
+        } catch(OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
+            ModelAndView mav = new ModelAndView("public_profile_unavailable");
+            mav.addObject("orcidId", orcid);
+            String displayName = "";
+            
+            if(e instanceof OrcidDeprecatedException) {
+                PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
+                if(publicPersonalDetails.getName() != null) {
+                    Name name = publicPersonalDetails.getName();
+                    if(name.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+                        if(name.getCreditName() != null && !PojoUtil.isEmpty(name.getCreditName().getContent())) {
+                            displayName = name.getCreditName().getContent();
+                        } else {
+                            if(name.getGivenNames() != null && !PojoUtil.isEmpty(name.getGivenNames().getContent())) {
+                                displayName = name.getGivenNames().getContent() + " ";
+                            }
+                            if(name.getFamilyName() != null && !PojoUtil.isEmpty(name.getFamilyName().getContent())) {
+                                displayName += name.getFamilyName().getContent();
+                            }
+                        }
+                    }
+                }
+                mav.addObject("deprecated", true);
+                mav.addObject("primaryRecord", profile.getPrimaryRecord().getId());
+            } else if(e instanceof OrcidNotClaimedException) {
+                displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
+            } else {
+                mav.addObject("locked", true);
+                displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name");
+            }
+            
+            if(!PojoUtil.isEmpty(displayName)) {
+                mav.addObject("title", getMessage("layout.public-layout.title", displayName, orcid));
+                mav.addObject("displayName", displayName);
+            }            
+            return mav;
+        }                
+        
+        Date lastModified = profile.getLastModified();
         long lastModifiedTime = 0;
         if(lastModified != null) {
             lastModifiedTime = lastModified.getTime();
@@ -202,11 +255,6 @@ public class PublicProfileController extends BaseWorkspaceController {
             session.removeAttribute(PUBLIC_WORKS_RESULTS_ATTRIBUTE);
         }
         
-        LinkedHashMap<Long, WorkForm> minimizedWorksMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
-        LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
-
         PersonalDetails publicPersonalDetails = personalDetailsManager.getPublicPersonalDetails(orcid);
         
         //Fill personal details
@@ -244,18 +292,32 @@ public class PublicProfileController extends BaseWorkspaceController {
                     isProfileEmtpy = false;
                 }            
             }
+            
+            //Fill other names
+            OtherNames publicOtherNames = publicPersonalDetails.getOtherNames();
+            if(publicOtherNames != null && publicOtherNames.getOtherNames() != null) {
+                Iterator<OtherName> it = publicOtherNames.getOtherNames().iterator();
+                while(it.hasNext()) {
+                    OtherName otherName = it.next();
+                    if(!org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(otherName.getVisibility())) {
+                        it.remove();
+                    }
+                }
+            }
+            mav.addObject("publicOtherNames", publicOtherNames);
         }
         
         //Fill biography elements
-        //Fill other names
-        OtherNames publicOtherNames = otherNameManager.getPublicOtherNames(orcid, lastModifiedTime);
-        mav.addObject("publicOtherNames", publicOtherNames);
-        
         //Fill country
-        Address publicPrimaryAddress = addressManager.getPrimaryAddress(orcid, lastModifiedTime);        
-        if(publicPrimaryAddress != null && publicPrimaryAddress.getCountry().getValue() != null && publicPrimaryAddress.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
-            mav.addObject("publicAddresses", publicPrimaryAddress);
-            mav.addObject("countryName", getcountryName(publicPrimaryAddress.getCountry().getValue().value()));
+        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);
+        if(publicAddresses != null && publicAddresses.getAddress() != null) {
+            for(Address publicAddress : publicAddresses.getAddress()) {
+                if(Boolean.TRUE.equals(publicAddress.getPrimary())) {
+                    mav.addObject("publicAddresses", publicAddress);
+                    mav.addObject("countryName", getcountryName(publicAddress.getCountry().getValue().value()));
+                    break;
+                }
+            }
         }
         
         //Fill keywords
@@ -273,48 +335,40 @@ public class PublicProfileController extends BaseWorkspaceController {
         //Fill external identifiers
         PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
         mav.addObject("publicPersonExternalIdentifiers", publicPersonExternalIdentifiers);
+                
+        LinkedHashMap<Long, WorkForm> minimizedWorksMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
+        LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
-        // Fill activities
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        if (!profile.isAccountNonLocked()) {
-            mav.addObject("locked", true);
-        } else if (profile.getPrimaryRecord() != null && !PojoUtil.isEmpty(profile.getPrimaryRecord().getId())) {
-            String primaryRecord = profile.getPrimaryRecord().getId();
-            mav.addObject("deprecated", true);
-            mav.addObject("primaryRecord", primaryRecord);
+        minimizedWorksMap = minimizedWorksMap(orcid);
+        if (minimizedWorksMap.size() > 0) {
+            isProfileEmtpy = false;
         } else {
-            minimizedWorksMap = minimizedWorksMap(orcid);
-            if (minimizedWorksMap.size() > 0) {
-                mav.addObject("works", minimizedWorksMap.values());
-                isProfileEmtpy = false;
-            } else {
-                mav.addObject("worksEmpty", true);
-            }
-
-            affiliationMap = affiliationMap(orcid);
-            if (affiliationMap.size() > 0) {
-                mav.addObject("affilations", affiliationMap.values());
-                isProfileEmtpy = false;
-            } else {
-                mav.addObject("affiliationsEmpty", true);
-            }
-
-            fundingMap = fundingMap(orcid);
-            if (fundingMap.size() > 0)
-                isProfileEmtpy = false;
-            else {
-                mav.addObject("fundingEmpty", true);
-            }
-
-            peerReviewMap = peerReviewMap(orcid);
-            if (peerReviewMap.size() > 0) {
-                mav.addObject("peerReviews", peerReviewMap.values());
-                isProfileEmtpy = false;
-            } else {
-                mav.addObject("peerReviewsEmpty", true);
-            }
-
+            mav.addObject("worksEmpty", true);
         }
+
+        affiliationMap = affiliationMap(orcid);
+        if (affiliationMap.size() > 0) {
+            isProfileEmtpy = false;
+        } else {
+            mav.addObject("affiliationsEmpty", true);
+        }
+
+        fundingMap = fundingMap(orcid);
+        if (fundingMap.size() > 0)
+            isProfileEmtpy = false;
+        else {
+            mav.addObject("fundingEmpty", true);
+        }
+
+        peerReviewMap = peerReviewMap(orcid);
+        if (peerReviewMap.size() > 0) {
+            isProfileEmtpy = false;
+        } else {
+            mav.addObject("peerReviewsEmpty", true);
+        }
+        
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -717,7 +771,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     private String formatAmountString(BigDecimal bigDecimal) {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(localeManager.getLocale());
         return numberFormat.format(bigDecimal);
-    }
+    }       
 }
 
 class OrcidInfo {

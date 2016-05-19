@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 
 import com.google.common.base.Optional;
@@ -68,8 +68,8 @@ public class Cerif16Builder {
      * @see https://zenodo.org/record/17065/files/
      *      OpenAIRE_Guidelines_for_CRIS_Managers_v.1.0.pdf
      */
-    private static Set<String> exportedIDs = ImmutableSet.of(ExternalIDType.DOI.name(), ExternalIDType.HANDLE.name(),
-            ExternalIDType.URI.name(), ExternalIDType.URN.name(), ExternalIDType.PMC.name());
+    private static Set<String> exportedIDs = ImmutableSet.of(WorkExternalIdentifierType.DOI.name(), WorkExternalIdentifierType.HANDLE.name(),
+            WorkExternalIdentifierType.URI.name(), WorkExternalIdentifierType.URN.name(), WorkExternalIdentifierType.PMC.name());
 
     public Cerif16Builder() {
         objectFactory = new ObjectFactory();

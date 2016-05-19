@@ -29,7 +29,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -420,6 +419,17 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         }
     }
     
+    /**
+     * Checks a record status and throw an exception indicating if the profile have any of the following conditions:
+     * - The record is not claimed and is not old enough nor being accessed by its creator
+     * - It is locked
+     * - It is deprecated
+     * - It is deactivated
+     * 
+     * @throws OrcidDeprecatedException in case the account is deprecated
+     * @throws OrcidNotClaimedException in case the account is not claimed
+     * @throws LockedException in the case the account is locked
+     * */
     @Override
     public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
         ProfileEntity profile = null;
@@ -429,6 +439,8 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         } catch(IllegalArgumentException e) {
             throw new NoResultException();
         }
+
+    
         //Check if the profile is not claimed and not old enough
         if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
             //Let the creator access the profile even if it is not claimed and not old enough

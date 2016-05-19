@@ -232,7 +232,7 @@ function checkOrcidLoggedIn() {
             $.ajax(
                     {
                         url : orcidVar.baseUri + '/userStatus.json?callback=?',
-                        type : 'GET',
+                        type : 'POST',
                         dataType : 'json',
                         success : function(data) {
                             if (data.loggedIn == false
@@ -311,7 +311,7 @@ $(function() {
     window.baseUrl = $('body').data('baseurl');
     window.basePath = window.location.pathname;
 
-    // fire off login check, if this page wasn't loaded via iframe (or html5
+    // fire off  check, if this page wasn't loaded via iframe (or html5
     // foo)
     if (location == parent.location) {
         checkOrcidLoggedIn();

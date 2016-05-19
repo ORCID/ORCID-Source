@@ -37,7 +37,7 @@
         <property name="version" value="Latest" />
         <property name="host" value="#{ orcidUrlManager.pubHostWithPort }" />
         <property name="basePath" value="#{ orcidUrlManager.pubPath }"/>
-        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.t1.stats,org.orcid.api.t1.cerif"/>
+        <property name="resourcePackage" value="org.orcid.api.publicV2.server,org.orcid.api.t1.stats,org.orcid.api.identifiers"/>
         <property name="scan" value="true"/>
         <property name="prettyPrint" value="true"/>        
     </bean>
@@ -138,6 +138,12 @@
     <bean id="cerifApiServiceDelegator" class="org.orcid.api.t1.cerif.delegator.impl.PublicCerifApiServiceDelegatorImpl" />
     <bean id="cerifApiServiceImpl" class="org.orcid.api.t1.cerif.PublicCerifApiServiceImpl">
         <property name="serviceDelegator" ref="cerifApiServiceDelegator"/>
+    </bean>
+    
+    <!--  Identifier API -->
+    <bean id="identifierApiServiceDelegator" class="org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl" />
+    <bean id="identifierApiServiceImplV2_0" class="org.orcid.api.identifiers.IdentifierApiServiceImplV2_0">
+        <property name="serviceDelegator" ref="identifierApiServiceDelegator"/>
     </bean>
     
 </beans>
