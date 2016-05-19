@@ -242,7 +242,7 @@
 		            </#if>          	           
 		             
 		            <!-- External Identifiers -->
-		            <#if (publicPersonExternalIdentifiers)?? && (publicPersonExternalIdentifiers.externalIdentifier?size != 0)>
+		            <#if (publicGroupedPersonExternalIdentifiers)?? && (publicGroupedPersonExternalIdentifiers?size != 0)>
 						<div class="workspace-section">
 		            		<div class="workspace-section-header">
 			            		<ul class="inline-list visible workspace-section-heading">
@@ -262,19 +262,25 @@
 									    </#if>
 								    </li>		                		
 								</ul>				                
-				                <div  id="public-external-identifiers-div" class="public-content">
-				                    <#list publicPersonExternalIdentifiers.externalIdentifier as external>
-				                        <#if (external.url.value)??>
-				                            <a href="${external.url.value}" target="_blank">${(external.type)!}: ${(external.value)!}</a>
-				                        <#else>
-				                            ${(external.type)!}: ${(external.value)!}<#if external_has_next><br/></#if>
-				                        </#if>				                        
-				                        <div ng-if="showSources['external-identifiers']" class="source-line separator" ng-cloak>				                		
-					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                		 	<#if (external.source)?? && (external.source.sourceName)??>${external.source.sourceName.content}</#if> <#if (external.createdDate)??>(${(external.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-					                		</p>				                						                			                						                			
-										</div>				                        			                       
-					                	<#if external_has_next><br/></#if>
+				                <div id="public-external-identifiers-div" class="public-content">
+				                    <#list publicGroupedPersonExternalIdentifiers?keys as external>
+				                        <#assign i = 1>
+				                        <#list publicGroupedPersonExternalIdentifiers[external] as externalIdentifier>				                							                		
+				                			<#if (i == 1)>
+					                			<#if (externalIdentifier.url.value)??>
+						                            <a href="${externalIdentifier.url.value}" target="_blank">${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}</a><#if external_has_next><span ng-if="showSources['external-identifiers'] == false || showSources['external-identifiers'] == null">,</span></#if>
+						                        <#else>
+						                            ${(externalIdentifier.type)!}: ${(externalIdentifier.value)!}<#if externalIdentifier_has_next><br/></#if>
+						                        </#if>																	
+					                			<div ng-if="showSources['external-identifiers']" class="source-line separator" ng-cloak>					                							                					                		
+						                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+						                	</#if>
+											<#if (externalIdentifier.source)?? && (externalIdentifier.source.sourceName)??>${externalIdentifier.source.sourceName.content}</#if> <#if (externalIdentifier.createdDate)??>(${(externalIdentifier.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+											<#assign i = i + 1>	
+					                	</#list>
+					                	</p>
+					                	</div>		                        			                       
+					                						                	
 				                    </#list>
 			                    </div>
 			                 </div>

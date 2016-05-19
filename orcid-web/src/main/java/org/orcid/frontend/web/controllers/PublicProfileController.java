@@ -76,6 +76,7 @@ import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -282,8 +283,11 @@ public class PublicProfileController extends BaseWorkspaceController {
         mav.addObject("publicGroupedEmails", groupedEmails);
         
         //Fill external identifiers
-        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);        
-        mav.addObject("publicPersonExternalIdentifiers", publicPersonExternalIdentifiers);
+        PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
+    	Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
+        mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
+        
+        
         
         // Fill activities
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
@@ -298,7 +302,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             if (minimizedWorksMap.size() > 0) {
                 mav.addObject("works", minimizedWorksMap.values());
                 isProfileEmtpy = false;
-            } else {
+            } else {	  
                 mav.addObject("worksEmpty", true);
             }
 
@@ -420,12 +424,9 @@ public class PublicProfileController extends BaseWorkspaceController {
     	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
     		return null;
     	}    	
-    	Map<String, List<ResearcherUrl>> groups = new TreeMap<String, List<ResearcherUrl>>();
-    	
-    	for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {
-    		
-    		String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();
-    		
+    	Map<String, List<ResearcherUrl>> groups = new TreeMap<String, List<ResearcherUrl>>();    	
+    	for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {    		
+    		String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();    		
     		if (groups.containsKey(urlValue)) {
     			groups.get(urlValue).add(r);
     		} else {
@@ -435,7 +436,28 @@ public class PublicProfileController extends BaseWorkspaceController {
     		}
     	}    	
     	return groups;
+    }   
+    
+    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers){
+    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
+    		return null;
+    	}    	
+    	Map<String, List<PersonExternalIdentifier>> groups = new TreeMap<String, List<PersonExternalIdentifier>>();
+    	
+    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifier()) {  		
+    		    		
+    		if (groups.containsKey(ei.getValue())) {
+    			groups.get(ei.getValue()).add(ei);
+    		} else {
+    			List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
+    			list.add(ei);
+    			groups.put(ei.getValue(), list);    			
+    		}
+    	}    	
+    	return groups;
     }
+    
+    
     
     
     
