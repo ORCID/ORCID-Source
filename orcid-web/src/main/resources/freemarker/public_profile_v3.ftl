@@ -75,8 +75,7 @@
 				                	</div>
 				                </#list>
                         	</div>
-                        </div>
-                    </div>
+                        </div>                    
 	            </#if>
 	            
 	            <!-- Websites -->       	            
@@ -154,7 +153,7 @@
 				                	</div>					 		
 		            			 </#list>
 	            			</div>		            			
-		                </div>
+		                </div>		                
 		            </#if>
 		            
 		            <!-- Keywords -->
@@ -270,8 +269,7 @@
 												</#list>
 					                		</p>
 					                	</div>					 		
-			            			 </#list>			            			 
-			            			 
+			            			 </#list>
 		            			</div>		            			
 			                </div>
 	                    </div>
