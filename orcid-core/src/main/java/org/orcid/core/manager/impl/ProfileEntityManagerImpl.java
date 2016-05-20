@@ -46,6 +46,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
@@ -178,6 +179,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private NotificationManager notificationManager;
+    
+    @Resource
+    private SourceManager sourceManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -884,7 +888,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
-    }
+    }    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

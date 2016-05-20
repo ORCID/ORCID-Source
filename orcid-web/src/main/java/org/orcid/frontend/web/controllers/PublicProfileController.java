@@ -190,12 +190,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!profileEntManager.orcidExists(orcid)) {
             return new ModelAndView("error-404");
         }        
-                
+               
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
         try {
             //Check if the profile is deprecated, non claimed or locked
-            orcidSecurityManager.checkProfile(profile);
+            orcidSecurityManager.checkProfile(orcid);
         } catch(OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("orcidId", orcid);
@@ -232,8 +232,8 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("displayName", displayName);
             }            
             return mav;
-        }
-                
+        }                
+        
         Date lastModified = profile.getLastModified();
         long lastModifiedTime = 0;
         if(lastModified != null) {
