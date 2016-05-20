@@ -74,30 +74,25 @@ public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     @Before
     public void init() throws Exception {
         assertNotNull(sourceEntityCacheManager);
-
-        when(profileEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ProfileEntity>(){
-            @Override
-            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
-                String id = (String)invocation.getArguments()[0];
-                return new ProfileEntity(id);
-            }
-            
-        });  
-        
-        when(clientDetailsEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
-            @Override
-            public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
-                String id = (String)invocation.getArguments()[0];
-                return new ClientDetailsEntity(id);
-            }            
-        });
-        
         TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "profileEntityCacheManager", profileEntityCacheManager);
         TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
     }
     
     @Test
     public void fromOtherNameToOtherNameEntityTest() throws JAXBException {
+        when(profileEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ProfileEntity>(){
+            @Override
+            public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
+                String id = (String)invocation.getArguments()[0];
+                ProfileEntity profile = new ProfileEntity(id);
+                profile.setLastModified(new Date());
+                return profile;
+            }
+            
+        });
+        
+        when(clientDetailsEntityCacheManager.retrieve((Matchers.<String> any()))).thenThrow(new IllegalArgumentException());
+        
         OtherName otherName = getOtherName();
         OtherNameEntity otherNameEntity = adapter.toOtherNameEntity(otherName);
         assertNotNull(otherNameEntity);
@@ -110,6 +105,16 @@ public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     
     @Test
     public void fromOtherNameEntityToOtherNameTest() {
+        when(clientDetailsEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
+            @Override
+            public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
+                String id = (String)invocation.getArguments()[0];
+                ClientDetailsEntity client = new ClientDetailsEntity(id);
+                client.setLastModified(new Date());
+                return client;
+            }            
+        });
+        
         OtherNameEntity entity = getOtherNameEntity();
         OtherName otherName = adapter.toOtherName(entity);
         assertNotNull(otherName);

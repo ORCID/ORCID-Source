@@ -27,7 +27,6 @@ import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.manager.cache.EntityCacheManager;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -59,18 +58,6 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceEntityCacheManagerImpl.class);
     
-    public void setProfileEntityCacheManager(EntityCacheManager entityCacheManager) {
-        if(entityCacheManager instanceof ProfileEntityCacheManager) {
-            this.profileEntityCacheManager = (ProfileEntityCacheManager) profileEntityCacheManager;
-        }
-    }
-
-    public void setClientDetailsEntityCacheManager(EntityCacheManager entityCacheManager) {
-        if(entityCacheManager instanceof ClientDetailsEntityCacheManager) {
-            this.clientDetailsEntityCacheManager = (ClientDetailsEntityCacheManager) clientDetailsEntityCacheManager;
-        }
-    }
-
     @Override
     @Transactional
     public SourceEntity retrieve(String id) throws IllegalArgumentException {
@@ -158,7 +145,7 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
         //Try to fetch the last modified from the client_details table
         try {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(id);
-            //If it is a public client, we should look again in the profile table, since the public client should not be a source for anything
+            //If it is a public client, we should look again in the profile table, since the public client should not be a source for anything            
             if(ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
                 ProfileEntity profile = profileEntityCacheManager.retrieve(id);
                 lastModified = profile.getLastModified();
