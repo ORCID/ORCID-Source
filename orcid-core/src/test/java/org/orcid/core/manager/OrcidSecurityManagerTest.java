@@ -23,6 +23,7 @@ import java.security.AccessControlException;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -50,6 +51,11 @@ public class OrcidSecurityManagerTest extends BaseTest {
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
 
+    @After
+    public void after() {
+        SecurityContextTestUtils.clearSecurityContext();
+    }
+    
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsPublicAndIsSource() {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
