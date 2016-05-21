@@ -32,8 +32,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import orcid.pojo.ajaxForm.WorkFormTest;
-
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -50,15 +48,15 @@ import org.orcid.pojo.ajaxForm.TranslatedTitleForm;
 import org.orcid.pojo.ajaxForm.WorkExternalIdentifier;
 import org.orcid.pojo.ajaxForm.WorkForm;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 
+import orcid.pojo.ajaxForm.WorkFormTest;
+
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class WorksControllerTest extends BaseControllerTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
@@ -91,6 +89,7 @@ public class WorksControllerTest extends BaseControllerTest {
 
     @Test
     public void testGetWorksJson() throws Exception {
+        SecurityContextHolder.getContext().setAuthentication(getAuthentication("0000-0000-0000-0003"));
         HttpServletRequest servletRequest = mock(HttpServletRequest.class);
         HttpSession session = mock(HttpSession.class);
         when(servletRequest.getSession()).thenReturn(session);
@@ -98,12 +97,8 @@ public class WorksControllerTest extends BaseControllerTest {
         List<String> work_ids = worksController.getWorksJson(servletRequest);
 
         assertNotNull(work_ids);
-        assertEquals(4, work_ids.size());
-        assertTrue(work_ids.contains("5"));
-        assertTrue(work_ids.contains("6"));
-        assertTrue(work_ids.contains("7"));
-        assertTrue(work_ids.contains("8"));
-
+        assertEquals(5, work_ids.size());
+        work_ids.containsAll(Arrays.asList("11","12","13","14","15"));        
     }
 
     @Test

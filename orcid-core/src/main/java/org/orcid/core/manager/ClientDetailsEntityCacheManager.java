@@ -17,9 +17,8 @@
 package org.orcid.core.manager;
 
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.manager.cache.EntityCacheManager;
 
-public interface ClientDetailsEntityCacheManager extends EntityCacheManager {
+public interface ClientDetailsEntityCacheManager {
 
     public ClientDetailsEntity retrieve(String clientId) throws IllegalArgumentException;
     
@@ -27,6 +26,5 @@ public interface ClientDetailsEntityCacheManager extends EntityCacheManager {
     
     public void removeAll();
     
-    public void remove(String clientId);
-    
+    public void remove(String clientId);    
 }

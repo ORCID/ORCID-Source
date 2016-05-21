@@ -23,6 +23,8 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -45,8 +47,14 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
+    private ProfileDao profileDao;
+    
+    @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private ClientDetailsDao clientDetailsDao;
+    
     LockerObjectsManager pubLocks = new LockerObjectsManager();
 
     @Resource(name = "sourceEntityCache")
@@ -70,8 +78,10 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
                     sourceEntity = toSourceEntity(sourceEntityCache.get(key));
                     if (needsFresh(dbDate, sourceEntity)) {
                         BaseEntity<String> entity = getEntity(id);
-                        if(entity == null)
+                        if(entity == null) {
+                            LOG.error("Unable to find id " + id);
                             throw new IllegalArgumentException("Invalid source " + id);  
+                        }
                         if(sourceEntity == null) {
                             sourceEntity = new SourceEntity();
                         }
@@ -121,45 +131,50 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
     
     private BaseEntity<String> getEntity(String id) {
         BaseEntity<String> result = null;
-        //First look for the entity in the client_details table
-        try {
+        // First look for the entity in the client_details table
+        if (clientDetailsDao.exists(id)) {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(id);
-            //If it is a public client, we should look again in the profile table, since the public client should not be a source for anything
-            if(ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
+            // If it is a public client, we should look again in the profile
+            // table, since the public client should not be a source for
+            // anything
+            if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
                 ProfileEntity profile = profileEntityCacheManager.retrieve(id);
                 result = (BaseEntity<String>) profile;
                 return result;
             } else {
                 result = (BaseEntity<String>) clientDetails;
-            }            
-        } catch(IllegalArgumentException e) {
-            //If it is not there, it means the source belongs to a record, so, fetch it from the profile table
+            }
+        } else {
+            // If it is not there, it means the source belongs to a record, so,
+            // fetch it from the profile table
             ProfileEntity profile = profileEntityCacheManager.retrieve(id);
             result = (BaseEntity<String>) profile;
         }
+
         return result;
     }
     
     private Date retrieveLastModifiedDate(String id) {
         Date lastModified = null;
         //Try to fetch the last modified from the client_details table
-        try {
+        if (clientDetailsDao.exists(id)) {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(id);
-            //If it is a public client, we should look again in the profile table, since the public client should not be a source for anything            
-            if(ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
-                ProfileEntity profile = profileEntityCacheManager.retrieve(id);
-                lastModified = profile.getLastModified();
+            // If it is a public client, we should look again in the profile
+            // table, since the public client should not be a source for
+            // anything
+            if (ClientType.PUBLIC_CLIENT.equals(clientDetails.getClientType())) {
+                lastModified = profileDao.retrieveLastModifiedDate(id);
             } else {
                 lastModified = clientDetails.getLastModified();
-            }            
-        } catch(IllegalArgumentException e) {
-            //If it is not there, it means the source belongs to a record, so, fetch it from the profile table
-            ProfileEntity profile = profileEntityCacheManager.retrieve(id);
-            lastModified = profile.getLastModified();
+            }
+        } else {
+            // If it is not there, it means the source belongs to a record, so,
+            // fetch it from the profile table
+            lastModified = profileDao.retrieveLastModifiedDate(id);
         }
         
         if(lastModified == null) {
-            LOG.debug("Unable to find last modified for:" + id);   
+            throw new IllegalArgumentException("Unable to find last modified for " + id);
         }
         
         return lastModified;

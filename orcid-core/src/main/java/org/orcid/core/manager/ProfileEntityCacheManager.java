@@ -17,9 +17,8 @@
 package org.orcid.core.manager;
 
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.manager.cache.EntityCacheManager;
 
-public interface ProfileEntityCacheManager extends EntityCacheManager {
+public interface ProfileEntityCacheManager {
 
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException;
     
