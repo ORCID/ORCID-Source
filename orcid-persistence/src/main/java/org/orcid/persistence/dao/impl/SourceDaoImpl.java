@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -36,8 +37,8 @@ public class SourceDaoImpl implements SourceDao {
     public Date getLastModified(String id) {
         Query query = entityManager.createNativeQuery("SELECT last_modified FROM client_details WHERE client_details_id = :id AND client_type != 'PUBLIC_CLIENT' UNION SELECT last_modified FROM profile WHERE orcid = :id");
         query.setParameter("id", id);        
-        Object result = query.getSingleResult();
-        return (Date) result;
+        List<Date> results = (List) query.getResultList();
+        return (Date) results.get(0);
     }
 
 }

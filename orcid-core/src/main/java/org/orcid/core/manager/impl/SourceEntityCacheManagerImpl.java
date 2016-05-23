@@ -20,10 +20,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SourceDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -44,11 +42,8 @@ import net.sf.ehcache.Element;
 public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
 
     @Resource
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileDao profileDao;
     
-    @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
     @Resource
     private ClientDetailsDao clientDetailsDao;
     
@@ -133,12 +128,12 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
         BaseEntity<String> result = null;
         // First look for the entity in the client_details table
         if (clientDetailsDao.existsAndIsNotPublicClient(id)) {
-            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(id);
+            ClientDetailsEntity clientDetails = clientDetailsDao.find(id);
             result = (BaseEntity<String>) clientDetails;            
         } else {
             // If it is not there, it means the source belongs to a record, so,
             // fetch it from the profile table
-            ProfileEntity profile = profileEntityCacheManager.retrieve(id);
+            ProfileEntity profile = profileDao.find(id);
             result = (BaseEntity<String>) profile;
         }
 

@@ -995,8 +995,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
-                if(otherNameEntity.getSource() != null) {
-                    Source source = createSource(otherNameEntity.getSource().getSourceId());
+                if(!PojoUtil.isEmpty(otherNameEntity.getElementSourceId())) {
+                    Source source = createSource(otherNameEntity.getElementSourceId());
                     otherName.setSource(source);
                 }
                 otherNames.getOtherName().add(otherName);

@@ -245,13 +245,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
 
     private boolean isDuplicated(OtherNameEntity existing, OtherName otherName, SourceEntity source) {
         if (!existing.getId().equals(otherName.getPutCode())) {
-            if (existing.getSource() != null) {
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
-                        return true;
-                    }
+            String existingSourceId = existing.getElementSourceId(); 
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                if (existing.getDisplayName() != null && existing.getDisplayName().equals(otherName.getContent())) {
+                    return true;
                 }
-            }
+            }            
         }
         return false;
     }
