@@ -178,6 +178,8 @@
 
     <bean id="identifierTypeDao" class="org.orcid.persistence.dao.impl.IdentifierTypeDaoImpl" />
     
+    <bean id="sourceDao" class="org.orcid.persistence.dao.impl.SourceDaoImpl" />
+    
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="liquibase">
         <property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
         <property name="dataSource" ref="\${org.orcid.persistence.db.dataSource}" />
