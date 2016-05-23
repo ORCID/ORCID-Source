@@ -44,7 +44,7 @@ if (typeof jQuery == 'undefined') {
     if (header && token){
 	    $(document).ajaxSend(function(e, xhr, options) {
 	        if (options.type == "POST") {
-	           if (   options.url.startsWith(orcidVar.baseUri) 
+	           if (   options.url.startsWith(orcidVar.baseUri)
 	               || options.url.startsWith(orcidVar.baseUriHttp)
 	               || options.url.startsWith('/')) {
 	               xhr.setRequestHeader(header, token);
