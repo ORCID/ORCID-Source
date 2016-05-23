@@ -81,6 +81,9 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
         }
     }
     
+    /**
+     * Get the element source id, util when we just need the id, not the complete source element
+     * */
     @Transient
     public String getElementSourceId() {
         if(!StringUtils.isEmpty(clientSourceId)) {
