@@ -25,14 +25,14 @@ import java.util.Map;
  */
 public class OrcidNotClaimedException extends ApplicationException {
     private static final long serialVersionUID = 1L;
-    
+
     public static final String ORCID = "orcid";
-    
+
     public OrcidNotClaimedException() {
         super();
-        }
-    
-        public OrcidNotClaimedException(Map<String, String> params) {
-                super(params);
-        }
+    }
+
+    public OrcidNotClaimedException(Map<String, String> params) {
+        super(params);
+    }
 }

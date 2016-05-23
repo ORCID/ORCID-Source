@@ -176,6 +176,17 @@
             <version>4.0.2</version>
         </dependency>
         
+        <!-- Messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>            
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.13.3</version>
+        </dependency>
         <!-- Test dependencies -->
 
     </dependencies>

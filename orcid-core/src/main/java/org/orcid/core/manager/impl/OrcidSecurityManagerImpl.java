@@ -27,8 +27,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -103,6 +103,16 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     
     @Value("${org.orcid.core.baseUri}")
     private String baseUrl;
+    
+    @Override
+    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
+        this.profileEntityCacheManager = profileEntityCacheManager;
+    }
+    
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    } 
     
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
@@ -419,9 +429,18 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
      * @throws OrcidDeprecatedException in case the account is deprecated
      * @throws OrcidNotClaimedException in case the account is not claimed
      * @throws LockedException in the case the account is locked
-     * */    
+     * */
     @Override
-    public void checkProfile(ProfileEntity profile) throws OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
+    public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
+        ProfileEntity profile = null;
+        
+        try {
+            profile = profileEntityCacheManager.retrieve(orcid);
+        } catch(IllegalArgumentException e) {
+            throw new NoResultException();
+        }
+
+    
         //Check if the profile is not claimed and not old enough
         if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
             //Let the creator access the profile even if it is not claimed and not old enough
@@ -458,5 +477,5 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         
     private boolean isOldEnough(ProfileEntity profile) {
         return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
-    }        
+    }          
 }

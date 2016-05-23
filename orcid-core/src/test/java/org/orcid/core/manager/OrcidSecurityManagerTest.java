@@ -18,15 +18,25 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.when;
 
 import java.security.AccessControlException;
+import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.common_rc2.Source;
@@ -39,6 +49,9 @@ import org.orcid.jaxb.model.record_rc2.GivenNames;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**
  * 
@@ -49,7 +62,25 @@ public class OrcidSecurityManagerTest extends BaseTest {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
-
+    
+    @Mock
+    private SourceManager sourceManager;
+    
+    @Mock
+    private ProfileEntityCacheManager profileEntityCacheManager;
+            
+    @Before
+    public void before() {
+        orcidSecurityManager.setSourceManager(sourceManager);
+        orcidSecurityManager.setProfileEntityCacheManager(profileEntityCacheManager);
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+    }
+    
+    @After
+    public void after() {
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+    }
+    
     @Test
     public void testCheckVisibilityOfActivityWhenUsingReadPublicScopeAndActivityIsPublicAndIsSource() {
         SecurityContextTestUtils.setUpSecurityContext(ScopePathType.READ_PUBLIC);
@@ -284,6 +315,75 @@ public class OrcidSecurityManagerTest extends BaseTest {
         }
     }
 
+    @Test(expected = LockedException.class)
+    public void testLockedRecord() {
+        ProfileEntity entity = createProfileEntity();
+        entity.setRecordLocked(true);        
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);        
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+        fail();
+    }
+    
+    @Test(expected = OrcidDeprecatedException.class)
+    public void testDeprecatedRecord() {
+        ProfileEntity entity = createProfileEntity();
+        entity.setPrimaryRecord(new ProfileEntity("0000-0000-0000-0001"));
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0001")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0001");
+        fail();
+    }
+    
+    @Test(expected = OrcidNotClaimedException.class)
+    public void testUnclaimedRecord() {
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+        ProfileEntity entity = createProfileEntity();
+        entity.setSubmissionDate(new Date());
+        entity.setClaimed(false);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+        fail();
+    }
+    
+    @Test
+    public void testUnclaimedRecordAfterClaimPeriod() {
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+        ProfileEntity entity = createProfileEntity();
+        entity.setSubmissionDate(DateUtils.addDays(new Date(), -11));
+        entity.setClaimed(false);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+    }
+    
+    @Test
+    public void testUnclaimedRecordOnClaimPeriodButAccessedByCreator() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-0000000000000000")));
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-0000000000000000");
+        ProfileEntity entity = createProfileEntity();
+        entity.setSubmissionDate(new Date());
+        entity.setClaimed(false);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+    }
+    
+    @Test(expected = OrcidNotClaimedException.class)
+    public void testUnclaimedRecordOnClaimPeriodButAccessedByAnyMember() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity("APP-1111111111111111")));
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-1111111111111111");
+        ProfileEntity entity = createProfileEntity();
+        entity.setSubmissionDate(new Date());
+        entity.setClaimed(false);
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenReturn(entity);
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+        fail();
+    }
+    
+    @Test(expected = NoResultException.class)
+    public void testNoResultException() {
+        when(profileEntityCacheManager.retrieve("0000-0000-0000-0000")).thenThrow(new IllegalArgumentException());
+        orcidSecurityManager.checkProfile("0000-0000-0000-0000");
+        fail();
+    }
+    
     public void checkScopes(String userOrcid, ScopePathType scopeThatShouldWork) {
         if (ScopePathType.READ_PUBLIC.equals(scopeThatShouldWork)) {
             System.out.println("Debug here");
@@ -328,4 +428,15 @@ public class OrcidSecurityManagerTest extends BaseTest {
         return otherName;
     }
 
+    private ProfileEntity createProfileEntity() {
+        ProfileEntity entity = new ProfileEntity();
+        entity.setClaimed(true);
+        entity.setDeactivationDate(null);
+        entity.setDeprecatedDate(null);
+        entity.setId("0000-0000-0000-0000");
+        entity.setRecordLocked(false);
+        entity.setSource(new SourceEntity(new ClientDetailsEntity("APP-0000000000000000")));
+        entity.setSubmissionDate(null);
+        return entity;
+    }
 }

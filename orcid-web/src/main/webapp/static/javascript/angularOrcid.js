@@ -7039,7 +7039,7 @@ orcidNgModule.controller('DelegatesCtrl',['$scope', '$compile', function Delegat
 
     $scope.getResults = function(rows){
         $.ajax({
-            url: orcidSearchUrlJs.buildUrl($scope.input),
+            url: orcidSearchUrlJs.buildUrl($scope.input)+'&callback=?',
             dataType: 'json',
             headers: { Accept: 'application/json'},
             success: function(data) {

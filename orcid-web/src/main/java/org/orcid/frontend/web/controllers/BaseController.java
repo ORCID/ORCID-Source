@@ -741,9 +741,7 @@ public class BaseController {
 
     @ModelAttribute("searchBaseUrl")
     protected String createSearchBaseUrl() {
-        String baseUrlWithCorrectedProtocol = orcidUrlManager.getBaseUrl().replaceAll("^https?:", "");
-        String baseUrlWithCorrectedContext = baseUrlWithCorrectedProtocol.replaceAll("/orcid-web$", "/orcid-pub-web");
-        return baseUrlWithCorrectedContext + "/v1.2/search/orcid-bio/";
+        return getPubBaseUri() + "/v1.2/search/orcid-bio/";
     }
 
     @ModelAttribute("locked")
