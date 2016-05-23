@@ -46,6 +46,7 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
+import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
@@ -178,6 +179,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private NotificationManager notificationManager;
+    
+    @Resource
+    private SourceManager sourceManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -398,44 +402,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public MemberType getGroupType(String orcid) {
         return profileDao.getGroupType(orcid);
-    }
-
-    /**
-     * Set the locked status of an account to true
-     * 
-     * @param orcid
-     *            the id of the profile that should be locked
-     * @return true if the account was locked
-     */
-    @Override
-    public boolean lockProfile(String orcid) {
-        return profileDao.lockProfile(orcid);
-    }
-
-    /**
-     * Set the locked status of an account to false
-     * 
-     * @param orcid
-     *            the id of the profile that should be unlocked
-     * @return true if the account was unlocked
-     */
-    @Override
-    public boolean unlockProfile(String orcid) {
-        return profileDao.unlockProfile(orcid);
-    }
-
-    /**
-     * Check if a profile is locked
-     * 
-     * @param orcid
-     *            the id of the profile to check
-     * @return true if the account is locked
-     */
-    @Override
-    public boolean isLocked(String orcid) {
-        if (PojoUtil.isEmpty(orcid))
-            return false;
-        return profileDao.isLocked(orcid);
     }
 
     @Override
@@ -922,7 +888,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
-    }        
+    }    
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

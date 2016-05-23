@@ -23,10 +23,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Resource;
-
+import javax.persistence.NoResultException;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.orcid.core.exception.OrcidDeprecatedException;
+import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.WrongSourceException;
@@ -36,6 +40,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
+import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -64,6 +69,7 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -92,6 +98,22 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     @Value("${org.orcid.core.token.write_validity_seconds:3600}")
     private int writeValiditySeconds;
 
+    @Value("${org.orcid.core.claimWaitPeriodDays:10}")
+    private int claimWaitPeriodDays;
+    
+    @Value("${org.orcid.core.baseUri}")
+    private String baseUrl;
+    
+    @Override
+    public void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager) {
+        this.profileEntityCacheManager = profileEntityCacheManager;
+    }
+    
+    @Override
+    public void setSourceManager(SourceManager sourceManager) {
+        this.sourceManager = sourceManager;
+    } 
+    
     @Override
     public void checkVisibility(Filterable filterable, String orcid) {
         OAuth2Authentication oAuth2Authentication = getOAuth2Authentication();
@@ -396,4 +418,64 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }
+    
+    /**
+     * Checks a record status and throw an exception indicating if the profile have any of the following conditions:
+     * - The record is not claimed and is not old enough nor being accessed by its creator
+     * - It is locked
+     * - It is deprecated
+     * - It is deactivated
+     * 
+     * @throws OrcidDeprecatedException in case the account is deprecated
+     * @throws OrcidNotClaimedException in case the account is not claimed
+     * @throws LockedException in the case the account is locked
+     * */
+    @Override
+    public void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException {
+        ProfileEntity profile = null;
+        
+        try {
+            profile = profileEntityCacheManager.retrieve(orcid);
+        } catch(IllegalArgumentException e) {
+            throw new NoResultException();
+        }
+
+    
+        //Check if the profile is not claimed and not old enough
+        if((profile.getClaimed() == null || Boolean.FALSE.equals(profile.getClaimed())) && !isOldEnough(profile)) {
+            //Let the creator access the profile even if it is not claimed and not old enough
+            SourceEntity currentSourceEntity = sourceManager.retrieveSourceEntity();
+            
+            String profileSource = profile.getSource() == null ? null : profile.getSource().getSourceId();
+            String currentSource = currentSourceEntity == null ? null : currentSourceEntity.getSourceId();
+            
+            //If the profile doesn't have source or the current source is not the profile source, throw an exception
+            if(profileSource == null || !Objects.equals(profileSource, currentSource)) {
+                throw new OrcidNotClaimedException();
+            }                        
+        }
+        
+        // Check if the user record is deprecated
+        if(profile.getPrimaryRecord() != null) {
+            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(profile.getPrimaryRecord().getId());
+            Map<String, String> params = new HashMap<String, String>();
+            params.put(OrcidDeprecatedException.ORCID, primary.toString());
+            if (profile.getDeprecatedDate() != null) {
+                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(profile.getDeprecatedDate());
+                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
+            }
+            throw new OrcidDeprecatedException(params);
+        }
+        
+        //Check if the record is locked
+        if(!profile.isAccountNonLocked()) {
+            LockedException lockedException = new LockedException();
+            lockedException.setOrcid(profile.getId());
+            throw lockedException;
+        }
+    }
+        
+    private boolean isOldEnough(ProfileEntity profile) {
+        return DateUtils.olderThan(profile.getSubmissionDate(), claimWaitPeriodDays);
+    }          
 }

@@ -100,12 +100,6 @@
 				<xs:element ref="internal:internal" minOccurs="0"
 					maxOccurs="1" />
 			</xs:sequence>
-			<xs:attribute name="type" type="common:orcid-type"
-				default="user" />
-			<xs:attribute name="clientType" type="common:client-type"
-				use="optional" />
-			<xs:attribute name="groupType" type="common:group-type"
-				use="optional" />
 		</xs:complexType>
 	</xs:element>
 

@@ -104,6 +104,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
+ * Usually run with -Xmx2g -Dorg.orcid.config.file=classpath:staging-persistence.properties
  * 
  * @author Angel Montenegro
  * 
@@ -530,7 +531,7 @@ public class SetUpClientsAndUsers {
         orcidProfileManager.createOrcidProfile(orcidProfile, false, false);
         
         if(params.containsKey(LOCKED)) {
-            profileEntityManager.lockProfile(params.get(ORCID));               
+            orcidProfileManager.lockProfile(params.get(ORCID));               
         }        
         
         if(params.containsKey(DEVELOPER_TOOLS)) {

@@ -81,6 +81,12 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private NotificationManager notificationManager;
+    
+    @Resource 
+    private ExternalIDValidator externalIDValidator;
+
+    @Resource 
+    private ActivityValidator activityValidator;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -190,7 +196,7 @@ public class WorkManagerImpl implements WorkManager {
         }
 
         if (applyAPIValidations) {
-            ActivityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
+            activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
             Date lastModified = profileEntityManager.getLastModified(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
             List<MinimizedWorkEntity> works = workCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
@@ -200,14 +206,14 @@ public class WorkManagerImpl implements WorkManager {
                 if (works != null) {
                     List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
                     for (Work existing : workEntities) {
-                        ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
+                        activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
                     }
                 }
             }
         } else {
             // validate external ID vocab
-            ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());
+            externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
         }
 
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
@@ -229,17 +235,17 @@ public class WorkManagerImpl implements WorkManager {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         if (applyAPIValidations) {
-            ActivityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
+            activityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
             List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());            
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
-                    ActivityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
+                    activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(), sourceEntity);
                 }
             }
         }else{
             //validate external ID vocab
-            ExternalIDValidator.getInstance().validateWorkOrPeerReview(work.getExternalIdentifiers());            
+            externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());            
         }
                         
         SourceEntity existingSource = workEntity.getSource();

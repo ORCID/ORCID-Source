@@ -750,7 +750,7 @@ public class BaseController {
         if (PojoUtil.isEmpty(orcid)) {
             return false;
         }
-        return profileEntityManager.isLocked(orcid);
+        return orcidProfileManager.isLocked(orcid);
     }
 
     protected String calculateRedirectUrl(HttpServletRequest request, HttpServletResponse response) {

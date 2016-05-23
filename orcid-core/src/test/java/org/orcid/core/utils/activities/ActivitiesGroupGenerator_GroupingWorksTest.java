@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.orcid.jaxb.model.common_rc2.Title;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDType;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 
@@ -407,13 +406,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
             switch (i) {
             case 1:
                 ExternalID e1 = new ExternalID();
-                e1.setType(ExternalIDType.AGR.value());
+                e1.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e1.setValue("A");
                 ExternalID e2 = new ExternalID();
-                e2.setType(ExternalIDType.AGR.value());
+                e2.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e2.setValue("B");
                 ExternalID e3 = new ExternalID();
-                e3.setType(ExternalIDType.AGR.value());
+                e3.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e3.setValue("C");
                 wei.getExternalIdentifier().add(e1);
                 wei.getExternalIdentifier().add(e2);
@@ -421,13 +420,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 2:
                 ExternalID e4 = new ExternalID();
-                e4.setType(ExternalIDType.AGR.value());
+                e4.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e4.setValue("C");
                 ExternalID e5 = new ExternalID();
-                e5.setType(ExternalIDType.AGR.value());
+                e5.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e5.setValue("D");
                 ExternalID e6 = new ExternalID();
-                e6.setType(ExternalIDType.AGR.value());
+                e6.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e6.setValue("E");
                 wei.getExternalIdentifier().add(e4);
                 wei.getExternalIdentifier().add(e5);
@@ -435,13 +434,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 3: 
                 ExternalID e7 = new ExternalID();
-                e7.setType(ExternalIDType.AGR.value());
+                e7.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e7.setValue("X");
                 ExternalID e8 = new ExternalID();
-                e8.setType(ExternalIDType.AGR.value());
+                e8.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e8.setValue("Y");
                 ExternalID e9 = new ExternalID();
-                e9.setType(ExternalIDType.AGR.value());
+                e9.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e9.setValue("Z");
                 wei.getExternalIdentifier().add(e7);
                 wei.getExternalIdentifier().add(e8);
@@ -449,13 +448,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 4: 
                 ExternalID e10 = new ExternalID();
-                e10.setType(ExternalIDType.AGR.value());
+                e10.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e10.setValue("Y");
                 ExternalID e11 = new ExternalID();
-                e11.setType(ExternalIDType.AGR.value());
+                e11.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e11.setValue("B");
                 ExternalID e12 = new ExternalID();
-                e12.setType(ExternalIDType.AGR.value());
+                e12.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e12.setValue("1");
                 wei.getExternalIdentifier().add(e10);
                 wei.getExternalIdentifier().add(e11);
@@ -463,13 +462,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 5:
                 ExternalID e13 = new ExternalID();
-                e13.setType(ExternalIDType.AGR.value());
+                e13.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e13.setValue("M");
                 ExternalID e14 = new ExternalID();
-                e14.setType(ExternalIDType.AGR.value());
+                e14.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e14.setValue("N");
                 ExternalID e15 = new ExternalID();
-                e15.setType(ExternalIDType.AGR.value());
+                e15.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.AGR.value());
                 e15.setValue("O");
                 wei.getExternalIdentifier().add(e13);
                 wei.getExternalIdentifier().add(e14);
@@ -477,13 +476,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 6: 
                 ExternalID e16 = new ExternalID();
-                e16.setType(ExternalIDType.ARXIV.value());
+                e16.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ARXIV.value());
                 e16.setValue("A");
                 ExternalID e17 = new ExternalID();
-                e17.setType(ExternalIDType.ARXIV.value());
+                e17.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ARXIV.value());
                 e17.setValue("B");
                 ExternalID e18 = new ExternalID();
-                e18.setType(ExternalIDType.ARXIV.value());
+                e18.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ARXIV.value());
                 e18.setValue("C");
                 wei.getExternalIdentifier().add(e16);
                 wei.getExternalIdentifier().add(e17);
@@ -491,13 +490,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 7:
                 ExternalID e19 = new ExternalID();
-                e19.setType(ExternalIDType.DOI.value());
+                e19.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value());
                 e19.setValue("1");
                 ExternalID e20 = new ExternalID();
-                e20.setType(ExternalIDType.DOI.value());
+                e20.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value());
                 e20.setValue("2");
                 ExternalID e21 = new ExternalID();
-                e21.setType(ExternalIDType.ARXIV.value());
+                e21.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ARXIV.value());
                 e21.setValue("B");
                 wei.getExternalIdentifier().add(e19);
                 wei.getExternalIdentifier().add(e20);
@@ -505,13 +504,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 10:
                 ExternalID e22 = new ExternalID();
-                e22.setType(ExternalIDType.ISSN.value());
+                e22.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e22.setValue("1");
                 ExternalID e23 = new ExternalID();
-                e23.setType(ExternalIDType.ISSN.value());
+                e23.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e23.setValue("2");
                 ExternalID e24 = new ExternalID();
-                e24.setType(ExternalIDType.ISSN.value());
+                e24.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e24.setValue("3");
                 wei.getExternalIdentifier().add(e22);
                 wei.getExternalIdentifier().add(e23);
@@ -519,13 +518,13 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 11:
                 ExternalID e25 = new ExternalID();
-                e25.setType(ExternalIDType.ISSN.value());
+                e25.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e25.setValue("3");
                 ExternalID e26 = new ExternalID();
-                e26.setType(ExternalIDType.ISSN.value());
+                e26.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e26.setValue("3");
                 ExternalID e27 = new ExternalID();
-                e27.setType(ExternalIDType.ISSN.value());
+                e27.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e27.setValue("3");
                 wei.getExternalIdentifier().add(e25);
                 wei.getExternalIdentifier().add(e26);
@@ -533,20 +532,20 @@ public class ActivitiesGroupGenerator_GroupingWorksTest extends ActivitiesGroupG
                 break;
             case 12: 
                 ExternalID e28 = new ExternalID();
-                e28.setType(ExternalIDType.DOI.value());
+                e28.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value());
                 e28.setValue("1");
                 ExternalID e29 = new ExternalID();
-                e29.setType(ExternalIDType.ISSN.value());
+                e29.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e29.setValue("1");
                 wei.getExternalIdentifier().add(e28);
                 wei.getExternalIdentifier().add(e29);
                 break;
             case 13:
                 ExternalID e30 = new ExternalID();
-                e30.setType(ExternalIDType.DOI.value());
+                e30.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.DOI.value());
                 e30.setValue("1");
                 ExternalID e31 = new ExternalID();
-                e31.setType(ExternalIDType.ISSN.value());
+                e31.setType(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.value());
                 e31.setValue("4");
                 wei.getExternalIdentifier().add(e30);
                 wei.getExternalIdentifier().add(e31);

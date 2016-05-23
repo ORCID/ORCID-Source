@@ -307,13 +307,13 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 for (ExternalID extId : extIds.getExternalIdentifier()) {
                     
                     if(extId.getRelationship() == null) {
-                        if(org.orcid.jaxb.model.record_rc2.ExternalIDType.ISSN.equals(extId.getType())) {
+                        if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
                             if(org.orcid.jaxb.model.record_rc2.WorkType.BOOK.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
                                 extId.setRelationship(Relationship.SELF);
                             }
-                        } else if(org.orcid.jaxb.model.record_rc2.ExternalIDType.ISBN.equals(extId.getType())) {
+                        } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
                             if(org.orcid.jaxb.model.record_rc2.WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || org.orcid.jaxb.model.record_rc2.WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {

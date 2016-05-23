@@ -1,0 +1,316 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
+package org.orcid.frontend.web.controllers;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.time.DateUtils;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.locale.LocaleManager;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.test.DBUnitTest;
+import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * @author Angel Montenegro
+ */
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
+public class PublicProfileControllerTest extends DBUnitTest {
+    
+    private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/BiographyEntityData.xml", "/data/OrgsEntityData.xml", 
+            "/data/OrgAffiliationEntityData.xml", "/data/PeerReviewEntityData.xml", "/data/ProfileFundingEntityData.xml", "/data/RecordNameEntityData.xml", 
+            "/data/WorksEntityData.xml");
+    
+    private String unclaimedUserOrcid = "0000-0000-0000-0001";
+    private String userOrcid = "0000-0000-0000-0003";    
+    private String deprecatedUserOrcid = "0000-0000-0000-0004";
+    private String lockedUserOrcid = "0000-0000-0000-0005";    
+    
+    @Resource
+    PublicProfileController publicProfileController;
+    
+    @Resource
+    private LocaleManager localeManager;
+    
+    @Resource
+    private ProfileDao profileDao;
+    
+    @Mock
+    private HttpServletRequest request;
+    
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+        assertNotNull(publicProfileController);
+     }
+    
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
+    @AfterClass
+    public static void afterClass() throws Exception {
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
+    }
+    
+    @Test
+    public void testViewValidUser() {
+        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, userOrcid);
+        assertEquals("public_profile_v3", mav.getViewName());
+        Map<String, Object> model = mav.getModel();
+        assertNotNull(model);
+        assertTrue(model.containsKey("isPublicProfile"));
+        assertTrue(model.containsKey("orcidId"));
+        assertEquals(userOrcid, model.get("orcidId"));
+        assertTrue(model.containsKey("profile"));
+        OrcidProfile profile = (OrcidProfile) model.get("profile");
+        assertNotNull(profile.getOrcidBio());
+        assertNotNull(profile.getOrcidBio().getBiography());
+        assertEquals("Biography for 0000-0000-0000-0003", profile.getOrcidBio().getBiography().getContent());
+        assertTrue(model.containsKey("displayName"));
+        String displayName = (String) model.get("displayName");
+        assertEquals("Credit Name", displayName);
+        assertTrue(model.containsKey("title"));
+        assertEquals(localeManager.resolveMessage("layout.public-layout.title", displayName, userOrcid), model.get("title"));
+        
+        assertTrue(model.containsKey("publicOtherNames"));
+        OtherNames otherNames = (OtherNames) model.get("publicOtherNames");
+        assertNotNull(otherNames.getOtherNames());
+        assertEquals(1, otherNames.getOtherNames().size());
+        assertEquals(Long.valueOf(13), otherNames.getOtherNames().get(0).getPutCode());
+        assertEquals("Other Name PUBLIC", otherNames.getOtherNames().get(0).getContent());
+        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicAddresses"));
+        Address address = (Address) model.get("publicAddresses");
+        assertEquals(Long.valueOf(9), address.getPutCode());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        
+        assertTrue(model.containsKey("countryName"));
+        assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
+        
+        assertTrue(model.containsKey("publicKeywords"));
+        Keywords keywords = (Keywords) model.get("publicKeywords");
+        assertNotNull(keywords.getKeywords());        
+        assertEquals(1, keywords.getKeywords().size());
+        assertEquals(Long.valueOf(9), keywords.getKeywords().get(0).getPutCode());
+        assertEquals("PUBLIC", keywords.getKeywords().get(0).getContent());
+        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());        
+        
+        assertTrue(model.containsKey("publicResearcherUrls"));
+        ResearcherUrls rUrls = (ResearcherUrls) model.get("publicResearcherUrls");
+        assertNotNull(rUrls.getResearcherUrls());
+        assertEquals(1, rUrls.getResearcherUrls().size());
+        assertEquals(Long.valueOf(13), rUrls.getResearcherUrls().get(0).getPutCode());
+        assertEquals("public_rurl", rUrls.getResearcherUrls().get(0).getUrlName());
+        assertEquals(Visibility.PUBLIC, rUrls.getResearcherUrls().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicEmails"));
+        Emails emails = (Emails) model.get("publicEmails");
+        assertNotNull(emails.getEmails());
+        assertEquals(1, emails.getEmails().size());        
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
+        assertEquals(Visibility.PUBLIC, emails.getEmails().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicPersonExternalIdentifiers"));
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) model.get("publicPersonExternalIdentifiers");
+        assertNotNull(extIds.getExternalIdentifier());
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertEquals("http://ext-id/public_ref", extIds.getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("workIdsJson"));
+        assertEquals("[11]", model.get("workIdsJson"));
+        
+        assertTrue(model.containsKey("affiliationIdsJson"));
+        assertEquals("[20,17]", model.get("affiliationIdsJson"));
+        
+        assertTrue(model.containsKey("fundingIdsJson"));
+        assertEquals("[10]", model.get("fundingIdsJson"));
+        
+        assertTrue(model.containsKey("peerReviewIdsJson"));
+        assertEquals("[9]", model.get("peerReviewIdsJson"));
+        
+        assertTrue(model.containsKey("isProfileEmpty"));
+        Boolean isProfileEmpty = (Boolean) model.get("isProfileEmpty");
+        assertFalse(isProfileEmpty);
+        assertFalse(model.containsKey("noIndex"));
+    }
+    
+    @Test
+    public void testViewLockedUser() {
+        String displayName = localeManager.resolveMessage("public_profile.deactivated.given_names") + " " + localeManager.resolveMessage("public_profile.deactivated.family_name");
+        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, lockedUserOrcid);
+        Map<String, Object> model = mav.getModel();
+        assertUnavailableProfileBasicData(mav, lockedUserOrcid, displayName);    
+        assertTrue(model.containsKey("locked"));
+        assertTrue(Boolean.TRUE.equals(model.get("locked")));
+    }
+    
+    @Test
+    public void testViewDeprecatedUser() {
+        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, deprecatedUserOrcid);
+        Map<String, Object> model = mav.getModel();
+        assertUnavailableProfileBasicData(mav, deprecatedUserOrcid, null);
+        assertTrue(model.containsKey("deprecated"));
+        assertTrue(Boolean.TRUE.equals(model.get("deprecated")));
+        assertTrue(model.containsKey("primaryRecord"));
+        assertEquals("0000-0000-0000-0003", model.get("primaryRecord"));
+    }
+    
+    @Test
+    public void testViewClaimedUserBeforeIsLongEnough() {
+        ProfileEntity profile = profileDao.find(unclaimedUserOrcid);
+        profile.setSubmissionDate(new Date());
+        profileDao.merge(profile);
+        profileDao.flush();
+        String displayName = localeManager.resolveMessage("orcid.reserved_for_claim");
+        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, unclaimedUserOrcid);
+        assertUnavailableProfileBasicData(mav, unclaimedUserOrcid, displayName);        
+    }
+    
+    @Test
+    public void testViewClaimedUserWhenIsLongEnough() {
+        //Update the submission date so it is long enough
+        ProfileEntity profileEntity = profileDao.find(unclaimedUserOrcid);
+        profileEntity.setSubmissionDate(DateUtils.addDays(new Date(), -10));
+        profileDao.merge(profileEntity);
+        profileDao.flush();
+        ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, unclaimedUserOrcid);        
+        assertEquals("public_profile_v3", mav.getViewName());
+        Map<String, Object> model = mav.getModel();
+        assertNotNull(model);
+        assertTrue(model.containsKey("isPublicProfile"));
+        assertTrue(model.containsKey("orcidId"));
+        assertEquals(unclaimedUserOrcid, model.get("orcidId"));
+        assertTrue(model.containsKey("profile"));
+        OrcidProfile profile = (OrcidProfile) model.get("profile");
+        assertNotNull(profile.getOrcidBio());
+        assertNull(profile.getOrcidBio().getBiography());
+        assertFalse(model.containsKey("displayName"));        
+        assertFalse(model.containsKey("title"));
+        
+        assertTrue(model.containsKey("publicOtherNames"));
+        OtherNames otherNames = (OtherNames) model.get("publicOtherNames");
+        assertNotNull(otherNames.getOtherNames());
+        assertEquals(1, otherNames.getOtherNames().size());
+        assertEquals(Long.valueOf(18), otherNames.getOtherNames().get(0).getPutCode());
+        assertEquals("PUBLIC", otherNames.getOtherNames().get(0).getContent());
+        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicAddresses"));
+        Address address = (Address) model.get("publicAddresses");
+        assertEquals(Long.valueOf(14), address.getPutCode());
+        assertEquals(Iso3166Country.US, address.getCountry().getValue());
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        
+        assertTrue(model.containsKey("countryName"));
+        assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
+        
+        assertTrue(model.containsKey("publicKeywords"));
+        Keywords keywords = (Keywords) model.get("publicKeywords");
+        assertNotNull(keywords.getKeywords());        
+        assertEquals(1, keywords.getKeywords().size());
+        assertEquals(Long.valueOf(14), keywords.getKeywords().get(0).getPutCode());
+        assertEquals("PUBLIC", keywords.getKeywords().get(0).getContent());
+        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());        
+        
+        assertTrue(model.containsKey("publicResearcherUrls"));
+        ResearcherUrls rUrls = (ResearcherUrls) model.get("publicResearcherUrls");
+        assertNotNull(rUrls.getResearcherUrls());
+        assertEquals(1, rUrls.getResearcherUrls().size());
+        assertEquals(Long.valueOf(18), rUrls.getResearcherUrls().get(0).getPutCode());
+        assertEquals("public", rUrls.getResearcherUrls().get(0).getUrlName());
+        assertEquals(Visibility.PUBLIC, rUrls.getResearcherUrls().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicEmails"));
+        Emails emails = (Emails) model.get("publicEmails");
+        assertNotNull(emails.getEmails());
+        assertEquals(1, emails.getEmails().size());        
+        assertEquals("public_0000-0000-0000-0001@test.orcid.org", emails.getEmails().get(0).getEmail());
+        assertEquals(Visibility.PUBLIC, emails.getEmails().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicPersonExternalIdentifiers"));
+        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) model.get("publicPersonExternalIdentifiers");
+        assertNotNull(extIds.getExternalIdentifier());
+        assertEquals(1, extIds.getExternalIdentifier().size());
+        assertEquals(Long.valueOf(18), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertEquals("http://ext-id/self/public", extIds.getExternalIdentifier().get(0).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+        
+        assertTrue(model.containsKey("isProfileEmpty"));
+        Boolean isProfileEmpty = (Boolean) model.get("isProfileEmpty");
+        assertTrue(isProfileEmpty);
+        assertFalse(model.containsKey("noIndex"));
+        
+        //Update the submission date so it is not long enough
+        profileEntity = profileDao.find(unclaimedUserOrcid);
+        profileEntity.setSubmissionDate(new Date());
+        profileDao.merge(profileEntity);
+        profileDao.flush();
+    }
+    
+    private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
+        assertEquals("public_profile_unavailable", mav.getViewName());
+        Map<String, Object> model = mav.getModel();
+        assertTrue(model.containsKey("orcidId"));
+        assertEquals(orcid, model.get("orcidId"));  
+        if(displayName != null) {
+            assertTrue(model.containsKey("displayName"));
+            assertEquals(displayName, model.get("displayName"));
+            assertTrue(model.containsKey("title"));
+            assertEquals(localeManager.resolveMessage("layout.public-layout.title", displayName, orcid), model.get("title"));
+        }
+    }
+}

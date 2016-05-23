@@ -250,6 +250,12 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @return
      * */
     OrcidProfile reactivateOrcidProfile(OrcidProfile orcidProfile);
+    
+    boolean lockProfile(String orcid);
+
+    boolean unlockProfile(String orcid);
+
+    boolean isLocked(String orcid);
 
     OrcidWorks dedupeWorks(OrcidWorks orcidWorks);
 

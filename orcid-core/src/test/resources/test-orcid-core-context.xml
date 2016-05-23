@@ -28,5 +28,6 @@
 		<property name="encryptionManager" ref="encryptionManager" />		        
 		<property name="templateManager" ref="templateManager" />
         <property name="apiRecordCreationEmailEnabled" value="${org.orcid.core.mail.apiRecordCreationEmailEnabled:true}" />
-	</bean>		
+	</bean>	
+	
 </beans>
