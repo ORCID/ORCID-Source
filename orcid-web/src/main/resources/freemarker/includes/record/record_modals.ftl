@@ -35,11 +35,12 @@
 						<div class="scroll-area">		
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames | orderBy : 'displayIndex'" ng-cloak> 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<div class="aka">
-										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
-										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.sourceName"></span>										
-									</div>
-									<div class="source" ng-show="otherName.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{otherName.sourceName}}</div>
+									<div class="aka">					
+										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput"/>
+										<input type="text" disabled="disabled" ng-if="otherName.source == null"/>										
+										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.source != null"></span>
+									</div>									    
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
 								</div>							
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<ul class="record-settings pull-right">
