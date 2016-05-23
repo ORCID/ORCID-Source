@@ -28,18 +28,21 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.core.BaseTest;
-import org.orcid.core.manager.ClientDetailsEntityCacheManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.persistence.dao.ClientDetailsDao;
+import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.SourceDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -47,7 +50,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -57,7 +59,6 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-@DirtiesContext
 public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     @Resource
     private JpaJaxbOtherNameAdapter adapter;        
@@ -66,21 +67,17 @@ public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     private SourceEntityCacheManager sourceEntityCacheManager;
     
     @Mock
-    private ProfileEntityCacheManager profileEntityCacheManager;
+    private ProfileDao profileDao;
     
     @Mock
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    private ClientDetailsDao clientDetailsDao;
+    
+    @Mock
+    private SourceDao sourceDao;
     
     @Before
-    public void init() throws Exception {
-        assertNotNull(sourceEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "profileEntityCacheManager", profileEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "clientDetailsEntityCacheManager", clientDetailsEntityCacheManager);
-    }
-    
-    @Test
-    public void fromOtherNameToOtherNameEntityTest() throws JAXBException {
-        when(profileEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ProfileEntity>(){
+    public void init() throws Exception {        
+        when(profileDao.find((Matchers.<String> any()))).thenAnswer(new Answer<ProfileEntity>(){
             @Override
             public ProfileEntity answer(InvocationOnMock invocation) throws Throwable {
                 String id = (String)invocation.getArguments()[0];
@@ -91,8 +88,26 @@ public class JpaJaxbOtherNameAdapterTest extends BaseTest {
             
         });
         
-        when(clientDetailsEntityCacheManager.retrieve((Matchers.<String> any()))).thenThrow(new IllegalArgumentException());
+        when(clientDetailsDao.find((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
+            @Override
+            public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
+                String id = (String)invocation.getArguments()[0];
+                ClientDetailsEntity client = new ClientDetailsEntity(id);
+                client.setLastModified(new Date());
+                return client;
+            }            
+        });
         
+        when(sourceDao.getLastModified((Matchers.<String> any()))).thenReturn(new Date());
+        
+        assertNotNull(sourceEntityCacheManager);
+        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "sourceDao", sourceDao);
+        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "profileDao", profileDao);        
+        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "clientDetailsDao", clientDetailsDao);
+    }    
+    
+    @Test
+    public void fromOtherNameToOtherNameEntityTest() throws JAXBException {                
         OtherName otherName = getOtherName();
         OtherNameEntity otherNameEntity = adapter.toOtherNameEntity(otherName);
         assertNotNull(otherNameEntity);
@@ -104,17 +119,7 @@ public class JpaJaxbOtherNameAdapterTest extends BaseTest {
     }
     
     @Test
-    public void fromOtherNameEntityToOtherNameTest() {
-        when(clientDetailsEntityCacheManager.retrieve((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
-            @Override
-            public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
-                String id = (String)invocation.getArguments()[0];
-                ClientDetailsEntity client = new ClientDetailsEntity(id);
-                client.setLastModified(new Date());
-                return client;
-            }            
-        });
-        
+    public void fromOtherNameEntityToOtherNameTest() {                
         OtherNameEntity entity = getOtherNameEntity();
         OtherName otherName = adapter.toOtherName(entity);
         assertNotNull(otherName);
