@@ -33,11 +33,12 @@ public class SourceDaoImpl implements SourceDao {
     @Resource
     private EntityManager entityManager;
     
+    @SuppressWarnings("unchecked")
     @Override
     public Date getLastModified(String id) {
         Query query = entityManager.createNativeQuery("SELECT last_modified FROM client_details WHERE client_details_id = :id AND client_type != 'PUBLIC_CLIENT' UNION SELECT last_modified FROM profile WHERE orcid = :id");
         query.setParameter("id", id);        
-        List<Date> results = (List) query.getResultList();
+        List<Date> results = (List<Date>) query.getResultList();
         return (Date) results.get(0);
     }
 

@@ -70,6 +70,7 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -886,8 +887,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(getCurrentUserOrcid());
-        NamesForm nf = NamesForm.valueOf(personalDetails);
+        Name name = personalDetailsManager.getName(getCurrentUserOrcid());
+        NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
 
