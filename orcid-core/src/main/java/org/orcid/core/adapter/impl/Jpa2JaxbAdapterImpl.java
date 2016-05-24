@@ -698,9 +698,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         }
                         break;
                     }
-                    if(address.getSource() != null) {
-                        sourceEntity = address.getSource();
-                    }
+                    sourceEntity = address.getSource();                    
                 }
             }
         }

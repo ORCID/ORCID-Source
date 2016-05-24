@@ -42,6 +42,7 @@ import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
 public class AddressManagerImpl implements AddressManager {
@@ -174,10 +175,13 @@ public class AddressManagerImpl implements AddressManager {
     }
 
     private boolean isDuplicated(AddressEntity existing, Address address, SourceEntity source) {
-        //If they have the same source
-        if(existing.getSource() != null && existing.getSource().getSourceId().equals(source.getSourceId())) {
-            if(existing.getIso2Country().equals(address.getCountry().getValue())) {
-                return true;
+        if (!existing.getId().equals(address.getPutCode())) {
+            //If they have the same source 
+            String existingSourceId = existing.getElementSourceId(); 
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                if(existing.getIso2Country().equals(address.getCountry().getValue())) {
+                    return true;
+                }
             }
         }
         return false;

@@ -41,14 +41,13 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  */
 @Entity
 @Table(name = "address")
-public class AddressEntity extends BaseEntity<Long> implements ProfileAware, SourceAware {
+public class AddressEntity extends SourceAwareEntity<Long> implements ProfileAware, SourceAware {
     private static final long serialVersionUID = -331185018871126442L;
     private Long id;
     private Iso3166Country iso2Country;
     private Visibility visibility;
     private Boolean primary = Boolean.FALSE;
     private ProfileEntity user;
-    private SourceEntity source;
     private Long displayIndex;
 
     @Id
@@ -83,14 +82,6 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
     }
 
     public void setUser(ProfileEntity user) {
@@ -135,7 +126,8 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         result = prime * result + ((iso2Country == null) ? 0 : iso2Country.hashCode());
         result = prime * result + ((primary == null) ? 0 : primary.hashCode());
         result = prime * result + ((user == null) ? 0 : user.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((sourceId == null) ? 0 : sourceId.hashCode());
+        result = prime * result + ((clientSourceId == null) ? 0 : clientSourceId.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -165,11 +157,6 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
             if (other.user != null)
                 return false;
         } else if (!user.equals(other.user))
-            return false;
-        if (source == null) {
-            if (other.source != null)
-                return false;
-        } else if (!source.equals(other.source))
             return false;
         if (visibility != other.visibility)
             return false;
