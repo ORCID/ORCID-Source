@@ -43,7 +43,13 @@ if (typeof jQuery == 'undefined') {
     var header = $("meta[name='_csrf_header']").attr("content");    
     if (header && token){
 	    $(document).ajaxSend(function(e, xhr, options) {
-	        xhr.setRequestHeader(header, token);
+	        if (options.type == "POST") {
+	           if (   options.url.startsWith(orcidVar.baseUri)
+	               || options.url.startsWith(orcidVar.baseUriHttp)
+	               || options.url.startsWith('/')) {
+	               xhr.setRequestHeader(header, token);
+	           };
+	        };
 	    });
     }
 </script>
