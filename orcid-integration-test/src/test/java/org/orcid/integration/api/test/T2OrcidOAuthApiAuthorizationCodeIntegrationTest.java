@@ -222,7 +222,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     public void testGetBioReadLimitedWhenAlreadySignedIn() throws JSONException, InterruptedException {
         String scopes = "/orcid-bio/read-limited";
         webDriverHelper.signIn("michael@bentine.com", "password");
-        String accessToken = obtainAccessToken(scopes, true);
+        
+        String accessToken = obtainAccessTokenWhenAlreadyLogged(webDriver, scopes);
 
         ClientResponse bioResponse1 = oauthT2Client.viewBioDetailsJson("4444-4444-4444-4442", accessToken);
         assertEquals(200, bioResponse1.getStatus());
@@ -914,13 +915,16 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         
         ClientResponse clientResponse = oauthT2Client.addWorksJson("4444-4444-4444-4443", orcidMessage, accessToken);
         assertEquals(403, clientResponse.getStatus());
-    }
-
-    private String obtainAccessToken(String scopes) throws JSONException, InterruptedException {
-        return obtainAccessToken(scopes, false);
+    }    
+    
+    private String obtainAccessTokenWhenAlreadyLogged (WebDriver webDriver, String scopes) throws JSONException, InterruptedException {
+        String authorizationCode = webDriverHelper.obtainAuthorizationCodeWhenAlreadySignedIn(webDriver, scopes, CLIENT_DETAILS_ID);
+        String accessToken = getAccessTokenFromAuthorizationCode(authorizationCode, scopes);
+        
+        return accessToken;
     }
     
-    private String obtainAccessToken(String scopes, boolean isLoggedIn) throws JSONException, InterruptedException {
+    private String obtainAccessToken(String scopes) throws JSONException, InterruptedException {
 
         for (TokenStore token : tokens) {
             if (token.getScope().equals(scopes) && token.getUser().equals(USER) && token.getClientId().equals(CLIENT_DETAILS_ID)) {
@@ -928,8 +932,15 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
             }
         }
 
-        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, USER, PASSWORD, isLoggedIn);
+        String authorizationCode = webDriverHelper.obtainAuthorizationCode(scopes, CLIENT_DETAILS_ID, USER, PASSWORD);
+        String accessToken = getAccessTokenFromAuthorizationCode(authorizationCode, scopes);        
+        TokenStore newToken = new TokenStore(CLIENT_DETAILS_ID, USER, scopes, accessToken);
+        tokens.add(newToken);
 
+        return accessToken;
+    }
+    
+    private String getAccessTokenFromAuthorizationCode(String authorizationCode, String scopes) throws JSONException {
         MultivaluedMap<String, String> params = new MultivaluedMapImpl();
         params.add("client_id", CLIENT_DETAILS_ID);
         params.add("client_secret", "client-secret");
@@ -944,9 +955,6 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         String accessToken = (String) jsonObject.get("access_token");
         assertNotNull(accessToken);
 
-        TokenStore newToken = new TokenStore(CLIENT_DETAILS_ID, USER, scopes, accessToken);
-
-        tokens.add(newToken);
 
         return accessToken;
     }
