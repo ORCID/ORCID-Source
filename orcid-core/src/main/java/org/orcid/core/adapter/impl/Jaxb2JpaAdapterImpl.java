@@ -634,7 +634,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 ProfileKeywordEntity existing = existingIt.next();
-                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                String existingElementSource = existing.getElementSourceId();
                 if(sourceId != null && !sourceId.equals(existingElementSource)){
                     //If am not the source of this element, do nothing
                 } else {

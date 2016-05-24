@@ -35,8 +35,8 @@ import org.springframework.context.ApplicationContext;
 @MappedSuperclass
 public abstract class SourceAwareEntity<T extends Serializable> extends BaseEntity<T> {
     private static final long serialVersionUID = -5397119397438830995L;
-    private String sourceId;
-    private String clientSourceId;
+    protected String sourceId;
+    protected String clientSourceId;
     private SourceEntityCacheManager sourceEntityCacheManager;
 
     @Column(name = "source_id")

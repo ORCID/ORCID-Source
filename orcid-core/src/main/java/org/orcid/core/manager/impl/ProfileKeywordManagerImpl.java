@@ -238,13 +238,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_rc2.Keyword keyword, SourceEntity source) {
         if (!existing.getId().equals(keyword.getPutCode())) {
-            if (existing.getSource() != null) {
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
-                        return true;
-                    }
+            String existingSourceId = existing.getElementSourceId();             
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
+                    return true;
                 }
-            }
+            }           
         }
         return false;
     }

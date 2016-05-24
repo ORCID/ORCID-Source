@@ -549,8 +549,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     mostRestrictive = vis;
                 
                 Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
-                if(keywordEntity.getSource() != null) {
-                    Source source = createSource(keywordEntity.getSource().getSourceId());
+                if(!PojoUtil.isEmpty(keywordEntity.getElementSourceId())) {
+                    Source source = createSource(keywordEntity.getElementSourceId());
                     keyword.setSource(source);
                 }
                 keywords.getKeyword().add(keyword);
@@ -992,7 +992,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 Visibility vis = (otherNameEntity.getVisibility() != null)?Visibility.fromValue(otherNameEntity.getVisibility().value()):Visibility.PRIVATE;                
                 if (vis.isMoreRestrictiveThan(mostRestrictive))
                     mostRestrictive = vis;
-
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
                 if(!PojoUtil.isEmpty(otherNameEntity.getElementSourceId())) {
