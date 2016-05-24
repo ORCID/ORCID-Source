@@ -83,7 +83,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
-    private static final int MAX_SEARCH_ROWS = 1000;
+    private static final int MAX_SEARCH_ROWS = 100;
 
     @Required
     public void setOrcidSearchManager(OrcidSearchManager orcidSearchManager) {
