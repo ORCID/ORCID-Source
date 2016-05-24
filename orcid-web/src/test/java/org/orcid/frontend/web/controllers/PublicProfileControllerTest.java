@@ -46,6 +46,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
@@ -102,7 +103,8 @@ public class PublicProfileControllerTest extends DBUnitTest {
         removeDBUnitData(DATA_FILES);
     }
     
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testViewValidUser() {
         ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, userOrcid);
         assertEquals("public_profile_v3", mav.getViewName());
@@ -122,13 +124,18 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertTrue(model.containsKey("title"));
         assertEquals(localeManager.resolveMessage("layout.public-layout.title", displayName, userOrcid), model.get("title"));
         
-        assertTrue(model.containsKey("publicOtherNames"));
-        OtherNames otherNames = (OtherNames) model.get("publicOtherNames");
-        assertNotNull(otherNames.getOtherNames());
-        assertEquals(1, otherNames.getOtherNames().size());
-        assertEquals(Long.valueOf(13), otherNames.getOtherNames().get(0).getPutCode());
-        assertEquals("Other Name PUBLIC", otherNames.getOtherNames().get(0).getContent());
-        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedOtherNames"));
+        Map<String, List<OtherName>> groupedOtherNames = (Map<String, List<OtherName>>) model.get("publicGroupedOtherNames");
+        assertNotNull(groupedOtherNames);        
+        assertEquals(1, groupedOtherNames.keySet().size());
+        assertTrue(groupedOtherNames.containsKey("Other Name PUBLIC"));
+        List<OtherName> publicOtherNames = groupedOtherNames.get("Other Name PUBLIC");
+        assertEquals(1, publicOtherNames.size());       
+        assertEquals(Long.valueOf(13), publicOtherNames.get(0).getPutCode());
+        assertEquals("Other Name PUBLIC", publicOtherNames.get(0).getContent());
+        assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());
+        
+        
         
         assertTrue(model.containsKey("publicAddresses"));
         Address address = (Address) model.get("publicAddresses");
