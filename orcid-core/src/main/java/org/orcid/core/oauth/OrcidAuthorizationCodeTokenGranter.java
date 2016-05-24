@@ -145,7 +145,7 @@ public class OrcidAuthorizationCodeTokenGranter extends AbstractTokenGranter {
         LOGGER.info("Comparing client ids: pendingClientId={}, authorizationRequest.clientId={}", pendingClientId, clientId);
         if (clientId != null && !clientId.equals(pendingClientId)) {
             // just a sanity check.
-            throw new InvalidClientException("Client ID mismatch");
+            throw new InvalidClientException("Client ID mismatch. pendingClientId:" + pendingClientId + " db clientId: " +clientId);
         }        
                 
         Authentication userAuth = storedAuth.getUserAuthentication();
