@@ -23,7 +23,6 @@ import javax.annotation.Resource;
 
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.SourceDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -44,14 +43,13 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager, S
     
     private static final long serialVersionUID = 6147277638780844758L;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SourceEntityCacheManagerImpl.class);
+    
     @Resource
     private ProfileDao profileDao;
     
     @Resource
     private ClientDetailsDao clientDetailsDao;
-    
-    @Resource
-    private SourceDao sourceDao;
     
     LockerObjectsManager pubLocks = new LockerObjectsManager();
 
@@ -148,9 +146,23 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager, S
     
     private Date retrieveLastModifiedDate(String id) {
         try {
-            return sourceDao.getLastModified(id);
+            return getLastModified(id);
         } catch(Exception e) {
             throw new IllegalArgumentException("Unable to find last modified for id:" + id);
+        }
+    }
+    
+    private Date getLastModified(String id) {
+        try {
+            return clientDetailsDao.getLastModifiedIfNotPublicClient(id);
+        } catch(Exception e1) {
+            LOGGER.debug("Unable to find id in client details table: " + id, e1);
+            try {
+                return profileDao.retrieveLastModifiedDate(id);
+            } catch(Exception e2) {
+                LOGGER.error("Unable to find id in any of the tables: " + id, e2);
+                throw e2;
+            }
         }
     }
     

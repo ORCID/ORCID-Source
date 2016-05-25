@@ -84,6 +84,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -218,46 +219,52 @@ public class SourceInActivitiesTest extends BaseTest {
     }
     
     @Test
+    @Transactional
     public void sourceDoesntChange_Funding_Test() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
-        ProfileFundingEntity funding1 = getProfileFundingEntity(userOrcid);
+        Funding funding1 = getFunding(userOrcid);
         assertNotNull(funding1);
-        assertFalse(PojoUtil.isEmpty(funding1.getTitle()));
-        assertEquals(userOrcid, funding1.getElementSourceId());
+        assertNotNull(funding1.getTitle());
+        assertNotNull(funding1.getTitle().getTitle());        
+        assertFalse(PojoUtil.isEmpty(funding1.getTitle().getTitle().getContent()));
+        assertEquals(userOrcid, funding1.getSource().retrieveSourcePath());
 
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
-        ProfileFundingEntity funding2 = getProfileFundingEntity(userOrcid);
-        assertNotNull(funding2);
-        assertFalse(PojoUtil.isEmpty(funding2.getTitle()));
-        assertEquals(CLIENT_1_ID, funding2.getElementSourceId());
+        Funding funding2 = getFunding(userOrcid);
+        assertNotNull(funding2.getTitle());
+        assertNotNull(funding2.getTitle().getTitle());        
+        assertFalse(PojoUtil.isEmpty(funding2.getTitle().getTitle().getContent()));
+        assertEquals(CLIENT_1_ID, funding2.getSource().retrieveSourcePath());
 
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
-        ProfileFundingEntity funding3 = getProfileFundingEntity(userOrcid);
-        assertNotNull(funding3);
-        assertFalse(PojoUtil.isEmpty(funding3.getTitle()));
-        assertEquals(CLIENT_2_ID, funding3.getElementSourceId());
+        Funding funding3 = getFunding(userOrcid);
+        assertNotNull(funding3.getTitle());
+        assertNotNull(funding3.getTitle().getTitle());        
+        assertFalse(PojoUtil.isEmpty(funding3.getTitle().getTitle().getContent()));
+        assertEquals(CLIENT_2_ID, funding3.getSource().retrieveSourcePath());
 
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ProfileEntity(userOrcid)));
-        ProfileFundingEntity funding4 = getProfileFundingEntity(userOrcid);
-        assertNotNull(funding4);
-        assertFalse(PojoUtil.isEmpty(funding4.getTitle()));
-        assertEquals(userOrcid, funding4.getElementSourceId());
+        Funding funding4 = getFunding(userOrcid);
+        assertNotNull(funding4.getTitle());
+        assertNotNull(funding4.getTitle().getTitle());        
+        assertFalse(PojoUtil.isEmpty(funding4.getTitle().getTitle().getContent()));
+        assertEquals(userOrcid, funding4.getSource().retrieveSourcePath());
 
-        ProfileFundingEntity fromDb1 = profileFundingManager.getProfileFundingEntity(funding1.getId());
+        Funding fromDb1 = profileFundingManager.getFunding(userOrcid, funding1.getPutCode());
         assertNotNull(fromDb1);
-        assertEquals(userOrcid, fromDb1.getElementSourceId());
+        assertEquals(userOrcid, fromDb1.getSource().retrieveSourcePath());
 
-        ProfileFundingEntity fromDb2 = profileFundingManager.getProfileFundingEntity(funding2.getId());
+        Funding fromDb2 = profileFundingManager.getFunding(userOrcid, funding2.getPutCode());
         assertNotNull(fromDb2);
-        assertEquals(CLIENT_1_ID, fromDb2.getElementSourceId());
+        assertEquals(CLIENT_1_ID, fromDb2.getSource().retrieveSourcePath());
 
-        ProfileFundingEntity fromDb3 = profileFundingManager.getProfileFundingEntity(funding3.getId());
+        Funding fromDb3 = profileFundingManager.getFunding(userOrcid, funding3.getPutCode());
         assertNotNull(fromDb3);
-        assertEquals(CLIENT_2_ID, fromDb3.getElementSourceId());
+        assertEquals(CLIENT_2_ID, fromDb3.getSource().retrieveSourcePath());
 
-        ProfileFundingEntity fromDb4 = profileFundingManager.getProfileFundingEntity(funding4.getId());
+        Funding fromDb4 = profileFundingManager.getFunding(userOrcid, funding4.getPutCode());
         assertNotNull(fromDb4);
-        assertEquals(userOrcid, fromDb4.getElementSourceId());
+        assertEquals(userOrcid, fromDb4.getSource().retrieveSourcePath());
     }
 	
     @Test(expected=ActivityTitleValidationException.class)
@@ -507,7 +514,7 @@ public class SourceInActivitiesTest extends BaseTest {
         return workManager.getWork(userOrcid, work.getPutCode(), 0L);
     }
 
-    private ProfileFundingEntity getProfileFundingEntity(String userOrcid) {
+    private Funding getFunding(String userOrcid) {
         Funding funding = new Funding();        
         funding.setOrganization(getOrganization());
         FundingTitle title = new FundingTitle();
@@ -523,7 +530,7 @@ public class SourceInActivitiesTest extends BaseTest {
         extIdentifiers.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIdentifiers);
         funding = profileFundingManager.createFunding(userOrcid, funding, true);
-        return profileFundingManager.getProfileFundingEntity(funding.getPutCode());
+        return profileFundingManager.getFunding(userOrcid, funding.getPutCode());
     }
 
     private Education getEducation(String userOrcid) {

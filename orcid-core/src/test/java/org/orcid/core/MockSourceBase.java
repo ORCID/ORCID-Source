@@ -31,7 +31,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.SourceDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
@@ -53,9 +52,6 @@ public class MockSourceBase extends BaseTest {
     @Mock
     protected ClientDetailsDao clientDetailsDao;
     
-    @Mock
-    protected SourceDao sourceDao;
-    
     @Resource 
     private SourceEntityCacheManager sourceEntityCacheManager;
     
@@ -72,6 +68,8 @@ public class MockSourceBase extends BaseTest {
             
         });
         
+        when(profileDao.retrieveLastModifiedDate(Matchers.<String> any())).thenReturn(new Date());
+        
         when(clientDetailsDao.find((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
             @Override
             public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -82,10 +80,9 @@ public class MockSourceBase extends BaseTest {
             }            
         });
         
-        when(sourceDao.getLastModified((Matchers.<String> any()))).thenReturn(new Date());
+        when(clientDetailsDao.getLastModifiedIfNotPublicClient(Matchers.<String> any())).thenReturn(new Date());
         
         assertNotNull(sourceEntityCacheManager);
-        TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "sourceDao", sourceDao);
         TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "profileDao", profileDao);        
         TargetProxyHelper.injectIntoProxy(sourceEntityCacheManager, "clientDetailsDao", clientDetailsDao);
     }

@@ -188,4 +188,13 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         return (result != null && result > 0);
     }
 
+    @Override
+    public Date getLastModifiedIfNotPublicClient(String clientId) {
+        Query query = entityManager.createQuery("SELECT lastModified FROM ClientDetailsEntity WHERE id = :id AND clientType != :type");
+        query.setParameter("id", clientId);        
+        query.setParameter("type", ClientType.PUBLIC_CLIENT);
+        Date result = (Date)query.getSingleResult();
+        return result;
+    }
+
 }
