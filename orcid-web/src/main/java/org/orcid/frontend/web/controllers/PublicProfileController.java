@@ -37,6 +37,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jsoup.helper.StringUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -486,30 +487,28 @@ public class PublicProfileController extends BaseWorkspaceController {
     		}
     	}    	
     	return groups;
-    }   
-    
-    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers){
-    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
-    		return null;
-    	}    	
-    	Map<String, List<PersonExternalIdentifier>> groups = new TreeMap<String, List<PersonExternalIdentifier>>();
-    	
-    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifier()) {  		
-    		    		
-    		if (groups.containsKey(ei.getValue())) {
-    			groups.get(ei.getValue()).add(ei);
-    		} else {
-    			List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
-    			list.add(ei);
-    			groups.put(ei.getValue(), list);    			
-    		}
-    	}    	
-    	return groups;
     }
     
     
     
     
+    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers){
+    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
+    		return null;
+    	}    	
+    	Map<String, List<PersonExternalIdentifier>> groups = new TreeMap<String, List<PersonExternalIdentifier>>();    	
+    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifier()) {
+    		String pairKey = ei.getType() + ":" + ei.getValue();    		
+    		if (groups.containsKey(pairKey)) {
+    			groups.get(pairKey).add(ei);
+    		} else {
+    			List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
+    			list.add(ei);
+    			groups.put(pairKey, list);    			
+    		}
+    	}    	
+    	return groups;
+    }
     
     
     private boolean isProfileValidForIndex(ProfileEntity profile) {

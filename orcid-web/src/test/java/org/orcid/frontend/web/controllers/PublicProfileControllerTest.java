@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
@@ -146,13 +147,16 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertTrue(model.containsKey("countryName"));
         assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
         
-        assertTrue(model.containsKey("publicKeywords"));
-        Keywords keywords = (Keywords) model.get("publicKeywords");
-        assertNotNull(keywords.getKeywords());        
-        assertEquals(1, keywords.getKeywords().size());
-        assertEquals(Long.valueOf(9), keywords.getKeywords().get(0).getPutCode());
-        assertEquals("PUBLIC", keywords.getKeywords().get(0).getContent());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());        
+        assertTrue(model.containsKey("publicGroupedKeywords"));
+        Map<String, List<Keyword>> groupedKeywords = (Map<String, List<Keyword>>) model.get("publicGroupedKeywords");
+        assertNotNull(groupedKeywords);        
+        assertEquals(1, groupedKeywords.keySet().size());
+        assertTrue(groupedKeywords.containsKey("PUBLIC"));
+		List<Keyword> publicKeywords = groupedKeywords.get("PUBLIC");
+        assertEquals(1, publicKeywords.size());       
+        assertEquals(Long.valueOf(9), publicKeywords.get(0).getPutCode());
+        assertEquals("PUBLIC", publicKeywords.get(0).getContent());
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());  
         
         assertTrue(model.containsKey("publicResearcherUrls"));
         ResearcherUrls rUrls = (ResearcherUrls) model.get("publicResearcherUrls");
