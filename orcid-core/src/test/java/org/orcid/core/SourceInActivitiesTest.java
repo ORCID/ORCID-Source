@@ -30,6 +30,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
@@ -80,13 +81,17 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
+import org.springframework.test.context.ContextConfiguration;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class SourceInActivitiesTest extends BaseTest {
 
     private static final String CLIENT_1_ID = "APP-5555555555555555";
