@@ -143,8 +143,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     public void detach(MinimizedWorkEntity minimizedWorkEntity) {
-        entityManager.detach(minimizedWorkEntity);
-        minimizedWorkEntity.setDetached(true);
+        entityManager.detach(minimizedWorkEntity);        
     }
     
     /**

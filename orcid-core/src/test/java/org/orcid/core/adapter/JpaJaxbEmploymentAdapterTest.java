@@ -28,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.MockSourceBaseTest;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
@@ -48,7 +49,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbEmploymentAdapterTest {
+public class JpaJaxbEmploymentAdapterTest extends MockSourceBaseTest {
 
     @Resource
     private JpaJaxbEmploymentAdapter jpaJaxbEmploymentAdapter;

@@ -47,7 +47,104 @@ import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.clientgroup.RedirectUris;
-import org.orcid.jaxb.model.message.*;
+import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
+import org.orcid.jaxb.model.message.Address;
+import org.orcid.jaxb.model.message.Affiliation;
+import org.orcid.jaxb.model.message.Affiliations;
+import org.orcid.jaxb.model.message.Amount;
+import org.orcid.jaxb.model.message.ApprovalDate;
+import org.orcid.jaxb.model.message.Biography;
+import org.orcid.jaxb.model.message.Citation;
+import org.orcid.jaxb.model.message.Claimed;
+import org.orcid.jaxb.model.message.CompletionDate;
+import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.Contributor;
+import org.orcid.jaxb.model.message.ContributorOrcid;
+import org.orcid.jaxb.model.message.Country;
+import org.orcid.jaxb.model.message.CreatedDate;
+import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.CreditName;
+import org.orcid.jaxb.model.message.Day;
+import org.orcid.jaxb.model.message.DeactivationDate;
+import org.orcid.jaxb.model.message.DelegateSummary;
+import org.orcid.jaxb.model.message.Delegation;
+import org.orcid.jaxb.model.message.DelegationDetails;
+import org.orcid.jaxb.model.message.DeprecatedDate;
+import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
+import org.orcid.jaxb.model.message.DisambiguatedOrganization;
+import org.orcid.jaxb.model.message.Email;
+import org.orcid.jaxb.model.message.EncryptedPassword;
+import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
+import org.orcid.jaxb.model.message.EncryptedVerificationCode;
+import org.orcid.jaxb.model.message.ExternalIdCommonName;
+import org.orcid.jaxb.model.message.ExternalIdReference;
+import org.orcid.jaxb.model.message.ExternalIdUrl;
+import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.ExternalIdentifiers;
+import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingContributor;
+import org.orcid.jaxb.model.message.FundingContributors;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.FuzzyDate;
+import org.orcid.jaxb.model.message.GivenNames;
+import org.orcid.jaxb.model.message.GivenPermissionBy;
+import org.orcid.jaxb.model.message.GivenPermissionTo;
+import org.orcid.jaxb.model.message.Iso3166Country;
+import org.orcid.jaxb.model.message.Keyword;
+import org.orcid.jaxb.model.message.Keywords;
+import org.orcid.jaxb.model.message.LastModifiedDate;
+import org.orcid.jaxb.model.message.Locale;
+import org.orcid.jaxb.model.message.Month;
+import org.orcid.jaxb.model.message.OrcidActivities;
+import org.orcid.jaxb.model.message.OrcidBio;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
+import org.orcid.jaxb.model.message.OrcidHistory;
+import org.orcid.jaxb.model.message.OrcidIdBase;
+import org.orcid.jaxb.model.message.OrcidIdentifier;
+import org.orcid.jaxb.model.message.OrcidInternal;
+import org.orcid.jaxb.model.message.OrcidPreferences;
+import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.OrcidWork;
+import org.orcid.jaxb.model.message.OrcidWorks;
+import org.orcid.jaxb.model.message.Organization;
+import org.orcid.jaxb.model.message.OrganizationAddress;
+import org.orcid.jaxb.model.message.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.message.OtherName;
+import org.orcid.jaxb.model.message.OtherNames;
+import org.orcid.jaxb.model.message.PersonalDetails;
+import org.orcid.jaxb.model.message.Preferences;
+import org.orcid.jaxb.model.message.PrimaryRecord;
+import org.orcid.jaxb.model.message.PublicationDate;
+import org.orcid.jaxb.model.message.ReferredBy;
+import org.orcid.jaxb.model.message.ResearcherUrl;
+import org.orcid.jaxb.model.message.ResearcherUrls;
+import org.orcid.jaxb.model.message.SalesforceId;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.message.SecurityDetails;
+import org.orcid.jaxb.model.message.SecurityQuestionId;
+import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
+import org.orcid.jaxb.model.message.SendChangeNotifications;
+import org.orcid.jaxb.model.message.SendOrcidNews;
+import org.orcid.jaxb.model.message.Source;
+import org.orcid.jaxb.model.message.SourceClientId;
+import org.orcid.jaxb.model.message.SourceDate;
+import org.orcid.jaxb.model.message.SourceName;
+import org.orcid.jaxb.model.message.SourceOrcid;
+import org.orcid.jaxb.model.message.SubmissionDate;
+import org.orcid.jaxb.model.message.Subtitle;
+import org.orcid.jaxb.model.message.Title;
+import org.orcid.jaxb.model.message.TranslatedTitle;
+import org.orcid.jaxb.model.message.Url;
+import org.orcid.jaxb.model.message.UrlName;
+import org.orcid.jaxb.model.message.VerifiedEmail;
+import org.orcid.jaxb.model.message.VerifiedPrimaryEmail;
+import org.orcid.jaxb.model.message.Visibility;
+import org.orcid.jaxb.model.message.WorkContributors;
+import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.Year;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -68,7 +165,7 @@ import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SourceAware;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -490,27 +587,26 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      *            The entity to obtain the source
      * @return the source of the object
      * */
-    private Source getSource(SourceAware sourceAwareEntity) {
+    private Source getSource(SourceAwareEntity sourceAwareEntity) {
         SourceEntity sourceEntity = sourceAwareEntity.getSource();
         if (sourceEntity == null) {
             return null;
         }
-        Source source = new Source();
-        ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
-        if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
-            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceClient.getClientId())));
+        Source source = new Source();        
+        if (sourceEntity.getSourceClient() != null) {
+            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceClient().getClientId())));
         } else {
-            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceProfile().getId())));
         }
+                
         String sourceName = sourceEntity.getSourceName();
         if (StringUtils.isNotBlank(sourceName)) {
             source.setSourceName(new SourceName(sourceName));
         }
-        if (sourceAwareEntity instanceof BaseEntity) {
-            @SuppressWarnings("rawtypes")
-            Date createdDate = ((BaseEntity) sourceAwareEntity).getDateCreated();
-            source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
-        }
+        
+        Date createdDate = sourceAwareEntity.getDateCreated();
+        source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
+        
         return source;
     }
 

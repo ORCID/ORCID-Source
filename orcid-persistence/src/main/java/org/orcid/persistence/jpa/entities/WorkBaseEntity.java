@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.WorkType;
  * @author Angel Montenegro (amontenegro)
  */
 @MappedSuperclass
-public class WorkBaseEntity extends BaseEntity<Long> {
+public class WorkBaseEntity extends SourceAwareEntity<Long> {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,12 +52,10 @@ public class WorkBaseEntity extends BaseEntity<Long> {
     protected String translatedTitleLanguageCode;
     protected WorkType workType;
     protected PublicationDateEntity publicationDate;
-    protected String externalIdentifiersJson;
-    protected SourceEntity source;
+    protected String externalIdentifiersJson;  
     protected Visibility visibility;
     protected Long displayIndex;
-    protected String orcid;
-    protected boolean isDetached;
+    protected String orcid;    
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "work_seq")
@@ -201,14 +199,6 @@ public class WorkBaseEntity extends BaseEntity<Long> {
         this.externalIdentifiersJson = externalIdentifiersJson;
     }
 
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-
     @Basic
     @Enumerated(EnumType.STRING)
     public Visibility getVisibility() {
@@ -243,33 +233,4 @@ public class WorkBaseEntity extends BaseEntity<Long> {
     public void setOrcid(String orcid) {
         this.orcid = orcid;
     }
-
-    @Transient
-    public boolean isDetached() {
-        return isDetached;
-    }
-
-    public void setDetached(boolean isDetached) {
-        this.isDetached = isDetached;
-        if (source != null) {
-            source.setDetached(true);
-        }
-    }
-
-    /**
-     * Call this method before storing in cache to prevent a whole profile or
-     * client being serialized.
-     * 
-     * WARNING: The entity must be detached (using DAO) so that the source is
-     * not made null in DB.
-     */
-    public void prepareForCache() {
-        if (!isDetached) {
-            throw new IllegalStateException("Must not prepare work entity for cache, unless it is detached");
-        }
-        if (source != null) {
-            source.prepareForCache();
-        }
-    }
-
 }

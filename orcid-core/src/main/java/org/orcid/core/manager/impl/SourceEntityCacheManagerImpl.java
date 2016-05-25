@@ -87,6 +87,9 @@ public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
                             sourceEntity.setSourceProfile((ProfileEntity) entity);
                         }                            
                         
+                        //Cache the source name
+                        sourceEntity.getSourceName();
+                        
                         sourceEntityCache.put(new Element(key, sourceEntity));
                     }
                 }

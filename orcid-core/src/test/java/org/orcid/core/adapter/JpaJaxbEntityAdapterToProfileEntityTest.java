@@ -81,7 +81,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
-        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml"));
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml"));
     }
 
     @Before
@@ -92,11 +92,14 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         ProfileEntity entityGivingPermission = new ProfileEntity();
         entityGivingPermission.setId("2222-2222-2222-2229");
         profileDao.merge(entityGivingPermission);
+        ProfileEntity source1 = new ProfileEntity();
+        source1.setId("2111-1111-1111-1114");
+        profileDao.merge(source1);
     }
 
     @AfterClass
     public static void removeDBUnitData() throws Exception {
-        removeDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml"));
+        removeDBUnitData(Arrays.asList("/data/SourceClientDetailsEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Before
@@ -140,7 +143,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertTrue(primaryEmail.getPrimary());
         assertTrue(primaryEmail.getCurrent());
         assertTrue(primaryEmail.getVerified());
-        assertEquals("4444-4444-4444-4446", primaryEmail.getSource().getSourceId());
+        assertEquals("4444-4444-4444-4446", primaryEmail.getElementSourceId());
 
         EmailEntity nonPrimaryEmail1 = emailMap.get("josiah_carberry_1@brown.edu");
         assertNotNull(nonPrimaryEmail1);
@@ -148,7 +151,7 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertFalse(nonPrimaryEmail1.getPrimary());
         assertTrue(nonPrimaryEmail1.getCurrent());
         assertFalse(nonPrimaryEmail1.getVerified());
-        assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getSource().getSourceId());
+        assertEquals("4444-4444-4444-4446", nonPrimaryEmail1.getElementSourceId());
 
         Set<WorkEntity> workEntities = profileEntity.getWorks();
         assertEquals(3, workEntities.size());
@@ -214,9 +217,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
         assertEquals("1111-1111-1111-1115", retrievedGivenPermissionToEntity.getReceiver().getId());
         assertEquals(DateUtils.convertToDate("2012-11-10T13:18:51"), retrievedGivenPermissionToEntity.getApprovalDate());
         assertNull(profileEntity.getGivenPermissionBy());
-        retrievedProfileEntity.getSource().setSourceClient(null);
-        retrievedProfileEntity.getSource().setSourceProfile(profileEntity);
-        adapter.toOrcidProfile(retrievedProfileEntity);
     }
 
     @Test
