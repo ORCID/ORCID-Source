@@ -58,7 +58,7 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
     }
 
     @Transient
-    public SourceEntity getSource() {
+    public final SourceEntity getSource() {
         if(getElementSourceId() == null){
             return null;
         }
@@ -71,7 +71,7 @@ public abstract class SourceAwareEntity<T extends Serializable> extends BaseEnti
     }
 
     @Transient
-    public void setSource(SourceEntity source) {
+    public final void setSource(SourceEntity source) {
         if(source != null) {
             if(source.getSourceClient() != null) {
                 this.clientSourceId = source.getSourceClient().getClientId(); 
