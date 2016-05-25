@@ -56,9 +56,8 @@ public class JpaJaxbOtherNameAdapterTest extends MockSourceBase {
         assertNotNull(otherNameEntity);
         assertNotNull(otherNameEntity.getDateCreated());
         assertNotNull(otherNameEntity.getLastModified());
-        assertEquals("Other Name #1", otherNameEntity.getDisplayName());
-        assertNotNull(otherNameEntity.getSource());
-        assertEquals("8888-8888-8888-8880", otherNameEntity.getSource().getSourceId());
+        assertEquals("Other Name #1", otherNameEntity.getDisplayName());        
+        assertEquals("8888-8888-8888-8880", otherNameEntity.getElementSourceId());
     }
     
     @Test

@@ -93,7 +93,7 @@ public class JpaJaxbFundingAdapterTest extends MockSourceBase {
                 pfe.getExternalIdentifiersJson());
 
         // Source
-        assertEquals("8888-8888-8888-8880", pfe.getSource().getSourceId());
+        assertEquals("8888-8888-8888-8880", pfe.getElementSourceId());
 
         // Check org values
         assertEquals("common:name", pfe.getOrg().getName());

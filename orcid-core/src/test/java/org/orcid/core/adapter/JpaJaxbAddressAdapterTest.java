@@ -57,9 +57,8 @@ public class JpaJaxbAddressAdapterTest extends MockSourceBase {
         assertNotNull(addressEntity);
         assertNotNull(addressEntity.getDateCreated());
         assertNotNull(addressEntity.getLastModified());
-        assertEquals(Iso3166Country.US, addressEntity.getIso2Country());
-        assertNotNull(addressEntity.getSource());
-        assertEquals("8888-8888-8888-8880", addressEntity.getSource().getSourceId());
+        assertEquals(Iso3166Country.US, addressEntity.getIso2Country());        
+        assertEquals("8888-8888-8888-8880", addressEntity.getElementSourceId());
     }
     
     @Test

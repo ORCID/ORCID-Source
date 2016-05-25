@@ -60,7 +60,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceBase {
         assertNotNull(entity.getLastModified());
         assertEquals("user1@email.com", entity.getId());
         assertEquals(org.orcid.jaxb.model.message.Visibility.PUBLIC, entity.getVisibility());
-        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());
+        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());
     }
 
     @Test

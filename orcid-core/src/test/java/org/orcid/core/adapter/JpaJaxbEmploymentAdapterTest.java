@@ -75,7 +75,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceBase {
         assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
         
         //Source
-        assertEquals("8888-8888-8888-8880", oar.getSource().getSourceId());
+        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());
         
         //Check org values
         assertEquals("common:name", oar.getOrg().getName());

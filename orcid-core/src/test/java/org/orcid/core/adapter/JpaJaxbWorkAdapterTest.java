@@ -83,8 +83,7 @@ public class JpaJaxbWorkAdapterTest extends MockSourceBase {
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
-        SourceEntity sourceEntity = workEntity.getSource();
-        assertEquals("8888-8888-8888-8880", sourceEntity.getSourceId());
+        assertEquals("8888-8888-8888-8880", workEntity.getElementSourceId());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());

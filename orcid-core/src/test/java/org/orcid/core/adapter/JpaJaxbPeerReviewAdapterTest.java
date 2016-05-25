@@ -76,7 +76,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceBase {
         assertEquals(Integer.valueOf(1848), pe.getCompletionDate().getYear());        
         
         //Source
-        assertEquals("8888-8888-8888-8880", pe.getSource().getSourceId());
+        assertEquals("8888-8888-8888-8880", pe.getElementSourceId());
         
         //Check org values
         assertEquals("common:name", pe.getOrg().getName());

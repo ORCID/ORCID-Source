@@ -58,9 +58,8 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceBase {
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
         assertEquals(Long.valueOf(1), entity.getId());
-        assertEquals("keyword1", entity.getKeywordName());
-        assertNotNull(entity.getSource());
-        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());
+        assertEquals("keyword1", entity.getKeywordName());        
+        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());
         assertEquals(Visibility.PUBLIC, entity.getVisibility());
     }
     
