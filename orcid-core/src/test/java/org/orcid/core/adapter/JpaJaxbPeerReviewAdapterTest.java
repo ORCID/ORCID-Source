@@ -28,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.MockSourceBase;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
@@ -50,7 +51,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbPeerReviewAdapterTest {
+public class JpaJaxbPeerReviewAdapterTest extends MockSourceBase {
 
     @Resource
     private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;

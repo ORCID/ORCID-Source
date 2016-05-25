@@ -16,7 +16,7 @@
  */
 package org.orcid.core;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -46,7 +46,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class MockSourceBaseTest extends BaseTest {
+public class MockSourceBase extends BaseTest {
     @Mock
     protected ProfileDao profileDao;
     

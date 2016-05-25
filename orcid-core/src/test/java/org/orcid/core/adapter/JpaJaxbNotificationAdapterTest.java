@@ -171,5 +171,4 @@ public class JpaJaxbNotificationAdapterTest {
         assertNotNull(notificationAmendedEntity.getSource());
         assertEquals("APP-5555-5555-5555-5555", notificationAmendedEntity.getSource().getSourceId());
     }
-
 }

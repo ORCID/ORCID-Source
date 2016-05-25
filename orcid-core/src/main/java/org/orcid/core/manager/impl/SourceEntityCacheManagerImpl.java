@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -39,7 +40,9 @@ import net.sf.ehcache.Element;
 /**
  * @author Angel Montenegro
  * */
-public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager {
+public class SourceEntityCacheManagerImpl implements SourceEntityCacheManager, Serializable {
+    
+    private static final long serialVersionUID = 6147277638780844758L;
 
     @Resource
     private ProfileDao profileDao;

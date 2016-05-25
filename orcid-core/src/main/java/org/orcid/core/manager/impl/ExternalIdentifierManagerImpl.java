@@ -161,14 +161,13 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
 
     private boolean isDuplicated(ExternalIdentifierEntity existing, PersonExternalIdentifier newExternalIdentifier, SourceEntity source) {
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
-            if (existing.getSource() != null) {
-                // If they have the same source
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    // If the url is the same
-                    if (existing.getExternalIdUrl() != null && existing.getExternalIdUrl().equals(newExternalIdentifier.getUrl().getValue())) {
-                        return true;
-                    }
-                }
+            //If they have the same source 
+            String existingSourceId = existing.getElementSourceId(); 
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                // If the url is the same
+                if (existing.getExternalIdUrl() != null && existing.getExternalIdUrl().equals(newExternalIdentifier.getUrl().getValue())) {
+                    return true;
+                } 
             }
         }
         return false;

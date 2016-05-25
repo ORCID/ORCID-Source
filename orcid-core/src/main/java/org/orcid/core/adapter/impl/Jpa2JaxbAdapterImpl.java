@@ -146,7 +146,6 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.jaxb.model.message.Year;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -592,12 +591,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         if (sourceEntity == null) {
             return null;
         }
-        Source source = new Source();        
-        if (sourceEntity.getSourceClient() != null) {
-            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceEntity.getSourceClient().getClientId())));
-        } else {
-            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceProfile().getId())));
-        }
+        Source source = new Source();
+        ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
+        if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
+            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceClient.getClientId())));
+         } else {
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+         }
                 
         String sourceName = sourceEntity.getSourceName();
         if (StringUtils.isNotBlank(sourceName)) {

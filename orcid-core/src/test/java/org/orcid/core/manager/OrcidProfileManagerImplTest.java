@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
@@ -119,22 +120,25 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
  */
-@DirtiesContext
+@RunWith(OrcidJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String APPLICATION_ORCID = "2222-2222-2222-2228";
 
     protected static final String DELEGATE_ORCID = "1111-1111-1111-1115";
 
-    protected static final String TEST_ORCID = "4444-4444-4444-4447";
+    protected static final String TEST_ORCID = "4444-4444-4444-0001";
 
     protected static final String TEST_ORCID_WITH_WORKS = "4444-4444-4444-4443";
 
@@ -932,8 +936,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     }
 
     @Test
-    @Transactional
-    @Rollback(true)
+    @Transactional    
     public void testAddOrcidWorksWhenDefaultVisibilityIsPrivate() {
 
         OrcidProfile profile1 = createBasicProfile();

@@ -36,10 +36,11 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.OrcidStringUtils;
 
 public class WorkForm implements ErrorsInterface, Serializable {
@@ -275,9 +276,10 @@ public class WorkForm implements ErrorsInterface, Serializable {
             identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
         }
         populateExternaIdentifiers(identifiers, w);
-        if (minimizedWorkEntity.getSource() != null) {
-            w.setSource(minimizedWorkEntity.getSource().getSourceId());
-            w.setSourceName(minimizedWorkEntity.getSource().getSourceName());
+        SourceEntity source = minimizedWorkEntity.getSource();
+        if (source != null) {
+            w.setSource(source.getSourceId());
+            w.setSourceName(source.getSourceName());
         }
         if (minimizedWorkEntity.getLanguageCode() != null) {
             w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
