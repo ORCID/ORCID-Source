@@ -92,12 +92,16 @@
             <artifactId>guava</artifactId>
             <scope>test</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>com.sun.jersey</groupId>              
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency> 
 		<!--  swagger2markup -->
 		<dependency>
 		    <groupId>io.github.robwin</groupId>
 		    <artifactId>swagger2markup</artifactId>
-		    <version>0.7.0</version>
+		    <version>0.9.2</version>
 		</dependency> 
 		<!-- fix versioning -->
    		<dependency>
