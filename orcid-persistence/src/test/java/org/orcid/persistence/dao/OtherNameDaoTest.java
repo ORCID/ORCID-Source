@@ -98,7 +98,7 @@ public class OtherNameDaoTest extends DBUnitTest {
         OtherNameEntity entity = new OtherNameEntity();
         entity.setDisplayName("The other name");
         entity.setProfile(new ProfileEntity("4444-4444-4444-4441"));
-        entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4441")));
+        entity.setSourceId("4444-4444-4444-4441");
         entity.setVisibility(Visibility.PUBLIC);
         otherNameDao.persist(entity);
         assertEquals(4, otherNameDao.getOtherNames("4444-4444-4444-4441", 0L).size());
