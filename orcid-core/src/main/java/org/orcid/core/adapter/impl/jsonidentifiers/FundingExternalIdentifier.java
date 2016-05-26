@@ -173,7 +173,10 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
         try {
             // note that funding identifiers use "_" in the api e.g.
             // grant_number wheras works use "-". Isn't that fun?
-            messagePojo.setType(FundingExternalIdentifierType.fromValue(this.getType().toLowerCase()));
+            if (this.getType() != null)
+                messagePojo.setType(FundingExternalIdentifierType.fromValue(this.getType().toLowerCase()));
+            else
+                messagePojo.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         } catch (IllegalArgumentException e) {
             messagePojo.setType(FundingExternalIdentifierType.GRANT_NUMBER);
         }
@@ -191,7 +194,10 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
 
         // note that funding identifiers use "_" in the api e.g. grant_number
         // wheras works use "-". Isn't that fun?
-        recordPojo.setType(this.getType().toLowerCase());
+        if (this.getType() == null)
+            recordPojo.setType(FundingExternalIdentifierType.GRANT_NUMBER.value());
+        else
+            recordPojo.setType(this.getType().toLowerCase());
 
         if (this.getUrl() != null && !PojoUtil.isEmpty(this.getUrl().value)) {
             org.orcid.jaxb.model.common_rc2.Url url = new org.orcid.jaxb.model.common_rc2.Url(this.getUrl().value);

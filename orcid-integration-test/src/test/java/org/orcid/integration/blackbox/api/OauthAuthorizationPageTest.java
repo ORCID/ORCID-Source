@@ -41,6 +41,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.orcid.integration.blackbox.web.SigninTest;
@@ -64,53 +65,25 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /read-limited";
     private static final int DEFAULT_TIMEOUT_SECONDS = 10;
-    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.+)");
+    private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.*)");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
 
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
-    private WebDriver webDriver;
-
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
         revokeApplicationsAccess();
     }
 
     @After
     public void after() {
-        webDriver.close();
-        webDriver.quit();
         revokeApplicationsAccess();
     }    
     
     @Test
     public void stateParamIsPersistentAndReturnedOnLoginTest() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", this.getWebBaseUrl(), this.getClient1ClientId(), SCOPES,
-                this.getClient1RedirectUri(), STATE_PARAM));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
-
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(this.getUser1UserName());
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(this.getUser1Password());
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), SCOPES, STATE_PARAM, this.getUser1UserName(), this.getUser1Password());
         Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String stateParam = matcher.group(1);
@@ -123,43 +96,30 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         WebDriver webDriver = new FirefoxDriver();
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         webDriver.get(this.getWebBaseUrl() + "/my-orcid");
-        // Sign in
         SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
-        // Go to the authroization page
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", this.getWebBaseUrl(), this.getClient1ClientId(), SCOPES,
-                this.getClient1RedirectUri(), STATE_PARAM));
-        By userIdElementLocator = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement authorizeButton = webDriver.findElement(By.id("authorize"));
-        authorizeButton.click();
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.authorizeOnAlreadyLoggedInUser(webDriver, this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), SCOPES, STATE_PARAM);
+        webDriver.close();
         Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String stateParam = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(stateParam));
         assertEquals(STATE_PARAM, stateParam);
-        webDriver.close();
     }
 
     @Test
     public void invalidRedirectUriAllowsLoginThenShowErrorTest() throws InterruptedException {
-        String invalidRedirectUri = "http://www.orcid.org/worng/redirect/uri";
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s&state=%s", this.getWebBaseUrl(), this.getClient1ClientId(), SCOPES,
-                invalidRedirectUri, STATE_PARAM));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
-
-        // Fill the form
+        String invalidRedirectUri = "http://www.orcid.org/worng/redirect/uri";        
+        
+        WebDriver webDriver = new FirefoxDriver();
+        String formattedAuthorizationScreen = String.format(OauthAuthorizationPageHelper.authorizationScreenUrl, this.getWebBaseUrl(), this.getClient1ClientId(), SCOPES, invalidRedirectUri);
+        formattedAuthorizationScreen += "&state=" + STATE_PARAM;
+        formattedAuthorizationScreen += "#show_login";
+        webDriver.get(formattedAuthorizationScreen);
+        
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+                
         By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
         WebElement userIdElement = webDriver.findElement(userIdElementLocator);
         userIdElement.sendKeys(this.getUser1UserName());
         WebElement passwordElement = webDriver.findElement(By.id("password"));
@@ -172,7 +132,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
                 return d.getCurrentUrl().contains("/oauth/error/redirect-uri-mismatch");
             }
         });
-
+        
         String currentUrl = webDriver.getCurrentUrl();
         assertTrue("URL is:" + currentUrl, currentUrl.contains("/oauth/error/redirect-uri-mismatch"));
         assertTrue("URL is:" + currentUrl, currentUrl.contains("client_id=" + this.getClient1ClientId()));
@@ -183,30 +143,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
     @Test
     public void useAuthorizationCodeWithInalidScopesTest() throws InterruptedException, JSONException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.ORCID_WORKS_CREATE.getContent(), this.getClient1RedirectUri()));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
-
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(this.getUser1UserName());
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(this.getUser1Password());
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_WORKS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password());        
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
@@ -224,30 +161,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
     @Test
     public void useAuthorizationCodeWithoutScopesTest() throws InterruptedException, JSONException {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.ORCID_WORKS_CREATE.getContent(), this.getClient1RedirectUri()));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
-
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(this.getUser1UserName());
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(this.getUser1Password());
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_WORKS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password());
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
@@ -265,30 +179,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void skipAuthorizationScreenIfTokenAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.ORCID_BIO_UPDATE.getContent(), this.getClient1RedirectUri()));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
-
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(this.getUser1UserName());
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(this.getUser1Password());
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password());
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
@@ -303,11 +194,16 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         assertNotNull(accessToken);
         assertFalse(PojoUtil.isEmpty(accessToken));
 
-        // Then, ask again for the same permissions. Note that the user is
-        // already logged in
+        // Then, ask again for the same permissions. 
+        //First login
+        WebDriver webDriver = new FirefoxDriver();
+        webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        webDriver.get(this.getWebBaseUrl() + "/my-orcid");
+        SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
+        //Then ask for the same permission
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
                 ScopePathType.ORCID_BIO_UPDATE.getContent(), this.getClient1RedirectUri()));
-
+ 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getTitle().equals("ORCID Playground");
@@ -315,6 +211,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         });
 
         currentUrl = webDriver.getCurrentUrl();
+        webDriver.close();
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         authorizationCode = matcher.group(1);
@@ -339,30 +236,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
         // First get the authorization code
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.FUNDING_CREATE.getContent(), this.getClient1RedirectUri()));
-        By switchFromLinkLocator = By.id("in-register-switch-form");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(switchFromLinkLocator));
-        WebElement switchFromLink = webDriver.findElement(switchFromLinkLocator);
-        switchFromLink.click();
-
-        // Fill the form
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(this.getUser1UserName());
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(this.getUser1Password());
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.FUNDING_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password());
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
@@ -377,24 +251,8 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         assertNotNull(accessToken);
         assertFalse(PojoUtil.isEmpty(accessToken));
 
-        // Then, ask again for permissions over other scopes. Note that the user
-        // is already logged in
-        String url = String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.AFFILIATIONS_CREATE.getContent(), this.getClient1RedirectUri());
-        webDriver.get(url);
-
-        By authorizeElementLocator = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
-        WebElement authorizeButton = webDriver.findElement(authorizeElementLocator);
-        authorizeButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getCurrentUrl().contains("code=");
-            }
-        });
-
-        currentUrl = webDriver.getCurrentUrl();
+        // Then, ask again for permissions over other scopes. 
+        currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.AFFILIATIONS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password());
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         authorizationCode = matcher.group(1);
@@ -410,22 +268,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
         assertFalse(otherAccessToken.equals(accessToken));
 
-        // Repeat the process again with other scope
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.ORCID_WORKS_UPDATE.getContent(), this.getClient1RedirectUri()));
-
-        authorizeElementLocator = By.id("authorize");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(authorizeElementLocator));
-        authorizeButton = webDriver.findElement(authorizeElementLocator);
-        authorizeButton.click();
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getCurrentUrl().contains("code=");
-            }
-        });
-
-        currentUrl = webDriver.getCurrentUrl();
+        currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_WORKS_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password());
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         authorizationCode = matcher.group(1);

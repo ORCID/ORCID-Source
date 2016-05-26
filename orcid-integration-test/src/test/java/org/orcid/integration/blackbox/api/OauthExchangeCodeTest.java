@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,12 +31,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -109,24 +105,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
     }
 
     private String getAuthorizationCode() {
-        webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), "/activities/update",
-                this.getClient1RedirectUri()));
-        List<WebElement> signInEl = webDriver.findElements(By.id("in-register-switch-form"));
-        if (signInEl.size() != 0) {
-            signInEl.get(0).click();
-            webDriver.findElement(By.id("userId")).sendKeys(this.getUser1UserName());
-            webDriver.findElement(By.id("password")).sendKeys(this.getUser1Password());
-            webDriver.findElement(By.id("authorize-button")).click();
-        } else {
-            webDriver.findElement(By.id("authorize-button")).click();
-        }
-
-        (new WebDriverWait(webDriver, 10)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("OAuth 2.0 Playground") || d.getTitle().equals("ORCID Playground");
-            }
-        });
-        String currentUrl = webDriver.getCurrentUrl();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), "/activities/update", null, this.getUser1UserName(), this.getUser1Password());        
         Matcher matcher = Pattern.compile("code=(.+)").matcher(currentUrl);
         assertTrue(matcher.find());
         return matcher.group(1);
