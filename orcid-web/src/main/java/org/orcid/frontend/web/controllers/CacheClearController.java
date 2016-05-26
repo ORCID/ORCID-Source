@@ -19,6 +19,7 @@ package org.orcid.frontend.web.controllers;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.springframework.stereotype.Controller;
@@ -36,11 +37,20 @@ public class CacheClearController extends BaseWorkspaceController {
     @Resource
     private ThirdPartyLinkManager thirdPartyLinkManager;
 
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @RequestMapping(value = "/thirdPartyLinkManager.json", method = RequestMethod.GET)
     public @ResponseBody
     Errors clearThirdPartyLinkManager() {
         thirdPartyLinkManager.evictAll();
+        return new Errors();
+    }
+
+    @RequestMapping(value = "/profileEntityCache.json", method = RequestMethod.GET)
+    public @ResponseBody
+    Errors clearProfileEntityCacheManager() {
+        profileEntityCacheManager.removeAll();
         return new Errors();
     }
 

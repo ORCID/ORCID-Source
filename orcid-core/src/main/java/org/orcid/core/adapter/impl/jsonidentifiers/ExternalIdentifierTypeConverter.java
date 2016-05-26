@@ -37,6 +37,8 @@ public final class ExternalIdentifierTypeConverter extends BidirectionalConverte
 
     @Override
     public String convertFrom(String source, Type<String> destinationType) {
+        if (source == null)
+            return null;
         // annoying hack because grant_number does it different.
         if (source.equals("GRANT_NUMBER"))
             return "grant_number";

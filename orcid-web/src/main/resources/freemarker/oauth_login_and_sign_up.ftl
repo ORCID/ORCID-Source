@@ -71,6 +71,13 @@
 									    </div>
 									</div>			
 								</div>
+					        	<div class="row">
+					        		<div>
+								        <span class="orcid-error" ng-show="authorizationForm.errors.length > 0">
+											<div ng-repeat='error in authorizationForm.errors' ng-bind-html="error"></div>
+										</span>
+									</div>
+					        	</div>								
 								<div class="row">
 									<div class="col-md-6">
 										<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">
