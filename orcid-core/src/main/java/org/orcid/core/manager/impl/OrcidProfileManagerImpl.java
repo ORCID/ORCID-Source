@@ -2098,7 +2098,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     public Date updateLastModifiedDate(String orcid) {
-        return profileDao.updateLastModifiedDate(orcid);
+        return profileEntityManager.updateLastModifed(orcid);
     }
 
     static public OrcidProfile toOrcidProfile(Element element) {
