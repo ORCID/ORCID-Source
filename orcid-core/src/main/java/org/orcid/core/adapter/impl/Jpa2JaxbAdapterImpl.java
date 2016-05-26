@@ -646,7 +646,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 
                 Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
                 if(!PojoUtil.isEmpty(keywordEntity.getElementSourceId())) {
-                    Source source = createSource(keywordEntity.getElementSourceId());
+                    Source source = createSource(keywordEntity);
                     keyword.setSource(source);
                 }
                 keywords.getKeyword().add(keyword);
@@ -689,8 +689,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 if (!StringUtils.isBlank(researcherUrl.getUrlName()))
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 
-                if(researcherUrl.getSource() != null) {
-                    Source source = createSource(researcherUrl.getSource().getSourceId());
+                if(!PojoUtil.isEmpty(researcherUrl.getElementSourceId())) {
+                    Source source = createSource(researcherUrl);
                     url.setSource(source);
                 }
                 researcherUrls.setVisibility(mostRestrictive);
@@ -782,7 +782,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
         Iso3166Country iso2Country = null;
-        SourceEntity sourceEntity = null;
+        Source source = null;
         Visibility vis = null;
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
             for(AddressEntity address : profileEntity.getAddresses()) {
@@ -794,7 +794,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                         }
                         break;
                     }
-                    sourceEntity = address.getSource();                    
+                    source = createSource(address);                    
                 }
             }
         }
@@ -804,8 +804,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             Country country = new Country(iso2Country);
             country.setVisibility(vis);
             address.setCountry(country);
-            if(sourceEntity != null) {
-                Source source = createSource(sourceEntity.getSourceId());
+            if(source != null) {
                 address.setSource(source);
             }            
             contactDetails.setAddress(address);
@@ -1082,7 +1081,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
                 if(!PojoUtil.isEmpty(otherNameEntity.getElementSourceId())) {
-                    Source source = createSource(otherNameEntity.getElementSourceId());
+                    Source source = createSource(otherNameEntity);
                     otherName.setSource(source);
                 }
                 otherNames.getOtherName().add(otherName);
@@ -1187,14 +1186,16 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return DateUtils.convertToXMLGregorianCalendar(date);
     }
     
-    private Source createSource(String amenderOrcid) {
+    private Source createSource(SourceAwareEntity<?> entity) {
         Source source = new Source();
-        if (OrcidStringUtils.isValidOrcid(amenderOrcid)) {
-            source.setSourceOrcid(new SourceOrcid(amenderOrcid));
-            source.setSourceClientId(null);
-        } else {
-            source.setSourceClientId(new SourceClientId(amenderOrcid));
-            source.setSourceOrcid(null);
+        if(entity != null) {
+            if (!PojoUtil.isEmpty(entity.getSourceId())) {
+                source.setSourceOrcid(new SourceOrcid(entity.getSourceId()));                
+            } 
+            
+            if(!PojoUtil.isEmpty(entity.getClientSourceId())){
+                source.setSourceClientId(new SourceClientId(entity.getClientSourceId()));                
+            }
         }
         return source;
     }
