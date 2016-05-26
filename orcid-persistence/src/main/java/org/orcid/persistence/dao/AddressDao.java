@@ -37,5 +37,4 @@ public interface AddressDao extends GenericDao<AddressEntity, Long> {
     
     boolean deleteAddress(String orcid, Long putCode);
     
-    boolean updateAddressVisibility(String orcid, Visibility visibility);
 }
