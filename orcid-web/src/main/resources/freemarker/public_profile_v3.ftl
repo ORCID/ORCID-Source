@@ -156,6 +156,39 @@
 		                </div>		                
 		            </#if>
 		            
+		            <!-- Countries -->    	            	           
+		            <#if (countryName)??>
+		            	<div class="workspace-section">
+		            		<div class="workspace-section-header">
+		            			<ul class="inline-list visible workspace-section-heading">
+								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>
+								    <li class="right">
+									    <#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('countries')" class="right toggle" ng-mouseenter="showPopover('countries')" ng-mouseleave="hidePopover('countries')">
+									    		<i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['countries']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['countries'] == false  || showSources['countries'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['countries']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
+								    </li>
+								</ul>		                		
+		                		<div id="public-country-div" class="public-content">
+		                			${(countryName)!}		                			  			
+		                			<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>		                							                		
+										<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+											<#if (publicAddresses.source??) && (publicAddresses.source.sourceName??) && (publicAddresses.source.sourceName.content??)>${publicAddresses.source.sourceName.content}</#if> <#if (publicAddresses.createdDate)??>(${(publicAddresses.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+										</p>				                						                			                						                						                						                			                						                			
+									</div>
+		                		</div>
+		                	</div>
+		                </div>
+		            </#if>
+		            
 		            <!-- Keywords -->
 		            <#if (publicGroupedKeywords)?? && (publicGroupedKeywords?size != 0)>
 			            <div class="workspace-section">
