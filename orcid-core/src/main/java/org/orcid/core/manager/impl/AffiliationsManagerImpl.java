@@ -155,7 +155,15 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(education);
         educationEntity.setOrg(updatedOrganization);
 
-        educationEntity.setSource(sourceEntity);
+        // Set source id 
+        if(sourceEntity.getSourceProfile() != null) {
+            educationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        
+        if(sourceEntity.getSourceClient() != null) {
+            educationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }        
+        
         ProfileEntity profile = profileDao.find(orcid);
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
@@ -178,15 +186,22 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
+        
+        //Save the original source
+        String existingSourceId = educationEntity.getSourceId();
+        String existingClientSourceId = educationEntity.getClientSourceId();
+        
         Visibility originalVisibility = educationEntity.getVisibility();
-        SourceEntity existingSource = educationEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(educationEntity);
 
         activityValidator.validateEducation(education, existingSource, false, isApiRequest, originalVisibility);
         
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
         educationEntity.setVisibility(originalVisibility);
-        educationEntity.setSource(existingSource);
+        
+        //Be sure it doesn't overwrite the source
+        educationEntity.setSourceId(existingSourceId);
+        educationEntity.setClientSourceId(existingClientSourceId);
 
         // Updates the give organization with the latest organization from
         // database, or, create a new one
@@ -250,7 +265,15 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
         employmentEntity.setOrg(updatedOrganization);
 
-        employmentEntity.setSource(sourceEntity);
+        // Set source id 
+        if(sourceEntity.getSourceProfile() != null) {
+            employmentEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        
+        if(sourceEntity.getSourceClient() != null) {
+            employmentEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }
+        
         ProfileEntity profile = profileDao.find(orcid);
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
@@ -273,16 +296,23 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
-        Visibility originalVisibility = employmentEntity.getVisibility();
-        SourceEntity existingSource = employmentEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        Visibility originalVisibility = employmentEntity.getVisibility();  
+        
+        //Save the original source
+        String existingSourceId = employmentEntity.getSourceId();
+        String existingClientSourceId = employmentEntity.getClientSourceId();
+        
+        orcidSecurityManager.checkSource(employmentEntity);
 
         activityValidator.validateEmployment(employment, existingSource, false, isApiRequest, originalVisibility);
         
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
         employmentEntity.setVisibility(originalVisibility);
-        employmentEntity.setSource(existingSource);
-
+                
+        //Be sure it doesn't overwrite the source
+        employmentEntity.setSourceId(existingSourceId);
+        employmentEntity.setClientSourceId(existingClientSourceId);
+                
         // Updates the give organization with the latest organization from
         // database, or, create a new one
         OrgEntity updatedOrganization = orgManager.getOrgEntity(employment);
@@ -308,7 +338,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public boolean checkSourceAndDelete(String orcid, Long affiliationId) {
         OrgAffiliationRelationEntity affiliationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, affiliationId);                
-        orcidSecurityManager.checkSource(affiliationEntity.getSource());
+        orcidSecurityManager.checkSource(affiliationEntity);
         boolean result = affiliationsDao.removeOrgAffiliationRelation(orcid, affiliationId);
         if(result)
             notificationManager.sendAmendEmail(orcid, AmendedSection.EMPLOYMENT, createItem(affiliationEntity));
