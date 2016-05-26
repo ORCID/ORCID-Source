@@ -28,11 +28,11 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.core.MockSourceBase;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -43,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbResearcherUrlAdapterTest {
+public class JpaJaxbResearcherUrlAdapterTest extends MockSourceBase {
 
     @Resource
     private JpaJaxbResearcherUrlAdapter jpaJaxbResearcherUrlAdapter;
@@ -61,9 +61,8 @@ public class JpaJaxbResearcherUrlAdapterTest {
         assertEquals(Visibility.PUBLIC.value(), entity.getVisibility().value());        
         assertEquals("http://site1.com/", entity.getUrl());
         assertEquals("Site # 1", entity.getUrlName());                
-        //Source
-        assertNotNull(entity.getSource());
-        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());  
+        //Source        
+        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());  
     }
 
     @Test
@@ -91,7 +90,7 @@ public class JpaJaxbResearcherUrlAdapterTest {
     private ResearcherUrlEntity getResearcherUrlEntity() {
         ResearcherUrlEntity entity = new ResearcherUrlEntity();
         entity.setId(13579L);
-        entity.setSource(new SourceEntity("APP-0001"));
+        entity.setClientSourceId("APP-0001");
         entity.setUrl("http://orcid.org");
         entity.setUrlName("Orcid URL");
         entity.setVisibility(Visibility.LIMITED);

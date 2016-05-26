@@ -197,7 +197,7 @@ public class JpaJaxbPeerReviewAdapterTest extends MockSourceBase {
         result.setSubjectUrl("peer-review:subject-url");                
         result.setSubjectType(WorkType.BOOK_REVIEW);        
         result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);
         

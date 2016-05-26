@@ -33,7 +33,6 @@ import org.orcid.core.MockSourceBase;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -98,7 +97,7 @@ public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceBase {
         entity.setExternalIdReference("id-reference");        
         entity.setExternalIdUrl("http://myurl.com");
         entity.setId(123L);        
-        entity.setSource(new SourceEntity("APP-0000000000000000"));
+        entity.setClientSourceId("APP-0000000000000000");
         entity.setVisibility(Visibility.LIMITED);
         return entity;
     }

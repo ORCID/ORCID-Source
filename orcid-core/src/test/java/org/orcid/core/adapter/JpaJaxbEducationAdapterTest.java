@@ -166,7 +166,7 @@ public class JpaJaxbEducationAdapterTest extends MockSourceBase {
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
         result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         
         return result;
     }

@@ -32,10 +32,8 @@ import org.junit.runner.RunWith;
 import org.orcid.core.MockSourceBase;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -94,7 +92,7 @@ public class JpaJaxbKeywordAdapterTest extends MockSourceBase {
         entity.setId(Long.valueOf(1));
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
-        entity.setSource(new SourceEntity(new ClientDetailsEntity("APP-000000000000")));
+        entity.setClientSourceId("APP-000000000000");
         entity.setVisibility(Visibility.LIMITED);
         return entity;
     }

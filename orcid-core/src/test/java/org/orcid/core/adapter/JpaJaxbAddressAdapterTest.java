@@ -35,7 +35,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -91,7 +90,7 @@ public class JpaJaxbAddressAdapterTest extends MockSourceBase {
         result.setIso2Country(Iso3166Country.US);
         result.setUser(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC);
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         return result;
     }
 }

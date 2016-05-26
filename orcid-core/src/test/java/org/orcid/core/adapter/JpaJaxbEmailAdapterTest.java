@@ -34,7 +34,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -92,7 +91,7 @@ public class JpaJaxbEmailAdapterTest extends MockSourceBase {
         result.setDateCreated(new Date());
         result.setLastModified(new Date());       
         result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         
         return result;
     }

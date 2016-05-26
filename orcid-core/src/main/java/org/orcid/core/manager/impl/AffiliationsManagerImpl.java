@@ -186,7 +186,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     @Override
     public Education updateEducationAffiliation(String orcid, Education education, boolean isApiRequest) {
         OrgAffiliationRelationEntity educationEntity = affiliationsDao.getOrgAffiliationRelation(orcid, education.getPutCode());                
-        
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         //Save the original source
         String existingSourceId = educationEntity.getSourceId();
         String existingClientSourceId = educationEntity.getClientSourceId();
@@ -194,7 +194,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         Visibility originalVisibility = educationEntity.getVisibility();
         orcidSecurityManager.checkSource(educationEntity);
 
-        activityValidator.validateEducation(education, existingSource, false, isApiRequest, originalVisibility);
+        activityValidator.validateEducation(education, sourceEntity, false, isApiRequest, originalVisibility);
         
         jpaJaxbEducationAdapter.toOrgAffiliationRelationEntity(education, educationEntity);
         educationEntity.setVisibility(originalVisibility);
@@ -297,6 +297,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     public Employment updateEmploymentAffiliation(String orcid, Employment employment, boolean isApiRequest) {
         OrgAffiliationRelationEntity employmentEntity = affiliationsDao.getOrgAffiliationRelation(orcid, employment.getPutCode());        
         Visibility originalVisibility = employmentEntity.getVisibility();  
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
         //Save the original source
         String existingSourceId = employmentEntity.getSourceId();
@@ -304,7 +305,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         
         orcidSecurityManager.checkSource(employmentEntity);
 
-        activityValidator.validateEmployment(employment, existingSource, false, isApiRequest, originalVisibility);
+        activityValidator.validateEmployment(employment, sourceEntity, false, isApiRequest, originalVisibility);
         
         jpaJaxbEmploymentAdapter.toOrgAffiliationRelationEntity(employment, employmentEntity);
         employmentEntity.setVisibility(originalVisibility);
