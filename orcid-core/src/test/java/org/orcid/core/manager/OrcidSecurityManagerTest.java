@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
+import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc2.CreditName;
 import org.orcid.jaxb.model.common_rc2.Source;
@@ -40,6 +41,10 @@ import org.orcid.jaxb.model.record_rc2.GivenNames;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
+import org.orcid.persistence.jpa.entities.OtherNameEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
 /**
  * 
@@ -290,6 +295,96 @@ public class OrcidSecurityManagerTest extends BaseTest {
         }
     }
 
+    @Test 
+    public void testCheckSourceForIdentifierTypeEntity() {
+        //Setup for APP-0001
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-0001");
+        //Check source on IdentifierTypeEntity
+        IdentifierTypeEntity entity = new IdentifierTypeEntity();
+        ClientDetailsEntity client = new ClientDetailsEntity("APP-0001");
+        entity.setSourceClient(client);
+        //Should work
+        orcidSecurityManager.checkSource(entity);
+        
+        //Should fail
+        try {
+            client.setId("APP-0002");
+            entity.setSourceClient(client);
+            orcidSecurityManager.checkSource(entity);
+            fail();
+        } catch(WrongSourceException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Should fail
+        try {
+            client.setId("APP-0003");
+            entity.setSourceClient(client);
+            orcidSecurityManager.checkSource(entity);
+            fail();
+        } catch(WrongSourceException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }   
+        
+        SecurityContextTestUtils.setUpSecurityContextForAnonymous();
+        try {
+            client.setId("APP-0001");
+            entity.setSourceClient(client);
+            orcidSecurityManager.checkSource(entity);
+            fail();
+        } catch(WrongSourceException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Should work again
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-0001");
+        client.setId("APP-0001");
+        entity.setSourceClient(client);
+        orcidSecurityManager.checkSource(entity);
+    }
+    
+    @Test 
+    public void testCheckSourceForSourceAwareEntity() {
+        //Setup for APP-0001
+        SecurityContextTestUtils.setUpSecurityContextForClientOnly("APP-0001");
+        //Try with any kind of source aware
+        SourceAwareEntity<?> entity = new OtherNameEntity();
+        
+        //Should fail for a user
+        try {
+            entity.setSourceId("0000-0000-0000-0001");
+            orcidSecurityManager.checkSource(entity);
+            fail();
+        } catch(WrongSourceException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Should fail for other client
+        try {
+            entity.setSourceId(null);
+            entity.setClientSourceId("APP-0002");
+            orcidSecurityManager.checkSource(entity);
+            fail();
+        } catch(WrongSourceException e) {
+            
+        } catch(Exception e) {
+            fail();
+        }
+        
+        //Should work for that client
+        entity.setSourceId(null);
+        entity.setClientSourceId("APP-0001");
+        orcidSecurityManager.checkSource(entity);
+    }
+    
     public void checkScopes(String userOrcid, ScopePathType scopeThatShouldWork) {
         if (ScopePathType.READ_PUBLIC.equals(scopeThatShouldWork)) {
             System.out.println("Debug here");

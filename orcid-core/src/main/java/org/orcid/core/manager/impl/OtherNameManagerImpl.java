@@ -119,9 +119,8 @@ public class OtherNameManagerImpl implements OtherNameManager {
     public boolean deleteOtherName(String orcid, Long putCode, boolean checkSource) {        
         OtherNameEntity otherNameEntity = otherNameDao.getOtherName(orcid, putCode);        
         
-        if(checkSource) {
-            SourceEntity existingSource = otherNameEntity.getSource();
-            orcidSecurityManager.checkSource(existingSource);
+        if(checkSource) {            
+            orcidSecurityManager.checkSource(otherNameEntity);
         }        
 
         try {
@@ -152,7 +151,13 @@ public class OtherNameManagerImpl implements OtherNameManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+                newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+                newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
         setIncomingPrivacy(newEntity, profile);
         otherNameDao.persist(newEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(newEntity);
@@ -162,7 +167,10 @@ public class OtherNameManagerImpl implements OtherNameManager {
     public OtherName updateOtherName(String orcid, Long putCode, OtherName otherName, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         OtherNameEntity updatedOtherNameEntity = otherNameDao.getOtherName(orcid, putCode);
-        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());
+        Visibility originalVisibility = Visibility.fromValue(updatedOtherNameEntity.getVisibility().value());        
+        //Save the original source
+        String existingSourceId = updatedOtherNameEntity.getSourceId();
+        String existingClientSourceId = updatedOtherNameEntity.getClientSourceId();
         // Validate the other name
         PersonValidator.validateOtherName(otherName, sourceEntity, false, isApiRequest, originalVisibility);
 
@@ -176,12 +184,14 @@ public class OtherNameManagerImpl implements OtherNameManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-       
-        SourceEntity existingSource = updatedOtherNameEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+               
+        orcidSecurityManager.checkSource(updatedOtherNameEntity);
         jpaJaxbOtherNameAdapter.toOtherNameEntity(otherName, updatedOtherNameEntity);
         updatedOtherNameEntity.setLastModified(new Date());        
-        updatedOtherNameEntity.setSource(existingSource);
+        //Be sure it doesn't overwrite the source
+        updatedOtherNameEntity.setSourceId(existingSourceId);
+        updatedOtherNameEntity.setClientSourceId(existingClientSourceId);
+        
         otherNameDao.merge(updatedOtherNameEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(updatedOtherNameEntity);
     }
@@ -231,7 +241,13 @@ public class OtherNameManagerImpl implements OtherNameManager {
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newOtherName.setProfile(profile);
                     newOtherName.setDateCreated(new Date());
-                    newOtherName.setSource(sourceEntity);
+                    //Set the source
+                    if(sourceEntity.getSourceProfile() != null) {
+                        newOtherName.setSourceId(sourceEntity.getSourceProfile().getId());
+                    }
+                    if(sourceEntity.getSourceClient() != null) {
+                        newOtherName.setClientSourceId(sourceEntity.getSourceClient().getId());
+                    } 
                     newOtherName.setVisibility(updatedOrNew.getVisibility());
                     newOtherName.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     otherNameDao.persist(newOtherName);

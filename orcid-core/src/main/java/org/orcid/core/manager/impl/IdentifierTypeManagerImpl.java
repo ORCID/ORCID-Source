@@ -111,7 +111,7 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         IdentifierTypeEntity entity = idTypeDao.getEntityByName(externalIdentifierTypeConverter.convertTo(id.getName(), null));
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceClient(entity.getSourceClient());
-        securityManager.checkSource(sourceEntity);
+        securityManager.checkSource(entity);
         entity.setIsDeprecated(id.getDeprecated());
         entity.setResolutionPrefix(id.getResolutionPrefix());
         entity.setValidationRegex(id.getValidationRegex());
