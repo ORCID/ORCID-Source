@@ -252,7 +252,7 @@
 				                		<#assign i = 1>
 				                		<#list publicGroupedResearcherUrls[url] as researcherUrl>				                							                		
 				                			<#if (i == 1)>
-				                				  <a href="<@orcid.absUrl researcherUrl.url/>" target="_blank" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName}<#else>${researcherUrl.url.value}</#if></a><#if researcherUrl_has_next><span ng-if="showSources['websites'] == false || showSources['websites'] == null">,</span></#if>
+				                				  <a href="<@orcid.absUrl researcherUrl.url/>" target="_blank" rel="me nofollow"><#if (researcherUrl.urlName)! != "">${researcherUrl.urlName}<#else>${researcherUrl.url.value}</#if></a><#if url_has_next><br/></#if>
 											</#if>			
 											<#if (i == 1)>								
 					                			<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>
