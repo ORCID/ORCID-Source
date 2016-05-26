@@ -105,6 +105,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * @author Declan Newman (declan) Date: 10/02/2012
@@ -114,8 +116,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
     
+    private String REQUEST_PROFILE_LAST_MODIFED = "REQUEST_PROFILE_LAST_MODIFED";
+    
     @Resource
     private ProfileDao profileDao;
+ 
+    @Resource 
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -420,7 +427,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (!orcidExists(orcid)) {
             throw new NoResultException();
         }
-        Date lastModified = profileDao.retrieveLastModifiedDate(orcid);
+        Date lastModified = profileEntityManager.updateLastModifed(orcid);
         long lastModifiedTime = lastModified.getTime();
         ActivitiesSummary activities = new ActivitiesSummary();
 
@@ -601,9 +608,29 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     public Date getLastModified(String orcid) {
-        return profileDao.retrieveLastModifiedDate(orcid);
+        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        Date lastMod = null;
+        if (sra != null)
+            lastMod = (Date)sra.getAttribute(REQUEST_PROFILE_LAST_MODIFED, ServletRequestAttributes.SCOPE_REQUEST);
+        if (lastMod == null) {
+            return lastMod = profileEntityManager.updateLastModifed(orcid);
+        }
+        return lastMod;
     }
 
+    @Override
+    public Date updateLastModifed(String orcid) {
+        Date lastMod = null;
+        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        if (sra != null)
+            lastMod = (Date)sra.getAttribute(REQUEST_PROFILE_LAST_MODIFED, ServletRequestAttributes.SCOPE_REQUEST);
+        if (lastMod == null) {
+            lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        }
+        return lastMod;
+    }
+    
+    
     @Override
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);

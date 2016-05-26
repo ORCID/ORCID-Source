@@ -21,6 +21,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
@@ -33,13 +34,13 @@ import net.sf.ehcache.Element;
 
 public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager {
 
-    @Resource
-    private ProfileDao profileDao;
-
     LockerObjectsManager pubLocks = new LockerObjectsManager();
 
     @Resource(name = "profileEntityCache")
     private Cache profileCache;
+
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     LockerObjectsManager lockers = new LockerObjectsManager();
 
@@ -51,14 +52,14 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     @Transactional
     public ProfileEntity retrieve(String orcid) throws IllegalArgumentException {
         Object key = new OrcidCacheKey(orcid, releaseName);
-        Date dbDate = retrieveLastModifiedDate(orcid);
+        Date dbDate = profileEntityManager.getLastModified(orcid);
         ProfileEntity profile = toProfileEntity(profileCache.get(key));
         if (needsFresh(dbDate, profile))
             try {
                 synchronized (lockers.obtainLock(orcid)) {
                     profile = toProfileEntity(profileCache.get(orcid));
                     if (needsFresh(dbDate, profile)) {
-                        profile = profileDao.find(orcid);                        
+                        profile = profileEntityManager.findByOrcid(orcid);                        
                         if(profile == null)
                             throw new IllegalArgumentException("Invalid orcid " + orcid);                         
                         if(profile.getGivenPermissionBy() != null) {
@@ -100,17 +101,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     public void remove(String orcid) {
         profileCache.remove(new OrcidCacheKey(orcid, releaseName));
     }
-    
-    private Date retrieveLastModifiedDate(String orcid) {
-        Date date = null;
-        try {
-            date = profileDao.retrieveLastModifiedDate(orcid);
-        } catch (javax.persistence.NoResultException e) {
-             LOG.debug("Missing retrieveLastModifiedDate orcid:" + orcid);   
-        }
-        return date;
-    }
-    
+        
     static public ProfileEntity toProfileEntity(Element element) {
         return (ProfileEntity) (element != null ? element.getObjectValue() : null);
     }

@@ -29,6 +29,7 @@ import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
 import org.orcid.core.manager.OrcidProfileManagerReadOnly;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
@@ -60,6 +61,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadOnly {
 
+    @Resource 
+    private ProfileEntityManager profileEntityManager;    
     @Resource
     protected ProfileDao profileDao;
     @Resource
@@ -245,7 +248,7 @@ public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadO
 
     @Override
     public Date retrieveLastModifiedDate(String orcid) {
-        return profileDao.retrieveLastModifiedDate(orcid);
+        return profileEntityManager.updateLastModifed(orcid);
     }
 
     @Deprecated

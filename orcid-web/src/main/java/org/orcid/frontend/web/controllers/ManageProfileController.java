@@ -295,7 +295,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (existing == null) {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
-            Date delegateLastModified = profileDao.updateLastModifiedDate(delegateOrcid);
+            Date delegateLastModified = profileEntityManager.updateLastModifed(delegateOrcid);
             GivenPermissionToEntity permission = new GivenPermissionToEntity();
             permission.setGiver(currentUserOrcid);
             ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
@@ -1018,7 +1018,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         // Clear the delegate's profile from the cache so that
                         // the granting
                         // user is visible to them immediately
-                        Date delegateLastModified = profileDao.updateLastModifiedDate(trustedOrcid);
+                        Date delegateLastModified = profileEntityManager.updateLastModifed(trustedOrcid);
                         GivenPermissionToEntity permission = new GivenPermissionToEntity();
                         permission.setGiver(managedOrcid);
                         ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
