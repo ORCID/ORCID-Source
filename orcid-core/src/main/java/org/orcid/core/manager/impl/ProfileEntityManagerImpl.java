@@ -117,12 +117,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
     
     private String REQUEST_PROFILE_LAST_MODIFED = "REQUEST_PROFILE_LAST_MODIFED";
-    
+
     @Resource
     private ProfileDao profileDao;
- 
-    @Resource 
-    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
@@ -427,7 +424,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (!orcidExists(orcid)) {
             throw new NoResultException();
         }
-        Date lastModified = profileEntityManager.updateLastModifed(orcid);
+        Date lastModified = updateLastModifed(orcid);
         long lastModifiedTime = lastModified.getTime();
         ActivitiesSummary activities = new ActivitiesSummary();
 
@@ -613,7 +610,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (sra != null)
             lastMod = (Date)sra.getAttribute(REQUEST_PROFILE_LAST_MODIFED, ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
-            return lastMod = profileEntityManager.updateLastModifed(orcid);
+            return lastMod = updateLastModifed(orcid);
         }
         return lastMod;
     }
@@ -629,8 +626,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         }
         return lastMod;
     }
-    
-    
+
     @Override
     public boolean isDeactivated(String orcid) {
         return profileDao.isDeactivated(orcid);

@@ -75,9 +75,9 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
 
-    @Resource 
+    @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
     private OrcidProfileManager orcidProfileManager;
 

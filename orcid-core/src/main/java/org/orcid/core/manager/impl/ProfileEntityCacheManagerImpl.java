@@ -59,7 +59,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
                 synchronized (lockers.obtainLock(orcid)) {
                     profile = toProfileEntity(profileCache.get(orcid));
                     if (needsFresh(dbDate, profile)) {
-                        profile = profileEntityManager.findByOrcid(orcid);                        
+                        profile = profileEntityManager.findByOrcid(orcid);
                         if(profile == null)
                             throw new IllegalArgumentException("Invalid orcid " + orcid);                         
                         if(profile.getGivenPermissionBy() != null) {
@@ -91,7 +91,6 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
         }
     }
 
-    
     @Override
     public void removeAll() {
         profileCache.removeAll();
@@ -101,7 +100,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
     public void remove(String orcid) {
         profileCache.remove(new OrcidCacheKey(orcid, releaseName));
     }
-        
+
     static public ProfileEntity toProfileEntity(Element element) {
         return (ProfileEntity) (element != null ? element.getObjectValue() : null);
     }

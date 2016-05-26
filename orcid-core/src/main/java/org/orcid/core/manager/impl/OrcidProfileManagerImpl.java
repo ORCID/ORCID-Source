@@ -208,8 +208,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Resource
     private OrcidJaxbCopyManager orcidJaxbCopyManager;
-    
-    @Resource 
+
+    @Resource
     private ProfileEntityManager profileEntityManager;
 
     @Resource
@@ -908,8 +908,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;
         Visibility namesVisibility = personalDetails.getName().getVisibility() != null ? Visibility.fromValue(personalDetails.getName().getVisibility().value()) : OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility();
         
-        Date lastModified = profileEntityManager.getLastModified(orcid); 
-        
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+
         RecordNameEntity recordName = recordNameManager.getRecordName(orcid, (lastModified == null ? 0 : lastModified.getTime()));
         if(recordName != null) {
             recordName.setCreditName(creditName);

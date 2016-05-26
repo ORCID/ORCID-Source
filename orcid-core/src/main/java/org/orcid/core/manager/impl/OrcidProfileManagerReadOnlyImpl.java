@@ -61,8 +61,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class OrcidProfileManagerReadOnlyImpl implements OrcidProfileManagerReadOnly {
 
-    @Resource 
-    private ProfileEntityManager profileEntityManager;    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
     @Resource
     protected ProfileDao profileDao;
     @Resource
