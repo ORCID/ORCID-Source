@@ -1,0 +1,57 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">	
+	            
+	<changeSet id="group_id_record_date_created_idx" author="rcpeters" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="group_id_record_date_created_idx" tableName="group_id_record" />
+			</not>
+		</preConditions>
+		<sql>CREATE INDEX group_id_record_date_created_idx on group_id_record (date_created);</sql>
+	</changeSet>
+	<changeSet id="group_id_record_group_type_idx" author="rcpeters" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="group_id_record_group_type_idx" tableName="group_id_record" />
+			</not>
+		</preConditions>
+		<sql>CREATE INDEX group_id_record_group_type_idx on group_id_record (group_type);</sql>
+	</changeSet>	
+	<changeSet id="record_name_credit_name_idx" author="rcpeters" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="record_name_credit_name_idx" tableName="record_name" />
+			</not>
+		</preConditions>
+		<sql>CREATE INDEX record_name_credit_name_idx on record_name (credit_name);</sql>
+	</changeSet>	
+	<changeSet id="profile_funding_org_id_idx" author="rcpeters" dbms="postgresql">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<indexExists indexName="profile_funding_org_id_idx" tableName="profile_funding" />
+			</not>
+		</preConditions>
+		<sql>CREATE INDEX profile_funding_org_id_idx on profile_funding (org_id);</sql>
+	</changeSet>	
+
+		
+</databaseChangeLog>
