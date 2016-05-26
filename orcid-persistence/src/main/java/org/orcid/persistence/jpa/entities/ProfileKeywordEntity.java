@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  */
 @Entity
 @Table(name = "profile_keyword")
-public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware, SourceAware {
+public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
