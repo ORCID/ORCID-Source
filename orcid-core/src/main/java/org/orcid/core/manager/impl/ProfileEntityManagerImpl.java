@@ -618,12 +618,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Override
     public Date updateLastModifed(String orcid) {
         Date lastMod = null;
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        if (sra != null)
-            lastMod = (Date)sra.getAttribute(REQUEST_PROFILE_LAST_MODIFED, ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
             lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
         }
+        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        if (sra != null)
+            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         return lastMod;
     }
 

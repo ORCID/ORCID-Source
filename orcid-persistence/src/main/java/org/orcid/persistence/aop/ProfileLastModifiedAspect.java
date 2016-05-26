@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.aop;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import org.aspectj.lang.JoinPoint;
@@ -31,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -42,6 +46,8 @@ import com.google.common.collect.ImmutableMap;
 @Aspect
 @Component(value = "profileLastModifiedAspect")
 public class ProfileLastModifiedAspect implements PriorityOrdered {
+    
+    private String REQUEST_PROFILE_LAST_MODIFED = "REQUEST_PROFILE_LAST_MODIFED";
 
     private static final int PRECEDENCE = 50;
 
@@ -83,7 +89,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        Date lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        if (sra != null)
+            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName()+"."+joinPoint.getSignature().getName()), JmsDestination.UPDATED_ORCIDS);
     }
 
