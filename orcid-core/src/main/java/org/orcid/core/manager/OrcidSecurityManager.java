@@ -24,7 +24,7 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
 /**
  * 
@@ -43,7 +43,7 @@ public interface OrcidSecurityManager {
     
     void checkIsPublic(Biography biography);
     
-    void checkSource(SourceEntity existingSource);
+    void checkSource(SourceAwareEntity<?> existingSource);
 
     boolean isAdmin();
 

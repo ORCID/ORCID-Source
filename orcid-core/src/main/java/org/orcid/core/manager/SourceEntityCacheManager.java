@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.manager.cache;
+package org.orcid.core.manager;
 
 import org.orcid.persistence.jpa.entities.SourceEntity;
 

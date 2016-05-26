@@ -823,15 +823,8 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 email.setCurrent(emailEntity.getCurrent());
                 email.setVerified(emailEntity.getVerified());
                 email.setVisibility(emailEntity.getVisibility());
-                SourceEntity source = emailEntity.getSource();
-                if (source != null) {
-                    ClientDetailsEntity sourceClient = source.getSourceClient();
-                    if (sourceClient != null && OrcidStringUtils.isClientId(sourceClient.getClientId())) {
-                        email.setSourceClientId(sourceClient.getClientId());
-                    } else {
-                        email.setSource(source.getSourceId());
-                    }
-                }
+                email.setSource(emailEntity.getSourceId());
+                email.setSourceClientId(emailEntity.getClientSourceId());
                 emailList.add(email);
             }
         }

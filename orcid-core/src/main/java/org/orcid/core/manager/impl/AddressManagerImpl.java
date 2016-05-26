@@ -103,10 +103,14 @@ public class AddressManagerImpl implements AddressManager {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
-        SourceEntity existingSource = updatedEntity.getSource();
+        
+        //Save the original source
+        String existingSourceId = updatedEntity.getSourceId();
+        String existingClientSourceId = updatedEntity.getClientSourceId();
+        
         //If it is an update from the API, check the source and preserve the original visibility
         if(isApiRequest) {
-            orcidSecurityManager.checkSource(existingSource);            
+            orcidSecurityManager.checkSource(updatedEntity);            
         }
         
         // Validate the address
@@ -127,7 +131,11 @@ public class AddressManagerImpl implements AddressManager {
                         
         adapter.toAddressEntity(address, updatedEntity);
         updatedEntity.setLastModified(new Date());        
-        updatedEntity.setSource(existingSource);
+
+        //Be sure it doesn't overwrite the source
+        updatedEntity.setSourceId(existingSourceId);
+        updatedEntity.setClientSourceId(existingClientSourceId);                
+        
         addressDao.merge(updatedEntity);
         return adapter.toAddress(updatedEntity);
     }
@@ -153,7 +161,15 @@ public class AddressManagerImpl implements AddressManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);        
+        
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+            newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+            newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }        
+        
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);
         return adapter.toAddress(newEntity);
@@ -163,8 +179,7 @@ public class AddressManagerImpl implements AddressManager {
     @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {
         AddressEntity entity = addressDao.getAddress(orcid, putCode);
-        SourceEntity existingSource = entity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(entity);
 
         try {
             addressDao.remove(entity);
@@ -269,7 +284,15 @@ public class AddressManagerImpl implements AddressManager {
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newAddress.setUser(profile);
                     newAddress.setDateCreated(new Date());
-                    newAddress.setSource(sourceEntity);
+                    
+                    //Set the source id
+                    if(sourceEntity.getSourceProfile() != null) {
+                        newAddress.setSourceId(sourceEntity.getSourceProfile().getId());
+                    }
+                    if(sourceEntity.getSourceClient() != null) {
+                        newAddress.setClientSourceId(sourceEntity.getSourceClient().getId());
+                    }
+                                                            
                     newAddress.setVisibility(updatedOrNew.getVisibility());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);

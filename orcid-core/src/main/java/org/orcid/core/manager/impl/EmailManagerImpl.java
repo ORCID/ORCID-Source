@@ -65,17 +65,8 @@ public class EmailManagerImpl implements EmailManager {
     @Override
     @Transactional
     public void addEmail(String orcid, EmailEntity email){
-        String sourceId = null;
-        String clientSourceId = null;
-        if(email.getSource() != null) {
-            if(email.getSource().getSourceProfile() != null) {
-                sourceId = email.getSource().getSourceProfile().getId();
-            }
-            if(email.getSource().getSourceClient() != null) {
-                clientSourceId = email.getSource().getSourceClient().getId();
-            }
-        }
-              
+        String sourceId = email.getSourceId();
+        String clientSourceId = email.getClientSourceId();
     	emailDao.addEmail(orcid, email.getId(), email.getVisibility(), sourceId, clientSourceId, email.getVerified(), email.getCurrent());
     }
     
@@ -204,12 +195,8 @@ public class EmailManagerImpl implements EmailManager {
                 org.orcid.pojo.Email email = new org.orcid.pojo.Email();
                 email.setCurrent(entity.getCurrent());
                 email.setPrimary(entity.getPrimary());
-                if(entity.getSource() != null) {
-                    if(entity.getSource().getSourceProfile() != null)
-                        email.setSource(entity.getSource().getSourceProfile().getId());
-                    if(entity.getSource().getSourceClient() != null)
-                        email.setSourceClientId(entity.getSource().getSourceClient().getClientId());
-                }
+                email.setSource(entity.getSourceId());
+                email.setSourceClientId(entity.getClientSourceId());
                 email.setValue(entity.getId());
                 email.setVerified(entity.getVerified());
                 email.setVisibility(entity.getVisibility());     

@@ -21,13 +21,13 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.orcid.core.manager.SourceEntityCacheManager;
 import org.orcid.persistence.dao.ClientDetailsDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.BaseEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.manager.cache.SourceEntityCacheManager;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
