@@ -383,6 +383,20 @@ public class BlackBoxBase {
         (new WebDriverWait(webDriver, 20, 100))
         .until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@id='cboxOverlay']")));
     }
+    
+    static public void extremeWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
+        int wait = 10;
+        int pollingInternval = 250;
+        try {
+            (new WebDriverWait(webDriver, wait, pollingInternval))
+            .until(expectedCondition);
+        } catch (Exception e) {
+            ((JavascriptExecutor)webDriver).executeScript("$(window).trigger('resize');");
+            angularHasFinishedProcessing();
+            (new WebDriverWait(webDriver, wait, pollingInternval))
+            .until(expectedCondition);            
+        }        
+    }
 
     public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
         /*
