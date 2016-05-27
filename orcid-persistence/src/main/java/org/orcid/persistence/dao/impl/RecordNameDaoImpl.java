@@ -88,7 +88,7 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
     
     @Override
     public Date getLastModified(String orcid) {
-        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHRE profile.id = :orcid", Date.class);
+        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHERE profile.id = :orcid", Date.class);
         query.setParameter("orcid", orcid);
         return query.getSingleResult();
     }

@@ -149,14 +149,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         
         // Amend notification
-        ClassMapBuilder<NotificationAmendedEntity, NotificationAmended> amendNotificationClassMap = mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class);
+        ClassMapBuilder<NotificationAmended, NotificationAmendedEntity> amendNotificationClassMap = mapperFactory.classMap(NotificationAmended.class, NotificationAmendedEntity.class);
         registerSourceConverters(mapperFactory, amendNotificationClassMap); 
         mapCommonFields(amendNotificationClassMap).register();
         mapperFactory.classMap(NotificationItemEntity.class, Item.class)
-            .fieldMap("externalIdentifier.type", "externalIdType")
+            .fieldMap("externalIdType", "externalIdentifier.type")
             .converter("externalIdentifierIdConverter")
             .add()
-            .field("externalIdentifier.value", "externalIdValue")
+            .field("externalIdValue", "externalIdentifier.value")
             .byDefault()
             .register();
         

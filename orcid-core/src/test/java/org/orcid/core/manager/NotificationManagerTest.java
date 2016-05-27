@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.orcid.core.BaseTest;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -63,6 +62,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
@@ -157,11 +157,14 @@ public class NotificationManagerTest {
 
     @Test
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("8888-8888-8888-8880"));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
         when(sourceManager.retrieveSourceOrcid()).thenReturn("8888-8888-8888-8880");
         String testOrcid = "4444-4444-4444-4446";
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
         testProfile.setEnableNotifications(true);
         profileDao.merge(testProfile);
+                      
         createClient();
         for (Locale locale : Locale.values()) {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
@@ -177,12 +180,12 @@ public class NotificationManagerTest {
     }
 
     private void createClient() {
-		ClientDetailsEntity clientEntity = new ClientDetailsEntity();
-		clientEntity.setId("8888-8888-8888-8880");
-		clientEntity.setGroupProfileId("4444-4444-4444-4446");
-		clientEntity.setClientName("Test Name");
-		clientDetailsDao.persist(clientEntity);
-	}
+        ClientDetailsEntity clientEntity = new ClientDetailsEntity();
+        clientEntity.setId("8888-8888-8888-8880");
+        clientEntity.setGroupProfileId("4444-4444-4444-4446");
+        clientEntity.setClientName("Test Name");
+        clientDetailsDao.persist(clientEntity);
+    }
 
 	@Test
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
@@ -273,9 +276,13 @@ public class NotificationManagerTest {
 
     @Test
     public void testCreateCustomNotification() {
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("8888-8888-8888-8880"));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveSourceOrcid()).thenReturn("8888-8888-8888-8880");        
         String testOrcid = "4444-4444-4444-4446";
         ProfileEntity testProfile = new ProfileEntity(testOrcid);
         profileDao.merge(testProfile);
+        createClient();
         NotificationCustom notification = new NotificationCustom();
         notification.setSubject("Test subject");
         notification.setLang("en-gb");

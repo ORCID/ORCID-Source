@@ -69,6 +69,10 @@ public class IdentifierTypeManagerImpl implements IdentifierTypeManager {
         this.sourceManager = manager;
     }
 
+    public void setSecurityManager(OrcidSecurityManager manager) {
+        this.securityManager = manager;
+    }
+    
     @Override
     @Cacheable("identifier-types")
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name) {
