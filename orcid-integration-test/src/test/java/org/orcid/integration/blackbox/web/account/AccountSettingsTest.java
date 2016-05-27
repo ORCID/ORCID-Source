@@ -151,7 +151,6 @@ public class AccountSettingsTest {
         accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
         BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        
         // Check that add email section is not there
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();
