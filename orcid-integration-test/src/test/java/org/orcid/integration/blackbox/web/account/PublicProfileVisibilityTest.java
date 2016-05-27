@@ -587,9 +587,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
         noSpinners(webDriver);
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding-container")), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding-container")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-funding-container")), webDriver);
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding")), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-funding")), webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")), webDriver);
