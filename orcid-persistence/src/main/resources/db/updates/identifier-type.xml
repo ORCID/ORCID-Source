@@ -53,10 +53,10 @@
    <changeSet id="ADD-SEQUENCE-FOR-IDENTIFIER-TYPE" author="Tom D" dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <not>
-                <sequenceExists sequenceName="identifer_type_seq" />
+                <sequenceExists sequenceName="identifier_type_seq" />
             </not>
         </preConditions>
-        <createSequence sequenceName="identifer_type_seq" />
+        <createSequence sequenceName="identifier_type_seq" />
     </changeSet>
     
     <changeSet id="CREATE-AUTOCOLS" author="Tom D" dbms="hsqldb">    	
