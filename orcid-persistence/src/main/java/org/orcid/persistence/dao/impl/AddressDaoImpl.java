@@ -81,14 +81,4 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
         return query.executeUpdate() > 0 ? true : false;
     }
     
-    @Override
-    @Transactional
-    public boolean updateAddressVisibility(String orcid, Visibility visibility) {
-        Query query = entityManager
-                .createNativeQuery("update profile set last_modified=now(), profile_address_visibility=:address_visibility, indexing_status='PENDING' where orcid=:orcid");
-        query.setParameter("address_visibility", StringUtils.upperCase(visibility.value()));
-        query.setParameter("orcid", orcid);
-        boolean result = query.executeUpdate() > 0 ? true : false;
-        return result;
-    }
 }
