@@ -145,7 +145,7 @@
 			
 	<bean id="clientDetailsEntityCacheManager" class="org.orcid.core.manager.impl.ClientDetailsEntityCacheManagerImpl"/>		
 	
-	<bean id="sourceEntityCacheManager" class="org.orcid.core.manager.impl.SourceEntityCacheManagerImpl"/>
+	<bean id="sourceNameCacheManager" class="org.orcid.core.manager.impl.SourceNameCacheManagerImpl"/>
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
 
@@ -513,8 +513,8 @@
         <property name="copyOnWrite" value="false" />
 	</bean>
 	
-	<bean id="sourceEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean"> 
-		<property name="cacheName" value="source-entity" />
+	<bean id="sourceNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean"> 
+		<property name="cacheName" value="source-name" />
 		<property name="cacheManager" ref="coreCacheManager" />
 		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
 		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />

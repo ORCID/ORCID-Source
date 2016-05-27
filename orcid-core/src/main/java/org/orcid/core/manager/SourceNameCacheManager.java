@@ -16,19 +16,15 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.persistence.jpa.entities.SourceEntity;
-
 /**
  * @author Angel Montenegro
  * */
-public interface SourceEntityCacheManager {
+public interface SourceNameCacheManager {
 
-    public SourceEntity retrieve(String id) throws IllegalArgumentException;
-    
-    public void put(SourceEntity sourceEntity);
+    public String retrieve(String sourceId) throws IllegalArgumentException;
     
     public void removeAll();
     
-    public void remove(String id);
+    public void remove(String sourceId);
     
 }

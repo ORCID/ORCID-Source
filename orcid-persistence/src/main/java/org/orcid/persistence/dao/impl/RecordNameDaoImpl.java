@@ -17,9 +17,11 @@
 package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.persistence.dao.RecordNameDao;
@@ -82,5 +84,12 @@ public class RecordNameDaoImpl extends GenericDaoImpl<RecordNameEntity, Long> im
         query.setParameter("orcid", orcid);
         Long result = ((BigInteger)query.getSingleResult()).longValue();
         return (result != null && result > 0);
-    }    
+    }   
+    
+    @Override
+    public Date getLastModified(String orcid) {
+        TypedQuery<Date> query = entityManager.createQuery("SELECT lastModified FROM RecordNameEntity WHRE profile.id = :orcid", Date.class);
+        query.setParameter("orcid", orcid);
+        return query.getSingleResult();
+    }
 }

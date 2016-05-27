@@ -29,7 +29,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.MockSourceBase;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
@@ -43,7 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceBase {
+public class JpaJaxbExternalIdentifierAdapterTest {
     @Resource
     private JpaJaxbExternalIdentifierAdapter jpaJaxbExternalIdentifierAdapter;
     

@@ -27,7 +27,9 @@ import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.jaxb.model.message.AffiliationType;
 import org.orcid.jaxb.model.message.Visibility;
@@ -39,7 +41,6 @@ import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -66,7 +67,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     private SourceManager sourceManager;
 
     @Resource
-    private ProfileDao profileDao;
+    private ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -76,6 +77,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
     
     @Resource 
     private ActivityValidator activityValidator;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -163,8 +167,8 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         if(sourceEntity.getSourceClient() != null) {
             educationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }        
-        
-        ProfileEntity profile = profileDao.find(orcid);
+                        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         educationEntity.setProfile(profile);
         setIncomingWorkPrivacy(educationEntity, profile);
         educationEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EDUCATION.value()));
@@ -274,7 +278,7 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
             employmentEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }
         
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         employmentEntity.setProfile(profile);
         setIncomingWorkPrivacy(employmentEntity, profile);
         employmentEntity.setAffiliationType(org.orcid.jaxb.model.message.AffiliationType.fromValue(AffiliationType.EMPLOYMENT.value()));
@@ -401,7 +405,13 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         
         if(affiliations != null) {
             for (OrgAffiliationRelationEntity affiliation : affiliations) {
-                result.add(AffiliationForm.valueOf(affiliation));
+                AffiliationForm affiliationForm = AffiliationForm.valueOf(affiliation);
+                //Get the name from the name cache
+                if(!PojoUtil.isEmpty(affiliationForm.getSource())) {
+                    String sourceName = sourceNameCacheManager.retrieve(affiliationForm.getSource());
+                    affiliationForm.setSourceName(sourceName);
+                }
+                result.add(affiliationForm);
             }
         }
         

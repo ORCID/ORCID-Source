@@ -37,6 +37,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -213,6 +214,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
         return toOrcidProfile(profileEntity, LoadOptions.ALL);
@@ -586,20 +590,18 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
      *            The entity to obtain the source
      * @return the source of the object
      * */
-    private Source getSource(SourceAwareEntity sourceAwareEntity) {
-        SourceEntity sourceEntity = sourceAwareEntity.getSource();
-        if (sourceEntity == null) {
+    private Source getSource(SourceAwareEntity<?> sourceAwareEntity) {
+        if (sourceAwareEntity == null || PojoUtil.isEmpty(sourceAwareEntity.getElementSourceId())) {
             return null;
         }
-        Source source = new Source();
-        ClientDetailsEntity sourceClient = sourceEntity.getSourceClient();
-        if (sourceClient != null && !OrcidStringUtils.isValidOrcid(sourceClient.getClientId())) {
-            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceClient.getClientId())));
+        Source source = new Source();        
+        if (!OrcidStringUtils.isValidOrcid(sourceAwareEntity.getElementSourceId())) {
+            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceAwareEntity.getElementSourceId())));
          } else {
-            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceEntity.getSourceId())));
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceAwareEntity.getElementSourceId())));
          }
                 
-        String sourceName = sourceEntity.getSourceName();
+        String sourceName = sourceNameCacheManager.retrieve(sourceAwareEntity.getElementSourceId());
         if (StringUtils.isNotBlank(sourceName)) {
             source.setSourceName(new SourceName(sourceName));
         }

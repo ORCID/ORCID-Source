@@ -24,23 +24,18 @@ import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import org.apache.commons.lang.StringUtils;
-import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
-import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.OrcidStringUtils;
 
 public class WorkForm implements ErrorsInterface, Serializable {
@@ -229,76 +224,6 @@ public class WorkForm implements ErrorsInterface, Serializable {
             }
         }
         return w;
-    }
-
-    public static WorkForm valueOf(MinimizedWorkEntity minimizedWorkEntity) {
-        WorkForm w = new WorkForm();
-        // Set id
-        w.setPutCode(Text.valueOf(String.valueOf(minimizedWorkEntity.getId())));
-        // Set publication date
-        Integer year = (minimizedWorkEntity.getPublicationYear() <= 0) ? null : minimizedWorkEntity.getPublicationYear();
-        Integer month = (minimizedWorkEntity.getPublicationMonth() <= 0) ? null : minimizedWorkEntity.getPublicationMonth();
-        Integer day = (minimizedWorkEntity.getPublicationDay() <= 0) ? null : minimizedWorkEntity.getPublicationDay();
-        FuzzyDate fuzz = new FuzzyDate(year, month, day);
-        w.setPublicationDate(Date.valueOf(fuzz));
-        w.setDateSortString(PojoUtil.createDateSortString(null, fuzz));
-
-        // Set title and subtitle
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getTitle()))
-            w.setTitle(Text.valueOf(minimizedWorkEntity.getTitle()));
-
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getTranslatedTitle())) {
-            TranslatedTitleForm translatedTitle = new TranslatedTitleForm();
-            translatedTitle.setContent(minimizedWorkEntity.getTranslatedTitle());
-            translatedTitle.setLanguageCode(minimizedWorkEntity.getTranslatedTitleLanguageCode());
-            w.setTranslatedTitle(translatedTitle);
-        }
-
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getSubtitle()))
-            w.setSubtitle(Text.valueOf(minimizedWorkEntity.getSubtitle()));
-
-        // Set Subtitle
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getJournalTitle()))
-            w.setJournalTitle(Text.valueOf(minimizedWorkEntity.getJournalTitle()));
-
-        // Set description
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getDescription())) {
-            w.setShortDescription(Text.valueOf(minimizedWorkEntity.getDescription()));
-        }
-        // Set visibility
-        if (minimizedWorkEntity.getVisibility() != null)
-            w.setVisibility(minimizedWorkEntity.getVisibility());
-
-        if (minimizedWorkEntity.getWorkType() != null)
-            w.setWorkType(Text.valueOf(minimizedWorkEntity.getWorkType().value()));
-        WorkExternalIdentifiers identifiers = null;
-        if (!StringUtils.isEmpty(minimizedWorkEntity.getExternalIdentifiersJson())) {
-            identifiers = JsonUtils.readObjectFromJsonString(minimizedWorkEntity.getExternalIdentifiersJson(), WorkExternalIdentifiers.class);
-        }
-        populateExternaIdentifiers(identifiers, w);
-        SourceEntity source = minimizedWorkEntity.getSource();
-        if (source != null) {
-            w.setSource(source.getSourceId());
-            w.setSourceName(source.getSourceName());
-        }
-        if (minimizedWorkEntity.getLanguageCode() != null) {
-            w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
-            w.setLanguageCode(Text.valueOf(minimizedWorkEntity.getLanguageCode()));
-        }
-        w.setCreatedDate(Date.valueOf(minimizedWorkEntity.getDateCreated()));
-        w.setLastModified(Date.valueOf(minimizedWorkEntity.getLastModified()));
-        if (minimizedWorkEntity.getWorkUrl() != null)
-            w.setUrl(Text.valueOf(minimizedWorkEntity.getWorkUrl()));
-        return w;
-    }
-
-    
-    private static void populateExternaIdentifiers(WorkExternalIdentifiers workExternalIdentifiers, WorkForm work) {
-        List<WorkExternalIdentifier> workExternalIdentifiersList = new ArrayList<WorkExternalIdentifier>();
-        if (workExternalIdentifiers != null && workExternalIdentifiers.getWorkExternalIdentifier() != null)
-            for (org.orcid.jaxb.model.message.WorkExternalIdentifier owWorkExternalIdentifier : workExternalIdentifiers.getWorkExternalIdentifier())
-                workExternalIdentifiersList.add(WorkExternalIdentifier.valueOf(owWorkExternalIdentifier));
-        work.setWorkExternalIdentifiers(workExternalIdentifiersList);
     }
 
     private static void populateExternalIdentifiers(Work work, WorkForm workForm) {

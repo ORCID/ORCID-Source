@@ -208,6 +208,16 @@ public class WorkManagerImpl implements WorkManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setProfile(profile);
         workEntity.setAddedToProfileDate(new Date());
+        
+        // Set source id 
+        if(sourceEntity.getSourceProfile() != null) {
+            workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        
+        if(sourceEntity.getSourceClient() != null) {
+            workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
+        
         setIncomingWorkPrivacy(workEntity, profile);
         workDao.persist(workEntity);
         workDao.flush();

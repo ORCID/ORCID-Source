@@ -163,7 +163,7 @@
 		<persistence strategy="none" />
 	</cache>
 	
-	<cache name="source-entity" maxElementsInMemory="5000"
+	<cache name="source-name" maxElementsInMemory="5000"
 		maxElementsOnDisk="20000" timeToLiveSeconds="86400" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />

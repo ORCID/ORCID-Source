@@ -29,7 +29,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.MockSourceBase;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -44,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbKeywordAdapterTest extends MockSourceBase {
+public class JpaJaxbKeywordAdapterTest {
     @Resource
     private JpaJaxbKeywordAdapter adapter;
     
