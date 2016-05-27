@@ -289,7 +289,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
         List<WorkExternalIdentifier> workExternalIdentifiers = profile1.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers()
                 .getWorkExternalIdentifier();
-        assertEquals(2, workExternalIdentifiers.size());
+        assertEquals(3, workExternalIdentifiers.size());
         Iterator<WorkExternalIdentifier> workExternalIdentifiersIterator = workExternalIdentifiers.iterator();
         while (workExternalIdentifiersIterator.hasNext()) {
             if (WorkExternalIdentifierType.PMID.equals(workExternalIdentifiersIterator.next().getWorkExternalIdentifierType())) {
@@ -306,7 +306,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(1, resultProfile.retrieveOrcidWorks().getOrcidWork().size());
         assertEquals(1, resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("http://www.wjrs.co.uk", resultProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
-        assertEquals(1, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
+        assertEquals(2, resultProfile.getOrcidActivities().getOrcidWorks().getOrcidWork().get(0).getWorkExternalIdentifiers().getWorkExternalIdentifier().size());
     }
 
     @Test
