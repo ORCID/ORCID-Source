@@ -47,7 +47,8 @@ import com.google.common.collect.ImmutableMap;
 @Component(value = "profileLastModifiedAspect")
 public class ProfileLastModifiedAspect implements PriorityOrdered {
     
-    private String REQUEST_PROFILE_LAST_MODIFED = "REQUEST_PROFILE_LAST_MODIFED";
+    // shared REQUEST_PROFILE_LAST_MODIFIED also used in other places
+    public static String REQUEST_PROFILE_LAST_MODIFIED = "REQUEST_PROFILE_LAST_MODIFIED";
 
     private static final int PRECEDENCE = 50;
 
@@ -92,7 +93,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         Date lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (sra != null)
-            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
+            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName()+"."+joinPoint.getSignature().getName()), JmsDestination.UPDATED_ORCIDS);
     }
 

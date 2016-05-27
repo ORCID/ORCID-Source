@@ -81,6 +81,7 @@ import org.orcid.jaxb.model.record_rc2.GroupAble;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
@@ -116,8 +117,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProfileEntityManagerImpl.class);
     
-    private String REQUEST_PROFILE_LAST_MODIFED = "REQUEST_PROFILE_LAST_MODIFED";
-
     @Resource
     private ProfileDao profileDao;
 
@@ -608,7 +607,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         Date lastMod = null;
         if (sra != null)
-            lastMod = (Date)sra.getAttribute(REQUEST_PROFILE_LAST_MODIFED, ServletRequestAttributes.SCOPE_REQUEST);
+            lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
             return lastMod = updateLastModifed(orcid);
         }
@@ -623,7 +622,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         }
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (sra != null)
-            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
+            sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         return lastMod;
     }
 
