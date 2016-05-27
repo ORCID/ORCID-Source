@@ -134,20 +134,20 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                         .field("items.items", "notificationItems").customize(new CustomMapper<NotificationPermission, NotificationAddItemsEntity>() {
                             @Override
                             public void mapAtoB(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
-                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
-                                if (authUrl != null) {
-                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
-                                    authUrl.setHost(orcidUrlManager.getBaseHost());
-                                }
-                            }
-
-                            @Override
-                            public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
                                 if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
                                     String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
                                     // validate
                                     validateAndConvertToURI(authUrl);
                                     entity.setAuthorizationUrl(authUrl);
+                                }                                
+                            }
+
+                            @Override
+                            public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
+                                AuthorizationUrl authUrl = notification.getAuthorizationUrl();
+                                if (authUrl != null) {
+                                    authUrl.setPath(extractFullPath(authUrl.getUri()));
+                                    authUrl.setHost(orcidUrlManager.getBaseHost());
                                 }
                             }
                         })).register();
