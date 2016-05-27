@@ -35,6 +35,8 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
     private Visibility visibility;
     private Long displayIndex;
     private String putCode;
+    private Date createdDate;
+	private Date lastModified;
 
     public static ExternalIdentifierForm valueOf(PersonExternalIdentifier extId) {
         if (extId == null)
@@ -62,6 +64,12 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
         } else {
             form.setDisplayIndex(Long.valueOf(-1));
         }
+        
+        // Set created date
+        form.setCreatedDate(Date.valueOf(extId.getCreatedDate()));
+        //Set last modified
+        form.setLastModified(Date.valueOf(extId.getLastModifiedDate()));                
+        
         return form;
     }
     
@@ -153,4 +161,19 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
     public void setDisplayIndex(Long displayIndex) {
         this.displayIndex = displayIndex;
     }
+    public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Date getLastModified() {
+		return lastModified;
+	}
+
+	public void setLastModified(Date lastModified) {
+		this.lastModified = lastModified;
+	}
 }
