@@ -137,8 +137,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         removeDBUnitData(DATA_FILES);
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
+    @Test    
     public void testViewActitivies() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED);
         Response response = serviceDelegator.viewActivities("4444-4444-4444-4446");
@@ -503,6 +502,25 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.updateWork("4444-4444-4444-4447", 10L, work);
         fail();
     }
+    
+    @Test
+    public void testUpdateWorkLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewWork("4444-4444-4444-4447", 10L);
+        assertNotNull(response);
+        Work work = (Work) response.getEntity(); 
+        assertNotNull(work);
+        assertEquals(Visibility.PUBLIC, work.getVisibility());
+        
+        work.setVisibility(null);
+        
+        response = serviceDelegator.updateWork("4444-4444-4444-4447", 10L, work);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        work = (Work) response.getEntity();
+        assertNotNull(work);
+        assertEquals(Visibility.PUBLIC, work.getVisibility());
+    }
 
     @Test(expected = NoResultException.class)
     public void testDeleteWork() {
@@ -717,6 +735,25 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();       
     }
 
+    @Test
+    public void testUpdateFundingLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewFunding("4444-4444-4444-4447", 6L);
+        assertNotNull(response);
+        Funding funding = (Funding) response.getEntity();
+        assertNotNull(funding);
+        assertEquals(Visibility.PUBLIC, funding.getVisibility());
+        
+        funding.setVisibility(null);
+        
+        response = serviceDelegator.updateFunding("4444-4444-4444-4447", 6L, funding);
+            
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());        
+        funding = (Funding) response.getEntity();
+        assertEquals(Visibility.PUBLIC, funding.getVisibility());
+    }            
+    
     @Test(expected = NoResultException.class)
     public void testDeleteFunding() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -903,6 +940,26 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
         fail();
     }
+    
+    @Test
+    public void testUpdateEducationLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEducation("4444-4444-4444-4443", 3L);
+        assertNotNull(response);
+        Education education = (Education) response.getEntity();
+        assertNotNull(education);
+        assertEquals(Visibility.PUBLIC, education.getVisibility());
+
+        education.setVisibility(null);
+        
+        response = serviceDelegator.updateEducation("4444-4444-4444-4443", 3L, education);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        education = (Education) response.getEntity();
+        assertNotNull(education);
+        assertEquals(Visibility.PUBLIC, education.getVisibility());
+    }
+    
     
     @Test(expected = NoResultException.class)
     public void testDeleteEducation() {
@@ -1092,6 +1149,27 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         fail();
     }
 
+    
+    @Test
+    public void testUpdateEmploymentLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewEmployment("4444-4444-4444-4446", 5L);
+        assertNotNull(response);
+        Employment employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        assertEquals(Visibility.PRIVATE, employment.getVisibility());
+
+        employment.setVisibility(null);
+        
+        response = serviceDelegator.updateEmployment("4444-4444-4444-4446", 5L, employment);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        employment = (Employment) response.getEntity();
+        assertNotNull(employment);
+        assertEquals(Visibility.PRIVATE, employment.getVisibility());        
+    }
+    
+    
     @Test(expected = NoResultException.class)
     public void testDeleteEmployment() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
@@ -1272,6 +1350,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
         fail();
     }        
+    
+    @Test
+    public void testUpdatePeerReviewLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.ACTIVITIES_UPDATE);
+        Response response = serviceDelegator.viewPeerReview("4444-4444-4444-4447", 6L);
+        assertNotNull(response);
+        PeerReview peerReview = (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals(Visibility.PUBLIC, peerReview.getVisibility());
+        
+        peerReview.setVisibility(null);
+        
+        response = serviceDelegator.updatePeerReview("4444-4444-4444-4447", 6L, peerReview);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        peerReview = (PeerReview) response.getEntity();
+        assertNotNull(peerReview);
+        assertEquals(Visibility.PUBLIC, peerReview.getVisibility());
+    }
     
     @Test
     public void testAddPeerReview() {
@@ -1476,7 +1572,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(groupIdRecordNew);
         // Verify the name
         assertEquals(groupIdRecordNew.getName(), "TestGroup33");
-
     }
 
     @Test(expected = GroupIdRecordNotFoundException.class)
@@ -1518,7 +1613,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     /**
      * TEST RESEARCHER URLS
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testViewResearcherUrls() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
@@ -1673,7 +1767,23 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         
         response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
         fail();
-    }        
+    }  
+    
+    @Test
+    public void testUpdateResearcherUrlLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewResearcherUrl("4444-4444-4444-4443", 5L);
+        assertNotNull(response);
+        ResearcherUrl researcherUrl = (ResearcherUrl) response.getEntity();        
+        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+        
+        researcherUrl.setVisibility(null);
+        
+        response = serviceDelegator.updateResearcherUrl("4444-4444-4444-4443", 5L, researcherUrl);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        researcherUrl = (ResearcherUrl) response.getEntity();        
+        assertEquals(Visibility.LIMITED, researcherUrl.getVisibility());
+    }
     
     @Test
     public void testDeleteResearcherUrl() {
@@ -1716,8 +1826,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     /**
      * TEST EMAILS
-     */
-    @SuppressWarnings("unchecked")
+     */    
     @Test
     public void testViewEmails() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
@@ -1749,7 +1858,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     /**
      * TEST OTHER NAMES
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testViewOtherNames() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4446", ScopePathType.PERSON_READ_LIMITED);
@@ -1901,9 +2009,28 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
         otherName.setVisibility(Visibility.PRIVATE);
         
-        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);               
+        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
+        fail();
     }
 
+    @Test
+    public void testUpdateOtherNameLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewOtherName("4444-4444-4444-4443", 1L);
+        assertNotNull(response);
+        OtherName otherName = (OtherName) response.getEntity();
+        assertNotNull(otherName);
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+
+        otherName.setVisibility(null);
+        
+        response = serviceDelegator.updateOtherName("4444-4444-4444-4443", 1L, otherName);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        otherName = (OtherName) response.getEntity();
+        assertNotNull(otherName);
+        assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+    }
+    
     @Test
     public void testDeleteOtherName() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
@@ -1933,8 +2060,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
 
     /**
      * TEST EXTERNAL IDENTIFIERS
-     */
-    @SuppressWarnings("unchecked")
+     */    
     @Test
     public void testViewExternalIdentifiers() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
@@ -2159,6 +2285,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testUpdateExternalIdentifierLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewExternalIdentifier("4444-4444-4444-4442", 2L);
+        assertNotNull(response);
+        PersonExternalIdentifier extId = (PersonExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+        
+        extId.setVisibility(null);
+        
+        response = serviceDelegator.updateExternalIdentifier("4444-4444-4444-4442", 2L, extId);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        extId = (PersonExternalIdentifier) response.getEntity();
+        assertNotNull(extId);
+        assertEquals(Visibility.PUBLIC, extId.getVisibility());
+    }
+    
+    @Test
     public void testDeleteExternalIdentifier() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4444", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewExternalIdentifiers("4444-4444-4444-4444");
@@ -2200,7 +2344,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     /**
      * TEST KEYWORDS
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testViewKeywords() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4443", ScopePathType.PERSON_READ_LIMITED);
@@ -2360,6 +2503,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }
     
     @Test
+    public void testUpdateKeywordLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4441", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewKeyword("4444-4444-4444-4441", 6L);
+        assertNotNull(response);
+        Keyword keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+
+        keyword.setVisibility(null);
+        
+        response = serviceDelegator.updateKeyword("4444-4444-4444-4441", 6L, keyword);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        keyword = (Keyword) response.getEntity();
+        assertNotNull(keyword);
+        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+    }
+    
+    @Test
     public void testDeleteKeyword() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewKeywords("4444-4444-4444-4499");
@@ -2389,7 +2550,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     /**
      * TEST ADDRESSES
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testViewAddresses() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4447", ScopePathType.PERSON_READ_LIMITED);
@@ -2559,6 +2719,24 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     }    
     
     @Test
+    public void testUpdateAddressLeavingVisibilityNullTest() {
+        SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
+        Response response = serviceDelegator.viewAddress("4444-4444-4444-4442", 1L);
+        assertNotNull(response);
+        Address address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+
+        address.setVisibility(null);
+        
+        response = serviceDelegator.updateAddress("4444-4444-4444-4442", 1L, address);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        address = (Address) response.getEntity();
+        assertNotNull(address);
+        assertEquals(Visibility.PUBLIC, address.getVisibility());
+    }
+    
+    @Test
     public void testDeleteAddress() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4499", ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE);
         Response response = serviceDelegator.viewAddresses("4444-4444-4444-4499");
@@ -2584,8 +2762,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         serviceDelegator.deleteAddress("4444-4444-4444-4447", 5L);
         fail();
     }
-
-    @SuppressWarnings("unchecked")
+    
     @Test
     public void testViewPerson() {
         SecurityContextTestUtils.setUpSecurityContext("4444-4444-4444-4442", ScopePathType.PERSON_READ_LIMITED);
@@ -2746,7 +2923,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         }
 
         assertTrue(found9 && found10 && found12);
-        // TODO: TEST APPLICATIONS AND DELEGATION
     }
 
     @Test
