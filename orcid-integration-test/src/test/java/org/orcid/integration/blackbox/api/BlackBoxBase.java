@@ -341,41 +341,45 @@ public class BlackBoxBase {
             baseUrl = prop.getProperty("org.orcid.web.baseUri");
         }
 
-        int timeout = 10;
+        int timeout = 40;
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
         webDriver.get(baseUrl + "/account");
         SigninTest.signIn(webDriver, userName, password);
+        noSpinners(webDriver);
+        angularHasFinishedProcessing();
         
         By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
         (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle));
         WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
-        toggle.click();
-                
-        By privacySettingsDiv = By.id("privacy-settings");
-        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacySettingsDiv));
-        WebElement privacySettings = webDriver.findElement(privacySettingsDiv);
+        ngAwareClick(toggle, webDriver);
+        angularHasFinishedProcessing();
         
-        int visibilityIndex = Visibility.PUBLIC.equals(visibility) ? 1 : (Visibility.LIMITED.equals(visibility) ? 2 : 3);
-        
-        WebElement visibilityToClick = privacySettings.findElement(ByXPath.xpath(".//div[@id='privacy-bar']//ul//li[" + visibilityIndex + "]"));
-        visibilityToClick.click();
-        
-        try {Thread.sleep(500);} catch(Exception e) {};        
+        String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
+        String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" +visibility.value().toLowerCase() + "Active']//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
+
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)));
+        ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
+        angularHasFinishedProcessing();
+        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)));
+        // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
+        try {Thread.sleep(500);} catch(Exception e) {};
     }
     
-    public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
+    static public  void ngAwareClick(WebElement webElement, WebDriver webDriver) {
         angularHasFinishedProcessing();
         Actions actions = new Actions(webDriver);
-        actions.moveToElement(webElement).click().perform();
+        actions.moveToElement(webElement).perform();
+        angularHasFinishedProcessing();
+        actions.click(webElement).perform();
         angularHasFinishedProcessing();
     }
     
-    public void noSpinners(WebDriver webDriver) {
+    static public void noSpinners(WebDriver webDriver) {
         (new WebDriverWait(webDriver, 20, 100))
         .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
     }
 
-    public void noCboxOverlay(WebDriver webDriver) {
+    static public void noCboxOverlay(WebDriver webDriver) {
         (new WebDriverWait(webDriver, 20, 100))
         .until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@id='cboxOverlay']")));
     }
