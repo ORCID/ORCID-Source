@@ -43,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbOtherNameAdapterTest {
+public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     @Resource
     private JpaJaxbOtherNameAdapter adapter;        
     

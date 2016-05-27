@@ -44,10 +44,10 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbAddressAdapterTest {
+public class JpaJaxbAddressAdapterTest extends MockSourceNameCache {
     @Resource
     private JpaJaxbAddressAdapter adapter;        
-    
+        
     @Test
     public void fromAddressToAddressEntityTest() throws JAXBException {                
         Address address = getAddress();

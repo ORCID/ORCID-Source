@@ -37,8 +37,10 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 /**
+ * 
  * @author Angel Montenegro
- * */
+ * 
+ */
 public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceNameCacheManagerImpl.class);
     

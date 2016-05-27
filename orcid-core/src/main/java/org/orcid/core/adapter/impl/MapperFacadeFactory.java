@@ -27,9 +27,11 @@ import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIDsConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.SingleWorkExternalIdentifierFromJsonConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.SourceClientIdConverter;
+import org.orcid.core.adapter.impl.jsonidentifiers.SourceNameConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.SourceOrcidConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.PublicationDate;
@@ -102,6 +104,9 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
 
     @Resource
     private WorkDao workDao;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -191,8 +196,10 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter("sourceOrcidConverter", new SourceOrcidConverter(orcidUrlManager));
         converterFactory.registerConverter("sourceClientIdConverter", new SourceClientIdConverter(orcidUrlManager));
+        converterFactory.registerConverter("sourceNameConverter", new SourceNameConverter(sourceNameCacheManager));
         classMapBuilder.fieldMap("source.sourceOrcid", "sourceId").converter("sourceOrcidConverter").add();
         classMapBuilder.fieldMap("source.sourceClientId", "clientSourceId").converter("sourceClientIdConverter").add();
+        classMapBuilder.fieldMap("source.sourceName", "elementSourceId").converter("sourceNameConverter").add();
     }
     
     public MapperFacade getExternalIdentifierMapperFacade() {

@@ -26,13 +26,17 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -63,6 +67,7 @@ import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,8 +76,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-orcid-core-context.xml" })
 @Transactional
-public class NotificationManagerTest {
+public class NotificationManagerTest extends DBUnitTest {
 
+    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml",
+            "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+    
     public static final String ORCID_INTERNAL_FULL_XML = "/orcid-internal-full-message-latest.xml";
 
     private Unmarshaller unmarshaller;
@@ -101,6 +110,17 @@ public class NotificationManagerTest {
     @Resource
     private ClientDetailsDao clientDetailsDao;
 
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(DATA_FILES);
+    }
+
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        Collections.reverse(DATA_FILES);
+        removeDBUnitData(DATA_FILES);
+    }
+    
     @Before
     public void initJaxb() throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);
@@ -152,20 +172,17 @@ public class NotificationManagerTest {
         OrcidMessage orcidMessage = (OrcidMessage) unmarshaller.unmarshal(getClass().getResourceAsStream(ORCID_INTERNAL_FULL_XML));
         OrcidProfile orcidProfile = orcidMessage.getOrcidProfile();
         orcidProfile.getOrcidPreferences().setLocale(locale);
+        orcidProfile.getOrcidIdentifier().setPath("0000-0000-0000-0003");
         return orcidProfile;
     }
 
     @Test
     public void testAmendEmail() throws JAXBException, IOException, URISyntaxException {
-        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("8888-8888-8888-8880"));
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("8888-8888-8888-8880");
-        String testOrcid = "4444-4444-4444-4446";
-        ProfileEntity testProfile = new ProfileEntity(testOrcid);
-        testProfile.setEnableNotifications(true);
-        profileDao.merge(testProfile);
+        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        String testOrcid = "0000-0000-0000-0003";
                       
-        createClient();
         for (Locale locale : Locale.values()) {
             NotificationEntity previousNotification = notificationDao.findLatestByOrcid(testOrcid);
             long minNotificationId = previousNotification != null ? previousNotification.getId() : -1;
@@ -179,15 +196,7 @@ public class NotificationManagerTest {
         }
     }
 
-    private void createClient() {
-        ClientDetailsEntity clientEntity = new ClientDetailsEntity();
-        clientEntity.setId("8888-8888-8888-8880");
-        clientEntity.setGroupProfileId("4444-4444-4444-4446");
-        clientEntity.setClientName("Test Name");
-        clientDetailsDao.persist(clientEntity);
-    }
-
-	@Test
+    @Test
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
         String delegateOrcid = "1234-5678-1234-5678";
         ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
@@ -268,6 +277,10 @@ public class NotificationManagerTest {
 
     @Test
     public void testAdminDelegateRequest() throws JAXBException, IOException, URISyntaxException {
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");        
+        
         for (Locale locale : Locale.values()) {
             OrcidProfile orcidProfile = getProfile(locale);
             notificationManager.sendDelegationRequestEmail(orcidProfile, orcidProfile, "http://test.orcid.org");
@@ -276,13 +289,10 @@ public class NotificationManagerTest {
 
     @Test
     public void testCreateCustomNotification() {
-        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("8888-8888-8888-8880"));
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
         when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
-        when(sourceManager.retrieveSourceOrcid()).thenReturn("8888-8888-8888-8880");        
-        String testOrcid = "4444-4444-4444-4446";
-        ProfileEntity testProfile = new ProfileEntity(testOrcid);
-        profileDao.merge(testProfile);
-        createClient();
+        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");        
+        String testOrcid = "0000-0000-0000-0003";
         NotificationCustom notification = new NotificationCustom();
         notification.setSubject("Test subject");
         notification.setLang("en-gb");
@@ -296,8 +306,7 @@ public class NotificationManagerTest {
 
     @Test
     public void deriveEmailFriendlyNameTest() {
-        ProfileEntity testProfile = new ProfileEntity("4444-4444-4444-4446");
-        profileDao.merge(testProfile);
+        ProfileEntity testProfile = new ProfileEntity("0000-0000-0000-0003");
         assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));
         testProfile.setRecordNameEntity(new RecordNameEntity());
         assertEquals("ORCID Registry User", notificationManager.deriveEmailFriendlyName(testProfile));

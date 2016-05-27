@@ -23,6 +23,11 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
 
+/**
+ * 
+ * @author Angel Montenegro
+ * 
+ */
 public class SourceClientIdConverter extends BidirectionalConverter<SourceClientId, String> {
 
     private OrcidUrlManager orcidUrlManager;
