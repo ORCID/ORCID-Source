@@ -117,18 +117,18 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                 TypeFactory.<Item> valueOf(Item.class));
 
         // Custom notification
-        ClassMapBuilder<NotificationCustomEntity, NotificationCustom> notificationCustomClassMap = mapperFactory.classMap(NotificationCustomEntity.class, NotificationCustom.class); 
-        addV2SourceMappingForNotification(notificationCustomClassMap);
+        ClassMapBuilder<NotificationCustom, NotificationCustomEntity> notificationCustomClassMap = mapperFactory.classMap(NotificationCustom.class, NotificationCustomEntity.class); 
+        registerSourceConverters(mapperFactory, notificationCustomClassMap);
         mapCommonFields(notificationCustomClassMap).register();        
         
         // Permission notification
-        ClassMapBuilder<NotificationAddItemsEntity, NotificationPermission> notificationPermissionClassMap = mapperFactory.classMap(NotificationAddItemsEntity.class, NotificationPermission.class);
-        addV2SourceMappingForNotification(notificationPermissionClassMap);
+        ClassMapBuilder<NotificationPermission, NotificationAddItemsEntity> notificationPermissionClassMap = mapperFactory.classMap(NotificationPermission.class, NotificationAddItemsEntity.class);
+        registerSourceConverters(mapperFactory, notificationPermissionClassMap);
         mapCommonFields(
-                notificationPermissionClassMap.field("authorizationUrl", "authorizationUrl.uri")
-                        .field("notificationItems", "items.items").customize(new CustomMapper<NotificationAddItemsEntity, NotificationPermission>() {
+                notificationPermissionClassMap.field("authorizationUrl.uri", "authorizationUrl")
+                        .field("items.items", "notificationItems").customize(new CustomMapper<NotificationPermission, NotificationAddItemsEntity>() {
                             @Override
-                            public void mapAtoB(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
+                            public void mapAtoB(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
                                 AuthorizationUrl authUrl = notification.getAuthorizationUrl();
                                 if (authUrl != null) {
                                     authUrl.setPath(extractFullPath(authUrl.getUri()));
@@ -137,7 +137,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                             }
 
                             @Override
-                            public void mapBtoA(NotificationPermission notification, NotificationAddItemsEntity entity, MappingContext context) {
+                            public void mapBtoA(NotificationAddItemsEntity entity, NotificationPermission notification, MappingContext context) {
                                 if (StringUtils.isBlank(entity.getAuthorizationUrl())) {
                                     String authUrl = orcidUrlManager.getBaseUrl() + notification.getAuthorizationUrl().getPath();
                                     // validate
@@ -150,13 +150,13 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         
         // Amend notification
         ClassMapBuilder<NotificationAmendedEntity, NotificationAmended> amendNotificationClassMap = mapperFactory.classMap(NotificationAmendedEntity.class, NotificationAmended.class);
-        addV2SourceMappingForNotification(amendNotificationClassMap);  
+        registerSourceConverters(mapperFactory, amendNotificationClassMap); 
         mapCommonFields(amendNotificationClassMap).register();
         mapperFactory.classMap(NotificationItemEntity.class, Item.class)
-            .fieldMap("externalIdType", "externalIdentifier.type")
+            .fieldMap("externalIdentifier.type", "externalIdType")
             .converter("externalIdentifierIdConverter")
             .add()
-            .field("externalIdValue", "externalIdentifier.value")
+            .field("externalIdentifier.value", "externalIdValue")
             .byDefault()
             .register();
         
@@ -528,7 +528,7 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     }
 
     private ClassMapBuilder<?, ?> mapCommonFields(ClassMapBuilder<?, ?> builder) {
-        return builder.field("dateCreated", "createdDate").field("id", "putCode").byDefault();
+        return builder.field("createdDate", "dateCreated").field("putCode", "id").byDefault();
     }
 
     private void addV2CommonFields(ClassMapBuilder<?, ?> classMap) {
