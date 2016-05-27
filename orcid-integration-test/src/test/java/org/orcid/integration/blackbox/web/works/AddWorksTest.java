@@ -147,6 +147,7 @@ public class AddWorksTest {
     public static void deleteAllByWorkName(String workName, WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
         waitWorksLoaded(wait, webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + workName + "']]"));
         if (wList.size() > 0)
             for (WebElement we : wList) {

@@ -519,12 +519,15 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String employmentName = "Employment" + System.currentTimeMillis();
         textBox.sendKeys(employmentName);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         textBox = webDriver.findElement(By.id("city"));
         textBox.sendKeys("New Delhi");
-
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
         //wait for angular to register that values have been typed.
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
