@@ -67,7 +67,7 @@ public class PrivacyWorksTest {
     @Test
     public void addThreeSimple() {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        AddWorksTest.waitWorksLoaded(wait);
+        AddWorksTest.waitWorksLoaded(wait, webDriver);
         // clean up any from previous test
         AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_A, webDriver);
         AddWorksTest.deleteAllByWorkName(PRIVACY_WORKS_TEST+_B, webDriver);

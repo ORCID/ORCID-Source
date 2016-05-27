@@ -429,6 +429,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void educationPrivacyTest() {
         Actions action = new Actions(webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")), webDriver);
         WebElement container = webDriver.findElement(By.id("add-education-container"));
         extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")), webDriver);
@@ -442,18 +443,22 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         textBox.sendKeys(educationName);
         textBox = webDriver.findElement(By.id("city"));
         textBox.sendKeys("New Delhi");
-
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
         noSpinners(webDriver);
         noCboxOverlay(webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        
 
         // Set Private Visibility
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
