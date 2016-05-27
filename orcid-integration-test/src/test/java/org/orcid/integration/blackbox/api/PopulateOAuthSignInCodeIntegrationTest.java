@@ -122,6 +122,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test existing email
         url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         element = By.xpath("//input[@name='userId']");
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                
         WebElement inputElement = webDriver.findElement(element);
@@ -134,8 +135,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // populating check populating orcid
         url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         element = By.xpath("//input[@name='userId']");
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(element));                
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);                
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }       
 
