@@ -289,7 +289,7 @@ public class BlackBoxBase {
 
         // Switch to accounts settings page
         By accountSettingsMenuLink = By.id("accountSettingMenuLink");
-        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink));
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink), webDriver);
         WebElement menuItem = webDriver.findElement(accountSettingsMenuLink);
         menuItem.click();
 
@@ -298,7 +298,7 @@ public class BlackBoxBase {
             do {
                 // Look for each revoke app button
                 By revokeAppBtn = By.id("revokeAppBtn");
-                (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(revokeAppBtn));
+                extremeWaitFor(ExpectedConditions.presenceOfElementLocated(revokeAppBtn), webDriver);
                 List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);
                 boolean elementFound = false;
                 // Iterate on them and delete the ones created by the specified
@@ -310,7 +310,7 @@ public class BlackBoxBase {
                         Thread.sleep(1000);
                         // Wait for the revoke button
                         By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
-                        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn));
+                        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn), webDriver);
                         WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
                         trash.click();
                         Thread.sleep(2000);
@@ -341,37 +341,36 @@ public class BlackBoxBase {
             baseUrl = prop.getProperty("org.orcid.web.baseUri");
         }
 
-        int timeout = 40;
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
         webDriver.get(baseUrl + "/account");
         SigninTest.signIn(webDriver, userName, password);
         noSpinners(webDriver);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(),webDriver);
         
         By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
-        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle), webDriver);
         WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
         ngAwareClick(toggle, webDriver);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         
         String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
         String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" +visibility.value().toLowerCase() + "Active']//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
 
-        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
         ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
-        angularHasFinishedProcessing();
-        (new WebDriverWait(webDriver, timeout)).until(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)));
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
         // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
         try {Thread.sleep(500);} catch(Exception e) {};
     }
     
     static public  void ngAwareClick(WebElement webElement, WebDriver webDriver) {
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Actions actions = new Actions(webDriver);
         actions.moveToElement(webElement).perform();
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         actions.click(webElement).perform();
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
     }
     
     static public void noSpinners(WebDriver webDriver) {
@@ -392,7 +391,7 @@ public class BlackBoxBase {
             .until(expectedCondition);
         } catch (Exception e) {
             ((JavascriptExecutor)webDriver).executeScript("$(window).trigger('resize');");
-            angularHasFinishedProcessing();
+            extremeWaitFor(angularHasFinishedProcessing(), webDriver);
             (new WebDriverWait(webDriver, wait, pollingInternval))
             .until(expectedCondition);            
         }        

@@ -590,20 +590,20 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         WebElement type = webDriver.findElement(By.id("fundingType"));
         type.sendKeys("Award");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         String fundingTitle = "Funding Title " + time;
         WebElement title = webDriver.findElement(By.id("fundingTitle"));
         title.sendKeys(fundingTitle);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         WebElement name = webDriver.findElement(By.id("fundingName"));
         name.sendKeys("Name " + time);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         WebElement city = webDriver.findElement(By.id("city"));
         city.sendKeys("San Jose");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
         selectBox.selectByVisibleText("United States");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
             Thread.sleep(500);
@@ -651,7 +651,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         String putCode = fundingElement.getAttribute("funding-put-code");
         ngAwareClick(fundingElement.findElement(By.id("delete-funding_" + putCode)), webDriver);
         
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")), webDriver);
         ngAwareClick(webDriver.findElement(ById.id("confirm-delete-funding")), webDriver);

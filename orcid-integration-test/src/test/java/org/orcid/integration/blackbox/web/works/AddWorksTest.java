@@ -34,6 +34,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -103,13 +104,16 @@ public class AddWorksTest {
 
     public static void addSimple(String workName, WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        ;
+        
         waitWorksLoaded(wait);
+        BlackBoxBase.noSpinners(webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         // Selenium is having issues finding this element, I supect do to CSS transformations
         // Run the function directly
         ((JavascriptExecutor) webDriver).executeScript("angular.element('[ng-controller=WorkCtrl]').scope().addWorkModal()");
-
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         Select catSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
         catSel.selectByVisibleText("Conference");
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//option[text()='Conference paper']")));
@@ -130,6 +134,7 @@ public class AddWorksTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
         buttonEl.click();
         SigninTest.colorBoxIsClosed(wait);
