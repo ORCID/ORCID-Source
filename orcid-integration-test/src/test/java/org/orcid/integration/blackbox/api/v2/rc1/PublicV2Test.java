@@ -142,11 +142,13 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
      * */
     @Test
     public void testViewWorkAndWorkSummary() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkWorks(null);
     }
         
     @Test
     public void testViewWorkAndWorkSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkWorks(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
     
@@ -189,11 +191,13 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void testViewFundingAndFundingSummary() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkFunding(null);
     }
     
     @Test
     public void testViewFundingAndFundingSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkFunding(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
     
@@ -240,11 +244,13 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void testViewEmploymentAndEmploymentSummary() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkEmployment(null);
     }
     
     @Test
     public void testViewEmploymentAndEmploymentSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkEmployment(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
         
@@ -291,11 +297,13 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     
     @Test
     public void testViewEducationAndEducationSummary() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkEducation(null);
     }
     
     @Test
     public void testViewEducationAndEducationSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkEducation(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
         
@@ -338,11 +346,13 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     
     @Test
     public void testViewPeerReviewAndPeerReviewSummary() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkPeerReview(null);
     }
     
     @Test
     public void testViewPeerReviewAndPeerReviewSummaryUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkPeerReview(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }    
     
@@ -386,11 +396,13 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
                 
     @Test
     public void testViewPublicActivities() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkPublicActivities(null);
     }
     
     @Test
     public void testViewPublicActivitiesUsingToken() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         checkPublicActivities(getReadPublicAccessToken(getClient1ClientId(), getClient1ClientSecret()));
     }
     
@@ -507,7 +519,6 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
          
     public void checkLimitedWork(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
-        //Change the default user visibility to public so we can create a limited work
         changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);
@@ -547,9 +558,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
-        
-        //Let the default visibility set to PUBLIC
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+
     }
 
     @Test
@@ -563,11 +572,9 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     public void checkLimitedFunding(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
-        //Change the default user visibility to public so we can create a limited work
         changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Funding fundingToCreate = (Funding) unmarshallFromPath("/record_2.0_rc1/samples/funding-2.0_rc1.xml", Funding.class);
         fundingToCreate.setPutCode(null);
-        fundingToCreate.setVisibility(org.orcid.jaxb.model.common_rc1.Visibility.LIMITED);
 
         String accessToken = getAccessToken();
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(getUser1OrcidId(), fundingToCreate, accessToken);
@@ -603,9 +610,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertNotNull(result);
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
-        
-        //Let the default visibility set to PUBLIC
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+
     }
 
     @Test
@@ -619,7 +624,6 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     public void checkLimitedEmployment(String readPublicToken) throws JSONException, InterruptedException, URISyntaxException {
-        //Change the default user visibility to public so we can create a limited work
         changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
         Employment employmentToCreate = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employmentToCreate.setPutCode(null);
@@ -648,8 +652,6 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
         
-        //Let the default visibility set to PUBLIC
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
 
     @Test
@@ -701,8 +703,6 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
         
-        //Let the default visibility set to PUBLIC
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
     
     @Test
@@ -754,8 +754,6 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         assertEquals(new Integer(9017), result.getErrorCode());
         assertEquals("org.orcid.core.exception.OrcidUnauthorizedException: The activity is not public", result.getDeveloperMessage());
         
-        //Let the default visibility set to PUBLIC
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
     }
 
     @Test
