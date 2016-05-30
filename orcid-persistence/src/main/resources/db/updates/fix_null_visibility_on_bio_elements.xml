@@ -1,0 +1,34 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="FIX-NULL-VISIBILITY-ON-OTHER-NAME" author="Angel Montenegro" dbms="postgresql">    	
+		<sql>UPDATE other_name o SET visibility=(select activities_visibility_default from profile where orcid=o.orcid) WHERE o.visibility IS NULL;</sql>
+    </changeSet>
+
+	<changeSet id="FIX-NULL-VISIBILITY-ON-PROFILE-KEYWORD" author="Angel Montenegro" dbms="postgresql">    	
+		<sql>UPDATE profile_keyword k SET visibility=(select activities_visibility_default from profile where orcid=k.profile_orcid) WHERE k.visibility IS NULL;</sql>
+    </changeSet>
+
+	<changeSet id="FIX-NULL-VISIBILITY-ON-RESEARCHER-URL" author="Angel Montenegro" dbms="postgresql">    	
+		<sql>UPDATE researcher_url r SET visibility=(select activities_visibility_default from profile where orcid=r.orcid) WHERE r.visibility IS NULL;</sql>
+    </changeSet>
+
+</databaseChangeLog>
