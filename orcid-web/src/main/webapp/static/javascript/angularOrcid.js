@@ -2696,8 +2696,9 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     
     $scope.addNewModal = function() {        
         var idx = $scope.getLastDisplayIndex();
-        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null};
+        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":""};
         tmpObj['displayIndex'] = idx + 1;
+        tmpObj['source'] = $scope.orcidId;        
         $scope.keywordsForm.keywords.push(tmpObj);
         $scope.newInput = true;
     };
@@ -2987,8 +2988,9 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     
     $scope.addNewModal = function() {        
         var idx = $scope.getLastDisplayIndex();               
-        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":null,"sourceName":null};
+        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":null,"sourceName":""};
         tmpObj['displayIndex'] = idx + 1;
+        tmpObj['source'] = $scope.orcidId;
         $scope.otherNamesForm.otherNames.push(tmpObj);        
         $scope.newInput = true;        
     };
@@ -3464,7 +3466,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.addNewModal = function() {
-        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":"","primary":false};
+        tmpObj['source'] = $scope.orcidId;
         var idx = $scope.getLastDisplayIndex();        
         tmpObj['displayIndex'] = idx + 1;
         $scope.countryForm.addresses.push(tmpObj);        
