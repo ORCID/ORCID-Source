@@ -59,24 +59,6 @@
         <createSequence sequenceName="identifer_type_seq" />
     </changeSet>
     
-    <changeSet id="REMOVE-SEQUENCE-FOR-IDENTIFIER-TYPE" author="Tom D" dbms="postgresql">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <sequenceExists sequenceName="identifer_type_seq" />
-            </not>
-        </preConditions>
-        <dropSequence sequenceName="identifer_type_seq" />
-    </changeSet>
-    
-    <changeSet id="ADD-SEQUENCE-FOR-IDENTIFIER-TYPE_REDO" author="Tom D" dbms="postgresql">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <sequenceExists sequenceName="identifier_type_seq" />
-            </not>
-        </preConditions>
-        <createSequence sequenceName="identifier_type_seq" />
-    </changeSet>
-    
     <changeSet id="CREATE-AUTOCOLS" author="Tom D" dbms="hsqldb">    	
         <addAutoIncrement tableName="identifier_type" columnName="id" columnDataType="bigint"/>
     </changeSet>
