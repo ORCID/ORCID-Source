@@ -148,7 +148,7 @@ public class AddressManagerImpl implements AddressManager {
                 throw new OrcidDuplicatedElementException(params);
             }
             
-            if(address.getDisplayIndex() > biggestDisplayIndex) {
+            if(address.getDisplayIndex() != null && address.getDisplayIndex() > biggestDisplayIndex) {
                 biggestDisplayIndex = address.getDisplayIndex();
             }
         }
