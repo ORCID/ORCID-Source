@@ -77,10 +77,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
     @Resource
-    private OrgAffiliationRelationDao orgRelationAffiliationDao;
-
-    @Resource
-    private ProfileDao profileDao;
+    private OrgAffiliationRelationDao orgRelationAffiliationDao;    
 
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
@@ -291,7 +288,7 @@ public class AffiliationsController extends BaseWorkspaceController {
      * */
     private void addAffiliation(AffiliationForm affiliationForm) {
         // Persist to DB
-        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
         orgAffiliationRelationEntity.setSource(new SourceEntity(userProfile));
         orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
@@ -312,7 +309,7 @@ public class AffiliationsController extends BaseWorkspaceController {
         if (!currentProfile.getOrcidIdentifier().getPath().equals(affiliationForm.getSource()))
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
 
-        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getUpdatedAffiliationRelationEntity(affiliationForm.toAffiliation());
         orgAffiliationRelationEntity.setSource(new SourceEntity(userProfile));
         orgAffiliationRelationDao.updateOrgAffiliationRelationEntity(orgAffiliationRelationEntity);
@@ -362,8 +359,9 @@ public class AffiliationsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody
-    AffiliationForm updateProfileAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
+    AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
         // Get cached profile
+        xxxxx
         OrcidProfile currentProfile = getEffectiveProfile();
         Affiliations orcidAffiliations = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getAffiliations();
         if (orcidAffiliations != null) {
