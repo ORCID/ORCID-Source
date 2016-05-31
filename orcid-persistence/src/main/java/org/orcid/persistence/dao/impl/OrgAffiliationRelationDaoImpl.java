@@ -69,10 +69,10 @@ public class OrgAffiliationRelationDaoImpl extends GenericDaoImpl<OrgAffiliation
      * */
     @Override
     @Transactional
-    public boolean updateVisibilityOnOrgAffiliationRelation(String clientOrcid, Long orgAffiliationRelationId, Visibility visibility) {
+    public boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, Visibility visibility) {
         Query query = entityManager
-                .createQuery("update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:clientOrcid and id=:orgAffiliationRelationId");
-        query.setParameter("clientOrcid", clientOrcid);
+                .createQuery("update OrgAffiliationRelationEntity set visibility=:visibility, lastModified=now() where profile.id=:userOrcid and id=:orgAffiliationRelationId");
+        query.setParameter("userOrcid", userOrcid);
         query.setParameter("orgAffiliationRelationId", orgAffiliationRelationId);
         query.setParameter("visibility", visibility);
         return query.executeUpdate() > 0 ? true : false;
