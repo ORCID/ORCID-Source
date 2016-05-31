@@ -139,6 +139,7 @@ public class AddressManagerImpl implements AddressManager {
         PersonValidator.validateAddress(address, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
+        Long biggestDisplayIndex = -1L;
         for (AddressEntity existing : existingAddresses) {
             if (isDuplicated(existing, address, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
@@ -146,13 +147,19 @@ public class AddressManagerImpl implements AddressManager {
                 params.put("value", address.getCountry().getValue().value());
                 throw new OrcidDuplicatedElementException(params);
             }
+            
+            if(address.getDisplayIndex() > biggestDisplayIndex) {
+                biggestDisplayIndex = address.getDisplayIndex();
+            }
         }
 
         AddressEntity newEntity = adapter.toAddressEntity(address);
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);        
+        newEntity.setSource(sourceEntity); 
+        //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
+        newEntity.setDisplayIndex(biggestDisplayIndex + 1); 
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);
         return adapter.toAddress(newEntity);
