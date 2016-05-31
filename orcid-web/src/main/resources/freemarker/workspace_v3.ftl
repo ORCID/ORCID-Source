@@ -138,7 +138,6 @@
 	            	<div class="workspace-section-header">
 			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEditModal()" title=""></span>
-			            
 			            <span ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">			            				            	
 			            	<span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
 			            </span>			            
@@ -150,9 +149,7 @@
 			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEdit()" title="" ng-hide="showEdit == true" id="open-edit-country"></span>
 			            <span ng-hide="showEdit == true" ng-click="toggleEdit()">
-			            	<span ng-repeat="country in countryForm.addresses">			            				            	
-			            		<span ng-if="showEdit == false && country != null && country.countryName != null && country.primary == true" ng-bind="country.countryName" ></span>			            		
-			            	</span>			            	
+			            	<span ng-if="showEdit == false && primaryElementIndex != null && countryForm.addresses[primaryElementIndex] != null && countryForm.addresses[primaryElementIndex].countryName != null" ng-bind="countryForm.addresses[primaryElementIndex].countryName" ></span>			            			            
 			            </span>
 			            <span class="pull-right" ng-hide="showEdit == false" ng-cloak>
 			            	<@orcid.privacyToggle3 angularModel="defaultVisibility"
@@ -166,14 +163,14 @@
 			            </span>
 		            </div>
 	                <!-- Edit -->
-	                <div ng-if="showEdit" ng-cloak>	                		                  	 
-	                  	 <div ng-repeat="country in countryForm.addresses">
-			                 <select id="country" ng-model="country.iso2Country.value" ng-if="country.primary">
+	                <div ng-if="showEdit" ng-cloak>
+	                  	 <div>
+			                 <select id="country" ng-model="countryForm.addresses[primaryElementIndex].iso2Country.value">
 				    			 <option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 <#list isoCountries?keys as key>
 								     <option value="${key}">${isoCountries[key]}</option>
 							 	 </#list>
-							 </select>							 
+							 </select>
 						 </div>
 						 <ul class="workspace-section-toolbar">
 	        	      		<li class="pull-right">

@@ -3287,10 +3287,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.privacyHelp = false;
     $scope.showElement = {};
     $scope.orcidId = orcidVar.orcidId;
-    $scope.newInput = false;
-    $scope.primary = true;
+    $scope.newInput = false;    
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
+    $scope.primaryElementIndex = null;
     
     $scope.openEdit = function() {
         $scope.showEdit = true;        
@@ -3337,8 +3337,17 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 				$scope.defaultVisibility = null;
                 				break;
                 			}
-                		}                		
+                		}                 		                		                	
                     }
+                	var lowestDisplayIndex = null;
+	            	//We have to iterate on them again to select the primary address
+                	for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
+	                	//Set the primary element based on the display index
+	            		if($scope.primaryElementIndex == null || lowestDisplayIndex > $scope.countryForm.addresses[i].displayIndex) {
+	            			$scope.primaryElementIndex = i;
+	            			lowestDisplayIndex = $scope.countryForm.addresses[i].displayIndex;
+	            		}
+                	}
                 } else {
                 	$scope.defaultVisibility = $scope.countryForm.visibility.visibility;
                 }     
@@ -3464,27 +3473,12 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.addNewModal = function() {
-        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null,"primary":false};
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null};
         var idx = $scope.getLastDisplayIndex();        
         tmpObj['displayIndex'] = idx + 1;
         $scope.countryForm.addresses.push(tmpObj);        
         $scope.newInput = true;
-    };
-    
-    $scope.setPrimary = function(country){
-        var countries = $scope.countryForm.addresses;
-        
-        var len = countries.length;
-        
-        while (len--) {
-            if (countries[len] == country){
-                countries[len].primary = true;
-                $scope.countryForm.addresses = countries;
-            }else{
-                countries[len].primary = false;
-            }
-        }
-    };
+    };        
     
     $scope.swap = function(idxA, valueA, idxB, valueB){        
         $scope.countryForm.addresses[idxA].displayIndex = valueB;
@@ -3548,7 +3542,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
 
     $scope.getCountryForm();
-
 }]);
 
 
