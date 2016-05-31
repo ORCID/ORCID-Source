@@ -17,9 +17,7 @@
 package org.orcid.persistence.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,8 +71,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Long.valueOf(1), address.getId());
         assertNotNull(address.getUser());
         assertEquals("4444-4444-4444-4442", address.getUser().getId());
-        assertEquals(Iso3166Country.US, address.getIso2Country());
-        assertTrue(address.getPrimary());
+        assertEquals(Iso3166Country.US, address.getIso2Country());        
 
         address = addressDao.getAddress("4444-4444-4444-4447", 2L);
         assertNotNull(address);
@@ -84,7 +81,6 @@ public class AddressDaoTest extends DBUnitTest {
         assertNotNull(address.getUser());
         assertEquals("4444-4444-4444-4447", address.getUser().getId());
         assertEquals(Iso3166Country.US, address.getIso2Country());
-        assertTrue(address.getPrimary());
 
         address = addressDao.getAddress("4444-4444-4444-4447", 3L);
         assertNotNull(address);
@@ -93,8 +89,7 @@ public class AddressDaoTest extends DBUnitTest {
         assertEquals(Long.valueOf(3), address.getId());
         assertNotNull(address.getUser());
         assertEquals("4444-4444-4444-4447", address.getUser().getId());
-        assertEquals(Iso3166Country.CR, address.getIso2Country());
-        assertFalse(address.getPrimary());
+        assertEquals(Iso3166Country.CR, address.getIso2Country());       
     }
     
     @Test

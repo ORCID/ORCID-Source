@@ -242,7 +242,6 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Long.valueOf(9), address.getPutCode());
         assertNotNull(address.getCountry());
         assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertTrue(address.getPrimary());        
         assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
         assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
@@ -593,7 +592,6 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC.value(), address.getVisibility().value());
         assertEquals(Long.valueOf(9), address.getPutCode());
         assertEquals("/0000-0000-0000-0003/address/9", address.getPath());
-        assertTrue(address.getPrimary());
         assertEquals("APP-5555555555555555", address.getSource().retrieveSourcePath());
         assertNotNull(person.getBiography());
         assertEquals(Visibility.PUBLIC.value(), person.getBiography().getVisibility().value());

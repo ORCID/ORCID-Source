@@ -80,11 +80,11 @@ public class AddressManagerImpl implements AddressManager {
         List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         Address address = null;
         if(addresses != null) {
+            //Look for the address with the smallest display index
             for(AddressEntity entity : addresses) {
-                if(entity.getPrimary()) {
-                    address = adapter.toAddress(entity);
-                    break;
-                }
+                if(address == null || address.getDisplayIndex() > entity.getDisplayIndex()) {
+                    address = adapter.toAddress(entity);                    
+                } 
             }
         }                    
         return address;
@@ -253,7 +253,6 @@ public class AddressManagerImpl implements AddressManager {
                            existingAddress.setLastModified(new Date());
                            existingAddress.setVisibility(updatedOrNew.getVisibility());
                            existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
-                           existingAddress.setPrimary(updatedOrNew.getPrimary());
                            existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            addressDao.merge(existingAddress);
                        }

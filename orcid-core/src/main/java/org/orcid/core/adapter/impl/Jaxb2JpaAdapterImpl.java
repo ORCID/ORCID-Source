@@ -843,11 +843,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 newAddress.setUser(profileEntity);
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
                 newAddress.setSource(sourceManager.retrieveSourceEntity());                
-                if(addresses.isEmpty()) {
-                    newAddress.setPrimary(true);
-                } else {
-                    newAddress.setPrimary(false);
-                }
                 addresses.add(newAddress);
             }                        
         }

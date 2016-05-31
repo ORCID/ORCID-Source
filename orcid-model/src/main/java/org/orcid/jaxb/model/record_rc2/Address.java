@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.Country;
@@ -68,8 +67,6 @@ public class Address implements VisibilityType, Filterable, Serializable, Compar
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
-    @XmlTransient
-    protected Boolean primary;
     @XmlAttribute(name = "display-index")
     protected Long displayIndex;
     
@@ -129,14 +126,6 @@ public class Address implements VisibilityType, Filterable, Serializable, Compar
         this.path = path;
     }    
             
-    public Boolean getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(Boolean primary) {
-        this.primary = primary;
-    }
-
     public Long getDisplayIndex() {
         return displayIndex;
     }
