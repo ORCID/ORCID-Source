@@ -35,11 +35,11 @@
 						<div class="scroll-area">		
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames | orderBy : 'displayIndex'" ng-cloak> 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
-									<div class="aka">
-										<input type="text" ng-model="otherName.content" ng-show="otherName.source == orcidId || otherName.source == null"  focus-me="newInput"/>
-										<span ng-bind="otherName.content" ng-show="otherName.source != orcidId && otherName.sourceName"></span>										
-									</div>
-									<div class="source" ng-show="otherName.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{otherName.sourceName}}</div>
+									<div class="aka">		
+										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput"/>																				
+										<span ng-bind="otherName.content" ng-if="otherName.source != orcidId && otherName.source != null"></span>										
+									</div>									    
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
 								</div>							
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<ul class="record-settings pull-right">
@@ -99,14 +99,14 @@
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">
 								<div class="col-md-6">
 									<div class="aka">
-			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="{{country.source != orcidId && country.source != null}}" ng-class="{'not-allowed': country.source != orcidId && country.source != null}" focus-me="newInput">
+			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
 				    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
 								 			<#list isoCountries?keys as key>
 								     			<option value="${key}">${isoCountries[key]}</option>
 							 	 			</#list>
-							 			</select>
-									</div> 
-						 			<div class="source" ng-show="country.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{country.sourceName}}</div>
+							 			</select>										
+									</div>									
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
 								</div> 
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
@@ -174,10 +174,10 @@
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords | orderBy:'displayIndex'">		
 								<div class="col-md-6">
 									<div class="aka">										
-										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId || keyword.source == null" focus-me="newInput"></input>
-										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId && keyword.sourceName"></span>
+										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId" focus-me="newInput"></input>
+										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId"></span>										
 									</div>
-									<div class="source" ng-show="keyword.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{keyword.sourceName}}</div>										
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
 								<div class="col-md-6">
@@ -238,11 +238,11 @@
 							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites | orderBy:'displayIndex'">
 								<div class="col-md-6">
 									<div class="aka">										
-										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId || website.source == null" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
-										<input type="text" ng-model="website.url" ng-show="website.source == orcidId || website.source == null" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
- 										<a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId && website.sourceName" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>										
+										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
+										<input type="text" ng-model="website.url" ng-show="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
+ 										<a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>										
 									</div>
-									<div class="source" ng-show="website.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{website.sourceName}}</div>										
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
 								<div class="col-md-6">
@@ -313,7 +313,7 @@
 			        						<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
 										</p>										
 									</div>
-									<div class="source" ng-show="externalIdentifier.sourceName"><@orcid.msg 'manage_bio_settings.source'/>: {{externalIdentifier.sourceName}}</div>										
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}</span><span ng-if="externalIdentifier.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
 								<div class="col-md-6">
