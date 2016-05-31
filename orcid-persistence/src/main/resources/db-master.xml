@@ -202,4 +202,5 @@
     <include file="/db/updates/add_indexes_2016_05_25.xml" />
     <include file="/db/updates/fix_null_visibility_on_bio_elements.xml"/>
     <include file="/db/updates/identifier-type-fixed.xml" />
+    <include file="/db/updates/clean-duplicated-delegates.xml" />
 </databaseChangeLog>
