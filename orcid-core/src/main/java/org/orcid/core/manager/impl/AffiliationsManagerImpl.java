@@ -377,4 +377,9 @@ public class AffiliationsManagerImpl implements AffiliationsManager {
         return result;
     }
 
+    @Override
+    public boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility) {
+        return affiliationsDao.updateVisibilityOnOrgAffiliationRelation(orcid, affiliationId, visibility);
+    }
+
 }
