@@ -200,4 +200,5 @@
     <include file="/db/updates/fix_source_on_bio_elements.xml" />
     <include file="/db/updates/add_indexes_2016_05_23.xml" />
     <include file="/db/updates/add_indexes_2016_05_25.xml" />
+    <include file="/db/updates/identifier-type-fixed.xml" />    
 </databaseChangeLog>
