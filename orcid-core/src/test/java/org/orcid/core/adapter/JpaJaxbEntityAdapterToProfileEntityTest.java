@@ -208,11 +208,6 @@ public class JpaJaxbEntityAdapterToProfileEntityTest extends DBUnitTest {
             assertNotNull(profileGrantEntity.getContributorsJson());
         }
 
-        assertNotNull(profileEntity.getGivenPermissionTo());
-        assertEquals(1, profileEntity.getGivenPermissionTo().size());
-        GivenPermissionToEntity retrievedGivenPermissionToEntity = profileEntity.getGivenPermissionTo().iterator().next();
-        assertEquals("1111-1111-1111-1115", retrievedGivenPermissionToEntity.getReceiver().getId());
-        assertEquals(DateUtils.convertToDate("2012-11-10T13:18:51"), retrievedGivenPermissionToEntity.getApprovalDate());
         assertNull(profileEntity.getGivenPermissionBy());
         retrievedProfileEntity.getSource().setSourceClient(null);
         retrievedProfileEntity.getSource().setSourceProfile(profileEntity);
