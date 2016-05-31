@@ -316,16 +316,21 @@ public class PublicProfileController extends BaseWorkspaceController {
         //Fill biography elements
 
         //Fill country
-        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);
+        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);        
         if(publicAddresses != null && publicAddresses.getAddress() != null) {
-            for(Address publicAddress : publicAddresses.getAddress()) {
-                if(Boolean.TRUE.equals(publicAddress.getPrimary())) {
-                    mav.addObject("publicAddresses", publicAddress);
-                    mav.addObject("countryName", getcountryName(publicAddress.getCountry().getValue().value()));
-                    break;
+            Address publicAddress = null;
+            //The primary address will be the one with the lowest display index
+            for(Address address : publicAddresses.getAddress()) {
+                if(publicAddress == null || publicAddress.getDisplayIndex() > address.getDisplayIndex()) {
+                   publicAddress = address;
                 }
             }
-        }
+            
+            if(publicAddress != null) {
+                mav.addObject("publicAddresses", publicAddress);
+                mav.addObject("countryName", getcountryName(publicAddress.getCountry().getValue().value()));
+            }
+        }                
         
         //Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);

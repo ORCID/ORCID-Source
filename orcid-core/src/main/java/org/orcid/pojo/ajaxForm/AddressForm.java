@@ -36,7 +36,6 @@ public class AddressForm implements ErrorsInterface, Serializable {
     private Date lastModified;
     private String source;
     private String sourceName;
-    private Boolean primary;
 
     public static AddressForm valueOf(Address address) {
         AddressForm form = new AddressForm();
@@ -45,10 +44,6 @@ public class AddressForm implements ErrorsInterface, Serializable {
 
         if (address.getCountry() != null && address.getCountry().getValue() != null) {
             form.setIso2Country(Iso2Country.valueOf(address.getCountry().getValue()));
-        }
-
-        if (address.getPrimary() != null) {
-            form.setPrimary(address.getPrimary());
         }
 
         if (address.getVisibility() != null) {
@@ -99,11 +94,7 @@ public class AddressForm implements ErrorsInterface, Serializable {
             country.setValue(this.iso2Country.getValue().value());
             address.setCountry(country);
         }
-
-        if (this.primary != null) {
-            address.setPrimary(this.primary);
-        }
-
+       
         if (this.visibility != null && this.visibility.getVisibility() != null) {
             address.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
@@ -193,14 +184,6 @@ public class AddressForm implements ErrorsInterface, Serializable {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
-    }
-
-    public Boolean getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(Boolean primary) {
-        this.primary = primary;
     }
 
     public Long getDisplayIndex() {

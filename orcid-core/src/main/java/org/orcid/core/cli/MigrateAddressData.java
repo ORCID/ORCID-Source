@@ -77,8 +77,7 @@ public class MigrateAddressData {
                         }
                         AddressEntity address = new AddressEntity();
                         address.setDateCreated(new Date());
-                        address.setLastModified(new Date());
-                        address.setPrimary(true);
+                        address.setLastModified(new Date());                        
                         address.setUser(new ProfileEntity(orcid));
                         address.setIso2Country(Iso3166Country.fromValue(countryCode));
                         address.setSource(new SourceEntity(new ProfileEntity(orcid)));

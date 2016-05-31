@@ -2782,8 +2782,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getAddresses().getAddress().get(0).getCreatedDate());
         assertNotNull(person.getAddresses().getAddress().get(0).getLastModifiedDate());
         assertNotNull(person.getAddresses().getAddress().get(0).getCountry());
-        assertEquals(Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());
-        assertTrue(person.getAddresses().getAddress().get(0).getPrimary());
+        assertEquals(Iso3166Country.US, person.getAddresses().getAddress().get(0).getCountry().getValue());       
         assertEquals(Long.valueOf(1), person.getAddresses().getAddress().get(0).getPutCode());
         assertNotNull(person.getAddresses().getAddress().get(0).getSource());
         assertEquals("APP-5555555555555555", person.getAddresses().getAddress().get(0).getSource().retrieveSourcePath());

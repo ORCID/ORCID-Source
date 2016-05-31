@@ -814,27 +814,26 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             boolean addIt = true;
                                    
             //If the address exists, don't add it
+            Long biggestDisplayIndex = -1L;
             for(AddressEntity address : addresses) {
                 if(Objects.equals(country.value(), address.getIso2Country().value())) {
-                    addIt = false;
-                    break;
+                    addIt = false;                    
+                }
+                if(address.getDisplayIndex() > biggestDisplayIndex) {
+                    biggestDisplayIndex = address.getDisplayIndex();
                 }
             }            
             
             if(addIt) {
                 AddressEntity newAddress = new AddressEntity();
                 newAddress.setDateCreated(new Date());
-                newAddress.setDisplayIndex(-1L);
+                //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
+                newAddress.setDisplayIndex(biggestDisplayIndex + 1);
                 newAddress.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
                 newAddress.setLastModified(new Date());
                 newAddress.setUser(profileEntity);
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
                 newAddress.setSource(sourceManager.retrieveSourceEntity());                
-                if(addresses.isEmpty()) {
-                    newAddress.setPrimary(true);
-                } else {
-                    newAddress.setPrimary(false);
-                }
                 addresses.add(newAddress);
             }                        
         }

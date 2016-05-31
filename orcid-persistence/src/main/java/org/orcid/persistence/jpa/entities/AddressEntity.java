@@ -45,8 +45,7 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
     private static final long serialVersionUID = -331185018871126442L;
     private Long id;
     private Iso3166Country iso2Country;
-    private Visibility visibility;
-    private Boolean primary = Boolean.FALSE;
+    private Visibility visibility;    
     private ProfileEntity user;
     private SourceEntity source;
     private Long displayIndex;
@@ -109,15 +108,6 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         return user;
     }
 
-    @Column(name = "is_primary", columnDefinition = "boolean default false")
-    public Boolean getPrimary() {
-        return primary == null ? Boolean.FALSE : primary;
-    }
-
-    public void setPrimary(Boolean primary) {
-        this.primary = primary;
-    }
-
     @Column(name = "display_index")
     public Long getDisplayIndex() {
         return displayIndex;
@@ -133,7 +123,6 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((iso2Country == null) ? 0 : iso2Country.hashCode());
-        result = prime * result + ((primary == null) ? 0 : primary.hashCode());
         result = prime * result + ((user == null) ? 0 : user.hashCode());
         result = prime * result + ((source == null) ? 0 : source.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
@@ -155,11 +144,6 @@ public class AddressEntity extends BaseEntity<Long> implements ProfileAware, Sou
         } else if (!id.equals(other.id))
             return false;
         if (iso2Country != other.iso2Country)
-            return false;
-        if (primary == null) {
-            if (other.primary != null)
-                return false;
-        } else if (!primary.equals(other.primary))
             return false;
         if (user == null) {
             if (other.user != null)

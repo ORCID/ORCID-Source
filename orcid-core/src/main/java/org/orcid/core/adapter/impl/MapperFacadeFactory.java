@@ -245,7 +245,6 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         addressClassMap.field("putCode", "id");
         addressClassMap.field("country.value", "iso2Country");
         addressClassMap.field("visibility", "visibility");
-        addressClassMap.field("primary", "primary");
         addressClassMap.register();        
         return mapperFactory.getMapperFacade();
     }

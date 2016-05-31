@@ -685,37 +685,25 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
-        Iso3166Country iso2Country = null;
-        SourceEntity sourceEntity = null;
-        Visibility vis = null;
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
+            //The primary will be the one with the smallest display index
+            AddressEntity primary = null;
             for(AddressEntity address : profileEntity.getAddresses()) {
-                if(address.getPrimary() != null && address.getPrimary()) {
-                    if(address.getIso2Country() != null) {
-                        iso2Country = Iso3166Country.fromValue(address.getIso2Country().value());
-                        if(address.getVisibility() != null) {
-                            vis = Visibility.fromValue(address.getVisibility().value());
-                        }
-                        break;
-                    }
-                    if(address.getSource() != null) {
-                        sourceEntity = address.getSource();
-                    }
-                }
+                if(primary == null || primary.getDisplayIndex() > address.getDisplayIndex()) {
+                    primary = address;
+                }                                                
             }
-        }
-        
-        if (iso2Country != null) {
+            
             Address address = new Address();
-            Country country = new Country(iso2Country);
-            country.setVisibility(vis);
+            Country country = new Country(Iso3166Country.fromValue(primary.getIso2Country().value()));
+            country.setVisibility(Visibility.fromValue(primary.getVisibility().value()));
             address.setCountry(country);
-            if(sourceEntity != null) {
-                Source source = createSource(sourceEntity.getSourceId());
+            if(primary.getSource() != null) {
+                Source source = createSource(primary.getSource().getSourceId());
                 address.setSource(source);
             }            
             contactDetails.setAddress(address);
-        }
+        }                
     }       
 
     private void setEmails(ProfileEntity profileEntity, ContactDetails contactDetails) {
