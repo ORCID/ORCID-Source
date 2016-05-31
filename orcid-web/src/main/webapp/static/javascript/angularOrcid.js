@@ -2522,19 +2522,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.setWebsitesForm = function(v2){        
         if(v2) {
         	$scope.websitesForm.visibility = null;
-        } else {
-        	//Set the default visibility to each of the elements
-            if($scope.defaultVisibility != null) {
-            	if($scope.websitesForm != null && $scope.websitesForm.websites != null) {
-            		for(var i = 0; i < $scope.websitesForm.websites.length; i ++) {
-            			if($scope.websitesForm.websites[i].visibility == null) {
-            				$scope.websitesForm.websites[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-            			}
-            			$scope.websitesForm.websites[i].visibility.visibility = $scope.defaultVisibility; 
-            		}
-            	}
-            }
-        }            
+        }          
         
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
@@ -2777,19 +2765,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.setKeywordsForm = function(v2){
         if (v2) {
         	$scope.keywordsForm.visibility = null;
-        } else {
-        	//Set the default visibility to each of the elements
-            if($scope.defaultVisibility != null) {
-            	if($scope.keywordsForm != null && $scope.keywordsForm.keywords != null) {
-            		for(var i = 0; i < $scope.keywordsForm.keywords.length; i ++) {
-            			if($scope.keywordsForm.keywords[i].visibility == null) {
-            				$scope.keywordsForm.keywords[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-            			}
-            			$scope.keywordsForm.keywords[i].visibility.visibility = $scope.defaultVisibility; 
-            		}
-            	}
-            }
-        }
+        } 
         
         $.ajax({
             url: getBaseUri() + '/my-orcid/keywordsForms.json',
@@ -3082,20 +3058,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     	//Remove once V2 API functionality is live
         if(v2) {
         	$scope.otherNamesForm.visibility = null;
-        } else {
-        	//Set the default visibility to each of the elements        	
-            if($scope.defaultVisibility != null) {
-            	if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null) {
-            		for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
-            			if($scope.otherNamesForm.otherNames[i].visibility == null) {
-            				$scope.otherNamesForm.otherNames[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-            			}
-            			        			
-            			$scope.otherNamesForm.otherNames[i].visibility.visibility = $scope.defaultVisibility; 
-            		}
-            	}
-            }
-        }        
+        }    
         
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
