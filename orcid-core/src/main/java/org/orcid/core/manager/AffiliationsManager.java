@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.jaxb.model.message.AffiliationType;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record_rc2.Education;
@@ -156,4 +157,6 @@ public interface AffiliationsManager {
     List<EducationSummary> getEducationSummaryList(String userOrcid, long lastModified);
     
     List<AffiliationForm> getAffiliations(String orcid);
+    
+    boolean updateVisibility(String orcid, Long affiliationId, Visibility visibility);
 }
