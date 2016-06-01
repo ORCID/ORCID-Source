@@ -17,7 +17,9 @@
 package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.OrcidDuplicatedElementException;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
@@ -47,9 +50,10 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration(inheritInitializers = false, inheritLocations = false, locations = { "classpath:orcid-core-context.xml" })
 public class ExternalIdentifierManagerTest extends BaseTest {
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
-            "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+            "/data/ProfileEntityData.xml");
 
-    private static final String CLIENT_1_ID = "4444-4444-4444-4498";
+    private static final String CLIENT_1_ID = "APP-5555555555555555";
+    private static final String CLIENT_2_ID = "APP-5555555555555556";
     private String claimedOrcid = "0000-0000-0000-0002";
     private String unclaimedOrcid = "0000-0000-0000-0001";
 
@@ -100,6 +104,43 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, extId.getVisibility());
     }
 
+    @Test
+    public void testAddEqualsExternalIdentifiersFromDifferentSource() {
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        extId.setType(extId.getType() + System.currentTimeMillis());
+        // Create from client # 1
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        assertNotNull(extId1);
+        assertNotNull(extId1.getPutCode());
+        
+        // Create from client # 2
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_2_ID)));
+        PersonExternalIdentifier extId2 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        assertNotNull(extId2);
+        assertNotNull(extId2.getPutCode());
+        
+        // Verify both ext ids are not the same one
+        assertNotEquals(extId1.getPutCode(), extId2.getPutCode());        
+    }
+    
+    @Test(expected = OrcidDuplicatedElementException.class)
+    public void testAddEqualsExternalIdentifiersFromSameSource() {
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        extId.setType(extId.getType() + System.currentTimeMillis());
+        // Create from client # 1
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        assertNotNull(extId1);
+        assertNotNull(extId1.getPutCode());
+        
+        // Remove the put code and the source
+        extId1.setPutCode(null);
+        extId1.setSource(null);
+        externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        fail();
+    }
+    
     private PersonExternalIdentifier getExternalIdentifier() {
         PersonExternalIdentifier extId = new PersonExternalIdentifier();
         extId.setRelationship(Relationship.SELF);

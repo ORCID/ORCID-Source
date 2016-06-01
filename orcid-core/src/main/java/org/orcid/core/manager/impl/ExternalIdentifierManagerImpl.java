@@ -164,9 +164,15 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             if (existing.getSource() != null) {
                 // If they have the same source
                 if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    // If the url is the same
-                    if (existing.getExternalIdUrl() != null && existing.getExternalIdUrl().equals(newExternalIdentifier.getUrl().getValue())) {
-                        return true;
+                    // And they have the same reference
+                    if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
+                            || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {
+                        // And they have the same type
+                        if ((PojoUtil.isEmpty(existing.getExternalIdCommonName()) && PojoUtil.isEmpty(newExternalIdentifier.getType()))
+                                || (!PojoUtil.isEmpty(existing.getExternalIdCommonName())
+                                        && existing.getExternalIdCommonName().equals(newExternalIdentifier.getType()))) {
+                            return true;
+                        }
                     }
                 }
             }
