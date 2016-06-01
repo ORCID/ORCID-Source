@@ -157,12 +157,12 @@
 		            </#if>
 		            
 		            <!-- Countries -->    	            	           
-		            <#if (countryName)??>
+		            <#if (publicAddress)?? || (publicGroupedAddresses)??>
 		            	<div class="workspace-section">
 		            		<div class="workspace-section-header">
 		            			<ul class="inline-list visible workspace-section-heading">
-								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>
-								    <li class="right">
+								    <li><span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span></li>								    
+									    <li class="right">
 									    <#if RequestParameters['v2']??>
 									    	<span ng-click="toggleSourcesDisplay('countries')" class="right toggle" ng-mouseenter="showPopover('countries')" ng-mouseleave="hidePopover('countries')">
 									    		<i ng-class="(showSources['countries'] || showSources['countries'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
@@ -175,15 +175,23 @@
 												</div>
 									    	</span>
 									    </#if>
-								    </li>
-								</ul>		                		
+									    </li>
+								</ul>								
 		                		<div id="public-country-div" class="public-content">
-		                			${(countryName)!}		                			  			
-		                			<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>		                							                		
-										<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-											<#if (publicAddresses.source??) && (publicAddresses.source.sourceName??) && (publicAddresses.source.sourceName.content??)>${publicAddresses.source.sourceName.content}</#if> <#if (publicAddresses.createdDate)??>(${(publicAddresses.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-										</p>				                						                			                						                						                						                			                						                			
-									</div>
+		                			<#if (publicAddress)?? && !RequestParameters['v2']??>
+		                				${countryNames[publicAddress.country.value]}		                				
+		                			<#elseif (publicGroupedAddresses)?? && RequestParameters['v2']??>		                						                			
+		                				<#list publicGroupedAddresses?keys as address>
+						                	${countryNames[address]}<#if address_has_next><span ng-if="showSources['countries'] == false || showSources['countries'] == null">,</span></#if>				                	
+						                	<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>
+						                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+						                			<#list publicGroupedAddresses[address] as addressSource>
+														<#if (addressSource.source)?? && (addressSource.source.sourceName)??>${addressSource.source.sourceName.content!}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if>  <#if (addressSource.createdDate)??>(${addressSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if addressSource_has_next>,</#if>
+						                		    </#list>
+						                		</p>
+						                	</div>
+						                </#list>	
+									</#if>
 		                		</div>
 		                	</div>
 		                </div>
