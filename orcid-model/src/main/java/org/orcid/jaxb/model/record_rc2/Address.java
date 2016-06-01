@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.Country;
@@ -39,6 +38,7 @@ import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -50,7 +50,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "country" })
 @XmlRootElement(name = "address", namespace = "http://www.orcid.org/ns/address")
-public class Address implements Filterable, Serializable, Comparable<Address> {
+public class Address implements VisibilityType, Filterable, Serializable, Comparable<Address> {
     private final static long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/address", required = true)
     protected Country country;
@@ -67,8 +67,6 @@ public class Address implements Filterable, Serializable, Comparable<Address> {
     protected Visibility visibility;
     @XmlAttribute
     protected String path;
-    @XmlTransient
-    protected Boolean primary;
     @XmlAttribute(name = "display-index")
     protected Long displayIndex;
     
@@ -128,14 +126,6 @@ public class Address implements Filterable, Serializable, Comparable<Address> {
         this.path = path;
     }    
             
-    public Boolean getPrimary() {
-        return primary;
-    }
-
-    public void setPrimary(Boolean primary) {
-        this.primary = primary;
-    }
-
     public Long getDisplayIndex() {
         return displayIndex;
     }
