@@ -64,7 +64,7 @@ Transifex can notify you when developers add/update strings. To configure nofica
 
 ####Verify strings to be translated
 When you are notified (via Transifex) that strings have been added/updated:
-1. Visit https://www.transifex.com/orcid-inc-1/[project-slug]
+1. Visit https://www.transifex.com/orcid-inc-1/registry
 2. Select a language with untranslated strings
 3. Select a resource with untranslated strings, then click Translate
 4. Select Untranslated from the top menu
@@ -114,8 +114,8 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
 
 ###Transifex Project Maintainer
 
-1. When the corrected English string is pushed to master (eg: card moves to Current Development > Submitted), navigate to Transifex project dashboard https://www.transifex.com/orcid-inc-1/[project-slug]
-3. Select Czech
+1. When the corrected English string is pushed to master (eg: card moves to Current Development > Submitted), navigate to https://www.transifex.com/orcid-inc-1/registry
+3. Select the first lanugage in the list
 4. Select the update properties file, it will display as less than 100% translated, then click "Translate"
 5. Select "Untranslated" from the top menu to go to the updated strings
 6. In the left column select the string that has been updated
@@ -134,7 +134,7 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
 ###Transifex Project Maintainer
 
 1. Contact the community translators via Transifex or another method to get or verify the corrected translation
-2. Navigate to the dashboard for the translation at https://www.transifex.com/orcid-inc-1/....
+2. Navigate to https://www.transifex.com/orcid-inc-1/registry/languages
 3. Select the language which needs to be fixed
 4. Select the update properties file which needs to be fixed then click "Translate"
 5. In the search box at the top of the left column search for the English version of the text to be corrected
@@ -159,7 +159,7 @@ Translated properties files are pushed directly to [ORCID-Source master](https:/
  * password: project owner or maintaner's Transifex password
 
 #####Transifex UI
-1. Navigate to https://www.transifex.com/orcid-inc-1/[project-slug]
+1. Navigate to https://www.transifex.com/orcid-inc-1/registry
 2. Click Edit Langauges
 3. Enter a new language and click Apply
 4. Navigate to the translation teams at https://www.transifex.com/orcid-inc-1/teams/
@@ -205,4 +205,7 @@ If automatic push/pull between Transifex and Github via TXGH fails, files can be
         git push origin [branch name]
 
 For additional options/usage, see http://docs.transifex.com/client/pull
+
+
+
 
