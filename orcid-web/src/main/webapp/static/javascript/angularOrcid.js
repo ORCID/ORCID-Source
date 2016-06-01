@@ -2601,7 +2601,12 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 if ($scope.websitesForm.websites.length == 0){
                     $scope.addNewModal();
                 }
-                
+                if ($scope.websitesForm.websites.length == 1){
+                	if($scope.websitesForm.websites[0].source == null){
+                		$scope.websitesForm.websites[0].source = $scope.orcidId;
+                		$scope.websitesForm.websites[0].sourceName = "";
+                	}
+                }
             },
             width: formColorBoxResize(),
             onComplete: function() {
@@ -3345,7 +3350,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             url: getBaseUri() + '/account/countryForm.json',
             dataType: 'json',
             success: function(data) {
-                $scope.countryForm = data;  
+                $scope.countryForm = data;                
                 $scope.newElementDefaultVisibility = $scope.countryForm.visibility.visibility;
                 //If there is at least one element, iterate over them to see if they have the same visibility, to set the default  visibility element
                 if($scope.countryForm != null && $scope.countryForm.addresses != null && $scope.countryForm.addresses.length > 0) {
@@ -3389,7 +3394,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 	            		}
                 	}
                 } else {
-                	$scope.defaultVisibility = $scope.countryForm.visibility.visibility;
+                	$scope.defaultVisibility = $scope.countryForm.visibility.visibility;                	
                 }     
                 $scope.$apply();                
             }
@@ -3406,7 +3411,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 
     $scope.setCountryForm = function(v2){        
         if(v2) {
-        	$scope.countryForm.visibility = null;
+        	$scope.countryForm.visibility = null;        	
         } else {
         	//Set the default visibility to each of the elements
             if($scope.defaultVisibility != null) {            	
@@ -3475,14 +3480,20 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     	$scope.showElement[elem] = false;	
     }
     
-    $scope.openEditModal = function() {
+    $scope.openEditModal = function() {    	
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-country').html())($scope),
             onLoad: function() {
                 $('#cboxClose').remove();
-                if ($scope.countryForm.addresses.length == 0){
+                if ($scope.countryForm.addresses.length == 0){                	
                     $scope.addNewModal();
+                }
+                if ($scope.countryForm.addresses.length == 1){
+                    if($scope.countryForm.addresses[0].source == null){
+                    	$scope.countryForm.addresses[0].source = $scope.orcidId;
+                    	$scope.countryForm.addresses[0].sourceName = "";
+                    }
                 }
             },
  
@@ -3513,8 +3524,9 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.addNewModal = function() {
-        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":null};
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":""};
         tmpObj['source'] = $scope.orcidId;
+        console.log(tmpObj);
         var idx = $scope.getLastDisplayIndex();        
         tmpObj['displayIndex'] = idx + 1;
         $scope.countryForm.addresses.push(tmpObj);        

@@ -97,7 +97,7 @@
 					<div class="fixed-area">
 						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">
-								<div class="col-md-6">
+								<div class="col-md-6">									
 									<div class="aka">
 			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
 				    			 			<option value=""><@orcid.msg 'org.orcid.persistence.jpa.entities.CountryIsoEntity.empty' /></option>
@@ -242,7 +242,7 @@
 										<input type="text" ng-model="website.url" ng-show="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
  										<a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>										
 									</div>
-									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
+									<div class="source" ng-if="website.sourceName || website.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
 								<div class="col-md-6">
