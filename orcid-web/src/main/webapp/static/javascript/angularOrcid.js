@@ -3527,7 +3527,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.addNewModal = function() {
         var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":""};
         tmpObj['source'] = $scope.orcidId;
-        console.log(tmpObj);
         var idx = $scope.getLastDisplayIndex();        
         tmpObj['displayIndex'] = idx + 1;
         $scope.countryForm.addresses.push(tmpObj);        
