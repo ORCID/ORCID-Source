@@ -1,13 +1,24 @@
 #i18n Translation Process
-- [**Github**](https://github.com/ORCID/ORCID-Source) contains ORCID source code (including translations) 
+
+This directory contains java properties files needed for i18n support. 
+
+For each resource (api, email, messages, javascript), a separate properties file for each language, named with the corresponding [locale code](http://www.oracle.com/technetwork/java/javase/locales-137662.html), contains translations. Additionally, we use codes xx, lr and rl for testing.
+
+In most cases, only en, xx, lr, and rl files should be edited directly. We use the following tools to manage files for other lanuages:
+
 - [**Transifex**](https://www.transifex.com) translation managment tool provides a visual interface and management tool for translators, reviewers, and translation project managers
 - [**TXGH**](https://github.com/transifex/txgh) application synchronizes Github and Transifex using the APIs for those services. TXGH runs on an internal ORCID server and is deployed via Puppet. It can also be run on Vagrant for local development - see [ORCID/registry_vagrant](https://github.com/ORCID/registry_vagrant) 
 
 ##Roles
-- Developers: The ORCID Development team
-- Transifex Project Maintainer: ORICD staff member who is overseeing the translation workflow and also manages the translation teams
-- Translators: Vendors and/or community members who have agreed to support a given language
-- Reviewers: Trusted community members who have agreed to review translations performed by others in a given language
+- **Developers** ORCID Development team
+- **Transifex Project Maintainer** ORICD staff member responsible for managing translation workflow
+- **Translators** Vendors/community members who provide translations
+- **Reviewers** Trusted community members who review translations provided by others
+##Workflows
+[Add new strings](#add-new-strings)
+[Update existing string(s) - English only](#update-existing-strings-english-only)
+[Update existing string(s) - non-English only](#update-existing-strings-non-english-only)
+[Add new language](#add-new-language)
 
 ##Add new strings
 ###Developers
@@ -45,7 +56,7 @@ The script listed above does not work on the email\_*.properties file due to the
         git commit -m "message text"
         git push origin [branch name]
 
-When changes to any properties files are merged into master, new strings will be pulled into Transifex automatically.
+When changes to any properties files are merged into master, new strings will be pulled into Transifex automatically. If Github deployment was not successful, translated property files can be pushed from Github to Transifex manually. See [Push/Pull to/from Transifex manually](#pushpull-tofrom-transifex-manually)
 
 ###Transifex Project Maintainer
 ####Configure Transifex notifications (first time only)
@@ -76,15 +87,16 @@ After translation is complete, strings _must_ be marked as reviewed in Transifex
 
 When review status for a resource reaches 100% in a given language, the resource properties file for that language is pushed to the master branch of [ORCID-Source/orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n) automatically via TXGH
 
-###Verify Github deployment
+####Verify Github deployment
 After review is complete, check to make sure that automatic deployment to Github was successful:
+
 1. Navigate to https://github.com/ORCID/ORCID-Source/commits/master/orcid-core/src/main/resources/i18n and verify that commits were made by the user **orcid-machine** at approximately the same time that review was completed.
 2. Optional: To check file contents, navigate to [ORCID-Source/orcid-core/src/main/resources/i18n](https://github.com/ORCID/ORCID-Source/tree/master/orcid-core/src/main/resources/i18n) and choose the appropriate file.
 3. On the Trello card for the translation set a QA check list to review the translation with one item for each language.
 
-If Github deployment was not successful, 
+If Github deployment was not successful, translated property files can be pushed from Transifex to Github manually. See [Push/Pull to/from Transifex manually](#pushpull-tofrom-transifex-manually)
 
-###Release translations
+####Release translations
 Translated properties files are pushed directly to [ORCID-Source master](https://github.com/ORCID/ORCID-Source) by TXGH, so translations become live on QA, Sandbox or Prod during the normal ORCID release process.
 
 ##Update existing string(s) -  English only 
@@ -193,7 +205,4 @@ If automatic push/pull between Transifex and Github via TXGH fails, files can be
         git push origin [branch name]
 
 For additional options/usage, see http://docs.transifex.com/client/pull
-
-
-
 
