@@ -70,7 +70,7 @@
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
       orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
-            
+
       orcidVar.version = "${ver}";
       
       
@@ -88,6 +88,13 @@
     <!--[if lt IE 8]>
         <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap-ie7.css?v=${ver}"/>	                
     <![endif]-->
+    
+    <#if locale?? && locale = 'rl'>
+        <!-- just a prototype to show what RTL, expect to switch the cdn to ours -->
+        <!-- Load Bootstrap RTL theme from RawGit -->
+        <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
+    </#if>
+    
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
     <link rel="stylesheet" type="text/css" href="${staticCdn}/css/idpselect.css" />
 

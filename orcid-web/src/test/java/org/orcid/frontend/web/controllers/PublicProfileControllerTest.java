@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -132,18 +133,24 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(1, publicOtherNames.size());       
         assertEquals(Long.valueOf(13), publicOtherNames.get(0).getPutCode());
         assertEquals("Other Name PUBLIC", publicOtherNames.get(0).getContent());
-        assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());
+        assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());        
+              
+        assertTrue(model.containsKey("publicGroupedAddresses"));
+        Map<String, List<Address>> groupedAddresses = (Map<String, List<Address>>) model.get("publicGroupedAddresses");        
+        assertNotNull(groupedAddresses);
+        assertEquals(1, groupedAddresses.keySet().size());
+        assertTrue(groupedAddresses.containsKey("US"));
+        List<Address> publicAddresses = groupedAddresses.get("US");
+        assertEquals(1, publicAddresses.size());
+        assertEquals(Long.valueOf(9), publicAddresses.get(0).getPutCode());
+        assertEquals(Iso3166Country.US, publicAddresses.get(0).getCountry().getValue());         
+        assertEquals(Visibility.PUBLIC, publicAddresses.get(0).getVisibility());
         
-        
-        
-        assertTrue(model.containsKey("publicAddresses"));
-        Address address = (Address) model.get("publicAddresses");
-        assertEquals(Long.valueOf(9), address.getPutCode());
-        assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, address.getVisibility());
-        
-        assertTrue(model.containsKey("countryName"));
-        assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
+        assertTrue(model.containsKey("countryNames"));
+        Map<String, String> countryNames =  (Map<String, String>) model.get("countryNames");
+        Map<String, String> testCountry = new HashMap<String, String>();
+        testCountry.put("US", localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"));        
+        assertEquals(testCountry, countryNames);
         
         assertTrue(model.containsKey("publicGroupedKeywords"));
         Map<String, List<Keyword>> groupedKeywords = (Map<String, List<Keyword>>) model.get("publicGroupedKeywords");
@@ -268,14 +275,16 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());        
         
         
-        assertTrue(model.containsKey("publicAddresses"));
-        Address address = (Address) model.get("publicAddresses");
-        assertEquals(Long.valueOf(14), address.getPutCode());
-        assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, address.getVisibility());
-        
-        assertTrue(model.containsKey("countryName"));
-        assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
+        assertTrue(model.containsKey("publicGroupedAddresses"));
+        Map<String, List<Address>> groupedAddresses = (Map<String, List<Address>>) model.get("publicGroupedAddresses");        
+        assertNotNull(groupedAddresses);
+        assertEquals(1, groupedAddresses.keySet().size());
+        assertTrue(groupedAddresses.containsKey("US"));
+        List<Address> publicAddresses = groupedAddresses.get("US");
+        assertEquals(1, publicAddresses.size());
+        assertEquals(Long.valueOf(14), publicAddresses.get(0).getPutCode());
+        assertEquals(Iso3166Country.US, publicAddresses.get(0).getCountry().getValue());         
+        assertEquals(Visibility.PUBLIC, publicAddresses.get(0).getVisibility());
         
         assertTrue(model.containsKey("publicGroupedKeywords"));
         Map<String, List<Keyword>> groupedKeywords = (Map<String, List<Keyword>>) model.get("publicGroupedKeywords");

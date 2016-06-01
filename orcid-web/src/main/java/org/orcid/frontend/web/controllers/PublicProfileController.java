@@ -317,20 +317,25 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         //Fill country
         Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);        
+        Map<String, String> countryNames = new HashMap<String, String>();        
         if(publicAddresses != null && publicAddresses.getAddress() != null) {
             Address publicAddress = null;
-            //The primary address will be the one with the lowest display index
+            //The primary address will be the one with the lowest display index            
             for(Address address : publicAddresses.getAddress()) {
+            	countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));            	
                 if(publicAddress == null || publicAddress.getDisplayIndex() > address.getDisplayIndex()) {
                    publicAddress = address;
                 }
-            }
-            
+            }            
             if(publicAddress != null) {
-                mav.addObject("publicAddresses", publicAddress);
-                mav.addObject("countryName", getcountryName(publicAddress.getCountry().getValue().value()));
+                mav.addObject("publicAddress", publicAddress);                
+                mav.addObject("countryNames", countryNames);
+                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);        
+                mav.addObject("publicGroupedAddresses", groupedAddresses);
             }
-        }                
+        }
+        
+        
         
         //Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
@@ -432,6 +437,24 @@ public class PublicProfileController extends BaseWorkspaceController {
     			List<Keyword> list = new ArrayList<Keyword>();
     			list.add(k);
     			groups.put(k.getContent(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    }
+    
+    private Map<String, List<Address>> groupAddresses(Addresses addresses){
+    	if (addresses == null || addresses.getAddress() == null){
+    		return null;
+    	}
+    	Map<String, List<Address>> groups = new TreeMap<String, List<Address>>();    	
+    	for (Address k : addresses.getAddress()) {
+    		if (groups.containsKey(k.getCountry().getValue().value())) {
+    			groups.get(k.getCountry().getValue().value()).add(k);
+    		} else {
+    			List<Address> list = new ArrayList<Address>();
+    			list.add(k);
+    			groups.put(k.getCountry().getValue().value(), list);    			
     		}
     	}
     	
