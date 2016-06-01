@@ -7644,8 +7644,16 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
                 "label": '한국어'
             },
             {
+                "value": 'lr',
+                "label": 'lr'
+            },
+            {
                 "value": 'pt',
                 "label": 'Português'
+            },
+            {
+                "value": 'rl',
+                "label": 'rl'
             },
             {
                 "value": 'ru',
