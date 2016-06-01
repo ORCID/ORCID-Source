@@ -109,10 +109,7 @@
 									<div class="source" ng-if="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
 								</div> 
 								<div class="col-md-6">
-									<ul class="record-settings pull-right">
-										<li>
-											<input name="priority" type="radio" ng-model="primary" ng-value="country.primary" ng-click="setPrimary(country)">
-										</li>										
+									<ul class="record-settings pull-right">																				
 										<li ng-init="">												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(country.displayIndex)"></span>											
 										</li>
