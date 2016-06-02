@@ -22,10 +22,13 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -425,10 +428,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         return mav;
     }
     
-    private Map<String, List<Keyword>> groupKeywords(Keywords keywords){
+    private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
     	if (keywords == null || keywords.getKeywords() == null){
     		return null;
     	}
+    	
+    	/* Grouping items */
     	Map<String, List<Keyword>> groups = new TreeMap<String, List<Keyword>>();    	
     	for (Keyword k : keywords.getKeywords()) {
     		if (groups.containsKey(k.getContent())) {
@@ -440,8 +445,43 @@ public class PublicProfileController extends BaseWorkspaceController {
     		}
     	}
     	
-    	return groups;
+    	/* Getting the highest display index for every group into a temporal Map*/
+    	Map<String, Long> tmpMap = new TreeMap<String, Long>();
+    	for (Map.Entry<String, List<Keyword>> group : groups.entrySet()){    		
+    		String mapKey = group.getKey();
+    		Long current = 0L;
+    		Long last = 0L;
+    		Integer idx = 0;
+    		List<Keyword> keywordList = group.getValue();    		
+    		for (Keyword k : keywordList){
+    			if ( idx == 0 ){
+    				last = k.getDisplayIndex();
+    				idx++;
+    			} else {
+    				current = k.getDisplayIndex();    			
+	    			if ( current < last ) {
+	    				last = current;
+	    			}
+    			}
+    		}
+    		tmpMap.put(mapKey, last);
+    	}
+    	
+    	/* Sorting the temporal map */
+    	Map<String, Long> sortedMap = sortByComparator(tmpMap);
+    	
+    	/* Creating the sorted output Map of groups */
+    	LinkedHashMap<String, List<Keyword>> sortedGroup = new LinkedHashMap<String, List<Keyword>>();    	
+    	for (Map.Entry<String, Long> b : sortedMap.entrySet()){
+    		sortedGroup.put(b.getKey(), groups.get(b.getKey()));
+    	}
+    	
+    	return sortedGroup;
     }
+    
+    
+    
+    
     
     private Map<String, List<Address>> groupAddresses(Addresses addresses){
     	if (addresses == null || addresses.getAddress() == null){
@@ -498,7 +538,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     	return groups;
     }    
     
-    private Map<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls){    	
+    private Map<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {    	
     	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
     		return null;
     	}    	
@@ -516,10 +556,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     	return groups;
     }
     
-    
-    
-    
-    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers){
+    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
     	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
     		return null;
     	}    	
@@ -536,6 +573,23 @@ public class PublicProfileController extends BaseWorkspaceController {
     	}    	
     	return groups;
     }
+    
+    
+    private static Map<String, Long> sortByComparator(Map<String, Long> unsortMap) { 
+		List<Map.Entry<String, Long>> list = new LinkedList<Map.Entry<String, Long>>(unsortMap.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<String, Long>>() {
+			public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+		Map<String, Long> sortedMap = new LinkedHashMap<String, Long>();
+		for (Iterator<Map.Entry<String, Long>> it = list.iterator(); it.hasNext();) {
+			Map.Entry<String, Long> entry = it.next();
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedMap;
+	}
+    
     
     
     private boolean isProfileValidForIndex(ProfileEntity profile) {
