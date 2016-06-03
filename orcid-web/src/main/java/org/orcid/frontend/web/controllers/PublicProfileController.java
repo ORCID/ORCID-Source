@@ -479,7 +479,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 		return sortedGroup;
 	}
     
-    private Map<String, List<Address>> groupAddresses(Addresses addresses){
+    private LinkedHashMap<String, List<Address>> groupAddresses(Addresses addresses){
     	if (addresses == null || addresses.getAddress() == null){
     		return null;
     	}
@@ -528,7 +528,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 		return sortedGroup;
     }
     
-    private Map<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
+    private LinkedHashMap<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
     	
     	if (otherNames == null || otherNames.getOtherNames() == null){
     		return null;
@@ -596,7 +596,7 @@ public class PublicProfileController extends BaseWorkspaceController {
     	return groups;
     }    
     
-    private Map<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {    	
+    private LinkedHashMap<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {    	
     	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
     		return null;
     	}    	
@@ -646,7 +646,7 @@ public class PublicProfileController extends BaseWorkspaceController {
 		return sortedGroup;
     }
     
-    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
+    private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
     	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
     		return null;
     	}    	
