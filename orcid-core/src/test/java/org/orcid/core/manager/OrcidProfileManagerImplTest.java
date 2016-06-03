@@ -120,21 +120,19 @@ import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
  */
-@DirtiesContext
 public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String APPLICATION_ORCID = "2222-2222-2222-2228";
 
     protected static final String DELEGATE_ORCID = "1111-1111-1111-1115";
 
-    protected static final String TEST_ORCID = "4444-4444-4444-4447";
+    protected static final String TEST_ORCID = "4444-4444-4444-0001";
 
     protected static final String TEST_ORCID_WITH_WORKS = "4444-4444-4444-4443";
 
@@ -932,8 +930,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     }
 
     @Test
-    @Transactional
-    @Rollback(true)
+    @Transactional    
     public void testAddOrcidWorksWhenDefaultVisibilityIsPrivate() {
 
         OrcidProfile profile1 = createBasicProfile();
@@ -1690,8 +1687,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.LIMITED, updatedBio.getResearcherUrls().getVisibility());
         assertEquals(2, updatedBio.getResearcherUrls().getResearcherUrl().size());
     }
-    
-    @SuppressWarnings("unchecked")
+        
     @Test
     @Transactional
     @Rollback(true)

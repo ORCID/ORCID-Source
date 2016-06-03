@@ -30,7 +30,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "group_id_record")
-public class GroupIdRecordEntity extends BaseEntity<Long> implements Comparable<GroupIdRecordEntity>, SourceAware {
+public class GroupIdRecordEntity extends SourceAwareEntity<Long> implements Comparable<GroupIdRecordEntity> {
 
     private static final long serialVersionUID = 3102454956983620497L;
 
@@ -42,9 +42,7 @@ public class GroupIdRecordEntity extends BaseEntity<Long> implements Comparable<
 
     private String groupDescription;
 
-    private String groupType;
-
-    private SourceEntity source;
+    private String groupType;    
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "group_id_record_seq")
@@ -94,16 +92,7 @@ public class GroupIdRecordEntity extends BaseEntity<Long> implements Comparable<
     }
 
     @Override
-    public SourceEntity getSource() {
-        return this.source;
-    }
-
-    @Override
     public int compareTo(GroupIdRecordEntity o) {
         return 0;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
     }
 }

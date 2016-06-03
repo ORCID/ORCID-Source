@@ -31,7 +31,6 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 
 public class AffiliationForm implements ErrorsInterface, Serializable {
@@ -256,15 +255,9 @@ public class AffiliationForm implements ErrorsInterface, Serializable {
         } else {
             form.setAffiliationType(new Text());
         }        
-                        
-        SourceEntity source = entity.getSource();
-        if (source != null) {
-            form.setSource(source.getSourceId());
-            if(source.getSourceName() != null) {
-                form.setSourceName(source.getSourceName());
-            }                        
-        }
-        
+                                
+        //Set the source
+        form.setSource(entity.getElementSourceId());                
         form.setCreatedDate(Date.valueOf(entity.getDateCreated()));
         form.setLastModified(Date.valueOf(entity.getLastModified())); 
         return form;

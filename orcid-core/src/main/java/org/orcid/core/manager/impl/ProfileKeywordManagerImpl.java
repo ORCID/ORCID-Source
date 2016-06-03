@@ -112,8 +112,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         ProfileKeywordEntity entity = profileKeywordDao.getProfileKeyword(orcid, putCode);
 
         if (checkSource) {
-            SourceEntity existingSource = entity.getSource();
-            orcidSecurityManager.checkSource(existingSource);
+            orcidSecurityManager.checkSource(entity);
         }
 
         try {
@@ -145,7 +144,15 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setProfile(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);
+        
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+                newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+                newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
+        
         setIncomingPrivacy(newEntity, profile);
         profileKeywordDao.persist(newEntity);
         return adapter.toKeyword(newEntity);
@@ -157,6 +164,11 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ProfileKeywordEntity updatedEntity = profileKeywordDao.getProfileKeyword(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
+        
+        //Save the original source
+        String existingSourceId = updatedEntity.getSourceId();
+        String existingClientSourceId = updatedEntity.getClientSourceId();
+                
         // Validate the keyword
         PersonValidator.validateKeyword(keyword, sourceEntity, false, isApiRequest, originalVisibility);
         // Validate it is not duplicated
@@ -169,12 +181,16 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
+                
+        orcidSecurityManager.checkSource(updatedEntity);
         
-        SourceEntity existingSource = updatedEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
         adapter.toProfileKeywordEntity(keyword, updatedEntity);
         updatedEntity.setLastModified(new Date());        
-        updatedEntity.setSource(existingSource);
+        
+        //Be sure it doesn't overwrite the source
+        updatedEntity.setSourceId(existingSourceId);
+        updatedEntity.setClientSourceId(existingClientSourceId);
+        
         profileKeywordDao.merge(updatedEntity);
         return adapter.toKeyword(updatedEntity);
     }
@@ -224,7 +240,13 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newKeyword.setProfile(profile);
                     newKeyword.setDateCreated(new Date());
-                    newKeyword.setSource(sourceEntity);
+                    //Set the source
+                    if(sourceEntity.getSourceProfile() != null) {
+                        newKeyword.setSourceId(sourceEntity.getSourceProfile().getId());
+                    }
+                    if(sourceEntity.getSourceClient() != null) {
+                        newKeyword.setClientSourceId(sourceEntity.getSourceClient().getId());
+                    } 
                     newKeyword.setVisibility(updatedOrNew.getVisibility());
                     newKeyword.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     profileKeywordDao.persist(newKeyword);
@@ -238,13 +260,12 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
 
     private boolean isDuplicated(ProfileKeywordEntity existing, org.orcid.jaxb.model.record_rc2.Keyword keyword, SourceEntity source) {
         if (!existing.getId().equals(keyword.getPutCode())) {
-            if (existing.getSource() != null) {
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
-                        return true;
-                    }
+            String existingSourceId = existing.getElementSourceId();             
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                if (existing.getKeywordName() != null && existing.getKeywordName().equals(keyword.getContent())) {
+                    return true;
                 }
-            }
+            }           
         }
         return false;
     }

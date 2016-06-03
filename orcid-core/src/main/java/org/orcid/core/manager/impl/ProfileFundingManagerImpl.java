@@ -286,7 +286,14 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
         profileFundingEntity.setOrg(updatedOrganization);
         
-        profileFundingEntity.setSource(sourceEntity);
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+            profileFundingEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+            profileFundingEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
+        
         ProfileEntity profile = profileDao.find(orcid);
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
@@ -323,6 +330,10 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     	ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, funding.getPutCode());
         Visibility originalVisibility = pfe.getVisibility();
         
+        //Save the original source
+        String existingSourceId = pfe.getSourceId();
+        String existingClientSourceId = pfe.getClientSourceId();
+        
         activityValidator.validateFunding(funding, sourceEntity, false, isApiRequest, originalVisibility);
     	if(!isApiRequest) {
     	    List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
@@ -334,12 +345,16 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
                 }
             }
     	}    	
-    	
-        SourceEntity existingSource = pfe.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+    	        
+        orcidSecurityManager.checkSource(pfe);
+        
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
         pfe.setVisibility(originalVisibility);
-        pfe.setSource(existingSource);
+        
+        
+        //Be sure it doesn't overwrite the source
+        pfe.setSourceId(existingSourceId);
+        pfe.setClientSourceId(existingClientSourceId);
         
         //Updates the give organization with the latest organization from database, or, create a new one
         OrgEntity updatedOrganization = orgManager.getOrgEntity(funding);
@@ -365,7 +380,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     @Transactional    
     public boolean checkSourceAndDelete(String orcid, Long fundingId) {
         ProfileFundingEntity pfe = profileFundingDao.getProfileFunding(orcid, fundingId);
-        orcidSecurityManager.checkSource(pfe.getSource());        
+        orcidSecurityManager.checkSource(pfe);        
         Item item = createItem(pfe);
         boolean result = profileFundingDao.removeProfileFunding(orcid, fundingId);
         notificationManager.sendAmendEmail(orcid, AmendedSection.FUNDING, item);

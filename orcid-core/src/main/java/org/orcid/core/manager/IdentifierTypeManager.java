@@ -23,6 +23,7 @@ import org.orcid.pojo.IdentifierType;
 public interface IdentifierTypeManager {
 
     public void setSourceManager(SourceManager manager);
+    public void setSecurityManager(OrcidSecurityManager manager);
     public IdentifierType createIdentifierType(IdentifierType id);
     public IdentifierType updateIdentifierType(IdentifierType id);
     public IdentifierType fetchIdentifierTypeByDatabaseName(String name);

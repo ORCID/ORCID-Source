@@ -44,6 +44,7 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
             
     <profile
@@ -68,7 +69,8 @@
             indexing_status="DONE"
             orcid_type="USER"
             reviewed="true"  
-            record_locked="false"              
+            record_locked="false"      
+            enable_notifications="true"        
             />
 
     <profile
@@ -96,6 +98,7 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
 
     <profile
@@ -122,6 +125,7 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
 
     <profile
@@ -148,6 +152,7 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
 
     <profile
@@ -174,6 +179,7 @@
             group_type="PREMIUM_INSTITUTION"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
 
     <profile
@@ -199,6 +205,7 @@
             orcid_type="USER"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
 	
 	<profile
@@ -225,6 +232,7 @@
             deprecated_date="2013-08-29 15:31:00.00"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
 
 	<profile
@@ -250,6 +258,7 @@
             orcid_type="ADMIN" 
             reviewed="false"     
             record_locked="false"     
+            enable_notifications="true"
             />            
 
 	<profile
@@ -275,6 +284,7 @@
             orcid_type="USER"
             reviewed="false"     
             record_locked="false"     
+            enable_notifications="true"
             />
             
 	<profile
@@ -302,6 +312,7 @@
             client_type="PREMIUM_CREATOR"
             reviewed="false"
             record_locked="false"
+            enable_notifications="true"
             />
             
 	<profile
@@ -327,6 +338,7 @@
             orcid_type="USER"
             reviewed="false"     
             record_locked="false"     
+            enable_notifications="true"
             />
 
 	<profile
@@ -351,6 +363,7 @@
             reviewed="true"            
             client_source_id="APP-5555555555555555"
             record_locked="false"
+            enable_notifications="true"
             />
 
 	<profile
@@ -379,6 +392,7 @@
             claimed="true"
             reviewed="true"
             record_locked="false"
+            enable_notifications="true"
             />
             
 	<profile
@@ -408,6 +422,7 @@
             reviewed="true"
             client_source_id="APP-5555555555555555"
             record_locked="false"
+            enable_notifications="true"
             />
 
 	<profile
@@ -436,8 +451,10 @@
             claimed="true"
             reviewed="true"
             primary_record="0000-0000-0000-0003"
+            deprecated_date="2016-03-29 15:31:00.00"
             client_source_id="APP-5555555555555555"
             record_locked="false"
+            enable_notifications="true"
             />
 
 	<profile
@@ -467,6 +484,7 @@
             reviewed="true"
             record_locked="true"            
             client_source_id="APP-5555555555555555"
+            enable_notifications="true"
             />
 
     <granted_authority

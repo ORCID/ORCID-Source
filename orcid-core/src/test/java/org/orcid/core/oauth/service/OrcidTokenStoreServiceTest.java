@@ -66,10 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Resource(name = "orcidTokenStore")
-    private TokenStore orcidTokenStoreService;
-
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    private TokenStore orcidTokenStoreService;    
     
     @Resource
     private ProfileEntityManager profileEntityManager;
@@ -120,7 +117,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         parameters.put("response_type", "bearer");
         OAuth2Request request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4444");
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
         OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);
@@ -190,7 +187,7 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         parameters.put("response_type", "bearer");
         OAuth2Request request = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true, new HashSet<String>(Arrays.asList("/orcid-profile/read-limited")), Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
 
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve("4444-4444-4444-4444");
+        ProfileEntity profileEntity = profileEntityManager.findByOrcid("4444-4444-4444-4444");
         OrcidOauth2UserAuthentication userAuthentication = new OrcidOauth2UserAuthentication(profileEntity, true);
 
         OAuth2Authentication authentication = new OAuth2Authentication(request, userAuthentication);

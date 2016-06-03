@@ -101,18 +101,27 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
 
     @Override
     public GroupIdRecord updateGroupIdRecord(Long putCode, GroupIdRecord groupIdRecord) {
-        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);                
+        GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);  
+        
         if(existingEntity == null) {
             throw new GroupIdRecordNotFoundException();
-        }        
-        SourceEntity existingSource = existingEntity.getSource();
-        activityValidator.validateGroupIdRecord(groupIdRecord, false, existingSource);        
+        }  
+        
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        //Save the original source
+        String existingSourceId = existingEntity.getSourceId();
+        String existingClientSourceId = existingEntity.getClientSourceId();             
+        
+        activityValidator.validateGroupIdRecord(groupIdRecord, false, sourceEntity);        
         validateDuplicate(groupIdRecord);
         
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(existingEntity);
         GroupIdRecordEntity updatedEntity = jpaJaxbGroupIdRecordAdapter.toGroupIdRecordEntity(groupIdRecord);
         updatedEntity.setDateCreated(existingEntity.getDateCreated());
-        updatedEntity.setSource(existingSource);
+        //Be sure it doesn't overwrite the source
+        updatedEntity.setSourceId(existingSourceId);
+        updatedEntity.setClientSourceId(existingClientSourceId);
+        
         updatedEntity = groupIdRecordDao.merge(updatedEntity);
         return jpaJaxbGroupIdRecordAdapter.toGroupIdRecord(updatedEntity);
     }
@@ -121,7 +130,7 @@ public class GroupIdRecordManagerImpl implements GroupIdRecordManager {
     public void deleteGroupIdRecord(Long putCode) {
         GroupIdRecordEntity existingEntity = groupIdRecordDao.find(putCode);
         if (existingEntity != null) {
-            orcidSecurityManager.checkSource(existingEntity.getSource());
+            orcidSecurityManager.checkSource(existingEntity);
             groupIdRecordDao.remove(Long.valueOf(putCode));
         } else {
             throw new GroupIdRecordNotFoundException();

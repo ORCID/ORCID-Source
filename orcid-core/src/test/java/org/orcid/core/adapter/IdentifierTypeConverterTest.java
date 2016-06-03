@@ -16,18 +16,16 @@
  */
 package org.orcid.core.adapter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Date;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.BaseTest;
 import org.orcid.core.adapter.impl.IdentifierTypePOJOConverter;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.pojo.IdentifierType;
-import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.springframework.test.context.ContextConfiguration;
-import static org.junit.Assert.*;
 
 public class IdentifierTypeConverterTest extends BaseTest {
 

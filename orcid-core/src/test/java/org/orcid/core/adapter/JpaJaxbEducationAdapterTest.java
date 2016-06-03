@@ -48,7 +48,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbEducationAdapterTest {
+public class JpaJaxbEducationAdapterTest extends MockSourceNameCache {
 
     @Resource
     private JpaJaxbEducationAdapter jpaJaxbEducationAdapter;
@@ -74,7 +74,7 @@ public class JpaJaxbEducationAdapterTest {
         assertEquals(Integer.valueOf(1848), oar.getEndDate().getYear());
         
         //Source
-        assertEquals("8888-8888-8888-8880", oar.getSource().getSourceId());
+        assertEquals("8888-8888-8888-8880", oar.getElementSourceId());
         
         //Check org values
         assertEquals("common:name", oar.getOrg().getName());
@@ -165,7 +165,7 @@ public class JpaJaxbEducationAdapterTest {
         result.setStartDate(new StartDateEntity(2000, 1, 1));
         result.setTitle("education:title");
         result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         
         return result;
     }

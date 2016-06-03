@@ -17,7 +17,6 @@
 package org.orcid.core;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.orcid.test.DBUnitTest;

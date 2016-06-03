@@ -55,4 +55,8 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     public ClientDetailsEntity getPublicClient(String ownerId);
     
     String getMemberName(String clientId);
+    
+    boolean existsAndIsNotPublicClient(String clientId);
+    
+    Date getLastModifiedIfNotPublicClient(String clientId);
 }

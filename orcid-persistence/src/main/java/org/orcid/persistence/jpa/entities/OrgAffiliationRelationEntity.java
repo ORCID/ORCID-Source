@@ -42,7 +42,7 @@ import org.orcid.utils.NullUtils;
  */
 @Entity
 @Table(name = "org_affiliation_relation")
-public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, ProfileAware, SourceAware {
+public class OrgAffiliationRelationEntity extends SourceAwareEntity<Long> implements Comparable<OrgAffiliationRelationEntity>, ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,8 +54,7 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
     private String department;
     private StartDateEntity startDate;
     private EndDateEntity endDate;
-    private Visibility visibility;
-    private SourceEntity source;
+    private Visibility visibility;    
 
     @Override
     @Id
@@ -144,14 +143,6 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         this.visibility = visibility;
     }
 
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-
     @Override
     public int compareTo(OrgAffiliationRelationEntity other) {
         if (other == null) {
@@ -233,5 +224,4 @@ public class OrgAffiliationRelationEntity extends BaseEntity<Long> implements Co
         endDate = null;
         visibility = null;
     }
-
 }

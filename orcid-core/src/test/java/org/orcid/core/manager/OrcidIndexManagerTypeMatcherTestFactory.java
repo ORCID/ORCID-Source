@@ -40,7 +40,7 @@ class OrcidIndexManagerTypeMatcherTestFactory {
 
             @Override
             public boolean matchesSafely(OrcidProfile orcidProfile) {
-                if (!"4444-4444-4444-4447".equals(orcidProfile.getOrcidIdentifier().getPath())) {
+                if (!"4444-4444-4444-0001".equals(orcidProfile.getOrcidIdentifier().getPath())) {
                     return false;
                 }
 

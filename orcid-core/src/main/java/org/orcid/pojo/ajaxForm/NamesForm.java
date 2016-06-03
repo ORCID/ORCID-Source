@@ -38,24 +38,24 @@ public class NamesForm implements ErrorsInterface, Serializable {
     private Text creditName;
     private Visibility namesVisibility;
 
-    public static NamesForm valueOf(PersonalDetails personalDetails) {
+    public static NamesForm valueOf(Name name) {
         NamesForm nf = new NamesForm();
 
-        if (personalDetails.getName() != null) {
-            if (personalDetails.getName().getGivenNames() != null) {
-                nf.setGivenNames(Text.valueOf(personalDetails.getName().getGivenNames().getContent()));
+        if (name != null) {
+            if (name.getGivenNames() != null) {
+                nf.setGivenNames(Text.valueOf(name.getGivenNames().getContent()));
             }
 
-            if (personalDetails.getName().getFamilyName() != null) {
-                nf.setFamilyName(Text.valueOf(personalDetails.getName().getFamilyName().getContent()));
+            if (name.getFamilyName() != null) {
+                nf.setFamilyName(Text.valueOf(name.getFamilyName().getContent()));
             }
 
-            if (personalDetails.getName().getCreditName() != null) {
-                nf.setCreditName(Text.valueOf(personalDetails.getName().getCreditName().getContent()));
+            if (name.getCreditName() != null) {
+                nf.setCreditName(Text.valueOf(name.getCreditName().getContent()));
             }
 
-            if (personalDetails.getName().getVisibility() != null) {
-                nf.setNamesVisibility(Visibility.valueOf(personalDetails.getName().getVisibility()));
+            if (name.getVisibility() != null) {
+                nf.setNamesVisibility(Visibility.valueOf(name.getVisibility()));
             } else {
                 nf.setNamesVisibility(Visibility.valueOf(OrcidVisibilityDefaults.NAMES_DEFAULT.getVisibility()));
             }

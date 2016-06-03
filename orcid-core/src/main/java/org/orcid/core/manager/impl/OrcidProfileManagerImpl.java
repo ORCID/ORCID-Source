@@ -137,7 +137,6 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -437,10 +436,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                             email.setSource(amenderOrcid);
                         }
                     } else {
-                        SourceEntity existingSource = existingEmail.getSource();
-                        if (existingSource != null) {
-                            email.setSource(existingSource.getSourceId());
-                        }
+                        email.setSource(existingEmail.getSourceId());
+                        email.setSourceClientId(existingEmail.getClientSourceId());
                     }
                 }
             }

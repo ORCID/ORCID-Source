@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.notification_rc2.NotificationType;
         + " (unix_timestamp(:effectiveNow) > (unix_timestamp(l.max_sent_date) + (p.send_email_frequency_days * 24 * 60 * 60))"
         + " OR (l.max_sent_date IS NULL AND unix_timestamp(:effectiveNow) > (unix_timestamp(COALESCE(p.completed_date, p.date_created)) + (p.send_email_frequency_days * 24 * 60 * 60))))", resultSetMapping = "distinctOrcidMapping") })
 // @formatter:on
-abstract public class NotificationEntity extends BaseEntity<Long> implements ProfileAware {
+abstract public class NotificationEntity extends SourceAwareEntity<Long> implements ProfileAware {
 
     public static final String FIND_ORCIDS_WITH_NOTIFICATIONS_TO_SEND = "findOrcidsWithNotificationsToSend";
 
@@ -75,8 +75,7 @@ abstract public class NotificationEntity extends BaseEntity<Long> implements Pro
     private Date archivedDate;
     private Date actionedDate;    
     private boolean sendable;
-    private SourceEntity source;
-
+    
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "notification_seq")
@@ -146,14 +145,6 @@ abstract public class NotificationEntity extends BaseEntity<Long> implements Pro
         this.sendable = sendable;
     }
 
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-    
     @Column(name = "actioned_date")
     public Date getActionedDate() {
         return actionedDate;

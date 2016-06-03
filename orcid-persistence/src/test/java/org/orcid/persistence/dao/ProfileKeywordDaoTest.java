@@ -16,9 +16,9 @@
  */
 package org.orcid.persistence.dao;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,10 +30,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -83,7 +81,7 @@ public class ProfileKeywordDaoTest extends DBUnitTest {
         ProfileKeywordEntity entity = new ProfileKeywordEntity();
         entity.setKeywordName("this is my keyword");
         entity.setProfile(new ProfileEntity("4444-4444-4444-4443"));
-        entity.setSource(new SourceEntity(new ProfileEntity("4444-4444-4444-4443")));
+        entity.setSourceId("4444-4444-4444-4443");
         entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);        
         
         profileKeywordDao.persist(entity);        

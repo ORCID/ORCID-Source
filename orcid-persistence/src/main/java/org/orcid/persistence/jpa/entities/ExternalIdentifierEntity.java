@@ -40,15 +40,14 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  */
 @Entity
 @Table(name = "external_identifier")
-public class ExternalIdentifierEntity extends BaseEntity<Long> implements Comparable<ExternalIdentifierEntity>, ProfileAware, SourceAware {
+public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements Comparable<ExternalIdentifierEntity>, ProfileAware {
 
     private static final long serialVersionUID = 1L;
 
     private String externalIdReference;
     private String externalIdCommonName;
     private String externalIdUrl;
-    private ProfileEntity owner;
-    private SourceEntity source;
+    private ProfileEntity owner;    
     private Long id;
     private Visibility visibility;
     private Long displayIndex;
@@ -81,14 +80,6 @@ public class ExternalIdentifierEntity extends BaseEntity<Long> implements Compar
 
     public void setExternalIdCommonName(String externalIdCommonName) {
         this.externalIdCommonName = externalIdCommonName;
-    }
-
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
     }
 
     /**
