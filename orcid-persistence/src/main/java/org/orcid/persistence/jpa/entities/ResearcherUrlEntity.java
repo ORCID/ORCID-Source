@@ -40,15 +40,14 @@ import org.orcid.persistence.constants.SiteConstants;
  */
 @Entity
 @Table(name = "researcher_url")
-public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware, SourceAware {
+public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware {
 
     private static final long serialVersionUID = -632507196189018770L;
 
     private Long id;
     private String url;
     private String urlName;
-    private ProfileEntity user;
-    private SourceEntity source;
+    private ProfileEntity user;    
     private Visibility visibility;
     private Long displayIndex;
 
@@ -107,15 +106,7 @@ public class ResearcherUrlEntity extends BaseEntity<Long> implements Comparable<
      */
     public void setUser(ProfileEntity user) {
         this.user = user;
-    }
-
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
+    }    
 
     @Basic
     @Enumerated(EnumType.STRING)

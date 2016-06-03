@@ -29,6 +29,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -85,15 +86,18 @@ public class SigninTest {
     }
 
 	// Make this available to other classes
-    static public void signIn(WebDriver webDriver, String username, String password) {        
+    static public void signIn(WebDriver webDriver, String username, String password) {  
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
         WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));
         passwordEl.sendKeys(password);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='form-sign-in-button']"));
         buttonEl.click();
-        WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")));
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")),webDriver);
     }
 
     public static void dismissVerifyEmailModal(WebDriver webDriver) {

@@ -868,7 +868,18 @@ public class NotificationManagerImpl implements NotificationManager {
             throw OrcidNotFoundException.newInstance(orcid);
         }
         notificationEntity.setProfile(profile);
-        notificationEntity.setSource(sourceManager.retrieveSourceEntity());
+        
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
+        // Set source id 
+        if(sourceEntity.getSourceProfile() != null) {
+            notificationEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        
+        if(sourceEntity.getSourceClient() != null) {
+            notificationEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }
+                
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
     }
@@ -904,7 +915,7 @@ public class NotificationManagerImpl implements NotificationManager {
             return null;
         }
         String sourceId = sourceManager.retrieveSourceOrcid();
-        if (sourceId != null && !sourceId.equals(notificationEntity.getSource().getSourceId())) {
+        if (sourceId != null && !sourceId.equals(notificationEntity.getElementSourceId())) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "notification");
             throw new WrongSourceException(params);

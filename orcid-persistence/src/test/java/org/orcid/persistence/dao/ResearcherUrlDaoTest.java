@@ -16,9 +16,9 @@
  */
 package org.orcid.persistence.dao;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -34,10 +34,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
@@ -102,7 +100,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
         newRUrl.setDateCreated(new Date());
         newRUrl.setLastModified(new Date());
-        newRUrl.setSource(new SourceEntity(new ClientDetailsEntity("APP-5555555555555555")));
+        newRUrl.setClientSourceId("APP-5555555555555555");
         newRUrl.setUrl("www.4443.com");
         newRUrl.setUrlName("test");
         newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));
@@ -112,7 +110,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
         assertEquals(7, researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L).size());
         for(ResearcherUrlEntity rUrl : researcherUrlDao.getResearcherUrls("4444-4444-4444-4443", 0L)) {
             if("www.4443.com".equals(rUrl.getUrl())) {
-                assertEquals("APP-5555555555555555", rUrl.getSource().getSourceId());
+                assertEquals("APP-5555555555555555", rUrl.getElementSourceId());
             }
         }
     }
@@ -138,7 +136,7 @@ public class ResearcherUrlDaoTest extends DBUnitTest {
             ResearcherUrlEntity newRUrl = new ResearcherUrlEntity();
             newRUrl.setDateCreated(new Date());
             newRUrl.setLastModified(new Date());
-            newRUrl.setSource(new SourceEntity(new ClientDetailsEntity("4444-4444-4444-4443")));
+            newRUrl.setClientSourceId("4444-4444-4444-4443");
             newRUrl.setUrl("http://www.researcherurl2.com?id=1");
             newRUrl.setUrlName("test");
             newRUrl.setUser(new ProfileEntity("4444-4444-4444-4443"));

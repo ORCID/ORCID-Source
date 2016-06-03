@@ -180,4 +180,21 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         return query.getSingleResult();
     }
 
+    @Override
+    public boolean existsAndIsNotPublicClient(String clientId) {
+        TypedQuery<Long> query = entityManager.createQuery("select count(*) from ClientDetailsEntity where client_details_id=:clientId and client_type != 'PUBLIC_CLIENT'", Long.class);
+        query.setParameter("clientId", clientId);
+        Long result = query.getSingleResult();
+        return (result != null && result > 0);
+    }
+
+    @Override
+    public Date getLastModifiedIfNotPublicClient(String clientId) {
+        Query query = entityManager.createQuery("SELECT lastModified FROM ClientDetailsEntity WHERE id = :id AND clientType != :type");
+        query.setParameter("id", clientId);        
+        query.setParameter("type", ClientType.PUBLIC_CLIENT);
+        Date result = (Date)query.getSingleResult();
+        return result;
+    }
+
 }

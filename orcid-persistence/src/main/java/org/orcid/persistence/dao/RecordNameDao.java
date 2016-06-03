@@ -16,6 +16,8 @@
  */
 package org.orcid.persistence.dao;
 
+import java.util.Date;
+
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 
 /**
@@ -33,4 +35,6 @@ public interface RecordNameDao extends GenericDao<RecordNameEntity, Long> {
     boolean updateRecordName(RecordNameEntity recordName);
 
     void createRecordName(RecordNameEntity recordName);
+    
+    Date getLastModified(String orcid);
 }

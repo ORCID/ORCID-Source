@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -43,7 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbExternalIdentifierAdapterTest {
+public class JpaJaxbExternalIdentifierAdapterTest extends MockSourceNameCache {
     @Resource
     private JpaJaxbExternalIdentifierAdapter jpaJaxbExternalIdentifierAdapter;
     
@@ -56,9 +55,8 @@ public class JpaJaxbExternalIdentifierAdapterTest {
         assertEquals("http://ext-id/A-0003", entity.getExternalIdUrl());
         assertEquals(Long.valueOf(1), entity.getId());
         assertNotNull(entity.getDateCreated());
-        assertNotNull(entity.getLastModified());
-        assertNotNull(entity.getSource());
-        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());        
+        assertNotNull(entity.getLastModified());        
+        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());        
     }
 
     @Test
@@ -98,7 +96,7 @@ public class JpaJaxbExternalIdentifierAdapterTest {
         entity.setExternalIdReference("id-reference");        
         entity.setExternalIdUrl("http://myurl.com");
         entity.setId(123L);        
-        entity.setSource(new SourceEntity("APP-0000000000000000"));
+        entity.setClientSourceId("APP-0000000000000000");
         entity.setVisibility(Visibility.LIMITED);
         return entity;
     }

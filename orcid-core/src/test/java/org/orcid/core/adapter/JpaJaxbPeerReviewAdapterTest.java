@@ -50,7 +50,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbPeerReviewAdapterTest {
+public class JpaJaxbPeerReviewAdapterTest extends MockSourceNameCache {
 
     @Resource
     private JpaJaxbPeerReviewAdapter jpaJaxbPeerReviewAdapter;
@@ -75,7 +75,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         assertEquals(Integer.valueOf(1848), pe.getCompletionDate().getYear());        
         
         //Source
-        assertEquals("8888-8888-8888-8880", pe.getSource().getSourceId());
+        assertEquals("8888-8888-8888-8880", pe.getElementSourceId());
         
         //Check org values
         assertEquals("common:name", pe.getOrg().getName());
@@ -196,7 +196,7 @@ public class JpaJaxbPeerReviewAdapterTest {
         result.setSubjectUrl("peer-review:subject-url");                
         result.setSubjectType(WorkType.BOOK_REVIEW);        
         result.setVisibility(org.orcid.jaxb.model.message.Visibility.PRIVATE);   
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         result.setGroupId("orcid-generated:12345");
         result.setId(12345L);
         

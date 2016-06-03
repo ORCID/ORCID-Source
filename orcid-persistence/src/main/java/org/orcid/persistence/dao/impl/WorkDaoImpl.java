@@ -78,8 +78,9 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         workToUpdate.setContributorsJson(workWithNewData.getContributorsJson());
         workToUpdate.setExternalIdentifiersJson(workWithNewData.getExternalIdentifiersJson());        
         workToUpdate.setVisibility(workWithNewData.getVisibility());
-        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());        
-        workToUpdate.setSource(workWithNewData.getSource());
+        workToUpdate.setDisplayIndex(workWithNewData.getDisplayIndex());                
+        workToUpdate.setSourceId(workWithNewData.getSourceId());
+        workToUpdate.setClientSourceId(workWithNewData.getClientSourceId());        
         workToUpdate.setLastModified(new Date());
         if(workWithNewData.getAddedToProfileDate() != null) {
             workToUpdate.setAddedToProfileDate(workWithNewData.getAddedToProfileDate());
@@ -143,8 +144,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     public void detach(MinimizedWorkEntity minimizedWorkEntity) {
-        entityManager.detach(minimizedWorkEntity);
-        minimizedWorkEntity.setDetached(true);
+        entityManager.detach(minimizedWorkEntity);        
     }
     
     /**

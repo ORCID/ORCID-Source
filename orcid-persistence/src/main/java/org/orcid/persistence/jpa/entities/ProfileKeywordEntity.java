@@ -39,15 +39,14 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  */
 @Entity
 @Table(name = "profile_keyword")
-public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware, SourceAware {
+public class ProfileKeywordEntity extends SourceAwareEntity<Long> implements Comparable<ProfileKeywordEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
     private Long id;
     private ProfileEntity profile;
     private String keywordName;
-    private Visibility visibility;
-    private SourceEntity source;
+    private Visibility visibility;    
     private Long displayIndex;
 
     /**
@@ -112,14 +111,6 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         this.visibility = visibility;
     }
     
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-    
     @Column(name = "display_index")
     public Long getDisplayIndex() {
         return displayIndex;
@@ -147,7 +138,8 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((keywordName == null) ? 0 : keywordName.hashCode());
         result = prime * result + ((profile == null) ? 0 : profile.hashCode());
-        result = prime * result + ((source == null) ? 0 : source.hashCode());
+        result = prime * result + ((sourceId == null) ? 0 : sourceId.hashCode());
+        result = prime * result + ((clientSourceId == null) ? 0 : clientSourceId.hashCode());
         result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
         return result;
     }
@@ -180,11 +172,6 @@ public class ProfileKeywordEntity extends BaseEntity<Long> implements Comparable
             if (other.profile != null)
                 return false;
         } else if (!profile.equals(other.profile))
-            return false;
-        if (source == null) {
-            if (other.source != null)
-                return false;
-        } else if (!source.equals(other.source))
             return false;
         if (visibility != other.visibility)
             return false;

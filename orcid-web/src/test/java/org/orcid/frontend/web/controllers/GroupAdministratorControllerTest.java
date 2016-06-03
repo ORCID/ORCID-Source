@@ -41,12 +41,10 @@ import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml", "classpath:orcid-frontend-web-servlet.xml" })
-@Transactional(propagation = Propagation.REQUIRES_NEW)
 public class GroupAdministratorControllerTest extends BaseControllerTest {
 
     @Resource
@@ -169,20 +167,3 @@ public class GroupAdministratorControllerTest extends BaseControllerTest {
         assertTrue(errors.contains(controller.getMessage("manage.developer_tools.group.error.empty_scopes")));
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

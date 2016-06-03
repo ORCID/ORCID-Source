@@ -38,7 +38,7 @@ import org.orcid.jaxb.model.message.Visibility;
  */
 @Entity
 @Table(name = "email")
-public class EmailEntity extends BaseEntity<String> implements ProfileAware {
+public class EmailEntity extends SourceAwareEntity<String> implements ProfileAware {
 
     private static final long serialVersionUID = 1;
 
@@ -47,8 +47,7 @@ public class EmailEntity extends BaseEntity<String> implements ProfileAware {
     private Boolean primary;
     private Boolean current;
     private Boolean verified;
-    private Visibility visibility;
-    private SourceEntity source;
+    private Visibility visibility;    
 
     @Override
     @Id
@@ -106,14 +105,6 @@ public class EmailEntity extends BaseEntity<String> implements ProfileAware {
 
     public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
-    }
-
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
     }
 
     public static Map<String, EmailEntity> mapByLowerCaseEmail(Collection<EmailEntity> emailEntities) {

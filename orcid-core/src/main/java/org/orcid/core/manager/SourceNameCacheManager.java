@@ -14,15 +14,17 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.jpa.entities;
+package org.orcid.core.manager;
 
 /**
- * Interface to indicate that an entity contains the source profile entity, so,
- * it will be able to show who creates it.
- * 
- * @author Will Simpson
- * 
- */
-public interface SourceAware {
-   SourceEntity getSource();
+ * @author Angel Montenegro
+ * */
+public interface SourceNameCacheManager {
+
+    public String retrieve(String sourceId) throws IllegalArgumentException;
+    
+    public void removeAll();
+    
+    public void remove(String sourceId);
+    
 }

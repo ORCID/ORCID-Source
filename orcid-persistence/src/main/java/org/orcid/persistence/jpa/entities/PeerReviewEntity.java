@@ -33,6 +33,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
@@ -41,7 +42,7 @@ import org.orcid.utils.OrcidStringUtils;
 
 @Entity
 @Table(name = "peer_review")
-public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<PeerReviewEntity>, ProfileAware, SourceAware {
+public class PeerReviewEntity extends SourceAwareEntity<Long> implements Comparable<PeerReviewEntity>, ProfileAware {
     
     private static final long serialVersionUID = -172752706595347541L;
     private Long id;
@@ -51,8 +52,7 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
     private String externalIdentifiersJson;
     private String url;
     private PeerReviewType type;
-    private CompletionDateEntity completionDate;    
-    private SourceEntity source;
+    private CompletionDateEntity completionDate;        
     private Visibility visibility;                
     private String subjectExternalIdentifiersJson;
     private WorkType subjectType;
@@ -128,14 +128,6 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
 
     public void setCompletionDate(CompletionDateEntity completionDate) {
         this.completionDate = completionDate;
-    }
-
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
     }
 
     @Basic
@@ -340,15 +332,15 @@ public class PeerReviewEntity extends BaseEntity<Long> implements Comparable<Pee
             return groupIdCompare;
         }
         
-        if(source == null) {
-            if(other.getSource() != null) {
+        if(StringUtils.isEmpty(getElementSourceId())) {
+            if(!StringUtils.isEmpty(other.getElementSourceId())) {
                 return -1;
             }
         } else {
-            if(other.getSource() == null) {
+            if(StringUtils.isEmpty(other.getElementSourceId())) {
                 return 1;
             } else {
-                int sourceCompare = OrcidStringUtils.compareStrings(source.getSourceId(), other.getSource().getSourceId());
+                int sourceCompare = OrcidStringUtils.compareStrings(getElementSourceId(), other.getElementSourceId());
                 if(sourceCompare != 0) {
                     return sourceCompare;
                 }

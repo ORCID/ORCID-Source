@@ -97,7 +97,6 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -829,7 +828,7 @@ public class SetUpClientsAndUsers {
         a1.setIso2Country(Iso3166Country.US);        
         a1.setLastModified(new Date());
         a1.setUser(new ProfileEntity(orcid));
-        a1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        a1.setClientSourceId(client1ClientId);
         a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         addressDao.persist(a1);        
     }
@@ -846,7 +845,7 @@ public class SetUpClientsAndUsers {
         o1.setDisplayName("other-name-1");
         o1.setLastModified(new Date());
         o1.setProfile(new ProfileEntity(orcid));
-        o1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        o1.setClientSourceId(client1ClientId);
         o1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         otherNameDao.persist(o1);
         
@@ -856,7 +855,7 @@ public class SetUpClientsAndUsers {
         o2.setDisplayName("other-name-2");
         o2.setLastModified(new Date());
         o2.setProfile(new ProfileEntity(orcid));
-        o2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        o2.setClientSourceId(client1ClientId);
         o2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         otherNameDao.persist(o2);
         
@@ -874,7 +873,7 @@ public class SetUpClientsAndUsers {
         k1.setKeywordName("keyword-1");
         k1.setLastModified(new Date());
         k1.setProfile(new ProfileEntity(orcid));
-        k1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        k1.setClientSourceId(client1ClientId);
         k1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         profileKeywordDao.persist(k1);
         
@@ -884,7 +883,7 @@ public class SetUpClientsAndUsers {
         k2.setKeywordName("keyword-2");
         k2.setLastModified(new Date());
         k2.setProfile(new ProfileEntity(orcid));
-        k2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        k2.setClientSourceId(client1ClientId);
         k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         profileKeywordDao.persist(k2);
     }
@@ -899,7 +898,7 @@ public class SetUpClientsAndUsers {
         email.setDateCreated(new Date());
         email.setLastModified(new Date());
         email.setProfile(new ProfileEntity(orcid));
-        email.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        email.setClientSourceId(client1ClientId);
         email.setVisibility(Visibility.LIMITED);
         email.setVerified(true);
         email.setCurrent(false);
@@ -922,7 +921,7 @@ public class SetUpClientsAndUsers {
         e1.setExternalIdCommonName("A-0001");
         e1.setExternalIdReference("A-0001");
         e1.setExternalIdUrl("http://ext-id/A-0001");
-        e1.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        e1.setClientSourceId(client1ClientId);
         e1.setOwner(new ProfileEntity(orcid));
         e1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         externalIdentifierDao.persist(e1);
@@ -933,7 +932,7 @@ public class SetUpClientsAndUsers {
         e2.setExternalIdCommonName("A-0002");
         e2.setExternalIdReference("A-0002");
         e2.setExternalIdUrl("http://ext-id/A-0002");
-        e2.setSource(new SourceEntity(new ClientDetailsEntity(client1ClientId)));
+        e2.setClientSourceId(client1ClientId);
         e2.setOwner(new ProfileEntity(orcid));
         e2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);        
         externalIdentifierDao.persist(e2);                        

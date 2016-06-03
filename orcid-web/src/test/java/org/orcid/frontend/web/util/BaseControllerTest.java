@@ -63,6 +63,10 @@ public class BaseControllerTest extends DBUnitTest {
     }
 
     protected Authentication getAuthentication() {
+        return getAuthentication("4444-4444-4444-4446");
+    }
+    
+    protected Authentication getAuthentication(String orcid) {
         if (orcidProfile == null) {
             orcidProfile = getOrcidProfile();
         }
@@ -75,10 +79,12 @@ public class BaseControllerTest extends DBUnitTest {
         	details = new OrcidProfileUserDetails(orcidProfile.getOrcidIdentifier().getPath(), orcidProfile.getOrcidBio().getContactDetails().getEmail()
                     .get(0).getValue(), orcidProfile.getOrcidInternal().getSecurityDetails().getEncryptedPassword().getContent());
         }
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, "4444-4444-4444-4446", Arrays.asList(OrcidWebRole.ROLE_USER));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(details, orcid, Arrays.asList(OrcidWebRole.ROLE_USER));
         return auth;
     }
 
+    
+    
     protected static OrcidProfile getOrcidProfile() {
         try {
             JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);

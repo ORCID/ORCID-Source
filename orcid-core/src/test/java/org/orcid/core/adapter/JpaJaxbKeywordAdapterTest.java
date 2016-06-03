@@ -31,10 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -45,7 +43,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbKeywordAdapterTest {
+public class JpaJaxbKeywordAdapterTest extends MockSourceNameCache {
     @Resource
     private JpaJaxbKeywordAdapter adapter;
     
@@ -57,9 +55,8 @@ public class JpaJaxbKeywordAdapterTest {
         assertNotNull(entity.getDateCreated());
         assertNotNull(entity.getLastModified());
         assertEquals(Long.valueOf(1), entity.getId());
-        assertEquals("keyword1", entity.getKeywordName());
-        assertNotNull(entity.getSource());
-        assertEquals("8888-8888-8888-8880", entity.getSource().getSourceId());
+        assertEquals("keyword1", entity.getKeywordName());        
+        assertEquals("8888-8888-8888-8880", entity.getElementSourceId());
         assertEquals(Visibility.PUBLIC, entity.getVisibility());
     }
     
@@ -94,7 +91,7 @@ public class JpaJaxbKeywordAdapterTest {
         entity.setId(Long.valueOf(1));
         entity.setKeywordName("keyword-1");
         entity.setProfile(new ProfileEntity("0000-0000-0000-0000"));
-        entity.setSource(new SourceEntity(new ClientDetailsEntity("APP-000000000000")));
+        entity.setClientSourceId("APP-000000000000");
         entity.setVisibility(Visibility.LIMITED);
         return entity;
     }

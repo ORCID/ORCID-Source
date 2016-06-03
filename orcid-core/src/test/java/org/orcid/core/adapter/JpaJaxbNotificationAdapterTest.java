@@ -128,8 +128,7 @@ public class JpaJaxbNotificationAdapterTest {
         assertEquals(authorizationUrlString, addActivitiesEntity.getAuthorizationUrl());
         assertEquals(notification.getNotificationIntro(), notificationEntity.getNotificationIntro());
         assertEquals(notification.getNotificationSubject(),notificationEntity.getNotificationSubject());
-        assertNotNull(addActivitiesEntity.getSource());
-        assertEquals("APP-5555-5555-5555-5555", addActivitiesEntity.getSource().getSourceId());
+        assertEquals("APP-5555-5555-5555-5555", addActivitiesEntity.getElementSourceId());
         Set<NotificationItemEntity> activityEntities = addActivitiesEntity.getNotificationItems();
         assertNotNull(activityEntities);
         assertEquals(1, activityEntities.size());
@@ -167,9 +166,7 @@ public class JpaJaxbNotificationAdapterTest {
         NotificationAmendedEntity notificationAmendedEntity = (NotificationAmendedEntity) notificationEntity;
 
         assertNotNull(notificationEntity);
-        assertEquals(NotificationType.AMENDED, notificationEntity.getNotificationType());
-        assertNotNull(notificationAmendedEntity.getSource());
-        assertEquals("APP-5555-5555-5555-5555", notificationAmendedEntity.getSource().getSourceId());
+        assertEquals(NotificationType.AMENDED, notificationEntity.getNotificationType());        
+        assertEquals("APP-5555-5555-5555-5555", notificationAmendedEntity.getElementSourceId());
     }
-
 }
