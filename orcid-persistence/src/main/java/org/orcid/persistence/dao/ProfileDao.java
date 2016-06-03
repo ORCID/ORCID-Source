@@ -70,11 +70,11 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     Date updateLastModifiedDate(String orcid);
 
-    void updateLastModifiedDateWithoutResult(String orcid);
+    Date updateLastModifiedDateWithoutResult(String orcid);
 
-    void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
+    Date updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus);
 
-    void updateLastModifiedDateAndIndexingStatus(String orcid);
+    Date updateLastModifiedDateAndIndexingStatus(String orcid);
 
     public List<String> findEmailsUnverfiedDays(int daysUnverified, int maxResults, EmailEventType ev);
 
