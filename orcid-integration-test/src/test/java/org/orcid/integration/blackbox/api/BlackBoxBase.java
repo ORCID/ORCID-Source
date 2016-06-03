@@ -23,6 +23,8 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -185,29 +187,23 @@ public class BlackBoxBase {
     @Resource
     protected OauthHelper oauthHelper;
     
-    protected WebDriver webDriver;
-    protected WebDriverHelper webDriverHelper;    
+    protected static WebDriver webDriver = (new BlackBoxWebDriver()).getWebDriver();
     
     public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
         String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, getUser1UserName(), getUser1Password(), clientRedirectUri);
-        webDriver.quit();
         return accessToken;
     }
     
     public String getAccessToken(String userName, String userPassword, String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
         String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, userName, userPassword, clientRedirectUri);
-        webDriver.quit();
         return accessToken;
     }
     
     public void adminSignIn(String adminUserName, String adminPassword) {
-        webDriver = new FirefoxDriver();
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         webDriver.get(this.getWebBaseUrl() + "/admin-actions");
         SigninTest.signIn(webDriver, adminUserName, adminPassword);
@@ -232,10 +228,11 @@ public class BlackBoxBase {
             confirmUnLockButton.click();
         } catch(TimeoutException t) {
             //Account might be already unlocked
-        } finally {
-            webDriver.quit();
-        }
-        
+        } 
+    }
+    
+    public void logUserOut() {
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
     }
 
     public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
@@ -255,9 +252,7 @@ public class BlackBoxBase {
             confirmLockButton.click();
         } catch (TimeoutException t) {
             // Account might be already locked
-        } finally {
-            webDriver.quit();
-        }
+        } 
     }
 
     public static void revokeApplicationsAccess() {
@@ -279,19 +274,17 @@ public class BlackBoxBase {
         if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
             baseUrl = prop.getProperty("org.orcid.web.baseUri");
         }
-
-        WebDriver webDriver = new FirefoxDriver();
-
-        int timeout = 4;
+        
+        
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
         webDriver.get(baseUrl + "/my-orcid");
+        
         SigninTest.signIn(webDriver, userName, password);
 
         // Switch to accounts settings page
         By accountSettingsMenuLink = By.id("accountSettingMenuLink");
         extremeWaitFor(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink), webDriver);
-        WebElement menuItem = webDriver.findElement(accountSettingsMenuLink);
-        menuItem.click();
+        ngAwareClick(webDriver.findElement(accountSettingsMenuLink), webDriver);
 
         try {
             boolean lookAgain = false;
@@ -328,7 +321,6 @@ public class BlackBoxBase {
             // If it fail is because it couldnt find any other application
         } finally {
             webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
-            webDriver.quit();
         }
     }
 
@@ -411,6 +403,7 @@ public class BlackBoxBase {
                 ((JavascriptExecutor) driver).executeScript(""
                         + "window._selenium_angular_done = false;"
                         + "function _seleniumAngularDone() { "
+                        + "   if (angular === undefined) return;"
                         + "   angular.element(document.documentElement).scope().$root.$apply("
                         + "      function(){"
                         + "        setTimeout(function(){ "
@@ -663,10 +656,5 @@ public class BlackBoxBase {
     public WebDriver getWebDriver() {
         return webDriver;
     }
-
-    public WebDriverHelper getWebDriverHelper() {
-        return webDriverHelper;
-    }
-
 
 }

@@ -35,11 +35,8 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc1.Day;
@@ -92,19 +89,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
 
     static List<GroupIdRecord> groupRecords = null;
     
-    static Map<String, String> publicAccessTokens = new HashMap<String, String>();
-    
-    static WebDriver webDriver;
-    
-    @BeforeClass
-    public static void beforeClass() {
-        webDriver = new FirefoxDriver();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        webDriver.quit();
-    }
+    static Map<String, String> publicAccessTokens = new HashMap<String, String>();    
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
