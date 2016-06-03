@@ -31,6 +31,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicHttpResponse;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -54,6 +55,9 @@ public class WebhookManagerImplTest extends BaseTest {
 
     @Mock
     private WebhookDao mockWebhookDao;
+    
+    @Resource
+    private WebhookDao webhookDao;
     
     private ClientDetailsEntity clientDetails;
 
@@ -89,6 +93,12 @@ public class WebhookManagerImplTest extends BaseTest {
         testProfile = new ProfileEntity("4444-4444-4444-4444");
     }   
         
+    @After
+    public void after() throws Exception {
+        WebhookManagerImpl webhookManagerImpl = getTargetObject(webhookManager, WebhookManagerImpl.class);
+        webhookManagerImpl.setWebhookDao(webhookDao);
+    }
+    
     @Test
     public void testValidUriOnWebhook() {
         WebhookEntity webhook = new WebhookEntity();
