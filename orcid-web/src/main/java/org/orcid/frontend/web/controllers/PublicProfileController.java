@@ -428,60 +428,56 @@ public class PublicProfileController extends BaseWorkspaceController {
         return mav;
     }
     
-    private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
-    	if (keywords == null || keywords.getKeywords() == null){
-    		return null;
-    	}
-    	
-    	/* Grouping items */
-    	Map<String, List<Keyword>> groups = new TreeMap<String, List<Keyword>>();    	
-    	for (Keyword k : keywords.getKeywords()) {
-    		if (groups.containsKey(k.getContent())) {
-    			groups.get(k.getContent()).add(k);
-    		} else {
-    			List<Keyword> list = new ArrayList<Keyword>();
-    			list.add(k);
-    			groups.put(k.getContent(), list);    			
-    		}
-    	}
-    	
-    	/* Getting the highest display index for every group into a temporal Map*/
-    	Map<String, Long> tmpMap = new TreeMap<String, Long>();
-    	for (Map.Entry<String, List<Keyword>> group : groups.entrySet()){    		
-    		String mapKey = group.getKey();
-    		Long current = 0L;
-    		Long last = 0L;
-    		Integer idx = 0;
-    		List<Keyword> keywordList = group.getValue();    		
-    		for (Keyword k : keywordList){
-    			if ( idx == 0 ){
-    				last = k.getDisplayIndex();
-    				idx++;
-    			} else {
-    				current = k.getDisplayIndex();    			
-	    			if ( current < last ) {
-	    				last = current;
-	    			}
-    			}
-    		}
-    		tmpMap.put(mapKey, last);
-    	}
-    	
-    	/* Sorting the temporal map */
-    	Map<String, Long> sortedMap = sortByComparator(tmpMap);
-    	
-    	/* Creating the sorted output Map of groups */
-    	LinkedHashMap<String, List<Keyword>> sortedGroup = new LinkedHashMap<String, List<Keyword>>();    	
-    	for (Map.Entry<String, Long> b : sortedMap.entrySet()){
-    		sortedGroup.put(b.getKey(), groups.get(b.getKey()));
-    	}
-    	
-    	return sortedGroup;
-    }
-    
-    
-    
-    
+	private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
+		if (keywords == null || keywords.getKeywords() == null) {
+			return null;
+		}
+
+		/* Grouping items */
+		Map<String, List<Keyword>> groups = new TreeMap<String, List<Keyword>>();
+		for (Keyword k : keywords.getKeywords()) {
+			if (groups.containsKey(k.getContent())) {
+				groups.get(k.getContent()).add(k);
+			} else {
+				List<Keyword> list = new ArrayList<Keyword>();
+				list.add(k);
+				groups.put(k.getContent(), list);
+			}
+		}
+
+		/* Getting the highest display index for every group into a temporal Map */
+		Map<String, Long> tmpMap = new TreeMap<String, Long>();
+		for (Map.Entry<String, List<Keyword>> group : groups.entrySet()) {
+			String mapKey = group.getKey();
+			Long current = 0L;
+			Long last = 0L;
+			Integer idx = 0;
+			List<Keyword> keywordList = group.getValue();
+			for (Keyword k : keywordList) {
+				if (idx == 0) {
+					last = k.getDisplayIndex();
+					idx++;
+				} else {
+					current = k.getDisplayIndex();
+					if (current < last) {
+						last = current;
+					}
+				}
+			}
+			tmpMap.put(mapKey, last);
+		}
+
+		/* Sorting the temporal map */
+		Map<String, Long> sortedMap = sortByComparator(tmpMap);
+
+		/* Creating the sorted output Map of groups */
+		LinkedHashMap<String, List<Keyword>> sortedGroup = new LinkedHashMap<String, List<Keyword>>();
+		for (Map.Entry<String, Long> b : sortedMap.entrySet()) {
+			sortedGroup.put(b.getKey(), groups.get(b.getKey()));
+		}
+
+		return sortedGroup;
+	}
     
     private Map<String, List<Address>> groupAddresses(Addresses addresses){
     	if (addresses == null || addresses.getAddress() == null){
@@ -498,7 +494,38 @@ public class PublicProfileController extends BaseWorkspaceController {
     		}
     	}
     	
-    	return groups;
+    	/* Getting the highest display index for every group into a temporal Map */
+		Map<String, Long> tmpMap = new TreeMap<String, Long>();
+		for (Map.Entry<String, List<Address>> group : groups.entrySet()) {
+			String mapKey = group.getKey();
+			Long current = 0L;
+			Long last = 0L;
+			Integer idx = 0;
+			List<Address> addressList = group.getValue();
+			for (Address a : addressList) {
+				if (idx == 0) {
+					last = a.getDisplayIndex();
+					idx++;
+				} else {
+					current = a.getDisplayIndex();
+					if (current < last) {
+						last = current;
+					}
+				}
+			}
+			tmpMap.put(mapKey, last);
+		}
+
+		/* Sorting the temporal map */
+		Map<String, Long> sortedMap = sortByComparator(tmpMap);
+
+		/* Creating the sorted output Map of groups */
+		LinkedHashMap<String, List<Address>> sortedGroup = new LinkedHashMap<String, List<Address>>();
+		for (Map.Entry<String, Long> b : sortedMap.entrySet()) {
+			sortedGroup.put(b.getKey(), groups.get(b.getKey()));
+		}
+
+		return sortedGroup;
     }
     
     private Map<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
@@ -517,7 +544,38 @@ public class PublicProfileController extends BaseWorkspaceController {
     		}
     	}
     	
-    	return groups;
+    	/* Getting the highest display index for every group into a temporal Map */
+		Map<String, Long> tmpMap = new TreeMap<String, Long>();
+		for (Map.Entry<String, List<OtherName>> group : groups.entrySet()) {
+			String mapKey = group.getKey();
+			Long current = 0L;
+			Long last = 0L;
+			Integer idx = 0;
+			List<OtherName> otherNameList = group.getValue();
+			for (OtherName o : otherNameList) {
+				if (idx == 0) {
+					last = o.getDisplayIndex();
+					idx++;
+				} else {
+					current = o.getDisplayIndex();
+					if (current < last) {
+						last = current;
+					}
+				}
+			}
+			tmpMap.put(mapKey, last);
+		}
+
+		/* Sorting the temporal map */
+		Map<String, Long> sortedMap = sortByComparator(tmpMap);
+
+		/* Creating the sorted output Map of groups */
+		LinkedHashMap<String, List<OtherName>> sortedGroup = new LinkedHashMap<String, List<OtherName>>();
+		for (Map.Entry<String, Long> b : sortedMap.entrySet()) {
+			sortedGroup.put(b.getKey(), groups.get(b.getKey()));
+		}
+
+		return sortedGroup;
     } 
     
     private Map<String, List<Email>> groupEmails(Emails emails){    	
@@ -553,7 +611,39 @@ public class PublicProfileController extends BaseWorkspaceController {
     			groups.put(urlValue, list);
     		}
     	}    	
-    	return groups;
+    	
+    	/* Getting the highest display index for every group into a temporal Map */
+		Map<String, Long> tmpMap = new TreeMap<String, Long>();
+		for (Map.Entry<String, List<ResearcherUrl>> group : groups.entrySet()) {
+			String mapKey = group.getKey();
+			Long current = 0L;
+			Long last = 0L;
+			Integer idx = 0;
+			List<ResearcherUrl> researchUrlList = group.getValue();
+			for (ResearcherUrl ru : researchUrlList) {
+				if (idx == 0) {
+					last = ru.getDisplayIndex();
+					idx++;
+				} else {
+					current = ru.getDisplayIndex();
+					if (current < last) {
+						last = current;
+					}
+				}
+			}
+			tmpMap.put(mapKey, last);
+		}
+
+		/* Sorting the temporal map */
+		Map<String, Long> sortedMap = sortByComparator(tmpMap);
+
+		/* Creating the sorted output Map of groups */
+		LinkedHashMap<String, List<ResearcherUrl>> sortedGroup = new LinkedHashMap<String, List<ResearcherUrl>>();
+		for (Map.Entry<String, Long> b : sortedMap.entrySet()) {
+			sortedGroup.put(b.getKey(), groups.get(b.getKey()));
+		}
+
+		return sortedGroup;
     }
     
     private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
@@ -571,9 +661,40 @@ public class PublicProfileController extends BaseWorkspaceController {
     			groups.put(pairKey, list);    			
     		}
     	}    	
-    	return groups;
+    	
+    	/* Getting the highest display index for every group into a temporal Map */
+		Map<String, Long> tmpMap = new TreeMap<String, Long>();
+		for (Map.Entry<String, List<PersonExternalIdentifier>> group : groups.entrySet()) {
+			String mapKey = group.getKey();
+			Long current = 0L;
+			Long last = 0L;
+			Integer idx = 0;
+			List<PersonExternalIdentifier> externalIdentifierList = group.getValue();
+			for (PersonExternalIdentifier ei : externalIdentifierList) {
+				if (idx == 0) {
+					last = ei.getDisplayIndex();
+					idx++;
+				} else {
+					current = ei.getDisplayIndex();
+					if (current < last) {
+						last = current;
+					}
+				}
+			}
+			tmpMap.put(mapKey, last);
+		}
+
+		/* Sorting the temporal map */
+		Map<String, Long> sortedMap = sortByComparator(tmpMap);
+
+		/* Creating the sorted output Map of groups */
+		LinkedHashMap<String, List<PersonExternalIdentifier>> sortedGroup = new LinkedHashMap<String, List<PersonExternalIdentifier>>();
+		for (Map.Entry<String, Long> b : sortedMap.entrySet()) {
+			sortedGroup.put(b.getKey(), groups.get(b.getKey()));
+		}
+
+		return sortedGroup;
     }
-    
     
     private static Map<String, Long> sortByComparator(Map<String, Long> unsortMap) { 
 		List<Map.Entry<String, Long>> list = new LinkedList<Map.Entry<String, Long>>(unsortMap.entrySet());
