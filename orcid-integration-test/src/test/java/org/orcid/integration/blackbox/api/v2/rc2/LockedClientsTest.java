@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -72,7 +71,6 @@ public class LockedClientsTest extends BlackBoxBaseRC2 {
     }
 
     private void lookForErrorsOnAuthorizationCodePage(String clientId, String scopes, String redirectUri) {
-        webDriver = new FirefoxDriver();
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", getWebBaseUrl(), clientId, scopes, redirectUri));
         (new WebDriverWait(webDriver, 10)).until(ExpectedConditions.urlContains("error"));
         String currentUrl = webDriver.getCurrentUrl();

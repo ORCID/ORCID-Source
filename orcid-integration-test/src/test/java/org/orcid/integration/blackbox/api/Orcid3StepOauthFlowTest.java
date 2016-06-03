@@ -46,16 +46,6 @@ public class Orcid3StepOauthFlowTest extends BlackBoxBaseRC1 {
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> oauthT2Client;
 
-    @Before    
-    public void before() {
-        webDriver = new FirefoxDriver();
-    }
-
-    @After
-    public void after() {
-        webDriver.quit();
-    }
-
     @Test
     public void testInvalidScopeThrowException() throws JSONException, InterruptedException {
         String scopes = "/orcid-profile/create";

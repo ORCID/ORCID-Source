@@ -34,7 +34,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc1.Visibility;
@@ -311,12 +310,10 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
             return accessTokens.get(userName);
         }
 
-        webDriver = new FirefoxDriver();
-        webDriverHelper = new WebDriverHelper(webDriver, getWebBaseUrl(), clientRedirectUri);
+        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, getWebBaseUrl(), clientRedirectUri);
         oauthHelper.setWebDriverHelper(webDriverHelper);
         String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret,
                 SCOPES, userName, userPassword, clientRedirectUri);
-        webDriver.quit();
 
         accessTokens.put(userName, accessToken);
         return accessToken;

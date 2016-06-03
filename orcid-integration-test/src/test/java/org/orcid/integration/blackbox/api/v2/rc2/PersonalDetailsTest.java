@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -94,7 +93,6 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     @SuppressWarnings("unchecked")
     @Test
     public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
-        webDriver = new FirefoxDriver();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         webDriver.get(getWebBaseUrl() + "/signin");
         SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
@@ -147,7 +145,6 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         
         //Test that the testGetWithPublicAPI test pass
         testGetWithPublicAPI();
-        webDriver.close();
     }
     
     @SuppressWarnings("unchecked")
@@ -181,13 +178,14 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         
-        webDriver = new FirefoxDriver();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         webDriver.get(getWebBaseUrl() + "/signin");
+        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
         SigninTest.dismissVerifyEmailModal(webDriver);
         
         //Change all to LIMITED
+        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
         changeNamesVisibility(Visibility.LIMITED);
         changeOtherNamesVisibility(Visibility.LIMITED);
         changeBioVisibility(Visibility.LIMITED);
@@ -237,8 +235,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         changeNamesVisibility(Visibility.PUBLIC);
         changeOtherNamesVisibility(Visibility.PUBLIC);
         changeBioVisibility(Visibility.PUBLIC);
-                
-        webDriver.close();
+  
     }
     
     private void changeNamesVisibility(Visibility changeTo) throws Exception {
@@ -273,8 +270,8 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         try {
             By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
             (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
-            WebElement openEditOtherNamesElement = webDriver.findElement(openEditOtherNames);
-            openEditOtherNamesElement.click();
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+            ngAwareClick(webDriver.findElement(openEditOtherNames), webDriver);
             
             By namesVisibility = By.xpath("//div[@id = 'other-names-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
             (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
