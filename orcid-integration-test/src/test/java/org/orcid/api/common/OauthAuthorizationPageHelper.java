@@ -30,8 +30,7 @@ public class OauthAuthorizationPageHelper {
 
     public static String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s";
     
-    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password) {
-        WebDriver webDriver = new FirefoxDriver();
+    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, WebDriver webDriver) {
         String formattedAuthorizationScreen = String.format(authorizationScreenUrl, baseUrl, clientId, scopes, redirectUri);
         
         if(!PojoUtil.isEmpty(stateParam)) {
@@ -40,13 +39,13 @@ public class OauthAuthorizationPageHelper {
         
         formattedAuthorizationScreen += "#show_login";
         webDriver.get(formattedAuthorizationScreen);
-        
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         
         loginOnOauthorizationScreen(webDriver, userId, password);
         
         String result = webDriver.getCurrentUrl();
-        webDriver.close();        
         return result;
     }
     

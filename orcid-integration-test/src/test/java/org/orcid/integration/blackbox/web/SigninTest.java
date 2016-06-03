@@ -96,8 +96,10 @@ public class SigninTest {
         passwordEl.sendKeys(password);
         BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='form-sign-in-button']"));
-        buttonEl.click();
+        BlackBoxBase.ngAwareClick(buttonEl, webDriver);
         BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")),webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(),webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
     }
 
     public static void dismissVerifyEmailModal(WebDriver webDriver) {
