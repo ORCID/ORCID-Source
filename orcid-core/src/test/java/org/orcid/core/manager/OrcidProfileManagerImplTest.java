@@ -41,7 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.manager.impl.OrcidProfileManagerImpl;
@@ -120,18 +119,13 @@ import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.utils.DateUtils;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Will Simpson
  */
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     protected static final String APPLICATION_ORCID = "2222-2222-2222-2228";
@@ -1693,8 +1687,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Visibility.LIMITED, updatedBio.getResearcherUrls().getVisibility());
         assertEquals(2, updatedBio.getResearcherUrls().getResearcherUrl().size());
     }
-    
-    @SuppressWarnings("unchecked")
+        
     @Test
     @Transactional
     @Rollback(true)

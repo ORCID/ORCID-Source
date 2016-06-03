@@ -33,7 +33,6 @@ import javax.annotation.Resource;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.orcid.core.BaseTest;
 import org.orcid.core.manager.OrcidSSOManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -42,12 +41,8 @@ import org.orcid.persistence.jpa.entities.ClientAuthorisedGrantTypeEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ClientGrantedAuthorityEntity;
 import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
-import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
 
-@RunWith(OrcidJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidSSOManagerImplTest extends BaseTest {
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SourceClientDetailsEntityData.xml",

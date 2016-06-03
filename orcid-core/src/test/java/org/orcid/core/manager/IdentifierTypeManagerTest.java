@@ -46,7 +46,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-//@DirtiesContext
 public class IdentifierTypeManagerTest extends BaseTest{
 
     private static final String CLIENT_1_ID = "APP-6666666666666666";
