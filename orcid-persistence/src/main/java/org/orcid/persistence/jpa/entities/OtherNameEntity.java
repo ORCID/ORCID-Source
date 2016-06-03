@@ -43,14 +43,13 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  **/
 @Entity
 @Table(name = "other_name")
-public class OtherNameEntity extends BaseEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware, SourceAware {
+public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware {
 
     private static final long serialVersionUID = -3227122865862310024L;
 
     private Long id;
     private String displayName;
-    private ProfileEntity profile;
-    private SourceEntity source;
+    private ProfileEntity profile;    
     private Visibility visibility;
     private Long displayIndex;
 
@@ -106,14 +105,6 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
         this.profile = profile;
     }
     
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-
     @Basic
     @Enumerated(EnumType.STRING)
     public Visibility getVisibility() {
@@ -140,5 +131,5 @@ public class OtherNameEntity extends BaseEntity<Long> implements Comparable<Othe
         } else {
             return 0;
         }
-    }
+    }    
 }

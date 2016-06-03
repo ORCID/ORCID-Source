@@ -16,6 +16,7 @@
  */
 package org.orcid.persistence.jpa.entities;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -62,7 +63,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "profile")
-public class ProfileEntity extends BaseEntity<String> implements UserDetails {
+public class ProfileEntity extends BaseEntity<String> implements UserDetails, Serializable {
 
     private static final long serialVersionUID = 7215593667128405456L;
 

@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.message.Iso3166Country;
  */
 @Entity
 @Table(name = "work")
-public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>, ProfileAware, DisplayIndexInterface, SourceAware {
+public class WorkEntity extends WorkBaseEntity implements Comparable<WorkEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 

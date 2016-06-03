@@ -38,11 +38,10 @@ import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -56,7 +55,7 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbWorkAdapterTest {
+public class JpaJaxbWorkAdapterTest extends MockSourceNameCache {
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -82,8 +81,7 @@ public class JpaJaxbWorkAdapterTest {
         WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
         assertNotNull(workEntity);
         assertEquals(Visibility.PRIVATE, workEntity.getVisibility());
-        SourceEntity sourceEntity = workEntity.getSource();
-        assertEquals("8888-8888-8888-8880", sourceEntity.getSourceId());
+        assertEquals("8888-8888-8888-8880", workEntity.getElementSourceId());
         assertNotNull(workEntity);
         assertEquals(123, workEntity.getId().longValue());
         assertEquals("common:title", workEntity.getTitle());
@@ -187,7 +185,7 @@ public class JpaJaxbWorkAdapterTest {
         work.setProfile(new ProfileEntity("0000-0000-0000-0001"));
         work.setVisibility(Visibility.LIMITED);
         work.setDisplayIndex(1234567890L);
-        work.setSource(new SourceEntity("APP-5555555555555555"));        
+        work.setClientSourceId("APP-5555555555555555");        
         work.setCitation("work:citation");
         work.setCitationType(CitationType.BIBTEX);
         work.setDateCreated(date);

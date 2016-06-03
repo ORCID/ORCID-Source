@@ -116,6 +116,7 @@ import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -280,7 +281,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             workEntity.setIso2Country(orcidWork.getCountry() == null ? null : orcidWork.getCountry().getValue());
             workEntity.setWorkType(orcidWork.getWorkType());
             workEntity.setWorkUrl(orcidWork.getUrl() != null ? orcidWork.getUrl().getValue() : null);
-            workEntity.setSource(getSource(orcidWork.getSource()));            
+            //Set source
+            setSource(orcidWork.getSource(), workEntity);            
             workEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
             workEntity.setAddedToProfileDate(new Date());
             return workEntity;
@@ -398,7 +400,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 ResearcherUrlEntity existing = existingIt.next();
-                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                String existingElementSource = existing.getElementSourceId();
                 if(sourceId != null && !sourceId.equals(existingElementSource)) {
                     //If am not the source of this element, do nothing
                 } else {
@@ -454,7 +456,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     }
                     ResearcherUrlEntity newEntity = new ResearcherUrlEntity();
                     newEntity.setUser(profileEntity);
-                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    //Set source
+                    SourceEntity source = sourceManager.retrieveSourceEntity();                    
+                    setSource(source, newEntity);
+                    
                     newEntity.setDisplayIndex(-1L);
                     if(newResearcherUrl.getUrl() != null) {
                         newEntity.setUrl(newResearcherUrl.getUrl().getValue());
@@ -510,7 +515,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 OtherNameEntity existing = existingIt.next();
-                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                String existingElementSource = existing.getElementSourceId();
                 if(sourceId != null && !sourceId.equals(existingElementSource)) {
                     //If am not the source of this element, do nothing
                 } else {
@@ -563,7 +568,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     }
                     OtherNameEntity newEntity = new OtherNameEntity();
                     newEntity.setProfile(profileEntity);
-                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    
+                    //Set source
+                    SourceEntity source = sourceManager.retrieveSourceEntity();
+                    setSource(source, newEntity);
+                    
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setDisplayName(newOtherName.getContent());
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, otherNames.getVisibility(), OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT));
@@ -625,7 +634,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 ProfileKeywordEntity existing = existingIt.next();
-                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                String existingElementSource = existing.getElementSourceId();
                 if(sourceId != null && !sourceId.equals(existingElementSource)){
                     //If am not the source of this element, do nothing
                 } else {
@@ -678,7 +687,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     }
                     ProfileKeywordEntity newEntity = new ProfileKeywordEntity();
                     newEntity.setProfile(profileEntity);
-                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    
+                    //Set source
+                    SourceEntity source = sourceManager.retrieveSourceEntity();
+                    setSource(source, newEntity);
+                    
                     newEntity.setDisplayIndex(-1L);
                     newEntity.setKeywordName(newKeyword.getContent());
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, keywords.getVisibility(), OrcidVisibilityDefaults.KEYWORD_DEFAULT));
@@ -701,17 +714,18 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 ExternalIdentifierEntity existing = existingIt.next();
-                String existingElementSource = existing.getSource() == null ? null : existing.getSource().getSourceId();
+                String existingElementSource = existing.getElementSourceId();
                 if(sourceId != null && !sourceId.equals(existingElementSource)){
                     //If am not the source of this element, do nothing
                 } else {
                     //If am the source, check if the element exists in the list of incoming elements
                     Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existing);
+                    String existingSourceId = existing.getElementSourceId();
                     boolean found = false;
                     if(externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
                         for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()){
                             Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
-                            if(Objects.equals(existingTriplet, newExternalIdentifierTriplet)) {
+                            if(Objects.equals(sourceId, existingSourceId) && Objects.equals(existingTriplet, newExternalIdentifierTriplet)) {
                                 found = true;
                                 break;
                             }
@@ -734,18 +748,21 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 if(existingExternalIdentifierEntities != null) {
                     for(ExternalIdentifierEntity existingEntity : existingExternalIdentifierEntities) {
                         Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
-                        if(Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
-                                exists = true;
-                                //If the profile is not claimed, you can update the visibility
-                                if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
-                                    //Update the visibility of existing elements if the profile is not claimed
-                                    String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
-                                    String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();                                                                
-                                    if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                        existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
-                                    }                                                                
+                        String existingSourceId = existingEntity.getElementSourceId();
+                        if (Objects.equals(sourceId, existingSourceId) && Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
+                            exists = true;
+                            // If the profile is not claimed, you can update the
+                            // visibility
+                            if (profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                // Update the visibility of existing elements if
+                                // the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();
+                                String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();
+                                if (listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
                                 }
-                                break;
+                            }
+                            break;
                         }
                     }
                 }
@@ -757,7 +774,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     }
                     ExternalIdentifierEntity newEntity = new ExternalIdentifierEntity();
                     newEntity.setOwner(profileEntity);
-                    newEntity.setSource(sourceManager.retrieveSourceEntity());
+                    
+                    //Set source
+                    SourceEntity source = sourceManager.retrieveSourceEntity();
+                    setSource(source, newEntity);
+                    
                     newEntity.setDisplayIndex(-1L);
                     if(newExternalIdentifier.getExternalIdCommonName() != null) {
                         newEntity.setExternalIdCommonName(newExternalIdentifier.getExternalIdCommonName().getContent());
@@ -833,7 +854,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 newAddress.setLastModified(new Date());
                 newAddress.setUser(profileEntity);
                 newAddress.setVisibility(getDefaultVisibility(profileEntity, contactCountry.getVisibility(), OrcidVisibilityDefaults.COUNTRY_DEFAULT));
-                newAddress.setSource(sourceManager.retrieveSourceEntity());                
+                //Set source
+                SourceEntity source = sourceManager.retrieveSourceEntity();
+                setSource(source, newAddress);
                 addresses.add(newAddress);
             }                        
         }
@@ -858,13 +881,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 emailEntity = new EmailEntity();
                 emailEntity.setId(emailId);
                 emailEntity.setProfile(profileEntity);
-                if (email.getSourceClientId() != null) {
-                    SourceEntity source = new SourceEntity(email.getSourceClientId());
-                    emailEntity.setSource(source);
-                } else if (email.getSource() != null) {
-                    SourceEntity source = new SourceEntity(email.getSource());
-                    emailEntity.setSource(source);
-                }
+                
+                emailEntity.setSourceId(email.getSource());
+                emailEntity.setClientSourceId(email.getSourceClientId());                                
             } else {
                 existingEmailEntity.clean();
                 emailEntity = existingEmailEntity;
@@ -1112,7 +1131,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             FuzzyDate endDate = affiliation.getEndDate();
             orgRelationEntity.setAffiliationType(affiliation.getType());
             orgRelationEntity.setVisibility(affiliation.getVisibility() == null ? Visibility.PRIVATE : affiliation.getVisibility());
-            orgRelationEntity.setSource(getSource(affiliation.getSource()));
+            
+            //Set source
+            setSource(affiliation.getSource(), orgRelationEntity);
+            
             orgRelationEntity.setDepartment(affiliation.getDepartmentName());
             orgRelationEntity.setEndDate(endDate != null ? new EndDateEntity(endDate) : null);
             orgRelationEntity.setOrg(orgEntity);
@@ -1148,7 +1170,8 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     throw new IllegalArgumentException("Invalid put-code was supplied for a funding: " + putCode);
                 }
                 profileFundingEntity = new ProfileFundingEntity();
-                profileFundingEntity.setSource(getSource(funding.getSource()));
+                //Set source
+                setSource(funding.getSource(), profileFundingEntity);                
             } else {
                 profileFundingEntity = exisitingProfileFundingEntity;
                 profileFundingEntity.clean();
@@ -1280,18 +1303,27 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return null;
     }
 
-    private SourceEntity getSource(Source source) {
+    private void setSource(Source source, SourceAwareEntity<?> entity) {
         if (source != null) {
-            String sourcePath = source.retrieveSourcePath();
-            if (StringUtils.isNotEmpty(sourcePath) && !sourcePath.equals(Source.NULL_SOURCE_PROFILE)) {
-                ClientDetailsEntity cde = clientDetailsDao.find(sourcePath);
-                if (cde != null && cde.getClientType() != null) {
-                    return new SourceEntity(cde);
-                }
-                return new SourceEntity(sourcePath);
+            if(source.getSourceOrcid() != null) {
+                entity.setSourceId(source.getSourceOrcid().getPath());
+            }
+            
+            if(source.getSourceClientId() != null) {
+                entity.setClientSourceId(source.getSourceClientId().getPath());
             }
         }
-        return null;
+    }
+    
+    private void setSource(SourceEntity source, SourceAwareEntity<?> entity) {
+        if(source != null){
+            if(source.getSourceProfile() != null) {
+                entity.setSourceId(source.getSourceProfile().getId());
+            }
+            if(source.getSourceClient() != null) {
+                entity.setClientSourceId(source.getSourceClient().getId());
+            }
+        }
     }
 
     private Date toDate(XMLGregorianCalendar completionDate) {

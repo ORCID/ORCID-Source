@@ -42,6 +42,7 @@ import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
 
 public class AddressManagerImpl implements AddressManager {
@@ -102,10 +103,14 @@ public class AddressManagerImpl implements AddressManager {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         AddressEntity updatedEntity = addressDao.getAddress(orcid, putCode);
         Visibility originalVisibility = Visibility.fromValue(updatedEntity.getVisibility().value());
-        SourceEntity existingSource = updatedEntity.getSource();
+        
+        //Save the original source
+        String existingSourceId = updatedEntity.getSourceId();
+        String existingClientSourceId = updatedEntity.getClientSourceId();
+        
         //If it is an update from the API, check the source and preserve the original visibility
         if(isApiRequest) {
-            orcidSecurityManager.checkSource(existingSource);            
+            orcidSecurityManager.checkSource(updatedEntity);            
         }
         
         // Validate the address
@@ -126,7 +131,11 @@ public class AddressManagerImpl implements AddressManager {
                         
         adapter.toAddressEntity(address, updatedEntity);
         updatedEntity.setLastModified(new Date());        
-        updatedEntity.setSource(existingSource);
+
+        //Be sure it doesn't overwrite the source
+        updatedEntity.setSourceId(existingSourceId);
+        updatedEntity.setClientSourceId(existingClientSourceId);                
+        
         addressDao.merge(updatedEntity);
         return adapter.toAddress(updatedEntity);
     }
@@ -157,8 +166,15 @@ public class AddressManagerImpl implements AddressManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity); 
-        //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
+        
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+            newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+            newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }        
+       
         newEntity.setDisplayIndex(biggestDisplayIndex + 1); 
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);
@@ -169,8 +185,7 @@ public class AddressManagerImpl implements AddressManager {
     @Transactional
     public boolean deleteAddress(String orcid, Long putCode) {
         AddressEntity entity = addressDao.getAddress(orcid, putCode);
-        SourceEntity existingSource = entity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(entity);
 
         try {
             addressDao.remove(entity);
@@ -181,10 +196,13 @@ public class AddressManagerImpl implements AddressManager {
     }
 
     private boolean isDuplicated(AddressEntity existing, Address address, SourceEntity source) {
-        //If they have the same source
-        if(existing.getSource() != null && existing.getSource().getSourceId().equals(source.getSourceId())) {
-            if(existing.getIso2Country().equals(address.getCountry().getValue())) {
-                return true;
+        if (!existing.getId().equals(address.getPutCode())) {
+            //If they have the same source 
+            String existingSourceId = existing.getElementSourceId(); 
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                if(existing.getIso2Country().equals(address.getCountry().getValue())) {
+                    return true;
+                }
             }
         }
         return false;
@@ -271,7 +289,15 @@ public class AddressManagerImpl implements AddressManager {
                     ProfileEntity profile = new ProfileEntity(orcid);
                     newAddress.setUser(profile);
                     newAddress.setDateCreated(new Date());
-                    newAddress.setSource(sourceEntity);
+                    
+                    //Set the source id
+                    if(sourceEntity.getSourceProfile() != null) {
+                        newAddress.setSourceId(sourceEntity.getSourceProfile().getId());
+                    }
+                    if(sourceEntity.getSourceClient() != null) {
+                        newAddress.setClientSourceId(sourceEntity.getSourceClient().getId());
+                    }
+                                                            
                     newAddress.setVisibility(updatedOrNew.getVisibility());
                     newAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     addressDao.persist(newAddress);

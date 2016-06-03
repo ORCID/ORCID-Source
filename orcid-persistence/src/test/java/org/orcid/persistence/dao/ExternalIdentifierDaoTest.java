@@ -87,24 +87,24 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         for(ExternalIdentifierEntity extId : extIds) {
             assertThat(extId.getId(), anyOf(is(2L), is(3L), is(4L), is(5L)));
             assertEquals("Facebook", extId.getExternalIdCommonName());
-            assertNotNull(extId.getSource());
+            assertNotNull(extId.getElementSourceId());
             if(extId.getId() == 2L) {
                 assertEquals("http://www.facebook.com/abc123", extId.getExternalIdUrl());
                 assertEquals("abc123", extId.getExternalIdReference());
-                assertEquals("APP-5555555555555555", extId.getSource().getSourceId());
+                assertEquals("APP-5555555555555555", extId.getElementSourceId());
             } else if(extId.getId() == 3L) {
                 assertEquals("http://www.facebook.com/abc456", extId.getExternalIdUrl());
                 assertEquals("abc456", extId.getExternalIdReference());
-                assertEquals("4444-4444-4444-4442", extId.getSource().getSourceId());
+                assertEquals("4444-4444-4444-4442", extId.getElementSourceId());
             } else if(extId.getId() == 4L) {
                 assertEquals("http://www.facebook.com/abc789", extId.getExternalIdUrl());
                 assertEquals("abc789", extId.getExternalIdReference());
-                assertEquals("4444-4444-4444-4441", extId.getSource().getSourceId());
+                assertEquals("4444-4444-4444-4441", extId.getElementSourceId());
             } else {
                 assertEquals(Long.valueOf(5), extId.getId());
                 assertEquals("http://www.facebook.com/abc012", extId.getExternalIdUrl());
                 assertEquals("abc012", extId.getExternalIdReference());
-                assertEquals("APP-5555555555555555", extId.getSource().getSourceId());                
+                assertEquals("APP-5555555555555555", extId.getElementSourceId());                
             }                                   
         }
     }
@@ -133,8 +133,8 @@ public class ExternalIdentifierDaoTest extends DBUnitTest {
         assertEquals("http://www.facebook.com/abc456", extId.getExternalIdUrl());
         assertEquals(Long.valueOf(3), extId.getId());        
         assertEquals(Visibility.LIMITED, extId.getVisibility());
-        assertNotNull(extId.getSource());
-        assertEquals("4444-4444-4444-4442", extId.getSource().getSourceId());
+        assertNotNull(extId.getElementSourceId());
+        assertEquals("4444-4444-4444-4442", extId.getElementSourceId());
     }
     
     @Test

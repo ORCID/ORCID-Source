@@ -48,7 +48,7 @@ import org.orcid.utils.OrcidStringUtils;
 
 @Entity
 @Table(name = "profile_funding")
-public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, SourceAware, DisplayIndexInterface {
+public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Comparable<ProfileFundingEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3187757614938904392L;
 
@@ -68,7 +68,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
     private StartDateEntity startDate;
     private EndDateEntity endDate;
     private Visibility visibility;    
-    private SourceEntity source;
     private BigDecimal numericAmount;
     private Long displayIndex; 
 
@@ -216,14 +215,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         this.visibility = visibility;
     }
 
-    public SourceEntity getSource() {
-        return source;
-    }
-
-    public void setSource(SourceEntity source) {
-        this.source = source;
-    }
-
     @Column(name = "numeric_amount")
     public BigDecimal getNumericAmount() {
         return numericAmount;
@@ -354,7 +345,6 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         return l1.compareTo(l2);
     }
     
-
     /**
      * Clean simple fields so that entity can be reused.
      */
@@ -374,6 +364,4 @@ public class ProfileFundingEntity extends BaseEntity<Long> implements Comparable
         displayIndex = null;
         externalIdentifiersJson = null;
     }
-    
-
 }

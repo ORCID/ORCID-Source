@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -81,7 +80,7 @@ public class WorkDaoTest extends DBUnitTest {
         work.setWorkUrl(url);
         ProfileEntity profile = new ProfileEntity(USER_ORCID); 
         work.setProfile(profile);
-        work.setSource(new SourceEntity(profile));
+        work.setSourceId(USER_ORCID);
         work.setAddedToProfileDate(new Date());
         
         assertNull(work.getId());

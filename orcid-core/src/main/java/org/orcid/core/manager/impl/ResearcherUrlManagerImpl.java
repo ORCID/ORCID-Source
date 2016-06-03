@@ -86,9 +86,8 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     public boolean deleteResearcherUrl(String orcid, Long id, boolean checkSource) {
         boolean result = true;        
         ResearcherUrlEntity toDelete = researcherUrlDao.getResearcherUrl(orcid, id);          
-        if(checkSource) {
-            SourceEntity existingSource = toDelete.getSource();
-            orcidSecurityManager.checkSource(existingSource);
+        if(checkSource) {            
+            orcidSecurityManager.checkSource(toDelete);
         }
         
         try {            
@@ -154,7 +153,14 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                     newResearcherUrl.setUser(profile);
                     newResearcherUrl.setDateCreated(new Date());
                     newResearcherUrl.setLastModified(new Date());
-                    newResearcherUrl.setSource(sourceEntity);
+                    
+                    if(sourceEntity.getSourceProfile() != null) {
+                        newResearcherUrl.setSourceId(sourceEntity.getSourceProfile().getId());
+                    }
+                    if(sourceEntity.getSourceClient() != null) {
+                        newResearcherUrl.setClientSourceId(sourceEntity.getSourceClient().getId());
+                    }
+                    
                     newResearcherUrl.setVisibility(updatedOrNew.getVisibility());
                     newResearcherUrl.setDisplayIndex(updatedOrNew.getDisplayIndex());
                     researcherUrlDao.persist(newResearcherUrl);                    
@@ -221,6 +227,12 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         ResearcherUrlEntity updatedResearcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, researcherUrl.getPutCode());        
         Visibility originalVisibility = Visibility.fromValue(updatedResearcherUrlEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();                
+        
+        //Save the original source
+        String existingSourceId = updatedResearcherUrlEntity.getSourceId();
+        String existingClientSourceId = updatedResearcherUrlEntity.getClientSourceId();
+        
+        
         // Validate the researcher url
         PersonValidator.validateResearcherUrl(researcherUrl, sourceEntity, false, isApiRequest, originalVisibility);        
         // Validate it is not duplicated
@@ -234,12 +246,15 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-                               
-        SourceEntity existingSource = updatedResearcherUrlEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        
+        orcidSecurityManager.checkSource(updatedResearcherUrlEntity);
         jpaJaxbResearcherUrlAdapter.toResearcherUrlEntity(researcherUrl, updatedResearcherUrlEntity);        
         updatedResearcherUrlEntity.setLastModified(new Date());
-        updatedResearcherUrlEntity.setSource(existingSource);
+                        
+        //Be sure it doesn't overwrite the source
+        updatedResearcherUrlEntity.setSourceId(existingSourceId);
+        updatedResearcherUrlEntity.setClientSourceId(existingClientSourceId);
+        
         researcherUrlDao.merge(updatedResearcherUrlEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(updatedResearcherUrlEntity);
     }
@@ -264,7 +279,15 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setUser(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);
+        
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+                newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+                newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
+        
         setIncomingPrivacy(newEntity, profile);
         researcherUrlDao.persist(newEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
@@ -272,15 +295,15 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
 
     private boolean isDuplicated(ResearcherUrlEntity existing, ResearcherUrl newResearcherUrl, SourceEntity source) {
         if (!existing.getId().equals(newResearcherUrl.getPutCode())) {
-            if (existing.getSource() != null) {
-                // If they have the same source
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    // If the url is the same
-                    if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
-                        return true;
-                    }
+            //If they have the same source 
+            String existingSourceId = existing.getElementSourceId(); 
+            // If they have the same source
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                // If the url is the same
+                if (existing.getUrl() != null && existing.getUrl().equals(newResearcherUrl.getUrl().getValue())) {
+                    return true;
                 }
-            }
+            }            
         }
         return false;
     }

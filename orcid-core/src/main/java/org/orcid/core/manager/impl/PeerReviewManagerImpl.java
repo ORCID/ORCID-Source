@@ -33,9 +33,6 @@ import org.orcid.core.manager.PeerReviewManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.SourceClientId;
-import org.orcid.jaxb.model.common_rc2.SourceOrcid;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -116,17 +113,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
-        // Set the source to the peerReview before looking for duplicates
-        if (sourceEntity != null) {
-            Source source = new Source();
-            if (sourceEntity.getSourceClient() != null) {
-                source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
-            } else if (sourceEntity.getSourceProfile() != null) {
-                source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
-            }
-            peerReview.setSource(source);
-        }
-
         // If request comes from the API, perform the validations
         if (isApiRequest) {
             // Validate it have at least one ext id
@@ -158,7 +144,15 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         // database
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         entity.setOrg(updatedOrganization);
-
+        
+        //Set the source
+        if(sourceEntity.getSourceProfile() != null) {
+            entity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+            entity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
+        
         ProfileEntity profile = profileDao.find(orcid);
         entity.setProfile(profile);
         setIncomingPrivacy(entity, profile);
@@ -173,6 +167,10 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         PeerReviewEntity existingEntity = peerReviewDao.getPeerReview(orcid, peerReview.getPutCode());        
         Visibility originalVisibility = existingEntity.getVisibility();
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
+        //Save the original source
+        String existingSourceId = existingEntity.getSourceId();
+        String existingClientSourceId = existingEntity.getClientSourceId();
         
         // If request comes from the API perform validations
         if (isApiRequest) {
@@ -192,12 +190,17 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             externalIDValidator.validateWorkOrPeerReview(peerReview.getSubjectExternalIdentifier());
         }
         PeerReviewEntity updatedEntity = new PeerReviewEntity();        
-        SourceEntity existingSource = existingEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        
+        orcidSecurityManager.checkSource(existingEntity);        
+        
         jpaJaxbPeerReviewAdapter.toPeerReviewEntity(peerReview, updatedEntity);
         updatedEntity.setProfile(new ProfileEntity(orcid));
         updatedEntity.setVisibility(originalVisibility);
-        updatedEntity.setSource(existingSource);
+        
+        //Be sure it doesn't overwrite the source
+        updatedEntity.setSourceId(existingSourceId);
+        updatedEntity.setClientSourceId(existingClientSourceId);
+        
         OrgEntity updatedOrganization = orgManager.getOrgEntity(peerReview);
         updatedEntity.setOrg(updatedOrganization);
         updatedEntity = peerReviewDao.merge(updatedEntity);
@@ -209,7 +212,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     @Override
     public boolean checkSourceAndDelete(String orcid, Long peerReviewId) {
         PeerReviewEntity pr = peerReviewDao.getPeerReview(orcid, peerReviewId);
-        orcidSecurityManager.checkSource(pr.getSource());
+        orcidSecurityManager.checkSource(pr);
         Item item = createItem(pr);
         boolean result = deletePeerReview(pr, orcid);
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, item);

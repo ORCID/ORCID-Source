@@ -32,9 +32,6 @@ import org.orcid.core.manager.WorkCacheManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.SourceClientId;
-import org.orcid.jaxb.model.common_rc2.SourceOrcid;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -185,16 +182,7 @@ public class WorkManagerImpl implements WorkManager {
     @Transactional
     public Work createWork(String orcid, Work work, boolean applyAPIValidations) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
-        if (sourceEntity != null) {
-            Source source = new Source();
-            if (sourceEntity.getSourceClient() != null) {
-                source.setSourceClientId(new SourceClientId(sourceEntity.getSourceClient().getClientId()));
-            } else if (sourceEntity.getSourceProfile() != null) {
-                source.setSourceOrcid(new SourceOrcid(sourceEntity.getSourceProfile().getId()));
-            }
-            work.setSource(source);
-        }
-
+        
         if (applyAPIValidations) {
             activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
             Date lastModified = profileEntityManager.getLastModified(orcid);
@@ -220,6 +208,16 @@ public class WorkManagerImpl implements WorkManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         workEntity.setProfile(profile);
         workEntity.setAddedToProfileDate(new Date());
+        
+        // Set source id 
+        if(sourceEntity.getSourceProfile() != null) {
+            workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        
+        if(sourceEntity.getSourceClient() != null) {
+            workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        } 
+        
         setIncomingWorkPrivacy(workEntity, profile);
         workDao.persist(workEntity);
         workDao.flush();
@@ -233,6 +231,10 @@ public class WorkManagerImpl implements WorkManager {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        
+        //Save the original source
+        String existingSourceId = workEntity.getSourceId();
+        String existingClientSourceId = workEntity.getClientSourceId();
         
         if (applyAPIValidations) {
             activityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
@@ -248,11 +250,14 @@ public class WorkManagerImpl implements WorkManager {
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());            
         }
                         
-        SourceEntity existingSource = workEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(workEntity);
         jpaJaxbWorkAdapter.toWorkEntity(work, workEntity);
         workEntity.setVisibility(org.orcid.jaxb.model.message.Visibility.fromValue(originalVisibility.value()));
-        workEntity.setSource(existingSource);
+        
+        //Be sure it doesn't overwrite the source
+        workEntity.setSourceId(existingSourceId);
+        workEntity.setClientSourceId(existingClientSourceId);
+        
         workDao.merge(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
@@ -263,8 +268,7 @@ public class WorkManagerImpl implements WorkManager {
     public boolean checkSourceAndRemoveWork(String orcid, Long workId) {
         boolean result = true;
         WorkEntity workEntity = workDao.getWork(orcid, workId);
-        SourceEntity existingSource = workEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(workEntity);
         try {
             Item item = createItem(workEntity);
             workDao.removeWork(orcid, workId);

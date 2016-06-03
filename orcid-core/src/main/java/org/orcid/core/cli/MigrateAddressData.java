@@ -26,7 +26,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -80,7 +79,7 @@ public class MigrateAddressData {
                         address.setLastModified(new Date());                        
                         address.setUser(new ProfileEntity(orcid));
                         address.setIso2Country(Iso3166Country.fromValue(countryCode));
-                        address.setSource(new SourceEntity(new ProfileEntity(orcid)));
+                        address.setSourceId(orcid);
                         address.setVisibility(visibility);
                         addressDao.persist(address);
                     }

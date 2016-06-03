@@ -126,6 +126,7 @@ public class JpaJaxbEntityAdapterToOrcidProfileTest extends DBUnitTest {
         long start = System.currentTimeMillis();
         OrcidProfile orcidProfile = adapter.toOrcidProfile(profileEntity);
         System.out.println("Took: " + Long.toString(System.currentTimeMillis() - start));
+        System.out.println(orcidProfile);
         checkOrcidProfile(orcidProfile);
         validateAgainstSchema(new OrcidMessage(orcidProfile));
     }

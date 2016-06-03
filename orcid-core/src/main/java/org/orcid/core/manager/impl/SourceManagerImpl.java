@@ -71,6 +71,7 @@ public class SourceManagerImpl implements SourceManager {
         if (authentication == null) {
             return null;
         }
+         
         // API
         if (OAuth2Authentication.class.isAssignableFrom(authentication.getClass())) {
             OAuth2Request authorizationRequest = ((OAuth2Authentication) authentication).getOAuth2Request();
@@ -78,6 +79,7 @@ public class SourceManagerImpl implements SourceManager {
             ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(clientId);
             SourceEntity sourceEntity = new SourceEntity();
             sourceEntity.setSourceClient(new ClientDetailsEntity(clientId, clientDetails.getClientName()));
+            sourceEntity.getSourceName();
             return sourceEntity;
         }
         String userOrcid = retrieveEffectiveOrcid(authentication);
@@ -88,6 +90,9 @@ public class SourceManagerImpl implements SourceManager {
         // Normal web user
         SourceEntity sourceEntity = new SourceEntity();
         sourceEntity.setSourceProfile(new ProfileEntity(userOrcid));
+        
+        //TODO! Set the source name in the SourceEntity
+        
         return sourceEntity;
     }
 

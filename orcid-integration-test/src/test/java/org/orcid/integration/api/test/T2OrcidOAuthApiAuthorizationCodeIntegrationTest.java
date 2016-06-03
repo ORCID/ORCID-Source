@@ -163,7 +163,7 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
     private String redirectUri;
 
     private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml");
+            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     public List<TokenStore> tokens = new ArrayList<TokenStore>();
 
@@ -325,9 +325,8 @@ public class T2OrcidOAuthApiAuthorizationCodeIntegrationTest extends DBUnitTest 
         WorkEntity work = workDao.find(workId);
         assertNotNull(work);
         assertNotNull(work.getProfile());
-        assertEquals(orcid, work.getProfile().getId());
-        assertNotNull(work.getSource());
-        assertEquals(CLIENT_DETAILS_ID, work.getSource().getSourceId());
+        assertEquals(orcid, work.getProfile().getId());        
+        assertEquals(CLIENT_DETAILS_ID, work.getElementSourceId());
         assertNotNull(work.getVisibility());
         assertNotNull(work.getAddedToProfileDate());
     }

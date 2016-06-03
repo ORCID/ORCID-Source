@@ -125,7 +125,14 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         newEntity.setOwner(profile);
         newEntity.setDateCreated(new Date());
-        newEntity.setSource(sourceEntity);
+        
+        if(sourceEntity.getSourceProfile() != null) {
+            newEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+        }
+        if(sourceEntity.getSourceClient() != null) {
+            newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+        }
+                
         setIncomingPrivacy(newEntity, profile);
         externalIdentifierDao.persist(newEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(newEntity);
@@ -135,6 +142,11 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     public PersonExternalIdentifier updateExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         ExternalIdentifierEntity updatedExternalIdentifierEntity = externalIdentifierDao.getExternalIdentifierEntity(orcid, externalIdentifier.getPutCode());
+        
+        //Save the original source
+        String existingSourceId = updatedExternalIdentifierEntity.getSourceId();
+        String existingClientSourceId = updatedExternalIdentifierEntity.getClientSourceId();
+        
         Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());
         // Validate external identifier
         PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false, isApiRequest, originalVisibility);
@@ -148,31 +160,30 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
                 throw new OrcidDuplicatedElementException(params);
             }
         }
-
-        
-        SourceEntity existingSource = updatedExternalIdentifierEntity.getSource();
-        orcidSecurityManager.checkSource(existingSource);
+        orcidSecurityManager.checkSource(updatedExternalIdentifierEntity);
         jpaJaxbExternalIdentifierAdapter.toExternalIdentifierEntity(externalIdentifier, updatedExternalIdentifierEntity);
         updatedExternalIdentifierEntity.setLastModified(new Date());        
-        updatedExternalIdentifierEntity.setSource(existingSource);
+                
+        //Set source
+        updatedExternalIdentifierEntity.setSourceId(existingSourceId);
+        updatedExternalIdentifierEntity.setClientSourceId(existingClientSourceId);
+        
         externalIdentifierDao.merge(updatedExternalIdentifierEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(updatedExternalIdentifierEntity);
     }
 
     private boolean isDuplicated(ExternalIdentifierEntity existing, PersonExternalIdentifier newExternalIdentifier, SourceEntity source) {
         if (!existing.getId().equals(newExternalIdentifier.getPutCode())) {
-            if (existing.getSource() != null) {
-                // If they have the same source
-                if (!PojoUtil.isEmpty(existing.getSource().getSourceId()) && existing.getSource().getSourceId().equals(source.getSourceId())) {
-                    // And they have the same reference
-                    if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
-                            || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {
-                        // And they have the same type
-                        if ((PojoUtil.isEmpty(existing.getExternalIdCommonName()) && PojoUtil.isEmpty(newExternalIdentifier.getType()))
-                                || (!PojoUtil.isEmpty(existing.getExternalIdCommonName())
-                                        && existing.getExternalIdCommonName().equals(newExternalIdentifier.getType()))) {
-                            return true;
-                        }
+            // If they have the same source
+            String existingSourceId = existing.getElementSourceId();
+            if (!PojoUtil.isEmpty(existingSourceId) && existingSourceId.equals(source.getSourceId())) {
+                // And they have the same reference
+                if ((PojoUtil.isEmpty(existing.getExternalIdReference()) && PojoUtil.isEmpty(newExternalIdentifier.getValue()))
+                        || (!PojoUtil.isEmpty(existing.getExternalIdReference()) && existing.getExternalIdReference().equals(newExternalIdentifier.getValue()))) {
+                    // And they have the same type
+                    if ((PojoUtil.isEmpty(existing.getExternalIdCommonName()) && PojoUtil.isEmpty(newExternalIdentifier.getType()))
+                            || (!PojoUtil.isEmpty(existing.getExternalIdCommonName()) && existing.getExternalIdCommonName().equals(newExternalIdentifier.getType()))) {
+                        return true;
                     }
                 }
             }
@@ -197,8 +208,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             return false;
         }        
         if(checkSource) {
-            SourceEntity existingSource = extIdEntity.getSource();
-            orcidSecurityManager.checkSource(existingSource);
+            orcidSecurityManager.checkSource(extIdEntity);
         }
         try {
             externalIdentifierDao.removeExternalIdentifier(orcid, id);

@@ -51,13 +51,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
     
     @Before    
     public void before() {
-        webDriver = new FirefoxDriver();
         authorizeScreen = this.getWebBaseUrl() + "/oauth/authorize?client_id=" + this.getClient1ClientId() + "&response_type=code&redirect_uri=" + this.getClient1RedirectUri() + "&scope=/activities/read-limited";
-    }
-
-    @After
-    public void after() {
-        webDriver.quit();
     }
     
     @Test
@@ -111,7 +105,8 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         webDriver.get(url);    
         
         By element = By.xpath("//input[@name='email']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                        
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);
+        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));

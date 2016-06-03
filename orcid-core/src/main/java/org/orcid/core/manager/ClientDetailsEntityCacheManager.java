@@ -26,6 +26,5 @@ public interface ClientDetailsEntityCacheManager {
     
     public void removeAll();
     
-    public void remove(String clientId);
-    
+    public void remove(String clientId);    
 }

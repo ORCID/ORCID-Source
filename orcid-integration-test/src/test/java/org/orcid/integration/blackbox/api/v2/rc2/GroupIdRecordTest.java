@@ -76,21 +76,6 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             "orcid-generated:this\"is\"a\"test\"",
             "orcid-generated:this<is>a<test>",
             "orcid-generated:this¢is¢a¢test¢");
-
-    private WebDriver webDriver;
-    
-    @Before
-    public void before() {
-        webDriver = new FirefoxDriver();        
-        webDriver.manage().window().maximize();
-    }
-
-    @After
-    public void after() {
-        if(webDriver != null) {
-            webDriver.quit();
-        }
-    }
     
     @Test
     public void testGetGroupIdRecordsWithSeveralFormats() throws JSONException, InterruptedException, URISyntaxException, UnsupportedEncodingException {

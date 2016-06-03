@@ -65,8 +65,10 @@ import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -184,15 +186,26 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
     }
 
     @Override
-    public void checkSource(SourceEntity existingSource) {
+    public void checkSource(SourceAwareEntity<?> existingEntity) {
         String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
-        if (sourceIdOfUpdater != null && (existingSource == null || !sourceIdOfUpdater.equals(existingSource.getSourceId()))) {
+        if (sourceIdOfUpdater != null && !(sourceIdOfUpdater.equals(existingEntity.getSourceId()) || sourceIdOfUpdater.equals(existingEntity.getClientSourceId()))) {
             Map<String, String> params = new HashMap<String, String>();
             params.put("activity", "work");
             throw new WrongSourceException(params);
         }
     }
 
+    @Override
+    public void checkSource(IdentifierTypeEntity existingEntity) {
+        String sourceIdOfUpdater = sourceManager.retrieveSourceOrcid();
+        String existingEntitySourceId = existingEntity.getSourceClient() == null ? null : existingEntity.getSourceClient().getId(); 
+        if (!Objects.equals(sourceIdOfUpdater, existingEntitySourceId)) {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("activity", "work");
+            throw new WrongSourceException(params);
+        }
+    }
+    
     @Override
     public boolean isAdmin() {
         Authentication authentication = getAuthentication();

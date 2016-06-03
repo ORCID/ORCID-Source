@@ -82,7 +82,7 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
 
     protected static final String DELEGATE_ORCID = "1111-1111-1111-1115";
 
-    protected static final String TEST_ORCID = "4444-4444-4444-4447";
+    protected static final String TEST_ORCID = "4444-4444-4444-0001";
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;

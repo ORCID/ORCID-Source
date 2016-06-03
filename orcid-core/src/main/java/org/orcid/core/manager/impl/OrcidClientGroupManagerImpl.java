@@ -34,6 +34,7 @@ import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.OrcidClientGroupManager;
 import org.orcid.core.manager.OrcidProfileManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -73,6 +74,9 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  */
 public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
+
+    @Resource
+    private ProfileEntityManager profileEntityManager;
 
     @Resource
     private OrcidProfileManager orcidProfileManager;
@@ -246,7 +250,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
             }
             // Merge changes
             profileDao.merge(groupProfileEntity);
-            profileDao.updateLastModifiedDate(groupOrcid);
+            profileEntityManager.updateLastModifed(groupOrcid);
             // Update client types and scopes
             if (updateClientScopes)
                 updateClientTypeDueGroupTypeUpdate(groupProfileEntity);

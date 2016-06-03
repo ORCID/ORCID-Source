@@ -33,7 +33,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -44,24 +43,23 @@ import org.springframework.test.context.ContextConfiguration;
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
-public class JpaJaxbOtherNameAdapterTest {
+public class JpaJaxbOtherNameAdapterTest extends MockSourceNameCache {
     @Resource
-    private JpaJaxbOtherNameAdapter adapter;
+    private JpaJaxbOtherNameAdapter adapter;        
     
     @Test
-    public void fromOtherNameToOtherNameEntityTest() throws JAXBException {
+    public void fromOtherNameToOtherNameEntityTest() throws JAXBException {                
         OtherName otherName = getOtherName();
         OtherNameEntity otherNameEntity = adapter.toOtherNameEntity(otherName);
         assertNotNull(otherNameEntity);
         assertNotNull(otherNameEntity.getDateCreated());
         assertNotNull(otherNameEntity.getLastModified());
-        assertEquals("Other Name #1", otherNameEntity.getDisplayName());
-        assertNotNull(otherNameEntity.getSource());
-        assertEquals("8888-8888-8888-8880", otherNameEntity.getSource().getSourceId());
+        assertEquals("Other Name #1", otherNameEntity.getDisplayName());        
+        assertEquals("8888-8888-8888-8880", otherNameEntity.getElementSourceId());
     }
     
     @Test
-    public void fromOtherNameEntityToOtherNameTest() {
+    public void fromOtherNameEntityToOtherNameTest() {                
         OtherNameEntity entity = getOtherNameEntity();
         OtherName otherName = adapter.toOtherName(entity);
         assertNotNull(otherName);
@@ -90,7 +88,7 @@ public class JpaJaxbOtherNameAdapterTest {
         result.setDisplayName("display-name");
         result.setProfile(new ProfileEntity("0000-0000-0000-0000"));
         result.setVisibility(Visibility.PUBLIC);
-        result.setSource(new SourceEntity("APP-000000001"));
+        result.setClientSourceId("APP-000000001");
         return result;
     }
 }

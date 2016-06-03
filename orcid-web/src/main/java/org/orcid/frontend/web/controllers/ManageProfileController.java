@@ -70,6 +70,7 @@ import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
@@ -295,7 +296,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         if (existing == null) {
             // Clear the delegate's profile from the cache so that the granting
             // user is visible to them immediately
-            Date delegateLastModified = profileDao.updateLastModifiedDate(delegateOrcid);
+            Date delegateLastModified = profileEntityManager.updateLastModifed(delegateOrcid);
             GivenPermissionToEntity permission = new GivenPermissionToEntity();
             permission.setGiver(currentUserOrcid);
             ProfileSummaryEntity receiver = new ProfileSummaryEntity(delegateOrcid);
@@ -877,8 +878,8 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
     public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
-        PersonalDetails personalDetails = personalDetailsManager.getPersonalDetails(getCurrentUserOrcid());
-        NamesForm nf = NamesForm.valueOf(personalDetails);
+        Name name = personalDetailsManager.getName(getCurrentUserOrcid());
+        NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
 
@@ -1009,7 +1010,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                         // Clear the delegate's profile from the cache so that
                         // the granting
                         // user is visible to them immediately
-                        Date delegateLastModified = profileDao.updateLastModifiedDate(trustedOrcid);
+                        Date delegateLastModified = profileEntityManager.updateLastModifed(trustedOrcid);
                         GivenPermissionToEntity permission = new GivenPermissionToEntity();
                         permission.setGiver(managedOrcid);
                         ProfileSummaryEntity receiver = new ProfileSummaryEntity(trustedOrcid);
