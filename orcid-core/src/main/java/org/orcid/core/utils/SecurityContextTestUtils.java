@@ -45,8 +45,12 @@ public class SecurityContextTestUtils {
     static public void setUpSecurityContext(ScopePathType... scopePathTypes) {
         setUpSecurityContext("4444-4444-4444-4441", scopePathTypes);
     }
-
+       
     static public void setUpSecurityContext(String userOrcid, ScopePathType... scopePathTypes) {
+        setUpSecurityContext(userOrcid, "APP-5555555555555555", scopePathTypes);
+    }
+    
+    static public void setUpSecurityContext(String userOrcid, String clientId, ScopePathType... scopePathTypes) {
         SecurityContextImpl securityContext = new SecurityContextImpl();
         OrcidOAuth2Authentication mockedAuthentication = mock(OrcidOAuth2Authentication.class);
         securityContext.setAuthentication(mockedAuthentication);
@@ -62,7 +66,7 @@ public class SecurityContextTestUtils {
                 scopes.add(scopePathType.value());
             }
         }
-        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), "APP-5555555555555555",
+        OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId,
                 Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
                 Collections.<String, Serializable> emptyMap());
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);

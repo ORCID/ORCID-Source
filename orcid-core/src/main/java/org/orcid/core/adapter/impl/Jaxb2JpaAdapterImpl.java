@@ -744,7 +744,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()) {
                 boolean exists = false;
                 Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
-                String sourceOfNewElement = newExternalIdentifier.getSource().retrieveSourcePath();
+                String sourceOfNewElement = newExternalIdentifier.getSource() == null ? null : newExternalIdentifier.getSource().retrieveSourcePath();
                 if(existingExternalIdentifierEntities != null) {
                     for(ExternalIdentifierEntity existingEntity : existingExternalIdentifierEntities) {
                         Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
