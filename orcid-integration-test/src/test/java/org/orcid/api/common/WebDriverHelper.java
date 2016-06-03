@@ -31,6 +31,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 
 /**
  * 
@@ -57,7 +58,7 @@ public class WebDriverHelper {
     }    
     
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password) throws InterruptedException {
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, orcid, redirectUri, scopes, null, userId, password);
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, orcid, redirectUri, scopes, null, userId, password, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
@@ -92,8 +93,8 @@ public class WebDriverHelper {
 
     public String obtainAuthorizationCode(String scopes, String orcid, String userId, String password, List<String> inputIdsToCheck, boolean markAsSelected)
             throws InterruptedException {
-            
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, orcid, redirectUri, scopes, null, userId, password);    
+        BlackBoxBase.logUserOut(webBaseUrl, webDriver);
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(webBaseUrl, orcid, redirectUri, scopes, null, userId, password, webDriver);    
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
