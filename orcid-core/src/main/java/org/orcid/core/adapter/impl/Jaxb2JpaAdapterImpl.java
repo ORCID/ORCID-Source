@@ -714,18 +714,17 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 ExternalIdentifierEntity existing = existingIt.next();
-                String existingElementSource = existing.getElementSourceId();
+                String existingElementSource = existing.getElementSourceId();                
                 if(sourceId != null && !sourceId.equals(existingElementSource)){
                     //If am not the source of this element, do nothing
                 } else {
                     //If am the source, check if the element exists in the list of incoming elements
                     Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existing);
-                    String existingSourceId = existing.getElementSourceId();
                     boolean found = false;
                     if(externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
                         for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()){
                             Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
-                            if(Objects.equals(sourceId, existingSourceId) && Objects.equals(existingTriplet, newExternalIdentifierTriplet)) {
+                            if(Objects.equals(existingTriplet, newExternalIdentifierTriplet)) {
                                 found = true;
                                 break;
                             }
@@ -745,11 +744,12 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()) {
                 boolean exists = false;
                 Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
+                String sourceOfNewElement = newExternalIdentifier.getSource().retrieveSourcePath();
                 if(existingExternalIdentifierEntities != null) {
                     for(ExternalIdentifierEntity existingEntity : existingExternalIdentifierEntities) {
                         Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
-                        String existingSourceId = existingEntity.getElementSourceId();
-                        if (Objects.equals(sourceId, existingSourceId) && Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
+                        String sourceOfExistingElement = existingEntity.getElementSourceId();
+                        if (Objects.equals(sourceOfNewElement, sourceOfExistingElement) && Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
                             exists = true;
                             // If the profile is not claimed, you can update the
                             // visibility
