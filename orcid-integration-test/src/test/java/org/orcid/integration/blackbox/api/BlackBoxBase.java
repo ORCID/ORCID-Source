@@ -232,7 +232,12 @@ public class BlackBoxBase {
     }
     
     public void logUserOut() {
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        logUserOut(getWebBaseUrl(), webDriver);
+    }
+    
+    public static void logUserOut(String baseUrl, WebDriver webDriver) {
+        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(),webDriver);
     }
 
     public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
@@ -387,6 +392,15 @@ public class BlackBoxBase {
             (new WebDriverWait(webDriver, wait, pollingInternval))
             .until(expectedCondition);            
         }        
+    }
+
+    public static ExpectedCondition<Boolean> documentReady() {
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
+            }
+        };
     }
 
     public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
