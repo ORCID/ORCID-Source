@@ -16,6 +16,8 @@
  */
 package org.orcid.core.manager;
 
+import javax.persistence.NoResultException;
+
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
@@ -24,7 +26,6 @@ import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 
 /**
@@ -34,6 +35,10 @@ import org.orcid.persistence.jpa.entities.SourceAwareEntity;
  */
 public interface OrcidSecurityManager {
 
+    void setProfileEntityCacheManager(ProfileEntityCacheManager profileEntityCacheManager);
+    
+    void setSourceManager(SourceManager sourceManager);
+    
     void checkVisibility(Filterable filterable, String orcid);   
     
     void checkVisibility(Name name, String orcid);
@@ -58,5 +63,5 @@ public interface OrcidSecurityManager {
     
     void checkPermissions(ScopePathType requiredScope, String orcid);
     
-    void checkProfile(ProfileEntity profile) throws OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
+    void checkProfile(String orcid) throws NoResultException, OrcidDeprecatedException, OrcidNotClaimedException, LockedException;
 }

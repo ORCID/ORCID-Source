@@ -34,6 +34,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -77,7 +78,7 @@ public class AddWorksTest {
         String workNameB = ADD_WORK_TEST + "_" + _B;
         String workNameC = ADD_WORK_TEST + "_" + _C;
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        waitWorksLoaded(wait);
+        waitWorksLoaded(wait, webDriver);
         // clean up any from previous test
         deleteAllByWorkName(workNameA, webDriver);
         deleteAllByWorkName(workNameB, webDriver);
@@ -103,17 +104,22 @@ public class AddWorksTest {
 
     public static void addSimple(String workName, WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        ;
-        waitWorksLoaded(wait);
+        
+        waitWorksLoaded(wait, webDriver);
+        BlackBoxBase.noSpinners(webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         // Selenium is having issues finding this element, I supect do to CSS transformations
         // Run the function directly
         ((JavascriptExecutor) webDriver).executeScript("angular.element('[ng-controller=WorkCtrl]').scope().addWorkModal()");
-
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//select[@ng-model='editWork.workCategory.value']")), webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         Select catSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference']")), webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         catSel.selectByVisibleText("Conference");
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//option[text()='Conference paper']")));
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference paper']")), webDriver);
         Select typeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workType.value']")));
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         typeSel.selectByVisibleText("Conference paper");
         
         Select idTypeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='workExternalIdentifier.workExternalIdentifierType.value']")));
@@ -130,16 +136,18 @@ public class AddWorksTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='save-new-work']"));
-        buttonEl.click();
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+        BlackBoxBase.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-new-work']")), webDriver);
+        
         SigninTest.colorBoxIsClosed(wait);
-        waitWorksLoaded(wait);
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle(workName)));
+        waitWorksLoaded(wait, webDriver);
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle(workName)), webDriver);
     }
 
     public static void deleteAllByWorkName(String workName, WebDriver webDriver) {
         WebDriverWait wait = new WebDriverWait(webDriver, 10);
-        waitWorksLoaded(wait);
+        waitWorksLoaded(wait, webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + workName + "']]"));
         if (wList.size() > 0)
             for (WebElement we : wList) {
@@ -147,9 +155,9 @@ public class AddWorksTest {
                 putCode = "" + putCode;
                 String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
                 ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-                waitWorksLoaded(wait);
+                waitWorksLoaded(wait, webDriver);
             }
-        wait.until(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle(workName))));
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle(workName))), webDriver);
         assertTrue(0 == webDriver.findElements(byWorkTitle(workName)).size());
     }
 
@@ -165,16 +173,16 @@ public class AddWorksTest {
     
     public static void reloadWorks(WebDriver webDriver, WebDriverWait wait) {
         ((JavascriptExecutor) webDriver).executeScript("angular.element('*[ng-app]').injector().get('worksSrvc').loadAbbrWorks()");
-        waitWorksLoaded(wait);
+        waitWorksLoaded(wait, webDriver);
     }
     
-    public static void waitWorksLoading(WebDriverWait wait) {
-        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='workSpinner']")));
+    public static void waitWorksLoading(WebDriverWait wait, WebDriver webDriver) {
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@id='workSpinner']")), webDriver);
     }
 
     
-    public static void waitWorksLoaded(WebDriverWait wait) {
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")));
+    public static void waitWorksLoaded(WebDriverWait wait, WebDriver webDriver) {
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
     }
 
     public void bulkVisToggle() {

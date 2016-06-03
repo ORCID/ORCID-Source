@@ -248,8 +248,13 @@ public class OrcidProfileManagerBaseTest extends BaseTest {
         WorkExternalIdentifier work1ExternalIdentifier2 = new WorkExternalIdentifier();
         work1ExternalIdentifier2.setWorkExternalIdentifierType(WorkExternalIdentifierType.PMID);
         work1ExternalIdentifier2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work1-pmid"));
+        WorkExternalIdentifier work1ExternalIdentifier3 = new WorkExternalIdentifier();
+        work1ExternalIdentifier3.setWorkExternalIdentifierType(WorkExternalIdentifierType.SOURCE_WORK_ID);
+        work1ExternalIdentifier3.setWorkExternalIdentifierId(new WorkExternalIdentifierId("work1-source-id"));
         work1ExternalIdentifiers.getWorkExternalIdentifier().add(work1ExternalIdentifier1);
         work1ExternalIdentifiers.getWorkExternalIdentifier().add(work1ExternalIdentifier2);
+        work1ExternalIdentifiers.getWorkExternalIdentifier().add(work1ExternalIdentifier3);
+
         return work1ExternalIdentifiers;
     }
 

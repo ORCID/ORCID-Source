@@ -87,26 +87,25 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     public void emailPrivacyTest() throws InterruptedException {
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
         emailsSection.addEmail(emailValue);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         List<Email> emails = emailsSection.getEmails();
         Email addedEmail = emails.stream().filter(e -> e.getEmail().equals(emailValue)).findFirst().get();
         assertNotNull("The added email should be there: " + emailValue, addedEmail);
 
         // Change Visibility to public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-emails")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-public-id")));
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-public-id")), webDriver);
         WebElement privateVisibility = webDriver.findElement(By.id("email-" + emailValue + "-public-id"));
         privateVisibility.click();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
 
         // Verify
         showPublicProfilePage();
@@ -114,8 +113,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Revert Visibility to private
         showMyOrcidPage();
         ngAwareClick(webDriver.findElement(By.id("open-edit-emails")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-private-id")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-private-id")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("email-" + emailValue + "-private-id")), webDriver);
         // Verify
         // TODO: figure out how to know when the post response returns.
@@ -142,8 +140,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     public void otherNamesPrivacyTest() throws InterruptedException {
         showMyOrcidPage();
         ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='save-other-names']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='save-other-names']")), webDriver);
         List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='other-name']"));
         WebElement textBox = null;
         for (WebElement element : elements) {
@@ -154,7 +151,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         }
         String otherNameValue = "OtherName" + System.currentTimeMillis();
         textBox.sendKeys(otherNameValue);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
 
         // Set Private Visibility
         WebElement privateVisibility = webDriver.findElement(By.id("other-names-private-id"));
@@ -165,7 +162,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showPublicProfilePage();
         try {
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
             WebElement otherNamesDiv = webDriver.findElement(By.xpath("//div[@id='public-other-names-div']"));
             assertNotNull(otherNamesDiv);
             assertFalse(PojoUtil.isEmpty(otherNamesDiv.getText()));
@@ -177,18 +174,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set Public Visibility
         showMyOrcidPage();
         ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='save-other-names']")));
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("other-names-public-id")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='save-other-names']")), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("other-names-public-id")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("other-names-public-id")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("save-other-names")));
+        extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("save-other-names")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("save-other-names")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("open-edit-other-names")));
+        extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("open-edit-other-names")), webDriver);
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-other-names-div']")), webDriver);
         WebElement otherNamesDiv = webDriver.findElement(By.xpath("//div[@id='public-other-names-div']"));
         assertNotNull(otherNamesDiv);
         assertFalse(PojoUtil.isEmpty(otherNamesDiv.getText()));
@@ -197,7 +192,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Rollback changes
         showMyOrcidPage();
         ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         List<WebElement> otherNames = webDriver.findElements(By.xpath("//input[@name='other-name']"));
         WebElement toClick = null;
         for (WebElement element : otherNames) {
@@ -215,9 +210,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     public void countryPrivacyTest() {
         showMyOrcidPage();
         String initialValue = "US";
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-country")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Select selectBox = new Select(webDriver.findElement(By.id("country")));
         WebElement selectedCountry = selectBox.getFirstSelectedOption();
         if (selectedCountry != null) {
@@ -230,13 +225,13 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         privateVisibility.click();
         WebElement saveButton = webDriver.findElement(By.id("save-country"));
         saveButton.click();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
 
         // Verify
         showPublicProfilePage();
         try {
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
             webDriver.findElement(By.xpath("//div[@id='public-country-div']"));
             fail("Just found country 'India' which should be private");
         } catch (Exception e) {
@@ -245,17 +240,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-country")), webDriver);
         privateVisibility = webDriver.findElement(By.id("country-public-id"));
         privateVisibility.click();
         ngAwareClick(webDriver.findElement(By.id("save-country")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-country-div']")), webDriver);
         WebElement countryDiv = webDriver.findElement(By.xpath("//div[@id='public-country-div']"));
         assertNotNull(countryDiv);
         assertFalse(PojoUtil.isEmpty(countryDiv.getText()));
@@ -263,9 +257,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-country")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("country")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country")), webDriver);
         selectBox = new Select(webDriver.findElement(By.id("country")));
         selectedCountry = selectBox.getFirstSelectedOption();
         selectBox.selectByValue(initialValue);
@@ -276,9 +270,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void keyWordPrivacyTest() throws InterruptedException {
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-keywords")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='keyword']")), webDriver);
         List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='keyword']"));
         WebElement textBox = null;
         for (WebElement element : elements) {
@@ -294,7 +288,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set Private Visibility
         ngAwareClick(webDriver.findElement(By.id("keywords-private-id")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("save-keywords")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
 
         // Verify
         showPublicProfilePage();
@@ -311,17 +305,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-keywords")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("keywords-public-id")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("save-keywords")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-keywords-div']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-keywords-div']")), webDriver);
         WebElement keywordsDiv = webDriver.findElement(By.xpath("//div[@id='public-keywords-div']"));
         assertNotNull(keywordsDiv);
         assertFalse(PojoUtil.isEmpty(keywordsDiv.getText()));
@@ -329,10 +322,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-keywords")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")));
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("save-keywords")), webDriver);
         List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));
         for (WebElement element : keywords) {
             if (keywordValue.equals(element.getAttribute("value"))) {
@@ -349,7 +342,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void websitesPrivacyTest() {
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-websites")), webDriver);
         List<WebElement> elements = webDriver.findElements(By.xpath("//input[@name='website-url']"));
         WebElement websiteUrl = null;
@@ -365,24 +358,24 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         long timestamp = System.currentTimeMillis();
         String websiteDesc = "Website" + timestamp;
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         websiteName.clear();
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         websiteName.sendKeys(websiteDesc);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
 
         String websiteValue = "http://orcid.org/" + timestamp;
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         websiteUrl.clear();
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         websiteUrl.sendKeys(websiteValue);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
 
         // Set Private Visibility
         WebElement privateVisibility = webDriver.findElement(By.id("websites-private-id"));
         privateVisibility.click();
         ngAwareClick(webDriver.findElement(By.id("save-websites")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
 
         // Verify
         showPublicProfilePage();
@@ -399,17 +392,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-websites")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("save-websites")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("save-websites")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("websites-public-id")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("save-websites")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-researcher-urls-div']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='public-researcher-urls-div']")), webDriver);
         WebElement researcherUrlsDiv = webDriver.findElement(By.xpath("//div[@id='public-researcher-urls-div']"));
         assertNotNull(researcherUrlsDiv);
         assertFalse(PojoUtil.isEmpty(researcherUrlsDiv.getText()));
@@ -417,13 +409,11 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("open-edit-websites")), webDriver);
 
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='save-websites']")));
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='website-url']")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@id='save-websites']")), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name='website-url']")), webDriver);
         List<WebElement> websites = webDriver.findElements(By.xpath("//input[@name='website-url']"));
         for (WebElement element : websites) {
             if (websiteValue.equals(element.getAttribute("value"))) {
@@ -433,46 +423,51 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         }
 
         ngAwareClick(webDriver.findElement(By.id("save-websites")), webDriver);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
     }
 
     @Test
     public void educationPrivacyTest() {
         Actions action = new Actions(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")));
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")), webDriver);
         WebElement container = webDriver.findElement(By.id("add-education-container"));
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")));
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")), webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-education"))).click().build().perform();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")));
-
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String educationName = "Education" + System.currentTimeMillis();
         textBox.sendKeys(educationName);
         textBox = webDriver.findElement(By.id("city"));
         textBox.sendKeys("New Delhi");
-
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
         noSpinners(webDriver);
         noCboxOverlay(webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        
 
         // Set Private Visibility
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
         WebElement educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
         ngAwareClick(webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
 
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
 
         // Verify
         showPublicProfilePage();
@@ -486,29 +481,25 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set Public Visibility
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
         educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
         ngAwareClick(educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
 
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
 
         // Verify
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")), webDriver);
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
         educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
         String putCode = educationElement.getAttribute("education-put-code");
         ngAwareClick(webDriver.findElement(By.id("delete-affiliation_" + putCode)), webDriver);
 
 
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")), webDriver);
         ngAwareClick(webDriver.findElement(ById.id("confirm_delete_affiliation")), webDriver);
 
     }
@@ -516,48 +507,50 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void employmentPrivacyTest() {
         noSpinners(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment-container")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment-container")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-employment-container")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-employment")), webDriver);
         noSpinners(webDriver);
         
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")));
-
+        
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String employmentName = "Employment" + System.currentTimeMillis();
         textBox.sendKeys(employmentName);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         textBox = webDriver.findElement(By.id("city"));
         textBox.sendKeys("New Delhi");
-
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
         //wait for angular to register that values have been typed.
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         noSpinners(webDriver);
         noCboxOverlay(webDriver);
         
         // Set Private Visibility
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(
+                By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
         ngAwareClick(webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
 
         // Verify
         showPublicProfilePage();
         noSpinners(webDriver);
         try {
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
             fail();
         } catch (Exception e) {
 
@@ -566,31 +559,27 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set Public Visibility
         showMyOrcidPage();
         noSpinners(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
         WebElement educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         ngAwareClick(educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
 
         
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
 
         // Verify
         showPublicProfilePage();
         noSpinners(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")), webDriver);
 
         // Rollback changes
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
         educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
         String putCode = educationElement.getAttribute("employment-put-code");
         ngAwareClick(webDriver.findElement(By.id("delete-affiliation_" + putCode)), webDriver);
         noSpinners(webDriver);
         
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")), webDriver);
         ngAwareClick(webDriver.findElement(ById.id("confirm_delete_affiliation")), webDriver);
 
     }
@@ -598,31 +587,31 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
         noSpinners(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding-container")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding-container")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-funding-container")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-funding")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-funding")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")));
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")), webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         long time = System.currentTimeMillis();
 
         WebElement type = webDriver.findElement(By.id("fundingType"));
         type.sendKeys("Award");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         String fundingTitle = "Funding Title " + time;
         WebElement title = webDriver.findElement(By.id("fundingTitle"));
         title.sendKeys(fundingTitle);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         WebElement name = webDriver.findElement(By.id("fundingName"));
         name.sendKeys("Name " + time);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         WebElement city = webDriver.findElement(By.id("city"));
         city.sendKeys("San Jose");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
         selectBox.selectByVisibleText("United States");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
             Thread.sleep(500);
@@ -632,15 +621,13 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         ngAwareClick(webDriver.findElement(By.id("save-funding")), webDriver);
         noSpinners(webDriver);
         
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
 
         // Change to private
         WebElement fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         ngAwareClick(fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
         
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
 
         // Check public page
         showPublicProfilePage();
@@ -656,48 +643,44 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Change to public
         showMyOrcidPage();
         noSpinners(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
         fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         ngAwareClick(fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
 
         // Check public page
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")), webDriver);
 
         // Rollback changes
         showMyOrcidPage();
         noSpinners(webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
         fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
         String putCode = fundingElement.getAttribute("funding-put-code");
         ngAwareClick(fundingElement.findElement(By.id("delete-funding_" + putCode)), webDriver);
         
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")), webDriver);
         ngAwareClick(webDriver.findElement(ById.id("confirm-delete-funding")), webDriver);
 
     }
 
     @Test
     public void workPrivacyTest() throws InterruptedException {
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")));
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-work-container")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")));
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")), webDriver);
 
         WebElement category = webDriver.findElement(By.id("workCategory"));
         category.sendKeys("Publication");
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         String workTitle = "Work " + System.currentTimeMillis();
         WebElement title = webDriver.findElement(By.id("work-title"));
         title.sendKeys(workTitle);
-        angularHasFinishedProcessing();
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
             Thread.sleep(500);
@@ -708,14 +691,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         noSpinners(webDriver);
         
         // Set private
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
         WebElement workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
         ngAwareClick(workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
 
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
         // Check public page
         showPublicProfilePage();
@@ -729,24 +710,20 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
         workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
         WebElement publicVisibilityIcon = workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
         // Check public page
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
         // Rollback
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
         workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
         String putCode = workElement.getAttribute("orcid-put-code");
         String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
@@ -781,19 +758,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set it private
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
         WebElement peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
         WebElement privateVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a"));
         privateVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
 
         // Check the public page
         showPublicProfilePage();
         try {
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
             fail();
         } catch (Exception e) {
 
@@ -801,18 +776,15 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Set it public
         showMyOrcidPage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
         peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
         WebElement publicVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a"));
         publicVisibilityIcon.click();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
 
         // Check the public page
         showPublicProfilePage();
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
 
         // Rollback
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), peerReview.getPutCode(), accessToken);
@@ -832,12 +804,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     private void showMyOrcidPage() {
         webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
     }
 
     private void showPublicProfilePage() {
         webDriver.get(getWebBaseUrl() + "/" + getUser1OrcidId());
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
     }
 
 }

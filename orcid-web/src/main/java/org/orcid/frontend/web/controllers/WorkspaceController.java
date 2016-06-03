@@ -383,7 +383,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/keywordsForms.json", method = RequestMethod.POST)
     public @ResponseBody
     KeywordsForm setKeywordsFormJson(HttpServletRequest request, @RequestBody KeywordsForm kf) throws NoSuchRequestHandlingMethodException {
-        kf.setErrors(new ArrayList<String>());        
+        kf.setErrors(new ArrayList<String>());              
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+        Visibility defaultVisibility = Visibility.valueOf(profile.getActivitiesVisibilityDefault());        
         if(kf != null) {
             Iterator<KeywordForm> it = kf.getKeywords().iterator();            
             while (it.hasNext()) {
@@ -394,9 +396,20 @@ public class WorkspaceController extends BaseWorkspaceController {
                     }                    
                 } else {
                     it.remove();
-                }                      
+                } 
+                
+                //Set default visibility in case it is null
+                if(k.getVisibility() == null || k.getVisibility().getVisibility() == null) {
+                    k.setVisibility(defaultVisibility);
+                }
+                
+                copyErrors(k, kf);
             }
 
+            if (kf.getErrors().size()>0) {
+                return kf;   
+            }
+            
             Keywords updatedKeywords = kf.toKeywords();                        
             profileKeywordManager.updateKeywords(getCurrentUserOrcid(), updatedKeywords);            
         }
@@ -420,7 +433,9 @@ public class WorkspaceController extends BaseWorkspaceController {
     @RequestMapping(value = "/my-orcid/otherNamesForms.json", method = RequestMethod.POST)
     public @ResponseBody
     OtherNamesForm setOtherNamesFormJson(@RequestBody OtherNamesForm onf) throws NoSuchRequestHandlingMethodException {
-        onf.setErrors(new ArrayList<String>());
+        onf.setErrors(new ArrayList<String>());        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+        Visibility defaultVisibility = Visibility.valueOf(profile.getActivitiesVisibilityDefault());        
         if(onf != null) {
             Iterator<OtherNameForm> it = onf.getOtherNames().iterator();
             while(it.hasNext()) {
@@ -431,8 +446,17 @@ public class WorkspaceController extends BaseWorkspaceController {
                 if(form.getContent().length() > SiteConstants.MAX_LENGTH_255) {
                     form.setContent(form.getContent().substring(0, SiteConstants.MAX_LENGTH_255));
                 }
+                //Set default visibility in case it is null
+                if(form.getVisibility() == null || form.getVisibility().getVisibility() == null) {
+                    form.setVisibility(defaultVisibility);
+                }                
+                copyErrors(form, onf);
             }
                     
+            if (onf.getErrors().size()>0) {
+                return onf;   
+            }
+            
             OtherNames otherNames = onf.toOtherNames();                
             otherNameManager.updateOtherNames(getEffectiveUserOrcid(), otherNames);            
         }
@@ -463,7 +487,8 @@ public class WorkspaceController extends BaseWorkspaceController {
     public @ResponseBody
     WebsitesForm setWebsitesFormJson(HttpServletRequest request, @RequestBody WebsitesForm ws) throws NoSuchRequestHandlingMethodException {
         ws.setErrors(new ArrayList<String>());
-        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
+        Visibility defaultVisibility = Visibility.valueOf(profile.getActivitiesVisibilityDefault());
         if(ws != null) {
             Set<String> existingUrls = new HashSet<String>();
             for (WebsiteForm w : ws.getWebsites()) {
@@ -484,7 +509,10 @@ public class WorkspaceController extends BaseWorkspaceController {
                 } else {
                     existingUrls.add(w.getUrl());
                 }
-                
+                //Set default visibility in case it is null
+                if(w.getVisibility() == null || w.getVisibility().getVisibility() == null) {
+                    w.setVisibility(defaultVisibility);
+                } 
                 copyErrors(w, ws);
             }   
             

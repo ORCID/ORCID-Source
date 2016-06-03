@@ -825,8 +825,7 @@ public class SetUpClientsAndUsers {
         AddressEntity a1 = new AddressEntity();
         a1.setDateCreated(new Date());
         a1.setDisplayIndex(-1L);
-        a1.setIso2Country(Iso3166Country.US);
-        a1.setPrimary(true);
+        a1.setIso2Country(Iso3166Country.US);        
         a1.setLastModified(new Date());
         a1.setUser(new ProfileEntity(orcid));
         a1.setClientSourceId(client1ClientId);

@@ -16,22 +16,14 @@
  */
 package org.orcid.api.memberV2.server.delegator.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
-import org.orcid.core.exception.OrcidDeprecatedException;
-import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.OrcidSecurityManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.utils.DateUtils;
-import org.springframework.beans.factory.annotation.Value;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements
         MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
@@ -45,14 +37,11 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     private V2VersionConverterChain v2VersionConverterChain;
 
     @Resource
-    private ProfileDao profileDao;
-
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
     @Resource
-    private ProfileEntityManager profileEntityManager;
-
-    @Value("${org.orcid.core.baseUri}")
-    private String baseUrl;
-
+    private OrcidSecurityManager orcidSecurityManager;
+    
     @Override
     public Response viewStatusText() {
         return memberV2ApiServiceDelegator.viewStatusText();
@@ -459,17 +448,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         return result.getObjectToConvert();
     }
 
-    private void checkProfileStatus(String orcid) {
-        ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
-        if (profileDao.isProfileDeprecated(orcid)) {
-            StringBuffer primary = new StringBuffer(baseUrl).append("/").append(entity.getPrimaryRecord().getId());
-            Map<String, String> params = new HashMap<String, String>();
-            params.put(OrcidDeprecatedException.ORCID, primary.toString());
-            if (entity.getDeprecatedDate() != null) {
-                XMLGregorianCalendar calendar = DateUtils.convertToXMLGregorianCalendar(entity.getDeprecatedDate());
-                params.put(OrcidDeprecatedException.DEPRECATED_DATE, calendar.toString());
-            }
-            throw new OrcidDeprecatedException(params);
-        }
+    private void checkProfileStatus(String orcid) {        
+        orcidSecurityManager.checkProfile(orcid);
     }
 }

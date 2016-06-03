@@ -81,11 +81,11 @@ public class AddressManagerImpl implements AddressManager {
         List<AddressEntity> addresses = addressDao.getAddresses(orcid, getLastModified(orcid));
         Address address = null;
         if(addresses != null) {
+            //Look for the address with the smallest display index
             for(AddressEntity entity : addresses) {
-                if(entity.getPrimary()) {
-                    address = adapter.toAddress(entity);
-                    break;
-                }
+                if(address == null || address.getDisplayIndex() > entity.getDisplayIndex()) {
+                    address = adapter.toAddress(entity);                    
+                } 
             }
         }                    
         return address;
@@ -148,12 +148,17 @@ public class AddressManagerImpl implements AddressManager {
         PersonValidator.validateAddress(address, sourceEntity, true, isApiRequest, null);
         // Validate it is not duplicated
         List<AddressEntity> existingAddresses = addressDao.getAddresses(orcid, getLastModified(orcid));
+        Long biggestDisplayIndex = -1L;
         for (AddressEntity existing : existingAddresses) {
             if (isDuplicated(existing, address, sourceEntity)) {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("type", "address");
                 params.put("value", address.getCountry().getValue().value());
                 throw new OrcidDuplicatedElementException(params);
+            }
+            
+            if(address.getDisplayIndex() != null && address.getDisplayIndex() > biggestDisplayIndex) {
+                biggestDisplayIndex = address.getDisplayIndex();
             }
         }
 
@@ -169,7 +174,8 @@ public class AddressManagerImpl implements AddressManager {
         if(sourceEntity.getSourceClient() != null) {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }        
-        
+       
+        newEntity.setDisplayIndex(biggestDisplayIndex + 1); 
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);
         return adapter.toAddress(newEntity);
@@ -272,7 +278,6 @@ public class AddressManagerImpl implements AddressManager {
                            existingAddress.setLastModified(new Date());
                            existingAddress.setVisibility(updatedOrNew.getVisibility());
                            existingAddress.setIso2Country(updatedOrNew.getCountry().getValue());
-                           existingAddress.setPrimary(updatedOrNew.getPrimary());
                            existingAddress.setDisplayIndex(updatedOrNew.getDisplayIndex());
                            addressDao.merge(existingAddress);
                        }

@@ -58,7 +58,7 @@ public class WorkExternalIdentifiers implements Serializable, JSONIdentifierAdap
 
             for (WorkExternalIdentifier extId : this.getWorkExternalIdentifier()) {
                 org.orcid.jaxb.model.message.WorkExternalIdentifierType type = org.orcid.jaxb.model.message.WorkExternalIdentifierType
-                        .fromValue(extId.getWorkExternalIdentifierType());
+                        .valueOf(extId.getWorkExternalIdentifierType());
 
                 if (org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(type)) {
                     if (!workType.equals(org.orcid.jaxb.model.message.WorkType.BOOK)) {

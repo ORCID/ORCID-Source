@@ -94,11 +94,17 @@ public class AccountSettingsTest {
         signinPage.signIn(user1UserName, user1Password);
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+        BlackBoxBase.noSpinners(webDriver);        
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+        BlackBoxBase.noSpinners(webDriver);        
         assertTrue("Should be able to add email", emailsSection.canAddEmail());
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
         emailsSection.addEmail(emailValue);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+        BlackBoxBase.noSpinners(webDriver);        
         List<Email> emails = emailsSection.getEmails();
         Email addedEmail = emails.stream().filter(e -> e.getEmail().equals(emailValue)).findFirst().get();
         assertNotNull("The added email should be there: " + emailValue, addedEmail);
@@ -144,7 +150,7 @@ public class AccountSettingsTest {
         // Got to account settings page as delegate
         accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         // Check that add email section is not there
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();

@@ -37,7 +37,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -75,12 +74,7 @@ public class AffiliationsController extends BaseWorkspaceController {
     @Resource
     private Jaxb2JpaAdapter jaxb2JpaAdapter;
 
-    @Resource
-    private OrgAffiliationRelationDao orgRelationAffiliationDao;
-
-    @Resource
-    private ProfileDao profileDao;
-
+    //TODO: Stop using the DAO, use the 'affiliationsManager' instead
     @Resource
     private OrgAffiliationRelationDao orgAffiliationRelationDao;
 
@@ -116,7 +110,7 @@ public class AffiliationsController extends BaseWorkspaceController {
                 }
             }
             currentProfile.getOrcidActivities().setAffiliations(affiliations);
-            orgRelationAffiliationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()));
+            orgAffiliationRelationDao.removeOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()));
         }
 
         return affiliation;
@@ -290,7 +284,7 @@ public class AffiliationsController extends BaseWorkspaceController {
      * */
     private void addAffiliation(AffiliationForm affiliationForm) {
         // Persist to DB
-        ProfileEntity userProfile = profileDao.find(getEffectiveUserOrcid());
+        ProfileEntity userProfile = new ProfileEntity(getEffectiveUserOrcid());
         OrgAffiliationRelationEntity orgAffiliationRelationEntity = jaxb2JpaAdapter.getNewOrgAffiliationRelationEntity(affiliationForm.toAffiliation(), userProfile);
         orgAffiliationRelationEntity.setSourceId(getEffectiveUserOrcid());
         orgAffiliationRelationDao.persist(orgAffiliationRelationEntity);
@@ -360,24 +354,11 @@ public class AffiliationsController extends BaseWorkspaceController {
      * */
     @RequestMapping(value = "/affiliation.json", method = RequestMethod.PUT)
     public @ResponseBody
-    AffiliationForm updateProfileAffiliationJson(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
+    AffiliationForm updateAffiliationVisibility(HttpServletRequest request, @RequestBody AffiliationForm affiliation) {
         // Get cached profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-        Affiliations orcidAffiliations = currentProfile.getOrcidActivities() == null ? null : currentProfile.getOrcidActivities().getAffiliations();
-        if (orcidAffiliations != null) {
-            List<Affiliation> orcidAffiliationsList = orcidAffiliations.getAffiliation();
-            if (orcidAffiliationsList != null) {
-                for (Affiliation orcidAffiliation : orcidAffiliationsList) {
-                    // If the put codes are equal, we know that they are the
-                    // same affiliation
-                    if (orcidAffiliation.getPutCode().equals(affiliation.getPutCode().getValue())) {
-                        // Update the privacy of the affiliation
-                        orgRelationAffiliationDao.updateVisibilityOnOrgAffiliationRelation(currentProfile.getOrcidIdentifier().getPath(), Long.valueOf(affiliation.getPutCode().getValue()), affiliation
+        String userOrcid = getEffectiveUserOrcid();
+        affiliationsManager.updateVisibility(userOrcid, Long.valueOf(affiliation.getPutCode().getValue()), affiliation
                                 .getVisibility().getVisibility());
-                    }
-                }
-            }
-        }
         return affiliation;
     }
 

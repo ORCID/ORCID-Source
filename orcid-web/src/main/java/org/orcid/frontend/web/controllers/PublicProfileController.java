@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -72,14 +73,18 @@ import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
+import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.Name;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
@@ -190,12 +195,12 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (!profileEntManager.orcidExists(orcid)) {
             return new ModelAndView("error-404");
         }        
-                
+               
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
         
         try {
             //Check if the profile is deprecated, non claimed or locked
-            orcidSecurityManager.checkProfile(profile);
+            orcidSecurityManager.checkProfile(orcid);
         } catch(OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
             mav.addObject("orcidId", orcid);
@@ -232,8 +237,8 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("displayName", displayName);
             }            
             return mav;
-        }
-                
+        }                
+        
         Date lastModified = profile.getLastModified();
         long lastModifiedTime = 0;
         if(lastModified != null) {
@@ -304,37 +309,53 @@ public class PublicProfileController extends BaseWorkspaceController {
                     }
                 }
             }
-            mav.addObject("publicOtherNames", publicOtherNames);
+            Map<String, List<OtherName>> groupedOtherNames = groupOtherNames(publicOtherNames);
+            mav.addObject("publicGroupedOtherNames", groupedOtherNames);            
         }
         
         //Fill biography elements
+
         //Fill country
-        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);
+        Addresses publicAddresses = addressManager.getPublicAddresses(orcid, lastModifiedTime);        
+        Map<String, String> countryNames = new HashMap<String, String>();        
         if(publicAddresses != null && publicAddresses.getAddress() != null) {
-            for(Address publicAddress : publicAddresses.getAddress()) {
-                if(Boolean.TRUE.equals(publicAddress.getPrimary())) {
-                    mav.addObject("publicAddresses", publicAddress);
-                    mav.addObject("countryName", getcountryName(publicAddress.getCountry().getValue().value()));
-                    break;
+            Address publicAddress = null;
+            //The primary address will be the one with the lowest display index            
+            for(Address address : publicAddresses.getAddress()) {
+            	countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));            	
+                if(publicAddress == null || publicAddress.getDisplayIndex() > address.getDisplayIndex()) {
+                   publicAddress = address;
                 }
+            }            
+            if(publicAddress != null) {
+                mav.addObject("publicAddress", publicAddress);                
+                mav.addObject("countryNames", countryNames);
+                Map<String, List<Address>> groupedAddresses = groupAddresses(publicAddresses);        
+                mav.addObject("publicGroupedAddresses", groupedAddresses);
             }
         }
         
+        
+        
         //Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
-        mav.addObject("publicKeywords", publicKeywords);
+        Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);        
+        mav.addObject("publicGroupedKeywords", groupedKeywords);        
         
         //Fill researcher urls
         ResearcherUrls publicResearcherUrls = researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime);
-        mav.addObject("publicResearcherUrls", publicResearcherUrls);
+        Map<String, List<ResearcherUrl>> groupedResearcherUrls = groupResearcherUrls(publicResearcherUrls);
+        mav.addObject("publicGroupedResearcherUrls", groupedResearcherUrls);
         
         //Fill emails
         Emails publicEmails = emailManager.getPublicEmails(orcid, lastModifiedTime);
-        mav.addObject("publicEmails", publicEmails);
+        Map<String, List<Email>> groupedEmails = groupEmails(publicEmails);
+        mav.addObject("publicGroupedEmails", groupedEmails);
         
         //Fill external identifiers
         PersonExternalIdentifiers publicPersonExternalIdentifiers = externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime);
-        mav.addObject("publicPersonExternalIdentifiers", publicPersonExternalIdentifiers);
+    	Map<String, List<PersonExternalIdentifier>> groupedExternalIdentifiers = groupExternalIdentifiers(publicPersonExternalIdentifiers);
+        mav.addObject("publicGroupedPersonExternalIdentifiers", groupedExternalIdentifiers);
                 
         LinkedHashMap<Long, WorkForm> minimizedWorksMap = new LinkedHashMap<>();
         LinkedHashMap<Long, Affiliation> affiliationMap = new LinkedHashMap<>();
@@ -403,7 +424,120 @@ public class PublicProfileController extends BaseWorkspaceController {
 
         return mav;
     }
-
+    
+    private Map<String, List<Keyword>> groupKeywords(Keywords keywords){
+    	if (keywords == null || keywords.getKeywords() == null){
+    		return null;
+    	}
+    	Map<String, List<Keyword>> groups = new TreeMap<String, List<Keyword>>();    	
+    	for (Keyword k : keywords.getKeywords()) {
+    		if (groups.containsKey(k.getContent())) {
+    			groups.get(k.getContent()).add(k);
+    		} else {
+    			List<Keyword> list = new ArrayList<Keyword>();
+    			list.add(k);
+    			groups.put(k.getContent(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    }
+    
+    private Map<String, List<Address>> groupAddresses(Addresses addresses){
+    	if (addresses == null || addresses.getAddress() == null){
+    		return null;
+    	}
+    	Map<String, List<Address>> groups = new TreeMap<String, List<Address>>();    	
+    	for (Address k : addresses.getAddress()) {
+    		if (groups.containsKey(k.getCountry().getValue().value())) {
+    			groups.get(k.getCountry().getValue().value()).add(k);
+    		} else {
+    			List<Address> list = new ArrayList<Address>();
+    			list.add(k);
+    			groups.put(k.getCountry().getValue().value(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    }
+    
+    private Map<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
+    	
+    	if (otherNames == null || otherNames.getOtherNames() == null){
+    		return null;
+    	}
+    	Map<String, List<OtherName>> groups = new TreeMap<String, List<OtherName>>();    	
+    	for (OtherName o : otherNames.getOtherNames()) {
+    		if (groups.containsKey(o.getContent())) {    			
+    			groups.get(o.getContent()).add(o);
+    		} else {
+    			List<OtherName> list = new ArrayList<OtherName>();
+    			list.add(o);
+    			groups.put(o.getContent(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    } 
+    
+    private Map<String, List<Email>> groupEmails(Emails emails){    	
+    	if (emails == null || emails.getEmails() == null){
+    		return null;
+    	}
+    	Map<String, List<Email>> groups = new TreeMap<String, List<Email>>();    	
+    	for (Email e : emails.getEmails()) {    		
+    		if (groups.containsKey(e.getEmail())) {
+    			groups.get(e.getEmail()).add(e);
+    		} else {
+    			List<Email> list = new ArrayList<Email>();
+    			list.add(e);
+    			groups.put(e.getEmail(), list);    			
+    		}
+    	}
+    	
+    	return groups;
+    }    
+    
+    private Map<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls){    	
+    	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
+    		return null;
+    	}    	
+    	Map<String, List<ResearcherUrl>> groups = new TreeMap<String, List<ResearcherUrl>>();    	
+    	for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {    		
+    		String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();    		
+    		if (groups.containsKey(urlValue)) {
+    			groups.get(urlValue).add(r);
+    		} else {
+    			List<ResearcherUrl> list = new ArrayList<ResearcherUrl>();
+    			list.add(r);
+    			groups.put(urlValue, list);
+    		}
+    	}    	
+    	return groups;
+    }
+    
+    
+    
+    
+    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers){
+    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
+    		return null;
+    	}    	
+    	Map<String, List<PersonExternalIdentifier>> groups = new TreeMap<String, List<PersonExternalIdentifier>>();    	
+    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifier()) {
+    		String pairKey = ei.getType() + ":" + ei.getValue();    		
+    		if (groups.containsKey(pairKey)) {
+    			groups.get(pairKey).add(ei);
+    		} else {
+    			List<PersonExternalIdentifier> list = new ArrayList<PersonExternalIdentifier>();
+    			list.add(ei);
+    			groups.put(pairKey, list);    			
+    		}
+    	}    	
+    	return groups;
+    }
+    
+    
     private boolean isProfileValidForIndex(ProfileEntity profile) {
         String orcid = profile.getId();
         if (orcid != null) {

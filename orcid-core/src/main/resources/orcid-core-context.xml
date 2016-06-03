@@ -20,18 +20,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jms="http://www.springframework.org/schema/jms"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd 
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.1.xsd">
+        
 
 	<import resource="classpath*:orcid-persistence-context.xml" />
 	<!-- Commenting out whilst the auditing is still being discussed -->
 	<!-- <import resource="classpath*:orcid-audit-context.xml" /> -->
 
 	<context:component-scan
-		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security" />
+		base-package="org.orcid.core.manager.impl, org.orcid.core.oauth.service, org.orcid.core.security, org.orcid.core.messaging" />
 	<aop:aspectj-autoproxy />
 	
     <context:mbean-server />
@@ -740,5 +743,7 @@
 	<bean id="v1xDisabled" class="java.lang.Boolean">
 		<constructor-arg value="${org.orcid.core.v1_x.disabled}"/>
 	</bean>
-
+	
+	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
+	
 </beans>

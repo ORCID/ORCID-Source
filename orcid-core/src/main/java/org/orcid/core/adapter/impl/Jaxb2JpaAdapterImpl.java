@@ -50,7 +50,6 @@ import org.orcid.core.utils.JsonUtils;
 import org.orcid.core.utils.Triplet;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
-import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Citation;
 import org.orcid.jaxb.model.message.CompletionDate;
@@ -59,9 +58,6 @@ import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.DelegateSummary;
-import org.orcid.jaxb.model.message.Delegation;
-import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -72,7 +68,6 @@ import org.orcid.jaxb.model.message.FundingList;
 import org.orcid.jaxb.model.message.FundingTitle;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.GivenNames;
-import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
@@ -111,14 +106,12 @@ import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
-import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.PublicationDateEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
@@ -128,7 +121,6 @@ import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.StartDateEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.util.Assert;
 
@@ -388,7 +380,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if (orcidBio != null) {
             setBiographyDetails(profileEntity, orcidBio.getBiography());
             setContactDetails(profileEntity, orcidBio.getContactDetails());
-            setDelegations(profileEntity, orcidBio.getDelegation());
             setExternalIdentifiers(profileEntity, orcidBio.getExternalIdentifiers());
             setKeywords(profileEntity, orcidBio.getKeywords());
             setPersonalDetails(profileEntity, orcidBio.getPersonalDetails());
@@ -818,10 +809,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         return triplet;
     }
 
-    private void setDelegations(ProfileEntity profileEntity, Delegation delegation) {
-        profileEntity.setGivenPermissionTo(getGivenPermissionsTo(profileEntity, delegation));
-    }
-
     private void setContactDetails(ProfileEntity profileEntity, ContactDetails contactDetails) {
         if (contactDetails != null) {
             setEmails(profileEntity, contactDetails);
@@ -844,17 +831,21 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             boolean addIt = true;
                                    
             //If the address exists, don't add it
+            Long biggestDisplayIndex = -1L;
             for(AddressEntity address : addresses) {
                 if(Objects.equals(country.value(), address.getIso2Country().value())) {
-                    addIt = false;
-                    break;
+                    addIt = false;                    
+                }
+                if(address.getDisplayIndex() > biggestDisplayIndex) {
+                    biggestDisplayIndex = address.getDisplayIndex();
                 }
             }            
             
             if(addIt) {
                 AddressEntity newAddress = new AddressEntity();
                 newAddress.setDateCreated(new Date());
-                newAddress.setDisplayIndex(-1L);
+                //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
+                newAddress.setDisplayIndex(biggestDisplayIndex + 1);
                 newAddress.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
                 newAddress.setLastModified(new Date());
                 newAddress.setUser(profileEntity);
@@ -862,12 +853,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 //Set source
                 SourceEntity source = sourceManager.retrieveSourceEntity();
                 setSource(source, newAddress);
-                
-                if(addresses.isEmpty()) {
-                    newAddress.setPrimary(true);
-                } else {
-                    newAddress.setPrimary(false);
-                }
                 addresses.add(newAddress);
             }                        
         }
@@ -1074,36 +1059,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             else
                 profileEntity.setLocale(Locale.EN);
         }
-    }
-
-    private Set<GivenPermissionToEntity> getGivenPermissionsTo(ProfileEntity profileEntity, Delegation delegation) {
-        if (delegation != null) {
-            GivenPermissionTo givenPermissionTo = delegation.getGivenPermissionTo();
-            if (givenPermissionTo != null && givenPermissionTo.getDelegationDetails() != null && !givenPermissionTo.getDelegationDetails().isEmpty()) {
-                Set<GivenPermissionToEntity> givenPermissionToEntities = new HashSet<GivenPermissionToEntity>();
-                for (DelegationDetails delegationDetails : givenPermissionTo.getDelegationDetails()) {
-                    GivenPermissionToEntity givenPermissionToEntity = new GivenPermissionToEntity();
-                    givenPermissionToEntity.setGiver(profileEntity.getId());
-                    DelegateSummary profileSummary = delegationDetails.getDelegateSummary();
-                    String delegateOrcid = profileSummary.getOrcidIdentifier().getPath();
-                    ProfileSummaryEntity profileSummaryEntity = new ProfileSummaryEntity(delegateOrcid);  
-                    Date lastModified = profileEntityManager.getLastModified(delegateOrcid);
-                    RecordNameEntity name = recordNameManager.getRecordName(delegateOrcid, (lastModified == null ? 0 : lastModified.getTime()));
-                    profileSummaryEntity.setRecordNameEntity(name);
-                    givenPermissionToEntity.setReceiver(profileSummaryEntity);
-                    ApprovalDate approvalDate = delegationDetails.getApprovalDate();
-                    if (approvalDate == null) {
-                        givenPermissionToEntity.setApprovalDate(new Date());
-                    } else {
-                        givenPermissionToEntity.setApprovalDate(DateUtils.convertToDate(approvalDate.getValue()));
-                    }
-                    givenPermissionToEntities.add(givenPermissionToEntity);
-                }
-                return givenPermissionToEntities;
-            }
-        }
-        return null;
-    }
+    }    
 
     @Override
     public OrgAffiliationRelationEntity getNewOrgAffiliationRelationEntity(Affiliation affiliation, ProfileEntity profileEntity) {

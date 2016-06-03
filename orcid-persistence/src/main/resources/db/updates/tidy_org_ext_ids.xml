@@ -1,0 +1,29 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="TIDY_ORG_EXT_IDS" author="Will Simpson" dbms="postgresql">
+        <sql>CREATE TEMP TABLE tmp_orgs_to_index AS (SELECT org_disambiguated_id FROM org_disambiguated_external_identifier WHERE org_disambiguated_id IN (SELECT id FROM org_disambiguated WHERE source_type = 'RINGGOLD') AND identifier_type = 'FUNDREF');</sql>
+        <sql>DELETE FROM org_disambiguated_external_identifier WHERE org_disambiguated_id IN (SELECT id FROM org_disambiguated WHERE source_type = 'RINGGOLD') AND identifier_type = 'FUNDREF';</sql>
+        <sql>UPDATE org_disambiguated set last_modified = now(), indexing_status = 'PENDING' where id in (SELECT org_disambiguated_id FROM tmp_orgs_to_index);</sql>
+        <sql>DROP TABLE IF EXISTS tmp_orgs_to_index;</sql>        
+    </changeSet>
+
+</databaseChangeLog>

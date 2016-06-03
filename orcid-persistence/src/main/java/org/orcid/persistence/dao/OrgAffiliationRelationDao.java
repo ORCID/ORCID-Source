@@ -39,7 +39,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
     /**
      * Updates the visibility of an existing profile affiliation relationship
      * 
-     * @param clientOrcid
+     * @param userOrcid
      *            The client orcid
      * 
      * @param orgAffiliationRelationId
@@ -50,7 +50,7 @@ public interface OrgAffiliationRelationDao extends GenericDao<OrgAffiliationRela
      * 
      * @return true if the relationship was updated
      * */
-    boolean updateVisibilityOnOrgAffiliationRelation(String clientOrcid, Long orgAffiliationRelationId, Visibility visibility);
+    boolean updateVisibilityOnOrgAffiliationRelation(String userOrcid, Long orgAffiliationRelationId, Visibility visibility);
 
     /**
      * Get the affiliation associated with the client orcid and the orgAffiliationRelationId

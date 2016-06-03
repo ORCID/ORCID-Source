@@ -843,7 +843,6 @@ public class ManageProfileController extends BaseWorkspaceController {
         if(form.getAddresses().isEmpty()) {
             AddressForm address = new AddressForm();
             address.setDisplayIndex(0L);
-            address.setPrimary(true);
             address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
             form.getAddresses().add(address);
         }                
@@ -855,24 +854,16 @@ public class ManageProfileController extends BaseWorkspaceController {
     public @ResponseBody AddressesForm setProfileCountryJson(HttpServletRequest request, @RequestBody AddressesForm addressesForm) throws NoSuchRequestHandlingMethodException {
         addressesForm.setErrors(new ArrayList<String>());
         Map<String, String> countries = retrieveIsoCountries();
-        boolean foundPrimary = false;
         if(addressesForm != null) {
             if(addressesForm.getAddresses() != null) {
                 for(AddressForm form : addressesForm.getAddresses()) {
-                    if(form.getPrimary()) {
-                        foundPrimary = true;
-                    }
                     if(form.getIso2Country() == null || form.getIso2Country().getValue() == null) {
                         form.getErrors().add(getMessage("common.invalid_country"));
                     } else {
                         form.setCountryName(countries.get(form.getIso2Country().getValue().name()));
-                    }
-                                                                                
+                    }                                                                               
                     copyErrors(form, addressesForm);
-                } 
-                if(!addressesForm.getAddresses().isEmpty() && !foundPrimary) {
-                    addressesForm.getErrors().add(getMessage("common.set_primary_email"));
-                }
+                }                 
             }
 
             if(!addressesForm.getErrors().isEmpty()) {

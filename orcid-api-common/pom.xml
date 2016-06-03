@@ -63,6 +63,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
         </dependency>
+        <!-- http://mvnrepository.com/artifact/com.sun.jersey/jersey-server -->
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-spring</artifactId>
@@ -100,7 +106,7 @@
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-jersey-jaxrs</artifactId>
-			<version>1.5.0</version>
+                        <version>${swagger.version}</version>
 		</dependency>
 
 		<!-- citeproc support -->

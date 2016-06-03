@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +45,11 @@ import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -102,7 +103,8 @@ public class PublicProfileControllerTest extends DBUnitTest {
         removeDBUnitData(DATA_FILES);
     }
     
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testViewValidUser() {
         ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, userOrcid);
         assertEquals("public_profile_v3", mav.getViewName());
@@ -122,53 +124,74 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertTrue(model.containsKey("title"));
         assertEquals(localeManager.resolveMessage("layout.public-layout.title", displayName, userOrcid), model.get("title"));
         
-        assertTrue(model.containsKey("publicOtherNames"));
-        OtherNames otherNames = (OtherNames) model.get("publicOtherNames");
-        assertNotNull(otherNames.getOtherNames());
-        assertEquals(1, otherNames.getOtherNames().size());
-        assertEquals(Long.valueOf(13), otherNames.getOtherNames().get(0).getPutCode());
-        assertEquals("Other Name PUBLIC", otherNames.getOtherNames().get(0).getContent());
-        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedOtherNames"));
+        Map<String, List<OtherName>> groupedOtherNames = (Map<String, List<OtherName>>) model.get("publicGroupedOtherNames");
+        assertNotNull(groupedOtherNames);        
+        assertEquals(1, groupedOtherNames.keySet().size());
+        assertTrue(groupedOtherNames.containsKey("Other Name PUBLIC"));
+        List<OtherName> publicOtherNames = groupedOtherNames.get("Other Name PUBLIC");
+        assertEquals(1, publicOtherNames.size());       
+        assertEquals(Long.valueOf(13), publicOtherNames.get(0).getPutCode());
+        assertEquals("Other Name PUBLIC", publicOtherNames.get(0).getContent());
+        assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());        
+              
+        assertTrue(model.containsKey("publicGroupedAddresses"));
+        Map<String, List<Address>> groupedAddresses = (Map<String, List<Address>>) model.get("publicGroupedAddresses");        
+        assertNotNull(groupedAddresses);
+        assertEquals(1, groupedAddresses.keySet().size());
+        assertTrue(groupedAddresses.containsKey("US"));
+        List<Address> publicAddresses = groupedAddresses.get("US");
+        assertEquals(1, publicAddresses.size());
+        assertEquals(Long.valueOf(9), publicAddresses.get(0).getPutCode());
+        assertEquals(Iso3166Country.US, publicAddresses.get(0).getCountry().getValue());         
+        assertEquals(Visibility.PUBLIC, publicAddresses.get(0).getVisibility());
         
-        assertTrue(model.containsKey("publicAddresses"));
-        Address address = (Address) model.get("publicAddresses");
-        assertEquals(Long.valueOf(9), address.getPutCode());
-        assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, address.getVisibility());
+        assertTrue(model.containsKey("countryNames"));
+        Map<String, String> countryNames =  (Map<String, String>) model.get("countryNames");
+        Map<String, String> testCountry = new HashMap<String, String>();
+        testCountry.put("US", localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"));        
+        assertEquals(testCountry, countryNames);
         
-        assertTrue(model.containsKey("countryName"));
-        assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
+        assertTrue(model.containsKey("publicGroupedKeywords"));
+        Map<String, List<Keyword>> groupedKeywords = (Map<String, List<Keyword>>) model.get("publicGroupedKeywords");
+        assertNotNull(groupedKeywords);        
+        assertEquals(1, groupedKeywords.keySet().size());
+        assertTrue(groupedKeywords.containsKey("PUBLIC"));
+		List<Keyword> publicKeywords = groupedKeywords.get("PUBLIC");
+        assertEquals(1, publicKeywords.size());       
+        assertEquals(Long.valueOf(9), publicKeywords.get(0).getPutCode());
+        assertEquals("PUBLIC", publicKeywords.get(0).getContent());
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());  
         
-        assertTrue(model.containsKey("publicKeywords"));
-        Keywords keywords = (Keywords) model.get("publicKeywords");
-        assertNotNull(keywords.getKeywords());        
-        assertEquals(1, keywords.getKeywords().size());
-        assertEquals(Long.valueOf(9), keywords.getKeywords().get(0).getPutCode());
-        assertEquals("PUBLIC", keywords.getKeywords().get(0).getContent());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());        
         
-        assertTrue(model.containsKey("publicResearcherUrls"));
-        ResearcherUrls rUrls = (ResearcherUrls) model.get("publicResearcherUrls");
-        assertNotNull(rUrls.getResearcherUrls());
-        assertEquals(1, rUrls.getResearcherUrls().size());
-        assertEquals(Long.valueOf(13), rUrls.getResearcherUrls().get(0).getPutCode());
-        assertEquals("public_rurl", rUrls.getResearcherUrls().get(0).getUrlName());
-        assertEquals(Visibility.PUBLIC, rUrls.getResearcherUrls().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedResearcherUrls"));
+        Map<String, List<ResearcherUrl>> rUrls = (Map<String, List<ResearcherUrl>>) model.get("publicGroupedResearcherUrls");        
+        assertNotNull(rUrls);
+        assertEquals(1, rUrls.keySet().size());
+        assertTrue(rUrls.containsKey("http://www.researcherurl.com?id=13"));
+        List<ResearcherUrl> publicResearchUrls = rUrls.get("http://www.researcherurl.com?id=13");
+        assertEquals(Long.valueOf(13), publicResearchUrls.get(0).getPutCode());
+        assertEquals("public_rurl", publicResearchUrls.get(0).getUrlName());
+        assertEquals(Visibility.PUBLIC, publicResearchUrls.get(0).getVisibility());
         
-        assertTrue(model.containsKey("publicEmails"));
-        Emails emails = (Emails) model.get("publicEmails");
-        assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());        
-        assertEquals("public_0000-0000-0000-0003@test.orcid.org", emails.getEmails().get(0).getEmail());
-        assertEquals(Visibility.PUBLIC, emails.getEmails().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedEmails"));
+        Map<String, List<Email>> emails = ( Map<String, List<Email>>) model.get("publicGroupedEmails");        
+        assertNotNull(emails);
+        assertEquals(1, emails.keySet().size());
+        assertTrue(emails.containsKey("public_0000-0000-0000-0003@test.orcid.org"));        
+        List<Email> publicEmails = emails.get("public_0000-0000-0000-0003@test.orcid.org");
+        assertEquals("public_0000-0000-0000-0003@test.orcid.org", publicEmails.get(0).getEmail());
+        assertEquals(Visibility.PUBLIC, publicEmails.get(0).getVisibility());
         
-        assertTrue(model.containsKey("publicPersonExternalIdentifiers"));
-        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) model.get("publicPersonExternalIdentifiers");
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifier().get(0).getPutCode());
-        assertEquals("http://ext-id/public_ref", extIds.getExternalIdentifier().get(0).getUrl().getValue());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedPersonExternalIdentifiers"));
+        Map<String, List<PersonExternalIdentifier>> extIds = (Map<String, List<PersonExternalIdentifier>>) model.get("publicGroupedPersonExternalIdentifiers");        
+        assertNotNull(extIds);
+        assertEquals(1, extIds.keySet().size());
+        assertTrue(extIds.containsKey("public_type:public_ref"));
+        List<PersonExternalIdentifier> publicExternalIdentifiers = extIds.get("public_type:public_ref");        
+        assertEquals(Long.valueOf(13), publicExternalIdentifiers.get(0).getPutCode());
+        assertEquals("http://ext-id/public_ref", publicExternalIdentifiers.get(0).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());
         
         assertTrue(model.containsKey("workIdsJson"));
         assertEquals("[11]", model.get("workIdsJson"));
@@ -241,53 +264,65 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertFalse(model.containsKey("displayName"));        
         assertFalse(model.containsKey("title"));
         
-        assertTrue(model.containsKey("publicOtherNames"));
-        OtherNames otherNames = (OtherNames) model.get("publicOtherNames");
-        assertNotNull(otherNames.getOtherNames());
-        assertEquals(1, otherNames.getOtherNames().size());
-        assertEquals(Long.valueOf(18), otherNames.getOtherNames().get(0).getPutCode());
-        assertEquals("PUBLIC", otherNames.getOtherNames().get(0).getContent());
-        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedOtherNames"));        
+		Map<String, List<OtherName>> groupedOtherNames = (Map<String, List<OtherName>>) model.get("publicGroupedOtherNames");
+        assertNotNull(groupedOtherNames);
+        assertEquals(1, groupedOtherNames.keySet().size());
+        List<OtherName> publicOtherNames = groupedOtherNames.get("PUBLIC");
+        assertEquals(1, publicOtherNames.size());
+        assertEquals(Long.valueOf(18), publicOtherNames.get(0).getPutCode());
+        assertEquals("PUBLIC", publicOtherNames.get(0).getContent());
+        assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());        
         
-        assertTrue(model.containsKey("publicAddresses"));
-        Address address = (Address) model.get("publicAddresses");
-        assertEquals(Long.valueOf(14), address.getPutCode());
-        assertEquals(Iso3166Country.US, address.getCountry().getValue());
-        assertEquals(Visibility.PUBLIC, address.getVisibility());
         
-        assertTrue(model.containsKey("countryName"));
-        assertEquals(localeManager.resolveMessage("org.orcid.persistence.jpa.entities.CountryIsoEntity.US"), model.get("countryName"));
+        assertTrue(model.containsKey("publicGroupedAddresses"));
+        Map<String, List<Address>> groupedAddresses = (Map<String, List<Address>>) model.get("publicGroupedAddresses");        
+        assertNotNull(groupedAddresses);
+        assertEquals(1, groupedAddresses.keySet().size());
+        assertTrue(groupedAddresses.containsKey("US"));
+        List<Address> publicAddresses = groupedAddresses.get("US");
+        assertEquals(1, publicAddresses.size());
+        assertEquals(Long.valueOf(14), publicAddresses.get(0).getPutCode());
+        assertEquals(Iso3166Country.US, publicAddresses.get(0).getCountry().getValue());         
+        assertEquals(Visibility.PUBLIC, publicAddresses.get(0).getVisibility());
         
-        assertTrue(model.containsKey("publicKeywords"));
-        Keywords keywords = (Keywords) model.get("publicKeywords");
-        assertNotNull(keywords.getKeywords());        
-        assertEquals(1, keywords.getKeywords().size());
-        assertEquals(Long.valueOf(14), keywords.getKeywords().get(0).getPutCode());
-        assertEquals("PUBLIC", keywords.getKeywords().get(0).getContent());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());        
+        assertTrue(model.containsKey("publicGroupedKeywords"));
+        Map<String, List<Keyword>> groupedKeywords = (Map<String, List<Keyword>>) model.get("publicGroupedKeywords");
+        assertNotNull(groupedKeywords);        
+        assertEquals(1, groupedKeywords.keySet().size());
+        List<Keyword> publicKeywords = groupedKeywords.get("PUBLIC");
+        assertEquals(Long.valueOf(14), publicKeywords.get(0).getPutCode());
+        assertEquals("PUBLIC", publicKeywords.get(0).getContent());
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());
         
-        assertTrue(model.containsKey("publicResearcherUrls"));
-        ResearcherUrls rUrls = (ResearcherUrls) model.get("publicResearcherUrls");
-        assertNotNull(rUrls.getResearcherUrls());
-        assertEquals(1, rUrls.getResearcherUrls().size());
-        assertEquals(Long.valueOf(18), rUrls.getResearcherUrls().get(0).getPutCode());
-        assertEquals("public", rUrls.getResearcherUrls().get(0).getUrlName());
-        assertEquals(Visibility.PUBLIC, rUrls.getResearcherUrls().get(0).getVisibility());
         
-        assertTrue(model.containsKey("publicEmails"));
-        Emails emails = (Emails) model.get("publicEmails");
-        assertNotNull(emails.getEmails());
-        assertEquals(1, emails.getEmails().size());        
-        assertEquals("public_0000-0000-0000-0001@test.orcid.org", emails.getEmails().get(0).getEmail());
-        assertEquals(Visibility.PUBLIC, emails.getEmails().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedResearcherUrls"));
+        Map<String, List<ResearcherUrl>> rUrls = ( Map<String, List<ResearcherUrl>>) model.get("publicGroupedResearcherUrls");
+        assertNotNull(rUrls);
+        assertEquals(1, rUrls.keySet().size());
+        assertTrue(rUrls.containsKey("http://www.researcherurl.com?id=18"));
+        List<ResearcherUrl> publicResearchUrls = rUrls.get("http://www.researcherurl.com?id=18");        
+        assertEquals(Long.valueOf(18), publicResearchUrls.get(0).getPutCode());
+        assertEquals("public", publicResearchUrls.get(0).getUrlName());
+        assertEquals(Visibility.PUBLIC, publicResearchUrls.get(0).getVisibility());        
         
-        assertTrue(model.containsKey("publicPersonExternalIdentifiers"));
-        PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) model.get("publicPersonExternalIdentifiers");
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(18), extIds.getExternalIdentifier().get(0).getPutCode());
-        assertEquals("http://ext-id/self/public", extIds.getExternalIdentifier().get(0).getUrl().getValue());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+        assertTrue(model.containsKey("publicGroupedEmails"));
+        Map<String, List<Email>> emails = (Map<String, List<Email>>) model.get("publicGroupedEmails");
+        assertNotNull(emails);
+        assertEquals(1, emails.keySet().size());
+        List<Email> groupedEmails = emails.get("public_0000-0000-0000-0001@test.orcid.org");        
+        assertEquals("public_0000-0000-0000-0001@test.orcid.org", groupedEmails.get(0).getEmail());
+        assertEquals(Visibility.PUBLIC, groupedEmails.get(0).getVisibility());
+        
+        assertTrue(model.containsKey("publicGroupedPersonExternalIdentifiers"));
+        Map<String, List<PersonExternalIdentifier>> extIds = (Map<String, List<PersonExternalIdentifier>>) model.get("publicGroupedPersonExternalIdentifiers");        
+        assertNotNull(extIds);        
+        assertEquals(1, extIds.keySet().size());
+        assertTrue(extIds.containsKey("public:public"));
+        List<PersonExternalIdentifier> publicExternalIdentifiers = extIds.get("public:public");
+        assertEquals(Long.valueOf(18), publicExternalIdentifiers.get(0).getPutCode());        
+        assertEquals("http://ext-id/self/public", publicExternalIdentifiers.get(0).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, publicExternalIdentifiers.get(0).getVisibility());
         
         assertTrue(model.containsKey("isProfileEmpty"));
         Boolean isProfileEmpty = (Boolean) model.get("isProfileEmpty");

@@ -6532,13 +6532,17 @@ a:hover .mozilla-badge{
 	left: 56px;
 }
 
-
 .form-social-sign-in h2{
     margin-bottom: 35px;
 }
 .form-social-sign-in hr{
 	margin-top: 5px;
 }
+
+.edit-external-identifiers .aka p{
+	margin-bottom: 0;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

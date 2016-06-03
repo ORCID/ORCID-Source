@@ -24,6 +24,7 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.PutCodeRequiredException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -82,10 +83,7 @@ public class PersonValidator {
         }
         
         //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
-            Visibility updatedVisibility = researcherUrl.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
+        validateAndFixVisibility(researcherUrl, createFlag, isApiRequest, originalVisibility);
     }
     
     public static void validateOtherName(OtherName otherName, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
@@ -105,10 +103,7 @@ public class PersonValidator {
         }
         
         //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
-            Visibility updatedVisibility = otherName.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
+        validateAndFixVisibility(otherName, createFlag, isApiRequest, originalVisibility);
     }
     
     public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
@@ -167,10 +162,7 @@ public class PersonValidator {
         }
         
         //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
-            Visibility updatedVisibility = externalIdentifier.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }        
+        validateAndFixVisibility(externalIdentifier, createFlag, isApiRequest, originalVisibility);        
     }
     
     public static void validateKeyword(Keyword keyword, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
@@ -196,10 +188,7 @@ public class PersonValidator {
         }
         
         //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
-            Visibility updatedVisibility = keyword.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
+        validateAndFixVisibility(keyword, createFlag, isApiRequest, originalVisibility);
     }
     
     public static void validateAddress(Address address, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
@@ -222,21 +211,42 @@ public class PersonValidator {
             String message = "Country cannot be null";
             LOGGER.error(message);
             throw new OrcidValidationException(message);
-        }
-        
-        if(address.getVisibility() == null) {
-            String message = "Visibility cannot be null";
-            LOGGER.error(message);
-            throw new OrcidValidationException(message);
-        }
+        }                
         
         //Check that we are not changing the visibility
-        if(isApiRequest && !createFlag) {
-            Visibility updatedVisibility = address.getVisibility();
-            validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
-        }
+        validateAndFixVisibility(address, createFlag, isApiRequest, originalVisibility);
     }
 
+    /**
+     * Validates the the incoming request doesn't change the visibility of an
+     * updated element. It also checks if the incoming visibility is null and
+     * fix it to the original visibility. This method will be executed only in
+     * the case that is not a new element (createFlag is false) and is an api
+     * request (isApiRequest is true)
+     * 
+     * @param element
+     * @param createFlag
+     * @param isApiRequest
+     * @param originalVisibility
+     * 
+     */
+    private static void validateAndFixVisibility(VisibilityType element, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+        if (isApiRequest && !createFlag) {
+            Visibility updatedVisibility = element.getVisibility();
+            if (updatedVisibility == null) {
+                element.setVisibility(originalVisibility);
+            } else {
+                validateVisibilityDoesntChange(updatedVisibility, originalVisibility);
+            }
+        }
+    }
+    
+    /**
+     * Throws an exception if the updatedVisibility is different than the original visibility
+     * 
+     * @param updatedVisibility
+     * @param originalVisibility
+     * */    
     private static void validateVisibilityDoesntChange(Visibility updatedVisibility, Visibility originalVisibility) {
         if(updatedVisibility != null) {
             if(originalVisibility == null) {

@@ -103,14 +103,19 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
             messagePojo.setWorkExternalIdentifierType(WorkExternalIdentifierType.OTHER_ID);
         }
         messagePojo.setWorkExternalIdentifierId(new org.orcid.jaxb.model.message.WorkExternalIdentifierId());
-        messagePojo.getWorkExternalIdentifierId().setContent(this.getWorkExternalIdentifierId().content);
+        if (this.getWorkExternalIdentifierId() != null)
+            messagePojo.getWorkExternalIdentifierId().setContent(this.getWorkExternalIdentifierId().content);
         return messagePojo;
     }
 
     public ExternalID toRecordPojo() {
         ExternalID id = new ExternalID();
-        id.setType(conv.convertFrom(this.getWorkExternalIdentifierType(), null));
-        id.setValue(this.getWorkExternalIdentifierId().content);
+        if (this.getWorkExternalIdentifierType() == null)
+            id.setType(WorkExternalIdentifierType.OTHER_ID.value());
+        else
+            id.setType(conv.convertFrom(this.getWorkExternalIdentifierType(), null));
+        if (this.getWorkExternalIdentifierId() != null)
+            id.setValue(this.getWorkExternalIdentifierId().content);
         if (this.url != null)
             id.setUrl(new org.orcid.jaxb.model.common_rc2.Url(this.getUrl().value));
         if (this.getRelationship() != null)

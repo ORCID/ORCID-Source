@@ -31,6 +31,7 @@ import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -42,7 +43,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "type", "value", "url", "relationship" })
 @XmlRootElement(name = "external-identifier", namespace = "http://www.orcid.org/ns/external-identifier")
-public class PersonExternalIdentifier implements Serializable, Filterable {
+public class PersonExternalIdentifier implements VisibilityType, Serializable, Filterable {
     private static final long serialVersionUID = 8340033850223164314L;
     
     @XmlElement(name = "external-id-type", namespace = "http://www.orcid.org/ns/common", required = true)

@@ -937,18 +937,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 .getSendEmailFrequencyDays());
         profileDao.updatePreferences(orcid, sendChangeNotifications, sendAdministrativeChangeNotifications, sendOrcidNews, sendMemberUpdateRequests,
                 activitiesVisibilityDefault, developerToolsEnabled, sendEmailFrequencyDays);
-        OrcidProfile cachedProfile = orcidProfileCacheManager.retrieve(orcid);
-        if (cachedProfile != null) {
-            profileDao.flush();
-            Preferences cachedPreferences = cachedProfile.getOrcidInternal().getPreferences();
-            cachedPreferences.setSendChangeNotifications(new SendChangeNotifications(sendChangeNotifications));
-            cachedPreferences.setSendAdministrativeChangeNotifications(new SendAdministrativeChangeNotifications(sendAdministrativeChangeNotifications));
-            cachedPreferences.setSendOrcidNews(new SendOrcidNews(sendOrcidNews));
-            cachedPreferences.setActivitiesVisibilityDefault(new ActivitiesVisibilityDefault(activitiesVisibilityDefault));
-            cachedPreferences.setDeveloperToolsEnabled(new DeveloperToolsEnabled(developerToolsEnabled));
-            cachedPreferences.setSendEmailFrequencyDays(preferences.getSendEmailFrequencyDays());
-            orcidProfileCacheManager.put(cachedProfile);
-        }
     }
 
     @Override
