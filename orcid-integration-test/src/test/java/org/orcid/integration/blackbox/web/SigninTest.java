@@ -87,8 +87,8 @@ public class SigninTest {
 
 	// Make this available to other classes
     static public void signIn(WebDriver webDriver, String username, String password) {  
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
         BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
         BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);

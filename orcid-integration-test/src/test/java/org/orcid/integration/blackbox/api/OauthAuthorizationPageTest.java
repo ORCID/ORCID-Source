@@ -120,10 +120,11 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
         WebElement userIdElement = webDriver.findElement(userIdElementLocator);
         userIdElement.sendKeys(this.getUser1UserName());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(this.getUser1Password());
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        BlackBoxBase.ngAwareClick( webDriver.findElement(By.id("login-authorize-button")), webDriver);
 
         (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
@@ -177,6 +178,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void skipAuthorizationScreenIfTokenAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
+        logUserOut();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
@@ -230,6 +232,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
         // First get the authorization code
+        logUserOut();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.FUNDING_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());

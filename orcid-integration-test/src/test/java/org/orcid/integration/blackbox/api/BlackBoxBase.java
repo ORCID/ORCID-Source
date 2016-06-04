@@ -282,8 +282,11 @@ public class BlackBoxBase {
         
         
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
         webDriver.get(baseUrl + "/my-orcid");
-        
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+               
         SigninTest.signIn(webDriver, userName, password);
 
         // Switch to accounts settings page
@@ -325,7 +328,7 @@ public class BlackBoxBase {
         } catch (Exception e){
             // If it fail is because it couldnt find any other application
         } finally {
-            webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+            BlackBoxBase.logUserOut(baseUrl, webDriver);
         }
     }
 
@@ -367,7 +370,6 @@ public class BlackBoxBase {
         actions.moveToElement(webElement).perform();
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         actions.click(webElement).perform();
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
     }
     
     static public void noSpinners(WebDriver webDriver) {
@@ -388,7 +390,6 @@ public class BlackBoxBase {
             .until(expectedCondition);
         } catch (Exception e) {
             ((JavascriptExecutor)webDriver).executeScript("$(window).trigger('resize');");
-            extremeWaitFor(angularHasFinishedProcessing(), webDriver);
             (new WebDriverWait(webDriver, wait, pollingInternval))
             .until(expectedCondition);            
         }        
@@ -417,7 +418,6 @@ public class BlackBoxBase {
                 ((JavascriptExecutor) driver).executeScript(""
                         + "window._selenium_angular_done = false;"
                         + "function _seleniumAngularDone() { "
-                        + "   if (angular === undefined) return;"
                         + "   angular.element(document.documentElement).scope().$root.$apply("
                         + "      function(){"
                         + "        setTimeout(function(){ "
@@ -428,7 +428,7 @@ public class BlackBoxBase {
                         + "         }, 0);"
                         + "   });"
                         + "};"
-                        + "_seleniumAngularDone();");
+                        + "try { _seleniumAngularDone(); } catch(err) { /* do nothing */ }");
                 return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(""
                         + "return window._selenium_angular_done;").toString());
             }
