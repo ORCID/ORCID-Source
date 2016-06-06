@@ -204,4 +204,5 @@
     <include file="/db/updates/identifier-type-fixed.xml" />
     <include file="/db/updates/clean-duplicated-delegates.xml" />
     <include file="/db/updates/tidy_org_ext_ids.xml" />
+    <include file="/db/updates/insitutional_sign_in_round_trip.xml" />
 </databaseChangeLog>
