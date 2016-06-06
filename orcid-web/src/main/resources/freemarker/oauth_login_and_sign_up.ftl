@@ -85,7 +85,7 @@
 										</a>
 									</div>
 									<div class="col-md-6">				                                		            		               					
-										<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+										<button class="btn btn-primary pull-right" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
 											<@orcid.msg 'confirm-oauth-access.Authorize' />
 										</button>
 									</div>
@@ -306,7 +306,7 @@
 									</div>
 									<div class="row">
 										<div class="col-md-6">
-											<button id="authorize-button" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
+											<button id="register-authorize-button" class="btn btn-primary pull-right" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="registerAndAuthorize()">
 												<@orcid.msg 'confirm-oauth-access.Authorize' />
 											</button>
 										</div>
@@ -360,7 +360,7 @@
 		    	</div>
 		    	<div class="row">
 	                <div class="col-md-12">                		            		               					
-						<button class="btn btn-primary pull-right" id="authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
+						<button class="btn btn-primary pull-right" id="login-authorize-button" name="authorize" value="<@orcid.msg 'confirm-oauth-access.Authorize'/>" ng-click="loginAndAuthorize()">
 							<@orcid.msg 'confirm-oauth-access.Authorize' />
 						</button>
 						<a class="oauth_deny_link pull-right" name="deny" value="<@orcid.msg 'confirm-oauth-access.Deny'/>" ng-click="loginAndDeny()">

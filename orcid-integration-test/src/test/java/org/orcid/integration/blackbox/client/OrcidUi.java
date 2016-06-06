@@ -43,20 +43,12 @@ public class OrcidUi {
         this.utils = new Utils(webDriver);
     }
 
-    public SigninPage getSigninPage() {
-        return new SigninPage(baseUri, webDriver);
-    }
-
     public AccountSettingsPage getAccountSettingsPage() {
         return new AccountSettingsPage(baseUri, webDriver);
     }
 
     public AccountSwitcherSection getAccountSwitcherSection() {
         return new AccountSwitcherSection();
-    }
-
-    public void quit() {
-        webDriver.quit();
     }
 
     public class AccountSwitcherSection {

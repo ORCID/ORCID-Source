@@ -27,8 +27,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
@@ -40,7 +38,7 @@ import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.client.OrcidUi.AccountSwitcherSection;
 import org.orcid.integration.blackbox.client.OrcidUi.AccountToSwitchTo;
-import org.orcid.integration.blackbox.client.SigninPage;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -51,47 +49,27 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-web-context.xml" })
-public class AccountSettingsTest {
-
-    private WebDriver webDriver;
+@ContextConfiguration(locations = { "classpath:test-web-context.xml", "classpath:test-memberV2-context.xml" })
+public class AccountSettingsTest extends BlackBoxBase {
     private OrcidUi orcidUi;
-
-    @Value("${org.orcid.web.baseUri}")
-    public String baseUri;
-
-    // User 1
-    @Value("${org.orcid.web.testUser1.username}")
-    public String user1UserName;
-    @Value("${org.orcid.web.testUser1.password}")
-    public String user1Password;
-    @Value("${org.orcid.web.testUser1.orcidId}")
-    public String user1OrcidId;
-
-    // User 2
-    @Value("${org.orcid.web.testUser2.username}")
-    public String user2UserName;
-    @Value("${org.orcid.web.testUser2.password}")
-    public String user2Password;
-    @Value("${org.orcid.web.testUser2.orcidId}")
-    public String user2OrcidId;
 
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
-        orcidUi = new OrcidUi(baseUri, webDriver);
+        orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
     }
 
     @After
     public void after() {
-        orcidUi.quit();
     }
 
     @Test
     public void emailsTest() {
-        SigninPage signinPage = orcidUi.getSigninPage();
-        signinPage.visit();
-        signinPage.signIn(user1UserName, user1Password);
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
         BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
@@ -115,10 +93,12 @@ public class AccountSettingsTest {
 
     @Test
     public void emailsTestAsDelegate() {
-        // User 1 is going to make user 2 a delegate
-        SigninPage signinPage = orcidUi.getSigninPage();
-        signinPage.visit();
-        signinPage.signIn(user1UserName, user1Password);
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
@@ -126,31 +106,34 @@ public class AccountSettingsTest {
         DelegatesSection delegatesSection = accountSettingsPage.getDelegatesSection();
         // If user 2 is already a delegate, then delete and add again - just to
         // make sure we can!
-        Optional<Delegate> existingDelegate = delegatesSection.getDelegates().stream().filter(e -> e.getDelegateId().equals(user2OrcidId)).findFirst();
+        Optional<Delegate> existingDelegate = delegatesSection.getDelegates().stream().filter(e -> e.getDelegateId().equals(getUser2OrcidId())).findFirst();
         if (existingDelegate.isPresent()) {
             existingDelegate.get().revoke();
         }
-        delegatesSection.searchForDelegate(user2OrcidId);
-        DelegateSearchResult delegateSearchResult = delegatesSection.getDelegateSearchResults().stream().filter(e -> e.getDelegateId().equals(user2OrcidId)).findFirst()
+        delegatesSection.searchForDelegate(getUser2OrcidId());
+        DelegateSearchResult delegateSearchResult = delegatesSection.getDelegateSearchResults().stream().filter(e -> e.getDelegateId().equals(getUser2OrcidId())).findFirst()
                 .get();
         assertNotNull(delegateSearchResult);
         delegateSearchResult.add();
-        Delegate addedDelegate = delegatesSection.getDelegates().stream().filter(e -> e.getDelegateId().equals(user2OrcidId)).findFirst().get();
+        Delegate addedDelegate = delegatesSection.getDelegates().stream().filter(e -> e.getDelegateId().equals(getUser2OrcidId())).findFirst().get();
         assertNotNull(addedDelegate);
         // Now sign in as user 2
-        signinPage.visit();
-        signinPage.signIn(user2UserName, user2Password);
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        SigninTest.signIn(webDriver, getUser2UserName(), getUser2Password());
         // And switch to user 1 in delegation mode
         AccountSwitcherSection accountSwitcherSection = orcidUi.getAccountSwitcherSection();
         accountSwitcherSection.open();
-        AccountToSwitchTo accountToSwitchTo = accountSwitcherSection.getAccountsToSwitchTo().stream().filter(e -> e.getAccountId().equals(user1OrcidId)).findFirst()
+        AccountToSwitchTo accountToSwitchTo = accountSwitcherSection.getAccountsToSwitchTo().stream().filter(e -> e.getAccountId().equals(getUser1OrcidId())).findFirst()
                 .get();
         assertNotNull(accountToSwitchTo);
         accountToSwitchTo.switchTo();
         // Got to account settings page as delegate
         accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
         // Check that add email section is not there
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();

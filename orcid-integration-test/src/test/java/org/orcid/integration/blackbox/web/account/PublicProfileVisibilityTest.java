@@ -35,19 +35,18 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ById;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.integration.blackbox.client.OrcidUi;
-import org.orcid.integration.blackbox.client.SigninPage;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
@@ -66,13 +65,10 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
-    private WebDriver webDriver;
     private OrcidUi orcidUi;
 
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
-        // webDriver.manage().window().maximize();
         orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
         signin();
     }
@@ -80,7 +76,6 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @After
     public void after() {
         signout();
-        orcidUi.quit();
     }
 
     @Test
@@ -689,7 +684,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         }
         ngAwareClick(webDriver.findElement(By.id("save-new-work")), webDriver);
         noSpinners(webDriver);
-        
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+
         // Set private
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
@@ -793,9 +789,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     }
 
     private void signin() {
-        SigninPage signinPage = orcidUi.getSigninPage();
-        signinPage.visit();
-        signinPage.signIn(getUser1UserName(), getUser1Password());
+        webDriver.get(getWebBaseUrl() + "/signin");
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
     }
 
     private void signout() {

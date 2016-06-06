@@ -39,8 +39,8 @@ public class OauthAuthorizationPageHelper {
         
         formattedAuthorizationScreen += "#show_login";
         webDriver.get(formattedAuthorizationScreen);
-        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         
         loginOnOauthorizationScreen(webDriver, userId, password);
@@ -69,12 +69,15 @@ public class OauthAuthorizationPageHelper {
     public static void loginOnOauthorizationScreen(final WebDriver webDriver, String userId, String password) {
         By userIdElementLocator = By.id("userId");
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         WebElement userIdElement = webDriver.findElement(userIdElementLocator);
         userIdElement.sendKeys(userId);
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(password);
-        WebElement submitButton = webDriver.findElement(By.id("authorize-button"));
-        submitButton.click();
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        BlackBoxBase.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
 
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {

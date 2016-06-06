@@ -23,6 +23,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 
 import com.google.common.base.Predicate;
 
@@ -47,6 +48,8 @@ public class AccountSettingsPage {
 
     public void visit() {
         webDriver.get(baseUri + "/account");
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(), webDriver);
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
     }
 
     public EmailsSection getEmailsSection() {
@@ -66,7 +69,8 @@ public class AccountSettingsPage {
     public class EmailsSection {
 
         public void toggleEdit() {
-            xpath.click("//a[@ng-click='toggleEmailEdit()']");
+            BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@ng-click='toggleEmailEdit()']")), webDriver);
+            BlackBoxBase.ngAwareClick(webDriver.findElement(By.xpath("//a[@ng-click='toggleEmailEdit()']")), webDriver);
         }
 
         public List<Email> getEmails() {
@@ -75,6 +79,7 @@ public class AccountSettingsPage {
         }
 
         public boolean canAddEmail() {
+            BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
             return xpath.isVisible("//input[@type='email']") && !xpath.isVisible("id('addEmailNotAllowed')");
         }
 
