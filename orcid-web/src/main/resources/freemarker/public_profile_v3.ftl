@@ -306,7 +306,7 @@
 			        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 					                			<#list publicGroupedEmails[email] as emailSource>					                																	
-													<#if (emailSource.source)?? && (emailSource.source.sourceName)??>${emailSource.source.sourceName}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (emailSource.createdDate)??>(${(emailSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+													<#if (emailSource.source)?? && (emailSource.source.sourceName)?? && (emailSource.source.sourceName.content)??>${emailSource.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (emailSource.createdDate)??>(${(emailSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 												</#list>
 					                		</p>
 					                	</div>					 		
