@@ -148,7 +148,7 @@
 		        					</#if>	
 		        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-				                			<#if (email.source)?? && (email.source.sourceName)??>${email.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (email.createdDate)??>(${(email.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+				                			<#if (email.source)?? && (email.source.sourceName.content)??>${email.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (email.createdDate)??>(${(email.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 				                		</p>				                						                			                						                			
 				                	</div>					 		
 		            			 </#list>
