@@ -120,41 +120,7 @@
                     </div>
 	            </#if>	
 	              
-	            <!-- Email -->
-	            <#if (publicEmails)?? && (publicEmails.emails)?? && (publicEmails.emails?size != 0)>
-	           		<div class="workspace-section">
-	            		<div class="workspace-section-header">
-	            			<ul class="inline-list visible workspace-section-heading">
-							    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelEmail")}</span></li>
-							    <li class="right">
-								    <#if RequestParameters['v2']??>
-								    	<span ng-click="toggleSourcesDisplay('emails')" class="right toggle" ng-mouseenter="showPopover('emails')" ng-mouseleave="hidePopover('emails')">
-								    		<i ng-class="(showSources['emails'] || showSources['emails'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['emails']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['emails'] == false  || showSources['emails'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['emails']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
-								    </#if>
-							    </li>		                		
-							</ul>		            			
-	            			<div class="public-content" id="public-emails-div">
-		            			 <#list publicEmails.emails as email>
-		        					<#if (email.visibility == 'public')??>    			 				            			 				            			 	
-		            					<div name="email">${email.email}</div>
-		        					</#if>	
-		        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
-				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-				                			<#if (email.source)?? && (email.source.sourceName.content)??>${email.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (email.createdDate)??>(${(email.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-				                		</p>				                						                			                						                			
-				                	</div>					 		
-		            			 </#list>
-	            			</div>		            			
-		                </div>		                
-		            </#if>
+	           
 		            
 		            <!-- Countries -->    	            	           
 		            <#if (publicAddress)?? || (publicGroupedAddresses)??>
