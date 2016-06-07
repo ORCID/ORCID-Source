@@ -42,6 +42,11 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
 
     @Override
+    public void setOrcidOauth2TokenDetailDao(OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
+        this.orcidOauth2TokenDetailDao = orcidOauth2TokenDetailDao;
+    }
+    
+    @Override
     public OrcidOauth2TokenDetail findNonDisabledByTokenValue(String token) {
         try {
             return orcidOauth2TokenDetailDao.findNonDisabledByTokenValue(token);
@@ -178,26 +183,7 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         // not delete based on the authentication key
         orcidOauth2TokenDetailDao.removeByAuthenticationKeyOrTokenValueOrRefreshTokenValue(null, detail.getTokenValue(), detail.getRefreshTokenValue());
         orcidOauth2TokenDetailDao.persist(detail);
-    }
-    
-    /**
-     * Check if a member have a specific scope over a client
-     * @param clientId
-     * @param userName
-     * @param scopes
-     * @return true if the member have access to any of the specified scope on the specified user
-     * */
-    @Override
-    public boolean checkIfScopeIsAvailableForMember(String clientId, String userName, List<String> scopes) {
-        List<String> availableScopes = orcidOauth2TokenDetailDao.findAvailableScopesByUserAndClientId(clientId, userName);
-        for(String availableScope : availableScopes) {
-            for(String scope: scopes) {
-                if(availableScope.contains(scope))
-                    return true;
-            }
-        }
-        return false;
-    }
+    }        
 
     @Override
     public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {

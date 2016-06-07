@@ -10461,8 +10461,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                     }
                 } else {
                     //Fire GA register deny
-                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
-                    orcidGA.windowLocationHrefDelay($scope.registrationForm.redirectUri.value);
+                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);                    
+                    orcidGA.windowLocationHrefDelay($scope.registrationForm.redirectUrl);
                 }
 
                 $scope.$apply();

@@ -714,7 +714,7 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
         if(existingIt != null) {
             while(existingIt.hasNext()) {
                 ExternalIdentifierEntity existing = existingIt.next();
-                String existingElementSource = existing.getElementSourceId();
+                String existingElementSource = existing.getElementSourceId();                
                 if(sourceId != null && !sourceId.equals(existingElementSource)){
                     //If am not the source of this element, do nothing
                 } else {
@@ -744,21 +744,25 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             for(ExternalIdentifier newExternalIdentifier : externalIdentifiers.getExternalIdentifier()) {
                 boolean exists = false;
                 Triplet<String, String, String> newExternalIdentifierTriplet = createTripletForExternalIdentifier(newExternalIdentifier);
+                String sourceOfNewElement = newExternalIdentifier.getSource() == null ? null : newExternalIdentifier.getSource().retrieveSourcePath();
                 if(existingExternalIdentifierEntities != null) {
                     for(ExternalIdentifierEntity existingEntity : existingExternalIdentifierEntities) {
                         Triplet<String, String, String> existingTriplet = createTripletForExternalIdentifier(existingEntity);
-                        if(Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
-                                exists = true;
-                                //If the profile is not claimed, you can update the visibility
-                                if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
-                                    //Update the visibility of existing elements if the profile is not claimed
-                                    String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();                                 
-                                    String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();                                                                
-                                    if(listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
-                                        existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
-                                    }                                                                
+                        String sourceOfExistingElement = existingEntity.getElementSourceId();
+                        if (Objects.equals(sourceOfNewElement, sourceOfExistingElement) && Objects.equals(newExternalIdentifierTriplet, existingTriplet)) {
+                            exists = true;
+                            // If the profile is not claimed, you can update the
+                            // visibility
+                            if (profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {
+                                // Update the visibility of existing elements if
+                                // the profile is not claimed
+                                String existingVisibilityValue = existingEntity.getVisibility() == null ? null : existingEntity.getVisibility().value();
+                                String listVisibilityValue = externalIdentifiers.getVisibility() == null ? null : externalIdentifiers.getVisibility().value();
+                                if (listVisibilityValue != null && !Objects.equals(existingVisibilityValue, listVisibilityValue)) {
+                                    existingEntity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(listVisibilityValue));
                                 }
-                                break;
+                            }
+                            break;
                         }
                     }
                 }

@@ -141,18 +141,35 @@ public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements
 
         int result = 0;
 
-        // First check externalIdUrl
-        if (other.getExternalIdUrl() == null) {
-            if (externalIdUrl == null) {
+        //First check the source
+        if(other.getElementSourceId() == null) {
+            if(getElementSourceId() == null) {
                 result = 0;
             } else {
                 result = 1;
             }
         } else {
-            if (externalIdUrl == null) {
+            if(getElementSourceId() == null) {
                 result = -1;
             } else {
-                result = externalIdUrl.compareToIgnoreCase(other.getExternalIdUrl());
+                result = getElementSourceId().compareToIgnoreCase(other.getElementSourceId());
+            }
+        }
+        
+        if (result == 0) {
+            // If they are still equal, compare against the externalIdUrl
+            if (other.getExternalIdUrl() == null) {
+                if (externalIdUrl == null) {
+                    result = 0;
+                } else {
+                    result = 1;
+                }
+            } else {
+                if (externalIdUrl == null) {
+                    result = -1;
+                } else {
+                    result = externalIdUrl.compareToIgnoreCase(other.getExternalIdUrl());
+                }
             }
         }
 
@@ -173,7 +190,7 @@ public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements
             }
         }
 
-        // If they are still equal, compare against the 
+        // If they are still equal, compare against the getExternalIdCommonName
         if (result == 0) {
             if(other.getExternalIdCommonName() == null) {
                 if(externalIdCommonName == null) {
