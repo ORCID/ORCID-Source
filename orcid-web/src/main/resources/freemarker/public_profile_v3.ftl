@@ -69,56 +69,56 @@
 				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 				                			<#list publicGroupedOtherNames[otherName] as otherNameSource>
-												<#if (otherNameSource.source)?? && (otherNameSource.source.sourceName)??>${otherNameSource.source.sourceName.content!}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if>  <#if (otherNameSource.createdDate)??>(${otherNameSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if otherNameSource_has_next>,</#if>
+												<#if (otherNameSource.source)?? && (otherNameSource.source.sourceName)?? && (otherNameSource.source.sourceName.content)??>${otherNameSource.source.sourceName.content!}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if>  <#if (otherNameSource.createdDate)??>(${otherNameSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if otherNameSource_has_next>,</#if>
 				                		    </#list>
 				                		</p>
 				                	</div>
 				                </#list>
                         	</div>
                         </div>                    
-	            </#if>
-	            
-	            <!-- Websites -->       	            
-	            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
-	           		<div class="workspace-section">
-	            		<div class="workspace-section-header">
-	            			<ul class="inline-list visible workspace-section-heading">
-							    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
-							    <li class="right">
-							    	<#if RequestParameters['v2']??>
-								    	<span ng-click="toggleSourcesDisplay('websites')" class="right toggle" ng-mouseenter="showPopover('websites')" ng-mouseleave="hidePopover('websites')">
-								    		<i ng-class="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
-								    		<div class="popover top" ng-class="{'block' : showPopover['websites']}">
-											    <div class="arrow"></div>
-											    <div class="popover-content">
-											        <span ng-show="showSources['websites'] == false  || showSources['websites'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
-											        <span ng-show="showSources['websites']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
-											    </div>
-											</div>
-								    	</span>
-								    </#if>
-							    </li>		                		
-							</ul>
-			                <div id="public-researcher-urls-div" class="public-content">
-			                    <#list publicResearcherUrls.researcherUrls as url>
-			                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
-			                        	<#if (url.urlName)! != "">
-			                        		${url.urlName}
-			                        	<#else>
-			                        		${url.url.value}
-			                        	</#if>
-		                        	</a>			                	
-				                	<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>				                		
-				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-				                			<#if (url.source)?? && (url.source.sourceName)??>${url.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
-				                		</p>				                						                			                						                			
-				                	</div>	
-				                	<#if url_has_next><br/></#if>
-			                    </#list>
-		                    </div>
-		                </div>
-                    </div>
-	            </#if>	
+		            </#if>
+		            
+		            <!-- Websites -->       	            
+		            <#if (publicResearcherUrls)?? && (publicResearcherUrls.researcherUrls?size != 0)>
+		           		<div class="workspace-section">
+		            		<div class="workspace-section-header">
+		            			<ul class="inline-list visible workspace-section-heading">
+								    <li><span class="workspace-section-title">${springMacroRequestContext.getMessage("public_profile.labelWebsites")}</span></li>
+								    <li class="right">
+								    	<#if RequestParameters['v2']??>
+									    	<span ng-click="toggleSourcesDisplay('websites')" class="right toggle" ng-mouseenter="showPopover('websites')" ng-mouseleave="hidePopover('websites')">
+									    		<i ng-class="(showSources['websites'] || showSources['websites'] == 'null')? 'glyphicons collapse_top' : 'glyphicons expand'"></i>
+									    		<div class="popover top" ng-class="{'block' : showPopover['websites']}">
+												    <div class="arrow"></div>
+												    <div class="popover-content">
+												        <span ng-show="showSources['websites'] == false  || showSources['websites'] == null">${springMacroRequestContext.getMessage("public_record.showDetails")}</span>
+												        <span ng-show="showSources['websites']">${springMacroRequestContext.getMessage("public_record.hideDetails")}</span>
+												    </div>
+												</div>
+									    	</span>
+									    </#if>
+								    </li>		                		
+								</ul>
+				                <div id="public-researcher-urls-div" class="public-content">
+				                    <#list publicResearcherUrls.researcherUrls as url>
+				                        <a href="<@orcid.absUrl url.url/>" target="_blank" rel="me nofollow">
+				                        	<#if (url.urlName)! != "">
+				                        		${url.urlName}
+				                        	<#else>
+				                        		${url.url.value}
+				                        	</#if>
+			                        	</a>			                	
+					                	<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>				                		
+					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
+					                			<#if (url.source)?? && (url.source.sourceName)?? && (url.source.sourceName.content)??>${url.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+					                		</p>				                						                			                						                			
+					                	</div>	
+					                	<#if url_has_next><br/></#if>
+				                    </#list>
+			                    </div>
+			                </div>
+	                    </div>
+		            </#if>	
 	              
 	           
 		            
@@ -152,7 +152,7 @@
 						                	<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>
 						                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 						                			<#list publicGroupedAddresses[address] as addressSource>
-														<#if (addressSource.source)?? && (addressSource.source.sourceName)??>${addressSource.source.sourceName.content!}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if>  <#if (addressSource.createdDate)??>(${addressSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if addressSource_has_next>,</#if>
+														<#if (addressSource.source)?? && (addressSource.source.sourceName)?? && (addressSource.source.sourceName.content)??>${addressSource.source.sourceName.content!}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if>  <#if (addressSource.createdDate)??>(${addressSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if addressSource_has_next>,</#if>
 						                		    </#list>
 						                		</p>
 						                	</div>
@@ -190,7 +190,7 @@
 										<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>
 											<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 												<#list publicGroupedKeywords[keyword] as keywordSource>																									
-													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)??>${keywordSource.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if keywordSource_has_next>,</#if>
+													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)?? && (keywordSource.source.sourceName.content)??>${keywordSource.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if keywordSource_has_next>,</#if>
 												</#list>
 											</p>
 										</div>
@@ -234,7 +234,7 @@
 					                			<#if (i == 1)>					                					                		
 						                			<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 						                		</#if>			                																											
-												<#if (researcherUrl.source)?? && (researcherUrl.source.sourceName.content)??>${researcherUrl.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (researcherUrl.createdDate)??>(${(researcherUrl.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if researcherUrl_has_next>,</#if>
+												<#if (researcherUrl.source)?? && (researcherUrl.source.sourceName)?? && (researcherUrl.source.sourceName.content)??>${researcherUrl.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (researcherUrl.createdDate)??>(${(researcherUrl.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if researcherUrl_has_next>,</#if>
 												<#assign i = i + 1>	
 					                	</#list>
 					                	</p>
@@ -316,7 +316,7 @@
   												<div ng-if="showSources['external-identifiers']" class="source-line separator" ng-cloak>					                							                					                		
 	  												<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 											</#if>
-					                     	<#if (externalIdentifier.source)?? && (externalIdentifier.source.sourceName.content)??>${externalIdentifier.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (externalIdentifier.createdDate)??>(${(externalIdentifier.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+					                     	<#if (externalIdentifier.source)?? && (externalIdentifier.source.sourceName)?? && (externalIdentifier.source.sourceName.content)??>${externalIdentifier.source.sourceName.content}<#else>${springMacroRequestContext.getMessage("manage.liprivate")}</#if> <#if (externalIdentifier.createdDate)??>(${(externalIdentifier.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                     		<#assign i = i + 1>	
 			                           </#list>
 			                           </p>
