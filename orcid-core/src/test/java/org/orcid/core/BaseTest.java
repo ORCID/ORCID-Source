@@ -46,8 +46,7 @@ public class BaseTest extends DBUnitTest {
      * @param targetClass
      * @return
      * @throws Exception
-     */
-    @SuppressWarnings( { "unchecked" })
+     */    
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }

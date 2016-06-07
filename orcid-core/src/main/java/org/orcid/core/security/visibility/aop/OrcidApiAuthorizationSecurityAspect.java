@@ -30,7 +30,6 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.orcid.core.oauth.OrcidOAuth2Authentication;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -39,7 +38,6 @@ import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.ResearcherUrls;
@@ -48,6 +46,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.record_rc2.Activity;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -59,6 +58,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author Declan Newman (declan) Date: 16/03/2012
  */
+@Deprecated
 @Aspect
 @Component
 @Order(100)
@@ -67,7 +67,7 @@ public class OrcidApiAuthorizationSecurityAspect {
     public static final String CLIENT_ID = "client_id";
 
     @Resource
-    private OrcidOauth2TokenDetailService orcidOauthTokenDetailService;
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
 
     @Resource(name = "visibilityFilter")
     private VisibilityFilter visibilityFilter;
@@ -75,6 +75,10 @@ public class OrcidApiAuthorizationSecurityAspect {
     @Resource(name = "defaultPermissionChecker")
     private PermissionChecker permissionChecker;
 
+    public void setOrcidOauth2TokenDetailDao(OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
+        this.orcidOauth2TokenDetailDao = orcidOauth2TokenDetailDao;
+    }
+    
     @Before("@annotation(accessControl) && (args(uriInfo ,orcid, orcidMessage))")
     public void checkPermissionsWithAll(AccessControl accessControl, UriInfo uriInfo, String orcid, OrcidMessage orcidMessage) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid, orcidMessage);
@@ -128,7 +132,7 @@ public class OrcidApiAuthorizationSecurityAspect {
     public void checkPermissionsWithWork(AccessControl accessControl, String orcid, String putCode, Activity activity) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
     }
-
+    
     @Before("@annotation(accessControl) && args(uriInfo, orcid, webhookUri)")
     public void checkPermissionsWithOrcidAndWebhookUri(AccessControl accessControl, UriInfo uriInfo, String orcid, String webhookUri) {
         permissionChecker.checkPermissions(getAuthentication(), accessControl.requiredScope(), orcid);
@@ -172,7 +176,6 @@ public class OrcidApiAuthorizationSecurityAspect {
                 // If the authentication contains a client_id, use it to check
                 // if it should be able to
                 if (OrcidOAuth2Authentication.class.isAssignableFrom(authentication.getClass())){
-//                if (authentication.getClass().isAssignableFrom(OrcidOAuth2Authentication.class)) {
                     OrcidOAuth2Authentication orcidAuth = (OrcidOAuth2Authentication) getAuthentication();
 
                     OAuth2Request authorization = orcidAuth.getOAuth2Request();
@@ -318,13 +321,14 @@ public class OrcidApiAuthorizationSecurityAspect {
             return false;
         }
     }
-
-    private boolean hasScopeEnabled(String clientId, String userName, String scope, String equivalentScope) {
+    
+    @Deprecated
+    public boolean hasScopeEnabled(String clientId, String userName, String scope, String equivalentScope) {
         List<String> scopes = new ArrayList<String>();
         scopes.add(scope);
         if (equivalentScope != null)
-            scopes.add(equivalentScope);
-        return orcidOauthTokenDetailService.checkIfScopeIsAvailableForMember(clientId, userName, scopes);
+            scopes.add(equivalentScope); 
+        return checkIfScopeIsAvailableForMember(clientId, userName, scopes);
     }
 
     private Authentication getAuthentication() {
@@ -366,5 +370,29 @@ public class OrcidApiAuthorizationSecurityAspect {
         }
         return allowAnonymousAccess;
     } 
+    
+    /**
+     * Check if a member have a specific scope over a client
+     * 
+     * @param clientId
+     * @param userName
+     * @param scopes
+     * @return true if the member have access to any of the specified scope on the specified user
+     * */
+    @Deprecated
+    private boolean checkIfScopeIsAvailableForMember(String clientId, String userName, List<String> requiredScopes) {
+        List<String> availableScopes = orcidOauth2TokenDetailDao.findAvailableScopesByUserAndClientId(clientId, userName);        
+        for(String availableScope : availableScopes) {
+            String [] simpleScopes = availableScope.split(" ");
+            for(String simpleScope : simpleScopes) {
+                ScopePathType scopePathType = ScopePathType.fromValue(simpleScope);
+                for(String requiredScope: requiredScopes) {
+                    if(scopePathType.hasScope(requiredScope))
+                        return true;
+                }
+            }            
+        }
+        return false;
+    }
 
 }
