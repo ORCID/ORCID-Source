@@ -60,7 +60,6 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -72,7 +71,6 @@ import org.orcid.jaxb.model.message.ContributorOrcid;
 import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DeactivationDate;
-import org.orcid.jaxb.model.message.DeveloperToolsEnabled;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.EncryptedPassword;
 import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
@@ -103,9 +101,6 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
-import org.orcid.jaxb.model.message.SendAdministrativeChangeNotifications;
-import org.orcid.jaxb.model.message.SendChangeNotifications;
-import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceClientId;
 import org.orcid.jaxb.model.message.SourceOrcid;
@@ -163,7 +158,7 @@ import net.sf.ehcache.Element;
  * 
  * @author Declan Newman and Will Simpson
  */
-
+@Deprecated
 public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl implements OrcidProfileManager {
 
     @Resource
@@ -764,6 +759,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * @param updatedOrcidProfile
      * @return
      */
+    @Deprecated
     @Override
     @Transactional
     public OrcidProfile updateOrcidBio(OrcidProfile updatedOrcidProfile) {        
@@ -1484,8 +1480,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             visibilityType.setVisibility(Visibility.PRIVATE);
         }
     }
-
-    @SuppressWarnings("deprecation")
+    
     @Override
     @Transactional
     public OrcidProfile revokeApplication(String userOrcid, String applicationClientId, Collection<ScopePathType> scopes) {
