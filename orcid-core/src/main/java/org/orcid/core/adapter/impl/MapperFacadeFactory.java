@@ -258,13 +258,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getAddressMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);
-        addressClassMap.byDefault();
+        ClassMapBuilder<Address, AddressEntity> addressClassMap = mapperFactory.classMap(Address.class, AddressEntity.class);        
         addV2DateFields(addressClassMap);
         registerSourceConverters(mapperFactory, addressClassMap);
         addressClassMap.field("putCode", "id");
         addressClassMap.field("country.value", "iso2Country");
         addressClassMap.field("visibility", "visibility");
+        addressClassMap.fieldBToA("displayIndex", "displayIndex");
+        addressClassMap.byDefault();
         addressClassMap.register();        
         return mapperFactory.getMapperFacade();
     }
