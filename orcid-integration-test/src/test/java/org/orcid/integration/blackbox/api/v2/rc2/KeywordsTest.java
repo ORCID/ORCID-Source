@@ -64,8 +64,7 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
      * 
      * @throws JSONException
      * @throws InterruptedException
-     */
-    @SuppressWarnings("unchecked")
+     */    
     @Test
     public void testGetKeywordsWihtMembersAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
@@ -107,8 +106,7 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
         assertNotNull(keywords.getKeywords());
-        assertEquals(3, keywords.getKeywords().size());
-        
+        assertEquals(3, keywords.getKeywords().size());        
         
         boolean found1 = false;
         boolean found2 = false;
@@ -140,6 +138,8 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         assertEquals(getClient1ClientId(), keyword.getSource().retrieveSourcePath());
         assertEquals("keyword-3", keyword.getContent());
         assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        assertNotNull(keyword.getDisplayIndex());
+        Long originalDisplayIndex = keyword.getDisplayIndex(); 
         
         //Save the original visibility
         Visibility originalVisibility = keyword.getVisibility();
@@ -167,7 +167,8 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         assertNotNull(updatedKeyword);
         assertEquals("keyword-3-updated", updatedKeyword.getContent());
         assertEquals(keyword.getPutCode(), updatedKeyword.getPutCode());
-                
+        assertEquals(originalDisplayIndex, updatedKeyword.getDisplayIndex());        
+        
         //Delete
         response = memberV2ApiClient.deleteKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
@@ -184,7 +185,6 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
      * @throws JSONException
      * @throws InterruptedException
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetKeywordWithPublicAPI() throws InterruptedException, JSONException {
         ClientResponse response = publicV2ApiClient.viewKeywordsXML(getUser1OrcidId());
