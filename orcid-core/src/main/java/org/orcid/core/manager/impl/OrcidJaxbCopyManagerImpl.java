@@ -253,7 +253,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         }
         
         if(existingShortDescription != null) {
-            if(!existingShortDescription.getVisibility().equals(Visibility.PRIVATE)) {
+            if(existingShortDescription.getVisibility() != null && !existingShortDescription.getVisibility().equals(Visibility.PRIVATE)) {
                 existing.setBiography(updatedShortDescription);    
             }
         } else {
