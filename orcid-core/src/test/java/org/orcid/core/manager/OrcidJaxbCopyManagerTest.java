@@ -593,8 +593,9 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         updated.getBiography().setVisibility(null);
         
         orcidJaxbCopyManager.copyUpdatedShortDescriptionToExistingPreservingVisibility(existing, updated);
+        //The visibility will be the same
         assertEquals(Visibility.LIMITED, updated.getBiography().getVisibility());
-        //It will not be updated if the visibility is null or PRIVATE
+        //And the content will change
         assertEquals("New biography", existing.getBiography().getContent());
     }
     
