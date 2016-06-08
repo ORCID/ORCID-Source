@@ -1,0 +1,36 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="FIX_DISPLAY_INDEXS_FOR_BIO" author="rcpeters" dbms="postgresql">
+       <sql>ALTER TABLE address ALTER COLUMN display_index SET DEFAULT 0;
+ 			ALTER TABLE external_identifier ALTER COLUMN display_index SET DEFAULT 0;
+ 			ALTER TABLE profile_keyword ALTER COLUMN display_index SET DEFAULT 0;
+ 			ALTER TABLE other_name ALTER COLUMN display_index SET DEFAULT 0;
+ 			ALTER TABLE researcher_url ALTER COLUMN display_index SET DEFAULT 0;
+ 			UPDATE address SET display_index = 0 where display_index = -1;
+ 			UPDATE external_identifier SET display_index = 0 where display_index = -1;
+ 			UPDATE profile_keyword SET display_index = 0 where display_index = -1;
+ 			UPDATE other_name SET display_index = 0 where display_index = -1;
+ 			UPDATE researcher_url SET display_index = 0 where display_index = -1;
+ 		</sql>        
+    </changeSet>
+
+</databaseChangeLog>
