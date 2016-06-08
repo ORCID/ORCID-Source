@@ -24,11 +24,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.springframework.test.context.ContextConfiguration;
@@ -48,6 +45,7 @@ public class Orcid3StepOauthFlowTest extends BlackBoxBaseRC1 {
 
     @Test
     public void testInvalidScopeThrowException() throws JSONException, InterruptedException {
+        logUserOut();
         String scopes = "/orcid-profile/create";
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), scopes, this.getClient1RedirectUri()));
         String url = webDriver.getCurrentUrl();

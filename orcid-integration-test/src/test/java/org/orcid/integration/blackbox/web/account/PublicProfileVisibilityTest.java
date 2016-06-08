@@ -436,6 +436,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String educationName = "Education" + System.currentTimeMillis();
         textBox.sendKeys(educationName);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         textBox = webDriver.findElement(By.id("city"));
         textBox.sendKeys("New Delhi");
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
@@ -668,7 +669,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")), webDriver);
-
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        
         WebElement category = webDriver.findElement(By.id("workCategory"));
         category.sendKeys("Publication");
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
