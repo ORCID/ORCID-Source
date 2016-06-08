@@ -932,20 +932,25 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
     private void setBiographyDetails(ProfileEntity profileEntity, Biography biography) {
         if (biography != null) {
+            Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault();
             if(profileEntity.getBiographyEntity() == null) {
                 profileEntity.setBiographyEntity(new BiographyEntity());
-                profileEntity.getBiographyEntity().setProfile(profileEntity);
+                profileEntity.getBiographyEntity().setProfile(profileEntity);                
             }
                         
             profileEntity.getBiographyEntity().setBiography(biography.getContent());
             if(profileEntity.getClaimed() == null || !profileEntity.getClaimed()) {                
                 if (biography.getVisibility() != null) {
                     profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(biography.getVisibility().value()));
-                } else {
-                    Visibility defaultVisibility = profileEntity.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility() : profileEntity.getActivitiesVisibilityDefault();
+                } else {                    
                     profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
                 }                
-            }                       
+            }  
+            
+            //Fill the visibility in case it is still null
+            if(profileEntity.getBiographyEntity().getVisibility() == null) {
+                profileEntity.getBiographyEntity().setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(defaultVisibility.value()));
+            }
         }
     }
 
