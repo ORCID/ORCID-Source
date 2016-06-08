@@ -216,6 +216,7 @@ public class BlackBoxBase {
         try {
             // Unlock the account
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]")));
             WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
             unLockProfileLink.click();
             WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
@@ -245,6 +246,7 @@ public class BlackBoxBase {
         try {
             // Lock the account
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]")));
             WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
             lockProfileLink.click();
             WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));

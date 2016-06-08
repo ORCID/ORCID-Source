@@ -48,6 +48,7 @@ public class Orcid3StepOauthFlowTest extends BlackBoxBaseRC1 {
 
     @Test
     public void testInvalidScopeThrowException() throws JSONException, InterruptedException {
+        logUserOut();
         String scopes = "/orcid-profile/create";
         webDriver.get(String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(), scopes, this.getClient1RedirectUri()));
         String url = webDriver.getCurrentUrl();

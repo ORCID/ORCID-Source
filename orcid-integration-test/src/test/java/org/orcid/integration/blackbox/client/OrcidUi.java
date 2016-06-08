@@ -73,6 +73,7 @@ public class OrcidUi {
 
         public void switchTo() {
             localXPath.click("a");
+            
             utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='delegation-mode-warning']")));
         }
 
