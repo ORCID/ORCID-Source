@@ -5462,25 +5462,34 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 	};
 	
 	$scope.showMozillaBadges = function(putCode){
-    	if ($scope.badgesRequested[putCode] == null){
-	    	var dois = worksSrvc.getUniqueDois(putCode);
-	    	var c = document.getElementsByClassName('badge-container-' + putCode);
-	    	for (i = 0; i <= dois.length - 1; i++){
-	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-	    		var s = document.createElement('script');
-	            s.type = 'text/javascript';
-	            try {
-	              s.appendChild(document.createTextNode(code));
-	              c[0].appendChild(s);
-	            } catch (e) {
-	              s.text = code;
-	              c[0].appendChild(s);
-	            }
-	    	}
-	    	$scope.badgesRequested[putCode] = true;
-    	}
-    }
-
+		$scope.$watch(
+			function () { 
+			   	return document.getElementsByClassName('badge-container-' + putCode).length; 
+			},
+			function (newValue, oldValue) {
+				if (newValue !== oldValue) {
+			    	if ($scope.badgesRequested[putCode] == null){
+				    	var dois = worksSrvc.getUniqueDois(putCode);
+				    	var c = document.getElementsByClassName('badge-container-' + putCode);
+				    	for (i = 0; i <= dois.length - 1; i++){
+				    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+				    		var s = document.createElement('script');
+				            s.type = 'text/javascript';
+				            try {
+				              s.appendChild(document.createTextNode(code));
+				              c[0].appendChild(s);
+				            } catch (e) {
+				              s.text = code;
+				              c[0].appendChild(s);
+				            }
+				    	}
+				    	$scope.badgesRequested[putCode] = true;
+			    	}
+		      	}
+		    }
+		);	
+    };
+    
 }]);
 
 function getParameterByName(name) {
@@ -6205,24 +6214,33 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.showMozillaBadges = function(putCode){
-    	if ($scope.badgesRequested[putCode] == null){
-	    	var dois = worksSrvc.getUniqueDois(putCode);
-	    	var c = document.getElementsByClassName('badge-container-' + putCode);
-	    	for (i = 0; i <= dois.length - 1; i++){
-	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-	    		var s = document.createElement('script');
-	            s.type = 'text/javascript';
-	            try {
-	              s.appendChild(document.createTextNode(code));
-	              c[0].appendChild(s);
-	            } catch (e) {
-	              s.text = code;
-	              c[0].appendChild(s);
-	            }
-	    	}
-	    	$scope.badgesRequested[putCode] = true;
-    	}
-    }
+    	$scope.$watch(
+		    function () { 
+		    	return document.getElementsByClassName('badge-container-' + putCode).length; 
+		    },
+			function (newValue, oldValue) {
+			      if (newValue !== oldValue) {
+			    	  if ($scope.badgesRequested[putCode] == null){
+						var dois = worksSrvc.getUniqueDois(putCode);
+						var c = document.getElementsByClassName('badge-container-' + putCode);
+						for (i = 0; i <= dois.length - 1; i++){
+							var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+							var s = document.createElement('script');
+						    s.type = 'text/javascript';
+						    try {
+						      s.appendChild(document.createTextNode(code));
+						      c[0].appendChild(s);
+						    } catch (e) {
+						      s.text = code;
+						      c[0].appendChild(s);
+						    }
+						}
+						$scope.badgesRequested[putCode] = true;
+			      	}
+			    }
+		    }
+		);
+    };
     
     $scope.toggleBibtexExport = function(){
         $scope.bibtexParsingError = false;
