@@ -204,13 +204,14 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getExternalIdentifierMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);
-        externalIdentifierClassMap.byDefault();
+        ClassMapBuilder<PersonExternalIdentifier, ExternalIdentifierEntity> externalIdentifierClassMap = mapperFactory.classMap(PersonExternalIdentifier.class, ExternalIdentifierEntity.class);        
         addV2DateFields(externalIdentifierClassMap);        
         externalIdentifierClassMap.field("putCode", "id");
         externalIdentifierClassMap.field("type", "externalIdCommonName");
         externalIdentifierClassMap.field("value", "externalIdReference");
-        externalIdentifierClassMap.field("url.value", "externalIdUrl");        
+        externalIdentifierClassMap.field("url.value", "externalIdUrl");
+        externalIdentifierClassMap.fieldBToA("displayIndex", "displayIndex");
+        externalIdentifierClassMap.byDefault();
         registerSourceConverters(mapperFactory, externalIdentifierClassMap);
         
         //TODO: add relationship to database schema for people.
@@ -220,38 +221,41 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     public MapperFacade getResearcherUrlMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);
-        researcherUrlClassMap.byDefault();
+        ClassMapBuilder<ResearcherUrl, ResearcherUrlEntity> researcherUrlClassMap = mapperFactory.classMap(ResearcherUrl.class, ResearcherUrlEntity.class);        
         addV2DateFields(researcherUrlClassMap);
         registerSourceConverters(mapperFactory, researcherUrlClassMap);
         researcherUrlClassMap.field("putCode", "id");
         researcherUrlClassMap.field("url.value", "url");
         researcherUrlClassMap.field("urlName", "urlName");
+        researcherUrlClassMap.fieldBToA("displayIndex", "displayIndex");
+        researcherUrlClassMap.byDefault();
         researcherUrlClassMap.register();
         return mapperFactory.getMapperFacade();
     }
     
     public MapperFacade getOtherNameMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);
-        otherNameClassMap.byDefault();
+        ClassMapBuilder<OtherName, OtherNameEntity> otherNameClassMap = mapperFactory.classMap(OtherName.class, OtherNameEntity.class);        
         addV2DateFields(otherNameClassMap);
         registerSourceConverters(mapperFactory, otherNameClassMap);
         otherNameClassMap.field("putCode", "id");
         otherNameClassMap.field("content", "displayName");
         otherNameClassMap.field("path", "profile.orcid");
+        otherNameClassMap.fieldBToA("displayIndex", "displayIndex");
+        otherNameClassMap.byDefault();
         otherNameClassMap.register();
         return mapperFactory.getMapperFacade();
     }
     
     public MapperFacade getKeywordMapperFacade() {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().build();
-        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);
-        keywordClassMap.byDefault();
+        ClassMapBuilder<Keyword, ProfileKeywordEntity> keywordClassMap = mapperFactory.classMap(Keyword.class, ProfileKeywordEntity.class);        
         addV2DateFields(keywordClassMap);
         registerSourceConverters(mapperFactory, keywordClassMap);
         keywordClassMap.field("putCode", "id");
         keywordClassMap.field("content", "keywordName");
+        keywordClassMap.fieldBToA("displayIndex", "displayIndex");
+        keywordClassMap.byDefault();
         keywordClassMap.register();        
         return mapperFactory.getMapperFacade();
     }
