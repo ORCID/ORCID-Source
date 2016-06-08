@@ -175,6 +175,8 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals("http://ext-id/A-0003", externalIdentifier.getUrl().getValue());
         assertEquals(Visibility.LIMITED, externalIdentifier.getVisibility());
         assertEquals(putCode, externalIdentifier.getPutCode());
+        assertNotNull(externalIdentifier.getDisplayIndex());
+        Long originalDisplayIndex = externalIdentifier.getDisplayIndex();
         
         //Save the original visibility
         Visibility originalVisibility = externalIdentifier.getVisibility();
@@ -206,6 +208,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals("http://ext-id/A-0004", externalIdentifier.getUrl().getValue());
         assertEquals(Visibility.LIMITED, externalIdentifier.getVisibility());
         assertEquals(putCode, externalIdentifier.getPutCode());       
+        assertEquals(originalDisplayIndex, externalIdentifier.getDisplayIndex());
         
         //Delete
         //Get access token to delete the external identifier

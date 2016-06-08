@@ -151,7 +151,9 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertEquals("http://site1.com/" + time, gotResearcherUrl.getUrl().getValue());
         assertEquals(String.valueOf(time), gotResearcherUrl.getUrlName());
         assertEquals("public", gotResearcherUrl.getVisibility().value());
-
+        assertNotNull(gotResearcherUrl.getDisplayIndex());
+        Long originalDisplayIndex = gotResearcherUrl.getDisplayIndex();
+        
         //Save the original visibility
         Visibility originalVisibility = gotResearcherUrl.getVisibility();
         Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
@@ -179,6 +181,8 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertNotNull(updatedResearcherUrl);
         assertEquals("http://site1.com/" + time + currentTime, updatedResearcherUrl.getUrl().getValue());
         assertEquals(String.valueOf(time) + " - " + currentTime, updatedResearcherUrl.getUrlName());
+        assertEquals(originalDisplayIndex, updatedResearcherUrl.getDisplayIndex());
+        
         // Keep it public, since it is more restrictive than the user visibility
         // default
         assertEquals("public", updatedResearcherUrl.getVisibility().value());
