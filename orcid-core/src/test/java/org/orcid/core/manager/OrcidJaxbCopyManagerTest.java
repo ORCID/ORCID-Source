@@ -570,6 +570,34 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         assertTrue(privateBio.getPersonalDetails().getOtherNames().getOtherName().containsAll(publicBio.getPersonalDetails().getOtherNames().getOtherName()));        
     }
 
+    @Test
+    public void testbiographyCopyDontFailOnEmpyVisibility() {
+        OrcidBio existing = getBio("bio1 ", Visibility.PUBLIC, 1);
+        existing.getBiography().setContent("Old biography");
+        existing.getBiography().setVisibility(null);
+        OrcidBio updated = getBio("bio1 ", Visibility.LIMITED, 1);
+        updated.getBiography().setContent("New biography");
+        updated.getBiography().setVisibility(null);
+        
+        assertEquals("Old biography", existing.getBiography().getContent());
+        orcidJaxbCopyManager.copyUpdatedShortDescriptionToExistingPreservingVisibility(existing, updated);
+        assertEquals(OrcidVisibilityDefaults.SHORT_DESCRIPTION_DEFAULT.getVisibility(), updated.getBiography().getVisibility());
+        //It will not be updated if the visibility is null or PRIVATE
+        assertEquals("Old biography", existing.getBiography().getContent());
+        
+        
+        //Do it again but now set a visibility to the existing bio
+        existing.getBiography().setContent("Old biography");
+        existing.getBiography().setVisibility(Visibility.LIMITED);
+        updated.getBiography().setContent("New biography");
+        updated.getBiography().setVisibility(null);
+        
+        orcidJaxbCopyManager.copyUpdatedShortDescriptionToExistingPreservingVisibility(existing, updated);
+        assertEquals(Visibility.LIMITED, updated.getBiography().getVisibility());
+        //It will not be updated if the visibility is null or PRIVATE
+        assertEquals("New biography", existing.getBiography().getContent());
+    }
+    
     private OrcidBio getBio(String sufix, Visibility visibility, int max) {
         OrcidBio orcidBio = new OrcidBio();
         Biography bio = new Biography(sufix + "My Biography", visibility);
