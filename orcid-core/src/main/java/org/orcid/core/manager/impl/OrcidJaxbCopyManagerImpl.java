@@ -38,11 +38,9 @@ import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;
-import org.orcid.jaxb.model.message.Keyword;
 import org.orcid.jaxb.model.message.Keywords;
 import org.orcid.jaxb.model.message.OrcidBio;
 import org.orcid.jaxb.model.message.OrcidHistory;
@@ -51,7 +49,6 @@ import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.OtherNames;
 import org.orcid.jaxb.model.message.PersonalDetails;
-import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.SourceClientId;
@@ -233,18 +230,8 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         } else if (updatedExternalIdentifiersVisibility == null && existingExternalIdentifiersVisibility != null) {
             updatedExternalIdentifiers.setVisibility(existingExternalIdentifiersVisibility);
         }
-        
-        if(Visibility.PRIVATE.equals(existingExternalIdentifiersVisibility)) {
-           if(existingExternalIdentifiers != null) {
-               for(ExternalIdentifier extId : updatedExternalIdentifiers.getExternalIdentifier()) {
-                   if(!existingExternalIdentifiers.getExternalIdentifier().contains(extId)) {
-                       existingExternalIdentifiers.getExternalIdentifier().add(extId);
-                   }
-               }
-           } 
-        } else {
-            existing.setExternalIdentifiers(updatedExternalIdentifiers);
-        }        
+                
+        existing.setExternalIdentifiers(updatedExternalIdentifiers);               
     }
 
     @Override
@@ -282,21 +269,11 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 
         Visibility existingKeywordsVisibility = existing.getKeywords() != null && existing.getKeywords().getVisibility() != null ? existing.getKeywords().getVisibility()
                 : OrcidVisibilityDefaults.KEYWORD_DEFAULT.getVisibility();
-        if(existingKeywordsVisibility.equals(Visibility.PRIVATE)) {
-            Keywords existingKeywords = existing.getKeywords();
-            if(existingKeywords != null) {
-                for(Keyword keyword : updated.getKeywords().getKeyword()) {
-                    if(!existingKeywords.getKeyword().contains(keyword)) {
-                        existingKeywords.getKeyword().add(keyword);
-                    }
-                }
-            }
-        } else {
-            Visibility updatedKeywordsVisibility = updated.getKeywords().getVisibility() != null ? updated.getKeywords().getVisibility() : existingKeywordsVisibility;
-            Keywords updatedKeywords = updated.getKeywords();
-            updatedKeywords.setVisibility(updatedKeywordsVisibility);
-            existing.setKeywords(updatedKeywords);
-        }        
+        
+        Visibility updatedKeywordsVisibility = updated.getKeywords().getVisibility() != null ? updated.getKeywords().getVisibility() : existingKeywordsVisibility;
+        Keywords updatedKeywords = updated.getKeywords();
+        updatedKeywords.setVisibility(updatedKeywordsVisibility);
+        existing.setKeywords(updatedKeywords);               
     }
 
     @Override
@@ -364,7 +341,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
 		existingContactDetails.setEmail(allEmails);
 	}
 
-	private void copyUpdatedAddress(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
+    private void copyUpdatedAddress(ContactDetails existingContactDetails, ContactDetails updatedContactDetails) {
 		if(updatedContactDetails == null) {
 			return;
 		}
@@ -391,7 +368,7 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
                 && existingContactDetails.getAddress().getCountry().getVisibility() == null) {
             existingContactDetails.getAddress().getCountry().setVisibility(OrcidVisibilityDefaults.COUNTRY_DEFAULT.getVisibility());
         }
-	}
+    }
 
     @Override
     public void copyUpdatedResearcherUrlPreservingVisbility(OrcidBio existing, OrcidBio updated) {
@@ -404,21 +381,12 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         Visibility existingVisibility = (existingResearcherUrls != null && existingResearcherUrls.getVisibility() != null) ? existingResearcherUrls.getVisibility()
                 : OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT.getVisibility();
 
-        // If it is private, add the new researcher url but preserve visibility
-        if (existingVisibility.equals(Visibility.PRIVATE)) {
-            for (ResearcherUrl rUrl : updatedResearcherUrls.getResearcherUrl()) {
-                if (!existingResearcherUrls.getResearcherUrl().contains(rUrl)) {
-                    existingResearcherUrls.getResearcherUrl().add(rUrl);
-                }
-            }
-        } else {
-            Visibility updatedVisibility = (updatedResearcherUrls != null && updatedResearcherUrls.getVisibility() != null) ? updatedResearcherUrls.getVisibility()
-                    : existingVisibility;
+        Visibility updatedVisibility = (updatedResearcherUrls != null && updatedResearcherUrls.getVisibility() != null) ? updatedResearcherUrls.getVisibility()
+                : existingVisibility;
 
-            // now visibility has been preserved, overwrite the content
-            updatedResearcherUrls.setVisibility(updatedVisibility);
-            existing.setResearcherUrls(updatedResearcherUrls);
-        }
+        // now visibility has been preserved, overwrite the content
+        updatedResearcherUrls.setVisibility(updatedVisibility);
+        existing.setResearcherUrls(updatedResearcherUrls);        
     }
 
     @Override
@@ -462,19 +430,10 @@ public class OrcidJaxbCopyManagerImpl implements OrcidJaxbCopyManager {
         // otherwise take into account the visibility of updated and existing
         Visibility existingVisibility = existingOtherNames.getVisibility() != null ? existingOtherNames.getVisibility() : OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT
                 .getVisibility();
-        // If it is private, add the new ones, but preserve the visibility
-        if (existingVisibility.equals(Visibility.PRIVATE)) {
-            for (OtherName otherName : updatedOtherNames.getOtherName()) {
-                if (!existingOtherNames.getOtherName().contains(otherName)) {
-                    existingOtherNames.getOtherName().add(otherName);
-                }
-            }
-        } else {
-            updatedOtherNames.setVisibility(updatedOtherNames.getVisibility() != null ? updatedOtherNames.getVisibility() : existingVisibility);
-            // now visibility has been preserved, overwrite the content
-            existingPersonalDetails.setOtherNames(updatedOtherNames);
-        }
-
+        
+        updatedOtherNames.setVisibility(updatedOtherNames.getVisibility() != null ? updatedOtherNames.getVisibility() : existingVisibility);
+        // now visibility has been preserved, overwrite the content
+        existingPersonalDetails.setOtherNames(updatedOtherNames);        
     }
 
     private void copyCreditNamePreservingVisibility(PersonalDetails existingPersonalDetails, PersonalDetails updatedPersonalDetails) {
