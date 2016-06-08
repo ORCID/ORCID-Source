@@ -27,12 +27,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;

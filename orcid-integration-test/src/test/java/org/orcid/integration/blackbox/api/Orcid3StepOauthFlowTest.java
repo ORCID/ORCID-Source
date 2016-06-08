@@ -24,11 +24,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
 import org.springframework.test.context.ContextConfiguration;

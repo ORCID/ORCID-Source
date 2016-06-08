@@ -23,8 +23,6 @@ import java.util.Properties;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
@@ -32,7 +30,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -343,8 +340,9 @@ public class BlackBoxBase {
             baseUrl = prop.getProperty("org.orcid.web.baseUri");
         }
 
-        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
+        logUserOut(baseUrl,webDriver);
         webDriver.get(baseUrl + "/account");
+        
         SigninTest.signIn(webDriver, userName, password);
         noSpinners(webDriver);
         extremeWaitFor(angularHasFinishedProcessing(),webDriver);
