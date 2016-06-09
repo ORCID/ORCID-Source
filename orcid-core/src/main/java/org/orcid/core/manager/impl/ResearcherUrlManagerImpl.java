@@ -210,7 +210,6 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }       
         
         ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        rUrls.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(rUrls);
         return rUrls;
     }

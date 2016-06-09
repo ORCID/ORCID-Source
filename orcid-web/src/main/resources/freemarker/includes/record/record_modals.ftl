@@ -232,7 +232,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites | orderBy:'displayIndex'">
+							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites | orderBy:'-':'displayIndex'">
 								<div class="col-md-6">
 									<div class="aka">										
 										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>

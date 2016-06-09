@@ -95,32 +95,6 @@ public class ResearcherUrls implements Serializable {
         return true;
     }
     
-    public void updateIndexingStatusOnChilds() {
-        if (this.getResearcherUrls() != null && !this.getResearcherUrls().isEmpty()) {
-            List<ResearcherUrl> sorted = new ArrayList<ResearcherUrl>();
-            List<ResearcherUrl> unsorted = new ArrayList<ResearcherUrl>();
-            Long maxDisplayIndex = 0L;
-            for(ResearcherUrl o : this.getResearcherUrls()) {
-                if(o.getDisplayIndex() == null || Long.valueOf(-1).equals(o.getDisplayIndex())) {
-                    unsorted.add(o);
-                } else {
-                    if(o.getDisplayIndex() > maxDisplayIndex) {
-                        maxDisplayIndex = o.getDisplayIndex();
-                    }
-                    sorted.add(o);
-                }                
-            }      
-            
-            if(!unsorted.isEmpty()) {
-                Collections.sort(unsorted);
-                for(ResearcherUrl o : unsorted) {
-                    o.setDisplayIndex((maxDisplayIndex++) + 1);
-                    sorted.add(o);
-                }
-            }
-        }
-    }
-    
 	public LastModifiedDate getLastModifiedDate() {
 		return lastModifiedDate;
 	}
