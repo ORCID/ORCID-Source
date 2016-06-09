@@ -2435,7 +2435,9 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
 
     $scope.addNew = function() {
-        $scope.websitesForm.websites.push({ url: "", urlName: "" });
+        for (var idx in $scope.websitesForm.websites)
+            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
+        $scope.websitesForm.websites.push({ url: "", urlName: "", displayIndex: "0" });
     };
     
     $scope.addNewModal = function() {
@@ -2444,7 +2446,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         tmpObj['source'] = $scope.orcidId;
         tmpObj['displayIndex'] = 0;
         for (var idx in $scope.websitesForm.websites)
-            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites[idx]['displayIndex'] + 1;
+            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
         $scope.websitesForm.websites.push(tmpObj);
         $scope.newInput = true; 
     };
