@@ -138,7 +138,7 @@
 	            	<div class="workspace-section-header">
 			        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
 			            <span class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEditModal()" title=""></span>
-			            <span ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">			            				            	
+			            <span ng-repeat="country in countryForm.addresses">			            				            	
 			            	<span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
 			            </span>			            
 		            </div>

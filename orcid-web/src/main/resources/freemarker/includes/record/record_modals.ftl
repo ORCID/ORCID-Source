@@ -95,7 +95,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">
+							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
 									<div class="aka">
 			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
@@ -110,10 +110,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">																				
 										<li ng-init="">												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(country.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(country.displayIndex)"></span>
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>
 										</li>
 										<li>
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
