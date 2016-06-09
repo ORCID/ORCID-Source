@@ -2690,7 +2690,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     };
 
     $scope.addNew = function() {
-    	for (var idx in $scope.websitesForm.websites)
+    	for (var idx in $scope.keywordsForm.keyword)
     		$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
         $scope.keywordsForm.keywords.push({content: "", displayIndex: "0"});
     };
