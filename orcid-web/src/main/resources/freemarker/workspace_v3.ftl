@@ -80,7 +80,7 @@
 	        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
 		        	   <span ng-hide="showEdit == true" ng-click="openEditModal()">		        	   	  
 		        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
-		        	      <span ng-repeat="otherName in otherNamesForm.otherNames | orderBy: 'displayIndex'" ng-cloak>
+		        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
 		        	         {{ $last?otherName.content:otherName.content + ", "}}
 		        	      </span>
 		        	   </span>		        	   

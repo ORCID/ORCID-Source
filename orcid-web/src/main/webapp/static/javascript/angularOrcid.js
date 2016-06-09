@@ -2994,16 +2994,27 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
+        //$scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});        
+        for (var idx in $scope.otherNamesForm.otherNames)
+        	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
+        $scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "0" });
     };
     
-    $scope.addNewModal = function() {        
+    $scope.addNewModal = function() {
+    	/*
         var idx = $scope.getLastDisplayIndex();               
         var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":null,"sourceName":""};
-        tmpObj['displayIndex'] = idx + 1;
+        tmpObj['displayIndex'] = 0;
         tmpObj['source'] = $scope.orcidId;
         $scope.otherNamesForm.otherNames.push(tmpObj);        
-        $scope.newInput = true;        
+        $scope.newInput = true;
+        */
+    	var idx = $scope.getLastDisplayIndex();        
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 0};
+        for (var idx in scope.otherNamesForm.otherNames)
+        	scope.otherNamesForm.otherNames[idx]['displayIndex'] = scope.otherNamesForm.otherNames.length - idx;
+        scope.otherNamesForm.otherNames.push(tmpObj);
+        $scope.newInput = true;
     };
 
     $scope.getOtherNamesForm = function(){
@@ -3156,52 +3167,27 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $.colorbox.close();
     }
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){        
-       $scope.otherNamesForm.otherNames[idxA].displayIndex = valueB;
-       $scope.otherNamesForm.otherNames[idxB].displayIndex = valueA;
-    }    
-    
-    $scope.setPriorityUp = function(displayIndex){
-        var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (otherNames[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (otherNames[len].displayIndex < displayIndex){
-                current = otherNames[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.otherNamesForm.otherNames[index];
+            var tempDisplayIndex =$scope.otherNamesForm.otherNames[index]['displayIndex'];
+            temp['displayIndex'] = $scope.otherNamesForm.otherNames[index - 1]['displayIndex']
+            $scope.otherNamesForm.otherNames[index] = $scope.otherNamesForm.otherNames[index - 1];
+            $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
+            $scope.otherNamesForm.otherNames[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
-    
-    $scope.setPriorityDown = function(displayIndex){        
-        var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();        
-        var idxB = 0;        
-        while (len--) {
-            if (otherNames[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (otherNames[len].displayIndex > displayIndex){
-                current = otherNames[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    };
+
+    $scope.swapDown = function(index){
+        if (index < $scope.otherNamesForm.otherNames.length - 1) {
+            var temp = $scope.otherNamesForm.otherNames[index];
+            var tempDisplayIndex = $scope.otherNamesForm.otherNames[index]['displayIndex'];
+            temp['displayIndex'] = $scope.otherNamesForm.otherNames[index + 1]['displayIndex']
+            $scope.otherNamesForm.otherNames[index] = $scope.otherNamesForm.otherNames[index + 1];
+            $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
+            $scope.otherNamesForm.otherNames[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
+    };
     
     $scope.getLastDisplayIndex = function(){        
         var last = 0;
