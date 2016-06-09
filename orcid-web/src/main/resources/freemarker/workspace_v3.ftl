@@ -349,6 +349,7 @@
 		        	</div>	        	
 		       	</div>
 	       	</#if>
+			
 			<!--  External Identifiers -->
 	       	<#if RequestParameters['v2modal']??>
 	       		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
@@ -356,7 +357,7 @@
 	       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
 	       				<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
 	       			</div>
-	       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers | orderBy:'displayIndex'">	       				
+	       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">	       				
 			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</span>
 			        	<span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>				   		
 	       			</div>

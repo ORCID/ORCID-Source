@@ -2703,9 +2703,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $scope.keywordsForm.keywords.push(tmpObj);
         $scope.newInput = true;
     };
-    
-    
-    
 
     $scope.getKeywordsForm = function(){
         $.ajax({
@@ -3640,55 +3637,26 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         }
     };
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){
-        $scope.externalIdentifiersForm.externalIdentifiers[idxA].displayIndex = valueB;
-        $scope.externalIdentifiersForm.externalIdentifiers[idxB].displayIndex = valueA;
-    };
-    
-    
-    $scope.setPriorityUp = function(displayIndex){
-        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-        var len = externalIdentifiers.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (externalIdentifiers[len].displayIndex == displayIndex){
-                var idxA = len;
-            }
-            if (externalIdentifiers[len].displayIndex < displayIndex){
-                current = externalIdentifiers[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.externalIdentifiersForm.externalIdentifiers[index];
+            var tempDisplayIndex = $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'];
+            temp['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers[index - 1]['displayIndex']
+            $scope.externalIdentifiersForm.externalIdentifiers[index] = $scope.externalIdentifiersForm.externalIdentifiers[index - 1];
+            $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'] = tempDisplayIndex;
+            $scope.externalIdentifiersForm.externalIdentifiers[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
-    
-    $scope.setPriorityDown = function(displayIndex){
 
-        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-        
-        var len = externalIdentifiers.length;
-        
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();
-        var idxB = 0;
-        while (len--) {
-            if (externalIdentifiers[len].displayIndex == displayIndex){
-                var idxA = len;
-            }
-            if (externalIdentifiers[len].displayIndex > displayIndex){
-                current = externalIdentifiers[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapDown = function(index){
+        if (index < $scope.externalIdentifiersForm.externalIdentifiers.length - 1) {
+            var temp = $scope.externalIdentifiersForm.externalIdentifiers[index];
+            var tempDisplayIndex = $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'];
+            temp['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers[index + 1]['displayIndex']
+            $scope.externalIdentifiersForm.externalIdentifiers[index] = $scope.externalIdentifiersForm.externalIdentifiers[index + 1];
+            $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'] = tempDisplayIndex;
+            $scope.externalIdentifiersForm.externalIdentifiers[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
     
     $scope.getLastDisplayIndex = function(){
