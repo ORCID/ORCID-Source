@@ -57,7 +57,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @Override
     @Cacheable(value = "dao-address", key = "#orcid.concat('-').concat(#lastModified)")
     public List<AddressEntity> getAddresses(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid");
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid order by displayIndex desc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }

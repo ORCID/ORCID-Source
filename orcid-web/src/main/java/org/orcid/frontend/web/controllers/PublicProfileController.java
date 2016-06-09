@@ -326,7 +326,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             //The primary address will be the one with the lowest display index            
             for(Address address : publicAddresses.getAddress()) {
             	countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));            	
-                if(publicAddress == null || publicAddress.getDisplayIndex() > address.getDisplayIndex()) {
+                if(publicAddress == null) {
                    publicAddress = address;
                 }
             }            
