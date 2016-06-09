@@ -96,7 +96,6 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         }
         
         Keywords result = adapter.toKeywords(entities);
-        result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }       

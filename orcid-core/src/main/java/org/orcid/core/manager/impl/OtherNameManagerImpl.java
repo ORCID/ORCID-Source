@@ -96,7 +96,6 @@ public class OtherNameManagerImpl implements OtherNameManager {
         }
         
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        result.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }

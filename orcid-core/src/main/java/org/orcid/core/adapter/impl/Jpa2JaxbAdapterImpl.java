@@ -784,10 +784,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     
     private void setCountry(ProfileEntity profileEntity, ContactDetails contactDetails) {
         if(profileEntity.getAddresses() != null && !profileEntity.getAddresses().isEmpty()) {
-            //The primary will be the one with the smallest display index
+            //The primary will be the one with the biggest display index
             AddressEntity primary = null;
             for(AddressEntity address : profileEntity.getAddresses()) {
-                if(primary == null || primary.getDisplayIndex() > address.getDisplayIndex()) {
+                if(primary == null || primary.getDisplayIndex() < address.getDisplayIndex()) {
                     primary = address;
                 }                                                
             }

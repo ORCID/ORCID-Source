@@ -95,32 +95,6 @@ public class Keywords implements Serializable {
             return false;
         return true;
     }
-
-    public void updateIndexingStatusOnChilds() {
-        if (this.getKeywords() != null && !this.getKeywords().isEmpty()) {
-            List<Keyword> sorted = new ArrayList<Keyword>();
-            List<Keyword> unsorted = new ArrayList<Keyword>();
-            Long maxDisplayIndex = 0L;
-            for(Keyword k : this.getKeywords()) {
-                if(k.getDisplayIndex() == null || Long.valueOf(-1).equals(k.getDisplayIndex())) {
-                    unsorted.add(k);
-                } else {
-                    if(k.getDisplayIndex() > maxDisplayIndex) {
-                        maxDisplayIndex = k.getDisplayIndex();
-                    }
-                    sorted.add(k);
-                }                
-            }      
-            
-            if(!unsorted.isEmpty()) {
-                Collections.sort(unsorted);
-                for(Keyword k : unsorted) {
-                    k.setDisplayIndex((maxDisplayIndex++) + 1);
-                    sorted.add(k);
-                }
-            }
-        }
-    }
     
 	public LastModifiedDate getLastModifiedDate() {
 		return lastModifiedDate;

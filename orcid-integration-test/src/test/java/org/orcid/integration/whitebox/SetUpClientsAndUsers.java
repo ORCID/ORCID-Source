@@ -824,7 +824,7 @@ public class SetUpClientsAndUsers {
     public void setUpAddresses(String orcid) {
         AddressEntity a1 = new AddressEntity();
         a1.setDateCreated(new Date());
-        a1.setDisplayIndex(-1L);
+        a1.setDisplayIndex(0L);
         a1.setIso2Country(Iso3166Country.US);        
         a1.setLastModified(new Date());
         a1.setUser(new ProfileEntity(orcid));
@@ -841,7 +841,7 @@ public class SetUpClientsAndUsers {
     public void setUpOtherNames(String orcid) {
         OtherNameEntity o1 = new OtherNameEntity();
         o1.setDateCreated(new Date());
-        o1.setDisplayIndex(-1L);
+        o1.setDisplayIndex(0L);
         o1.setDisplayName("other-name-1");
         o1.setLastModified(new Date());
         o1.setProfile(new ProfileEntity(orcid));
@@ -851,7 +851,7 @@ public class SetUpClientsAndUsers {
         
         OtherNameEntity o2 = new OtherNameEntity();
         o2.setDateCreated(new Date());
-        o2.setDisplayIndex(-1L);
+        o2.setDisplayIndex(0L);
         o2.setDisplayName("other-name-2");
         o2.setLastModified(new Date());
         o2.setProfile(new ProfileEntity(orcid));
@@ -869,7 +869,7 @@ public class SetUpClientsAndUsers {
     public void setUpKeywords(String orcid) {
         ProfileKeywordEntity k1 = new ProfileKeywordEntity();
         k1.setDateCreated(new Date());
-        k1.setDisplayIndex(-1L);
+        k1.setDisplayIndex(0L);
         k1.setKeywordName("keyword-1");
         k1.setLastModified(new Date());
         k1.setProfile(new ProfileEntity(orcid));
@@ -879,7 +879,7 @@ public class SetUpClientsAndUsers {
         
         ProfileKeywordEntity k2 = new ProfileKeywordEntity();
         k2.setDateCreated(new Date());
-        k2.setDisplayIndex(-1L);
+        k2.setDisplayIndex(0L);
         k2.setKeywordName("keyword-2");
         k2.setLastModified(new Date());
         k2.setProfile(new ProfileEntity(orcid));
@@ -917,7 +917,7 @@ public class SetUpClientsAndUsers {
     public void setUpExternalIdentifiers(String orcid) {
         ExternalIdentifierEntity e1 = new ExternalIdentifierEntity();
         e1.setDateCreated(new Date());
-        e1.setDisplayIndex(-1L);
+        e1.setDisplayIndex(0L);
         e1.setExternalIdCommonName("A-0001");
         e1.setExternalIdReference("A-0001");
         e1.setExternalIdUrl("http://ext-id/A-0001");
@@ -928,7 +928,7 @@ public class SetUpClientsAndUsers {
                 
         ExternalIdentifierEntity e2 = new ExternalIdentifierEntity();
         e2.setDateCreated(new Date());
-        e2.setDisplayIndex(-1L);
+        e2.setDisplayIndex(0L);
         e2.setExternalIdCommonName("A-0002");
         e2.setExternalIdReference("A-0002");
         e2.setExternalIdUrl("http://ext-id/A-0002");
