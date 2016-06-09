@@ -2993,22 +2993,13 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $scope.showEdit = false;
     };
 
-    $scope.addNew = function() {
-        //$scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});        
+    $scope.addNew = function() {        
         for (var idx in $scope.otherNamesForm.otherNames)
         	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
         $scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "0" });
     };
     
-    $scope.addNewModal = function() {
-    	/*
-        var idx = $scope.getLastDisplayIndex();               
-        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":null,"sourceName":""};
-        tmpObj['displayIndex'] = 0;
-        tmpObj['source'] = $scope.orcidId;
-        $scope.otherNamesForm.otherNames.push(tmpObj);        
-        $scope.newInput = true;
-        */
+    $scope.addNewModal = function() {    	
     	var idx = $scope.getLastDisplayIndex();        
         var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 0};
         for (var idx in scope.otherNamesForm.otherNames)
