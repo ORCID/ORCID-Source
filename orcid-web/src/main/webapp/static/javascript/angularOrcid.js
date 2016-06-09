@@ -2442,7 +2442,9 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         var idx = $scope.getLastDisplayIndex();        
         var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":null,"sourceName":"", "displayIndex": 0};        
         tmpObj['source'] = $scope.orcidId;
-        tmpObj['displayIndex'] = idx + 1;
+        tmpObj['displayIndex'] = 0;
+        for (var idx in $scope.websitesForm.websites)
+            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites[idx]['displayIndex'] + 1;
         $scope.websitesForm.websites.push(tmpObj);
         $scope.newInput = true; 
     };

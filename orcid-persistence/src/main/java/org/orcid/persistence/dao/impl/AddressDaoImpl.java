@@ -39,7 +39,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
 
     @Override
     public AddressEntity getAddress(String orcid, Long putCode) {
-        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and id = :id");
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and id = :id order by displayIndex desc");
         query.setParameter("orcid", orcid);
         query.setParameter("id", putCode);
         return (AddressEntity) query.getSingleResult();
@@ -65,7 +65,7 @@ public class AddressDaoImpl extends GenericDaoImpl<AddressEntity, Long> implemen
     @SuppressWarnings("unchecked")
     @Override
     public List<AddressEntity> getAddresses(String orcid, Visibility visibility) {
-        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and visibility = :visibility");
+        Query query = entityManager.createQuery("FROM AddressEntity WHERE user.id = :orcid and visibility = :visibility order by displayIndex desc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();
