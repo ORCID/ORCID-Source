@@ -253,7 +253,7 @@
 		        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
 		        	   <span>
 		        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()" title=""></span><br />
-                          <div ng-repeat="website in websitesForm.websites | orderBy:'-':'displayIndex'" ng-cloak class="wrap">
+                          <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
 		        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
 		        	      </div>
 		        	   </span>
