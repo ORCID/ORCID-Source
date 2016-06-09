@@ -2690,17 +2690,22 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.keywordsForm.keywords.push({content: ""});
+    	for (var idx in $scope.websitesForm.websites)
+    		$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
+        $scope.keywordsForm.keywords.push({content: "", displayIndex: "0"});
     };
     
     $scope.addNewModal = function() {        
         var idx = $scope.getLastDisplayIndex();
-        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":""};
-        tmpObj['displayIndex'] = idx + 1;
-        tmpObj['source'] = $scope.orcidId;        
+        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":$scope.orcidId,"sourceName":""};
+        for (var idx in $scope.keywordsForm.keywords)
+        	$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
         $scope.keywordsForm.keywords.push(tmpObj);
         $scope.newInput = true;
     };
+    
+    
+    
 
     $scope.getKeywordsForm = function(){
         $.ajax({
@@ -2853,52 +2858,27 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $.colorbox.close();
     }
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){        
-        $scope.keywordsForm.keywords[idxA].displayIndex = valueB;
-        $scope.keywordsForm.keywords[idxB].displayIndex = valueA;
-    }
-    
-    $scope.setPriorityUp = function(displayIndex){        
-        var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (keywords[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (keywords[len].displayIndex < displayIndex){
-                current = keywords[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.keywordsForm.keywords[index];
+            var tempDisplayIndex = $scope.keywordsForm.keywords[index]['displayIndex'];
+            temp['displayIndex'] = $scope.keywordsForm.keywords[index - 1]['displayIndex']
+            $scope.keywordsForm.keywords[index] = $scope.keywordsForm.keywords[index - 1];
+            $scope.keywordsForm.keywords[index]['displayIndex'] = tempDisplayIndex;
+            $scope.keywordsForm.keywords[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
-    
-    $scope.setPriorityDown = function(displayIndex){        
-        var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();        
-        var idxB = 0;        
-        while (len--) {
-            if (keywords[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (keywords[len].displayIndex > displayIndex){
-                current = keywords[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    };
+
+    $scope.swapDown = function(index){
+        if (index < $scope.keywordsForm.keywords.length - 1) {
+            var temp = $scope.keywordsForm.keywords[index];
+            var tempDisplayIndex = $scope.keywordsForm.keywords[index]['displayIndex'];
+            temp['displayIndex'] = $scope.keywordsForm.keywords[index + 1]['displayIndex']
+            $scope.keywordsForm.keywords[index] = $scope.keywordsForm.keywords[index + 1];
+            $scope.keywordsForm.keywords[index]['displayIndex'] = tempDisplayIndex;
+            $scope.keywordsForm.keywords[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
+    };
     
     $scope.getLastDisplayIndex = function(){        
         var last = 0;
