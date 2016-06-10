@@ -42,8 +42,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {   
-
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     
     private String authorizeScreen = null;
     

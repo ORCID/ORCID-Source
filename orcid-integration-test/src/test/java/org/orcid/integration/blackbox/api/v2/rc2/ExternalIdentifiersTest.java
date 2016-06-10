@@ -60,18 +60,6 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    protected static WebDriver webDriver;
-    
-    @BeforeClass
-    public static void beforeClass() {
-        webDriver = new FirefoxDriver();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        webDriver.quit();
-    }
-    
     /**
      * PRECONDITIONS: 
      *          The user should have two external identifiers: 
