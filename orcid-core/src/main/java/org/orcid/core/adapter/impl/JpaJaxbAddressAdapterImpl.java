@@ -41,7 +41,7 @@ public class JpaJaxbAddressAdapterImpl implements JpaJaxbAddressAdapter {
         }
         AddressEntity result = mapperFacade.map(address, AddressEntity.class);
         if(result.getDisplayIndex() == null) {
-            result.setDisplayIndex(-1L);
+            result.setDisplayIndex(0L);
         }
         return result;
     }

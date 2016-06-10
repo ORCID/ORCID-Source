@@ -33,4 +33,15 @@
  		</sql>        
     </changeSet>
 
+    <!-- found some issues with the marshalling layer during testing patch that up. -->
+    <changeSet id="FIX_DISPLAY_INDEXS_FOR_BIO_V2" author="rcpeters" dbms="postgresql">
+       <sql>
+            UPDATE address SET display_index = 0 where display_index = -1;
+ 			UPDATE external_identifier SET display_index = 0 where display_index = -1;
+ 			UPDATE profile_keyword SET display_index = 0 where display_index = -1;
+ 			UPDATE other_name SET display_index = 0 where display_index = -1;
+ 			UPDATE researcher_url SET display_index = 0 where display_index = -1;
+ 		</sql>        
+    </changeSet>
+
 </databaseChangeLog>

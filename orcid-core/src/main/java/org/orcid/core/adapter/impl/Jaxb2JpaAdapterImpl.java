@@ -459,8 +459,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     //Set source
                     SourceEntity source = sourceManager.retrieveSourceEntity();                    
                     setSource(source, newEntity);
-                    
-                    newEntity.setDisplayIndex(-1L);
                     if(newResearcherUrl.getUrl() != null) {
                         newEntity.setUrl(newResearcherUrl.getUrl().getValue());
                     }
@@ -468,6 +466,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                         newEntity.setUrlName(newResearcherUrl.getUrlName().getContent());
                     }                    
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, researcherUrls.getVisibility(), OrcidVisibilityDefaults.RESEARCHER_URLS_DEFAULT));
+                    newEntity.setDisplayIndex(0L);
+                    for (ResearcherUrlEntity tempEntity:existingResearcherUrlEntities)
+                        tempEntity.setDisplayIndex(tempEntity.getDisplayIndex()+1);
                     existingResearcherUrlEntities.add(newEntity);
                 }
             }
@@ -573,9 +574,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     SourceEntity source = sourceManager.retrieveSourceEntity();
                     setSource(source, newEntity);
                     
-                    newEntity.setDisplayIndex(-1L);
                     newEntity.setDisplayName(newOtherName.getContent());
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, otherNames.getVisibility(), OrcidVisibilityDefaults.OTHER_NAMES_DEFAULT));
+                    newEntity.setDisplayIndex(0L);
+                    for (OtherNameEntity tempEntity:existingOtherNameEntities)
+                        tempEntity.setDisplayIndex(tempEntity.getDisplayIndex()+1);
                     existingOtherNameEntities.add(newEntity);
                 }                
             }
@@ -692,9 +695,11 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     SourceEntity source = sourceManager.retrieveSourceEntity();
                     setSource(source, newEntity);
                     
-                    newEntity.setDisplayIndex(-1L);
                     newEntity.setKeywordName(newKeyword.getContent());
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, keywords.getVisibility(), OrcidVisibilityDefaults.KEYWORD_DEFAULT));
+                    newEntity.setDisplayIndex(0L);
+                    for (ProfileKeywordEntity tempEntity:existingProfileKeywordEntities)
+                        tempEntity.setDisplayIndex(tempEntity.getDisplayIndex()+1);
                     existingProfileKeywordEntities.add(newEntity);
                 }
             }
@@ -779,7 +784,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     SourceEntity source = sourceManager.retrieveSourceEntity();
                     setSource(source, newEntity);
                     
-                    newEntity.setDisplayIndex(-1L);
                     if(newExternalIdentifier.getExternalIdCommonName() != null) {
                         newEntity.setExternalIdCommonName(newExternalIdentifier.getExternalIdCommonName().getContent());
                     }
@@ -791,6 +795,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                     }
                     
                     newEntity.setVisibility(getDefaultVisibility(profileEntity, externalIdentifiers.getVisibility(), OrcidVisibilityDefaults.EXTERNAL_IDENTIFIER_DEFAULT));
+                    newEntity.setDisplayIndex(0L);
+                    for (ExternalIdentifierEntity tempEntity:existingExternalIdentifierEntities)
+                        tempEntity.setDisplayIndex(tempEntity.getDisplayIndex()+1);
                     existingExternalIdentifierEntities.add(newEntity);
                 }
             }               
@@ -835,13 +842,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             boolean addIt = true;
                                    
             //If the address exists, don't add it
-            Long biggestDisplayIndex = -1L;
             for(AddressEntity address : addresses) {
                 if(Objects.equals(country.value(), address.getIso2Country().value())) {
                     addIt = false;                    
-                }
-                if(address.getDisplayIndex() > biggestDisplayIndex) {
-                    biggestDisplayIndex = address.getDisplayIndex();
                 }
             }            
             
@@ -849,7 +852,6 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 AddressEntity newAddress = new AddressEntity();
                 newAddress.setDateCreated(new Date());
                 //The default country is the smallest one, so, lets add this one as the biggest display index possible for the record
-                newAddress.setDisplayIndex(biggestDisplayIndex + 1);
                 newAddress.setIso2Country(org.orcid.jaxb.model.common_rc2.Iso3166Country.fromValue(country.value()));
                 newAddress.setLastModified(new Date());
                 newAddress.setUser(profileEntity);
@@ -857,6 +859,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
                 //Set source
                 SourceEntity source = sourceManager.retrieveSourceEntity();
                 setSource(source, newAddress);
+                newAddress.setDisplayIndex(0L);
+                for(AddressEntity address : addresses)
+                    address.setDisplayIndex(address.getDisplayIndex()+1L);
                 addresses.add(newAddress);
             }                        
         }

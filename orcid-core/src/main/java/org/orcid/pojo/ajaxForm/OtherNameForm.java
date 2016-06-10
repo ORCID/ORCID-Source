@@ -78,7 +78,7 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
             if (otherName.getDisplayIndex() != null) {
                 form.setDisplayIndex(otherName.getDisplayIndex());
             } else {
-                form.setDisplayIndex(Long.valueOf(-1));
+                form.setDisplayIndex(0L);
             }
         }
         return form;
@@ -101,7 +101,7 @@ public class OtherNameForm implements ErrorsInterface, Serializable {
         if (displayIndex != null) {
             otherName.setDisplayIndex(displayIndex);
         } else {
-            otherName.setDisplayIndex(Long.valueOf(-1));
+            otherName.setDisplayIndex(0L);
         }
 
         otherName.setSource(new Source(source));
