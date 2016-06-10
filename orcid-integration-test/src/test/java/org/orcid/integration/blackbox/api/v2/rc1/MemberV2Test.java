@@ -87,18 +87,6 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     
     static List<GroupIdRecord> groupRecords = null;
 
-    @BeforeClass
-    public static void beforeClass() {
-        // we need to make sure the users activity visibility setting is public for this test
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        revokeApplicationsAccess();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        revokeApplicationsAccess();
-    }
-    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();  
@@ -118,6 +106,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);

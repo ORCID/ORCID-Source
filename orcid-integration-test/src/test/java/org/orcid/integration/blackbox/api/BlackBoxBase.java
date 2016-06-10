@@ -214,16 +214,21 @@ public class BlackBoxBase {
             // Unlock the account
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]")));
-            WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
-            unLockProfileLink.click();
+            ngAwareClick(webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]")), webDriver);
+
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
             WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
             unLockProfileOrcidId.sendKeys(orcidToUnlock);
-                    
-            WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
-            unLockButton.click();
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
-            WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
-            confirmUnLockButton.click();
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("bottom-confirm-unlock-profile")));
+            ngAwareClick(webDriver.findElement(By.id("bottom-confirm-unlock-profile")), webDriver);
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("btn-unlock")));
+            ngAwareClick(webDriver.findElement(By.id("btn-unlock")), webDriver);
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+
         } catch(TimeoutException t) {
             //Account might be already unlocked
         } 
@@ -244,16 +249,21 @@ public class BlackBoxBase {
             // Lock the account
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
             (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]")));
-            WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
-            lockProfileLink.click();
+            ngAwareClick(webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]")), webDriver);
+
+            (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+            extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("bottom-confirm-lock-profile")), webDriver);
+
             WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
             lockProfileOrcidId.sendKeys(orcidToLock);
-            WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
-            lockButton.click();
+            (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+            extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("bottom-confirm-lock-profile")), webDriver);
+            ngAwareClick(webDriver.findElement(By.id("bottom-confirm-lock-profile")), webDriver);
 
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
-            WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
-            confirmLockButton.click();
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("btn-lock")));
+            ngAwareClick(webDriver.findElement(By.id("btn-lock")), webDriver);
+            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
         } catch (TimeoutException t) {
             // Account might be already locked
         } 
@@ -331,19 +341,12 @@ public class BlackBoxBase {
         }
     }
 
-    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
-        Properties prop = SystemPropertiesHelper.getProperties();
-        String userName = prop.getProperty("org.orcid.web.testUser1.username");
-        String password = prop.getProperty("org.orcid.web.testUser1.password");
-        String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
-            baseUrl = prop.getProperty("org.orcid.web.baseUri");
-        }
-
-        logUserOut(baseUrl,webDriver);
-        webDriver.get(baseUrl + "/account");
+    public void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        logUserOut(getWebBaseUrl(),webDriver);
+        webDriver.get(getWebBaseUrl() + "/account");
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         
-        SigninTest.signIn(webDriver, userName, password);
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
         noSpinners(webDriver);
         extremeWaitFor(angularHasFinishedProcessing(),webDriver);
         
