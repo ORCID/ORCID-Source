@@ -169,7 +169,9 @@ public class AddressManagerImpl implements AddressManager {
         if(sourceEntity.getSourceClient() != null) {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }        
-       
+        
+        for (AddressEntity existing : existingAddresses)
+            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
         newEntity.setDisplayIndex(0L); 
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);

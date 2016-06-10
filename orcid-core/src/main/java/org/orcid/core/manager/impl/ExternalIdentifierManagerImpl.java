@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
@@ -134,6 +135,9 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         }
                 
         setIncomingPrivacy(newEntity, profile);
+        for (ExternalIdentifierEntity existing : existingExternalIdentifiers)
+            existing.setDisplayIndex(existing.getDisplayIndex() + 1);        
+        newEntity.setDisplayIndex(0L);
         externalIdentifierDao.persist(newEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(newEntity);
     }
