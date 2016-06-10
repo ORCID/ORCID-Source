@@ -173,7 +173,7 @@
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId" focus-me="newInput"></input>
 										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId"></span>										
 									</div>
-									<div class="source" ng-if="keyword.sourceName || keyword.source == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
+									<div class="source" ng-if="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
 								<div class="col-md-6">
