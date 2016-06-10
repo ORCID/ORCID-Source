@@ -14,6 +14,7 @@ In most cases, only en, xx, lr, and rl files should be edited directly. We use t
 - **Transifex Project Maintainer** ORICD staff member responsible for managing translation workflow
 - **Translators** Vendors/community members who provide translations
 - **Reviewers** Trusted community members who review translations provided by others
+
 ##Workflows
 [Add new strings](#add-new-strings)
 [Update existing string(s) - English only](#update-existing-strings-english-only)
