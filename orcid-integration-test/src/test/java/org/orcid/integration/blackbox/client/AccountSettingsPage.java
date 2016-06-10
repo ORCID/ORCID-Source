@@ -69,8 +69,8 @@ public class AccountSettingsPage {
     public class EmailsSection {
 
         public void toggleEdit() {
-            BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@ng-click='toggleEmailEdit()']")), webDriver);
-            BlackBoxBase.ngAwareClick(webDriver.findElement(By.xpath("//a[@ng-click='toggleEmailEdit()']")), webDriver);
+            BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("account-settings-toggle-email-edit")), webDriver);
+            BlackBoxBase.ngAwareClick(webDriver.findElement(By.id("account-settings-toggle-email-edit")), webDriver);
         }
 
         public List<Email> getEmails() {
