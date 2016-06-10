@@ -441,7 +441,8 @@ public class WorkspaceController extends BaseWorkspaceController {
             while(it.hasNext()) {
                 OtherNameForm form = it.next();
                 if(PojoUtil.isEmpty(form.getContent())) {
-                   it.remove();    
+                   it.remove();
+                   continue;
                 } 
                 if(form.getContent().length() > SiteConstants.MAX_LENGTH_255) {
                     form.setContent(form.getContent().substring(0, SiteConstants.MAX_LENGTH_255));
