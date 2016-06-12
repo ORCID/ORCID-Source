@@ -738,7 +738,22 @@ $(function() {
                     $('#searchResults').html(data);
                 });
             });
-
+    
+    // set of functions to track colorbox complete for automated testing
+    window.cbox_complete = false;
+    // traditional tracker
+    $(document).bind("cbox_complete", function(){
+       window.cbox_complete = true;
+    });
+    // traditional tracker
+    $(document).bind("cbox_open", function(){
+       window.cbox_complete = false;
+    });
+    // traditional tracker
+    $(document).bind("cbox_closed", function(){
+       window.cbox_complete = false;
+    });
+    
 });
 
 /* START: Bibjson to work AjaxForm */
