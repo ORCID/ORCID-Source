@@ -32,6 +32,7 @@ import org.orcid.frontend.web.controllers.ShibbolethController;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +79,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             userConnectionEntity.setLinked(true);
             userConnectionEntity.setLastLogin(new Date());
             userConnectionEntity.setIdType(remoteUser.getIdType());
+            userConnectionEntity.setConnectionSatus(UserConnectionStatus.STARTED);
             userConnectionDao.persist(userConnectionEntity);
         }
     }
