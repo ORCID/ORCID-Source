@@ -29,7 +29,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -87,21 +87,21 @@ public class SigninTest {
 
 	// Make this available to other classes
     static public void signIn(WebDriver webDriver, String username, String password) {
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(),webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
-        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
         WebElement emailEl = webDriver.findElement(By.xpath("//input[@name='userId']"));
         emailEl.sendKeys(username);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
         WebElement passwordEl = webDriver.findElement(By.xpath("//input[@name='password']"));
         passwordEl.sendKeys(password);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
         WebElement buttonEl = webDriver.findElement(By.xpath("//button[@id='form-sign-in-button']"));
-        BlackBoxBase.ngAwareClick(buttonEl, webDriver);
-        BlackBoxBase.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")),webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(),webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+        BBBUtil.ngAwareClick(buttonEl, webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[text()='Sign out']")),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
     }
 
     public static void dismissVerifyEmailModal(WebDriver webDriver) {

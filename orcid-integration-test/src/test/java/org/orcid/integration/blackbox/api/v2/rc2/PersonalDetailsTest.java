@@ -36,6 +36,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -180,12 +181,12 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         webDriver.get(getWebBaseUrl() + "/signin");
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
         SigninTest.dismissVerifyEmailModal(webDriver);
         
         //Change all to LIMITED
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         changeNamesVisibility(Visibility.LIMITED);
         changeOtherNamesVisibility(Visibility.LIMITED);
         changeBioVisibility(Visibility.LIMITED);
@@ -270,8 +271,8 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         try {
             By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
             (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
-            ngAwareClick(webDriver.findElement(openEditOtherNames), webDriver);
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            BBBUtil.ngAwareClick(webDriver.findElement(openEditOtherNames), webDriver);
             
             By namesVisibility = By.xpath("//div[@id = 'other-names-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
             (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));

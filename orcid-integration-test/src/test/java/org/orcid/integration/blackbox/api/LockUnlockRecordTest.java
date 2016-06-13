@@ -71,8 +71,8 @@ public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
 
     private boolean checkIfLockedUI() {
         webDriver.get(this.getWebBaseUrl() + "/" + getUser1OrcidId());
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(documentReady());
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         if (webDriver.findElements(By.id("error_locked")).size() != 0) {
             return true;
         }
