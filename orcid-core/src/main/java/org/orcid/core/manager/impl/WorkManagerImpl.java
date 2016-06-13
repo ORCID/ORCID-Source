@@ -219,6 +219,8 @@ public class WorkManagerImpl implements WorkManager {
         } 
         
         setIncomingWorkPrivacy(workEntity, profile);
+        workEntity.setDisplayIndex(0L);
+        workDao.increaseDisplayIndexOnAllElements(orcid);
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));

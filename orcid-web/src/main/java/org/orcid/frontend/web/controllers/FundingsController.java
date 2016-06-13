@@ -399,9 +399,6 @@ public class FundingsController extends BaseWorkspaceController {
         Funding funding = fundingForm.toFunding();
         funding = profileFundingManager.createFunding(getEffectiveUserOrcid(), funding, false);        
 
-        // make the newly added funding the default
-        profileFundingManager.updateToMaxDisplay(getEffectiveUserOrcid(), funding.getPutCode());
-
         // Send the new funding sub type for indexing
         if (fundingForm.getOrganizationDefinedFundingSubType() != null && !PojoUtil.isEmpty(fundingForm.getOrganizationDefinedFundingSubType().getSubtype())
                 && !fundingForm.getOrganizationDefinedFundingSubType().isAlreadyIndexed())

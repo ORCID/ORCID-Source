@@ -30,6 +30,7 @@ import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
 import org.orcid.core.manager.PeerReviewManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
@@ -40,7 +41,6 @@ import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.persistence.dao.PeerReviewDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -67,9 +67,6 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     private SourceManager sourceManager;
 
     @Resource
-    private ProfileDao profileDao;
-
-    @Resource
     private LocaleManager localeManager;
 
     @Resource
@@ -86,6 +83,9 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     
     @Resource 
     private ActivityValidator activityValidator;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -110,6 +110,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
     }
 
     @Override
+    @Transactional
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -153,9 +154,11 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             entity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        ProfileEntity profile = profileDao.find(orcid);
-        entity.setProfile(profile);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
+        entity.setProfile(profile);        
         setIncomingPrivacy(entity, profile);
+        entity.setDisplayIndex(0L);
+        peerReviewDao.increaseDisplayIndexOnAllElements(orcid);
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(entity));

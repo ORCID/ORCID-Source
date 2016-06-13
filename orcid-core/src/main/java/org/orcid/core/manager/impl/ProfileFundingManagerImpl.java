@@ -29,6 +29,7 @@ import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
@@ -40,7 +41,6 @@ import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -75,9 +75,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     private SourceManager sourceManager;
     
     @Resource
-    private ProfileDao profileDao;
-    
-    @Resource
     private LocaleManager localeManager;
     
     @Resource
@@ -85,6 +82,9 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource 
     private ActivityValidator activityValidator;
+    
+    @Resource
+    private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -294,9 +294,11 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
             profileFundingEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        ProfileEntity profile = profileDao.find(orcid);
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
+        profileFundingEntity.setDisplayIndex(0L);
+        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if(isApiRequest) {

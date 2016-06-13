@@ -248,4 +248,11 @@ public class ProfileFundingDaoImpl extends GenericDaoImpl<ProfileFundingEntity, 
         query.setParameter("limit", limit);
         return query.getResultList();
     }
+
+    @Override
+    public boolean increaseDisplayIndexOnAllElements(String orcid) {
+        Query query = entityManager.createNativeQuery("update profile_funding set display_index=(display_index + 1), last_modified=now() where orcid=:orcid");                
+        query.setParameter("orcid", orcid);
+        return query.executeUpdate() > 0;
+    }
 }

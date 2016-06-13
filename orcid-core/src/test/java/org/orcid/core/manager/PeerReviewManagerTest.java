@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Role;
+import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class PeerReviewManagerTest extends BaseTest {
@@ -61,6 +64,9 @@ public class PeerReviewManagerTest extends BaseTest {
     
     @Resource 
     private PeerReviewManager peerReviewManager;
+    
+    @Resource
+    private PeerReviewDao peerReviewDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -82,7 +88,7 @@ public class PeerReviewManagerTest extends BaseTest {
     @Test
     public void testAddPeerReviewToUnclaimedRecordPreservePeerReviewVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
-        PeerReview peer = getPeerReview();
+        PeerReview peer = getPeerReview(null);
         
         peer = peerReviewManager.createPeerReview(unclaimedOrcid, peer, true);
         peer = peerReviewManager.getPeerReview(unclaimedOrcid, peer.getPutCode());
@@ -94,7 +100,7 @@ public class PeerReviewManagerTest extends BaseTest {
     @Test
     public void testAddPeerReviewToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
-        PeerReview peer = getPeerReview();
+        PeerReview peer = getPeerReview(null);
         
         peer = peerReviewManager.createPeerReview(claimedOrcid, peer, true);
         peer = peerReviewManager.getPeerReview(claimedOrcid, peer.getPutCode());
@@ -103,7 +109,36 @@ public class PeerReviewManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, peer.getVisibility());       
     }
     
-    private PeerReview getPeerReview() {
+    @Test
+    public void testAddMultipleModifiesIndexingStatus() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PeerReview p1 = getPeerReview("extId1");
+        p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
+        
+        PeerReview p2 = getPeerReview("extId2");
+        p2 = peerReviewManager.createPeerReview(claimedOrcid, p2, true);
+        
+        PeerReview p3 = getPeerReview("extId3");
+        p3 = peerReviewManager.createPeerReview(claimedOrcid, p3, true);
+        
+        PeerReviewEntity entity1 = peerReviewDao.find(p1.getPutCode());
+        PeerReviewEntity entity2 = peerReviewDao.find(p2.getPutCode());
+        PeerReviewEntity entity3 = peerReviewDao.find(p3.getPutCode());
+        
+        assertNotNull(entity1.getDisplayIndex());
+        assertNotNull(entity2.getDisplayIndex());
+        assertNotNull(entity3.getDisplayIndex());
+        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
+        assertTrue(entity2.getDisplayIndex() > entity3.getDisplayIndex());
+        assertTrue(entity1.getDisplayIndex() > entity2.getDisplayIndex());
+        
+        //Rollback all changes
+        peerReviewDao.remove(entity1.getId());
+        peerReviewDao.remove(entity2.getId());
+        peerReviewDao.remove(entity3.getId());
+    }
+    
+    private PeerReview getPeerReview(String extIdValue) {
         PeerReview peerReview = new PeerReview();
         peerReview.setRole(Role.CHAIR);
         ExternalIDs extIds = new ExternalIDs();
@@ -111,10 +146,18 @@ public class PeerReviewManagerTest extends BaseTest {
         extId.setRelationship(Relationship.SELF);
         extId.setType("doi");
         extId.setUrl(new Url("http://orcid.org"));
-        extId.setValue("ext-id-value");
+        if(extIdValue == null) {
+            extId.setValue("ext-id-value");
+        } else {
+            extId.setValue("ext-id-value-" + extIdValue);
+        }
         extIds.getExternalIdentifier().add(extId);
-        peerReview.setExternalIdentifiers(extIds);        
-        peerReview.setSubjectContainerName(new Title("Peer review title"));
+        peerReview.setExternalIdentifiers(extIds);       
+        if(extIdValue == null) {
+            peerReview.setSubjectContainerName(new Title("Peer review title"));
+        } else {
+            peerReview.setSubjectContainerName(new Title("Peer review title " + extIdValue));
+        }
         peerReview.setSubjectExternalIdentifier(extId);
         
         Organization org = new Organization();

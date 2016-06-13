@@ -259,6 +259,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
+    @Transactional
     public ResearcherUrl createResearcherUrl(String orcid, ResearcherUrl researcherUrl, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the researcher url
