@@ -2435,14 +2435,18 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
 
     $scope.addNew = function() {
-        $scope.websitesForm.websites.push({ url: "", urlName: "" });
+        for (var idx in $scope.websitesForm.websites)
+            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
+        $scope.websitesForm.websites.push({ url: "", urlName: "", displayIndex: "0" });
     };
     
     $scope.addNewModal = function() {
         var idx = $scope.getLastDisplayIndex();        
         var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":null,"sourceName":"", "displayIndex": 0};        
         tmpObj['source'] = $scope.orcidId;
-        tmpObj['displayIndex'] = idx + 1;
+        tmpObj['displayIndex'] = 0;
+        for (var idx in $scope.websitesForm.websites)
+            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
         $scope.websitesForm.websites.push(tmpObj);
         $scope.newInput = true; 
     };
@@ -2623,52 +2627,27 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.closeEditModal = function(){
         $.colorbox.close();
     }
-    
-    $scope.swap = function(idxA, valueA, idxB, valueB){        
-        $scope.websitesForm.websites[idxA].displayIndex = valueB;
-        $scope.websitesForm.websites[idxB].displayIndex = valueA;
-    }    
-    
-    $scope.setPriorityUp = function(displayIndex){        
-        var websites = $scope.websitesForm.websites;
-        var len = websites.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (websites[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (websites[len].displayIndex < displayIndex){
-                current = websites[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.websitesForm.websites[index];
+            var tempDisplayIndex = $scope.websitesForm.websites[index]['displayIndex'];
+            temp['displayIndex'] = $scope.websitesForm.websites[index - 1]['displayIndex']
+            $scope.websitesForm.websites[index] = $scope.websitesForm.websites[index - 1];
+            $scope.websitesForm.websites[index]['displayIndex'] = tempDisplayIndex;
+            $scope.websitesForm.websites[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
-    
-    $scope.setPriorityDown = function(displayIndex){
-        var websites = $scope.websitesForm.websites;
-        var len = websites.length;
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();        
-        var idxB = 0;        
-        while (len--) {
-            if (websites[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (websites[len].displayIndex > displayIndex){
-                current = websites[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+
+    $scope.swapDown = function(index){
+        if (index < $scope.websitesForm.websites.length - 1) {
+            var temp = $scope.websitesForm.websites[index];
+            var tempDisplayIndex = $scope.websitesForm.websites[index]['displayIndex'];
+            temp['displayIndex'] = $scope.websitesForm.websites[index + 1]['displayIndex']
+            $scope.websitesForm.websites[index] = $scope.websitesForm.websites[index + 1];
+            $scope.websitesForm.websites[index]['displayIndex'] = tempDisplayIndex;
+            $scope.websitesForm.websites[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
     
     $scope.getLastDisplayIndex = function(){        
@@ -2711,14 +2690,16 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     };
 
     $scope.addNew = function() {
-        $scope.keywordsForm.keywords.push({content: ""});
+    	for (var idx in $scope.keywordsForm.keyword)
+    		$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
+        $scope.keywordsForm.keywords.push({content: "", displayIndex: "0"});
     };
     
     $scope.addNewModal = function() {        
         var idx = $scope.getLastDisplayIndex();
-        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":""};
-        tmpObj['displayIndex'] = idx + 1;
-        tmpObj['source'] = $scope.orcidId;        
+        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":$scope.orcidId,"sourceName":""};
+        for (var idx in $scope.keywordsForm.keywords)
+        	$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
         $scope.keywordsForm.keywords.push(tmpObj);
         $scope.newInput = true;
     };
@@ -2874,52 +2855,27 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $.colorbox.close();
     }
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){        
-        $scope.keywordsForm.keywords[idxA].displayIndex = valueB;
-        $scope.keywordsForm.keywords[idxB].displayIndex = valueA;
-    }
-    
-    $scope.setPriorityUp = function(displayIndex){        
-        var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (keywords[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (keywords[len].displayIndex < displayIndex){
-                current = keywords[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.keywordsForm.keywords[index];
+            var tempDisplayIndex = $scope.keywordsForm.keywords[index]['displayIndex'];
+            temp['displayIndex'] = $scope.keywordsForm.keywords[index - 1]['displayIndex']
+            $scope.keywordsForm.keywords[index] = $scope.keywordsForm.keywords[index - 1];
+            $scope.keywordsForm.keywords[index]['displayIndex'] = tempDisplayIndex;
+            $scope.keywordsForm.keywords[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
-    
-    $scope.setPriorityDown = function(displayIndex){        
-        var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();        
-        var idxB = 0;        
-        while (len--) {
-            if (keywords[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (keywords[len].displayIndex > displayIndex){
-                current = keywords[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    };
+
+    $scope.swapDown = function(index){
+        if (index < $scope.keywordsForm.keywords.length - 1) {
+            var temp = $scope.keywordsForm.keywords[index];
+            var tempDisplayIndex = $scope.keywordsForm.keywords[index]['displayIndex'];
+            temp['displayIndex'] = $scope.keywordsForm.keywords[index + 1]['displayIndex']
+            $scope.keywordsForm.keywords[index] = $scope.keywordsForm.keywords[index + 1];
+            $scope.keywordsForm.keywords[index]['displayIndex'] = tempDisplayIndex;
+            $scope.keywordsForm.keywords[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
+    };
     
     $scope.getLastDisplayIndex = function(){        
         var last = 0;
@@ -3014,17 +2970,19 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $scope.showEdit = false;
     };
 
-    $scope.addNew = function() {
-        $scope.otherNamesForm.otherNames.push({"errors":[],"content":"","putCode":null,"visibility":null});
+    $scope.addNew = function() {        
+        for (var idx in $scope.otherNamesForm.otherNames)
+        	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
+        $scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "0" });
     };
     
-    $scope.addNewModal = function() {        
-        var idx = $scope.getLastDisplayIndex();               
-        var tmpObj = {"errors":[],"content":"","putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":null,"sourceName":""};
-        tmpObj['displayIndex'] = idx + 1;
-        tmpObj['source'] = $scope.orcidId;
-        $scope.otherNamesForm.otherNames.push(tmpObj);        
-        $scope.newInput = true;        
+    $scope.addNewModal = function() {    	
+    	var idx = $scope.getLastDisplayIndex();        
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 0};
+        for (var idx in $scope.otherNamesForm.otherNames)
+        	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
+        $scope.otherNamesForm.otherNames.push(tmpObj);
+        $scope.newInput = true;
     };
 
     $scope.getOtherNamesForm = function(){
@@ -3177,52 +3135,27 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $.colorbox.close();
     }
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){        
-       $scope.otherNamesForm.otherNames[idxA].displayIndex = valueB;
-       $scope.otherNamesForm.otherNames[idxB].displayIndex = valueA;
-    }    
-    
-    $scope.setPriorityUp = function(displayIndex){
-        var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (otherNames[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (otherNames[len].displayIndex < displayIndex){
-                current = otherNames[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.otherNamesForm.otherNames[index];
+            var tempDisplayIndex =$scope.otherNamesForm.otherNames[index]['displayIndex'];
+            temp['displayIndex'] = $scope.otherNamesForm.otherNames[index - 1]['displayIndex']
+            $scope.otherNamesForm.otherNames[index] = $scope.otherNamesForm.otherNames[index - 1];
+            $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
+            $scope.otherNamesForm.otherNames[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
-    
-    $scope.setPriorityDown = function(displayIndex){        
-        var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();        
-        var idxB = 0;        
-        while (len--) {
-            if (otherNames[len].displayIndex == displayIndex){
-                var idxA = len;  
-            }
-            if (otherNames[len].displayIndex > displayIndex){
-                current = otherNames[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    };
+
+    $scope.swapDown = function(index){
+        if (index < $scope.otherNamesForm.otherNames.length - 1) {
+            var temp = $scope.otherNamesForm.otherNames[index];
+            var tempDisplayIndex = $scope.otherNamesForm.otherNames[index]['displayIndex'];
+            temp['displayIndex'] = $scope.otherNamesForm.otherNames[index + 1]['displayIndex']
+            $scope.otherNamesForm.otherNames[index] = $scope.otherNamesForm.otherNames[index + 1];
+            $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
+            $scope.otherNamesForm.otherNames[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
-    }
+    };
     
     $scope.getLastDisplayIndex = function(){        
         var last = 0;
@@ -3525,73 +3458,48 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.addNewModal = function() {
-        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":null,"sourceName":""};
-        tmpObj['source'] = $scope.orcidId;
-        var idx = $scope.getLastDisplayIndex();        
-        tmpObj['displayIndex'] = idx + 1;
+    	var idx = $scope.getLastDisplayIndex();
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":$scope.orcidId,"sourceName":""};
+        for (var idx in $scope.countryForm.addresses)
+        	$scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;
         $scope.countryForm.addresses.push(tmpObj);        
-        $scope.newInput = true;
-    };        
+        $scope.newInput = true; 
+    };
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){        
-        $scope.countryForm.addresses[idxA].displayIndex = valueB;
-        $scope.countryForm.addresses[idxB].displayIndex = valueA;
-    };    
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.countryForm.addresses[index];
+            var tempDisplayIndex = $scope.countryForm.addresses[index]['displayIndex'];
+            temp['displayIndex'] = $scope.countryForm.addresses[index - 1]['displayIndex']
+            $scope.countryForm.addresses[index] = $scope.countryForm.addresses[index - 1];
+            $scope.countryForm.addresses[index]['displayIndex'] = tempDisplayIndex;
+            $scope.countryForm.addresses[index - 1] = temp;
+        }
+    };
+
+    $scope.swapDown = function(index){
+        if (index < $scope.countryForm.addresses.length - 1) {
+            var temp = $scope.countryForm.addresses[index];
+            var tempDisplayIndex = $scope.countryForm.addresses[index]['displayIndex'];
+            temp['displayIndex'] = $scope.countryForm.addresses[index + 1]['displayIndex']
+            $scope.countryForm.addresses[index] = $scope.countryForm.addresses[index + 1];
+            $scope.countryForm.addresses[index]['displayIndex'] = tempDisplayIndex;
+            $scope.countryForm.addresses[index + 1] = temp;
+        }
+    };
      
-    $scope.setPriorityUp = function(displayIndex){
-         var countries = $scope.countryForm.addresses;
-         var len = countries.length;
-         var current = 0;
-         var valueB = 0;
-         var idxB = 0;
-         while (len--) {
-             if (countries[len].displayIndex == displayIndex){
-                 var idxA = len;  
-             }
-             if (countries[len].displayIndex < displayIndex){
-                 current = countries[len].displayIndex;
-                 if (current >= valueB){
-                     valueB = current;                     
-                     idxB = len;
-                 }
-             }
-         }
-         $scope.swap(idxA, displayIndex, idxB, valueB);
-     };
-     
-     $scope.setPriorityDown = function(displayIndex){        
-         var countries = $scope.countryForm.addresses;
-         var len = countries.length;
-         var current = 0;
-         var valueB = $scope.getLastDisplayIndex();        
-         var idxB = 0;        
-         while (len--) {
-             if (countries[len].displayIndex == displayIndex){
-                 var idxA = len;  
-             }
-             if (countries[len].displayIndex > displayIndex){
-                 current = countries[len].displayIndex;
-                 if (current <= valueB){
-                     valueB = current;
-                     idxB = len;
-                 }
-             }
-         }
-         $scope.swap(idxA, displayIndex, idxB, valueB);
-     };
-     
-     $scope.getLastDisplayIndex = function(){        
-         var last = 0;
-         var current = 0;
-         var countries = $scope.countryForm.addresses;
-         var len = countries.length;         
-         while (len--) {            
-             current = countries[len].displayIndex;
-             if (current > last){
-                 last = countries[len].displayIndex;
-             }
-         }         
-         return last;
+    $scope.getLastDisplayIndex = function(){        
+		var last = 0;
+		var current = 0;
+		var countries = $scope.countryForm.addresses;
+		var len = countries.length;         
+		while (len--) {            
+		    current = countries[len].displayIndex;
+		    if (current > last){
+		        last = countries[len].displayIndex;
+		    }
+		}         
+		return last;
     };
 
     $scope.getCountryForm();
@@ -3729,55 +3637,26 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         }
     };
     
-    $scope.swap = function(idxA, valueA, idxB, valueB){
-        $scope.externalIdentifiersForm.externalIdentifiers[idxA].displayIndex = valueB;
-        $scope.externalIdentifiersForm.externalIdentifiers[idxB].displayIndex = valueA;
-    };
-    
-    
-    $scope.setPriorityUp = function(displayIndex){
-        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-        var len = externalIdentifiers.length;
-        var current = 0;
-        var valueB = 0;
-        var idxB = 0;
-        while (len--) {
-            if (externalIdentifiers[len].displayIndex == displayIndex){
-                var idxA = len;
-            }
-            if (externalIdentifiers[len].displayIndex < displayIndex){
-                current = externalIdentifiers[len].displayIndex;
-                if (current > valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapUp = function(index){
+        if (index > 0) {
+            var temp = $scope.externalIdentifiersForm.externalIdentifiers[index];
+            var tempDisplayIndex = $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'];
+            temp['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers[index - 1]['displayIndex']
+            $scope.externalIdentifiersForm.externalIdentifiers[index] = $scope.externalIdentifiersForm.externalIdentifiers[index - 1];
+            $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'] = tempDisplayIndex;
+            $scope.externalIdentifiersForm.externalIdentifiers[index - 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
-    
-    $scope.setPriorityDown = function(displayIndex){
 
-        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-        
-        var len = externalIdentifiers.length;
-        
-        var current = 0;
-        var valueB = $scope.getLastDisplayIndex();
-        var idxB = 0;
-        while (len--) {
-            if (externalIdentifiers[len].displayIndex == displayIndex){
-                var idxA = len;
-            }
-            if (externalIdentifiers[len].displayIndex > displayIndex){
-                current = externalIdentifiers[len].displayIndex;
-                if (current <= valueB){
-                    valueB = current;
-                    idxB = len;
-                }
-            }
+    $scope.swapDown = function(index){
+        if (index < $scope.externalIdentifiersForm.externalIdentifiers.length - 1) {
+            var temp = $scope.externalIdentifiersForm.externalIdentifiers[index];
+            var tempDisplayIndex = $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'];
+            temp['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers[index + 1]['displayIndex']
+            $scope.externalIdentifiersForm.externalIdentifiers[index] = $scope.externalIdentifiersForm.externalIdentifiers[index + 1];
+            $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'] = tempDisplayIndex;
+            $scope.externalIdentifiersForm.externalIdentifiers[index + 1] = temp;
         }
-        $scope.swap(idxA, displayIndex, idxB, valueB);
     };
     
     $scope.getLastDisplayIndex = function(){
@@ -5462,25 +5341,34 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
 	};
 	
 	$scope.showMozillaBadges = function(putCode){
-    	if ($scope.badgesRequested[putCode] == null){
-	    	var dois = worksSrvc.getUniqueDois(putCode);
-	    	var c = document.getElementsByClassName('badge-container-' + putCode);
-	    	for (i = 0; i <= dois.length - 1; i++){
-	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-	    		var s = document.createElement('script');
-	            s.type = 'text/javascript';
-	            try {
-	              s.appendChild(document.createTextNode(code));
-	              c[0].appendChild(s);
-	            } catch (e) {
-	              s.text = code;
-	              c[0].appendChild(s);
-	            }
-	    	}
-	    	$scope.badgesRequested[putCode] = true;
-    	}
-    }
-
+		$scope.$watch(
+			function () { 
+			   	return document.getElementsByClassName('badge-container-' + putCode).length; 
+			},
+			function (newValue, oldValue) {
+				if (newValue !== oldValue) {
+			    	if ($scope.badgesRequested[putCode] == null){
+				    	var dois = worksSrvc.getUniqueDois(putCode);
+				    	var c = document.getElementsByClassName('badge-container-' + putCode);
+				    	for (i = 0; i <= dois.length - 1; i++){
+				    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+				    		var s = document.createElement('script');
+				            s.type = 'text/javascript';
+				            try {
+				              s.appendChild(document.createTextNode(code));
+				              c[0].appendChild(s);
+				            } catch (e) {
+				              s.text = code;
+				              c[0].appendChild(s);
+				            }
+				    	}
+				    	$scope.badgesRequested[putCode] = true;
+			    	}
+		      	}
+		    }
+		);	
+    };
+    
 }]);
 
 function getParameterByName(name) {
@@ -6205,24 +6093,33 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     }
     
     $scope.showMozillaBadges = function(putCode){
-    	if ($scope.badgesRequested[putCode] == null){
-	    	var dois = worksSrvc.getUniqueDois(putCode);
-	    	var c = document.getElementsByClassName('badge-container-' + putCode);
-	    	for (i = 0; i <= dois.length - 1; i++){
-	    		var code = 'var conf={"article-doi": "' + dois[i] + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
-	    		var s = document.createElement('script');
-	            s.type = 'text/javascript';
-	            try {
-	              s.appendChild(document.createTextNode(code));
-	              c[0].appendChild(s);
-	            } catch (e) {
-	              s.text = code;
-	              c[0].appendChild(s);
-	            }
-	    	}
-	    	$scope.badgesRequested[putCode] = true;
-    	}
-    }
+    	$scope.$watch(
+		    function () { 
+		    	return document.getElementsByClassName('badge-container-' + putCode).length; 
+		    },
+			function (newValue, oldValue) {
+			      if (newValue !== oldValue) {
+			    	  if ($scope.badgesRequested[putCode] == null){
+						var dois = worksSrvc.getUniqueDois(putCode);
+						var c = document.getElementsByClassName('badge-container-' + putCode);
+						for (i = 0; i <= dois.length - 1; i++){
+							var code = 'var conf={"article-doi": "' + dois[i].trim() + '", "container-class": "badge-container-' + putCode + '"};showBadges(conf);';
+							var s = document.createElement('script');
+						    s.type = 'text/javascript';
+						    try {
+						      s.appendChild(document.createTextNode(code));
+						      c[0].appendChild(s);
+						    } catch (e) {
+						      s.text = code;
+						      c[0].appendChild(s);
+						    }
+						}
+						$scope.badgesRequested[putCode] = true;
+			      	}
+			    }
+		    }
+		);
+    };
     
     $scope.toggleBibtexExport = function(){
         $scope.bibtexParsingError = false;
@@ -10461,8 +10358,8 @@ orcidNgModule.controller('OauthAuthorizationController',['$scope', '$compile', '
                     }
                 } else {
                     //Fire GA register deny
-                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);
-                    orcidGA.windowLocationHrefDelay($scope.registrationForm.redirectUri.value);
+                    orcidGA.gaPush(['send', 'event', 'Disengagement', 'Authorize_Deny', 'OAuth ' + $scope.gaString]);                    
+                    orcidGA.windowLocationHrefDelay($scope.registrationForm.redirectUrl);
                 }
 
                 $scope.$apply();

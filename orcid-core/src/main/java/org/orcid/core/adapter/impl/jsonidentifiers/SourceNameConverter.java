@@ -43,6 +43,11 @@ public class SourceNameConverter extends CustomConverter<String, SourceName> {
         }
         
         String sourceName = sourceNameCacheManager.retrieve(source);
+        
+        if(PojoUtil.isEmpty(sourceName)) {
+            return null;
+        }
+        
         SourceName result = new SourceName();
         result.setContent(sourceName);
         return result;

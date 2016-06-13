@@ -61,26 +61,13 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-    
-    protected static WebDriver webDriver;
-    
-    @BeforeClass
-    public static void beforeClass() {
-        webDriver = new FirefoxDriver();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        webDriver.quit();
-    }
-    
+
     /**
      * PRECONDITIONS: 
      *          The user should have two public other names "other-name-1" and "other-name-2"
      * @throws JSONException 
      * @throws InterruptedException 
-     * */
-    @SuppressWarnings("unchecked")
+     * */    
     @Test
     public void testGetOtherNamesWihtMembersAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
@@ -154,6 +141,8 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         assertEquals("Other Name #1", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
         assertEquals(putCode, otherName.getPutCode());
+        assertNotNull(otherName.getDisplayIndex());
+        Long originalDisplayIndex = otherName.getDisplayIndex();
         
         //Save the original visibility
         Visibility originalVisibility = otherName.getVisibility();
@@ -182,6 +171,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         assertEquals("Other Name #1 - Updated", otherName.getContent());
         assertEquals(Visibility.LIMITED, otherName.getVisibility());
         assertEquals(putCode, otherName.getPutCode());        
+        assertEquals(originalDisplayIndex, otherName.getDisplayIndex());
         
         //Delete
         response = memberV2ApiClient.deleteOtherName(this.getUser1OrcidId(), putCode, accessToken);
@@ -199,7 +189,6 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
      * @throws JSONException 
      * @throws InterruptedException 
      * */
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetOtherNamesWithPublicAPI() throws InterruptedException, JSONException {
         ClientResponse getResponse = publicV2ApiClient.viewOtherNamesXML(getUser1OrcidId());

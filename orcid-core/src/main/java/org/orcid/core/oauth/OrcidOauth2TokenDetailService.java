@@ -16,6 +16,7 @@
  */
 package org.orcid.core.oauth;
 
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.List;
  */
 public interface OrcidOauth2TokenDetailService {
 
+    void setOrcidOauth2TokenDetailDao(OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao);
+    
     OrcidOauth2TokenDetail findNonDisabledByTokenValue(String token);
 
     OrcidOauth2TokenDetail findIgnoringDisabledByTokenValue(String token);
@@ -73,7 +76,5 @@ public interface OrcidOauth2TokenDetailService {
 
     void removeConflictsAndCreateNew(OrcidOauth2TokenDetail detail);
     
-    boolean checkIfScopeIsAvailableForMember(String clientId, String userName, List<String> scope);
-
     int findCountByUserName(String userName, long lastModified);
 }

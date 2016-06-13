@@ -42,7 +42,7 @@ public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIden
         
         ExternalIdentifierEntity result = mapperFacade.map(externalIdentifier, ExternalIdentifierEntity.class);
         if(result.getDisplayIndex() == null) {
-            result.setDisplayIndex(-1L);
+            result.setDisplayIndex(0L);
         }
         
         return result;

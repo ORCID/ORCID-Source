@@ -203,6 +203,9 @@
     <include file="/db/updates/fix_null_visibility_on_bio_elements.xml"/>
     <include file="/db/updates/identifier-type-fixed.xml" />
     <include file="/db/updates/clean-duplicated-delegates.xml" />
+    <include file="/db/updates/update-external-identifiers-unique-constraint.xml" />
     <include file="/db/updates/tidy_org_ext_ids.xml" />
-    <include file="/db/updates/insitutional_sign_in_round_trip.xml" />
+    <include file="/db/updates/fix_bios_without_visibility.xml" />
+    <include file="/db/updates/fix_display_indexs_for_bio.xml" />
+	<include file="/db/updates/insitutional_sign_in_round_trip.xml" />
 </databaseChangeLog>

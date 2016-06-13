@@ -10,7 +10,7 @@
 
 * Install [Postgres](http://www.postgresql.org/download/). (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
 
-* Install [Tomcat 7](http://tomcat.apache.org/). (Verify Tomcat. Go to the directory /apache-tomcat-7.x/bin and run the batch "startup.bat". It should start the server and display a message "Server startup in xxxx ms".)
+* Install [Tomcat](http://tomcat.apache.org/). (Verify Tomcat. Go to the directory /apache-tomcat-xx/bin and run the batch "startup.bat". It should start the server and display a message "Server startup in xxxx ms".)
 
 
 ## Setup Postgres DB

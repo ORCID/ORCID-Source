@@ -42,7 +42,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-other-names", key = "#orcid.concat('-').concat(#lastModified)")
     public List<OtherNameEntity> getOtherNames(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid");
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid order by displayIndex desc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -50,7 +50,7 @@ public class OtherNameDaoImpl extends GenericDaoImpl<OtherNameEntity, Long> impl
     @Override
     @SuppressWarnings("unchecked")
     public List<OtherNameEntity> getOtherNames(String orcid, org.orcid.jaxb.model.common_rc2.Visibility visibility) {
-        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility");
+        Query query = entityManager.createQuery("FROM OtherNameEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();

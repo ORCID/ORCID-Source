@@ -133,6 +133,8 @@ public class AddressTest extends BlackBoxBaseRC2 {
         assertNotNull(address.getCountry().getValue());        
         assertEquals(Iso3166Country.CR, address.getCountry().getValue());
         assertEquals(Visibility.PUBLIC, address.getVisibility());                
+        assertNotNull(address.getDisplayIndex());
+        Long originalDisplayIndex = address.getDisplayIndex();
         
         //Save the original visibility
         Visibility originalVisibility = address.getVisibility();
@@ -161,7 +163,8 @@ public class AddressTest extends BlackBoxBaseRC2 {
         assertNotNull(updatedAddress.getCountry());
         assertEquals(Iso3166Country.PA, updatedAddress.getCountry().getValue());
         assertEquals(address.getPutCode(), updatedAddress.getPutCode());
-                
+        assertEquals(originalDisplayIndex, updatedAddress.getDisplayIndex());        
+        
         //Delete
         response = memberV2ApiClient.deleteAddress(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);

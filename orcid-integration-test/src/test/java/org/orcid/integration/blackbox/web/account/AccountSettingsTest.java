@@ -64,6 +64,7 @@ public class AccountSettingsTest extends BlackBoxBase {
 
     @Test
     public void emailsTest() {
+        logUserOut();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
@@ -93,7 +94,7 @@ public class AccountSettingsTest extends BlackBoxBase {
 
     @Test
     public void emailsTestAsDelegate() {
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        logUserOut();
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());

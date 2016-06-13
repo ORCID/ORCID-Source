@@ -151,12 +151,10 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
 
         orcidJaxbCopyManager.copyUpdatedBioToExistingWithVisibility(existingOrcidBioProtected, updatedOrcidBioPublic);
 
-        assertEquals(4, existingOtherNames.getOtherName().size());
-        assertEquals("Another 1", existingOtherNames.getOtherName().get(0).getContent());
-        assertEquals("Another 2", existingOtherNames.getOtherName().get(1).getContent());
-        assertEquals("Yet Another 1", existingOtherNames.getOtherName().get(2).getContent());
-        assertEquals("Yet Another 2", existingOtherNames.getOtherName().get(3).getContent());
-        assertEquals(Visibility.PRIVATE, existingOtherNames.getVisibility());
+        assertEquals(2, existingOrcidBioProtected.getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("Yet Another 1", existingOrcidBioProtected.getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertEquals("Yet Another 2", existingOrcidBioProtected.getPersonalDetails().getOtherNames().getOtherName().get(1).getContent());
+        assertEquals(Visibility.PRIVATE, existingOrcidBioProtected.getPersonalDetails().getOtherNames().getVisibility());
         existingContactDetailsAddress = existingOrcidBioProtected.getContactDetails().getAddress();
         assertEquals(Visibility.LIMITED, existingContactDetailsAddress.getCountry().getVisibility());
         assertEquals(Iso3166Country.BM, existingContactDetailsAddress.getCountry().getValue());
@@ -543,47 +541,64 @@ public class OrcidJaxbCopyManagerTest extends BaseTest {
         assertEquals("private_Email0", privateBio.getContactDetails().getEmail().get(0).getValue());
         assertEquals("private_Email1", privateBio.getContactDetails().getEmail().get(1).getValue());
         assertEquals("private_Email2", privateBio.getContactDetails().getEmail().get(2).getValue());
-        assertEquals(6, privateBio.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("private_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
-        assertEquals("private_CommonName1", privateBio.getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
-        assertEquals("private_CommonName2", privateBio.getExternalIdentifiers().getExternalIdentifier().get(2).getExternalIdCommonName().getContent());
-        assertEquals("public_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(3).getExternalIdCommonName().getContent());
-        assertEquals("public_CommonName1", privateBio.getExternalIdentifiers().getExternalIdentifier().get(4).getExternalIdCommonName().getContent());
-        assertEquals("public_CommonName2", privateBio.getExternalIdentifiers().getExternalIdentifier().get(5).getExternalIdCommonName().getContent());
+        assertEquals(3, privateBio.getExternalIdentifiers().getExternalIdentifier().size());
+        assertEquals("public_CommonName0", privateBio.getExternalIdentifiers().getExternalIdentifier().get(0).getExternalIdCommonName().getContent());
+        assertEquals("public_CommonName1", privateBio.getExternalIdentifiers().getExternalIdentifier().get(1).getExternalIdCommonName().getContent());
+        assertEquals("public_CommonName2", privateBio.getExternalIdentifiers().getExternalIdentifier().get(2).getExternalIdCommonName().getContent());
         assertTrue(privateBio.getExternalIdentifiers().getExternalIdentifier().containsAll(publicBio.getExternalIdentifiers().getExternalIdentifier()));
-        assertEquals(Visibility.PRIVATE, privateBio.getExternalIdentifiers().getVisibility());
-        assertEquals(6, privateBio.getKeywords().getKeyword().size());
-        assertEquals("private_Keyword0", privateBio.getKeywords().getKeyword().get(0).getContent());
-        assertEquals("private_Keyword1", privateBio.getKeywords().getKeyword().get(1).getContent());
-        assertEquals("private_Keyword2", privateBio.getKeywords().getKeyword().get(2).getContent());
-        assertEquals("public_Keyword0", privateBio.getKeywords().getKeyword().get(3).getContent());
-        assertEquals("public_Keyword1", privateBio.getKeywords().getKeyword().get(4).getContent());
-        assertEquals("public_Keyword2", privateBio.getKeywords().getKeyword().get(5).getContent());
+        assertEquals(Visibility.PUBLIC, privateBio.getExternalIdentifiers().getVisibility());
+        assertEquals(3, privateBio.getKeywords().getKeyword().size());
+        assertEquals("public_Keyword0", privateBio.getKeywords().getKeyword().get(0).getContent());
+        assertEquals("public_Keyword1", privateBio.getKeywords().getKeyword().get(1).getContent());
+        assertEquals("public_Keyword2", privateBio.getKeywords().getKeyword().get(2).getContent());
         assertTrue(privateBio.getKeywords().getKeyword().containsAll(publicBio.getKeywords().getKeyword()));
-        assertEquals(Visibility.PRIVATE, privateBio.getKeywords().getVisibility());
-        assertEquals(6, privateBio.getResearcherUrls().getResearcherUrl().size());
-        assertEquals("http://www.rurl.com/private_/0", privateBio.getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
-        assertEquals("http://www.rurl.com/private_/1", privateBio.getResearcherUrls().getResearcherUrl().get(1).getUrl().getValue());
-        assertEquals("http://www.rurl.com/private_/2", privateBio.getResearcherUrls().getResearcherUrl().get(2).getUrl().getValue());
-        assertEquals("http://www.rurl.com/public_/0", privateBio.getResearcherUrls().getResearcherUrl().get(3).getUrl().getValue());
-        assertEquals("http://www.rurl.com/public_/1", privateBio.getResearcherUrls().getResearcherUrl().get(4).getUrl().getValue());
-        assertEquals("http://www.rurl.com/public_/2", privateBio.getResearcherUrls().getResearcherUrl().get(5).getUrl().getValue());
+        assertEquals(Visibility.PUBLIC, privateBio.getKeywords().getVisibility());
+        assertEquals(3, privateBio.getResearcherUrls().getResearcherUrl().size());
+        assertEquals("http://www.rurl.com/public_/0", privateBio.getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
+        assertEquals("http://www.rurl.com/public_/1", privateBio.getResearcherUrls().getResearcherUrl().get(1).getUrl().getValue());
+        assertEquals("http://www.rurl.com/public_/2", privateBio.getResearcherUrls().getResearcherUrl().get(2).getUrl().getValue());
         assertTrue(privateBio.getResearcherUrls().getResearcherUrl().containsAll(publicBio.getResearcherUrls().getResearcherUrl()));
-        assertEquals(Visibility.PRIVATE, privateBio.getResearcherUrls().getVisibility());
+        assertEquals(Visibility.PUBLIC, privateBio.getResearcherUrls().getVisibility());
         assertEquals(privateSufix + "Credit name", privateBio.getPersonalDetails().getCreditName().getContent());
         assertEquals(Visibility.PRIVATE, privateBio.getPersonalDetails().getCreditName().getVisibility());
         assertEquals(publicSufix + "Family", privateBio.getPersonalDetails().getFamilyName().getContent());
         assertEquals(publicSufix + "Given", privateBio.getPersonalDetails().getGivenNames().getContent());
-        assertEquals(6, privateBio.getPersonalDetails().getOtherNames().getOtherName().size());
-        assertEquals("private_Other0", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
-        assertEquals("private_Other1", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(1).getContent());
-        assertEquals("private_Other2", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(2).getContent());
-        assertEquals("public_Other0", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(3).getContent());
-        assertEquals("public_Other1", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(4).getContent());
-        assertEquals("public_Other2", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(5).getContent());
+        assertEquals(3, privateBio.getPersonalDetails().getOtherNames().getOtherName().size());
+        assertEquals("public_Other0", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(0).getContent());
+        assertEquals("public_Other1", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(1).getContent());
+        assertEquals("public_Other2", privateBio.getPersonalDetails().getOtherNames().getOtherName().get(2).getContent());
         assertTrue(privateBio.getPersonalDetails().getOtherNames().getOtherName().containsAll(publicBio.getPersonalDetails().getOtherNames().getOtherName()));        
     }
 
+    @Test
+    public void testbiographyCopyDontFailOnEmpyVisibility() {
+        OrcidBio existing = getBio("bio1 ", Visibility.PUBLIC, 1);
+        existing.getBiography().setContent("Old biography");
+        existing.getBiography().setVisibility(null);
+        OrcidBio updated = getBio("bio1 ", Visibility.LIMITED, 1);
+        updated.getBiography().setContent("New biography");
+        updated.getBiography().setVisibility(null);
+        
+        assertEquals("Old biography", existing.getBiography().getContent());
+        orcidJaxbCopyManager.copyUpdatedShortDescriptionToExistingPreservingVisibility(existing, updated);
+        assertEquals(OrcidVisibilityDefaults.SHORT_DESCRIPTION_DEFAULT.getVisibility(), updated.getBiography().getVisibility());
+        //It will not be updated if the visibility is null or PRIVATE
+        assertEquals("Old biography", existing.getBiography().getContent());
+        
+        
+        //Do it again but now set a visibility to the existing bio
+        existing.getBiography().setContent("Old biography");
+        existing.getBiography().setVisibility(Visibility.LIMITED);
+        updated.getBiography().setContent("New biography");
+        updated.getBiography().setVisibility(null);
+        
+        orcidJaxbCopyManager.copyUpdatedShortDescriptionToExistingPreservingVisibility(existing, updated);
+        //The visibility will be the same
+        assertEquals(Visibility.LIMITED, updated.getBiography().getVisibility());
+        //And the content will change
+        assertEquals("New biography", existing.getBiography().getContent());
+    }
+    
     private OrcidBio getBio(String sufix, Visibility visibility, int max) {
         OrcidBio orcidBio = new OrcidBio();
         Biography bio = new Biography(sufix + "My Biography", visibility);

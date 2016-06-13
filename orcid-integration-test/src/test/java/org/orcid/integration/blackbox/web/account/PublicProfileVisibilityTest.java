@@ -430,14 +430,12 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")), webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-education"))).click().build().perform();
+        extremeWaitFor(cboxComplete(), webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String educationName = "Education" + System.currentTimeMillis();
-        textBox.sendKeys(educationName);
-        textBox = webDriver.findElement(By.id("city"));
-        textBox.sendKeys("New Delhi");
+        ngAwareSendKeys(educationName,"affiliationName", webDriver);
+        ngAwareSendKeys("New Delhi","city", webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
         selectBox.selectByVisibleText("India");
@@ -506,17 +504,17 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         ngAwareClick(webDriver.findElement(By.id("add-employment-container")), webDriver);
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-employment")), webDriver);
+        extremeWaitFor(cboxComplete(), webDriver);
         noSpinners(webDriver);
         
         
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        WebElement textBox = webDriver.findElement(By.id("affiliationName"));
         String employmentName = "Employment" + System.currentTimeMillis();
-        textBox.sendKeys(employmentName);
+        ngAwareSendKeys(employmentName,"affiliationName", webDriver);        
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        textBox = webDriver.findElement(By.id("city"));
-        textBox.sendKeys("New Delhi");
+        ngAwareSendKeys("New Delhi","city", webDriver);        
+
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
@@ -586,27 +584,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         ngAwareClick(webDriver.findElement(By.id("add-funding-container")), webDriver);
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-funding")), webDriver);
+        extremeWaitFor(cboxComplete(), webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")), webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         long time = System.currentTimeMillis();
-
-        WebElement type = webDriver.findElement(By.id("fundingType"));
-        type.sendKeys("Award");
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        ngAwareSendKeys("award","fundingType", webDriver);
         String fundingTitle = "Funding Title " + time;
-        WebElement title = webDriver.findElement(By.id("fundingTitle"));
-        title.sendKeys(fundingTitle);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        WebElement name = webDriver.findElement(By.id("fundingName"));
-        name.sendKeys("Name " + time);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        WebElement city = webDriver.findElement(By.id("city"));
-        city.sendKeys("San Jose");
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        ngAwareSendKeys(fundingTitle,"fundingTitle", webDriver);
+        ngAwareSendKeys("Name " + time,"fundingName", webDriver);
+        ngAwareSendKeys("San Jose","city", webDriver);
         Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
         selectBox.selectByVisibleText("United States");
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
             Thread.sleep(500);
@@ -663,18 +652,22 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     @Test
     public void workPrivacyTest() throws InterruptedException {
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-work-container")), webDriver);
+        extremeWaitFor(documentReady(),webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(),webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-work-container")), webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-work-container")), webDriver);
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-work")), webDriver);
+        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-work")), webDriver);
         ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
+        extremeWaitFor(cboxComplete(), webDriver);
+        
         extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")), webDriver);
-
-        WebElement category = webDriver.findElement(By.id("workCategory"));
-        category.sendKeys("Publication");
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        ngAwareSendKeys("publication","workCategory", webDriver);
+        
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         String workTitle = "Work " + System.currentTimeMillis();
-        WebElement title = webDriver.findElement(By.id("work-title"));
-        title.sendKeys(workTitle);
+        ngAwareSendKeys(workTitle,"work-title", webDriver);
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         //wait for angular to register that values have been typed.
         try {
@@ -684,6 +677,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         }
         ngAwareClick(webDriver.findElement(By.id("save-new-work")), webDriver);
         noSpinners(webDriver);
+        noCboxOverlay(webDriver);
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
 
         // Set private

@@ -38,8 +38,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.jaxb.model.common_rc1.Day;
 import org.orcid.jaxb.model.common_rc1.FuzzyDate;
 import org.orcid.jaxb.model.common_rc1.Month;
@@ -89,20 +87,6 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     
     static List<GroupIdRecord> groupRecords = null;
 
-    @BeforeClass
-    public static void beforeClass() {
-        // we need to make sure the users activity visibility setting is public for this test
-        WebDriver webDriver = new FirefoxDriver();
-        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        revokeApplicationsAccess();
-        webDriver.quit();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        revokeApplicationsAccess();
-    }
-    
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();  
@@ -122,6 +106,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
 
     @Test
     public void createViewUpdateAndDeleteWork() throws JSONException, InterruptedException, URISyntaxException {
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         long time = System.currentTimeMillis();
         Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         workToCreate.setPutCode(null);

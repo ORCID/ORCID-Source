@@ -60,18 +60,6 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    protected static WebDriver webDriver;
-    
-    @BeforeClass
-    public static void beforeClass() {
-        webDriver = new FirefoxDriver();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        webDriver.quit();
-    }
-    
     /**
      * PRECONDITIONS: 
      *          The user should have two external identifiers: 
@@ -175,6 +163,8 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals("http://ext-id/A-0003", externalIdentifier.getUrl().getValue());
         assertEquals(Visibility.LIMITED, externalIdentifier.getVisibility());
         assertEquals(putCode, externalIdentifier.getPutCode());
+        assertNotNull(externalIdentifier.getDisplayIndex());
+        Long originalDisplayIndex = externalIdentifier.getDisplayIndex();
         
         //Save the original visibility
         Visibility originalVisibility = externalIdentifier.getVisibility();
@@ -206,6 +196,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals("http://ext-id/A-0004", externalIdentifier.getUrl().getValue());
         assertEquals(Visibility.LIMITED, externalIdentifier.getVisibility());
         assertEquals(putCode, externalIdentifier.getPutCode());       
+        assertEquals(originalDisplayIndex, externalIdentifier.getDisplayIndex());
         
         //Delete
         //Get access token to delete the external identifier

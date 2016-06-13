@@ -42,7 +42,7 @@ public class JpaJaxbResearcherUrlAdapterImpl implements JpaJaxbResearcherUrlAdap
         ResearcherUrlEntity result = mapperFacade.map(researcherUrl, ResearcherUrlEntity.class);
         
         if(result.getDisplayIndex() == null) {
-            result.setDisplayIndex(-1L);
+            result.setDisplayIndex(0L);
         }
         
         return result;

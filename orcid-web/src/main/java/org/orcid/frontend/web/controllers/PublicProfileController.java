@@ -22,10 +22,13 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -323,7 +326,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             //The primary address will be the one with the lowest display index            
             for(Address address : publicAddresses.getAddress()) {
             	countryNames.put(address.getCountry().getValue().value(), getcountryName(address.getCountry().getValue().value()));            	
-                if(publicAddress == null || publicAddress.getDisplayIndex() > address.getDisplayIndex()) {
+                if(publicAddress == null) {
                    publicAddress = address;
                 }
             }            
@@ -425,29 +428,31 @@ public class PublicProfileController extends BaseWorkspaceController {
         return mav;
     }
     
-    private Map<String, List<Keyword>> groupKeywords(Keywords keywords){
-    	if (keywords == null || keywords.getKeywords() == null){
-    		return null;
-    	}
-    	Map<String, List<Keyword>> groups = new TreeMap<String, List<Keyword>>();    	
-    	for (Keyword k : keywords.getKeywords()) {
-    		if (groups.containsKey(k.getContent())) {
-    			groups.get(k.getContent()).add(k);
-    		} else {
-    			List<Keyword> list = new ArrayList<Keyword>();
-    			list.add(k);
-    			groups.put(k.getContent(), list);    			
-    		}
-    	}
-    	
-    	return groups;
-    }
+	private LinkedHashMap<String, List<Keyword>> groupKeywords(Keywords keywords) {
+		if (keywords == null || keywords.getKeywords() == null) {
+			return null;
+		}
+
+		/* Grouping items */
+		LinkedHashMap<String, List<Keyword>> groups = new LinkedHashMap<String, List<Keyword>>();
+		for (Keyword k : keywords.getKeywords()) {
+			if (groups.containsKey(k.getContent())) {
+				groups.get(k.getContent()).add(k);
+			} else {
+				List<Keyword> list = new ArrayList<Keyword>();
+				list.add(k);
+				groups.put(k.getContent(), list);
+			}
+		}
+		
+		return groups;
+	}
     
-    private Map<String, List<Address>> groupAddresses(Addresses addresses){
+    private LinkedHashMap<String, List<Address>> groupAddresses(Addresses addresses){
     	if (addresses == null || addresses.getAddress() == null){
     		return null;
     	}
-    	Map<String, List<Address>> groups = new TreeMap<String, List<Address>>();    	
+    	LinkedHashMap<String, List<Address>> groups = new LinkedHashMap<String, List<Address>>();    	
     	for (Address k : addresses.getAddress()) {
     		if (groups.containsKey(k.getCountry().getValue().value())) {
     			groups.get(k.getCountry().getValue().value()).add(k);
@@ -457,16 +462,16 @@ public class PublicProfileController extends BaseWorkspaceController {
     			groups.put(k.getCountry().getValue().value(), list);    			
     		}
     	}
-    	
+		
     	return groups;
     }
     
-    private Map<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
+    private LinkedHashMap<String, List<OtherName>> groupOtherNames(OtherNames otherNames){
     	
     	if (otherNames == null || otherNames.getOtherNames() == null){
     		return null;
     	}
-    	Map<String, List<OtherName>> groups = new TreeMap<String, List<OtherName>>();    	
+    	LinkedHashMap<String, List<OtherName>> groups = new LinkedHashMap<String, List<OtherName>>();    	
     	for (OtherName o : otherNames.getOtherNames()) {
     		if (groups.containsKey(o.getContent())) {    			
     			groups.get(o.getContent()).add(o);
@@ -476,8 +481,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     			groups.put(o.getContent(), list);    			
     		}
     	}
-    	
-    	return groups;
+		return groups;
+		
     } 
     
     private Map<String, List<Email>> groupEmails(Emails emails){    	
@@ -498,11 +503,11 @@ public class PublicProfileController extends BaseWorkspaceController {
     	return groups;
     }    
     
-    private Map<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls){    	
+    private LinkedHashMap<String, List<ResearcherUrl>> groupResearcherUrls(ResearcherUrls researcherUrls) {    	
     	if (researcherUrls == null || researcherUrls.getResearcherUrls() == null){
     		return null;
     	}    	
-    	Map<String, List<ResearcherUrl>> groups = new TreeMap<String, List<ResearcherUrl>>();    	
+        LinkedHashMap<String, List<ResearcherUrl>> groups = new LinkedHashMap<String, List<ResearcherUrl>>();
     	for (ResearcherUrl r : researcherUrls.getResearcherUrls()) {    		
     		String urlValue = r.getUrl() == null ? "" : r.getUrl().getValue();    		
     		if (groups.containsKey(urlValue)) {
@@ -513,17 +518,14 @@ public class PublicProfileController extends BaseWorkspaceController {
     			groups.put(urlValue, list);
     		}
     	}    	
-    	return groups;
+        return groups;
     }
     
-    
-    
-    
-    private Map<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers){
+    private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
     	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
     		return null;
     	}    	
-    	Map<String, List<PersonExternalIdentifier>> groups = new TreeMap<String, List<PersonExternalIdentifier>>();    	
+    	LinkedHashMap<String, List<PersonExternalIdentifier>> groups = new LinkedHashMap<String, List<PersonExternalIdentifier>>();    	
     	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifier()) {
     		String pairKey = ei.getType() + ":" + ei.getValue();    		
     		if (groups.containsKey(pairKey)) {
@@ -533,10 +535,10 @@ public class PublicProfileController extends BaseWorkspaceController {
     			list.add(ei);
     			groups.put(pairKey, list);    			
     		}
-    	}    	
-    	return groups;
+    	}
+    	
+		return groups;
     }
-    
     
     private boolean isProfileValidForIndex(ProfileEntity profile) {
         String orcid = profile.getId();

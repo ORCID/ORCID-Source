@@ -22,14 +22,12 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
@@ -44,8 +42,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {   
-
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     
     private String authorizeScreen = null;
     

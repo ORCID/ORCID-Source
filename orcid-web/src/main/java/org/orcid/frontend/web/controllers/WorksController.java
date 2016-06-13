@@ -377,7 +377,7 @@ public class WorksController extends BaseWorkspaceController {
         validateWork(workForm);
         removeEmptyExternalIdentifiers(workForm);
         if (workForm.getErrors().size() == 0) {
-            if (workForm.getPutCode() != null)
+            if (workForm.getPutCode() != null)  
                 updateWork(workForm);
             else
                 addWork(workForm);

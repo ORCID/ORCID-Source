@@ -33,7 +33,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames | orderBy : 'displayIndex'" ng-cloak> 								
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
 										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput"/>																				
@@ -44,11 +44,10 @@
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(otherName.displayIndex)"></span>										
-											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(otherName.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>											
@@ -96,7 +95,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="country in countryForm.addresses | orderBy: 'displayIndex'">
+							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
 									<div class="aka">
 			                 			<select id="country" name="country" ng-model="country.iso2Country.value" ng-disabled="country.source != orcidId" ng-class="{'not-allowed': country.source != orcidId}" focus-me="newInput">
@@ -111,10 +110,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">																				
 										<li ng-init="">												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(country.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(country.displayIndex)"></span>
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>
 										</li>
 										<li>
 											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
@@ -168,22 +167,22 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords | orderBy:'displayIndex'">		
+							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">		
 								<div class="col-md-6">
 									<div class="aka">										
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId" focus-me="newInput"></input>
 										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId"></span>										
 									</div>
-									<div class="source" ng-if="keyword.sourceName || keyword.source == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
+									<div class="source" ng-if="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(keyword.displayIndex)"></span>
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(keyword.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)"></span>											
@@ -232,7 +231,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites | orderBy:'displayIndex'">
+							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites">
 								<div class="col-md-6">
 									<div class="aka">										
 										<input type="text" ng-model="website.urlName" ng-show="website.source == orcidId" focus-me="newInput" placeholder="${springMacroRequestContext.getMessage('manual_work_form_contents.labeldescription')}"></input>
@@ -245,10 +244,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)"></span>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(website.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="swapDown($index)"></span>
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)"></span>											
@@ -302,7 +301,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12">
 					<div class="fixed-area">
 						<div class="scroll-area">		
-							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers | orderBy:'displayIndex'">
+							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
 								<div class="col-md-6">
 									<div class="aka">										
 										<p>
@@ -316,10 +315,10 @@
 								<div class="col-md-6">
 									<ul class="record-settings pull-right">
 										<li>												
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || setPriorityUp(externalIdentifier.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || setPriorityDown(externalIdentifier.displayIndex)"></span>											
+											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
 										</li>
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)"></span>											

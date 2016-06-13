@@ -43,7 +43,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-researcher-urls", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid");
+        Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid order by displayIndex desc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -58,7 +58,7 @@ public class ResearcherUrlDaoImpl extends GenericDaoImpl<ResearcherUrlEntity, Lo
     @Override
     @SuppressWarnings("unchecked")
     public List<ResearcherUrlEntity> getResearcherUrls(String orcid, Visibility visibility) {
-        Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid AND visibility = :visibility");
+        Query query = entityManager.createQuery("FROM ResearcherUrlEntity WHERE orcid = :orcid AND visibility = :visibility order by displayIndex desc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();

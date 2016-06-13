@@ -210,7 +210,6 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }       
         
         ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        rUrls.updateIndexingStatusOnChilds();
         LastModifiedDatesHelper.calculateLatest(rUrls);
         return rUrls;
     }
@@ -289,6 +288,9 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         } 
         
         setIncomingPrivacy(newEntity, profile);
+        for (ResearcherUrlEntity existing : existingResearcherUrls)
+            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+        newEntity.setDisplayIndex(0L);
         researcherUrlDao.persist(newEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
     }
