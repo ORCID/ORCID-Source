@@ -28,11 +28,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By.ById;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
@@ -301,14 +303,16 @@ public class BlackBoxBase {
         // Switch to accounts settings page
         By accountSettingsMenuLink = By.id("accountSettingMenuLink");
         extremeWaitFor(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink), webDriver);
-        ngAwareClick(webDriver.findElement(accountSettingsMenuLink), webDriver);
-
+        webDriver.get(baseUrl + "/account");
+        extremeWaitFor(documentReady(), webDriver);
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        
         try {
             boolean lookAgain = false;
             do {
                 // Look for each revoke app button
                 By revokeAppBtn = By.id("revokeAppBtn");
-                extremeWaitFor(ExpectedConditions.presenceOfElementLocated(revokeAppBtn), webDriver);
+                extremeWaitFor(angularHasFinishedProcessing(), webDriver);
                 List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);
                 boolean elementFound = false;
                 // Iterate on them and delete the ones created by the specified
@@ -316,14 +320,16 @@ public class BlackBoxBase {
                 for (WebElement appElement : appsToRevoke) {
                     String nameAttribute = appElement.getAttribute("name");
                     if (clientIds.contains(nameAttribute)) {
-                        appElement.click();
-                        Thread.sleep(1000);
+                        ngAwareClick(appElement, webDriver);
+                        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
                         // Wait for the revoke button
                         By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
-                        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn), webDriver);
-                        WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
-                        trash.click();
-                        Thread.sleep(2000);
+                        extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(confirmRevokeAppBtn), webDriver);
+                        ngAwareClick(webDriver.findElement(confirmRevokeAppBtn), webDriver);
+                        extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+                        noCboxOverlay(webDriver);
+                        extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(),webDriver);
+                        // may need to put sleep back here
                         elementFound = true;
                         break;
                     }
@@ -335,7 +341,7 @@ public class BlackBoxBase {
                 }
             } while (lookAgain);
         } catch (Exception e){
-            // If it fail is because it couldnt find any other application
+            // If it fail is because it couldn't find any other application
         } finally {
             BlackBoxBase.logUserOut(baseUrl, webDriver);
         }
@@ -367,14 +373,25 @@ public class BlackBoxBase {
         try {Thread.sleep(500);} catch(Exception e) {};
     }
     
-    static public  void ngAwareClick(WebElement webElement, WebDriver webDriver) {
+    static public void ngAwareClick(WebElement webElement, WebDriver webDriver) {
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         Actions actions = new Actions(webDriver);
         actions.moveToElement(webElement).perform();
         extremeWaitFor(angularHasFinishedProcessing(), webDriver);
         actions.click(webElement).perform();
     }
-    
+
+    static public void ngAwareSendKeys(String keys, String id, WebDriver webDriver) {
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);          
+        ((JavascriptExecutor)webDriver).executeScript(""
+           + "angular.element('#" + id + "').triggerHandler('focus');"
+           + "angular.element('#" + id + "').val('" + keys + "');"
+           + "angular.element('#" + id + "').triggerHandler('change');"
+           + "angular.element('#" + id + "').triggerHandler('blur');"
+           + "angular.element('#" + id + "').scope().$apply();");
+        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+    }
+
     static public void noSpinners(WebDriver webDriver) {
         (new WebDriverWait(webDriver, 20, 100))
         .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
@@ -386,7 +403,7 @@ public class BlackBoxBase {
     }
     
     static public void extremeWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
-        int wait = 10;
+        int wait = 20;
         int pollingInternval = 250;
         try {
             (new WebDriverWait(webDriver, wait, pollingInternval))
@@ -437,7 +454,24 @@ public class BlackBoxBase {
             }
         };
     }
-    
+
+    public static ExpectedCondition<Boolean> cboxComplete() {
+        /*
+         * Getting complex.
+         * 1. We want to make sure Angular is done. So you call the rootScope apply
+         * 2. We want to make sure the browser is done rendering the DOM so we call $timeout
+         *    http://blog.brunoscopelliti.com/run-a-directive-after-the-dom-has-finished-rendering/
+         * 3. make sure there are no pending AJAX request, if so start over
+         */
+        return new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver driver) {
+                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(""
+                        + "return window.cbox_complete").toString());
+            }
+        };
+    }
+
     public String getAdminUserName() {
         return adminUserName;
     }

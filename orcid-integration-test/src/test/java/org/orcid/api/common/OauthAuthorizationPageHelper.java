@@ -77,6 +77,7 @@ public class OauthAuthorizationPageHelper {
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(password);
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("login-authorize-button")));
         BlackBoxBase.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
 
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {

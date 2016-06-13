@@ -125,12 +125,12 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         passwordElement.sendKeys(this.getUser1Password());
         (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
         BlackBoxBase.ngAwareClick( webDriver.findElement(By.id("login-authorize-button")), webDriver);
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+        BlackBoxBase.extremeWaitFor(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getCurrentUrl().contains("/oauth/error/redirect-uri-mismatch");
             }
-        });
+        }, webDriver);                
         
         String currentUrl = webDriver.getCurrentUrl();
         assertTrue("URL is:" + currentUrl, currentUrl.contains("/oauth/error/redirect-uri-mismatch"));
