@@ -40,6 +40,7 @@ public class Client implements ErrorsInterface, Serializable {
     private Text type; 
     private Text memberId;
     private Text memberName;
+    private Text authenticationProviderId;
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;
     private Set<String> scopes;
@@ -67,6 +68,9 @@ public class Client implements ErrorsInterface, Serializable {
                 client.setScopes(clientDetails.getScope());
             
             client.setMemberId(Text.valueOf(clientDetails.getGroupProfileId()));
+            if(!PojoUtil.isEmpty(clientDetails.getAuthenticationProviderId())) {
+                client.setAuthenticationProviderId(Text.valueOf(clientDetails.getAuthenticationProviderId()));
+            }
         }
         return client;
     }
@@ -225,5 +229,13 @@ public class Client implements ErrorsInterface, Serializable {
 
     public void setMemberName(Text memberName) {
         this.memberName = memberName;
-    }           
+    }
+
+    public Text getAuthenticationProviderId() {
+        return authenticationProviderId;
+    }
+
+    public void setAuthenticationProviderId(Text authenticationProviderId) {
+        this.authenticationProviderId = authenticationProviderId;
+    }
 }

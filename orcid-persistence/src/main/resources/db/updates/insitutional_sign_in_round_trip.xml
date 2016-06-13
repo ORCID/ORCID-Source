@@ -30,4 +30,15 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="ADD-AUTHENTICATION-PROVIDER-ID-TO-THE-CLIENT-DETAILS-TABLE" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<columnExists tableName="client_details" columnName="authentication_provider_id"/>
+			</not>
+		</preConditions>
+		<addColumn tableName="client_details">
+			<column name="authentication_provider_id" type="VARCHAR(1000)"/>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>                   
