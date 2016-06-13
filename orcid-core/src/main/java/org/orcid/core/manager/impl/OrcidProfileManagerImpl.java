@@ -1280,6 +1280,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
         Set<String> titles = new HashSet<String>();
+        workDao.increaseDisplayIndexOnAllElements(orcid);
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
@@ -1798,6 +1799,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void persistAddedFundings(String orcid, List<Funding> updatedFundingList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
+        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
         for (Funding updatedFunding : updatedFundingList) {
             ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
             // Save the profile grant

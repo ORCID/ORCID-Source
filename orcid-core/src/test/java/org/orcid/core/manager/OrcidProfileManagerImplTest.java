@@ -68,6 +68,13 @@ import org.orcid.jaxb.model.message.ExternalIdUrl;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
 import org.orcid.jaxb.model.message.FamilyName;
+import org.orcid.jaxb.model.message.Funding;
+import org.orcid.jaxb.model.message.FundingExternalIdentifier;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.message.FundingExternalIdentifiers;
+import org.orcid.jaxb.model.message.FundingList;
+import org.orcid.jaxb.model.message.FundingTitle;
+import org.orcid.jaxb.model.message.FundingType;
 import org.orcid.jaxb.model.message.GivenNames;
 import org.orcid.jaxb.model.message.GivenPermissionTo;
 import org.orcid.jaxb.model.message.Iso3166Country;
@@ -109,12 +116,14 @@ import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
@@ -164,6 +173,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
 
     @Mock
     private NotificationManager notificationManager;
+    
+    @Resource
+    private ProfileFundingDao profileFundingDao;
 
     @Before
     @Transactional
@@ -1897,6 +1909,62 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(Iso3166Country.US, profile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());        
     }
     
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void addNewWorksModifyExistingWorksDisplayIndex() {
+        
+    }
+    
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void addNewFundingModifyExistingWorksDisplayIndex() {
+        OrcidProfile profile1 = createBasicProfile();
+        String orcidIdentifier = null;
+        profile1.setOrcidIdentifier(orcidIdentifier);
+        setBio(profile1, Visibility.PUBLIC);   
+        String email = profile1.getOrcidBio().getContactDetails().getEmail().get(0).getValue();
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, true, false);
+        assertNotNull(profile1);
+        assertNotNull(profile1.getOrcidIdentifier());
+        
+        String orcidId = profile1.getOrcidIdentifier().getPath();
+        
+        OrcidProfile profile = getFundingInsideOrcidProfile("f1", orcidId);
+        orcidProfileManager.addFundings(profile);
+        
+        profile = getFundingInsideOrcidProfile("f2", orcidId);
+        orcidProfileManager.addFundings(profile);
+        
+        profile = getFundingInsideOrcidProfile("f3", orcidId);
+        orcidProfileManager.addFundings(profile);
+        
+        List<ProfileFundingEntity> all = profileFundingDao.getByUser(orcidId);
+        assertNotNull(all);
+        Long displayIndex1 = null;
+        Long displayIndex2 = null;
+        Long displayIndex3 = null;
+        
+        for(ProfileFundingEntity entity : all) {
+            Long displayIndex = entity.getDisplayIndex();
+            if("f1".equals(entity.getTitle())) {
+                displayIndex1 = displayIndex;
+            } else if("f2".equals(entity.getTitle())) {
+                displayIndex2 = displayIndex;
+            } else if("f3".equals(entity.getTitle())) {
+                displayIndex3 = displayIndex;
+            }
+        }
+        
+        assertNotNull(displayIndex1);
+        assertNotNull(displayIndex2);
+        assertNotNull(displayIndex3);
+        assertEquals(Long.valueOf(0L), displayIndex3);
+        assertTrue(displayIndex3 < displayIndex2);
+        assertTrue(displayIndex2 < displayIndex1);
+    }
+    
     private void setBio(OrcidProfile profile, Visibility defaultVisibility) {
         OrcidBio bio = new OrcidBio();
         Biography biography = new Biography("This is my biography");
@@ -2004,4 +2072,41 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         return orcidWork;
     }
 
+    private OrcidProfile getFundingInsideOrcidProfile(String defaultTitle, String orcid) {
+        Funding funding = new Funding();
+        funding.setType(FundingType.AWARD);
+        FundingTitle title = new FundingTitle();
+        if(defaultTitle == null) {
+            title.setTitle(new Title("New Funding"));
+        } else {
+            title.setTitle(new Title(defaultTitle));
+        }
+        
+        funding.setTitle(title);
+        FundingExternalIdentifiers fExtIds = new FundingExternalIdentifiers();
+        FundingExternalIdentifier fExtId = new FundingExternalIdentifier();
+        fExtId.setType(FundingExternalIdentifierType.GRANT_NUMBER);
+        if(defaultTitle == null) {
+            fExtId.setValue("123");
+        } else {
+            fExtId.setValue("123-" + defaultTitle);
+        }
+        fExtIds.getFundingExternalIdentifier().add(fExtId);
+        funding.setFundingExternalIdentifiers(fExtIds);
+        Organization org = new Organization();
+        OrganizationAddress add = new OrganizationAddress();
+        add.setCity("city");
+        add.setCountry(Iso3166Country.US);
+        org.setName("Test org");
+        org.setAddress(add);
+        funding.setOrganization(org);
+        
+        FundingList fList = new FundingList();
+        fList.getFundings().add(funding);
+        OrcidProfile profile = new OrcidProfile();
+        profile.setOrcidIdentifier(orcid);
+        profile.setFundings(fList);
+        return profile;
+    }
+    
 }

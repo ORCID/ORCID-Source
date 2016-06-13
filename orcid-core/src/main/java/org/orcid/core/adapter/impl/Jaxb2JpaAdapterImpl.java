@@ -1241,6 +1241,10 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
 
             profileFundingEntity.setOrg(orgEntity);
 
+            if(profileFundingEntity.getDisplayIndex() == null) {
+                profileFundingEntity.setDisplayIndex(0L);
+            }
+            
             return profileFundingEntity;
         }
         return null;
