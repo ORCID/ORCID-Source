@@ -273,7 +273,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         //Check for duplicates
         List<ProfileFundingEntity> existingFundings = profileFundingDao.getByUser(orcid);
         List<Funding> fundings = jpaJaxbFundingAdapter.toFunding(existingFundings);
-        if(fundings != null) {
+        if(fundings != null && isApiRequest) {
             for(Funding exstingFunding : fundings) {
                 activityValidator.checkFundingExternalIdentifiersForDuplicates(funding.getExternalIdentifiers(),
             			exstingFunding.getExternalIdentifiers(), exstingFunding.getSource(), sourceEntity);
