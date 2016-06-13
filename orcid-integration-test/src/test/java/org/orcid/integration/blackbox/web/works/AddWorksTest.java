@@ -112,23 +112,12 @@ public class AddWorksTest {
         // Run the function directly
         ((JavascriptExecutor) webDriver).executeScript("angular.element('[ng-controller=WorkCtrl]').scope().addWorkModal()");
         BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//select[@ng-model='editWork.workCategory.value']")), webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        Select catSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workCategory.value']")));
-        BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference']")), webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        catSel.selectByVisibleText("Conference");
+        BlackBoxBase.ngAwareSendKeys("conference","workCategory", webDriver);
         BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference paper']")), webDriver);
-        Select typeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editWork.workType.value']")));
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        typeSel.selectByVisibleText("Conference paper");
-        
-        Select idTypeSel = new Select(webDriver.findElement(By.xpath("//select[@ng-model='workExternalIdentifier.workExternalIdentifierType.value']")));
-        idTypeSel.selectByVisibleText("doi: Digital object identifier");
-        WebElement idValue = webDriver.findElement(By.xpath("//input[@ng-model='workExternalIdentifier.workExternalIdentifierId.value']"));
-        idValue.sendKeys("10.10/"+System.currentTimeMillis());
-        
-        WebElement title = webDriver.findElement(By.xpath("//input[@ng-model='editWork.title.value']"));
-        title.sendKeys(workName);
+        BlackBoxBase.ngAwareSendKeys("string:conference-abstract","workType", webDriver);
+        BlackBoxBase.ngAwareSendKeys("doi","worksIdType0", webDriver);
+        BlackBoxBase.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
+        BlackBoxBase.ngAwareSendKeys(workName,"work-title", webDriver);
         
         //wait for angular to register that values have been typed.
         try {
