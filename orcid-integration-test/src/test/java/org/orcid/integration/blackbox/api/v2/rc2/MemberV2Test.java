@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.common_rc2.Day;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.Month;
@@ -87,12 +88,12 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
     
     @BeforeClass
     public static void beforeClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
     
     @AfterClass
     public static void afterClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
     
     @Before
