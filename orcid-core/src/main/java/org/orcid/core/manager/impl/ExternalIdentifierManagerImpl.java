@@ -40,10 +40,10 @@ import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.transaction.annotation.Transactional;
 
 public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager {
 
@@ -107,6 +107,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     @Override
+    @Transactional
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate external identifier

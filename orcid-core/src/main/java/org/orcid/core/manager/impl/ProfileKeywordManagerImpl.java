@@ -39,7 +39,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;

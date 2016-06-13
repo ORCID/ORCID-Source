@@ -414,9 +414,6 @@ public class WorksController extends BaseWorkspaceController {
         // Set the id in the work to be returned
         Long workId = newWork.getPutCode();
         workForm.setPutCode(Text.valueOf(workId));
-
-        // make the new work the default display
-        workManager.updateToMaxDisplay(currentProfile.getOrcidIdentifier().getPath(), workId);
     }
 
     private void updateWork(WorkForm workForm) throws Exception {
