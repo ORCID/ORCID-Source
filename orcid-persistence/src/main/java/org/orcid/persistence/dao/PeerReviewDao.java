@@ -69,4 +69,6 @@ public interface PeerReviewDao extends GenericDao<PeerReviewEntity, Long> {
      * @return a list of peer review ids with old ext ids          
      * */
     List<BigInteger> getPeerReviewWithOldExtIds(long limit);
+    
+    boolean increaseDisplayIndexOnAllElements(String orcid);
 }

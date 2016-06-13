@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -45,7 +46,9 @@ import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.persistence.dao.ProfileFundingDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 public class ProfileFundingManagerTest extends BaseTest {
@@ -61,6 +64,9 @@ public class ProfileFundingManagerTest extends BaseTest {
     
     @Resource 
     private ProfileFundingManager profileFundingManager;
+    
+    @Resource
+    private ProfileFundingDao profileFundingDao;
     
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -82,7 +88,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     @Test
     public void testAddFundingToUnclaimedRecordPreserveFundingVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
-        Funding funding = getFunding();
+        Funding funding = getFunding(null);
         
         funding = profileFundingManager.createFunding(unclaimedOrcid, funding, true);
         funding = profileFundingManager.getFunding(unclaimedOrcid, funding.getPutCode());
@@ -95,7 +101,7 @@ public class ProfileFundingManagerTest extends BaseTest {
     @Test
     public void testAddFundingToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
-        Funding funding = getFunding();
+        Funding funding = getFunding(null);
         
         funding = profileFundingManager.createFunding(claimedOrcid, funding, true);
         funding = profileFundingManager.getFunding(claimedOrcid, funding.getPutCode());
@@ -105,19 +111,57 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, funding.getVisibility());        
     }
     
-    private Funding getFunding() {
+    @Test
+    public void testAddMultipleModifiesIndexingStatus() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        Funding f1 = getFunding("F1");
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
+        
+        Funding f2 = getFunding("F2");
+        f2 = profileFundingManager.createFunding(claimedOrcid, f2, true);
+        
+        Funding f3 = getFunding("F3");
+        f3 = profileFundingManager.createFunding(claimedOrcid, f3, true);
+        
+        ProfileFundingEntity entity1 = profileFundingDao.find(f1.getPutCode());
+        ProfileFundingEntity entity2 = profileFundingDao.find(f2.getPutCode());
+        ProfileFundingEntity entity3 = profileFundingDao.find(f3.getPutCode());
+        
+        assertNotNull(entity1.getDisplayIndex());
+        assertNotNull(entity2.getDisplayIndex());
+        assertNotNull(entity3.getDisplayIndex());
+        assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
+        assertTrue(entity2.getDisplayIndex() > entity3.getDisplayIndex());
+        assertTrue(entity1.getDisplayIndex() > entity2.getDisplayIndex());
+        
+        //Rollback all changes
+        profileFundingDao.remove(entity1.getId());
+        profileFundingDao.remove(entity2.getId());
+        profileFundingDao.remove(entity3.getId());
+    } 
+    
+    private Funding getFunding(String grantNumber) {
         Funding funding = new Funding();
         ExternalIDs extIds = new ExternalIDs();
         ExternalID extId = new ExternalID();
         extId.setRelationship(Relationship.SELF);
         extId.setType("grant_number");
         extId.setUrl(new Url("http://orcid.org"));
-        extId.setValue("ext-id-value");
+        if(grantNumber == null) {
+            extId.setValue("ext-id-value");
+        } else {
+            extId.setValue(grantNumber);
+        }
+        
         extIds.getExternalIdentifier().add(extId);
         funding.setExternalIdentifiers(extIds);
         
         FundingTitle title = new FundingTitle();
-        title.setTitle(new Title("Funding title"));
+        if(grantNumber == null) {
+            title.setTitle(new Title("Funding title"));
+        } else {
+            title.setTitle(new Title("Funding title " + grantNumber));
+        }        
         funding.setTitle(title);
         
         Organization org = new Organization();
