@@ -140,8 +140,7 @@ public class AddressManagerImpl implements AddressManager {
         return adapter.toAddress(updatedEntity);
     }
     
-    @Override
-    @Transactional
+    @Override    
     public Address createAddress(String orcid, Address address, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the address
@@ -170,8 +169,10 @@ public class AddressManagerImpl implements AddressManager {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }        
         
+        /*
         for (AddressEntity existing : existingAddresses)
             existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+         */
         newEntity.setDisplayIndex(0L); 
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);

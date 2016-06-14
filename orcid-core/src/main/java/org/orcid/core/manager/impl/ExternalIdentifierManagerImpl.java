@@ -107,7 +107,6 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     @Override
-    @Transactional
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate external identifier
@@ -136,8 +135,10 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         }
                 
         setIncomingPrivacy(newEntity, profile);
+        /*
         for (ExternalIdentifierEntity existing : existingExternalIdentifiers)
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);        
+            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+         */        
         newEntity.setDisplayIndex(0L);
         externalIdentifierDao.persist(newEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(newEntity);
