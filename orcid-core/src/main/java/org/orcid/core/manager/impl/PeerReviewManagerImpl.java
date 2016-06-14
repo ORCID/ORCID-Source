@@ -109,8 +109,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviews);
     }
 
-    @Override
-    @Transactional
+    @Override    
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 

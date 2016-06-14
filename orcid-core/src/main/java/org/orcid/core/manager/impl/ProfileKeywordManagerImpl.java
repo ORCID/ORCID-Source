@@ -122,8 +122,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         return true;
     }
 
-    @Override
-    @Transactional
+    @Override    
     public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
@@ -153,8 +152,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         } 
         
         setIncomingPrivacy(newEntity, profile);
+        /*
         for (ProfileKeywordEntity existing : existingKeywords)
             existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+         */
         newEntity.setDisplayIndex(0L);
         profileKeywordDao.persist(newEntity);
         return adapter.toKeyword(newEntity);
