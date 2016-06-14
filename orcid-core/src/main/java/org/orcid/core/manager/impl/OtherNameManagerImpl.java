@@ -130,8 +130,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         return true;
     }
 
-    @Override
-    @Transactional
+    @Override    
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the otherName
@@ -159,8 +158,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
                 newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         setIncomingPrivacy(newEntity, profile);
-        for (OtherNameEntity existing : existingOtherNames)
+        /*
+        for (OtherNameEntity existing : existingOtherNames) {
             existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+            otherNameDao.merge(existing);
+        }
+        */
         newEntity.setDisplayIndex(0L);
         otherNameDao.persist(newEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(newEntity);
