@@ -285,6 +285,9 @@ public class Jaxb2JpaAdapterImpl implements Jaxb2JpaAdapter {
             setSource(orcidWork.getSource(), workEntity);            
             workEntity.setVisibility(orcidWork.getVisibility() == null ? Visibility.PRIVATE : orcidWork.getVisibility());
             workEntity.setAddedToProfileDate(new Date());
+            if(workEntity.getDisplayIndex() == null) {
+                workEntity.setDisplayIndex(0L);
+            }
             return workEntity;
         }
         return null;

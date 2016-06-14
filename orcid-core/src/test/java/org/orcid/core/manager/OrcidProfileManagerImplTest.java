@@ -113,20 +113,22 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
+import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
+import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
+import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.persistence.jpa.entities.SubjectEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.springframework.test.annotation.Rollback;
@@ -166,7 +168,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     private GenericDao<SubjectEntity, String> subjectDao;
 
     @Resource
-    private GenericDao<WorkEntity, Long> workDao;
+    private WorkDao workDao;
 
     @Resource(name = "securityQuestionDao")
     private GenericDao<SecurityQuestionEntity, Integer> securityQuestionDao;
@@ -1913,18 +1915,57 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
     @Transactional
     @Rollback(true)
     public void addNewWorksModifyExistingWorksDisplayIndex() {
+        OrcidProfile profile1 = createBasicProfile();
+        String orcidIdentifier = null;
+        profile1.setOrcidIdentifier(orcidIdentifier);
+        setBio(profile1, Visibility.PUBLIC);   
+        profile1 = orcidProfileManager.createOrcidProfile(profile1, true, false);
+        assertNotNull(profile1);
+        assertNotNull(profile1.getOrcidIdentifier());
         
+        String orcidId = profile1.getOrcidIdentifier().getPath();
+        OrcidProfile profile = getWorkInsideOrcidProfile("w1", orcidId);
+        orcidProfileManager.addOrcidWorks(profile);
+        
+        profile = getWorkInsideOrcidProfile("w2", orcidId);
+        orcidProfileManager.addOrcidWorks(profile);
+        
+        profile = getWorkInsideOrcidProfile("w3", orcidId);
+        orcidProfileManager.addOrcidWorks(profile);
+        
+        List<MinimizedWorkEntity> all = workDao.findWorks(orcidId, System.currentTimeMillis());
+        assertNotNull(all);
+        Long displayIndex1 = null;
+        Long displayIndex2 = null;
+        Long displayIndex3 = null;
+        
+        for(MinimizedWorkEntity entity : all) {
+            Long displayIndex = entity.getDisplayIndex();
+            if("w1".equals(entity.getTitle())) {
+                displayIndex1 = displayIndex;
+            } else if("w2".equals(entity.getTitle())) {
+                displayIndex2 = displayIndex;
+            } else if("w3".equals(entity.getTitle())) {
+                displayIndex3 = displayIndex;
+            }
+        }
+        
+        assertNotNull(displayIndex1);
+        assertNotNull(displayIndex2);
+        assertNotNull(displayIndex3);
+        assertEquals(Long.valueOf(0L), displayIndex3);
+        assertTrue(displayIndex3 < displayIndex2);
+        assertTrue(displayIndex2 < displayIndex1);
     }
     
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback(true)    
     public void addNewFundingModifyExistingWorksDisplayIndex() {
         OrcidProfile profile1 = createBasicProfile();
         String orcidIdentifier = null;
         profile1.setOrcidIdentifier(orcidIdentifier);
         setBio(profile1, Visibility.PUBLIC);   
-        String email = profile1.getOrcidBio().getContactDetails().getEmail().get(0).getValue();
         profile1 = orcidProfileManager.createOrcidProfile(profile1, true, false);
         assertNotNull(profile1);
         assertNotNull(profile1.getOrcidIdentifier());
@@ -1939,6 +1980,9 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         
         profile = getFundingInsideOrcidProfile("f3", orcidId);
         orcidProfileManager.addFundings(profile);
+        
+        profile = getFundingInsideOrcidProfile("f4", orcidId);
+        orcidProfileManager.addFundings(profile);        
         
         List<ProfileFundingEntity> all = profileFundingDao.getByUser(orcidId);
         assertNotNull(all);
@@ -2108,5 +2152,46 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         profile.setFundings(fList);
         return profile;
     }
+    
+    private OrcidProfile getWorkInsideOrcidProfile(String defaultTitle, String orcid) {
+        OrcidWork orcidWork = new OrcidWork();
+        //Set title
+        WorkTitle title = new WorkTitle();
+        if(defaultTitle != null)
+            title.setTitle(new Title(defaultTitle));            
+        else
+            title.setTitle(new Title("Title"));
+        orcidWork.setWorkTitle(title);
+        
+        //Set external identifiers
+        WorkExternalIdentifier extId1 = new WorkExternalIdentifier();
+        extId1.setWorkExternalIdentifierId(new WorkExternalIdentifierId("doi-" + defaultTitle));
+        extId1.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
+        
+        WorkExternalIdentifier extId2 = new WorkExternalIdentifier();
+        if(defaultTitle != null)
+            extId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("issn-" + defaultTitle));
+        else
+            extId2.setWorkExternalIdentifierId(new WorkExternalIdentifierId("issn-" + System.currentTimeMillis()));
+        extId2.setWorkExternalIdentifierType(WorkExternalIdentifierType.ISSN);
+        
+        WorkExternalIdentifiers extIds = new WorkExternalIdentifiers();
+        extIds.getWorkExternalIdentifier().add(extId1);
+        extIds.getWorkExternalIdentifier().add(extId2);        
+        
+        orcidWork.setWorkExternalIdentifiers(extIds);
+        
+        orcidWork.setWorkType(WorkType.ARTISTIC_PERFORMANCE);
+        
+        OrcidProfile profile = new OrcidProfile();
+        profile.setOrcidIdentifier(orcid);
+        List<OrcidWork> workList = new ArrayList<OrcidWork>();
+        workList.add(orcidWork);
+        OrcidWorks orcidWorks = new OrcidWorks();
+        orcidWorks.setOrcidWork(workList);       
+        profile.setOrcidWorks(orcidWorks);
+        return profile;
+    }
+    
     
 }

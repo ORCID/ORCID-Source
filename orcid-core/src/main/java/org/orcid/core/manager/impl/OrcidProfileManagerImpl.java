@@ -171,7 +171,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
 
     @Resource
-    ProfileFundingDao profileFundingDao;
+    private ProfileFundingDao profileFundingDao;
 
     @Resource
     private EmailDao emailDao;
@@ -1608,6 +1608,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
+        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);        
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
@@ -1799,7 +1800,6 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void persistAddedFundings(String orcid, List<Funding> updatedFundingList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
-        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
         for (Funding updatedFunding : updatedFundingList) {
             ProfileFundingEntity profileFundingEntity = jaxb2JpaAdapter.getNewProfileFundingEntity(updatedFunding, profileEntity);
             // Save the profile grant
