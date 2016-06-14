@@ -981,7 +981,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         } else {
             checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
         }
-
+        
+        workDao.increaseDisplayIndexOnAllElements(orcid);
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
 
@@ -1279,8 +1280,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
-        Set<String> titles = new HashSet<String>();
-        workDao.increaseDisplayIndexOnAllElements(orcid);
+        Set<String> titles = new HashSet<String>();        
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
