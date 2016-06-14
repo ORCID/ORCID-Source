@@ -75,7 +75,7 @@
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
     <#if RequestParameters['font']??>
-    	<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+    	<link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'>
     </#if>
     
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
@@ -122,7 +122,7 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
-    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>    
     <#if RequestParameters['font']??>
     	<link rel="stylesheet" href="${staticCdn}/css/noto-font.css?v=${ver}"/>
     </#if>

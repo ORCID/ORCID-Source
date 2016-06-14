@@ -1,3 +1,20 @@
-*, body{
+*, body, .orcid-id{
 	font-family: 'Noto Sans', sans-serif;
+	font-style: normal;
 }
+
+h1,h2,h3,h4,h5,h6,
+.header .search form#form-search input[type="search"],
+.header .language-selector select#language-codes,
+.header .navigation > .menu,
+strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-header-public h3,.workspace-help a,.full-name,.tabs a,.tabs a:visited,
+.primaryEmail,
+#statistics .page-header,
+#statistics span.stat-name,
+#statistics span.stat-data{	
+	font-weight: 700;
+	font-style: normal;		
+}
+
+
+
