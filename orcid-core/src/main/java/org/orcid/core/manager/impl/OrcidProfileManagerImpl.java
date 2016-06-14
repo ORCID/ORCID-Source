@@ -982,7 +982,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
         }
         
-        workDao.increaseDisplayIndexOnAllElements(orcid);
+        //workDao.increaseDisplayIndexOnAllElements(orcid);
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
 
@@ -1608,7 +1608,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
-        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);        
+        //profileFundingDao.increaseDisplayIndexOnAllElements(orcid);        
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
