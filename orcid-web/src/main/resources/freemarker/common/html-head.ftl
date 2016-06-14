@@ -70,15 +70,14 @@
       orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");
       orcidVar.searchBaseUrl = "${searchBaseUrl}";
       orcidVar.isPasswordConfirmationRequired = ${isPasswordConfirmationRequired?string};
-
       orcidVar.version = "${ver}";
-      
-      
-      
-      
-    </script>    
+    </script>
     
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
+    <#if RequestParameters['font']??>
+    	<link href='https://fonts.googleapis.com/css?family=Noto+Sans' rel='stylesheet' type='text/css'>
+    </#if>
+    
     <link rel="stylesheet" href="${staticLoc}/css/glyphicons.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/social.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/filetypes.css?v=${ver}"/>    
@@ -124,4 +123,7 @@
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
     <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
+    <#if RequestParameters['font']??>
+    	<link rel="stylesheet" href="${staticCdn}/css/noto-font.css?v=${ver}"/>
+    </#if>
 </head>
