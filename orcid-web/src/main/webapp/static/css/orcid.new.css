@@ -6543,6 +6543,11 @@ a:hover .mozilla-badge{
 	margin-bottom: 0;
 }
 
+
+#colorbox, #cboxOverlay, #cboxWrapper{
+	overflow: visible; /* Deal with it only for Modal v2*/
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 

@@ -2677,6 +2677,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
+    $scope.modal = false;
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2821,7 +2822,12 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         }
     };
     
-    $scope.showTooltip = function(elem){
+    $scope.showTooltip = function(elem, event){
+    	if (elem.indexOf("privacy") > 0){    		
+    		var pos = angular.element(event.target.parentNode).prop('offsetTop');
+    		
+    	}
+    	
     	$scope.showElement[elem] = true;
     }
     
@@ -2830,6 +2836,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     }
     
     $scope.openEditModal = function(){
+    	$scope.modal = true;
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-keyword').html())($scope),
@@ -2838,6 +2845,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 if ($scope.keywordsForm.keywords.length == 0){
                     $scope.addNewModal();
                     $scope.newInput = true;
+                    
                 }
             },
             width: formColorBoxResize(),
