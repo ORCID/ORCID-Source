@@ -17,7 +17,6 @@
 package org.orcid.core.manager;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -261,7 +260,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     public void updateNames(String orcid, PersonalDetails personalDetails);
 
-    Date updateLastModifiedDate(String orcid);
+    void updateLastModifiedDate(String orcid);
 
     void clearOrcidProfileCache();
 
