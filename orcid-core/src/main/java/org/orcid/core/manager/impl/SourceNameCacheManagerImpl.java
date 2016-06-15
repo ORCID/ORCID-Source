@@ -32,6 +32,9 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -61,37 +64,46 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     
     @Override    
     public String retrieve(String sourceId) throws IllegalArgumentException {
-        Object key = new OrcidCacheKey(sourceId, releaseName);        
-        SourceNameData sourceNameData = toSourceNameData(sourceNameCache.get(key));
-        Date dbDate = null;
-        if(sourceNameData != null) {
-            dbDate = retrieveLastModifiedDate(sourceId, sourceNameData.isClient());
-        } else {
-            dbDate = retrieveLastModifiedDate(sourceId, null);
+        String key = sourceId + "_source_name";
+        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();                
+        String sourceName = null;
+        if(sra != null) {
+            sourceName = (String) sra.getAttribute(key, ServletRequestAttributes.SCOPE_REQUEST);
         }
-        if (needsFresh(dbDate, sourceNameData))
+        
+        if(sourceName == null) {                
             try {
                 synchronized (lockers.obtainLock(sourceId)) {
-                    sourceNameData = toSourceNameData(sourceNameCache.get(key));
-                    if (needsFresh(dbDate, sourceNameData)) {                                                
-                        if(sourceNameData != null) {
-                            sourceNameData = getSourceNameData(sourceId, sourceNameData.isClient());
-                        } else {
-                            sourceNameData = getSourceNameData(sourceId, null);
-                        }
-                                                
+                    sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+                    if(sra != null) {
+                        sourceName = (String) sra.getAttribute(key, ServletRequestAttributes.SCOPE_REQUEST);
+                    }
+                    
+                    if(sourceName == null) {
+                        System.out.println("----------------->Refreshing name for " + sourceId);
+                        SourceNameData  sourceNameData = getSourceNameData(sourceId, null);                                                                       
                         if(sourceNameData == null) {
                             LOGGER.error("Unable to find id " + sourceId);
                             throw new IllegalArgumentException("Invalid source " + sourceId);  
-                        }
-                                                                        
-                        sourceNameCache.put(new Element(key, sourceNameData));
+                        }                                                                       
+                        sourceName = sourceNameData.getName();
+                    }
+                                                            
+                    if (sra != null) {
+                        sra.setAttribute(key, sourceName, ServletRequestAttributes.SCOPE_REQUEST);
                     }
                 }
             } finally {
                 lockers.releaseLock(sourceId);
-            }
-        return sourceNameData.getName();
+            }            
+        }
+        
+        if(sourceName == null) {
+            LOGGER.error("Unable to find id " + sourceId);
+            throw new IllegalArgumentException("Invalid source " + sourceId);  
+        }
+        
+        return sourceName;
     }    
 
     @Override
