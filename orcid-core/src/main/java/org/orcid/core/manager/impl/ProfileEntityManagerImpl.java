@@ -423,7 +423,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (!orcidExists(orcid)) {
             throw new NoResultException();
         }
-        Date lastModified = updateLastModifed(orcid);
+        Date lastModified = getLastModified(orcid);
         long lastModifiedTime = lastModified.getTime();
         ActivitiesSummary activities = new ActivitiesSummary();
 
