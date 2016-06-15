@@ -604,7 +604,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     public Date getLastModified(String orcid) {
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+//        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         Date lastMod = null;
 //        if (sra != null)
 //            lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
@@ -617,13 +617,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     @Override
-    public Date updateLastModifed(String orcid) {
+    public void updateLastModifed(String orcid) {
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        Date lastMod  = profileDao.retrieveLastModifiedDate(orcid);
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+//        Date lastMod  = profileDao.retrieveLastModifiedDate(orcid);
+//        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
 //        if (sra != null)
 //            sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
-        return lastMod;
+//        return lastMod;
     }
 
     @Override
