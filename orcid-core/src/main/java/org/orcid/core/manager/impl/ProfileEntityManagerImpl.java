@@ -610,7 +610,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
             lastMod = profileDao.retrieveLastModifiedDate(orcid);
-            sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
+            if (sra != null)
+                sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         }
         return lastMod;
     }
