@@ -423,7 +423,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (!orcidExists(orcid)) {
             throw new NoResultException();
         }
-        Date lastModified = updateLastModifed(orcid);
+        Date lastModified = getLastModified(orcid);
         long lastModifiedTime = lastModified.getTime();
         ActivitiesSummary activities = new ActivitiesSummary();
 
@@ -609,17 +609,17 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (sra != null)
             lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
-            return lastMod = updateLastModifed(orcid);
+            lastMod = profileDao.retrieveLastModifiedDate(orcid);
+            if (sra != null)
+                sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         }
         return lastMod;
     }
 
     @Override
     public Date updateLastModifed(String orcid) {
-        Date lastMod = null;
-        if (lastMod == null) {
-            lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        }
+        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        Date lastMod  = profileDao.retrieveLastModifiedDate(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
