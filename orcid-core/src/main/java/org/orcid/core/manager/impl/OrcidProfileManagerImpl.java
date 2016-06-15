@@ -171,7 +171,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private GenericDao<OrgAffiliationRelationEntity, Long> orgAffilationRelationDao;
 
     @Resource
-    ProfileFundingDao profileFundingDao;
+    private ProfileFundingDao profileFundingDao;
 
     @Resource
     private EmailDao emailDao;
@@ -981,7 +981,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         } else {
             checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
         }
-
+        
+        //workDao.increaseDisplayIndexOnAllElements(orcid);
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
 
@@ -1279,7 +1280,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     private void persistAddedWorks(String orcid, List<OrcidWork> updatedOrcidWorksList) {
         ProfileEntity profileEntity = profileDao.find(orcid);
-        Set<String> titles = new HashSet<String>();
+        Set<String> titles = new HashSet<String>();        
         for (OrcidWork updatedOrcidWork : updatedOrcidWorksList) {
             populateContributorInfo(updatedOrcidWork);
             // Create the work entity
@@ -1607,6 +1608,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
+        //profileFundingDao.increaseDisplayIndexOnAllElements(orcid);        
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
@@ -2077,8 +2079,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    public Date updateLastModifiedDate(String orcid) {
-        return profileEntityManager.updateLastModifed(orcid);
+    public void updateLastModifiedDate(String orcid) {
+        profileEntityManager.updateLastModifed(orcid);
     }
 
     static public OrcidProfile toOrcidProfile(Element element) {

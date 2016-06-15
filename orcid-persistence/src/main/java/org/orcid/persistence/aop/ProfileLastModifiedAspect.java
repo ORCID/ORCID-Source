@@ -90,10 +90,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        Date lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        /* ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        Date lastMod = profileDao.retrieveLastModifiedDate(orcid);
         if (sra != null)
-            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
+            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST); */
         messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName()+"."+joinPoint.getSignature().getName()), JmsDestination.UPDATED_ORCIDS);
     }
 

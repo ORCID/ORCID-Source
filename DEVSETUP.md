@@ -15,16 +15,30 @@
 
 ## Setup Postgres DB
 We'll set up postgres using the default settings in 
-[staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties).
- Please change usernames and passwords for any production environments.
+[staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties). Please change usernames and passwords for any production environments.
 
-1. Become postgres user (note: your username for the superuser may differ)
+1. Install Postgres
+2. If you are using a Mac install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
+   * nano .bash_profile
+   * add a new line at the end with 
+ 	```
+	export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+	```
+   * save the file with ctrl +o then return, then exit nano with ctrl +x
+   * activate your changes with 
+	
+	```
+	source .bash_profile
+	```
+
+
+3. Become postgres user (note: you may not need to do this step if you use Postgresapp to install)
 
     ```
     sudo su - postgres
     ```
     
-* Set up database
+4. Set up database
 
     ```
     psql -c "CREATE DATABASE orcid;"     
@@ -40,13 +54,13 @@ We'll set up postgres using the default settings in
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
     
-* Exit postgres user prompt
+5. Exit postgres user prompt
     
     ```
     exit
     ```
 
-* Verify user login and database exist
+6. Verify user login and database exist
 
     ```
     psql -U orcid -d orcid -c "\list" -h localhost

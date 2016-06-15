@@ -23,6 +23,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.orcid.integration.blackbox.api.BBBUtil;
 
 /**
  * 
@@ -34,13 +35,11 @@ public class OrcidUi {
     private String baseUri;
     private WebDriver webDriver;
     private XPath xpath;
-    private Utils utils;
 
     public OrcidUi(String baseUri, WebDriver webDriver) {
         this.baseUri = baseUri;
         this.webDriver = webDriver;
         this.xpath = new XPath(webDriver);
-        this.utils = new Utils(webDriver);
     }
 
     public AccountSettingsPage getAccountSettingsPage() {
@@ -54,7 +53,7 @@ public class OrcidUi {
     public class AccountSwitcherSection {
 
         public void open() {
-            xpath.click("//div[@ng-controller='SwitchUserCtrl']/a[2]");
+            BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-controller='SwitchUserCtrl']/a[2]")), webDriver);
         }
 
         public List<AccountToSwitchTo> getAccountsToSwitchTo() {
@@ -72,9 +71,10 @@ public class OrcidUi {
         }
 
         public void switchTo() {
-            localXPath.click("a");
-            
-            utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='delegation-mode-warning']")));
+            BBBUtil.ngAwareClick(localXPath.findElement("a"), webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@class='delegation-mode-warning']")), webDriver);
         }
 
         public String getAccountId() {

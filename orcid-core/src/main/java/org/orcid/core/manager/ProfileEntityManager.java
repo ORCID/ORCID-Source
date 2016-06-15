@@ -89,5 +89,5 @@ public interface ProfileEntityManager {
     
     boolean deactivateRecord(String orcid);
 
-    Date updateLastModifed(String orcid);
+    void updateLastModifed(String orcid);
 }

@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
@@ -82,7 +83,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
     
     @AfterClass
     public static void afterClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
     @Test

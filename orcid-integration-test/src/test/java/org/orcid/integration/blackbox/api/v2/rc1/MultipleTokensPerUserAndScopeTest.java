@@ -28,6 +28,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc1.Work;
@@ -42,12 +43,12 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBaseRC1 {
 
     @BeforeClass
     public static void beforeClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
     
     @AfterClass
     public static void afterClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
     
     @Test

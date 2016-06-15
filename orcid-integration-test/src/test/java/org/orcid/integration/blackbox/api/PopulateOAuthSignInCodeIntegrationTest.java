@@ -42,8 +42,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {   
-
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
     
     private String authorizeScreen = null;
     
@@ -57,7 +55,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         webDriver.get(authorizeScreen);
         // make sure we are on the page
         By element = By.xpath("//input[@name='email']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);        
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals(""));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals(""));
@@ -71,7 +69,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         String url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
         By element = By.xpath("//input[@name='email']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);       
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);       
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
@@ -82,7 +80,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         url = authorizeScreen + "&email=" + this.getUser1UserName() + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);               
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);               
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1UserName()));
         // make sure register
         assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
@@ -91,7 +89,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         url = authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }
         
@@ -103,8 +101,8 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         webDriver.get(url);    
         
         By element = By.xpath("//input[@name='email']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);
-        (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='givenNames']")).getAttribute("value").equals("test_given_name"));
@@ -114,9 +112,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test existing email
         url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
         WebElement inputElement = webDriver.findElement(element);
         assertNotNull(inputElement);
         assertNotNull(inputElement.getAttribute("value"));
@@ -127,9 +125,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // populating check populating orcid
         url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }       
 
@@ -138,16 +136,16 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // populating check populating orcid
         String url = authorizeScreen + "&orcid=" + this.getUser1OrcidId();
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         By element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                                
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                                
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
 
         // populating check populating orcid overwrites populating email
         webDriver.get(authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId());
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                                
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                                
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }
 
@@ -157,16 +155,16 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         String encodedOrcid = StringEscapeUtils.escapeHtml4(this.getUser1OrcidId());
         String url = authorizeScreen + "&orcid=" + encodedOrcid;        
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        noSpinners(webDriver);                
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);                
         By element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);        
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
 
         // populating check populating orcid overwrites populating email
         webDriver.get(authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId());
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1OrcidId()));
     }
     
@@ -175,30 +173,30 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form family and given names
         String url = authorizeScreen + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         JavascriptExecutor je = (JavascriptExecutor)webDriver;
         
         By element = By.xpath("//input[@name='familyNames']");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);     
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);     
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("test_family_names"));
                 
         element = By.xpath("//input[@name='givenNames']");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);    
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);    
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("test_given_name"));
         
         // verify we don't populate signin
         element = By.xpath("//input[@name='userId']");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);              
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);              
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(""));
 
         // test populating form with family name
         url = authorizeScreen + "&family_names=test_family_names";
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         element = By.xpath("//input[@ng-model='registrationForm.familyNames.value']");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);                    
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);                    
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("test_family_names"));
         WebElement we = webDriver.findElement(element);
         // angular doesn't always populate the element value attribute on init. Instead we check to make sure the model is populated
@@ -207,10 +205,10 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form with given name
         url = authorizeScreen + "&given_names=testGivenNames";
         webDriver.get(url);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         element = By.xpath("//input[@ng-model='registrationForm.givenNames.value']");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(element), webDriver);
         we = webDriver.findElement(element);
         // angular doesn't always populate the element value attribute on init. Instead we check to make sure the model is populated
         assertEquals("testGivenNames",(String)je.executeScript("return angular.element(arguments[0]).scope().registrationForm.givenNames.value", we).toString());

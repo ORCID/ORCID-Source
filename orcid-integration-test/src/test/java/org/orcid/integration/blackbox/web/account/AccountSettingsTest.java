@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Delegate;
@@ -64,25 +65,26 @@ public class AccountSettingsTest extends BlackBoxBase {
 
     @Test
     public void emailsTest() {
+        logUserOut();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        BlackBoxBase.noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
         emailsSection.toggleEdit();
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        BlackBoxBase.noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         assertTrue("Should be able to add email", emailsSection.canAddEmail());
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
         emailsSection.addEmail(emailValue);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
-        BlackBoxBase.noSpinners(webDriver);        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
         List<Email> emails = emailsSection.getEmails();
         Email addedEmail = emails.stream().filter(e -> e.getEmail().equals(emailValue)).findFirst().get();
         assertNotNull("The added email should be there: " + emailValue, addedEmail);
@@ -93,16 +95,16 @@ public class AccountSettingsTest extends BlackBoxBase {
 
     @Test
     public void emailsTestAsDelegate() {
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        logUserOut();
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         DelegatesSection delegatesSection = accountSettingsPage.getDelegatesSection();
         // If user 2 is already a delegate, then delete and add again - just to
         // make sure we can!
@@ -119,10 +121,10 @@ public class AccountSettingsTest extends BlackBoxBase {
         assertNotNull(addedDelegate);
         // Now sign in as user 2
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser2UserName(), getUser2Password());
         // And switch to user 1 in delegation mode
         AccountSwitcherSection accountSwitcherSection = orcidUi.getAccountSwitcherSection();

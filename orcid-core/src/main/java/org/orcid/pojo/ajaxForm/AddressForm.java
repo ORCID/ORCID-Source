@@ -80,7 +80,7 @@ public class AddressForm implements ErrorsInterface, Serializable {
         if (address.getDisplayIndex() != null) {
             form.setDisplayIndex(address.getDisplayIndex());
         } else {
-            form.setDisplayIndex(Long.valueOf(-1));
+            form.setDisplayIndex(0L);
         }
 
         return form;
@@ -106,7 +106,7 @@ public class AddressForm implements ErrorsInterface, Serializable {
         if (displayIndex != null) {
             address.setDisplayIndex(displayIndex);
         } else {
-            address.setDisplayIndex(Long.valueOf(-1));
+            address.setDisplayIndex(0L);
         }
 
         address.setSource(new Source(source));

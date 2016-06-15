@@ -86,7 +86,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
             if (researcherUrl.getDisplayIndex() != null) {
                 form.setDisplayIndex(researcherUrl.getDisplayIndex());
             } else {
-                form.setDisplayIndex(Long.valueOf(-1));
+                form.setDisplayIndex(0L);
             }
         }
         return form;
@@ -113,7 +113,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
         if (displayIndex != null) {
             researcherUrl.setDisplayIndex(displayIndex);
         } else {
-            researcherUrl.setDisplayIndex(Long.valueOf(-1));
+            researcherUrl.setDisplayIndex(0L);
         }
 
         researcherUrl.setSource(new Source(source));

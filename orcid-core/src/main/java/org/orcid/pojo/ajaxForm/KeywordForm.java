@@ -91,7 +91,7 @@ public class KeywordForm implements ErrorsInterface, Serializable {
         if (keyword.getDisplayIndex() != null) {
             form.setDisplayIndex(keyword.getDisplayIndex());
         } else {
-            form.setDisplayIndex(Long.valueOf(-1));
+            form.setDisplayIndex(0L);
         }
 
         return form;
@@ -125,7 +125,7 @@ public class KeywordForm implements ErrorsInterface, Serializable {
         if (displayIndex != null) {
             keyword.setDisplayIndex(displayIndex);
         } else {
-            keyword.setDisplayIndex(Long.valueOf(-1));
+            keyword.setDisplayIndex(0L);
         }
 
         keyword.setSource(new Source(source));

@@ -16,10 +16,6 @@
  */
 package org.orcid.integration.blackbox.api;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
@@ -29,25 +25,17 @@ import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By.ByXPath;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
-import org.orcid.integration.api.helper.SystemPropertiesHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
-    public static final int TIMEOUT_SECONDS = 10;
-    public static final int SLEEP_MILLISECONDS = 100;
-        
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
     private String adminUserName;
@@ -184,6 +172,7 @@ public class BlackBoxBase {
     @Resource
     protected OauthHelper oauthHelper;
     
+    // TODO: make this not static.
     protected static WebDriver webDriver = (new BlackBoxWebDriver()).getWebDriver();
     
     public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
@@ -212,227 +201,82 @@ public class BlackBoxBase {
         adminSignIn(adminUserName, adminPassword);
         try {
             // Unlock the account
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]")));
-            WebElement unLockProfileLink = webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]"));
-            unLockProfileLink.click();
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]")));
+            BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='unlockProfileDiv']/p[1]/a[2]")), webDriver);
+
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
             WebElement unLockProfileOrcidId = webDriver.findElement(By.id("orcid_to_unlock"));
             unLockProfileOrcidId.sendKeys(orcidToUnlock);
-                    
-            WebElement unLockButton = webDriver.findElement(By.id("bottom-confirm-unlock-profile"));
-            unLockButton.click();
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("btn-unlock")));            
-            WebElement confirmUnLockButton = webDriver.findElement(By.id("btn-unlock"));
-            confirmUnLockButton.click();
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("bottom-confirm-unlock-profile")));
+            BBBUtil.ngAwareClick(webDriver.findElement(By.id("bottom-confirm-unlock-profile")), webDriver);
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("btn-unlock")));
+            BBBUtil.ngAwareClick(webDriver.findElement(By.id("btn-unlock")), webDriver);
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+
         } catch(TimeoutException t) {
             //Account might be already unlocked
         } 
     }
     
     public void logUserOut() {
-        logUserOut(getWebBaseUrl(), webDriver);
+        BBBUtil.logUserOut(getWebBaseUrl(), webDriver);
     }
     
-    public static void logUserOut(String baseUrl, WebDriver webDriver) {
-        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(),webDriver);
-    }
-
     public void adminLockAccount(String adminUserName, String adminPassword, String orcidToLock) {
         adminSignIn(adminUserName, adminPassword);
         try {
             // Lock the account
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS, SLEEP_MILLISECONDS)).until(angularHasFinishedProcessing());
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]")));
-            WebElement lockProfileLink = webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]"));
-            lockProfileLink.click();
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]")));
+            BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='lockProfileDiv']/p[1]/a[2]")), webDriver);
+
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("bottom-confirm-lock-profile")), webDriver);
+
             WebElement lockProfileOrcidId = webDriver.findElement(By.id("orcid_to_lock"));
             lockProfileOrcidId.sendKeys(orcidToLock);
-            WebElement lockButton = webDriver.findElement(By.id("bottom-confirm-lock-profile"));
-            lockButton.click();
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("bottom-confirm-lock-profile")), webDriver);
+            BBBUtil.ngAwareClick(webDriver.findElement(By.id("bottom-confirm-lock-profile")), webDriver);
 
-            (new WebDriverWait(webDriver, TIMEOUT_SECONDS)).until(ExpectedConditions.elementToBeClickable(By.id("btn-lock")));
-            WebElement confirmLockButton = webDriver.findElement(By.id("btn-lock"));
-            confirmLockButton.click();
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("btn-lock")));
+            BBBUtil.ngAwareClick(webDriver.findElement(By.id("btn-lock")), webDriver);
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         } catch (TimeoutException t) {
             // Account might be already locked
         } 
     }
 
-    public static void revokeApplicationsAccess() {
-        List<String> clientIds = new ArrayList<String>();        
-        Properties prop = SystemPropertiesHelper.getProperties();        
-        String clientId1 = prop.getProperty("org.orcid.web.testClient1.clientId");     
-        if (!PojoUtil.isEmpty(clientId1)) {
-            clientIds.add(clientId1);
-        }
-                
-        String clientId2 = prop.getProperty("org.orcid.web.testClient2.clientId");
-        if (!PojoUtil.isEmpty(clientId2)) {
-            clientIds.add(clientId2);
-        }
+    public void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        BBBUtil.logUserOut(getWebBaseUrl(),webDriver);
+        webDriver.get(getWebBaseUrl() + "/account");
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
-        String userName = prop.getProperty("org.orcid.web.testUser1.username");
-        String password = prop.getProperty("org.orcid.web.testUser1.password");
-        String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
-            baseUrl = prop.getProperty("org.orcid.web.baseUri");
-        }
-        
-        
-        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
-        webDriver.get(baseUrl + "/my-orcid");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
-               
-        SigninTest.signIn(webDriver, userName, password);
-
-        // Switch to accounts settings page
-        By accountSettingsMenuLink = By.id("accountSettingMenuLink");
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(accountSettingsMenuLink), webDriver);
-        ngAwareClick(webDriver.findElement(accountSettingsMenuLink), webDriver);
-
-        try {
-            boolean lookAgain = false;
-            do {
-                // Look for each revoke app button
-                By revokeAppBtn = By.id("revokeAppBtn");
-                extremeWaitFor(ExpectedConditions.presenceOfElementLocated(revokeAppBtn), webDriver);
-                List<WebElement> appsToRevoke = webDriver.findElements(revokeAppBtn);
-                boolean elementFound = false;
-                // Iterate on them and delete the ones created by the specified
-                // client id
-                for (WebElement appElement : appsToRevoke) {
-                    String nameAttribute = appElement.getAttribute("name");
-                    if (clientIds.contains(nameAttribute)) {
-                        appElement.click();
-                        Thread.sleep(1000);
-                        // Wait for the revoke button
-                        By confirmRevokeAppBtn = By.id("confirmRevokeAppBtn");
-                        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(confirmRevokeAppBtn), webDriver);
-                        WebElement trash = webDriver.findElement(confirmRevokeAppBtn);
-                        trash.click();
-                        Thread.sleep(2000);
-                        elementFound = true;
-                        break;
-                    }
-                }
-                if (elementFound) {
-                    lookAgain = true;
-                } else {
-                    lookAgain = false;
-                }
-            } while (lookAgain);
-        } catch (Exception e){
-            // If it fail is because it couldnt find any other application
-        } finally {
-            BlackBoxBase.logUserOut(baseUrl, webDriver);
-        }
-    }
-
-    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
-        Properties prop = SystemPropertiesHelper.getProperties();
-        String userName = prop.getProperty("org.orcid.web.testUser1.username");
-        String password = prop.getProperty("org.orcid.web.testUser1.password");
-        String baseUrl = "https://localhost:8443/orcid-web";
-        if (!PojoUtil.isEmpty(prop.getProperty("org.orcid.web.baseUri"))) {
-            baseUrl = prop.getProperty("org.orcid.web.baseUri");
-        }
-
-        logUserOut(baseUrl,webDriver);
-        webDriver.get(baseUrl + "/account");
-        
-        SigninTest.signIn(webDriver, userName, password);
-        noSpinners(webDriver);
-        extremeWaitFor(angularHasFinishedProcessing(),webDriver);
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
+        BBBUtil.noSpinners(webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
         
         By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle), webDriver);
         WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
-        ngAwareClick(toggle, webDriver);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
+        BBBUtil.ngAwareClick(toggle, webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         
         String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
         String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" +visibility.value().toLowerCase() + "Active']//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
 
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
-        ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
         // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
         try {Thread.sleep(500);} catch(Exception e) {};
-    }
-    
-    static public  void ngAwareClick(WebElement webElement, WebDriver webDriver) {
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        Actions actions = new Actions(webDriver);
-        actions.moveToElement(webElement).perform();
-        extremeWaitFor(angularHasFinishedProcessing(), webDriver);
-        actions.click(webElement).perform();
-    }
-    
-    static public void noSpinners(WebDriver webDriver) {
-        (new WebDriverWait(webDriver, 20, 100))
-        .until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
-    }
-
-    static public void noCboxOverlay(WebDriver webDriver) {
-        (new WebDriverWait(webDriver, 20, 100))
-        .until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@id='cboxOverlay']")));
-    }
-    
-    static public void extremeWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
-        int wait = 10;
-        int pollingInternval = 250;
-        try {
-            (new WebDriverWait(webDriver, wait, pollingInternval))
-            .until(expectedCondition);
-        } catch (Exception e) {
-            ((JavascriptExecutor)webDriver).executeScript("$(window).trigger('resize');");
-            (new WebDriverWait(webDriver, wait, pollingInternval))
-            .until(expectedCondition);            
-        }        
-    }
-
-    public static ExpectedCondition<Boolean> documentReady() {
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
-            }
-        };
-    }
-
-    public static ExpectedCondition<Boolean> angularHasFinishedProcessing() {
-        /*
-         * Getting complex.
-         * 1. We want to make sure Angular is done. So you call the rootScope apply
-         * 2. We want to make sure the browser is done rendering the DOM so we call $timeout
-         *    http://blog.brunoscopelliti.com/run-a-directive-after-the-dom-has-finished-rendering/
-         * 3. make sure there are no pending AJAX request, if so start over
-         */
-        return new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver driver) {
-                ((JavascriptExecutor) driver).executeScript(""
-                        + "window._selenium_angular_done = false;"
-                        + "function _seleniumAngularDone() { "
-                        + "   angular.element(document.documentElement).scope().$root.$apply("
-                        + "      function(){"
-                        + "        setTimeout(function(){ "
-                        + "            if ($.active > 0)"
-                        + "               _seleniumAngularDone();"
-                        + "            else"
-                        + "               window._selenium_angular_done = true;"
-                        + "         }, 0);"
-                        + "   });"
-                        + "};"
-                        + "try { _seleniumAngularDone(); } catch(err) { /* do nothing */ }");
-                return Boolean.valueOf(((JavascriptExecutor) driver).executeScript(""
-                        + "return window._selenium_angular_done;").toString());
-            }
-        };
     }
     
     public String getAdminUserName() {

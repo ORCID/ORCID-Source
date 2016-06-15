@@ -151,5 +151,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid);
 
     void detach(MinimizedWorkEntity minimizedWorkEntity);
-
+    
+    boolean increaseDisplayIndexOnAllElements(String orcid);
 }

@@ -62,7 +62,7 @@ public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
         if (extId.getDisplayIndex() != null) {
             form.setDisplayIndex(extId.getDisplayIndex());
         } else {
-            form.setDisplayIndex(Long.valueOf(-1));
+            form.setDisplayIndex(Long.valueOf(0L));
         }
         
         // Set created date

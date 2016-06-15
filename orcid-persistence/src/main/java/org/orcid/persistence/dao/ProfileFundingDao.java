@@ -129,4 +129,6 @@ public interface ProfileFundingDao extends GenericDao<ProfileFundingEntity, Long
      * @return a list of funding ids with old ext ids          
      * */
     List<BigInteger> getFundingWithOldExtIds(long limit);
+    
+    boolean increaseDisplayIndexOnAllElements(String orcid);
 }

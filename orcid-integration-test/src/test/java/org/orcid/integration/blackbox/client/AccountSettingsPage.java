@@ -23,7 +23,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.integration.blackbox.api.BBBUtil;
 
 import com.google.common.base.Predicate;
 
@@ -48,8 +48,8 @@ public class AccountSettingsPage {
 
     public void visit() {
         webDriver.get(baseUri + "/account");
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.documentReady(), webDriver);
-        BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
 
     public EmailsSection getEmailsSection() {
@@ -69,8 +69,8 @@ public class AccountSettingsPage {
     public class EmailsSection {
 
         public void toggleEdit() {
-            BlackBoxBase.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@ng-click='toggleEmailEdit()']")), webDriver);
-            BlackBoxBase.ngAwareClick(webDriver.findElement(By.xpath("//a[@ng-click='toggleEmailEdit()']")), webDriver);
+            BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("account-settings-toggle-email-edit")), webDriver);
+            BBBUtil.ngAwareClick(webDriver.findElement(By.id("account-settings-toggle-email-edit")), webDriver);
         }
 
         public List<Email> getEmails() {
@@ -79,7 +79,7 @@ public class AccountSettingsPage {
         }
 
         public boolean canAddEmail() {
-            BlackBoxBase.extremeWaitFor(BlackBoxBase.angularHasFinishedProcessing(), webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
             return xpath.isVisible("//input[@type='email']") && !xpath.isVisible("id('addEmailNotAllowed')");
         }
 

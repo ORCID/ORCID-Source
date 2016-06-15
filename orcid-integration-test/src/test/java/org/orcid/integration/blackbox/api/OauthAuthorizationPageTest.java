@@ -72,12 +72,12 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
     @Before
     public void before() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
     @After
     public void after() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }    
     
     @Test
@@ -112,25 +112,25 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         formattedAuthorizationScreen += "#show_login";
         webDriver.get(formattedAuthorizationScreen);
         
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
                 
         By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
         WebElement userIdElement = webDriver.findElement(userIdElementLocator);
         userIdElement.sendKeys(this.getUser1UserName());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         WebElement passwordElement = webDriver.findElement(By.id("password"));
         passwordElement.sendKeys(this.getUser1Password());
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.angularHasFinishedProcessing());
-        BlackBoxBase.ngAwareClick( webDriver.findElement(By.id("login-authorize-button")), webDriver);
-
-        (new WebDriverWait(webDriver, DEFAULT_TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        BBBUtil.ngAwareClick( webDriver.findElement(By.id("login-authorize-button")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(new ExpectedCondition<Boolean>() {
             public Boolean apply(WebDriver d) {
                 return d.getCurrentUrl().contains("/oauth/error/redirect-uri-mismatch");
             }
-        });
+        }, webDriver);                
         
         String currentUrl = webDriver.getCurrentUrl();
         assertTrue("URL is:" + currentUrl, currentUrl.contains("/oauth/error/redirect-uri-mismatch"));
@@ -197,15 +197,15 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         // Then, ask again for the same permissions. 
         //First login
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(this.getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, BlackBoxBase.TIMEOUT_SECONDS, BlackBoxBase.SLEEP_MILLISECONDS)).until(BlackBoxBase.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
         //Then ask for the same permission
         String url =String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
                 ScopePathType.ORCID_BIO_UPDATE.getContent(), this.getClient1RedirectUri());
         webDriver.get(url);
-        extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//title[contains(text(),'ORCID Playground')]")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//title[contains(text(),'ORCID Playground')]")), webDriver);
         
         currentUrl = webDriver.getCurrentUrl();
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
