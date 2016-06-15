@@ -606,12 +606,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     public Date getLastModified(String orcid) {
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         Date lastMod = null;
-        if (sra != null)
-            lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
+//        if (sra != null)
+//            lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
         if (lastMod == null) {
             lastMod = profileDao.retrieveLastModifiedDate(orcid);
-            if (sra != null)
-                sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
+//            if (sra != null)
+//                sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         }
         return lastMod;
     }
@@ -621,8 +621,8 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
         Date lastMod  = profileDao.retrieveLastModifiedDate(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        if (sra != null)
-            sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
+//        if (sra != null)
+//            sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
         return lastMod;
     }
 
