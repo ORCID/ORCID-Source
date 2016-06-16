@@ -19,6 +19,7 @@ package org.orcid.core.manager.impl;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.RecordNameManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.persistence.dao.RecordNameDao;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.slf4j.Logger;
@@ -36,6 +37,9 @@ public class RecordNameManagerImpl implements RecordNameManager {
     
     @Resource
     private RecordNameDao recordNameDao;
+    
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
     
     @Override
     @Cacheable(value = "record-name", key = "#orcid.concat('-').concat(#lastModified)")
@@ -63,7 +67,11 @@ public class RecordNameManagerImpl implements RecordNameManager {
         if(recordName == null || recordName.getId() == null || recordName.getProfile() == null) {
             return false;
         }
-        return recordNameDao.updateRecordName(recordName);
+        
+        boolean updated = recordNameDao.updateRecordName(recordName);
+        // Evict the name in the source name manager
+        sourceNameCacheManager.remove(recordName.getProfile().getId());
+        return updated;
     }
 
     @Override
