@@ -57,7 +57,7 @@
                 <tr>
                     <!-- Email header -->
                     <th><a name="editEmail"></a>${springMacroRequestContext.getMessage("manage.thEmail")}</th>
-                    <td><a href="" id="account-settings-toggle-email-edit" ng-click="toggleEmailEdit()" ng-bind="emailToggleText">Edit</a></td>
+                    <td><a href="" id="account-settings-toggle-email-edit" ng-click="toggleEmailEdit()" ng-bind="emailToggleText"></a></td>
                 </tr>
                 <tr ng-include="'edit-emails'">
                 	<!-- Injecting Emails -->
