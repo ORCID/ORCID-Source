@@ -194,7 +194,7 @@
 		             	  						publicClick="setPrivacyModal('PUBLIC', $event, keyword)" 
                 	      						limitedClick="setPrivacyModal('LIMITED', $event, keyword)" 
                 	      						privateClick="setPrivacyModal('PRIVATE', $event, keyword)"
-                	      						elementId="$index"/>	
+                	      						elementId="$index"/>
 										</li>
 									</ul>
 									<span class="created-date pull-right" ng-show="keyword.createdDate" ng-class="{'hidden-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>

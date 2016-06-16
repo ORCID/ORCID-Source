@@ -2823,9 +2823,12 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     };
     
     $scope.showTooltip = function(elem, event){
-    	if (elem.indexOf("privacy") > 0){    		
-    		var pos = angular.element(event.target.parentNode).prop('offsetTop');
-    		
+    	if (elem.indexOf("privacy") > 0){    		    		
+    		var pos = angular.element(event.target.parentNode).prop('offsetLeft');    		
+    		angular.element(elem).css({
+    			top: '300px',
+    			left: '2px'
+    		});
     	}
     	
     	$scope.showElement[elem] = true;

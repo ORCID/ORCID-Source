@@ -6548,6 +6548,8 @@ a:hover .mozilla-badge{
 	overflow: visible; /* Deal with it only for Modal v2*/
 }
 
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 
