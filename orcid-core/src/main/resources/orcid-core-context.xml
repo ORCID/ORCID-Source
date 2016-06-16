@@ -519,9 +519,9 @@
 	<bean id="sourceNameCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean"> 
 		<property name="cacheName" value="source-name" />
 		<property name="cacheManager" ref="coreCacheManager" />
-		<property name="maxElementsInMemory" value="${org.orcid.core.profileCache.maxElementsInMemory:10000}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.profileCache.timeToLiveSeconds:600}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.profileCache.timeToIdleSeconds:600}" />
+		<property name="maxElementsInMemory" value="${org.orcid.core.sourceNameCache.maxElementsInMemory:10000}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.sourceNameCache.timeToLiveSeconds:300}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.sourceNameCache.timeToIdleSeconds:300}" />
 		<property name="maxElementsOnDisk" value="0" />
 		<property name="strategy" value="NONE" />
 	</bean>	
