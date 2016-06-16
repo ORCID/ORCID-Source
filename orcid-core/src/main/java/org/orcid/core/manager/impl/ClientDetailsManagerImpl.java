@@ -34,6 +34,7 @@ import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
@@ -80,6 +81,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource
+    private SourceNameCacheManager sourceNameCacheManager;
+    
     /**
      * Load a client by the client id. This method must NOT return null.
      * 
@@ -336,6 +340,8 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
         ClientDetailsEntity result = clientDetailsDao.merge(clientDetails);
         clientDetailsDao.updateLastModified(result.getId());
+        // Evict the name in the source name manager
+        sourceNameCacheManager.remove(result.getId());        
         return result;
     }
 
