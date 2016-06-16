@@ -81,8 +81,6 @@ public class MockSourceNameCache {
             
         });
         
-        when(mockedRecordNameDao.getLastModified(Matchers.<String> any())).thenReturn(new Date());
-        
         when(mockedClientDetailsDao.find((Matchers.<String> any()))).thenAnswer(new Answer<ClientDetailsEntity>(){
             @Override
             public ClientDetailsEntity answer(InvocationOnMock invocation) throws Throwable {
@@ -92,8 +90,6 @@ public class MockSourceNameCache {
                 return client;
             }            
         });
-        
-        when(mockedClientDetailsDao.getLastModifiedIfNotPublicClient(Matchers.<String> any())).thenReturn(new Date());
         
         assertNotNull(sourceNameCacheManager);
         TargetProxyHelper.injectIntoProxy(sourceNameCacheManager, "recordNameDao", mockedRecordNameDao);        

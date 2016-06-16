@@ -65,11 +65,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
                     sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
                     if(sourceName == null) {
                         LOGGER.info("Fetching source name for: " + sourceId);
-                        sourceName = getSourceName(sourceId);                                                                       
-                        if(sourceName == null) {
-                            LOGGER.error("Unable to find source name for " + sourceId);
-                            throw new IllegalArgumentException("Unable to find source name for " + sourceId);  
-                        }    
+                        sourceName = getSourceName(sourceId);                        
                         sourceNameCache.put(new Element(cacheKey, sourceName));
                     }                    
                 }
