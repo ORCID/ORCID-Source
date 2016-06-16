@@ -164,7 +164,7 @@
 	</cache>
 	
 	<cache name="source-name" maxElementsInMemory="5000"
-		maxElementsOnDisk="20000" timeToLiveSeconds="86400" copyOnRead="false"
+		maxElementsOnDisk="20000" timeToLiveSeconds="300" timeToIdleSeconds="300" copyOnRead="false"
 		copyOnWrite="false" eternal="false">
 		<persistence strategy="localTempSwap" />
 	</cache>
