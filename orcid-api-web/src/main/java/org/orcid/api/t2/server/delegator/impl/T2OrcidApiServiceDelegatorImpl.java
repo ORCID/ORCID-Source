@@ -36,6 +36,7 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceDelegatorImpl;
+import org.orcid.api.common.util.OrcidMessageUtil;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidClientNotFoundException;
@@ -103,6 +104,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    OrcidMessageUtil orcidMessageUtil = new OrcidMessageUtil();
     
     @Override
     public Response viewStatusText() {
@@ -406,6 +409,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
         if (profile != null) {            
             OrcidMessage orcidMessage = new OrcidMessage(profile);
+            orcidMessageUtil.setSourceName(orcidMessage);
             return Response.ok(orcidMessage).build();
         } else {
         	Map<String, String> params = new HashMap<String, String>();

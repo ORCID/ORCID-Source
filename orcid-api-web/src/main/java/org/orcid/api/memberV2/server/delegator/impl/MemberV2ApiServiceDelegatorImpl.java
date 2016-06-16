@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
+import org.orcid.api.common.util.SourceUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -172,6 +173,9 @@ public class MemberV2ApiServiceDelegatorImpl
     @Resource
     private RecordManager recordManager;
     
+    @Resource
+    private SourceUtils sourceUtils;
+    
     private long getLastModifiedTime(String orcid) {
         Date lastModified = profileEntityManager.getLastModified(orcid);
         return (lastModified == null) ? 0 : lastModified.getTime();        
@@ -199,10 +203,12 @@ public class MemberV2ApiServiceDelegatorImpl
         
         if(record.getPerson() != null) {
             ElementUtils.setPathToPerson(record.getPerson(), orcid);
+            sourceUtils.setSourceName(record.getPerson());
         }
         if(record.getActivitiesSummary() != null) {
             ActivityUtils.cleanEmptyFields(record.getActivitiesSummary());
             ActivityUtils.setPathToActivity(record.getActivitiesSummary(), orcid);
+            sourceUtils.setSourceName(record.getActivitiesSummary());
         }  
         
         return Response.ok(record).build();
@@ -224,6 +230,7 @@ public class MemberV2ApiServiceDelegatorImpl
         }
         ActivityUtils.cleanEmptyFields(as);
         ActivityUtils.setPathToActivity(as, orcid);
+        sourceUtils.setSourceName(as);
         return Response.ok(as).build();
     }
 
@@ -234,6 +241,7 @@ public class MemberV2ApiServiceDelegatorImpl
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_WORKS_READ_LIMITED, w);
         ActivityUtils.cleanEmptyFields(w);        
         ActivityUtils.setPathToActivity(w, orcid);
+        sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
 
@@ -244,6 +252,7 @@ public class MemberV2ApiServiceDelegatorImpl
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_WORKS_READ_LIMITED, ws);
         ActivityUtils.cleanEmptyFields(ws);        
         ActivityUtils.setPathToActivity(ws, orcid);
+        sourceUtils.setSourceName(ws);
         return Response.ok(ws).build();
     }
 
@@ -251,6 +260,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createWork(String orcid, Work work) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_CREATE, orcid);
         Work w = workManager.createWork(orcid, work, true);
+        sourceUtils.setSourceName(w);
         try {
             return Response.created(new URI(String.valueOf(w.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -268,6 +278,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
         Work w = workManager.updateWork(orcid, work, true);
+        sourceUtils.setSourceName(w);
         return Response.ok(w).build();
     }
 
@@ -283,6 +294,7 @@ public class MemberV2ApiServiceDelegatorImpl
         Funding f = profileFundingManager.getFunding(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.FUNDING_READ_LIMITED, f);
         ActivityUtils.setPathToActivity(f, orcid);
+        sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
 
@@ -291,6 +303,7 @@ public class MemberV2ApiServiceDelegatorImpl
         FundingSummary fs = profileFundingManager.getSummary(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.FUNDING_READ_LIMITED, fs);
         ActivityUtils.setPathToActivity(fs, orcid);
+        sourceUtils.setSourceName(fs);
         return Response.ok(fs).build();
     }
 
@@ -298,6 +311,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createFunding(String orcid, Funding funding) {
         orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_CREATE, orcid);
         Funding f = profileFundingManager.createFunding(orcid, funding, true);
+        sourceUtils.setSourceName(f);
         try {
             return Response.created(new URI(String.valueOf(f.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -315,6 +329,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
         Funding f = profileFundingManager.updateFunding(orcid, funding, true);
+        sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
     
@@ -330,6 +345,7 @@ public class MemberV2ApiServiceDelegatorImpl
         Education e = affiliationsManager.getEducationAffiliation(orcid, putCode);        
         checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, e);
         ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
 
@@ -338,6 +354,7 @@ public class MemberV2ApiServiceDelegatorImpl
         EducationSummary es = affiliationsManager.getEducationSummary(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, es);
         ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }
 
@@ -345,6 +362,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createEducation(String orcid, Education education) {
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE, orcid);
         Education e = affiliationsManager.createEducationAffiliation(orcid, education, true);
+        sourceUtils.setSourceName(e);
         try {
             return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
         } catch (URISyntaxException ex) {
@@ -362,6 +380,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
         Education e = affiliationsManager.updateEducationAffiliation(orcid, education, true);
+        sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
 
@@ -370,6 +389,7 @@ public class MemberV2ApiServiceDelegatorImpl
         Employment e = affiliationsManager.getEmploymentAffiliation(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, e);
         ActivityUtils.setPathToActivity(e, orcid);
+        sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
 
@@ -378,6 +398,7 @@ public class MemberV2ApiServiceDelegatorImpl
         EmploymentSummary es = affiliationsManager.getEmploymentSummary(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.AFFILIATIONS_READ_LIMITED, es);
         ActivityUtils.setPathToActivity(es, orcid);
+        sourceUtils.setSourceName(es);
         return Response.ok(es).build();
     }
 
@@ -385,6 +406,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createEmployment(String orcid, Employment employment) {
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_CREATE, orcid);
         Employment e = affiliationsManager.createEmploymentAffiliation(orcid, employment, true);
+        sourceUtils.setSourceName(e);
         try {
             return Response.created(new URI(String.valueOf(e.getPutCode()))).build();
         } catch (URISyntaxException ex) {
@@ -402,6 +424,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
         Employment e = affiliationsManager.updateEmploymentAffiliation(orcid, employment, true);
+        sourceUtils.setSourceName(e);
         return Response.ok(e).build();
     }
 
@@ -417,6 +440,7 @@ public class MemberV2ApiServiceDelegatorImpl
         PeerReview p = peerReviewManager.getPeerReview(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.PEER_REVIEW_READ_LIMITED, p);
         ActivityUtils.setPathToActivity(p, orcid);
+        sourceUtils.setSourceName(p);
         return Response.ok(p).build();
     }
 
@@ -425,6 +449,7 @@ public class MemberV2ApiServiceDelegatorImpl
         PeerReviewSummary ps = peerReviewManager.getPeerReviewSummary(orcid, putCode);        
         checkPermissionsOnElement(orcid, ScopePathType.PEER_REVIEW_READ_LIMITED, ps);
         ActivityUtils.setPathToActivity(ps, orcid);
+        sourceUtils.setSourceName(ps);
         return Response.ok(ps).build();
     }
 
@@ -432,6 +457,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createPeerReview(String orcid, PeerReview peerReview) {
         orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_CREATE, orcid);
         PeerReview newPeerReview = peerReviewManager.createPeerReview(orcid, peerReview, true);
+        sourceUtils.setSourceName(newPeerReview);
         try {
             return Response.created(new URI(String.valueOf(newPeerReview.getPutCode()))).build();
         } catch (URISyntaxException ex) {
@@ -449,6 +475,7 @@ public class MemberV2ApiServiceDelegatorImpl
             throw new MismatchedPutCodeException(params);
         }
         PeerReview updatedPeerReview = peerReviewManager.updatePeerReview(orcid, peerReview, true);
+        sourceUtils.setSourceName(updatedPeerReview);
         return Response.ok(updatedPeerReview).build();
     }
 
@@ -525,6 +552,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToResearcherUrls(researcherUrls, orcid);
+        sourceUtils.setSourceName(researcherUrls);
         return Response.ok(researcherUrls).build();
     }
 
@@ -532,6 +560,7 @@ public class MemberV2ApiServiceDelegatorImpl
         ResearcherUrl researcherUrl = researcherUrlManager.getResearcherUrl(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, researcherUrl);
         ElementUtils.setPathToResearcherUrl(researcherUrl, orcid);
+        sourceUtils.setSourceName(researcherUrl);
         return Response.ok(researcherUrl).build();
     }
 
@@ -546,6 +575,7 @@ public class MemberV2ApiServiceDelegatorImpl
         }
         ResearcherUrl updatedResearcherUrl = researcherUrlManager.updateResearcherUrl(orcid, researcherUrl, true);
         ElementUtils.setPathToResearcherUrl(updatedResearcherUrl, orcid);
+        sourceUtils.setSourceName(updatedResearcherUrl);
         return Response.ok(updatedResearcherUrl).build();
     }
 
@@ -553,6 +583,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createResearcherUrl(String orcid, ResearcherUrl researcherUrl) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         researcherUrl = researcherUrlManager.createResearcherUrl(orcid, researcherUrl, true);
+        sourceUtils.setSourceName(researcherUrl);
         try {
             return Response.created(new URI(String.valueOf(researcherUrl.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -585,6 +616,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToEmail(emails, orcid);
+        sourceUtils.setSourceName(emails);
         return Response.ok(emails).build();
     }
 
@@ -608,6 +640,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToOtherNames(otherNames, orcid);
+        sourceUtils.setSourceName(otherNames);
         return Response.ok(otherNames).build();
     }
 
@@ -616,6 +649,7 @@ public class MemberV2ApiServiceDelegatorImpl
         OtherName otherName = otherNameManager.getOtherName(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, otherName);
         ElementUtils.setPathToOtherName(otherName, orcid);
+        sourceUtils.setSourceName(otherName);
         return Response.ok(otherName).build();
     }
 
@@ -623,6 +657,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createOtherName(String orcid, OtherName otherName) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         otherName = otherNameManager.createOtherName(orcid, otherName, true);
+        sourceUtils.setSourceName(otherName);
         try {
             return Response.created(new URI(String.valueOf(otherName.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -642,6 +677,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
         OtherName updatedOtherName = otherNameManager.updateOtherName(orcid, putCode, otherName, true);
         ElementUtils.setPathToOtherName(updatedOtherName, orcid);
+        sourceUtils.setSourceName(updatedOtherName);
         return Response.ok(updatedOtherName).build();
     }
 
@@ -672,6 +708,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToExternalIdentifiers(extIds, orcid);
+        sourceUtils.setSourceName(extIds);
         return Response.ok(extIds).build();
     }
 
@@ -680,6 +717,7 @@ public class MemberV2ApiServiceDelegatorImpl
         PersonExternalIdentifier extId = externalIdentifierManager.getExternalIdentifier(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, extId);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
+        sourceUtils.setSourceName(extId);
         return Response.ok(extId).build();
     }
 
@@ -694,6 +732,7 @@ public class MemberV2ApiServiceDelegatorImpl
         }        
         PersonExternalIdentifier extId = externalIdentifierManager.updateExternalIdentifier(orcid, externalIdentifier, true);
         ElementUtils.setPathToExternalIdentifier(extId, orcid);
+        sourceUtils.setSourceName(extId);
         return Response.ok(extId).build();
     }
 
@@ -735,6 +774,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToKeywords(keywords, orcid);
+        sourceUtils.setSourceName(keywords);
         return Response.ok(keywords).build();
     }
 
@@ -743,6 +783,7 @@ public class MemberV2ApiServiceDelegatorImpl
         Keyword keyword = keywordsManager.getKeyword(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, keyword);
         ElementUtils.setPathToKeyword(keyword, orcid);
+        sourceUtils.setSourceName(keyword);
         return Response.ok(keyword).build();
     }
 
@@ -750,6 +791,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createKeyword(String orcid, Keyword keyword) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         keyword = keywordsManager.createKeyword(orcid, keyword, true);
+        sourceUtils.setSourceName(keyword);
         try {
             return Response.created(new URI(String.valueOf(keyword.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -769,6 +811,7 @@ public class MemberV2ApiServiceDelegatorImpl
 
         keyword = keywordsManager.updateKeyword(orcid, putCode, keyword, true);      
         ElementUtils.setPathToKeyword(keyword, orcid);
+        sourceUtils.setSourceName(keyword);
         return Response.ok(keyword).build();
     }
 
@@ -799,6 +842,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToAddresses(addresses, orcid);
+        sourceUtils.setSourceName(addresses);
         return Response.ok(addresses).build();
     }
 
@@ -807,6 +851,7 @@ public class MemberV2ApiServiceDelegatorImpl
         Address address = addressManager.getAddress(orcid, putCode);
         checkPermissionsOnElement(orcid, ScopePathType.ORCID_BIO_READ_LIMITED, address);
         ElementUtils.setPathToAddress(address, orcid);
+        sourceUtils.setSourceName(address);
         return Response.ok(address).build();
     }
 
@@ -814,6 +859,7 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response createAddress(String orcid, Address address) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_UPDATE, orcid);
         address = addressManager.createAddress(orcid, address, true);
+        sourceUtils.setSourceName(address);
         try {
             return Response.created(new URI(String.valueOf(address.getPutCode()))).build();
         } catch (URISyntaxException e) {
@@ -833,6 +879,7 @@ public class MemberV2ApiServiceDelegatorImpl
         
         address = addressManager.updateAddress(orcid, putCode, address, true);
         ElementUtils.setPathToAddress(address, orcid);
+        sourceUtils.setSourceName(address);
         return Response.ok(address).build();
     }
 
@@ -880,7 +927,8 @@ public class MemberV2ApiServiceDelegatorImpl
                 throw e;
             }
         }
-        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);    
+        ElementUtils.setPathToPersonalDetails(personalDetails, orcid);
+        sourceUtils.setSourceName(personalDetails);
         return Response.ok(personalDetails).build();
     }
     
@@ -900,6 +948,7 @@ public class MemberV2ApiServiceDelegatorImpl
             }
         }
         ElementUtils.setPathToPerson(person, orcid);
+        sourceUtils.setSourceName(person);
         return Response.ok(person).build();
     }
     

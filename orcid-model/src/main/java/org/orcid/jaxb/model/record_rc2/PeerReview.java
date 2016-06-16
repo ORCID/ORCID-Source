@@ -42,7 +42,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "role", "externalIdentifiers", "url", "type",  "completionDate",
         "groupId", "subjectExternalIdentifier", "subjectContainerName", "subjectType", "subjectName", "subjectUrl", "organization" })
 @XmlRootElement(name = "peer-review", namespace = "http://www.orcid.org/ns/peer-review")
-public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder {
+public class PeerReview implements VisibilityType, Activity, Serializable, OrganizationHolder, SourceAware {
     private static final long serialVersionUID = -1112309604310926743L;
     @XmlElement(namespace = "http://www.orcid.org/ns/peer-review", name = "reviewer-role")
     protected Role role;

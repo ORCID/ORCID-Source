@@ -33,11 +33,12 @@ import org.orcid.jaxb.model.common_rc1.Organization;
 import org.orcid.jaxb.model.common_rc1.Source;
 import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.record_rc1.Activity;
+import org.orcid.jaxb.model.record_rc1.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "departmentName", "roleTitle", "startDate", "endDate", "organization" })
 @XmlRootElement(name = "education-summary", namespace = "http://www.orcid.org/ns/education")
-public class EducationSummary implements Filterable, Activity, Serializable {
+public class EducationSummary implements Filterable, Activity, Serializable, SourceAware {
             
     private static final long serialVersionUID = 6988028860521476955L;
     @XmlElement(name="department-name", namespace = "http://www.orcid.org/ns/education")

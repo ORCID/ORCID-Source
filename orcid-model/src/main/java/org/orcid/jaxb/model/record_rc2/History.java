@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.CreationMethod;
 @XmlType(propOrder = { "creationMethod", "completionDate", "submissionDate", "lastModifiedDate", "claimed", "source", "deactivationDate", "verifiedEmail",
         "verifiedPrimaryEmail" })
 @XmlRootElement(name = "history", namespace = "http://www.orcid.org/ns/history")
-public class History implements Serializable {
+public class History implements Serializable, SourceAware {
     private static final long serialVersionUID = 5662067844899740318L;
     @XmlElement(namespace = "http://www.orcid.org/ns/history", name = "creation-method")
     protected CreationMethod creationMethod;

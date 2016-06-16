@@ -172,5 +172,5 @@
         <property name="serviceDelegator" ref="memberCerifApiServiceDelegator"/>
     </bean>
 
-
+	<bean id="sourceUtils" class="org.orcid.api.common.util.SourceUtils" />
 </beans>

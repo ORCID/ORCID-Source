@@ -43,7 +43,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "urlName", "url" })
 @XmlRootElement(name = "researcher-url", namespace = "http://www.orcid.org/ns/researcher-url")
-public class ResearcherUrl implements VisibilityType, Filterable, Serializable, Comparable<ResearcherUrl> {
+public class ResearcherUrl implements VisibilityType, Filterable, Serializable, Comparable<ResearcherUrl>, SourceAware {
     private static final long serialVersionUID = 1047027166285177589L;    
     @XmlElement(name = "url-name", namespace = "http://www.orcid.org/ns/researcher-url")
     protected String urlName;
