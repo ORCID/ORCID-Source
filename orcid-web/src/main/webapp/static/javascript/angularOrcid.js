@@ -1963,7 +1963,7 @@ orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
         window.location.hash = "#editEmail"
     };
     
-    /* Langguage preferences */
+    /* Language preferences */
     $scope.toggleLanguageEdit = function() {
         $scope.showEditLanguage = !$scope.showEditLanguage;
         $scope.languageUpdateToggleText();
