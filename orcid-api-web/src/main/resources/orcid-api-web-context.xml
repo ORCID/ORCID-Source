@@ -172,5 +172,6 @@
         <property name="serviceDelegator" ref="memberCerifApiServiceDelegator"/>
     </bean>
 
+	<bean id="orcidMessageUtil" class="org.orcid.api.common.util.OrcidMessageUtil" />
 	<bean id="sourceUtils" class="org.orcid.api.common.util.SourceUtils" />
 </beans>

@@ -81,7 +81,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     @Resource
     LocaleManager localeManager;  
     
-    OrcidMessageUtil orcidMessageUtil = new OrcidMessageUtil();
+    @Resource
+    private OrcidMessageUtil orcidMessageUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 

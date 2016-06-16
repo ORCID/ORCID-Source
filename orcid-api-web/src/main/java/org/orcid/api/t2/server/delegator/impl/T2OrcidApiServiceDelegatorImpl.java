@@ -105,7 +105,8 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
     
-    OrcidMessageUtil orcidMessageUtil = new OrcidMessageUtil();
+    @Resource
+    private OrcidMessageUtil orcidMessageUtil;
     
     @Override
     public Response viewStatusText() {
