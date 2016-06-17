@@ -60,8 +60,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-    
-    @SuppressWarnings("unchecked")
+        
     @Test
     public void testGetWithPublicAPI() {
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
@@ -91,7 +90,6 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, personalDetails.getOtherNames().getOtherNames().get(1).getVisibility());
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
@@ -148,7 +146,6 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         testGetWithPublicAPI();
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetWithMemberAPI() throws Exception {
         String accessToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
