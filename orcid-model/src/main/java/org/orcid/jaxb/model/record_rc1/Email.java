@@ -34,7 +34,7 @@ import org.orcid.jaxb.model.common_rc1.Visibility;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "email", "createdDate", "lastModifiedDate", "source" })
 @XmlRootElement(name = "email", namespace = "http://www.orcid.org/ns/email")
-public class Email implements Filterable, Serializable {
+public class Email implements Filterable, Serializable, SourceAware {
     private static final long serialVersionUID = 7986448691143979246L;
     @XmlElement(namespace = "http://www.orcid.org/ns/email")
     protected String email;

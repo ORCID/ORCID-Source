@@ -36,11 +36,12 @@ import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.FundingTitle;
 import org.orcid.jaxb.model.record_rc2.FundingType;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/funding")
-public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
+public class FundingSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
     private static final long serialVersionUID = 7489792970949538708L;
     @XmlElement(namespace = "http://www.orcid.org/ns/funding", required = true)

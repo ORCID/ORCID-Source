@@ -79,7 +79,6 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, bio.getVisibility());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testViewPersonFromMemberAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
@@ -151,7 +150,6 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testViewPersonFromPublicAPI() {
         ClientResponse response = publicV2ApiClient.viewPersonXML(getUser1OrcidId());

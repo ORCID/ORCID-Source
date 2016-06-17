@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.common_rc2.VisibilityType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "givenNames", "familyName", "creditName", "source" })
 @XmlRootElement(name = "name", namespace = "http://www.orcid.org/ns/personal-details")
-public class Name implements Serializable, VisibilityType {
+public class Name implements Serializable, VisibilityType, SourceAware {
     private static final long serialVersionUID = -7946486981092688675L;
 
     @XmlElement(name = "given-names", namespace = "http://www.orcid.org/ns/personal-details")

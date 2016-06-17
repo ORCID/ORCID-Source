@@ -44,7 +44,7 @@ import io.swagger.annotations.ApiModelProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "email" })
 @XmlRootElement(name = "email", namespace = "http://www.orcid.org/ns/email")
-public class Email implements Filterable, Serializable {
+public class Email implements Filterable, Serializable, SourceAware {
     private static final long serialVersionUID = 7986448691143979246L;
     @XmlElement(namespace = "http://www.orcid.org/ns/email")
     protected String email;

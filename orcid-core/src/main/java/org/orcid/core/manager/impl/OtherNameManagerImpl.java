@@ -40,7 +40,6 @@ import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
-import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
@@ -131,7 +130,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         return true;
     }
 
-    @Override
+    @Override    
     public OtherName createOtherName(String orcid, OtherName otherName, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the otherName
@@ -159,8 +158,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
                 newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         setIncomingPrivacy(newEntity, profile);
-        for (OtherNameEntity existing : existingOtherNames)
+        /*
+        for (OtherNameEntity existing : existingOtherNames) {
             existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+            otherNameDao.merge(existing);
+        }
+        */
         newEntity.setDisplayIndex(0L);
         otherNameDao.persist(newEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(newEntity);

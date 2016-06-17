@@ -49,6 +49,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
+import org.orcid.core.utils.OrcidMessageUtil;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.ExternalIdentifier;
 import org.orcid.jaxb.model.message.ExternalIdentifiers;
@@ -103,6 +104,9 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
 
     @Resource(name = "profileEntityCacheManager")
     ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private OrcidMessageUtil orcidMessageUtil;
     
     @Override
     public Response viewStatusText() {
@@ -406,6 +410,7 @@ public class T2OrcidApiServiceDelegatorImpl extends OrcidApiServiceDelegatorImpl
     private Response getOrcidMessageResponse(OrcidProfile profile, String requestedOrcid) {
         if (profile != null) {            
             OrcidMessage orcidMessage = new OrcidMessage(profile);
+            orcidMessageUtil.setSourceName(orcidMessage);
             return Response.ok(orcidMessage).build();
         } else {
         	Map<String, String> params = new HashMap<String, String>();

@@ -39,7 +39,6 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.persistence.dao.ProfileKeywordDao;
-import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -123,8 +122,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         return true;
     }
 
-    @Override
-    @Transactional
+    @Override    
     public Keyword createKeyword(String orcid, Keyword keyword, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate the keyword
@@ -154,8 +152,10 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         } 
         
         setIncomingPrivacy(newEntity, profile);
+        /*
         for (ProfileKeywordEntity existing : existingKeywords)
             existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+         */
         newEntity.setDisplayIndex(0L);
         profileKeywordDao.persist(newEntity);
         return adapter.toKeyword(newEntity);

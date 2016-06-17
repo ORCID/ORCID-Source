@@ -288,8 +288,10 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         } 
         
         setIncomingPrivacy(newEntity, profile);
+        /*
         for (ResearcherUrlEntity existing : existingResearcherUrls)
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
+            existing.setDisplayIndex(existing.getDisplayIndex() + 1);           
+         */
         newEntity.setDisplayIndex(0L);
         researcherUrlDao.persist(newEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);

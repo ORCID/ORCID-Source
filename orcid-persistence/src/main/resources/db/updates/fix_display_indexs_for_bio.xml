@@ -44,4 +44,15 @@
  		</sql>        
     </changeSet>
 
+	<!-- there are some display index in  -->
+	<changeSet id="FIX_NULL_DISPLAY_INDEXS_FOR_BIO_V2" author="Angel Montenegro" dbms="postgresql">
+       <sql>
+            UPDATE address SET display_index = 0 where display_index is NULL;
+ 			UPDATE external_identifier SET display_index = 0 where display_index is NULL;
+ 			UPDATE profile_keyword SET display_index = 0 where display_index is NULL;
+ 			UPDATE other_name SET display_index = 0 where display_index is NULL;
+ 			UPDATE researcher_url SET display_index = 0 where display_index is NULL;
+ 		</sql>        
+    </changeSet>
+
 </databaseChangeLog>

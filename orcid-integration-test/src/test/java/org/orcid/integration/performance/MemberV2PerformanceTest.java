@@ -33,6 +33,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -66,12 +67,12 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
 
     @BeforeClass
     public static void beforeClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
     @AfterClass
     public static void afterClass() {
-        revokeApplicationsAccess();
+        BBBUtil.revokeApplicationsAccess(webDriver);
     }
 
     @After
