@@ -60,7 +60,7 @@ import java.io.Serializable;
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "putCode", "path", "type", "organizationDefinedType", "title", "description", "amount", "url",
         "startDate", "endDate", "externalIdentifiers", "contributors", "organization" })
 @XmlRootElement(name = "funding", namespace = "http://www.orcid.org/ns/funding")
-public class Funding implements VisibilityType, Activity, Serializable, OrganizationHolder {
+public class Funding implements VisibilityType, Activity, Serializable, OrganizationHolder, SourceAware {
 
     private final static long serialVersionUID = 1L;
 
