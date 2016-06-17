@@ -167,8 +167,10 @@ public class OrcidMessageUtil {
                     List<ResearcherUrl> rUrlList = rUrls.getResearcherUrl();
                     if(rUrlList != null) {
                         for(ResearcherUrl rUrl : rUrlList) {
-                            SourceName sourceName = getSourceName(rUrl.getSource().retrieveSourcePath());
-                            rUrl.getSource().setSourceName(sourceName);
+                            if(rUrl.getSource() != null && rUrl.getSource().retrieveSourcePath() != null) {
+                                SourceName sourceName = getSourceName(rUrl.getSource().retrieveSourcePath());
+                                rUrl.getSource().setSourceName(sourceName);
+                            }
                         }
                     }
                 }                                
