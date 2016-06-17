@@ -146,6 +146,4 @@
         <property name="serviceDelegator" ref="identifierApiServiceDelegator"/>
     </bean>
     
-    <bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-    <bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />    
 </beans>
