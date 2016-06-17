@@ -228,7 +228,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private int verifyReminderAfterDays = 7;
     
     @Value("${org.orcid.core.activities.max:10000}")
-    private long maxNumOfActivities = 10000;
+    private long maxNumOfActivities;
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
