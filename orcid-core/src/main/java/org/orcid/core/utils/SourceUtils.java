@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.util;
+package org.orcid.core.utils;
 
 import java.util.List;
 

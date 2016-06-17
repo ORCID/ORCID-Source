@@ -31,7 +31,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
-import org.orcid.api.common.util.SourceUtils;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.exception.MismatchedPutCodeException;
 import org.orcid.core.exception.OrcidUnauthorizedException;
@@ -55,6 +54,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.core.utils.SourceUtils;
 import org.orcid.jaxb.model.common_rc2.Filterable;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;

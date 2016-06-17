@@ -103,4 +103,7 @@
     	<constructor-arg value="${org.orcid.recaptcha.secret}" />
     </bean>
 
+	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
+    <bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" /> 
+
 </beans>

@@ -25,7 +25,6 @@ import javax.ws.rs.core.Response;
 
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
-import org.orcid.api.common.util.SourceUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
 import org.orcid.api.publicV2.server.delegator.PublicV2ApiServiceDelegator;
 import org.orcid.core.locale.LocaleManager;
@@ -49,6 +48,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
+import org.orcid.core.utils.SourceUtils;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;

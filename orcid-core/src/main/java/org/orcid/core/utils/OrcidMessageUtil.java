@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.api.common.util;
+package org.orcid.core.utils;
 
 import java.util.List;
 
@@ -74,10 +74,7 @@ public class OrcidMessageUtil {
                    List<Affiliation> affList = affs.getAffiliation();
                    if(affList != null) {
                        for(Affiliation aff : affList) {
-                           if(aff.retrieveSourcePath() != null) {
-                               SourceName sourceName = getSourceName(aff.retrieveSourcePath());
-                               aff.getSource().setSourceName(sourceName);
-                           }
+                           setSourceName(aff);
                        }
                    }
                 }
@@ -87,10 +84,7 @@ public class OrcidMessageUtil {
                     List<Funding> fundings = fundingList.getFundings();
                     if(fundings != null) {
                         for(Funding funding : fundings) {
-                            if(funding.retrieveSourcePath() != null) {
-                                SourceName sourceName = getSourceName(funding.retrieveSourcePath());
-                                funding.getSource().setSourceName(sourceName);
-                            }
+                            setSourceName(funding);
                         }
                     }
                     
@@ -101,10 +95,7 @@ public class OrcidMessageUtil {
                     List<OrcidWork> works = orcidWorks.getOrcidWork();
                     if(works != null) {
                         for(OrcidWork work : works) {
-                            if(work.retrieveSourcePath() != null) {
-                                SourceName sourceName = getSourceName(work.retrieveSourcePath());
-                                work.getSource().setSourceName(sourceName);
-                            }
+                            setSourceName(work);
                         }
                     }
                 }
@@ -114,10 +105,7 @@ public class OrcidMessageUtil {
                 if(orcidBio.getContactDetails() != null) {
                     Address address = orcidBio.getContactDetails().getAddress();
                     if(address != null) {
-                        if(address.getSource() != null && address.getSource().retrieveSourcePath() != null) {
-                            SourceName sourceName = getSourceName(address.getSource().retrieveSourcePath());
-                            address.getSource().setSourceName(sourceName);
-                        }
+                        setSourceName(address);
                     }                    
                 }
                 
@@ -126,10 +114,7 @@ public class OrcidMessageUtil {
                    List<ExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
                    if(extIdsList != null) {
                        for(ExternalIdentifier extId : extIdsList) {
-                           if(extId.getSource() != null && extId.getSource().retrieveSourcePath() != null) {
-                               SourceName sourceName = getSourceName(extId.getSource().retrieveSourcePath());
-                               extId.getSource().setSourceName(sourceName);
-                           }
+                           setSourceName(extId);
                        }
                    }
                 }
@@ -139,10 +124,7 @@ public class OrcidMessageUtil {
                     List<Keyword> keywordList = keywords.getKeyword();
                     if(keywordList != null) {
                         for(Keyword keyword : keywordList) {
-                            if(keyword.getSource() != null && keyword.getSource().retrieveSourcePath() != null) {
-                                SourceName sourceName = getSourceName(keyword.getSource().retrieveSourcePath());
-                                keyword.getSource().setSourceName(sourceName);
-                            }
+                            setSourceName(keyword);
                         }
                     }
                 }
@@ -153,10 +135,7 @@ public class OrcidMessageUtil {
                         List<OtherName> otherNameList = otherNames.getOtherName();
                         if(otherNameList != null) {
                             for(OtherName otherName : otherNameList) {
-                                if(otherName.getSource() != null && otherName.getSource().retrieveSourcePath() != null) {
-                                    SourceName sourceName = getSourceName(otherName.getSource().retrieveSourcePath());
-                                    otherName.getSource().setSourceName(sourceName);
-                                }
+                                setSourceName(otherName);
                             }
                         }
                     }
@@ -167,10 +146,7 @@ public class OrcidMessageUtil {
                     List<ResearcherUrl> rUrlList = rUrls.getResearcherUrl();
                     if(rUrlList != null) {
                         for(ResearcherUrl rUrl : rUrlList) {
-                            if(rUrl.getSource() != null && rUrl.getSource().retrieveSourcePath() != null) {
-                                SourceName sourceName = getSourceName(rUrl.getSource().retrieveSourcePath());
-                                rUrl.getSource().setSourceName(sourceName);
-                            }
+                            setSourceName(rUrl);
                         }
                     }
                 }                                
@@ -178,7 +154,63 @@ public class OrcidMessageUtil {
         }
     }
     
-    private SourceName getSourceName(String sourceId) {
+    public void setSourceName(ResearcherUrl element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(OtherName element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(Keyword element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(ExternalIdentifier element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(Address element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(OrcidWork element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(Funding element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }
+    
+    public void setSourceName(Affiliation element) {
+        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
+            element.getSource().setSourceName(sourceName);
+        }
+    }           
+    
+    public SourceName getSourceName(String sourceId) {
         if(PojoUtil.isEmpty(sourceId)) {
             return null;
         }

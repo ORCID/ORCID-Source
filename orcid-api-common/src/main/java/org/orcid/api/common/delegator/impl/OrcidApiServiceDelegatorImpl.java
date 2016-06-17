@@ -31,7 +31,6 @@ import javax.ws.rs.core.Response;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
-import org.orcid.api.common.util.OrcidMessageUtil;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.exception.OrcidDeprecatedException;
@@ -44,6 +43,7 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
+import org.orcid.core.utils.OrcidMessageUtil;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
