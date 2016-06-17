@@ -70,6 +70,8 @@ public interface ClientDetailsManager extends ClientDetailsService {
     
     Date getLastModified(String clientId);
 
+    Date getLastModifiedByIdp(String idp);
+    
     /**
      * Set a new client secret for the specific client and set the other keys as
      * non primaries
@@ -117,4 +119,6 @@ public interface ClientDetailsManager extends ClientDetailsService {
     ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
+    
+    ClientDetailsEntity findByIdP(String idp);
 }

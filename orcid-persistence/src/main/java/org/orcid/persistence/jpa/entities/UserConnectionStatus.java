@@ -17,5 +17,5 @@
 package org.orcid.persistence.jpa.entities;
 
 public enum UserConnectionStatus {
-    STARTED, DONE, IGNORED;
+    STARTED, DONE;
 }

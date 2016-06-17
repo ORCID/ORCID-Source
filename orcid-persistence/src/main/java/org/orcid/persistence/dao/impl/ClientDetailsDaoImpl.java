@@ -66,6 +66,13 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
     }
 
     @Override
+    public Date getLastModifiedByIdP(String idp) {
+        TypedQuery<Date> query = entityManager.createQuery("select lastModified from ClientDetailsEntity where authenticationProviderId = :idp", Date.class);
+        query.setParameter("idp", idp);
+        return query.getSingleResult();
+    }
+    
+    @Override
     @Transactional
     public void updateLastModified(String clientId) {
         Query updateQuery = entityManager.createQuery("update ClientDetailsEntity set lastModified = now() where id = :clientId");
@@ -197,4 +204,10 @@ public class ClientDetailsDaoImpl extends GenericDaoImpl<ClientDetailsEntity, St
         return result;
     }
 
+    @Override
+    public ClientDetailsEntity findByIdP(String idp) {
+        TypedQuery<ClientDetailsEntity> query = entityManager.createQuery("from ClientDetailsEntity where authenticationProviderId = :idp", ClientDetailsEntity.class);
+        query.setParameter("idp", idp);        
+        return query.getSingleResult();        
+    }
 }

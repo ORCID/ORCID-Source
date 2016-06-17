@@ -397,4 +397,25 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     public Date getLastModified(String clientId) {
         return clientDetailsDao.getLastModified(clientId);
     }
+
+    @Override    
+    public Date getLastModifiedByIdp(String idp) {
+        try {
+            return clientDetailsDao.getLastModifiedByIdP(idp);
+        } catch(Exception e) {
+            LOGGER.warn("There is no client with the IdP: " + idp);
+        }
+        return null;
+    }
+    
+    @Override
+    public ClientDetailsEntity findByIdP(String idp) {
+        try {
+            ClientDetailsEntity result = clientDetailsDao.findByIdP(idp);
+            return result;
+        } catch(Exception e) {
+            LOGGER.warn("There is no client with the IdP: " + idp);
+        }
+        return null;
+    }
 }

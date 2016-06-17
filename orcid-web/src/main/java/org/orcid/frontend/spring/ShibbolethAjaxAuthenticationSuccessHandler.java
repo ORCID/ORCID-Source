@@ -89,5 +89,9 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             throw new FeatureDisabledException();
         }
     }
+    
+    private void shouldSendNotification(String userOrcid, String providerId) {
+        
+    }
 
 }
