@@ -76,10 +76,10 @@ the software.
         <xs:element ref="orcid:display-name"/>
         <xs:element ref="orcid:website"/>
         <xs:element ref="orcid:short-description"/>
-        <xs:element ref="orcid:redirect-uris"/>
-        <xs:element ref="orcid:client-id" minOccurs="0"/>
-        <xs:element ref="orcid:client-secret" minOccurs="0"/>        
         <xs:element ref="orcid:idp" minOccurs="0"/>
+        <xs:element ref="orcid:redirect-uris"/>        
+        <xs:element ref="orcid:client-id" minOccurs="0"/>
+        <xs:element ref="orcid:client-secret" minOccurs="0"/>                
       </xs:sequence>
       <xs:attribute name="type" type="orcid:client-type" use="optional"/>
     </xs:complexType>

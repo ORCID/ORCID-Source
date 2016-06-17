@@ -24,7 +24,6 @@ import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 
 public interface ClientDetailsManager extends ClientDetailsService {
@@ -54,74 +53,16 @@ public interface ClientDetailsManager extends ClientDetailsService {
      *            only "ROLE_CLIENT"
      * @return
      */
-    ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
-            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
-
-    /**
-     * Creates a new {@link ClientDetailsEntity} using the component parts, and
-     * not the underyling entity directly.
-     * 
-     * @param groupOrcid
-     *            the ORCID that will be the owner of this client. Each client
-     *            can have one, and one only profile associated with it
-     * @param name
-     *            The client name
-     * @param description
-     *            The client description
-     * @param clientId
-     *            the client id that will be used to retrieve this entity from
-     *            the database
-     * @param clientSecret
-     *            the secret that will be used for authentication/authorisation
-     * @param clientScopes
-     *            the scopes that this client can request
-     * @param clientResourceIds
-     *            the resource ids that this client has access to
-     * @param clientAuthorizedGrantTypes
-     *            the grant types that this client has been granted. Clients
-     *            will commonly be granted "client_credentials" and
-     *            "authorization_code"
-     * @param clientRegisteredRedirectUris
-     *            The redirect URIs that can be legally requested by the client.
-     * @param clientGrantedAuthorities
-     *            the authorities that can be used to. These are likely to be
-     *            only "ROLE_CLIENT"
-     * @return
-     */
-    ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, String clientId, String clientSecret,
-            ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
-
-    /**
-     * Create new {@link ClientDetailsEntity} using the entity object
-     * 
-     * @param clientDetailsEntity
-     *            the {@link ClientDetailsEntity} to be persisted
-     * @return the newly persisted {@link ClientDetailsEntity}
-     */
-    ClientDetailsEntity createClientDetails(ClientDetailsEntity clientDetailsEntity);
-
-    /**
-     * Delete the {@link ClientDetailsEntity} from the persistence layer that
-     * has the corresponding id
-     * 
-     * @param clientId
-     *            the id corresponding to the persisted
-     *            {@link ClientDetailsEntity}
-     */
-    void deleteClientDetail(String clientId);
+    ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);    
 
     ClientDetailsEntity findByClientId(String orcid);
 
-    void removeByClientId(String clientId);
-
-    void persist(ClientDetailsEntity clientDetails);
+    void removeByClientId(String clientId);    
 
     public void addClientRedirectUri(String clientId, String uri);
 
-    ClientDetailsEntity merge(ClientDetailsEntity clientDetails);
-
-    void remove(String clientId);
+    ClientDetailsEntity merge(ClientDetailsEntity clientDetails);    
 
     List<ClientDetailsEntity> getAll();
 
@@ -173,7 +114,7 @@ public interface ClientDetailsManager extends ClientDetailsService {
     /**
      * Utility function that will help us to create and persist a clientDetailsEntity giving all the details
      * */
-    ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website,
+    ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities);
 }
