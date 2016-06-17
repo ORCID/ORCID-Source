@@ -182,7 +182,7 @@ public class ManageMembersController extends BaseController {
     @RequestMapping(value = "/update-client.json", method = RequestMethod.POST)
     public @ResponseBody
     Client updateClient(@RequestBody Client client) {
-        // Clean the error list
+        // Clean the error list 
         client.setErrors(new ArrayList<String>());
         // Validate fields
         groupAdministratorController.validateDisplayName(client);

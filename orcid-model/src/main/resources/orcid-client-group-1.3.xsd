@@ -50,6 +50,7 @@ the software.
         <xs:element ref="orcid:group-name"/>
         <xs:element ref="orcid:email"/>
         <xs:element ref="orcid:orcid-client" maxOccurs="unbounded"/>
+        <xs:element ref="orcid:salesforce-id" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="type" type="orcid:group-type" use="required"/>
     </xs:complexType>
@@ -77,8 +78,8 @@ the software.
         <xs:element ref="orcid:short-description"/>
         <xs:element ref="orcid:redirect-uris"/>
         <xs:element ref="orcid:client-id" minOccurs="0"/>
-        <xs:element ref="orcid:client-secret" minOccurs="0"/>
-        <xs:element ref="orcid:salesforce-id" minOccurs="0"/>
+        <xs:element ref="orcid:client-secret" minOccurs="0"/>        
+        <xs:element ref="orcid:idp" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="type" type="orcid:client-type" use="optional"/>
     </xs:complexType>
@@ -144,6 +145,11 @@ the software.
   <xs:element name="salesforce-id" type="orcid:salesforce-id">
     <xs:annotation>
         <xs:documentation>An ID that identifies a profile in Salesforce.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="idp" type="orcid:idp">
+    <xs:annotation>
+        <xs:documentation>Authentication provider ID for institutional sign in.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:simpleType name="orcid">
@@ -216,5 +222,10 @@ the software.
 	   	<xs:restriction base="xs:string">
 	     		<xs:pattern value="([a-zA-Z0-9]){15}"/>
 	   	</xs:restriction>
-	 	</xs:simpleType>
+	</xs:simpleType>
+	<xs:simpleType name="idp">
+    	<xs:restriction base="xs:string">
+      		<xs:maxLength value="1000"/>
+    	</xs:restriction>
+  	</xs:simpleType>
 </xs:schema>

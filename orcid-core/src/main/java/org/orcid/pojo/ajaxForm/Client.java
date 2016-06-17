@@ -105,6 +105,10 @@ public class Client implements ErrorsInterface, Serializable {
             }
         }
 
+        if(orcidClient.getIdp() != null) {
+            client.setAuthenticationProviderId(Text.valueOf(orcidClient.getIdp()));
+        }
+        
         client.setRedirectUris(redirectUris);
 
         return client;
@@ -116,6 +120,9 @@ public class Client implements ErrorsInterface, Serializable {
         orcidClient.setWebsite(this.website.getValue());
         orcidClient.setShortDescription(this.shortDescription.getValue());
         orcidClient.setClientId(this.clientId.getValue());
+        if(this.getAuthenticationProviderId() != null) {
+            orcidClient.setIdp(this.getAuthenticationProviderId().getValue());
+        }
         if (!PojoUtil.isEmpty(this.clientSecret))
             orcidClient.setClientSecret(this.clientSecret.getValue());
         if (!PojoUtil.isEmpty(this.type))
