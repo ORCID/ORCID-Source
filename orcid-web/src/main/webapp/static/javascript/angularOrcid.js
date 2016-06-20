@@ -2835,14 +2835,17 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         }
     };
     
-    $scope.showTooltip = function(elem, event){
-    	if (elem.indexOf("privacy") > 0){    		    		
-    		var pos = angular.element(event.target.parentNode).prop('offsetLeft');    		
-    		angular.element(elem).css({
-    			top: '300px',
-    			left: '2px'
-    		});
-    	}
+    $scope.showTooltip = function(elem, event){    	
+		$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+		$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+		if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+		$scope.$watch('scrollTop', function (value) {		
+			angular.element('.popover-help-container').css({
+    			top: $scope.top - $scope.scrollTop,
+    			left: $scope.left
+    		});    
+	    });
+    	
     	
     	$scope.showElement[elem] = true;
     }
@@ -11282,4 +11285,17 @@ orcidNgModule.directive('focusMe', function($timeout) {
         });
       }
     };
-  });
+});
+
+orcidNgModule.directive('scroll', function () {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            var raw = element[0];
+            element.bind('scroll', function () {
+            	scope.scrollTop = raw.scrollTop;            	
+                scope.$apply(attrs.scroll);                
+            });
+        }
+    }
+});

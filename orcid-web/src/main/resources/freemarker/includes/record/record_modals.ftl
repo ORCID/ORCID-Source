@@ -165,7 +165,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">					
-					<div class="fixed-area">
+					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">		
 								<div class="col-md-6">
