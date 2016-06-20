@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -57,7 +56,7 @@ public class ProfileEntityCacheManagerImpl implements ProfileEntityCacheManager 
         if (needsFresh(dbDate, profile))
             try {
                 synchronized (lockers.obtainLock(orcid)) {
-                    profile = toProfileEntity(profileCache.get(orcid));
+                    profile = toProfileEntity(profileCache.get(key));
                     if (needsFresh(dbDate, profile)) {
                         profile = profileEntityManager.findByOrcid(orcid);
                         if(profile == null)

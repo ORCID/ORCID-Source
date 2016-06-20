@@ -67,6 +67,8 @@ public class SourceUtils {
                     String sourceName = sourceNameCacheManager.retrieve(sourceId);
                     if(!PojoUtil.isEmpty(sourceName)) {
                         source.setSourceName(new SourceName(sourceName));
+                    } else {
+                        source.setSourceName(null);
                     }
                 }
             }

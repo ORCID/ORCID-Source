@@ -14,8 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.jpa.entities;
+package org.orcid.core.manager;
 
-public enum UserConnectionStatus {
-    STARTED, NOTIFIED;
+public interface InstitutionalSignInManager {
+    void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid);
 }

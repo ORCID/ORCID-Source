@@ -31,6 +31,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
@@ -40,6 +41,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
@@ -49,6 +51,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -64,16 +67,19 @@ import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -171,6 +177,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private EmailManager emailManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -388,11 +397,21 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("locale", locale);
     }
 
+    public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale", locale);
+    }
+    
     public String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
     }
 
+    private String getSubject(String code, Locale locale) {
+        return messages.getMessage(code, null, locale);
+    }
+    
     private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, args, locale);
@@ -423,7 +442,15 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
-        return deriveEmailFriendlyName(jpa2JaxbAdapter.toOrcidProfile(profileEntity));
+        if(profileEntity != null && profileEntity.getRecordNameEntity() != null) {
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+            if(!PojoUtil.isEmpty(recordName.getCreditName())) {
+                return recordName.getCreditName();
+            }
+            
+            return recordName.getGivenNames() + (PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName());
+        }
+        return LAST_RESORT_ORCID_USER_EMAIL_NAME;
     }
 
     @Override
@@ -946,4 +973,75 @@ public class NotificationManagerImpl implements NotificationManager {
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    @Override
+    public void sendAcknowledgeMessage(String userOrcid, String clientId) {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
+        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH : LocaleUtils.toLocale(profileEntity.getLocale().value());
+        String subject = getSubject("email.subject.amend", userLocale);
+        
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", deriveEmailFriendlyName(profileEntity));
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
+        templateParams.put("subject", subject);
+        templateParams.put("clientName", clientDetails.getClientName());
+        templateParams.put("rUri", getRedirectUriForInstitutionalSignIn(clientDetails));
+        templateParams.put("clientId", clientId);                
+        
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("authenticate_request_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("authenticate_request_email_html.ftl", templateParams);
+
+        boolean notificationsEnabled = profileEntity.getEnableNotifications();
+        if (notificationsEnabled) {
+            NotificationCustom notification = new NotificationCustom();
+            notification.setNotificationType(NotificationType.PERMISSION);
+            notification.setSubject(subject);
+            notification.setBodyHtml(html);
+            createNotification(userOrcid, notification);
+        } else {            
+            Emails emails = emailManager.getEmails(userOrcid, (profileEntity.getLastModified() == null ? System.currentTimeMillis() : profileEntity.getLastModified().getTime()));
+            String primaryEmail = null;
+            if(emails == null || emails.getEmails() == null)  {
+                throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
+            }
+            for(org.orcid.jaxb.model.record_rc2.Email email : emails.getEmails()) {
+                if(email.isPrimary()) {
+                    primaryEmail = email.getEmail();
+                }
+            }
+            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
+        }
+    }
+    
+    private String getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails) {
+        if(clientDetails == null) {
+            throw new IllegalArgumentException("Unable to find valid redirect uris for null client details");
+        }
+        
+        if(clientDetails.getClientRegisteredRedirectUris() == null) {
+            throw new IllegalArgumentException("Unable to find valid redirect uris for client: " + clientDetails.getId());
+        }
+        
+        String result = null;
+        
+        //Look for the redirect uri of INSTITUTIONAL_SIGN_IN type or if none if found, return the first DEFAULT one 
+        for(ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
+            if(RedirectUriType.INSTITUTIONAL_SIGN_IN.value().equals(redirectUri.getRedirectUriType())) {
+                result = redirectUri.getRedirectUri();
+                break;
+            } else if(RedirectUriType.DEFAULT.value().equals(redirectUri.getRedirectUriType())) {
+                if(result == null) {
+                    result = redirectUri.getRedirectUri();
+                }
+            }
+        }
+        
+        return result;
+    }
 }

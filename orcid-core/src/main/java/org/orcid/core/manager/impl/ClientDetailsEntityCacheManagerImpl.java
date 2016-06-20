@@ -52,8 +52,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         if (needsFresh(dbDate, clientDetails)) {
             try {
                 synchronized (lockers.obtainLock(clientId)) {
-                    ///---------------------------------------------------------> is this ok? should we search by key or by client id?
-                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(clientId));
+                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
                     if (needsFresh(dbDate, clientDetails)) {
                         clientDetails = clientDetailsManager.findByClientId(clientId);
                         if(clientDetails == null)
@@ -76,17 +75,16 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         if (needsFresh(dbDate, clientDetails)) {
             try {
                 synchronized (lockers.obtainLock(idp)) {
-                    ///---------------------------------------------------------> is this ok? should we search by key or by client id?
-                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(clientId));
+                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
                     if (needsFresh(dbDate, clientDetails)) {
-                        clientDetails = clientDetailsManager.findByClientId(clientId);
+                        clientDetails = clientDetailsManager.findByIdP(idp);
                         if(clientDetails == null)
-                            throw new IllegalArgumentException("Invalid client id " + clientId);
+                            throw new IllegalArgumentException("Invalid idp " + idp);
                         clientDetailsCache.put(new Element(key, clientDetails));
                     }
                 }
             } finally {
-                lockers.releaseLock(clientId);
+                lockers.releaseLock(idp);
             }
         }
         return clientDetails;

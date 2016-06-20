@@ -75,7 +75,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
         return realOrcid == null ? null : orcidProfileManager.retrieveOrcidProfile(realOrcid);
     }
 
-    private String getRealUserOrcid() {
+    protected String getRealUserOrcid() {
         return sourceManager.retrieveRealUserOrcid();
     }
 

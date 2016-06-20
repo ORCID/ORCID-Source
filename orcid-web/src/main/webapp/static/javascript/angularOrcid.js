@@ -1962,6 +1962,19 @@ orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
         $scope.emailUpdateToggleText();
         window.location.hash = "#editEmail"
     };
+    
+    /* Language preferences */
+    $scope.toggleLanguageEdit = function() {
+        $scope.showEditLanguage = !$scope.showEditLanguage;
+        $scope.languageUpdateToggleText();
+    };    
+    
+    $scope.languageUpdateToggleText = function () {
+        if ($scope.showEditLanguage) $scope.languageToggleText = om.get("manage.editTable.hide");
+        else $scope.languageToggleText = om.get("manage.editTable.edit");
+    };
+    
+    $scope.languageUpdateToggleText();
 
     // init email edit row
     $scope.showEditEmail = (window.location.hash === "#editEmail");
@@ -7622,6 +7635,8 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
             console.log("Error setting up language cookie");
         });
     };
+    
+    
 }]);
 
 orcidNgModule.controller('adminVerifyEmailCtrl',['$scope','$compile', function ($scope,$compile){
