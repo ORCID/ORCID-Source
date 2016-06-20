@@ -62,6 +62,24 @@
                 <tr ng-include="'edit-emails'">
                 	<!-- Injecting Emails -->
                 </tr>
+                
+                <tr>
+					<th><a name="editLanguage"></a>${springMacroRequestContext.getMessage("manage.language")}</th>
+                    <td><a href="" id="" ng-click="toggleLanguageEdit()" ng-bind="languageToggleText"></a></td>
+                </tr>
+                
+                <tr ng-controller="languageCtrl" ng-show="showEditLanguage" ng-cloak>                                
+                	<td colspan="2">
+                		<p>${springMacroRequestContext.getMessage("manage.language_copy")}</p>
+                		<div class="row">
+                			<div class="col-md-12" ng-include="'edit-language'">
+                				
+                			</div>                			
+                			
+                		</div>                		
+                	</td>
+                </tr>
+                
                 <!-- Notifications -->
                 <#if profile.orcidInternal.preferences.notificationsEnabled>
 	                <tr>
@@ -683,5 +701,6 @@
 </script>
 
 <#include "/includes/record/email_settings.ftl">
+<#include "/includes/language_selector.ftl">
 
 </@protected>

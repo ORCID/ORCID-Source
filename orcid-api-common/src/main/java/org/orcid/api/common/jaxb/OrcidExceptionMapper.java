@@ -42,6 +42,7 @@ import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.exception.ActivityTitleValidationException;
 import org.orcid.core.exception.ApplicationException;
 import org.orcid.core.exception.DuplicatedGroupIdRecordException;
+import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.exception.GroupIdRecordNotFoundException;
 import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.MismatchedPutCodeException;
@@ -172,7 +173,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidDuplicatedElementException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9030));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(PutCodeRequiredException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9031));
         HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotificationException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9032));
-        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotClaimedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9036));
+        HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE.put(OrcidNotClaimedException.class, new ImmutablePair<>(Response.Status.CONFLICT, 9036));             
     }
 
     @Override
@@ -274,6 +275,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         } else if (NoResultException.class.isAssignableFrom(t.getClass())) {
             OrcidMessage entity = getLegacyOrcidEntity("Not found : ", t);
             return Response.status(Response.Status.NOT_FOUND).entity(entity).build();
+        } else if(ExceedMaxNumberOfElementsException.class.isAssignableFrom(t.getClass())) {
+            OrcidMessage entity = getLegacyOrcidEntity("This version of the API does not support adding more than 10,000 works to a record. Please consider using the 2.0 API.", null);
+            return Response.status(Response.Status.CONFLICT).entity(entity).build();
         } else {
             OrcidMessage entity = getLegacy500OrcidEntity(t);
             return Response.status(getHttpStatusAndErrorCode(t).getKey()).entity(entity).build();

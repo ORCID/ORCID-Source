@@ -16,9 +16,6 @@
  */
 package org.orcid.core.manager.impl;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -50,8 +47,6 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     @Resource
     private ClientDetailsDao clientDetailsDao;
     
-    LockerObjectsManager pubLocks = new LockerObjectsManager();
-
     @Resource(name = "sourceNameCache")
     private Cache sourceNameCache;
 
@@ -61,37 +56,25 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
     
     @Override    
     public String retrieve(String sourceId) throws IllegalArgumentException {
-        Object key = new OrcidCacheKey(sourceId, releaseName);        
-        SourceNameData sourceNameData = toSourceNameData(sourceNameCache.get(key));
-        Date dbDate = null;
-        if(sourceNameData != null) {
-            dbDate = retrieveLastModifiedDate(sourceId, sourceNameData.isClient());
-        } else {
-            dbDate = retrieveLastModifiedDate(sourceId, null);
-        }
-        if (needsFresh(dbDate, sourceNameData))
+        String cacheKey = getCacheKey(sourceId);
+        String sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
+        
+        if(sourceName == null) {
             try {
                 synchronized (lockers.obtainLock(sourceId)) {
-                    sourceNameData = toSourceNameData(sourceNameCache.get(key));
-                    if (needsFresh(dbDate, sourceNameData)) {                                                
-                        if(sourceNameData != null) {
-                            sourceNameData = getSourceNameData(sourceId, sourceNameData.isClient());
-                        } else {
-                            sourceNameData = getSourceNameData(sourceId, null);
-                        }
-                                                
-                        if(sourceNameData == null) {
-                            LOGGER.error("Unable to find id " + sourceId);
-                            throw new IllegalArgumentException("Invalid source " + sourceId);  
-                        }
-                                                                        
-                        sourceNameCache.put(new Element(key, sourceNameData));
-                    }
+                    sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
+                    if(sourceName == null) {
+                        LOGGER.info("Fetching source name for: " + sourceId);
+                        sourceName = getSourceName(sourceId);                        
+                        sourceNameCache.put(new Element(cacheKey, sourceName));
+                    }                    
                 }
             } finally {
                 lockers.releaseLock(sourceId);
-            }
-        return sourceNameData.getName();
+            }            
+        }
+        
+        return sourceName;
     }    
 
     @Override
@@ -101,23 +84,24 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
 
     @Override
     public void remove(String sourceId) {
-        sourceNameCache.remove(new OrcidCacheKey(sourceId, releaseName));
+        sourceNameCache.remove(getCacheKey(sourceId));
     }
     
-    private SourceNameData toSourceNameData(Element element) {
-        return (SourceNameData) (element != null ? element.getObjectValue() : null);
+    private String getSourceNameFromCache(Element element) {
+        return (String) (element != null ? element.getObjectValue() : null);
     }
     
-    private SourceNameData getSourceNameData(String clientId, Boolean isClient) {
-        SourceNameData result = null;
+    private String getCacheKey(String sourceId) {
+        return releaseName + "_" + sourceId;
+    }
+    
+    private String getSourceName(String clientId) {
+        String result = null;
                 
-        if((isClient != null && isClient) || clientDetailsDao.existsAndIsNotPublicClient(clientId)) {                                                
+        if(clientDetailsDao.existsAndIsNotPublicClient(clientId)) {                                                
             try {
                 ClientDetailsEntity clientDetails = clientDetailsDao.find(clientId);
-                result = new SourceNameData();                
-                result.setLastModified(clientDetails.getLastModified());
-                result.setClient(true);
-                result.setName(clientDetails.getClientName());
+                result = clientDetails.getClientName();
             } catch(Exception e1) {
                 //If it fails here, don't panic, it might be a public client
             }                        
@@ -127,16 +111,12 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
         if(result == null) {
             try {
                 RecordNameEntity recordName = recordNameDao.getRecordName(clientId);
-                result = new SourceNameData();
-                result.setLastModified(recordName.getLastModified());
-                result.setClient(false);
-                result.setName(getPublicNameFromRecordName(recordName));
+                result = getPublicNameFromRecordName(recordName);
             } catch(Exception e2) {
                 //If it fails to find the name in the record_name table, then it might be an error
                 throw new IllegalArgumentException("Unable to find source name for: " + clientId);
             }       
-        }              
-        
+        }        
         return result;
     }
     
@@ -153,71 +133,4 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
             return null;
         }
     }
-    
-    private Date retrieveLastModifiedDate(String sourceId, Boolean isClient) {
-        Date lastModified = null;
-        if(sourceId == null) {
-            throw new IllegalArgumentException("Source Id should not be null");
-        }
-        
-        //If we still don't know what kind of source is, or, if we know is a client because of the boolean, or if we know is a client because of the 'APP-' name
-        if(isClient == null || isClient|| sourceId.startsWith("APP-")) {
-            try {
-                lastModified = clientDetailsDao.getLastModifiedIfNotPublicClient(sourceId);
-            } catch(Exception e1) {
-                LOGGER.debug("Unable to find client id in client details table: " + sourceId, e1);
-            }
-        }
-        
-        //If client details is still null, check at the profile table
-        if(lastModified == null) {
-            try {
-                return recordNameDao.getLastModified(sourceId);
-            } catch(Exception e2) {
-                //If we still cant find the last modified, propagate the error                
-                LOGGER.error("Unable to find id in any of the tables: " + sourceId, e2);
-                throw new IllegalArgumentException("Unable to find id in any of the tables: " + sourceId, e2);
-            }
-        }
-        
-        return lastModified;                    
-    }
-    
-    
-    static public boolean needsFresh(Date dbDate, SourceNameData data) {
-        if (data == null || (data.getLastModified() == null))
-            return true;
-        if (dbDate == null) // is this possible?
-            return true;
-        Date lastModified = data.getLastModified();
-        if (lastModified.getTime() != dbDate.getTime())
-            return true;
-        return false;
-    }        
-}
-
-class SourceNameData implements Serializable {        
-    private static final long serialVersionUID = -8472529187391016000L;
-    private String name;
-    private boolean isClient;
-    private Date lastModified;
-    
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }    
-    public Date getLastModified() {
-        return lastModified;
-    }
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
-    }
-    public boolean isClient() {
-        return isClient;
-    }
-    public void setClient(boolean isClient) {
-        this.isClient = isClient;
-    }    
 }

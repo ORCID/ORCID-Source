@@ -371,13 +371,6 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
-    public void updateLastModifiedDate(String orcid) {
-        updateLastModifiedDateWithoutResult(orcid);
-    }
-
-    @Override
-    @Transactional
     public void updateLastModifiedDateWithoutResult(String orcid) {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);

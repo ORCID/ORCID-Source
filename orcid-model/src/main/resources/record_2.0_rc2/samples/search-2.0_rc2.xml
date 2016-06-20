@@ -17,8 +17,7 @@
 	xsi:schemaLocation="http://www.orcid.org/ns/search ../search-2.0_rc2.xsd ">
 	<search:result>
 		<search:relevancy-score>0.0</search:relevancy-score>
-		<record:record clientType="creator" groupType="basic"
-			type="user">
+		<record:record>
 			<common:orcid-identifier>
 				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
 				<common:path>8888-8888-8888-8880</common:path>

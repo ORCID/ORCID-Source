@@ -34,12 +34,13 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.SourceAware;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "externalIdentifiers", "completionDate", "groupId", "organization" })
 @XmlRootElement(name = "summary", namespace = "http://www.orcid.org/ns/peer-review")
-public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable {
+public class PeerReviewSummary implements Filterable, Activity, GroupableActivity, Serializable, SourceAware {
     
     private static final long serialVersionUID = -7769331531691171324L;    
     @XmlElement(name = "external-ids", namespace = "http://www.orcid.org/ns/common")

@@ -10,6 +10,21 @@
 
 * Install [Postgres](http://www.postgresql.org/download/). (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
 
+	If you are using a Mac install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
+	  
+   	```
+   	nano .bash_profile
+	```
+	add a new line 
+ 	```
+	export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+	```
+	save and exit
+    	activate your changes with 
+	```
+	source .bash_profile
+	```
+
 * Install [Tomcat](http://tomcat.apache.org/). (Verify Tomcat. Go to the directory /apache-tomcat-xx/bin and run the batch "startup.bat". It should start the server and display a message "Server startup in xxxx ms".)
 
 
@@ -17,25 +32,14 @@
 We'll set up postgres using the default settings in 
 [staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties). Please change usernames and passwords for any production environments.
 
-1. Install Postgres
-2. If you are using a Mac install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
-   * nano .bash_profile
-   * add a new line at the end with 
- 	```
-	export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
-	```
-   * save the file with ctrl +o then return, then exit nano with ctrl +x
-   * activate your changes with 
-	
-	```
-	source .bash_profile
-	```
-
-
-3. Become postgres user (note: you may not need to do this step if you use Postgresapp to install)
+1.  Become postgres user
 
     ```
     sudo su - postgres
+    ```
+    or if using postgresapp
+    ```
+    psql -U postgres
     ```
     
 4. Set up database

@@ -88,23 +88,17 @@
 				
 				<!-- Language -->
 				<div class="language-selector" ng-show = "settingsVisible == true">
-										
-					<form id="language-form" action="#" ng-controller="languageCtrl">
-						<select name="language-codes" id="language-codes"
-							ng-model="language"
-							ng-options="language.label for language in languages"
-							ng-change="selectedLanguage()"></select>
-					</form>
+					<!-- Shared component -->
+					<div ng-include="'edit-language'"></div>
 					
 					<div class="account-settings-mobile-menu">
-						<span class="account-settings-mobile"> <a ${(nav==
-							"settings")?string('class="active"
-							', '')}href="<@orcid.rootPath '/account'/>"><@orcid.msg
-								'public-layout.account_setting'/></a>
+						<span class="account-settings-mobile"> 
+							<a ${(nav=="settings")?string('class="active"', '')}href="<@orcid.rootPath '/account'/>">
+								<@orcid.msg 'public-layout.account_setting'/>
+							</a>
 						</span>
 					</div>
 				</div>
-
 			</div>
 
 
@@ -536,5 +530,9 @@
 <form action="<@orcid.rootPath '/'/>">
 	<input id="imageUrl" type="hidden" value="${staticCdn}/images">
 </form>
+
+<#include "../includes/language_selector.ftl">
+
 </@base>
 </#macro>
+
