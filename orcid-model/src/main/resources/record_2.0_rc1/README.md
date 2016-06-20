@@ -24,7 +24,85 @@ undetected into the code during the previous development period. Release candida
 **stable**, further model changes will be expressed in v2.0_rc2
 
 ## Changes
-Not Applicable v2.0_rc1 is a first draft.
+A number of changes to the ORCID API have been made to improve on the existing 1.2 release, this section highlights the most notable changes.
+
+###Activities summary:
+When reading a list of activities, a summary of each activity is returned. The summary is intended to provide basic information about the item, including title, source and identifiers. The full item can be retrieved by accessing the individual item using the path provided, or by using the identifiers to retrieve metadata from another service.
+
+An example work summary is below, fields to note are:
+
+The parent *work-summary* field, which has attributes for the put-code and path to access the individual work. The *visibility* attribute indicates who can access this item and the *display-index* indicates the order the researcher has ranked this item within its group, higher display indexes appear first. 
+
+```
+<work:work-summary put-code="142937" path="/0000-0001-6737-6852/work/142937" visibility="public" display-index="0">
+```
+
+The create, modified, and source fields which provide metadata about the item. The *created date* is when the item was first added to the ORCID record, the *last-modified-date* is when the item was changed, such as being edited or having it's visibility changed. The *source* field records who added the item to the record. Items added via the API will have the *source-client-id* field to record the client iD and associated display name. Items added by the researcher will use the *source-orcid* field to record the researcher's ORCID iD and their name.
+
+```
+<common:created-date>2016-06-15T17:38:59.907Z</common:created-date>
+	<common:last-modified-date>2016-06-15T17:38:59.907Z</common:last-modified-date>
+	<common:source>
+		<common:source-client-id>
+			<common:uri>http://qa.orcid.org/client/APP-5G54N5YFOKGV5Z0X</common:uri>
+			<common:path>APP-5G54N5YFOKGV5Z0X</common:path>
+			<common:host>orcid.org</common:host>
+		</common:source-client-id>
+		<common:source-name>ORCID, Inc</common:source-name>
+	</common:source>
+```
+
+The body of the summary records the basic information about the item including *title*, *type*, *date*, and *external-identifiers* associated with the item.
+
+```
+	<work:title>
+		<common:title>ORCID: a system to uniquely identify researchers</common:title>
+	</work:title>
+	<work:external-identifiers>
+		<work:work-external-identifier>
+			<common:external-identifier-url>dx.doi.org/10.1087/20120404</common:external-identifier-url>
+			<common:relationship>self</common:relationship>
+			<work:external-identifier-type>doi</work:external-identifier-type>
+			<work:external-identifier-id>10.1087/20120404</work:external-identifier-id>
+   	 </work:work-external-identifier>
+	</work:external-identifiers>
+	<work:type>journal-article</work:type>
+	<common:publication-date>
+		<common:year>2012</common:year>
+        <common:month>10</common:month>
+       	 <common:day>01</common:day>
+    </common:publication-date>
+</work:work-summary>
+```
+
+
+###Activities group:
+
+Funding, Works and Peer-review items are grouped together based on a common external identifier. In the schema, the group is the parent of the activity summary and contains a last modified date for the group and the identifier(s) used to create the group. An example work group:
+
+```
+<activities:group>
+	<common:last-modified-date>2016-06-14T22:44:12.705Z</common:last-modified-date>
+	<common:external-ids>
+		<common:external-id>
+			<common:external-id-type>doi</common:external-id-type>
+			<common:external-id-value>10.1087/20120404</common:external-id-value>
+			<common:external-id-relationship>self</common:external-id-relationship>
+		</common:external-id>
+	</common:external-ids>
+	<work:work-summary>...</work:work-summary>
+</activities:group>
+```
+
+###Per item API
+With version 2.0_rc1 the ORCID API now requires that information be added, updated and read as individual items, as compared to entire sections of a record as was the case with 1.2. Existing items are read, updated or deleted using their put-code, and new items must be posted individually. To read an entire section of a record the activities summary can be accessed.
+
+###Peer-review
+
+A new activities section, peer-review, captures the formal review activity of researchers. Information on how to add peer-review items is at http://members.orcid.org/api/peer-review-getting-started
+
+###Multiple XSD
+The 2.0_rc1 schema has been broken into individual pieces for each section of the ORCID record. As part of this namespaces are now included with the XML record. [Full list of XSDs](#xsds-and-current-state-none-stable)
 
 ## Sample XML files:
 
