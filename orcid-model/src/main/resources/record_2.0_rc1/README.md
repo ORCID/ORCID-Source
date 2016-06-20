@@ -37,7 +37,7 @@ The parent *work-summary* field, which has attributes for the put-code and path 
 <work:work-summary put-code="142937" path="/0000-0001-6737-6852/work/142937" visibility="public" display-index="0">
 ```
 
-The create, modified, and source fields which provide metadata about the item. The *created date* is when the item was first added to the ORCID record, the *last-modified-date* is when the item was changed, such as being edited or having it's visibility changed. The source records who added the item to the record. Items added via the API will have the *source-client-id* field to record the client iD and associated display name. Items added by the researcher will use the *source-orcid* field to record the researcher's ORCID iD and their name.
+The create, modified, and source fields which provide metadata about the item. The *created date* is when the item was first added to the ORCID record, the *last-modified-date* is when the item was changed, such as being edited or having it's visibility changed. The *source* field records who added the item to the record. Items added via the API will have the *source-client-id* field to record the client iD and associated display name. Items added by the researcher will use the *source-orcid* field to record the researcher's ORCID iD and their name.
 
 ```
 <common:created-date>2016-06-15T17:38:59.907Z</common:created-date>
@@ -78,7 +78,7 @@ The body of the summary records the basic information about the item including *
 
 ###Activities group:
 
-Funding, Works and Peer-review items are grouped together based on a common external identifier. In the schema, the group is the parent of the items and contains a last modified date for the group and the identifier(s) used to create the group. An example work group:
+Funding, Works and Peer-review items are grouped together based on a common external identifier. In the schema, the group is the parent of the activity summary and contains a last modified date for the group and the identifier(s) used to create the group. An example work group:
 
 ```
 <activities:group>
@@ -95,7 +95,7 @@ Funding, Works and Peer-review items are grouped together based on a common exte
 ```
 
 ###Per item API
-With version 2.0_rc1 the ORCID API now requires that information be added, updated and read as individual items, rather than in entire sections of a record as was the case with 1.2. Existing items are read, updated or deleted using their put-code, and new items must be posted individually. To read an entire section of a record a summary can be accessed.
+With version 2.0_rc1 the ORCID API now requires that information be added, updated and read as individual items, as compared to entire sections of a record as was the case with 1.2. Existing items are read, updated or deleted using their put-code, and new items must be posted individually. To read an entire section of a record the activities summary can be accessed.
 
 ###Peer-review
 
