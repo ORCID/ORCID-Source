@@ -2602,6 +2602,16 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
     
     $scope.showTooltip = function(elem){
+    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+    	$scope.$watch('scrollTop', function (value) {		
+    	  	angular.element('.edit-websites .popover-help-container').css({
+	  			top: $scope.top - $scope.scrollTop,
+	  			left: $scope.left
+    	  	});    
+    	});
+    	
     	$scope.showElement[elem] = true;
     }
     
@@ -3111,6 +3121,17 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     };
     
     $scope.showTooltip = function(elem){
+    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+    	$scope.$watch('scrollTop', function (value) {		
+    	  	angular.element('.edit-aka .popover-help-container').css({
+	  			top: $scope.top - $scope.scrollTop,
+	  			left: $scope.left
+    	  	});    
+    	});
+    	
+    	
     	$scope.showElement[elem] = true;
     };
 
@@ -3434,6 +3455,17 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     };
     
     $scope.showTooltip = function(elem){
+    	
+    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+    	$scope.$watch('scrollTop', function (value) {		
+    	  	angular.element('.edit-country .popover-help-container').css({
+    	  			top: $scope.top - $scope.scrollTop,
+    	  			left: $scope.left
+    	  	});    
+    	});
+    	
     	$scope.showElement[elem] = true;
     }
 
@@ -3538,7 +3570,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
 	$scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;
     $scope.primary = true;
-    
+    $scope.showElement = [];
     
     $scope.getExternalIdentifiersForm = function(){
         $.ajax({
@@ -3722,6 +3754,24 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     	    }
        }
        $scope.externalIdentifiersForm.externalIdentifiers = externalIdentifiers;       
+   }
+   
+   $scope.showTooltip = function(elem){
+	   	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+	   	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+	   	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+	   	$scope.$watch('scrollTop', function (value) {		
+	   	  	angular.element('.edit-external-identifiers .popover-help-container').css({
+	  			top: $scope.top - $scope.scrollTop,
+	  			left: $scope.left
+	   	  	});    
+	   	});
+	   	
+	   	$scope.showElement[elem] = true;
+   }
+   
+   $scope.hideTooltip = function(elem){
+   		$scope.showElement[elem] = false;
    }
 
     
@@ -10730,7 +10780,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	}
 	
 	$scope.openEditModal = function(){
-	    var HTML = '<div class="lightbox-container"><div class="edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
+	    var HTML = '<div class="lightbox-container"><div class="edit-record edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12" style="position: static"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
 	    $('#edit-emails').html() +
 	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a></div></div></div></div>';  
 	    
@@ -11293,8 +11343,8 @@ orcidNgModule.directive('scroll', function () {
         link: function (scope, element, attrs) {
             var raw = element[0];
             element.bind('scroll', function () {
-            	scope.scrollTop = raw.scrollTop;            	
-                scope.$apply(attrs.scroll);                
+            	scope.scrollTop = raw.scrollTop;
+                scope.$apply(attrs.scroll);
             });
         }
     }
