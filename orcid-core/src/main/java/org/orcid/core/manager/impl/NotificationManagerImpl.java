@@ -1015,7 +1015,7 @@ public class NotificationManagerImpl implements NotificationManager {
                     primaryEmail = email.getEmail();
                 }
             }
-            mailGunManager.sendEmail(AMEND_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
+            mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
         }
     }
     
