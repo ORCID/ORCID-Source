@@ -89,7 +89,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     /**
-     * @deprecated Use {@link org.orcid.core.manager.WorkCacheManager#retrieveMinimizedWorks(String, long) } instead
+     * @deprecated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrieveMinimizedWorks(String, long) } instead
      * 
      * Find works for a specific user
      * 
@@ -112,7 +112,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     /**
-     * @deprepcated Use {@link org.orcid.core.manager.WorkCacheManager#retrievePublicMinimizedWorks(String, long)} instead
+     * @deprepcated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrievePublicMinimizedWorks(String, long)} instead
      * 
      * Find the public works for a specific user
      * 
