@@ -116,7 +116,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                     }
                 }
             } finally {
-                publicWorkLastModifiedListLockers.releaseLock(Long.toString(workId));
+                lockerMinimizedWork.releaseLock(Long.toString(workId));
             }
         }
         return minimizedWorkEntity;
