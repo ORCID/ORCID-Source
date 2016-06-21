@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -140,6 +141,15 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .createQuery("from MinimizedWorkEntity where id = :id", MinimizedWorkEntity.class);
         query.setParameter("id", id);
         return query.getSingleResult();
+    }
+    
+    @Override
+    public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids, String orcid) {
+        TypedQuery<MinimizedWorkEntity> query = entityManager
+                .createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.orcid=:orcid AND x.id IN :ids", MinimizedWorkEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setParameter("ids", ids);
+        return query.getResultList();
     }
     
     @Override
