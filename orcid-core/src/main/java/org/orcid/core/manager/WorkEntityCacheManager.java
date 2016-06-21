@@ -28,7 +28,7 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
  * @author Will Simpson
  *
  */
-public interface WorkCacheManager {
+public interface WorkEntityCacheManager {
 
     List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified);
     
