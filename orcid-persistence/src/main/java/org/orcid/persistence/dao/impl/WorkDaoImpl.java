@@ -32,6 +32,8 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
+
 public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements WorkDao {
 
     public WorkDaoImpl() {
@@ -145,10 +147,16 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids) {
-        TypedQuery<MinimizedWorkEntity> query = entityManager
-                .createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
-        query.setParameter("ids", ids);
-        return query.getResultList();
+        //batch up list into sets of 50;
+        List<MinimizedWorkEntity> list = new ArrayList<MinimizedWorkEntity>();
+        for (List<Long> partition : Lists.partition(ids, 50)){
+            TypedQuery<MinimizedWorkEntity> query = entityManager
+                    .createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
+            query.setParameter("ids", partition);
+            list.addAll(query.getResultList());            
+        }
+        return list;
+        
     }
     
     @Override
