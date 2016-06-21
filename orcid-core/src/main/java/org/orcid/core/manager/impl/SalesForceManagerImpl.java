@@ -5,14 +5,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.pojo.SalesForceMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +50,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Value("${org.orcid.core.salesForce.apiBaseUrl:https://na11.salesforce.com}")
     private String apiBaseUrl;
 
-    @Resource
-    private IdentityProviderDao identityProviderDao;
-
     private Client client = Client.create();
 
     @Override
@@ -66,7 +61,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private List<SalesForceMember> retrieveMembersFromsSalesForce(String accessToken) {
         List<SalesForceMember> members = new ArrayList<>();
-        LOGGER.info("About get SalesForce access token");
+        LOGGER.info("About get list of members from SalesForce");
         WebResource resource = createMemberListResource();
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         if (response.getStatus() != 200) {
