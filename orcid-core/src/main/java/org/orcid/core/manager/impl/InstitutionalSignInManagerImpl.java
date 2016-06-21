@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.InstitutionalSignInManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
@@ -48,6 +49,9 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     @Resource
     protected OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
+    @Resource
+    protected NotificationManager notificationManager;
+    
     @Override
     @Transactional
     public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid) {
@@ -67,28 +71,37 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             userConnectionEntity.setIdType(idType);
             userConnectionEntity.setConnectionSatus(UserConnectionStatus.STARTED);
             userConnectionDao.persist(userConnectionEntity);
-        } else {
-            //Check if the notification was sent
-        }
-
+        }    
+        
+        sendNotification(userOrcid, providerId);
+    }        
+    
+    public void sendNotification(String userOrcid, String providerId) {
         try {
             ClientDetailsEntity clientDetails = clientdetailsEntityCacheManager.retrieveByIdP(providerId);
-            boolean clientKnowsUser = doesClientKnownUser(userOrcid, clientDetails.getClientId());
-            //If the client doesnt know about the user yet, send a notification
+            boolean clientKnowsUser = doesClientKnowUser(userOrcid, clientDetails.getClientId());
+            //If the client doesn't know about the user yet, send a notification
             if(!clientKnowsUser) {
-                
+                notificationManager.sendAcknowledgeMessage(userOrcid, clientDetails.getClientId());
             }
         } catch(IllegalArgumentException e) {
             //The provided IdP hast not been linked to any client yet.
         }
     }
     
-    private boolean doesClientKnownUser(String userOrcid, String clientId) {
+    private boolean doesClientKnowUser(String userOrcid, String clientId) {
         List<OrcidOauth2TokenDetail> existingTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(clientId, userOrcid);
         if(existingTokens == null || existingTokens.isEmpty()) {
             return false;
         }
         
-        return true;
+        Date now = new Date();
+        for(OrcidOauth2TokenDetail token : existingTokens) {
+            if(token.getTokenExpiration() != null && token.getTokenExpiration().after(now)) {
+                return true;                                      
+            }
+        }
+        
+        return false;
     }
 }

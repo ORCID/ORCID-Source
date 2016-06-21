@@ -18,4 +18,5 @@ package org.orcid.core.manager;
 
 public interface InstitutionalSignInManager {
     void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid);
+    void sendNotification(String userOrcid, String providerId);
 }

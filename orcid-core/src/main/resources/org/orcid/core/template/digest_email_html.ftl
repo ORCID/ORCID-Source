@@ -95,6 +95,10 @@
                 </ul>
                 </#if>
             </p>
+            <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
+            <p>
+            	<div><img src="${baseUri}/static/img/request.png">&nbsp;You have successfully logged into ORCID through ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}. To successfully complete the process, please click <a href="${notification.authorizationUrl}">here</a> </div>
+            </p>
             <#else>
             ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
             </#if>

@@ -43,6 +43,7 @@ public enum NotificationType {
 
     //@formatter:off
     @XmlEnumValue("custom") CUSTOM,
+    @XmlEnumValue("institutional_connection") INSTITUTIONAL_CONNECTION,
     @XmlEnumValue("permission")PERMISSION,
     @XmlEnumValue("amended") AMENDED;
     //@formatter:on

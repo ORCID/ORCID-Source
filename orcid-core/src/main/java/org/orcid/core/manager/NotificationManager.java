@@ -91,6 +91,6 @@ public interface NotificationManager {
 
     public String createClaimVerificationUrl(String email, String baseUri);
     
-    void sendAcknowledgeMessage(String email, String clientId);
+    void sendAcknowledgeMessage(String userOrcid, String clientId);
 
 }

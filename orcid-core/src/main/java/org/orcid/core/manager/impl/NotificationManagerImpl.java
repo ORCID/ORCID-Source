@@ -63,8 +63,10 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
+import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
 import org.orcid.jaxb.model.record_rc2.Emails;
@@ -910,7 +912,7 @@ public class NotificationManagerImpl implements NotificationManager {
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
     }
-
+                    
     @Override
     public List<Notification> findUnsentByOrcid(String orcid) {
         return notificationAdapter.toNotification(notificationDao.findUnsentByOrcid(orcid));
@@ -979,6 +981,7 @@ public class NotificationManagerImpl implements NotificationManager {
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
         Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH : LocaleUtils.toLocale(profileEntity.getLocale().value());
         String subject = getSubject("email.subject.amend", userLocale);
+        String rUri = getRedirectUriForInstitutionalSignIn(clientDetails);
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -987,7 +990,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
         templateParams.put("subject", subject);
         templateParams.put("clientName", clientDetails.getClientName());
-        templateParams.put("rUri", getRedirectUriForInstitutionalSignIn(clientDetails));
+        templateParams.put("rUri", rUri);
         templateParams.put("clientId", clientId);                
         
         addMessageParams(templateParams, userLocale);
@@ -999,11 +1002,14 @@ public class NotificationManagerImpl implements NotificationManager {
 
         boolean notificationsEnabled = profileEntity.getEnableNotifications();
         if (notificationsEnabled) {
-            NotificationCustom notification = new NotificationCustom();
-            notification.setNotificationType(NotificationType.PERMISSION);
+            NotificationPermission notification = new NotificationPermission();
+            notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);
             notification.setSubject(subject);
-            notification.setBodyHtml(html);
-            createNotification(userOrcid, notification);
+            notification.setAuthorizationUrl(new AuthorizationUrl(rUri));
+            NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);            
+            notificationEntity.setProfile(new ProfileEntity(userOrcid));
+            notificationEntity.setClientSourceId(clientId);                                    
+            notificationDao.persist(notificationEntity);                                   
         } else {            
             Emails emails = emailManager.getEmails(userOrcid, (profileEntity.getLastModified() == null ? System.currentTimeMillis() : profileEntity.getLastModified().getTime()));
             String primaryEmail = null;
