@@ -141,7 +141,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             
             //get works from the cache if we can
             Object key = new WorkCacheKey(workId, releaseName);
-            MinimizedWorkEntity cachedWork = toMinimizedWork(minimizedWorkCache.get(key));
+            MinimizedWorkEntity cachedWork = toMinimizedWork(minimizedWorkEntityCache.get(key));
             if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
                 fetchList.add(workId);
             }else{
@@ -158,10 +158,10 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                     synchronized (lockerMinimizedWork.obtainLock(Long.toString(mWorkRefreshedFromDB.getId()))) {
                         //check cache again here to prevent race condition since something could have updated while we were fetching from DB 
                         //(or can we skip because new last modified is always going to be after profile last modified as provided)
-                        MinimizedWorkEntity cachedWork = toMinimizedWork(minimizedWorkCache.get(key));
+                        MinimizedWorkEntity cachedWork = toMinimizedWork(minimizedWorkEntityCache.get(key));
                         if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
                             workDao.detach(mWorkRefreshedFromDB);                        
-                            minimizedWorkCache.put(new Element(key, mWorkRefreshedFromDB));
+                            minimizedWorkEntityCache.put(new Element(key, mWorkRefreshedFromDB));
                             returnList.add(mWorkRefreshedFromDB);
                         }else{
                             returnList.add(cachedWork);
