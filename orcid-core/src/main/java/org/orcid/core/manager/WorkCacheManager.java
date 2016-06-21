@@ -36,7 +36,7 @@ public interface WorkCacheManager {
 
     MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified);
 
-    List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long, Date> workIdsWithLastModified, String orcid);
+    List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long, Date> workIdsWithLastModified);
 
     List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
 

@@ -133,7 +133,7 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
      * @return
      */
     @Override
-    public List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long,Date> workIdsWithLastModified, String orcid) {
+    public List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long,Date> workIdsWithLastModified) {
         List<MinimizedWorkEntity> returnList = new ArrayList<MinimizedWorkEntity>();
         List<Long> fetchList = new ArrayList<Long>();
         
@@ -151,7 +151,7 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
             
         //now fetch all the others that are *not* in the cache
         if (fetchList.size()>0){
-            List<MinimizedWorkEntity> refreshedWorks = workDao.getMinimizedWorkEntities(fetchList, orcid);
+            List<MinimizedWorkEntity> refreshedWorks = workDao.getMinimizedWorkEntities(fetchList);
             for (MinimizedWorkEntity mWorkRefreshedFromDB : refreshedWorks){
                 Object key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
                 try {
@@ -181,14 +181,14 @@ public class WorkCacheManagerImpl implements WorkCacheManager {
     public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified) {
         List<WorkLastModifiedEntity> workLastModifiedList = retrieveWorkLastModifiedList(orcid, profileLastModified);        
         Map<Long, Date> workIdsWithLastModified = workLastModifiedList.stream().collect(Collectors.toMap(WorkLastModifiedEntity::getId, WorkLastModifiedEntity::getLastModified));
-        return this.retrieveMinimizedWorkList(workIdsWithLastModified,orcid);
+        return this.retrieveMinimizedWorkList(workIdsWithLastModified);
     }
 
     @Override
     public List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified) {
         List<WorkLastModifiedEntity> workLastModifiedList = retrievePublicWorkLastModifiedList(orcid, profileLastModified);
         Map<Long, Date> workIdsWithLastModified = workLastModifiedList.stream().collect(Collectors.toMap(WorkLastModifiedEntity::getId, WorkLastModifiedEntity::getLastModified));
-        return this.retrieveMinimizedWorkList(workIdsWithLastModified,orcid);
+        return this.retrieveMinimizedWorkList(workIdsWithLastModified);
     }
 
     private MinimizedWorkEntity toMinimizedWork(Element element) {
