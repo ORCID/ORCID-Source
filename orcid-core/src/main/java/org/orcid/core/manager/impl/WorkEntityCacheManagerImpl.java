@@ -50,8 +50,8 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Resource(name = "publicWorkLastModifiedCache")
     private Cache publicWorkLastModifiedCache;
 
-    @Resource(name = "minimizedWorkCache")
-    private Cache minimizedWorkCache;
+    @Resource(name = "minimizedWorkEntityCache")
+    private Cache minimizedWorkEntityCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -104,15 +104,15 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     @Override
     public MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified) {
         Object key = new WorkCacheKey(workId, releaseName);
-        MinimizedWorkEntity minimizedWorkEntity = toMinimizedWork(minimizedWorkCache.get(key));
+        MinimizedWorkEntity minimizedWorkEntity = toMinimizedWork(minimizedWorkEntityCache.get(key));
         if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
             try {
                 synchronized (lockerMinimizedWork.obtainLock(Long.toString(workId))) {
-                    minimizedWorkEntity = toMinimizedWork(minimizedWorkCache.get(key));
+                    minimizedWorkEntity = toMinimizedWork(minimizedWorkEntityCache.get(key));
                     if (minimizedWorkEntity == null || minimizedWorkEntity.getLastModified().getTime() < workLastModified) {
                         minimizedWorkEntity = workDao.getMinimizedWorkEntity(workId);
                         workDao.detach(minimizedWorkEntity);                        
-                        minimizedWorkCache.put(new Element(key, minimizedWorkEntity));
+                        minimizedWorkEntityCache.put(new Element(key, minimizedWorkEntity));
                     }
                 }
             } finally {
