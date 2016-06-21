@@ -185,7 +185,7 @@ public class WorkManagerImpl implements WorkManager {
         
         if (applyAPIValidations) {
             activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
-            /*
+            
             Date lastModified = profileEntityManager.getLastModified(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
             List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
@@ -199,7 +199,7 @@ public class WorkManagerImpl implements WorkManager {
                                 sourceEntity);
                     }
                 }
-            }*/
+            }
         } else {
             // validate external ID vocab
             externalIDValidator.validateWorkOrPeerReview(work.getExternalIdentifiers());
