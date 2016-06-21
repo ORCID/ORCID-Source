@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.WorkCacheManager;
+import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
@@ -36,7 +36,7 @@ import net.sf.ehcache.Element;
  * @author Will Simpson
  *
  */
-public class WorkCacheManagerImpl implements WorkCacheManager {
+public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
     @Resource
     private WorkDao workDao;

@@ -152,7 +152,7 @@
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
 
-	<bean id="workCacheManager" class="org.orcid.core.manager.impl.WorkCacheManagerImpl"/>
+	<bean id="WorkEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl"/>
 
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
@@ -560,7 +560,7 @@
         <property name="copyOnWrite" value="false" />
     </bean>
 
-    <bean id="minimizedWorkCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+    <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="10000" />
