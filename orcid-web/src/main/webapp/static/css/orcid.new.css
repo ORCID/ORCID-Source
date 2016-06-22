@@ -6537,10 +6537,15 @@ a:hover .mozilla-badge{
 	margin-bottom: 0;
 }
 
+
 #colorbox, 
 #cboxOverlay, 
 #cboxWrapper{
 	overflow: visible; /* Deal with it only for Modal v2*/
+}
+
+.edit-record-emails .popover-help-container{
+	position: absolute;
 }
 
 /* Media Queries */
