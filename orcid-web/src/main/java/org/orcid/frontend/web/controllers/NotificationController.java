@@ -153,17 +153,17 @@ public class NotificationController extends BaseController {
     }
 
     @RequestMapping(value = "/INSTITUTIONAL_CONNECTION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
-    public ModelAndView getInstitutionalConnectionNotificationHtml(@PathVariable("id") String id) {
+    public ModelAndView getInstitutionalConnectionNotificationHtml(@PathVariable("id") String id) throws UnsupportedEncodingException {
         ModelAndView mav = new ModelAndView();        
         Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
         String clientId = notification.getSource().retrieveSourcePath();
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        String rUri = notificationManager.getRedirectUriForInstitutionalSignIn(clientDetails);
+        String authorizationUrl = notificationManager.buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
         addSourceDescription(notification);
-        mav.addObject("notification", notification);
+        mav.addObject("notification", notification);               
         mav.addObject("baseUri", getBaseUri());
         mav.addObject("clientId", clientId);
-        mav.addObject("rUri", rUri);
+        mav.addObject("authorizationUrl", authorizationUrl);
         mav.setViewName("notification/institutional_connection_notification");
         return mav;
     }

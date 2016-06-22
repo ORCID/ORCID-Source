@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,7 +96,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Will Simpson
  */
 public class NotificationManagerImpl implements NotificationManager {
-
+ 
     private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
 
     private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
@@ -121,6 +122,8 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_WEBSITE = "${website}";
 
     private static final String WILDCARD_DESCRIPTION = "${description}";
+    
+    private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
     @Resource
     private MessageSource messages;
@@ -976,12 +979,12 @@ public class NotificationManagerImpl implements NotificationManager {
     }
 
     @Override
-    public void sendAcknowledgeMessage(String userOrcid, String clientId) {
+    public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
         Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH : LocaleUtils.toLocale(profileEntity.getLocale().value());
         String subject = getSubject("email.subject.amend", userLocale);
-        String rUri = getRedirectUriForInstitutionalSignIn(clientDetails);
+        String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
         
         // Create map of template params
         Map<String, Object> templateParams = new HashMap<String, Object>();
@@ -990,8 +993,7 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
         templateParams.put("subject", subject);
         templateParams.put("clientName", clientDetails.getClientName());
-        templateParams.put("rUri", rUri);
-        templateParams.put("clientId", clientId);                
+        templateParams.put("authorization_url", authorizationUrl);
         
         addMessageParams(templateParams, userLocale);
 
@@ -1004,7 +1006,7 @@ public class NotificationManagerImpl implements NotificationManager {
         if (notificationsEnabled) {
             NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
             notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);            
-            notification.setAuthorizationUrl(new AuthorizationUrl(rUri));
+            notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
             NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);            
             notificationEntity.setProfile(new ProfileEntity(userOrcid));
             notificationEntity.setClientSourceId(clientId);                                    
@@ -1024,7 +1026,14 @@ public class NotificationManagerImpl implements NotificationManager {
         }
     }
     
-    public String getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails) {
+    public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
+        ClientRedirectUriEntity rUri = getRedirectUriForInstitutionalSignIn(clientDetails);
+        String urlEncodedScopes = URLEncoder.encode(rUri.getPredefinedClientScope(), "UTF-8");
+        String urlEncodedRedirectUri = URLEncoder.encode(rUri.getRedirectUri(), "UTF-8");
+        return MessageFormat.format(AUTHORIZATION_END_POINT, orcidUrlManager.getBaseUrl(), clientDetails.getClientId(), urlEncodedScopes, urlEncodedRedirectUri);        
+    }
+    
+    private ClientRedirectUriEntity getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails) {
         if(clientDetails == null) {
             throw new IllegalArgumentException("Unable to find valid redirect uris for null client details");
         }
@@ -1033,18 +1042,14 @@ public class NotificationManagerImpl implements NotificationManager {
             throw new IllegalArgumentException("Unable to find valid redirect uris for client: " + clientDetails.getId());
         }
         
-        String result = null;
+        ClientRedirectUriEntity result = null;
         
         //Look for the redirect uri of INSTITUTIONAL_SIGN_IN type or if none if found, return the first DEFAULT one 
         for(ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
             if(RedirectUriType.INSTITUTIONAL_SIGN_IN.value().equals(redirectUri.getRedirectUriType())) {
-                result = redirectUri.getRedirectUri();
+                result = redirectUri;
                 break;
-            } else if(RedirectUriType.DEFAULT.value().equals(redirectUri.getRedirectUriType())) {
-                if(result == null) {
-                    result = redirectUri.getRedirectUri();
-                }
-            }
+            } 
         }
         
         return result;

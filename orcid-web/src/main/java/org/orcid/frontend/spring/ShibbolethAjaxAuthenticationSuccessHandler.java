@@ -17,6 +17,7 @@
 package org.orcid.frontend.spring;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
     }
 
-    public void linkShibbolethAccount(HttpServletRequest request, HttpServletResponse response) {
+    public void linkShibbolethAccount(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         Map<String, String> headers = new HashMap<String, String>();
 
         Enumeration<String> headerNames = request.getHeaderNames();

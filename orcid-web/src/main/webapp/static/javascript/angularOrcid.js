@@ -8291,6 +8291,8 @@ orcidNgModule.controller('manageMembersCtrl',['$scope', '$compile', function man
         } else if (rUri.type.value == 'import-peer-review-wizard'){
             rUri.scopes.push('/orcid-profile/read-limited');
             rUri.scopes.push('/peer-review/create');
+        } else if(rUri.type.value == 'institutional-sign-in') {
+        	rUri.scopes.push('/authenticate');
         }
     };
 

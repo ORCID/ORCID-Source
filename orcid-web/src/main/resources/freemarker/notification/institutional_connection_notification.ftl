@@ -67,7 +67,7 @@
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
 			$parentScope.$apply();
-		  };		  
+		  };			  		  
 		});
 	</script>
 	<!--  Do not remove -->
@@ -76,7 +76,8 @@
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<p>You have successfully logged into ORCID through ${notification.source.sourceName.content}.<br/>
-    	To successfully complete the process, ${notification.source.sourceName.content} would like to access some of your record information, please click <a href="${baseUri}/oauth/authorize?client_id=${clientId}&response_type=code&scope=/authenticate&redirect_uri=${rUri}" target="_blank">here</a> to complete the process.</p>                
+    	To successfully complete the process, ${notification.source.sourceName.content} would like to access some of your record information, please click 
+    	<a href="${authorizationUrl}" target="_blank">here</a> to complete the process.</p>                
         <div class="pull-right margin-top">
     		<a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="">Archive</a>
     	</div>

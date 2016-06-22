@@ -21,7 +21,7 @@
 
 You have successfully logged into ORCID through ${clientName}. To successfully complete the process, ${clientName} would like to get your ORCID iD ${orcid}. 
 
-Please click ${baseUri}/oauth/authorize?client_id=${clientId}&response_type=code&scope=/authenticate&redirect_uri=${rUri} to complete the process.
+Please click ${authorization_url?url} to complete the process.
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}

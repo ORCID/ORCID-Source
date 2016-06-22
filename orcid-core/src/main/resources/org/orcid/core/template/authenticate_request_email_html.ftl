@@ -33,7 +33,7 @@
 				You have successfully logged into ORCID through ${clientName}. To successfully complete the process, ${clientName} would like to get your ORCID iD ${orcid}. 
 		    </p>		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">                
-                Please click <a href="${baseUri}/oauth/authorize?client_id=${clientId}&response_type=code&scope=/authenticate&redirect_uri=${rUri}">here</a> to complete the process.
+                Please click <a href="${authorization_url?url}">here</a> to complete the process.
 		    </p>		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />

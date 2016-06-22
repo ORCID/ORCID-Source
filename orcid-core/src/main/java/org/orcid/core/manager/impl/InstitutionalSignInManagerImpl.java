@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +55,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     
     @Override
     @Transactional
-    public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid) {
+    public void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid) throws UnsupportedEncodingException {
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUserId, providerId,
                 idType);
         if (userConnectionEntity == null) {
@@ -69,14 +70,14 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
             userConnectionEntity.setLinked(true);
             userConnectionEntity.setLastLogin(new Date());
             userConnectionEntity.setIdType(idType);
-            userConnectionEntity.setConnectionSatus(UserConnectionStatus.STARTED);
+            userConnectionEntity.setConnectionSatus(UserConnectionStatus.NOTIFIED);
             userConnectionDao.persist(userConnectionEntity);
         }    
         
         sendNotification(userOrcid, providerId);
     }        
     
-    public void sendNotification(String userOrcid, String providerId) {
+    private void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
             ClientDetailsEntity clientDetails = clientdetailsEntityCacheManager.retrieveByIdP(providerId);
             boolean clientKnowsUser = doesClientKnowUser(userOrcid, clientDetails.getClientId());
