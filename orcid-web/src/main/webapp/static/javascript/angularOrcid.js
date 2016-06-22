@@ -2619,7 +2619,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.showTooltip = function(elem){    	
     	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-    	if(typeof $scope.scrollTop == 'undefined' || $scope.scrollTop == null) $scope.scrollTop = 0;
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
     	$scope.$watch('scrollTop', function (value) {		
     	  	angular.element('.edit-websites .popover-help-container').css({
 	  			top: $scope.top - $scope.scrollTop,
