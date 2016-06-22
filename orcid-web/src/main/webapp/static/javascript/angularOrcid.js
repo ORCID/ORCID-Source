@@ -2616,7 +2616,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         }
     };
     
-    $scope.showTooltip = function(elem){    	
+    $scope.showTooltip = function(elem, event){    	
     	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
     	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
@@ -3137,7 +3137,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         });
     };
     
-    $scope.showTooltip = function(elem){
+    $scope.showTooltip = function(elem, event){
     	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
     	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
@@ -3472,8 +3472,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         }
     };
     
-    $scope.showTooltip = function(elem){
-    	
+    $scope.showTooltip = function(elem, event){    	
     	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
     	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
@@ -3774,7 +3773,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
        $scope.externalIdentifiersForm.externalIdentifiers = externalIdentifiers;       
    }
    
-   $scope.showTooltip = function(elem){
+   $scope.showTooltip = function(elem, event){
 	   	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
 	   	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
 	   	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
