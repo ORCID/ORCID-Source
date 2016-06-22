@@ -28,7 +28,7 @@ import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
-import org.orcid.core.manager.WorkCacheManager;
+import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
@@ -74,7 +74,7 @@ public class WorkManagerImpl implements WorkManager {
     private ProfileEntityCacheManager profileEntityCacheManager;
     
     @Resource
-    private WorkCacheManager workCacheManager;
+    private WorkEntityCacheManager workEntityCacheManager;
 
     @Resource
     private NotificationManager notificationManager;
@@ -99,7 +99,7 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Cacheable(value = "works", key = "#orcid.concat('-').concat(#lastModified)")
     public List<Work> findWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workCacheManager.retrieveMinimizedWorks(orcid, lastModified);
+        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -112,7 +112,7 @@ public class WorkManagerImpl implements WorkManager {
      * */
     @Cacheable(value = "public-works", key = "#orcid.concat('-').concat(#lastModified)")
     public List<Work> findPublicWorks(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> minimizedWorks = workCacheManager.retrievePublicMinimizedWorks(orcid, lastModified);
+        List<MinimizedWorkEntity> minimizedWorks = workEntityCacheManager.retrievePublicMinimizedWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toMinimizedWork(minimizedWorks);
     }
 
@@ -185,9 +185,10 @@ public class WorkManagerImpl implements WorkManager {
         
         if (applyAPIValidations) {
             activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
+            
             Date lastModified = profileEntityManager.getLastModified(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-            List<MinimizedWorkEntity> works = workCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
+            List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
@@ -304,7 +305,7 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Cacheable(value = "works-summaries", key = "#orcid.concat('-').concat(#lastModified)")
     public List<WorkSummary> getWorksSummaryList(String orcid, long lastModified) {
-        List<MinimizedWorkEntity> works = workCacheManager.retrieveMinimizedWorks(orcid, lastModified);
+        List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModified);
         return jpaJaxbWorkAdapter.toWorkSummaryFromMinimized(works);
     }
 
