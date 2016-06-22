@@ -25,10 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -40,8 +41,8 @@ import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.NotificationDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.springframework.stereotype.Controller;
@@ -69,16 +70,16 @@ public class NotificationController extends BaseController {
     private TemplateManager templateManager;
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
     private EncryptionManager encryptionManager;
     
     @Resource
     private OrcidUrlManager orcidUrlManager;
     
     @Resource
-    private ProfileDao profileDao;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -106,6 +107,9 @@ public class NotificationController extends BaseController {
             } else if (notification instanceof NotificationAmended) {
                 NotificationAmended na = (NotificationAmended) notification;
                 na.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, na.getNotificationType().value())));
+            } else if (notification instanceof NotificationInstitutionalConnection) {
+                NotificationInstitutionalConnection nic = (NotificationInstitutionalConnection) notification;
+                nic.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, nic.getNotificationType().value())));                                
             }
         }
         return notifications;
@@ -148,6 +152,22 @@ public class NotificationController extends BaseController {
         return mav;
     }
 
+    @RequestMapping(value = "/INSTITUTIONAL_CONNECTION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public ModelAndView getInstitutionalConnectionNotificationHtml(@PathVariable("id") String id) {
+        ModelAndView mav = new ModelAndView();        
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        String clientId = notification.getSource().retrieveSourcePath();
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        String rUri = notificationManager.getRedirectUriForInstitutionalSignIn(clientDetails);
+        addSourceDescription(notification);
+        mav.addObject("notification", notification);
+        mav.addObject("baseUri", getBaseUri());
+        mav.addObject("clientId", clientId);
+        mav.addObject("rUri", rUri);
+        mav.setViewName("notification/institutional_connection_notification");
+        return mav;
+    }
+    
     @RequestMapping(value = "{id}/read.json")
     public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
@@ -231,7 +251,7 @@ public class NotificationController extends BaseController {
         if (source != null) {
             String sourcePath = source.retrieveSourcePath();
             if (sourcePath != null) {
-                ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sourcePath);
+                ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
                 if (clientDetails != null) {
                     notification.setSourceDescription(clientDetails.getClientDescription());
                 }

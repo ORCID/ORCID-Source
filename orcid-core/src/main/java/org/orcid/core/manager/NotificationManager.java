@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
@@ -92,5 +93,7 @@ public interface NotificationManager {
     public String createClaimVerificationUrl(String email, String baseUri);
     
     void sendAcknowledgeMessage(String userOrcid, String clientId);
+    
+    String getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails);
 
 }

@@ -66,10 +66,10 @@ import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
 import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -1002,9 +1002,8 @@ public class NotificationManagerImpl implements NotificationManager {
 
         boolean notificationsEnabled = profileEntity.getEnableNotifications();
         if (notificationsEnabled) {
-            NotificationPermission notification = new NotificationPermission();
-            notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);
-            notification.setSubject(subject);
+            NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
+            notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);            
             notification.setAuthorizationUrl(new AuthorizationUrl(rUri));
             NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);            
             notificationEntity.setProfile(new ProfileEntity(userOrcid));
@@ -1025,7 +1024,7 @@ public class NotificationManagerImpl implements NotificationManager {
         }
     }
     
-    private String getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails) {
+    public String getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails) {
         if(clientDetails == null) {
             throw new IllegalArgumentException("Unable to find valid redirect uris for null client details");
         }
