@@ -45,6 +45,7 @@ import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstit
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -182,6 +184,12 @@ public class NotificationController extends BaseController {
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
+    @RequestMapping(value = "{id}/no_redirect/action", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void executeActionNoRedirect(@PathVariable("id") String id) {
+        notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));        
+    }
+    
     @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
     public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
         notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));

@@ -27,7 +27,7 @@
     <meta name="author" content="ORCID">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>    
     <link rel="stylesheet" href="${staticCdn}/twitter-bootstrap/3.1.0/css/bootstrap.min.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticLoc}/css/fonts.css?v=${ver}"/>
     <link rel="stylesheet" href="${staticCdn}/css/orcid.new.css?v=${ver}"/>
@@ -58,7 +58,7 @@
 		  return $window.parent.angular.element($window.frameElement).scope();
 		});
 	
-		appInIframe.controller('iframeController', function($scope, $parentScope) {
+		appInIframe.controller('iframeController', function($scope, $parentScope, $http) {
 	      
 		  var str = "${notification.putCode!}";
 		  $scope.putCode = parseInt(str.replace(",", ""));
@@ -67,7 +67,19 @@
 		  $scope.archive = function(id) {			
 			$parentScope.archive(id);
 			$parentScope.$apply();
-		  };			  		  
+		  };	
+		  
+		  $scope.actioned = function(id) {
+			  //Set the actioned date
+			  $http({
+				  method: 'GET',
+				  url: '${baseUri}/inbox/' + id + '/no_redirect/action'})
+			  	.then(function successCallback(response) {
+			  		window.open('${authorizationUrl}','_blank');
+				}, function errorCallback(response) {
+					console.log("Unable to set actioned date on notification");
+				});	
+		  }
 		});
 	</script>
 	<!--  Do not remove -->
@@ -77,9 +89,9 @@
     <div>        	        	
     	<p>You have successfully logged into ORCID through ${notification.source.sourceName.content}.<br/>
     	To successfully complete the process, ${notification.source.sourceName.content} would like to access some of your record information, please click 
-    	<a href="${authorizationUrl}" target="_blank">here</a> to complete the process.</p>                
+    	<a ng-click="actioned('${notification.putCode?c}')">here</a> to complete the process.</p>                
         <div class="pull-right margin-top">
-    		<a ng-click="archive(putCode)" target="_parent" ng-hide="archivedDate" class="">Archive</a>
+    		<a ng-click="archive('${notification.putCode?c}')" target="_parent" ng-hide="archivedDate" class="">Archive</a>
     	</div>
      </div>
      <#if notification.sourceDescription??>
