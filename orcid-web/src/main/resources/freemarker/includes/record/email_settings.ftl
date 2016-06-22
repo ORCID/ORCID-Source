@@ -20,7 +20,7 @@
 <script type="text/ng-template" id="edit-emails">
 	<!-- Email edit -->
 	<td colspan="2" ng-show="showEditEmail || emailSrvc.popUp" ng-class="{'email-pop-up' : emailSrvc.popUp}" ng-cloak>
-	    <div class="editTablePadCell35" ng-controller="EmailEditCtrl">
+	    <div class="editTablePadCell35" ng-controller="EmailEditCtrl" style="position: static">
 	        <!-- we should never see errors here, but just to be safe -->
 	        <div class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
 	        	<span ng-repeat='error in emailSrvc.emails.errors' ng-bind-html="error"></span>
@@ -30,8 +30,8 @@
 	            <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
 	        </div>			
 	        <!-- Email table -->
-	        <div class="table-responsive bottomBuffer">
-	            <table class="table">
+	        <div class="table-responsive bottomBuffer" style="position: static">
+	            <table class="table" style="position: static">
 	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" name="email">
 	                    <!-- Primary Email -->
 	                    <td ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-3 col-xs-12 email">
@@ -66,16 +66,16 @@
 	                            ng-show="email.primary == false && emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmailInline(email, $event)" ng-cloak></a>
 	                    </td>
-	                    <td width="100" style="padding-top: 0;">
-	                        <div class="emailVisibility" style="float: right;">
+	                    <td width="100" style="padding-top: 0; position: static">
+	                        <div class="emailVisibility" style="float: right; position: static">
 	                            <@orcid.privacyToggle3
-	                            angularModel="email.visibility"
-	                            questionClick="toggleClickPrivacyHelp(email.value)"
-	                            clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
-	                            publicClick="setPrivacy(email, 'PUBLIC', $event)" 
-	                            limitedClick="setPrivacy(email, 'LIMITED', $event)" 
-	                            privateClick="setPrivacy(email, 'PRIVATE', $event)" 
-	                            elementId="email.value" />    
+	                            	angularModel="email.visibility"
+	                            	questionClick="toggleClickPrivacyHelp(email.value)"
+	                            	clickedClassCheck="{'popover-help-container-show':privacyHelp[email.value]==true}" 
+	                            	publicClick="setPrivacy(email, 'PUBLIC', $event)" 
+	                            	limitedClick="setPrivacy(email, 'LIMITED', $event)" 
+	                            	privateClick="setPrivacy(email, 'PRIVATE', $event)" 
+	                            	elementId="email.value" />    
 	                        </div>
 	                    </td>
 	                </tr>

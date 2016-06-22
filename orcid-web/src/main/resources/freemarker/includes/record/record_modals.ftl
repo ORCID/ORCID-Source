@@ -30,8 +30,8 @@
 				</div>			
 			</div>
 			<div class="row">
-				<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="fixed-area">
+				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
+					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
@@ -41,7 +41,7 @@
 									</div>									    
 									<div class="source" ng-if="otherName.sourceName || otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
 								</div>							
-								<div class="col-md-6 col-sm-6 col-xs-12">
+								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
@@ -92,8 +92,8 @@
 				</div>			
 			</div>
 			<div class="row">
-				<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="fixed-area">
+				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
+					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
@@ -107,7 +107,7 @@
 									</div>									
 									<div class="source" ng-if="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
 								</div> 
-								<div class="col-md-6">
+								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">																				
 										<li ng-init="">												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
@@ -164,8 +164,8 @@
 				</div>			
 			</div>
 			<div class="row">
-				<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="fixed-area">
+				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">					
+					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">		
 								<div class="col-md-6">
@@ -176,7 +176,7 @@
 									<div class="source" ng-if="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
-								<div class="col-md-6">
+								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
@@ -194,7 +194,7 @@
 		             	  						publicClick="setPrivacyModal('PUBLIC', $event, keyword)" 
                 	      						limitedClick="setPrivacyModal('LIMITED', $event, keyword)" 
                 	      						privateClick="setPrivacyModal('PRIVATE', $event, keyword)"
-                	      						elementId="$index"/>	
+                	      						elementId="$index"/>
 										</li>
 									</ul>
 									<span class="created-date pull-right" ng-show="keyword.createdDate" ng-class="{'hidden-xs' : keyword.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{keyword.createdDate.year + '-' + keyword.createdDate.month + '-' + keyword.createdDate.day}}</span>
@@ -228,8 +228,8 @@
 				</div>			
 			</div>
 			<div class="row">
-				<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="fixed-area">
+				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
+					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
 							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites">
 								<div class="col-md-6">
@@ -241,7 +241,7 @@
 									<div class="source" ng-if="website.sourceName || website.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
-								<div class="col-md-6">
+								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)"></span>
@@ -298,8 +298,8 @@
 				</div>			
 			</div>
 			<div class="row">
-				<div class="col-md-12 col-xs-12 col-sm-12">
-					<div class="fixed-area">
+				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
+					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
 							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
 								<div class="col-md-6">
@@ -312,7 +312,7 @@
 									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}</span><span ng-if="externalIdentifier.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
 								</div>
 								
-								<div class="col-md-6">
+								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>												
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
