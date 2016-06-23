@@ -64,9 +64,9 @@ public class ActivitiesGroupGenerator {
                 if(belongsTo.size() > 1) {
                     for(int i = 1; i < belongsTo.size(); i++){
                         //Merge the group
-                        firstGroup.merge(groups.get(i));
+                        firstGroup.merge(belongsTo.get(i));
                         //Remove it from the list of groups
-                        groups.remove(i);
+                        groups.remove(belongsTo.get(i));
                     }                        
                 }
                 for (GroupAble g :thisGroup.getGroupKeys()){
@@ -74,6 +74,9 @@ public class ActivitiesGroupGenerator {
                 }
             }
         }
+        
+        //TODO: make sure this orders correctly
+        //TODO: look at v1.2 post/put work....
     }
     
     public List<ActivitiesGroup> getGroups() {
