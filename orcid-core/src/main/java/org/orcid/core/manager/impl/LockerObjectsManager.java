@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class LockerObjectsManager {
     private ConcurrentMap<String, Object> locks = new ConcurrentHashMap<>();
-    private static final Logger LOG = LoggerFactory.getLogger(OrcidProfileCacheManagerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LockerObjectsManager.class);
     
     public Object obtainLock(String string) {
         LOG.debug("About to obtain read lock: " + string);

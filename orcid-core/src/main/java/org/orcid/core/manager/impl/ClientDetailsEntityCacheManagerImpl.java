@@ -52,7 +52,7 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         if (needsFresh(dbDate, clientDetails)) {
             try {
                 synchronized (lockers.obtainLock(clientId)) {
-                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(clientId));
+                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
                     if (needsFresh(dbDate, clientDetails)) {
                         clientDetails = clientDetailsManager.findByClientId(clientId);
                         if(clientDetails == null)

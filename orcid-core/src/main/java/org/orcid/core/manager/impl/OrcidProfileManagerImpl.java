@@ -48,6 +48,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
+import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidGenerationManager;
@@ -60,6 +61,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.jaxb.model.message.ActivitiesContainer;
 import org.orcid.jaxb.model.message.Activity;
 import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -224,6 +226,9 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     private int claimReminderAfterDays = 8;
 
     private int verifyReminderAfterDays = 7;
+    
+    @Value("${org.orcid.core.activities.max:10000}")
+    private long maxNumOfActivities;
 
     public NotificationManager getNotificationManager() {
         return notificationManager;
@@ -710,12 +715,45 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             existingOrcidWorks = new OrcidWorks();
             existingActivities.setOrcidWorks(existingOrcidWorks);
         }
+        checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         orcidJaxbCopyManager.copyUpdatedWorksPreservingVisbility(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
         OrcidProfile profileToReturn = updateOrcidProfile(existingProfile);
         notificationManager.sendAmendEmail(profileToReturn, AmendedSection.WORK);
         return profileToReturn;
     }
 
+    private void checkUserCanHoldMoreElement(ActivitiesContainer existingActivities, ActivitiesContainer updatedActivities) {
+        long activitiesCount = 0;
+        
+        if(existingActivities != null) {
+            if(existingActivities.retrieveActivities() != null) {
+                activitiesCount = existingActivities.retrieveActivities().size();
+            }            
+        }
+        
+        if(activitiesCount > maxNumOfActivities) {
+            throw new ExceedMaxNumberOfElementsException();
+        }
+        
+        if(updatedActivities != null) {
+            if(updatedActivities.retrieveActivities() != null) {
+                Collection<? extends Activity> elements = updatedActivities.retrieveActivities();
+                Iterator<? extends Activity> elementsIt = elements.iterator();
+                if(elementsIt != null) {
+                    while(elementsIt.hasNext()) {
+                        Activity activity = elementsIt.next();
+                        if(activity != null && PojoUtil.isEmpty(activity.getPutCode())) {
+                            activitiesCount += 1;
+                            if(activitiesCount > maxNumOfActivities) {
+                                throw new ExceedMaxNumberOfElementsException();
+                            }
+                        }
+                    }
+                }                
+            }
+        }
+    }
+    
     /**
      * Add new external identifiers to an existing profile
      * 
@@ -972,6 +1010,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         updatedOrcidWorks = dedupeWorks(updatedOrcidWorks);
         List<OrcidWork> updatedOrcidWorksList = updatedOrcidWorks.getOrcidWork();
 
+        checkUserCanHoldMoreElement(existingProfile.retrieveOrcidWorks(), updatedOrcidProfile.retrieveOrcidWorks());
+        
         if (compareWorksUsingScopusWay) {
             checkForAlreadyExistingWorks(existingOrcidWorks, updatedOrcidWorksList);
             if (existingOrcidWorks != null)
@@ -982,7 +1022,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             checkForAlreadyExistingWorksLegacyMode(existingOrcidWorks, updatedOrcidWorksList);
         }
         
-        workDao.increaseDisplayIndexOnAllElements(orcid);
+        //workDao.increaseDisplayIndexOnAllElements(orcid);
         persistAddedWorks(orcid, updatedOrcidWorksList);
         profileDao.flush();
 
@@ -1608,7 +1648,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         addSourceToFundings(updatedFundingList, amenderOrcid);
         List<Funding> updatedList = updatedFundingList.getFundings();
         checkForAlreadyExistingFundings(existingFundingList, updatedList);
-        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);        
+        //profileFundingDao.increaseDisplayIndexOnAllElements(orcid);        
         persistAddedFundings(orcid, updatedList);
         profileDao.flush();
         boolean notificationsEnabled = existingProfile.getOrcidInternal().getPreferences().getNotificationsEnabled();
@@ -2079,8 +2119,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     }
 
     @Override
-    public Date updateLastModifiedDate(String orcid) {
-        return profileEntityManager.updateLastModifed(orcid);
+    public void updateLastModifiedDate(String orcid) {
+        profileEntityManager.updateLastModifed(orcid);
     }
 
     static public OrcidProfile toOrcidProfile(Element element) {

@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao.impl;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,8 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
 
 public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements WorkDao {
 
@@ -89,7 +92,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     /**
-     * @deprecated Use {@link org.orcid.core.manager.WorkCacheManager#retrieveMinimizedWorks(String, long) } instead
+     * @deprecated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrieveMinimizedWorks(String, long) } instead
      * 
      * Find works for a specific user
      * 
@@ -112,7 +115,7 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
 
     /**
-     * @deprepcated Use {@link org.orcid.core.manager.WorkCacheManager#retrievePublicMinimizedWorks(String, long)} instead
+     * @deprepcated Use {@link org.orcid.core.manager.WorkEntityCacheManager#retrievePublicMinimizedWorks(String, long)} instead
      * 
      * Find the public works for a specific user
      * 
@@ -140,6 +143,20 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
                 .createQuery("from MinimizedWorkEntity where id = :id", MinimizedWorkEntity.class);
         query.setParameter("id", id);
         return query.getSingleResult();
+    }
+    
+    @Override
+    public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids) {
+        //batch up list into sets of 50;
+        List<MinimizedWorkEntity> list = new ArrayList<MinimizedWorkEntity>();
+        for (List<Long> partition : Lists.partition(ids, 50)){
+            TypedQuery<MinimizedWorkEntity> query = entityManager
+                    .createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
+            query.setParameter("ids", partition);
+            list.addAll(query.getResultList());            
+        }
+        return list;
+        
     }
     
     @Override

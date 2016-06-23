@@ -40,6 +40,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.common_rc2.VisibilityType;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.SourceAware;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.WorkTitle;
 import org.orcid.jaxb.model.record_rc2.WorkType;
@@ -58,7 +59,7 @@ import org.orcid.jaxb.model.record_rc2.WorkType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "putCode", "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "publicationDate" })
 @XmlRootElement(name = "work-summary", namespace = "http://www.orcid.org/ns/work")
-public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable {
+public class WorkSummary implements VisibilityType, Activity, GroupableActivity, Serializable, SourceAware {
 
     private static final long serialVersionUID = 1L;
     @XmlElement(namespace = "http://www.orcid.org/ns/work")

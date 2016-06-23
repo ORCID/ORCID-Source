@@ -46,16 +46,15 @@ import com.google.common.collect.ImmutableMap;
 @Aspect
 @Component(value = "profileLastModifiedAspect")
 public class ProfileLastModifiedAspect implements PriorityOrdered {
-    
-    // shared REQUEST_PROFILE_LAST_MODIFIED also used in other places
-    public static String REQUEST_PROFILE_LAST_MODIFIED = "REQUEST_PROFILE_LAST_MODIFIED";
 
     private static final int PRECEDENCE = 50;
 
+    private static String REQUEST_PROFILE_LAST_MODIFIED = "REQUEST_PROFILE_LAST_MODIFIED";
+
     @Resource
     private ProfileDao profileDao;
-    
-    @Resource 
+
+    @Resource
     JmsMessageSender messaging;
 
     private boolean enabled = true;
@@ -90,11 +89,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
-        Date lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        if (sra != null)
-            sra.setAttribute(REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
-        messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName()+"."+joinPoint.getSignature().getName()), JmsDestination.UPDATED_ORCIDS);
+        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()),
+                JmsDestination.UPDATED_ORCIDS);
     }
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")
@@ -109,6 +106,30 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
     @Override
     public int getOrder() {
         return PRECEDENCE;
+    }
+
+    public void updateLastModifiedDateAndIndexingStatus(String orcid) {
+        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (sra != null)
+            sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);
+    }
+
+    public Date retrieveLastModifiedDate(String orcid) {
+        ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        Date lastMod = null;
+        if (sra != null)
+            lastMod = (Date) sra.getAttribute(sraKey(orcid), ServletRequestAttributes.SCOPE_REQUEST);
+        if (lastMod == null) {
+            lastMod = profileDao.retrieveLastModifiedDate(orcid);
+            if (sra != null)
+                sra.setAttribute(sraKey(orcid), lastMod, ServletRequestAttributes.SCOPE_REQUEST);
+        }
+        return lastMod;
+    }
+
+    private String sraKey(String orcid) {
+        return REQUEST_PROFILE_LAST_MODIFIED + '_' + orcid;
     }
 
 }

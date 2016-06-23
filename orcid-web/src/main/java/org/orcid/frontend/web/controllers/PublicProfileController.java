@@ -22,13 +22,10 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -64,6 +61,8 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
+import org.orcid.core.utils.OrcidMessageUtil;
+import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.Affiliation;
@@ -178,6 +177,12 @@ public class PublicProfileController extends BaseWorkspaceController {
 
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+
+    @Resource
+    private OrcidMessageUtil orcidMessageUtil;
+    
+    @Resource
+    private SourceUtils sourceUtils;
     
     public static int ORCID_HASH_LENGTH = 8;
 
@@ -337,9 +342,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 mav.addObject("publicGroupedAddresses", groupedAddresses);
             }
         }
-        
-        
-        
+                        
         //Fill keywords
         Keywords publicKeywords = keywordManager.getPublicKeywords(orcid, lastModifiedTime);
         Map<String, List<Keyword>> groupedKeywords = groupKeywords(publicKeywords);        
@@ -365,7 +368,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
-        minimizedWorksMap = minimizedWorksMap(orcid);
+        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModified.getTime());
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -568,6 +571,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] affIds = workIdsStr.split(",");
         for (String id : affIds) {
             Affiliation aff = affMap.get(Long.valueOf(id));
+            orcidMessageUtil.setSourceName(aff);
             // ONLY SHARE THE PUBLIC AFFILIATIONS!
             if (aff != null && aff.getVisibility().equals(Visibility.PUBLIC)) {
                 AffiliationForm form = AffiliationForm.valueOf(aff);
@@ -588,6 +592,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] fundingIds = fundingIdsStr.split(",");
         for (String id : fundingIds) {
             Funding funding = fundingMap.get(Long.valueOf(id));
+            orcidMessageUtil.setSourceName(funding);
             FundingForm form = FundingForm.valueOf(funding);
             // Set type name
             if (funding.getType() != null) {
@@ -616,8 +621,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-
-        HashMap<Long, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
+        
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid).getTime());
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -657,22 +662,18 @@ public class PublicProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
-        Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
             return null;
 
-        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
-        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid).getTime());
+        sourceUtils.setSourceName(workObj);
         
-        Work workObj = workManager.getWork(orcid, workId, lastModifiedTime);
-
         if (workObj != null) {
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                Text countryName = Text.valueOf(retrieveIsoCountries().get(work.getCountryCode().getValue()));
                 work.setCountryName(countryName);
             }
             // Set language name
@@ -723,6 +724,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         String[] peerReviewIds = peerReviewIdsStr.split(",");
         for (String id : peerReviewIds) {
             PeerReview peerReview = peerReviewMap.get(Long.valueOf(id));
+            sourceUtils.setSourceName(peerReview);
             PeerReviewForm form = PeerReviewForm.valueOf(peerReview);
             // Set language name
             form.setCountryForDisplay(getMessage(buildInternationalizationKey(CountryIsoEntity.class, peerReview.getOrganization().getAddress().getCountry().name())));
@@ -882,13 +884,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profile == null)
             return null;
         return activityCacheManager.affiliationMap(profile);
-    }
-
-    public LinkedHashMap<Long, WorkForm> minimizedWorksMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        if (profile == null)
-            return null;
-        return activityCacheManager.pubMinWorksMap(profile);
     }
 
     public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid) {

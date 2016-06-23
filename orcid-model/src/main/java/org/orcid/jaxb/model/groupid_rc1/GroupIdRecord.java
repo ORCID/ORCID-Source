@@ -16,8 +16,6 @@
  */
 package org.orcid.jaxb.model.groupid_rc1;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -30,8 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common_rc1.CreatedDate;
 import org.orcid.jaxb.model.common_rc1.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc1.Source;
+import org.orcid.jaxb.model.record_rc1.SourceAware;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -79,7 +80,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "name", "groupId", "description", "type", "source", "lastModifiedDate", "createdDate", "putCode" })
 @XmlRootElement(name = "group-id-record", namespace = "http://www.orcid.org/ns/group-id")
-public class GroupIdRecord implements Serializable {
+public class GroupIdRecord implements Serializable, SourceAware {
     private static final long serialVersionUID = -1852949022694968571L;
     @XmlElement(namespace = "http://www.orcid.org/ns/group-id", required = true)
     protected String name;

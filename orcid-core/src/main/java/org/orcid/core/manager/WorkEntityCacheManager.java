@@ -16,7 +16,9 @@
  */
 package org.orcid.core.manager;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
@@ -26,7 +28,7 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
  * @author Will Simpson
  *
  */
-public interface WorkCacheManager {
+public interface WorkEntityCacheManager {
 
     List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified);
     
@@ -34,8 +36,11 @@ public interface WorkCacheManager {
 
     MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified);
 
+    List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long, Date> workIdsWithLastModified);
+
     List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
 
     List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
+
 
 }

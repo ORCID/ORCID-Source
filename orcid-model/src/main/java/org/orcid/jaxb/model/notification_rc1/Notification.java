@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.common_rc1.Source;
-import org.orcid.jaxb.model.notification_rc1.NotificationType;
+import org.orcid.jaxb.model.record_rc1.SourceAware;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -68,7 +68,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlTransient
-abstract public class Notification implements Serializable {
+abstract public class Notification implements Serializable, SourceAware {
 
     private final static long serialVersionUID = 1L;
     @XmlAttribute(name = "put-code")

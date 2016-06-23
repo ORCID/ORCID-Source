@@ -30,7 +30,6 @@ import javax.persistence.NoResultException;
 import javax.ws.rs.core.Response;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.exception.OrcidBadRequestException;
@@ -44,6 +43,7 @@ import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.security.aop.NonLocked;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.core.security.visibility.aop.VisibilityControl;
+import org.orcid.core.utils.OrcidMessageUtil;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResult;
@@ -79,7 +79,10 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
-    LocaleManager localeManager;
+    LocaleManager localeManager;  
+    
+    @Resource
+    private OrcidMessageUtil orcidMessageUtil;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidApiServiceDelegatorImpl.class);
 
@@ -409,6 +412,8 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
         profile.setOrcidInternal(null);
         OrcidMessage orcidMessage = new OrcidMessage(profile);
 
+        orcidMessageUtil.setSourceName(orcidMessage);
+        
         return Response.ok(orcidMessage).build();
     }
 
@@ -439,21 +444,22 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             }
             throw new OrcidDeprecatedException(params);
         } else {
+            orcidMessageUtil.setSourceName(orcidMessage);
             response = Response.ok(orcidMessage).build();
         }
         return response;
     }
 
     private Response getOrcidSearchResultsResponse(OrcidSearchResults orcidSearchResults, String query) {
-
         if (orcidSearchResults != null) {
             OrcidMessage orcidMessage = new OrcidMessage();
             orcidMessage.setMessageVersion("1.2");
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
+            orcidMessageUtil.setSourceName(orcidMessage);
             return Response.ok(orcidMessage).build();
         } else {
             Object params[] = { query };
             throw new NoResultException(localeManager.resolveMessage("apiError.no_search_result.exception", params));
         }
-    }
+    }        
 }

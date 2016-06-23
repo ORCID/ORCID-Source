@@ -120,6 +120,9 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     @Resource
     private ProfileDao profileDao;
 
+    @Resource    
+    private ProfileLastModifiedAspect profileLastModifiedAspect;
+    
     @Resource
     private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
@@ -423,7 +426,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         if (!orcidExists(orcid)) {
             throw new NoResultException();
         }
-        Date lastModified = updateLastModifed(orcid);
+        Date lastModified = getLastModified(orcid);
         long lastModifiedTime = lastModified.getTime();
         ActivitiesSummary activities = new ActivitiesSummary();
 
@@ -604,26 +607,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
 
     public Date getLastModified(String orcid) {
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        Date lastMod = null;
-        if (sra != null)
-            lastMod = (Date)sra.getAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, ServletRequestAttributes.SCOPE_REQUEST);
-        if (lastMod == null) {
-            return lastMod = updateLastModifed(orcid);
-        }
-        return lastMod;
+        return profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
     }
 
     @Override
-    public Date updateLastModifed(String orcid) {
-        Date lastMod = null;
-        if (lastMod == null) {
-            lastMod = profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        }
-        ServletRequestAttributes sra = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
-        if (sra != null)
-            sra.setAttribute(ProfileLastModifiedAspect.REQUEST_PROFILE_LAST_MODIFIED, lastMod,ServletRequestAttributes.SCOPE_REQUEST);
-        return lastMod;
+    public void updateLastModifed(String orcid) {
+        profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);
     }
 
     @Override

@@ -371,40 +371,29 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
 
     @Override
     @Transactional
-    @ExcludeFromProfileLastModifiedUpdate
-    public Date updateLastModifiedDate(String orcid) {
-        updateLastModifiedDateWithoutResult(orcid);
-        return retrieveLastModifiedDate(orcid);
-    }
-
-    @Override
-    @Transactional
-    public Date updateLastModifiedDateWithoutResult(String orcid) {
+    public void updateLastModifiedDateWithoutResult(String orcid) {
         Query query = entityManager.createNativeQuery("update profile set last_modified = now() where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         query.executeUpdate();
-        return retrieveLastModifiedDate(orcid);
     }
 
     @Override
     @Transactional
-    public Date updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus) {
+    public void updateLastModifiedDateAndIndexingStatusWithoutResult(String orcid, Date lastModified, IndexingStatus indexingStatus) {
         Query query = entityManager.createNativeQuery("update profile set last_modified = :lastModified, indexing_status = :indexingStatus where orcid = :orcid ");
         query.setParameter("orcid", orcid);
         query.setParameter("lastModified", lastModified);
         query.setParameter("indexingStatus", indexingStatus.name());
         query.executeUpdate();
-        return retrieveLastModifiedDate(orcid);
     }
 
     @Override
     @Transactional
     @ExcludeFromProfileLastModifiedUpdate
-    public Date updateLastModifiedDateAndIndexingStatus(String orcid) {
+    public void updateLastModifiedDateAndIndexingStatus(String orcid) {
         Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = 'PENDING' where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
         updateQuery.executeUpdate();
-        return retrieveLastModifiedDate(orcid);
     }
 
     private void updateWebhookProfileLastUpdate(String orcid) {

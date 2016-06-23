@@ -298,7 +298,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
         profileFundingEntity.setDisplayIndex(0L);
-        profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
+        //profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if(isApiRequest) {

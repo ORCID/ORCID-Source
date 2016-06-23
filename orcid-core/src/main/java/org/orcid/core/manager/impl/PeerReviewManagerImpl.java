@@ -109,8 +109,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         return jpaJaxbPeerReviewAdapter.toPeerReview(peerReviews);
     }
 
-    @Override
-    @Transactional
+    @Override    
     public PeerReview createPeerReview(String orcid, PeerReview peerReview, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
 
@@ -158,7 +157,7 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
         entity.setProfile(profile);        
         setIncomingPrivacy(entity, profile);
         entity.setDisplayIndex(0L);
-        peerReviewDao.increaseDisplayIndexOnAllElements(orcid);
+        //peerReviewDao.increaseDisplayIndexOnAllElements(orcid);
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(entity));

@@ -17,6 +17,7 @@
 package org.orcid.persistence.dao;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -153,4 +154,6 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     void detach(MinimizedWorkEntity minimizedWorkEntity);
     
     boolean increaseDisplayIndexOnAllElements(String orcid);
+
+    List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids);
 }

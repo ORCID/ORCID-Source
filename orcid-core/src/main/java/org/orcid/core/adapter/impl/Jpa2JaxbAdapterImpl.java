@@ -37,7 +37,6 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
@@ -212,10 +211,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
-    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
-
-    @Resource
-    private SourceNameCacheManager sourceNameCacheManager;
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;    
     
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
@@ -581,36 +577,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             }
         }
         return fundingContributors;
-    }
-
-    /**
-     * Get the source of a sowrceAware object
-     * 
-     * @param sourceAwareEntity
-     *            The entity to obtain the source
-     * @return the source of the object
-     * */
-    private Source getSource(SourceAwareEntity<?> sourceAwareEntity) {
-        if (sourceAwareEntity == null || PojoUtil.isEmpty(sourceAwareEntity.getElementSourceId())) {
-            return null;
-        }
-        Source source = new Source();        
-        if (!OrcidStringUtils.isValidOrcid(sourceAwareEntity.getElementSourceId())) {
-            source.setSourceClientId(new SourceClientId(getOrcidIdBase(sourceAwareEntity.getElementSourceId())));
-         } else {
-            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceAwareEntity.getElementSourceId())));
-         }
-                
-        String sourceName = sourceNameCacheManager.retrieve(sourceAwareEntity.getElementSourceId());
-        if (StringUtils.isNotBlank(sourceName)) {
-            source.setSourceName(new SourceName(sourceName));
-        }
-        
-        Date createdDate = sourceAwareEntity.getDateCreated();
-        source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
-        
-        return source;
-    }
+    }    
 
     public DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity) {
         DisambiguatedOrganization disambiguatedOrganization = new DisambiguatedOrganization();
@@ -648,7 +615,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 
                 Keyword keyword = new Keyword(keywordEntity.getKeywordName(), vis);
                 if(!PojoUtil.isEmpty(keywordEntity.getElementSourceId())) {
-                    Source source = createSource(keywordEntity);
+                    Source source = getSource(keywordEntity);
                     keyword.setSource(source);
                 }
                 keywords.getKeyword().add(keyword);
@@ -692,7 +659,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                     url.setUrlName(new UrlName(researcherUrl.getUrlName()));
                 
                 if(!PojoUtil.isEmpty(researcherUrl.getElementSourceId())) {
-                    Source source = createSource(researcherUrl);
+                    Source source = getSource(researcherUrl);
                     url.setSource(source);
                 }
                 researcherUrls.setVisibility(mostRestrictive);
@@ -792,7 +759,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 }                                                
             }
             
-            Source source = createSource(primary);
+            Source source = getSource(primary);
             
             Address address = new Address();
             Country country = new Country(Iso3166Country.fromValue(primary.getIso2Country().value()));
@@ -1073,7 +1040,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 
                 OtherName otherName = new OtherName(otherNameEntity.getDisplayName(), vis);
                 if(!PojoUtil.isEmpty(otherNameEntity.getElementSourceId())) {
-                    Source source = createSource(otherNameEntity);
+                    Source source = getSource(otherNameEntity);
                     otherName.setSource(source);
                 }
                 otherNames.getOtherName().add(otherName);
@@ -1176,19 +1143,31 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
     private XMLGregorianCalendar toXMLGregorianCalendar(Date date) {
         return DateUtils.convertToXMLGregorianCalendar(date);
-    }
+    }        
     
-    private Source createSource(SourceAwareEntity<?> entity) {
-        Source source = new Source();
-        if(entity != null) {
-            if (!PojoUtil.isEmpty(entity.getSourceId())) {
-                source.setSourceOrcid(new SourceOrcid(entity.getSourceId()));                
-            } 
-            
-            if(!PojoUtil.isEmpty(entity.getClientSourceId())){
-                source.setSourceClientId(new SourceClientId(entity.getClientSourceId()));                
-            }
+    /**
+     * Get the source of a sowrceAware object
+     * 
+     * @param sourceAwareEntity
+     *            The entity to obtain the source
+     * @return the source of the object
+     * */
+    private Source getSource(SourceAwareEntity<?> sourceAwareEntity) {
+        if (sourceAwareEntity == null || PojoUtil.isEmpty(sourceAwareEntity.getElementSourceId())) {
+            return null;
         }
+        Source source = new Source();        
+        if (!PojoUtil.isEmpty(sourceAwareEntity.getSourceId())) {
+            source.setSourceOrcid(new SourceOrcid(sourceAwareEntity.getSourceId()));                
+        } 
+        
+        if(!PojoUtil.isEmpty(sourceAwareEntity.getClientSourceId())){
+            source.setSourceClientId(new SourceClientId(sourceAwareEntity.getClientSourceId()));                
+        }
+                
+        Date createdDate = sourceAwareEntity.getDateCreated();
+        source.setSourceDate(new SourceDate(DateUtils.convertToXMLGregorianCalendar(createdDate)));
+        
         return source;
     }
 
