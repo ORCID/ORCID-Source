@@ -40,5 +40,12 @@
 			<column name="authentication_provider_id" type="VARCHAR(1000)"/>
 		</addColumn>
 	</changeSet>
+	
+	<changeSet id="SET-ALL-EXISTING-USERCONNECTION-TO-STARTED" author="Angel Montenegro">
+		<preConditions onFail="MARK_RAN">			
+			<columnExists tableName="userconnection" columnName="status"/>			
+		</preConditions>
+		<sql>UPDATE userconnection SET status = 'STARTED' WHERE status is null;</sql>
+	</changeSet>
 
 </databaseChangeLog>                   
