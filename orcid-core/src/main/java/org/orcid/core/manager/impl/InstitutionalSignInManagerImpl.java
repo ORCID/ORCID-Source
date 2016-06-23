@@ -45,7 +45,7 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     protected OrcidUrlManager orcidUrlManager;
     
     @Resource
-    protected ClientDetailsEntityCacheManager clientdetailsEntityCacheManager;
+    protected ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @Resource
     protected OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
@@ -79,14 +79,14 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
     
     private void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
-            ClientDetailsEntity clientDetails = clientdetailsEntityCacheManager.retrieveByIdP(providerId);
+            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
             boolean clientKnowsUser = doesClientKnowUser(userOrcid, clientDetails.getClientId());
             //If the client doesn't know about the user yet, send a notification
             if(!clientKnowsUser) {
                 notificationManager.sendAcknowledgeMessage(userOrcid, clientDetails.getClientId());
             }
         } catch(IllegalArgumentException e) {
-            //The provided IdP hast not been linked to any client yet.
+            //The provided IdP hasn't not been linked to any client yet.
         }
     }
     
