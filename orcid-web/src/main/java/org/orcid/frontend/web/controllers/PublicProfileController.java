@@ -368,7 +368,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
-        minimizedWorksMap = minimizedWorksMap(orcid);
+        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModified.getTime());
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -621,8 +621,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-
-        HashMap<Long, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
+        
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid).getTime());
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -662,23 +662,18 @@ public class PublicProfileController extends BaseWorkspaceController {
      */
     @RequestMapping(value = "/{orcid:(?:\\d{4}-){3,}\\d{3}[\\dX]}/getWorkInfo.json", method = RequestMethod.GET)
     public @ResponseBody WorkForm getWorkInfo(@PathVariable("orcid") String orcid, @RequestParam(value = "workId") Long workId) {
-        Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
         if (workId == null)
             return null;
 
-        OrcidProfile userPubProfile = orcidProfileCacheManager.retrievePublic(orcid);
-        java.util.Date lastModified = userPubProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        
-        Work workObj = workManager.getWork(orcid, workId, lastModifiedTime);
+        Work workObj = workManager.getWork(orcid, workId, profileEntManager.getLastModified(orcid).getTime());
         sourceUtils.setSourceName(workObj);
         
         if (workObj != null) {
             WorkForm work = WorkForm.valueOf(workObj);
             // Set country name
             if (!PojoUtil.isEmpty(work.getCountryCode())) {
-                Text countryName = Text.valueOf(countries.get(work.getCountryCode().getValue()));
+                Text countryName = Text.valueOf(retrieveIsoCountries().get(work.getCountryCode().getValue()));
                 work.setCountryName(countryName);
             }
             // Set language name
@@ -889,13 +884,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profile == null)
             return null;
         return activityCacheManager.affiliationMap(profile);
-    }
-
-    public LinkedHashMap<Long, WorkForm> minimizedWorksMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        if (profile == null)
-            return null;
-        return activityCacheManager.pubMinWorksMap(profile);
     }
 
     public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid) {
