@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -87,24 +88,46 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     private SalesForceMember createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
-        String name = record.getString("Name");
+        String name = extractString(record, "Name");
         SalesForceMember member = new SalesForceMember();
         member.setName(name);
         try {
-            member.setWebsiteUrl(new URL(record.getString("Website")));
+            member.setWebsiteUrl(extractURL(record, "Website"));
         } catch (MalformedURLException e) {
             LOGGER.info("Malformed website URL for member: {}", name, e);
         }
-        member.setResearchCommunity(record.getString("Research_Community__c"));
-        member.setCountry(record.getString("BillingCountry"));
+        member.setResearchCommunity(extractString(record, "Research_Community__c"));
+        member.setCountry(extractString(record, "BillingCountry"));
         /// XXX parent org
-        member.setDescription(record.getString("Public_Display_Description__c"));
+        member.setDescription(extractString(record, "Public_Display_Description__c"));
         try {
-            member.setLogoUrl(new URL(record.getString("Logo_Description__c")));
+            member.setLogoUrl(extractURL(record, "Logo_Description__c"));
         } catch (MalformedURLException e) {
             LOGGER.info("Malformed logo URL for member: {}", name, e);
         }
         return member;
+    }
+
+    private String extractString(JSONObject record, String key) throws JSONException {
+        if (record.isNull(key)) {
+            return null;
+        }
+        return record.getString(key);
+    }
+
+    private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
+        String urlString = tidyUrl(extractString(record, key));
+        return urlString != null ? new URL(urlString) : null;
+    }
+
+    private String tidyUrl(String urlString) {
+        if (StringUtils.isBlank(urlString)) {
+            return null;
+        }
+        if (!urlString.matches("^.*?://.*")) {
+            urlString = "http://" + urlString;
+        }
+        return urlString;
     }
 
     private String getAccessToken() {
