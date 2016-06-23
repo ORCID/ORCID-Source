@@ -9,6 +9,7 @@ import java.net.URL;
  */
 public class SalesForceMember {
 
+    private String id;
     private String name;
     private URL websiteUrl;
     private String researchCommunity;
@@ -16,6 +17,14 @@ public class SalesForceMember {
     private String parentName;
     private String description;
     private URL logoUrl;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -75,8 +84,8 @@ public class SalesForceMember {
 
     @Override
     public String toString() {
-        return "SalesForceMember [name=" + name + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country + ", parentName="
-                + parentName + ", description=" + description + ", logoUrl=" + logoUrl + "]";
+        return "SalesForceMember [id=" + id + ", name=" + name + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country
+                + ", parentName=" + parentName + ", description=" + description + ", logoUrl=" + logoUrl + "]";
     }
 
 }

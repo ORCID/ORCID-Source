@@ -12,6 +12,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +61,28 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return members;
     }
 
+    @Override
+    public List<SalesForceIntegration> retrieveIntegrations(String memberId) {
+        validateMemberId(memberId);
+        String accessToken = getAccessToken();
+        return retrieveIntegrationsFromSalesForce(accessToken, memberId);
+    }
+
+    @Override
+    public void validateMemberId(String memberId) {
+        if (!memberId.matches("[a-zA-Z0-9]+")) {
+            // Could be malicious, so give no further info.
+            throw new IllegalArgumentException();
+        }
+    }
+
     private List<SalesForceMember> retrieveMembersFromsSalesForce(String accessToken) {
         List<SalesForceMember> members = new ArrayList<>();
         LOGGER.info("About get list of members from SalesForce");
         WebResource resource = createMemberListResource();
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         if (response.getStatus() != 200) {
+            LOGGER.debug("Error response body from members list call = " + response.getEntity(String.class));
             throw new RuntimeException(
                     "Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
         }
@@ -76,7 +93,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
                 members.add(createMemberFromSalesForceRecord(records.getJSONObject(i)));
             }
         } catch (JSONException e) {
-            throw new RuntimeException("Error getting records from SalesForce JSON", e);
+            throw new RuntimeException("Error getting member records from SalesForce JSON", e);
         }
         return members;
     }
@@ -91,6 +108,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         String name = extractString(record, "Name");
         SalesForceMember member = new SalesForceMember();
         member.setName(name);
+        member.setId(extractString(record, "Id"));
         try {
             member.setWebsiteUrl(extractURL(record, "Website"));
         } catch (MalformedURLException e) {
@@ -98,7 +116,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         }
         member.setResearchCommunity(extractString(record, "Research_Community__c"));
         member.setCountry(extractString(record, "BillingCountry"));
-        /// XXX parent org
+        // XXX parent org
         member.setDescription(extractString(record, "Public_Display_Description__c"));
         try {
             member.setLogoUrl(extractURL(record, "Logo_Description__c"));
@@ -106,6 +124,53 @@ public class SalesForceManagerImpl implements SalesForceManager {
             LOGGER.info("Malformed logo URL for member: {}", name, e);
         }
         return member;
+    }
+
+    private List<SalesForceIntegration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) {
+        List<SalesForceIntegration> integrations = new ArrayList<>();
+        WebResource resource = createIntegrationListResource(memberId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        if (response.getStatus() != 200) {
+            LOGGER.debug("Error response body from integrations list call = " + response.getEntity(String.class));
+            throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase());
+        }
+        JSONObject results = response.getEntity(JSONObject.class);
+        try {
+            JSONArray records = results.getJSONArray("records");
+            if (records.length() > 0) {
+                JSONObject firstRecord = records.getJSONObject(0);
+                JSONObject integrationsObject = firstRecord.getJSONObject("Integrations__r");
+                JSONArray integrationRecords = integrationsObject.getJSONArray("records");
+                for (int i = 0; i < integrationRecords.length(); i++) {
+                    integrations.add(createIntegrationFromSalesForceRecord(integrationRecords.getJSONObject(i)));
+                }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting integrations records from SalesForce JSON", e);
+        }
+        return integrations;
+    }
+
+    private WebResource createIntegrationListResource(String memberId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
+                        + memberId + "'");
+        return resource;
+    }
+
+    private SalesForceIntegration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
+        SalesForceIntegration integration = new SalesForceIntegration();
+        String name = extractString(integrationRecord, "Name");
+        integration.setName(name);
+        integration.setDescription(extractString(integrationRecord, "Description__c"));
+        integration.setStage(extractString(integrationRecord, "Integration_Stage__c"));
+        try {
+            integration.setResourceUrl(extractURL(integrationRecord, "Integration_URL__c"));
+        } catch (MalformedURLException e) {
+            LOGGER.info("Malformed resource URL for member: {}", name, e);
+        }
+        return integration;
     }
 
     private String extractString(JSONObject record, String key) throws JSONException {
