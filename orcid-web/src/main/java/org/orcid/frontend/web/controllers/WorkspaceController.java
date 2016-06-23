@@ -353,11 +353,6 @@ public class WorkspaceController extends BaseWorkspaceController {
         ModelAndView mav = new ModelAndView("workspace_v3");
         mav.addObject("showPrivacy", true);
 
-        OrcidProfile profile = orcidProfileManager.retrieveOrcidProfile(getCurrentUserOrcid(), LoadOptions.BIO_AND_INTERNAL_ONLY);
-        mav.addObject("profile", profile);
-        String countryName = getCountryName(profile);
-        if(!StringUtil.isBlank(countryName))
-            mav.addObject("countryName", countryName);
         mav.addObject("currentLocaleKey", localeManager.getLocale().toString());
         mav.addObject("sendEmailFrequencies", retrieveEmailFrequenciesAsMap());
         mav.addObject("currentLocaleValue", lm.buildLanguageValue(localeManager.getLocale(), localeManager.getLocale()));

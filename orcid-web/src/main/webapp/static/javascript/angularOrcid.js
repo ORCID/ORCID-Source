@@ -2328,7 +2328,6 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.verifyEmailObject;
     $scope.showElement = {};
     $scope.isPassConfReq = orcidVar.isPasswordConfirmationRequired;
-    $scope.notificationsEnabled = orcidVar.notificationsEnabled;
     $scope.baseUri = orcidVar.baseUri;
     $scope.showDeleteBox = false;
     $scope.showConfirmationBox = false;

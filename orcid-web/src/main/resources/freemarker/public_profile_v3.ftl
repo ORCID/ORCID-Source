@@ -35,7 +35,7 @@
 						<div class="orcid-id-info">
 					    	<span class="mini-orcid-icon"></span>
 					    	<!-- Reference: orcid.js:removeProtocolString() -->
-				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(orcidId)!}</span>
+				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
 						</div>						
 					</div>
 				</div>					        
@@ -337,7 +337,7 @@
 	        		<#if (isProfileEmpty)?? && isProfileEmpty>
 	        			<p class="margin-top-box"><b><@orcid.msg 'public_profile.empty_profile'/></b></p>
 	        		<#else>	            
-		                <#if (profile.orcidBio.biography.content)?? && (profile.orcidBio.biography.content)?has_content>		                	        			
+		                <#if (biography.content)?? && (biography.content)?has_content>		                	        			
 		        			<div class="workspace-accordion-content" ng-show="displayInfo">
 		        				<div class="row bottomBuffer">
 		        					<div class="col-md-12 col-sm-12 col-xs-12">
@@ -346,7 +346,7 @@
 		        				</div>	        
 		        				<div class="row bottomBuffer">					
 			        				<div class="col-md-12 col-sm-12 col-xs-12">
-										<div class="bio-content">${(profile.orcidBio.biography.content)!}</div>		        					
+										<div class="bio-content">${(biography.content)!}</div>		        					
 			        				</div>
 			        			</div>	        				
 		        			</div>
