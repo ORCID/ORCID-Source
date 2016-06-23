@@ -56,6 +56,8 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
      ${item.itemName} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
 </#list>
 </#if>
+<#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
+<@emailMacros.msg "email.digest.institutional_connection.1" /> ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}. <@emailMacros.msg "email.digest.institutional_connection.2" /> ${notification.authorizationUrl}
 <#else>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
 </#if>

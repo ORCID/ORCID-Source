@@ -998,7 +998,7 @@ public class NotificationManagerImpl implements NotificationManager {
         ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
         Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH : LocaleUtils.toLocale(profileEntity.getLocale().value());
-        String subject = getSubject("email.subject.amend", userLocale);
+        String subject = getSubject("email.subject.institutional_sign_in", userLocale);
         String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
         
         // Create map of template params

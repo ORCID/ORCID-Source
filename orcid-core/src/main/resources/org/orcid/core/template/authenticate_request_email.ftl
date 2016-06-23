@@ -19,9 +19,7 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-You have successfully logged into ORCID through ${clientName}. To successfully complete the process, ${clientName} would like to get your ORCID iD ${orcid}. 
-
-Please click ${authorization_url?url} to complete the process.
+<@emailMacros.msg "email.digest.institutional_connection.1" />&nbsp;${clientName}.<@emailMacros.msg "email.digest.institutional_connection.2" />&nbsp;<a href="${authorization_url}"><@emailMacros.msg "email.digest.institutional_connection.here" /></a>
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}

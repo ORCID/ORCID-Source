@@ -30,10 +30,7 @@
 		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				You have successfully logged into ORCID through ${clientName}. To successfully complete the process, ${clientName} would like to get your ORCID iD ${orcid}. 
-		    </p>		    
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">                
-                Please click <a href="${authorization_url?url}">here</a> to complete the process.
+		    	<@emailMacros.msg "email.digest.institutional_connection.1" />&nbsp;${clientName}.<@emailMacros.msg "email.digest.institutional_connection.2" />&nbsp;<a href="${authorization_url}"><@emailMacros.msg "email.digest.institutional_connection.here" /></a>
 		    </p>		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
