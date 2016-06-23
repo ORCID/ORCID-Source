@@ -69,6 +69,53 @@ PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
 PRIVACY.PRIVATE = 'PRIVATE';
 
+var GroupedActivitiesUtil = function() {
+};
+
+GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
+    var matches = new Array();
+    // there are no possible keys for affiliations    
+    if (type != GroupedActivities.AFFILIATION);
+       for (var idx in groupsArray) {          
+           if (groupsArray[idx].keyMatch(activity))
+               matches.push(groupsArray[idx]);
+       }           
+    if (matches.length == 0) {
+        var newGroup = new GroupedActivities(type);
+        newGroup.add(activity);
+        groupsArray.push(newGroup);
+    }  else {
+        var firstMatch = matches.shift();
+        firstMatch.add(activity);
+        // combine any remaining groups into the first group we found.
+        for (var idx in matches) {
+            var matchIndex = groupsArray.indexOf(matches[idx]);
+            var curMatch = groupsArray[matchIndex];
+            for (var idj in curMatch.activities)
+                firstMatch.add(curMatch.activities[idj]);
+            groupsArray.splice(matchIndex, 1);
+        }
+    }
+};
+
+GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
+    for (var idx in groupsArray) {
+        if (groupsArray[idx].hasPut(putCode)) {
+           groupsArray[idx].rmByPut(putCode);
+           if (groupsArray[idx].activitiesCount == 0)
+               groupsArray.splice(idx,1);
+           else {
+               var orphans = groupsArray[idx].unionCheck();
+               for (var idj in orphans)
+                   groupedActivitiesUtil.group(orphans[idj], type, groupsArray);
+           }
+       }
+    }
+}
+
+
+var groupedActivitiesUtil = new GroupedActivitiesUtil();
+
 var GroupedActivities = function(type) {
 
     if (GroupedActivities.count == undefined)
@@ -176,31 +223,6 @@ GroupedActivities.prototype.getIdentifiersPath = function() {
  * takes a activity and adds it to an existing group or creates
  * a new group
  */
-GroupedActivities.group = function(activity, type, groupsArray) {
-	var matches = new Array();
-    // there are no possible keys for affiliations    
-    if (type != GroupedActivities.AFFILIATION);
-       for (var idx in groupsArray) {     	   
-    	   if (groupsArray[idx].keyMatch(activity))
-               matches.push(groupsArray[idx]);
-       }           
-    if (matches.length == 0) {
-        var newGroup = new GroupedActivities(type);
-        newGroup.add(activity);
-        groupsArray.push(newGroup);
-    }  else {
-        var firstMatch = matches.shift();
-        firstMatch.add(activity);
-        // combine any remaining groups into the first group we found.
-        for (var idx in matches) {
-            var matchIndex = groupsArray.indexOf(matches[idx]);
-            var curMatch = groupsArray[matchIndex];
-            for (var idj in curMatch.activities)
-                firstMatch.add(curMatch.activities[idj]);
-            groupsArray.splice(matchIndex, 1);
-        }
-    }
-};
 
 GroupedActivities.prototype.hasKey = function(key) {
     if (key in this._keySet)
@@ -326,6 +348,27 @@ GroupedActivities.prototype.rmByPut = function(putCode) {
         this.activePutCode = this.defaultPutCode;
     return activity;
 };
+
+// makes sure the current set if a valid union of activities
+// and returns any activity removed from the group
+GroupedActivities.prototype.unionCheck = function() {
+    //alert('here unionCheck');
+    var rmActs = new Array();
+    var tempGroups = new Array();
+    for (var idx in this.activities)
+        groupedActivitiesUtil.group(this.activities[idx],this.type, tempGroups);
+    for (var idx in tempGroups)
+        if (idx == 0) {
+           this._keySet = tempGroups[idx]._keySet; 
+        } else { 
+           for (var jdx in tempGroups[idx].activities) {
+              rmActs.push(tempGroups[idx].activities[jdx]);
+              this.rmByPut(tempGroups[idx].activities[jdx].putCode.value);
+           }
+        }
+    return rmActs;
+};
+
 
 var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
 
@@ -519,10 +562,10 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
 
                                 if (data[i].affiliationType != null && data[i].affiliationType.value != null
                                         && data[i].affiliationType.value == 'education')
-                                    GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+                                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
                                 else if (data[i].affiliationType != null && data[i].affiliationType.value != null
                                         && data[i].affiliationType.value == 'employment')
-                                    GroupedActivities.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+                                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
                             };
                             if (serv.affiliationsToAddIds.length == 0) {
                                 serv.loading = false;
@@ -688,7 +731,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                         success: function(data) {
                                 for (i in data) {
                                     var funding = data[i];
-                                    GroupedActivities.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
+                                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
                                 };
                                 if (fundingSrvc.fundingToAddIds.length == 0) {
                                     fundingSrvc.loading = false;
@@ -738,9 +781,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                 var rmFunding;
                 for (var idx in fundingSrvc.groups) {
                     if (fundingSrvc.groups[idx].hasPut(putCode)) {
-                        rmFunding = fundingSrvc.groups[idx].rmByPut(putCode);
-                        if (fundingSrvc.groups[idx].activitiesCount == 0)
-                            fundingSrvc.groups.splice(idx,1);
+                        rmFunding = fundingSrvc.groups[idx].getByPut(putCode);
                         break;
                     };
                 };
@@ -821,19 +862,10 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     success: function(data) {
-                        if(data.errors.length != 0){
-                            console.log("Unable to delete funding.");
-                        } else {
-                            // new groups
-                            for (var idx in fundingSrvc.groups) {
-                                if (fundingSrvc.groups[idx].hasPut(funding.putCode.value)) {
-                                    rmWorks = fundingSrvc.groups[idx].rmByPut(funding.putCode.value);
-                                    if (fundingSrvc.groups[idx].activitiesCount == 0)
-                                        fundingSrvc.groups.splice(idx,1);
-                                    break;
-                                }
-                            }
-                        }
+                        if (data.errors.length != 0)
+                           console.log("Unable to delete funding.");
+                        else
+                           groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);
                         $rootScope.$apply();
                     }
                 }).fail(function() {
@@ -916,7 +948,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                                     removeBadContributors(dw);
                                     removeBadExternalIdentifiers(dw);
                                     worksSrvc.addBibtexJson(dw);
-                                    GroupedActivities.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
+                                    groupedActivitiesUtil.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
                                 };
                             });
                             if(worksSrvc.worksToAddIds.length == 0 ) {
@@ -1065,7 +1097,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 worksSrvc.removeWorks(rmWorks);
             },
             deleteWork: function(putCode) {
-                worksSrvc.removeWorks([putCode], function() {worksSrvc.loadAbbrWorks(worksSrvc.constants.access_type.USER);});
+                worksSrvc.removeWorks([putCode], function() {
+                    groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
+                    $rootScope.$apply();
+                });
             },
             makeDefault: function(group, putCode) {
                 group.makeDefault(putCode);
@@ -6711,7 +6746,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                                 for (i in data) {
                                     var dw = data[i];                                    
                                     removeBadExternalIdentifiers(dw);                                       
-                                    GroupedActivities.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
+                                    groupedActivitiesUtil.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
                                 };
                             });
                             if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
