@@ -63,7 +63,7 @@ public enum WorkExternalIdentifierType implements Serializable {
     @XmlEnumValue("pmid") PMID("pmid"),
     @XmlEnumValue("rfc") RFC("rfc"),
     @XmlEnumValue("ssrn") SSRN("ssrn"),
-    @XmlEnumValue("zbl") XBL("zbl"),
+    @XmlEnumValue("zbl") ZBL("zbl"),
     // New types in 1.2_rc6
     @XmlEnumValue("agr") AGR("agr"), // Agricola
     @XmlEnumValue("cba") CBA("cba"), // Chinese Biological Abstracts

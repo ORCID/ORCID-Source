@@ -2298,6 +2298,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.showDeleteBox = false;
     $scope.showConfirmationBox = false;
     $scope.showEmailVerifBox = false;
+    $scope.scrollTop = 0;
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2356,6 +2357,11 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     };
 
     $scope.closeModal = function() {
+    	
+    	angular.element('#cboxLoadedContent').css({	  		
+  			overflow: 'auto'
+	  	});
+    	
         $.colorbox.close();
     };
     
@@ -2419,7 +2425,15 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
         }
     };
     
-    $scope.showTooltip = function(el){
+    $scope.showTooltip = function(el, event){    	
+    	$scope.position = angular.element(event.target.parentNode).parent().position();
+	  	angular.element('.edit-record-emails .popover-help-container').css({	  		
+  			top: $scope.position.top + 33,
+  			left: $scope.position.left
+	  	});
+	  	angular.element('#cboxLoadedContent').css({	  		
+  			overflow: 'visible'
+	  	});
     	$scope.showElement[el] = true;
     };
     
@@ -2436,6 +2450,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
+    $scope.scrollTop = 0;
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2601,7 +2616,17 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         }
     };
     
-    $scope.showTooltip = function(elem){
+    $scope.showTooltip = function(elem, event){    	
+    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+    	$scope.$watch('scrollTop', function (value) {		
+    	  	angular.element('.edit-websites .popover-help-container').css({
+	  			top: $scope.top - $scope.scrollTop,
+	  			left: $scope.left - 5
+    	  	});    
+    	});
+    	
     	$scope.showElement[elem] = true;
     }
     
@@ -2690,6 +2715,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
+    $scope.modal = false;
+    $scope.scrollTop = 0;
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -2834,7 +2861,18 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         }
     };
     
-    $scope.showTooltip = function(elem){
+    $scope.showTooltip = function(elem, event){    	
+		$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+		$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+		if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+		$scope.$watch('scrollTop', function (value) {		
+			angular.element('.edit-keyword .popover-help-container').css({
+    			top: $scope.top - $scope.scrollTop,
+    			left: $scope.left - 5
+    		});    
+	    });
+    	
+    	
     	$scope.showElement[elem] = true;
     }
     
@@ -2843,6 +2881,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     }
     
     $scope.openEditModal = function(){
+    	$scope.modal = true;
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-keyword').html())($scope),
@@ -2851,6 +2890,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                 if ($scope.keywordsForm.keywords.length == 0){
                     $scope.addNewModal();
                     $scope.newInput = true;
+                    
                 }
             },
             width: formColorBoxResize(),
@@ -2972,6 +3012,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
     $scope.orcidId = orcidVar.orcidId; 
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
+    $scope.scrollTop = 0;
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -3096,7 +3137,18 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         });
     };
     
-    $scope.showTooltip = function(elem){
+    $scope.showTooltip = function(elem, event){
+    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+    	$scope.$watch('scrollTop', function (value) {		
+    	  	angular.element('.edit-aka .popover-help-container').css({
+	  			top: $scope.top - $scope.scrollTop,
+	  			left: $scope.left - 5
+    	  	});    
+    	});
+    	
+    	
     	$scope.showElement[elem] = true;
     };
 
@@ -3283,6 +3335,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.primaryElementIndex = null;
+    $scope.scrollTop = 0;
     
     $scope.openEdit = function() {
         $scope.showEdit = true;        
@@ -3419,7 +3472,17 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         }
     };
     
-    $scope.showTooltip = function(elem){
+    $scope.showTooltip = function(elem, event){    	
+    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+    	$scope.$watch('scrollTop', function (value) {		
+    	  	angular.element('.edit-country .popover-help-container').css({
+    	  			top: $scope.top - $scope.scrollTop,
+    	  			left: $scope.left - 5
+    	  	});    
+    	});
+    	
     	$scope.showElement[elem] = true;
     }
 
@@ -3519,12 +3582,12 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
 }]);
 
 
-orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', function ($scope, $compile){
-    
+orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', function ($scope, $compile){    
 	$scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;
     $scope.primary = true;
-    
+    $scope.showElement = [];
+    $scope.scrollTop = 0;
     
     $scope.getExternalIdentifiersForm = function(){
         $.ajax({
@@ -3708,6 +3771,24 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     	    }
        }
        $scope.externalIdentifiersForm.externalIdentifiers = externalIdentifiers;       
+   }
+   
+   $scope.showTooltip = function(elem, event){
+	   	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+	   	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+	   	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
+	   	$scope.$watch('scrollTop', function (value) {		
+	   	  	angular.element('.edit-external-identifiers .popover-help-container').css({
+	  			top: $scope.top - $scope.scrollTop,
+	  			left: $scope.left - 5
+	   	  	});    
+	   	});
+	   	
+	   	$scope.showElement[elem] = true;
+   }
+   
+   $scope.hideTooltip = function(elem){
+   		$scope.showElement[elem] = false;
    }
 
     
@@ -10708,19 +10789,31 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 		prefsSrvc.saved = false;
 	    $.colorbox.close();
 	}
-	    
-	$scope.showTooltip = function(elem){
-		$scope.showElement[elem] = true;
-	}
-	
-	$scope.hideTooltip = function(elem){
-		$scope.showElement[elem] = false;
-	}
 	
 	$scope.openEditModal = function(){
-	    var HTML = '<div class="lightbox-container"><div class="edit-record-emails"><div class="row bottomBuffer"><div class="col-md-12 col-sm-12 col-xs-12"><h1 class="lightbox-title pull-left"> Edit Emails </h1> </div></div><div class="row"> <div class="col-md-12 col-xs-12 col-sm-12"><table class="settings-table"><tr>' +
-	    $('#edit-emails').html() +
-	    '</tr></table></div></div><div class="row"><div class="col-md-12 col-sm-12 col-xs-12"><a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a></div></div></div></div>';  
+	    var HTML = '<div class="lightbox-container">\
+	    				<div class="edit-record edit-record-emails" style="position: relative">\
+	    					<div class="row bottomBuffer">\
+	    						<div class="col-md-12 col-sm-12 col-xs-12">\
+	    								<h1 class="lightbox-title pull-left"> Edit Emails </h1>\
+	    						</div>\
+	    					</div>\
+	    					<div class="row">\
+	    						<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">\
+	    							<table class="settings-table">\
+	    								<tr>' +
+	    									$('#edit-emails').html()
+	    							  +'</tr>\
+	    							</table>\
+	    						</div>\
+	    					</div>\
+	    					<div class="row">\
+	    						<div class="col-md-12 col-sm-12 col-xs-12">\
+	    							<a ng-click="close()" class="cancel-option pull-right">'+om.get("manage.email.close")+'</a>\
+	    						</div>\
+	    					</div>\
+	    				</div>\
+	    			</div>';  
 	    
 	    $scope.emailSrvc.popUp = true;
 	    
@@ -11273,4 +11366,18 @@ orcidNgModule.directive('focusMe', function($timeout) {
         });
       }
     };
-  });
+});
+
+orcidNgModule.directive('scroll', function () {
+    return {
+        restrict: 'A',
+        link: function ($scope, element, attrs) {
+        	$scope.scrollTop = 0;
+            var raw = element[0];
+            element.bind('scroll', function () {
+            	$scope.scrollTop = raw.scrollTop;
+                //$scope.$apply(attrs.scroll);
+            });
+        }
+    }
+});

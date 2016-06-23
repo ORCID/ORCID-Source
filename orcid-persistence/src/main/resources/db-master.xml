@@ -207,5 +207,6 @@
     <include file="/db/updates/tidy_org_ext_ids.xml" />
     <include file="/db/updates/fix_bios_without_visibility.xml" />
     <include file="/db/updates/fix_display_indexs_for_bio.xml" />
-	<include file="/db/updates/insitutional_sign_in_round_trip.xml" />
+    <include file="/db/updates/fix_zbl.xml" />
+    <include file="/db/updates/insitutional_sign_in_round_trip.xml" />
 </databaseChangeLog>
