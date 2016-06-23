@@ -217,6 +217,14 @@ public class NotificationManagerImpl implements NotificationManager {
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
     }
+    
+    public void setNotificationDao(NotificationDao notificationDao) {
+        this.notificationDao = notificationDao;
+    }
+    
+    public void setMailGunManager(MailGunManager mailGunManager) {
+        this.mailGunManager = mailGunManager;
+    }
 
     @Override
     public void sendWelcomeEmail(OrcidProfile orcidProfile, String email) {
@@ -447,15 +455,22 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
+        String result = null;
         if(profileEntity != null && profileEntity.getRecordNameEntity() != null) {
             RecordNameEntity recordName = profileEntity.getRecordNameEntity();
             if(!PojoUtil.isEmpty(recordName.getCreditName())) {
-                return recordName.getCreditName();
-            }
-            
-            return recordName.getGivenNames() + (PojoUtil.isEmpty(recordName.getFamilyName()) ? "" : " " + recordName.getFamilyName());
+                result = recordName.getCreditName();
+            } else {
+                if(!PojoUtil.isEmpty(recordName.getGivenNames()))
+                    result = recordName.getGivenNames();
+                if(!PojoUtil.isEmpty(recordName.getFamilyName()))
+                    result += " " + recordName.getFamilyName();
+            }                                               
         }
-        return LAST_RESORT_ORCID_USER_EMAIL_NAME;
+        if(PojoUtil.isEmpty(result)) {
+            result = LAST_RESORT_ORCID_USER_EMAIL_NAME; 
+        }
+        return result;
     }
 
     @Override

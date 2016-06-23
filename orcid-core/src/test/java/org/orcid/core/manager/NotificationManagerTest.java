@@ -19,9 +19,11 @@ package org.orcid.core.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -40,8 +42,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.impl.MailGunManager;
 import org.orcid.core.manager.impl.NotificationManagerImpl;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -96,6 +100,12 @@ public class NotificationManagerTest extends DBUnitTest {
     @Mock
     private SourceManager sourceManager;
 
+    @Mock
+    private NotificationDao mockNotificationDao;
+    
+    @Mock
+    private MailGunManager mockMailGunManager;
+    
     @Resource
     private ProfileDao profileDao;
 
@@ -107,6 +117,9 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Resource
     private NotificationDao notificationDao;
+    
+    @Resource
+    private MailGunManager mailGunManager;
     
     @Resource
     private ClientDetailsDao clientDetailsDao;
@@ -137,7 +150,6 @@ public class NotificationManagerTest extends DBUnitTest {
         notificationManagerImpl.setSourceManager(sourceManager);
     }
 
-    @SuppressWarnings( { "unchecked" })
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
         return TargetProxyHelper.getTargetObject(proxy, targetClass);
     }
@@ -319,9 +331,43 @@ public class NotificationManagerTest extends DBUnitTest {
         assertEquals("Credit Name", notificationManager.deriveEmailFriendlyName(testProfile));
     }
     
+    /**
+     * 0000-0000-0000-0003 Must have notifications enabled
+     * */
     @Test
-    public void sendAcknowledgeMessageTest() {
-        fail();
+    public void sendAcknowledgeMessageToAccountWithNotificationsEnabledTest() throws Exception {
+        String clientId = "APP-5555555555555555";
+        String orcid = "0000-0000-0000-0003";
+        //Mock the notification DAO
+        NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
+        notificationManagerImpl.setNotificationDao(mockNotificationDao);
+        notificationManagerImpl.setMailGunManager(mockMailGunManager);
+        notificationManagerImpl.sendAcknowledgeMessage(orcid, clientId);   
+        verify(mockNotificationDao, times(1)).persist(Matchers.any(NotificationEntity.class));
+        verify(mockMailGunManager, never()).sendEmail(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+        
+        //Rollback mocked
+        notificationManagerImpl.setNotificationDao(notificationDao);
+        notificationManagerImpl.setMailGunManager(mailGunManager);
     }
-
+    
+    /**
+     * 0000-0000-0000-0002 Must have notifications disabled
+     * */
+    @Test
+    public void sendAcknowledgeMessageToAccountWithNotificationsDisabledTest() throws Exception {
+        String clientId = "APP-5555555555555555";
+        String orcid = "0000-0000-0000-0002";
+        //Mock the notification DAO
+        NotificationManagerImpl notificationManagerImpl = getTargetObject(notificationManager, NotificationManagerImpl.class);
+        notificationManagerImpl.setNotificationDao(mockNotificationDao);
+        notificationManagerImpl.setMailGunManager(mockMailGunManager);
+        notificationManagerImpl.sendAcknowledgeMessage(orcid, clientId);   
+        verify(mockNotificationDao, never()).persist(Matchers.any(NotificationEntity.class));
+        verify(mockMailGunManager, times(1)).sendEmail(Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString(), Matchers.anyString());
+        
+        //Rollback mocked
+        notificationManagerImpl.setNotificationDao(notificationDao);
+        notificationManagerImpl.setMailGunManager(mailGunManager);
+    }
 }
