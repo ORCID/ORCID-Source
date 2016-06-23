@@ -30,7 +30,8 @@
 		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.digest.institutional_connection.1" />&nbsp;${clientName}.<@emailMacros.msg "email.digest.institutional_connection.2" />&nbsp;<a href="${authorization_url}"><@emailMacros.msg "email.digest.institutional_connection.here" /></a>
+		    	<@emailMacros.msg 'email.institutional_connection.1' /> ${clientName}.<br />
+		    	<@emailMacros.msg 'email.institutional_connection.2' /> ${clientName} <@emailMacros.msg 'email.institutional_connection.3' /> <a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a> <@emailMacros.msg 'email.institutional_connection.4' />
 		    </p>		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />

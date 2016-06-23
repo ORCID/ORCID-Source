@@ -19,7 +19,8 @@
 <#import "email_macros.ftl" as emailMacros />
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.digest.institutional_connection.1" />&nbsp;${clientName}.<@emailMacros.msg "email.digest.institutional_connection.2" />&nbsp;<a href="${authorization_url}"><@emailMacros.msg "email.digest.institutional_connection.here" /></a>
+<@emailMacros.msg 'email.institutional_connection.1' /> ${clientName}.<br />
+<@emailMacros.msg 'email.institutional_connection.2' /> ${clientName} <@emailMacros.msg 'email.institutional_connection.3' /> <a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a> <@emailMacros.msg 'email.institutional_connection.4' />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}

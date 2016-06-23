@@ -87,9 +87,8 @@
 </head>
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
-    	<p>You have successfully logged into ORCID through ${notification.source.sourceName.content}.<br/>
-    	To successfully complete the process, ${notification.source.sourceName.content} would like to access some of your record information, please click 
-    	<a ng-click="actioned('${notification.putCode?c}')">here</a> to complete the process.</p>                
+    	<p><@orcid.msg 'email.institutional_connection.1' /> ${notification.source.sourceName.content}.<br/>
+    	<@orcid.msg 'email.institutional_connection.2' /> ${notification.source.sourceName.content} <@orcid.msg 'email.institutional_connection.3' /> <a ng-click="actioned('${notification.putCode?c}')"><@orcid.msg 'email.institutional_connection.here' /></a> <@orcid.msg 'email.institutional_connection.4' /></p>                
         <div class="pull-right margin-top">
     		<a ng-click="archive('${notification.putCode?c}')" target="_parent" ng-hide="archivedDate" class="">Archive</a>
     	</div>
