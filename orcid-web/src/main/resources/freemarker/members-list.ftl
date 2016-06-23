@@ -29,6 +29,18 @@
                 <div ng-show="membersListSrvc.membersList">
                     <div ng-repeat="member in membersListSrvc.membersList">
                         <h2>{{member.name}}</h2>
+                        <div ng-click="toggleDisplayMoreDetails(member.id)">More details</div>
+                        <div ng-show="displayMoreDetails[member.id]">
+                            <div ng-hide="membersListSrvc.memberIntegrations[member.id]" class="text-center">
+                                <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                                <!--[if lt IE 8]>
+                                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+                                <![endif]-->
+                            </div>
+                            <div ng-show="membersListSrvc.memberIntegrations[member.id]" ng-repeat="integration in membersListSrvc.memberIntegrations[member.id]">
+                                <span>{{integration.name}}</span>
+                            </div>
+                        </div>
                         <hr></hr>
                     </div>
                 </div>

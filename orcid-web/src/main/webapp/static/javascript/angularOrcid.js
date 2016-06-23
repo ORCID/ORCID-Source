@@ -1628,6 +1628,7 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
 orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
+        memberIntegrations: {},
         getMembersList: function() {
             $.ajax({
                 url: getBaseUri() + '/members-list/members.json',
@@ -1643,6 +1644,24 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 serv.feed = [];
                 $rootScope.$apply();
             });
+        },
+        getIntegrations: function(memberId) {
+            if(serv.memberIntegrations[memberId] == null){
+                $.ajax({
+                    url: getBaseUri() + '/members-list/' + memberId + '/integrations.json',
+                    dataType: 'json',
+                    cache: true,
+                    success: function(data) {
+                        serv.memberIntegrations[memberId] = data;
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with members integrations");
+                    serv.feed = [];
+                    $rootScope.$apply();
+                });
+            }
         }
     };
 
@@ -10716,8 +10735,13 @@ orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', functio
 }]);
 
 orcidNgModule.controller('MembersListController',['$scope', 'membersListSrvc', function ($scope, membersListSrvc){
-    
     $scope.membersListSrvc = membersListSrvc;
+    $scope.displayMoreDetails = {};
+    
+    $scope.toggleDisplayMoreDetails = function(memberId){
+        membersListSrvc.getIntegrations(memberId);
+        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+    }
     
 }]);
 
