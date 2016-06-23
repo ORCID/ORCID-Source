@@ -291,6 +291,10 @@
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/inbox/encrypted/.*?/action?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/members-list(\?.*)?"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/members-list/.*"
+            access="IS_AUTHENTICATED_ANONYMOUSLY" />
 		<sec:intercept-url pattern="/orgs/.*" 
 			access="ROLE_USER"/>
 		<sec:intercept-url pattern="/developer-tools" 

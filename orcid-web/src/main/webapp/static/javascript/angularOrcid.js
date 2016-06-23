@@ -1625,6 +1625,32 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
     return serv; 
 }]);
 
+orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
+    var serv = {
+        membersList: null,
+        getMembersList: function() {
+            $.ajax({
+                url: getBaseUri() + '/members-list/members.json',
+                dataType: 'json',
+                cache: true,
+                success: function(data) {
+                    serv.membersList = data;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with members list");
+                serv.feed = [];
+                $rootScope.$apply();
+            });
+        }
+    };
+
+    // populate the members feed
+    serv.getMembersList();
+    return serv; 
+}]);
+
 
 orcidNgModule.filter('urlProtocol', function(){
     return function(url){
@@ -10686,6 +10712,12 @@ orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', functio
             $scope.loadedFeed = true;
         }
     });
+    
+}]);
+
+orcidNgModule.controller('MembersListController',['$scope', 'membersListSrvc', function ($scope, membersListSrvc){
+    
+    $scope.membersListSrvc = membersListSrvc;
     
 }]);
 
