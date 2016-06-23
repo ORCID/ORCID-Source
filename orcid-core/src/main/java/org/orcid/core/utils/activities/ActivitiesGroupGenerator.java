@@ -47,13 +47,6 @@ public class ActivitiesGroupGenerator {
                 if (lookup.containsKey(g))
                     belongsTo.add(lookup.get(g));
             }
-            /*
-            for(int i = 0; i < groups.size(); i++) {
-                ActivitiesGroup group = groups.get(i);
-                if(group.belongsToGroup(activity)) {
-                    belongsTo.add(i);
-                }
-            }*/
             
             //If it doesnt belong to any group, create a new group for it
             if(belongsTo.isEmpty()) {
