@@ -16,14 +16,12 @@
  */
 package org.orcid.core.manager;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -190,5 +188,75 @@ public class InstitutionalSignInManagerTest {
         
         verify(mock_userConnectionDao, never()).persist(Matchers.any());
         verify(mock_notificationManager, never()).sendAcknowledgeMessage(userOrcid, clientId);
+    }
+    
+    
+    
+    
+    @Test
+    public void testDontSendNotificationIfAtLeastOneTokenIsNotExpired() throws UnsupportedEncodingException {
+        ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
+        List<OrcidOauth2TokenDetail> existingTokens = new ArrayList<OrcidOauth2TokenDetail>();
+        
+        //Expired 1
+        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() - 1000));
+        
+        //Expired 2
+        OrcidOauth2TokenDetail token2 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() - 2000));
+        
+        //Expired 3
+        OrcidOauth2TokenDetail token3 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() - 2000));
+        
+        //Live 1
+        OrcidOauth2TokenDetail token4 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() + 5000));
+        
+        existingTokens.add(token1);
+        existingTokens.add(token2);
+        existingTokens.add(token3);
+        existingTokens.add(token4);
+        
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(null);
+        when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
+        when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
+        
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        
+        verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
+        verify(mock_notificationManager, never()).sendAcknowledgeMessage(userOrcid, clientId);
+    }
+    
+    @Test
+    public void testSendNotificationIfAllTokensAreExpired() throws UnsupportedEncodingException {
+        ClientDetailsEntity testClient = new ClientDetailsEntity(clientId);
+        List<OrcidOauth2TokenDetail> existingTokens = new ArrayList<OrcidOauth2TokenDetail>();
+        
+        //Expired 1
+        OrcidOauth2TokenDetail token1 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() - 1000));
+        
+        //Expired 2
+        OrcidOauth2TokenDetail token2 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() - 2000));
+        
+        //Expired 3
+        OrcidOauth2TokenDetail token3 = new OrcidOauth2TokenDetail();       
+        token1.setTokenExpiration(new Date(System.currentTimeMillis() - 2000));
+        
+        existingTokens.add(token1);
+        existingTokens.add(token2);
+        existingTokens.add(token3);
+        
+        when(mock_userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(Matchers.anyString(), Matchers.anyString(), Matchers.anyString())).thenReturn(null);
+        when(mock_clientDetailsEntityCacheManager.retrieveByIdP(Matchers.anyString())).thenReturn(testClient);
+        when(mock_orcidOauth2TokenDetailDao.findByClientIdAndUserName(Matchers.anyString(), Matchers.anyString())).thenReturn(existingTokens);
+        
+        institutionalSignInManager.createUserConnectionAndNotify("idType", "remoteUserId", "displayName", "providerId", userOrcid);
+        
+        verify(mock_userConnectionDao, times(1)).persist(Matchers.any());
+        verify(mock_notificationManager, times(1)).sendAcknowledgeMessage(userOrcid, clientId);
     }
 }
