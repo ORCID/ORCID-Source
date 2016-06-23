@@ -140,10 +140,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
             JSONArray records = results.getJSONArray("records");
             if (records.length() > 0) {
                 JSONObject firstRecord = records.getJSONObject(0);
-                JSONObject integrationsObject = firstRecord.getJSONObject("Integrations__r");
-                JSONArray integrationRecords = integrationsObject.getJSONArray("records");
-                for (int i = 0; i < integrationRecords.length(); i++) {
-                    integrations.add(createIntegrationFromSalesForceRecord(integrationRecords.getJSONObject(i)));
+                JSONObject integrationsObject = extractObject(firstRecord, "Integrations__r");
+                if (integrationsObject != null) {
+                    JSONArray integrationRecords = integrationsObject.getJSONArray("records");
+                    for (int i = 0; i < integrationRecords.length(); i++) {
+                        integrations.add(createIntegrationFromSalesForceRecord(integrationRecords.getJSONObject(i)));
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -171,6 +173,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
             LOGGER.info("Malformed resource URL for member: {}", name, e);
         }
         return integration;
+    }
+    
+    private JSONObject extractObject(JSONObject parent, String key) throws JSONException {
+        if (parent.isNull(key)) {
+            return null;
+        }
+        return parent.getJSONObject(key);
     }
 
     private String extractString(JSONObject record, String key) throws JSONException {
