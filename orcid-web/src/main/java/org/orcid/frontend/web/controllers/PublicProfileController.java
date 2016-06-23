@@ -368,7 +368,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         LinkedHashMap<Long, Funding> fundingMap = new LinkedHashMap<>();
         LinkedHashMap<Long, PeerReview> peerReviewMap = new LinkedHashMap<>();
         
-        minimizedWorksMap = minimizedWorksMap(orcid);
+        minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, lastModified.getTime());
         if (minimizedWorksMap.size() > 0) {
             isProfileEmtpy = false;
         } else {
@@ -621,8 +621,8 @@ public class PublicProfileController extends BaseWorkspaceController {
     public @ResponseBody List<WorkForm> getWorkJson(HttpServletRequest request, @PathVariable("orcid") String orcid, @RequestParam(value = "workIds") String workIdsStr) {
         Map<String, String> countries = retrieveIsoCountries();
         Map<String, String> languages = lm.buildLanguageMap(localeManager.getLocale(), false);
-
-        HashMap<Long, WorkForm> minimizedWorksMap = minimizedWorksMap(orcid);
+        
+        HashMap<Long, WorkForm> minimizedWorksMap = activityCacheManager.pubMinWorksMap(orcid, profileEntManager.getLastModified(orcid).getTime());
 
         List<WorkForm> works = new ArrayList<WorkForm>();
         String[] workIds = workIdsStr.split(",");
@@ -889,13 +889,6 @@ public class PublicProfileController extends BaseWorkspaceController {
         if (profile == null)
             return null;
         return activityCacheManager.affiliationMap(profile);
-    }
-
-    public LinkedHashMap<Long, WorkForm> minimizedWorksMap(String orcid) {
-        OrcidProfile profile = orcidProfileCacheManager.retrievePublic(orcid);
-        if (profile == null)
-            return null;
-        return activityCacheManager.pubMinWorksMap(profile);
     }
 
     public LinkedHashMap<Long, PeerReview> peerReviewMap(String orcid) {
