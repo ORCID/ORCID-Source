@@ -1,20 +1,61 @@
-*, body, .orcid-id{
+*, body, .orcid-id, h1{
 	font-family: 'Noto Sans', sans-serif;
-	font-style: normal;
-}
-
-h1,h2,h3,h4,h5,h6,
-.header .search form#form-search input[type="search"],
-.header .language-selector select#language-codes,
-.header .navigation > .menu,
-strong,.table th,.close,.nav-header,.label,.badge,.header .search form input[type="search"],.header .main>.menu>li>a,.btn-update,.btn-update:visited,.overview-count,.overview-count:visited,.overview-title,.workspace-header-public h3,.workspace-help a,.full-name,.tabs a,.tabs a:visited,
-.primaryEmail,
-#statistics .page-header,
-#statistics span.stat-name,
-#statistics span.stat-data{	
-	font-weight: 700;
 	font-style: normal;		
 }
 
 
+body{
+	font-size: 14px;
+	line-height: 22px;	
+}
 
+.fixed-area .aka{
+	font-size: 22px; 
+}
+
+h2{
+	font-size: 23px;
+}
+
+h3 {
+	font-size: 18px;
+}
+
+h4 {
+	font-size: 16px;
+}
+
+/* Used to be 16px */
+.affiliation-type,
+.journaltitle,
+.workspace-accordion-header a.toggle-text, .work-title a.toggle-text{
+	font-size: 14px;
+}
+
+/* Used to be 14px */
+.orcid-id,
+.id-banner .oid .orcid-id-container .orcid-id-options a{
+	font-size: 13px;
+}
+
+select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input{
+	font-size: 12px;
+}
+
+label,input,button,select,textarea,
+.info-detail,
+.source-line,
+ul.toggle-menu > li,
+.btn,
+.popover-help-container .popover,
+.header .logo p{
+	font-size: 12px;
+}
+
+ul.menu-options li a{
+	font-size: 11px;
+}
+
+.workspace-right h3, .workspace-body-list h3{
+	font-size: 18px;
+}
