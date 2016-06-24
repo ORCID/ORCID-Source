@@ -69,7 +69,7 @@
 				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 				                			<#list publicGroupedOtherNames[otherName] as otherNameSource>
-												<#if (otherNameSource.source)?? && (otherNameSource.source.sourceName)?? && (otherNameSource.source.sourceName.content)??>${otherNameSource.source.sourceName.content!}<#else>${(orcidId)!}</#if>  <#if (otherNameSource.createdDate)??>(${otherNameSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if otherNameSource_has_next>,</#if>
+												<#if (otherNameSource.source)?? && (otherNameSource.source.sourceName)?? && (otherNameSource.source.sourceName.content)??>${otherNameSource.source.sourceName.content!}<#else>${(effectiveUserOrcid)!}</#if>  <#if (otherNameSource.createdDate)??>(${otherNameSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if otherNameSource_has_next>,</#if>
 				                		    </#list>
 				                		</p>
 				                	</div>
@@ -110,7 +110,7 @@
 			                        	</a>			                	
 					                	<div ng-if="showSources['websites']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
-					                			<#if (url.source)?? && (url.source.sourceName)?? && (url.source.sourceName.content)??>${url.source.sourceName.content}<#else>${(orcidId)!}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+					                			<#if (url.source)?? && (url.source.sourceName)?? && (url.source.sourceName.content)??>${url.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (url.createdDate)??>(${(url.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                		</p>				                						                			                						                			
 					                	</div>	
 					                	<#if url_has_next><br/></#if>
@@ -152,7 +152,7 @@
 						                	<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>
 						                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 						                			<#list publicGroupedAddresses[address] as addressSource>
-														<#if (addressSource.source)?? && (addressSource.source.sourceName)?? && (addressSource.source.sourceName.content)??>${addressSource.source.sourceName.content!}<#else>${(orcidId)!}</#if>  <#if (addressSource.createdDate)??>(${addressSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if addressSource_has_next>,</#if>
+														<#if (addressSource.source)?? && (addressSource.source.sourceName)?? && (addressSource.source.sourceName.content)??>${addressSource.source.sourceName.content!}<#else>${(effectiveUserOrcid)!}</#if>  <#if (addressSource.createdDate)??>(${addressSource.createdDate.value?datetime("yyyy-MM-dd")?date!})</#if><#if addressSource_has_next>,</#if>
 						                		    </#list>
 						                		</p>
 						                	</div>
@@ -190,7 +190,7 @@
 										<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>
 											<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 												<#list publicGroupedKeywords[keyword] as keywordSource>																									
-													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)?? && (keywordSource.source.sourceName.content)??>${keywordSource.source.sourceName.content}<#else>${(orcidId)!}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if keywordSource_has_next>,</#if>
+													<#if (keywordSource.source)?? && (keywordSource.source.sourceName)?? && (keywordSource.source.sourceName.content)??>${keywordSource.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (keywordSource.createdDate)??>(${(keywordSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if keywordSource_has_next>,</#if>
 												</#list>
 											</p>
 										</div>
@@ -234,7 +234,7 @@
 					                			<#if (i == 1)>					                					                		
 						                			<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 						                		</#if>			                																											
-												<#if (researcherUrl.source)?? && (researcherUrl.source.sourceName)?? && (researcherUrl.source.sourceName.content)??>${researcherUrl.source.sourceName.content}<#else>${(orcidId)!}</#if> <#if (researcherUrl.createdDate)??>(${(researcherUrl.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if researcherUrl_has_next>,</#if>
+												<#if (researcherUrl.source)?? && (researcherUrl.source.sourceName)?? && (researcherUrl.source.sourceName.content)??>${researcherUrl.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (researcherUrl.createdDate)??>(${(researcherUrl.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if><#if researcherUrl_has_next>,</#if>
 												<#assign i = i + 1>	
 					                	</#list>
 					                	</p>
@@ -272,7 +272,7 @@
 			        					<div ng-if="showSources['emails']" class="source-line separator" ng-cloak>				                		
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 					                			<#list publicGroupedEmails[email] as emailSource>					                																	
-													<#if (emailSource.source)?? && (emailSource.source.sourceName)?? && (emailSource.source.sourceName.content)??>${emailSource.source.sourceName.content}<#else>${(orcidId)!}</#if> <#if (emailSource.createdDate)??>(${(emailSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+													<#if (emailSource.source)?? && (emailSource.source.sourceName)?? && (emailSource.source.sourceName.content)??>${emailSource.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (emailSource.createdDate)??>(${(emailSource.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 												</#list>
 					                		</p>
 					                	</div>					 		
@@ -316,7 +316,7 @@
   												<div ng-if="showSources['external-identifiers']" class="source-line separator" ng-cloak>					                							                					                		
 	  												<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 											</#if>
-					                     	<#if (externalIdentifier.source)?? && (externalIdentifier.source.sourceName)?? && (externalIdentifier.source.sourceName.content)??>${externalIdentifier.source.sourceName.content}<#else>${(orcidId)!}</#if> <#if (externalIdentifier.createdDate)??>(${(externalIdentifier.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
+					                     	<#if (externalIdentifier.source)?? && (externalIdentifier.source.sourceName)?? && (externalIdentifier.source.sourceName.content)??>${externalIdentifier.source.sourceName.content}<#else>${(effectiveUserOrcid)!}</#if> <#if (externalIdentifier.createdDate)??>(${(externalIdentifier.createdDate.value?datetime("yyyy-MM-dd")?date!)})</#if>
 					                     		<#assign i = i + 1>	
 			                           </#list>
 			                           </p>
