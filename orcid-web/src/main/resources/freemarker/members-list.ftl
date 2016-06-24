@@ -27,18 +27,38 @@
                     <![endif]-->
                 </div>
                 <div ng-show="membersListSrvc.membersList">
-                    <div ng-repeat="member in membersListSrvc.membersList">
+                    <div class="member" ng-repeat="member in membersListSrvc.membersList">
                         <h2>{{member.name}}</h2>
-                        <div ng-click="toggleDisplayMoreDetails(member.id)">More details</div>
+                        <p>{{member.researchCommunity}} | {{member.country}}</p>
+                        <p>
+                        	<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}">
+                        	<span ng-bind-html="renderHtml(member.description)" ng-show="member.description"></span>
+                        </p>
+						<div class="clear-fix">
+							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id)">Member details
+								<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayMoreDetails[member.id]==false}"></i>
+							</a>
+							
+						</div>
+
                         <div ng-show="displayMoreDetails[member.id]">
+                        	<hr>
                             <div ng-hide="membersListSrvc.memberIntegrations[member.id]" class="text-center">
-                                <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-                                <!--[if lt IE 8]>
-                                    <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
-                                <![endif]-->
+                            	<p>No details to display for this member</p>
                             </div>
                             <div ng-show="membersListSrvc.memberIntegrations[member.id]" ng-repeat="integration in membersListSrvc.memberIntegrations[member.id]">
-                                <span>{{integration.name}}</span>
+                                <h3>Integrations</h3>
+                                <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
+                                <p>
+                                	<span ng-bind-html="renderHtml(integration.description)" ng-show="integration.description">
+	                                	
+	                                </span>
+	                           </p>
+	                           <p>
+	                                <span ng-show="integration.resourceUrl">
+	                                	<a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
+	                                </span>
+                                </p>
                             </div>
                         </div>
                         <hr></hr>
