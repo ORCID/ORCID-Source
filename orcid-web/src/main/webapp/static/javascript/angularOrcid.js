@@ -10734,7 +10734,7 @@ orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', functio
     
 }]);
 
-orcidNgModule.controller('MembersListController',['$scope', 'membersListSrvc', function ($scope, membersListSrvc){
+orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
     $scope.membersListSrvc = membersListSrvc;
     $scope.displayMoreDetails = {};
     
@@ -10742,6 +10742,10 @@ orcidNgModule.controller('MembersListController',['$scope', 'membersListSrvc', f
         membersListSrvc.getIntegrations(memberId);
         $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
     }
+    
+    $scope.renderHtml = function (htmlCode) {
+        return $sce.trustAsHtml(htmlCode);
+    };
     
 }]);
 
