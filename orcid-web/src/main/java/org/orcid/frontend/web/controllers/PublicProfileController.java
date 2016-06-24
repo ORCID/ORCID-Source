@@ -211,7 +211,7 @@ public class PublicProfileController extends BaseWorkspaceController {
             orcidSecurityManager.checkProfile(orcid);
         } catch(OrcidDeprecatedException | OrcidNotClaimedException | LockedException e) {
             ModelAndView mav = new ModelAndView("public_profile_unavailable");
-            mav.addObject("orcidId", orcid);
+            mav.addObject("effectiveUserOrcid", orcid);
             String displayName = "";
             
             if(e instanceof OrcidDeprecatedException) {
@@ -256,10 +256,7 @@ public class PublicProfileController extends BaseWorkspaceController {
         ModelAndView mav = null;
         mav = new ModelAndView("public_profile_v3");
         mav.addObject("isPublicProfile", true);
-        mav.addObject("orcidId", orcid);
-        
-        OrcidProfile orcidProfile = orcidProfileCacheManager.retrievePublic(orcid);
-        mav.addObject("profile", orcidProfile);
+        mav.addObject("effectiveUserOrcid", orcid);
         
         boolean isProfileEmtpy = true;
 
@@ -303,6 +300,7 @@ public class PublicProfileController extends BaseWorkspaceController {
                 Biography bio = publicPersonalDetails.getBiography();
                 if(bio.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC) && !PojoUtil.isEmpty(bio.getContent())) {
                     isProfileEmtpy = false;
+                    mav.addObject("biography", bio);
                 }            
             }
             
