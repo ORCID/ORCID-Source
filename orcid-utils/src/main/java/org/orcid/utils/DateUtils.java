@@ -39,6 +39,8 @@ public class DateUtils {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d+)(?:-(\\d+))?(?:-(\\d+))?(T\\d\\d:\\d\\d:\\d\\d)?");
 
+    private static DatatypeFactory dataTypeFactory;
+    
     /**
      * @see http 
      *      ://www.crossref.org/schema/info/CrossRefSchemaDocumentation4.1.0.pdf
@@ -158,11 +160,15 @@ public class DateUtils {
     }
 
     private static DatatypeFactory createDataTypeFactory() {
-        DatatypeFactory dataTypeFactory;
-        try {
-            dataTypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            throw new RuntimeException("Couldn't create org.orcid.test.data type factory", e);
+        if (dataTypeFactory == null){
+            synchronized (DateUtils.class){
+                if (dataTypeFactory == null)
+                    try {
+                        dataTypeFactory = DatatypeFactory.newInstance();
+                    } catch (DatatypeConfigurationException e) {
+                        throw new RuntimeException("Couldn't create org.orcid.test.data type factory", e);
+                    }
+            }
         }
         return dataTypeFactory;
     }
