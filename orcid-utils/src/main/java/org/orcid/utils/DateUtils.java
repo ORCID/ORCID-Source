@@ -39,6 +39,8 @@ public class DateUtils {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d+)(?:-(\\d+))?(?:-(\\d+))?(T\\d\\d:\\d\\d:\\d\\d)?");
 
+    //Thread safe: see source http://www.docjar.com/html/api/com/sun/org/apache/xerces/internal/jaxp/datatype/DatatypeFactoryImpl.java.html
+    //see also analysis: http://www.javajirawat.com/2015/09/xmlgregoriancalendar-datatypefactory.html
     private static DatatypeFactory dataTypeFactory;
     
     /**
