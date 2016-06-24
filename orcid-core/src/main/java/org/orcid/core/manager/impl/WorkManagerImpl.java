@@ -185,15 +185,15 @@ public class WorkManagerImpl implements WorkManager {
         
         if (applyAPIValidations) {
             activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
-            Date lastModified = profileEntityManager.getLastModified(orcid);
-            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-            List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
+            
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                if (works != null) {
-                    List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
-                    for (Work existing : workEntities) {
+                Date lastModified = profileEntityManager.getLastModified(orcid);
+                long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+                List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
+                if (existingWorks != null) {
+                    for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
                     }
@@ -240,7 +240,11 @@ public class WorkManagerImpl implements WorkManager {
         
         if (applyAPIValidations) {
             activityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
-            List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());            
+            
+            Date lastModified = profileEntityManager.getLastModified(orcid);
+            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+            List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
+            
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
