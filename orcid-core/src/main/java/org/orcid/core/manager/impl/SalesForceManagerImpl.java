@@ -160,8 +160,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
         JSONObject opportunitiesObject = extractObject(record, "Opportunities");
         if (opportunitiesObject != null) {
             JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
-            if (opportunitiesArray.length() > 0) {
-                member.setConsortiumLeadId(extractString(opportunitiesArray.getJSONObject(0), "Consortia_Lead__c"));
+            for (int i = 0; i < opportunitiesArray.length(); i++) {
+                String consortiumLeadId = extractString(opportunitiesArray.getJSONObject(i), "Consortia_Lead__c");
+                if (consortiumLeadId != null) {
+                    member.setConsortiumLeadId(consortiumLeadId);
+                }
             }
         }
         member.setDescription(extractString(record, "Public_Display_Description__c"));
