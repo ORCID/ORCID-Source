@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -134,7 +135,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      */
     @Override
     public List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long,Date> workIdsWithLastModified) {
-        List<MinimizedWorkEntity> returnList = new ArrayList<MinimizedWorkEntity>();
+        MinimizedWorkEntity[] returnArray = new MinimizedWorkEntity[workIdsWithLastModified.size()];
         List<Long> fetchList = new ArrayList<Long>();
         Map<Long, Integer> fetchListIndexOrder = new LinkedHashMap<Long, Integer>();        
         int index = 0;
@@ -147,7 +148,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 fetchListIndexOrder.put(workId, index);
                 fetchList.add(workId);
             }else{
-                returnList.add(cachedWork);
+                returnArray[index] = cachedWork;
             }
             index++;
         }
@@ -166,9 +167,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                         if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
                             workDao.detach(mWorkRefreshedFromDB);                        
                             minimizedWorkEntityCache.put(new Element(key, mWorkRefreshedFromDB));
-                            returnList.add(returnListIndex, mWorkRefreshedFromDB);
+                            returnArray[returnListIndex] = mWorkRefreshedFromDB;
                         }else{
-                            returnList.add(returnListIndex, cachedWork);
+                            returnArray[returnListIndex] = cachedWork;
                         }
                         
                     }
@@ -178,7 +179,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
             }
         }
 
-        return returnList;
+        return Arrays.asList(returnArray);
     }
 
     @Override
