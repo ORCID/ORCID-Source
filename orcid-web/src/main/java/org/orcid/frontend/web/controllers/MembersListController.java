@@ -21,7 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.pojo.SalesForceIntegration;
+import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,9 +53,9 @@ public class MembersListController extends BaseController {
         return salesForceManager.retrieveMembers();
     }
 
-    @RequestMapping(value = "/{memberId}/integrations.json", method = RequestMethod.GET)
-    public @ResponseBody List<SalesForceIntegration> retrieveIntegrations(@PathVariable("memberId") String memberId) {
-        return salesForceManager.retrieveIntegrations(memberId);
+    @RequestMapping(value = "/{memberId}/details.json", method = RequestMethod.GET)
+    public @ResponseBody SalesForceDetails retrieveDetails(@PathVariable("memberId") String memberId) {
+        return salesForceManager.retrieveDetails(memberId);
     }
 
 }

@@ -18,7 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
-import org.orcid.pojo.SalesForceIntegration;
+import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 
 /**
@@ -30,7 +30,7 @@ public interface SalesForceManager {
 
     List<SalesForceMember> retrieveMembers();
 
-    List<SalesForceIntegration> retrieveIntegrations(String memberId);
+    SalesForceDetails retrieveDetails(String memberId);
 
     /**
      * @return The memberId, if valid.

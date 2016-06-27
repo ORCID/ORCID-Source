@@ -29,6 +29,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
 import org.slf4j.Logger;
@@ -78,19 +79,19 @@ public class SalesForceManagerImpl implements SalesForceManager {
         try {
             return retrieveMembersFromsSalesForce(getAccessToken());
         } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve members list, trying again.");
+            LOGGER.debug("Unauthorized to retrieve members list, trying again.", e);
             return retrieveMembersFromsSalesForce(getFreshAccessToken());
         }
     }
 
     @Override
-    public List<SalesForceIntegration> retrieveIntegrations(String memberId) {
+    public SalesForceDetails retrieveDetails(String memberId) {
         validateMemberId(memberId);
         try {
-            return retrieveIntegrationsFromSalesForce(getAccessToken(), memberId);
+            return retrieveDetailsFromSalesForce(getAccessToken(), memberId);
         } catch (SalesForceUnauthorizedException e) {
-            LOGGER.debug("Unauthorized to retrieve integrations list, trying again.");
-            return retrieveIntegrationsFromSalesForce(getFreshAccessToken(), memberId);
+            LOGGER.debug("Unauthorized to retrieve details, trying again.", e);
+            return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId);
         }
     }
 
@@ -163,6 +164,19 @@ public class SalesForceManagerImpl implements SalesForceManager {
             LOGGER.info("Malformed logo URL for member: {}", name, e);
         }
         return member;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private SalesForceDetails retrieveDetailsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
+        SalesForceDetails details = new SalesForceDetails();
+        details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
+        return details;
     }
 
     /**

@@ -43,10 +43,10 @@
 
                         <div ng-show="displayMoreDetails[member.id]">
                         	<hr>
-                            <div ng-hide="membersListSrvc.memberIntegrations[member.id]" class="text-center">
+                            <div ng-hide="membersListSrvc.memberDetails[member.id]" class="text-center">
                             	<p>No details to display for this member</p>
                             </div>
-                            <div ng-show="membersListSrvc.memberIntegrations[member.id]" ng-repeat="integration in membersListSrvc.memberIntegrations[member.id]">
+                            <div ng-show="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations">
                                 <h3>Integrations</h3>
                                 <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
                                 <p>
