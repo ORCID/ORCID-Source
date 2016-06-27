@@ -36,7 +36,7 @@
                         </p>
 						<div class="clear-fix">
 							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id)">Member details
-								<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayMoreDetails[member.id]==false}"></i>
+								<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayMoreDetails[member.id]==true}"></i>
 							</a>
 							
 						</div>
@@ -44,7 +44,10 @@
                         <div ng-show="displayMoreDetails[member.id]">
                         	<hr>
                             <div ng-hide="membersListSrvc.memberIntegrations[member.id]" class="text-center">
-                            	<p>No details to display for this member</p>
+                            	<i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+                                <!--[if lt IE 8]>
+                                    <!--<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>-->
+                                <![endif]-->
                             </div>
                             <div ng-show="membersListSrvc.memberIntegrations[member.id]" ng-repeat="integration in membersListSrvc.memberIntegrations[member.id]">
                                 <h3>Integrations</h3>
@@ -59,6 +62,9 @@
 	                                	<a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
 	                                </span>
                                 </p>
+                            </div>
+                            <div ng-show="!membersListSrvc.memberIntegrations[member.id].lenth">
+                            	<p>This member has not completed any integrations yet.</p>
                             </div>
                         </div>
                         <hr></hr>
