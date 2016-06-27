@@ -24,9 +24,9 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -53,9 +53,10 @@ public class MembersListController extends BaseController {
         return salesForceManager.retrieveMembers();
     }
 
-    @RequestMapping(value = "/{memberId}/details.json", method = RequestMethod.GET)
-    public @ResponseBody SalesForceDetails retrieveDetails(@PathVariable("memberId") String memberId) {
-        return salesForceManager.retrieveDetails(memberId);
+    @RequestMapping(value = "/details.json", method = RequestMethod.GET)
+    public @ResponseBody SalesForceDetails retrieveDetails(@RequestParam("memberId") String memberId,
+            @RequestParam(value = "consortiumLeadId", required = false) String consortiumLeadId) {
+        return salesForceManager.retrieveDetails(memberId, consortiumLeadId);
     }
 
 }

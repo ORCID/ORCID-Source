@@ -85,18 +85,19 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
-    public SalesForceDetails retrieveDetails(String memberId) {
-        validateMemberId(memberId);
+    public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
+        validateSalesForceId(memberId);
+        validateSalesForceId(consortiumLeadId);
         try {
-            return retrieveDetailsFromSalesForce(getAccessToken(), memberId);
+            return retrieveDetailsFromSalesForce(getAccessToken(), memberId, consortiumLeadId);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to retrieve details, trying again.", e);
-            return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId);
+            return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId, consortiumLeadId);
         }
     }
 
     @Override
-    public String validateMemberId(String memberId) {
+    public String validateSalesForceId(String memberId) {
         if (!memberId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
@@ -156,7 +157,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
         }
         member.setResearchCommunity(extractString(record, "Research_Community__c"));
         member.setCountry(extractString(record, "BillingCountry"));
-        // XXX parent org
+        JSONObject opportunitiesObject = extractObject(record, "Opportunities");
+        if (opportunitiesObject != null) {
+            JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
+            if (opportunitiesArray.length() > 0) {
+                member.setConsortiumLeadId(extractString(opportunitiesArray.getJSONObject(0), "Consortia_Lead__c"));
+            }
+        }
         member.setDescription(extractString(record, "Public_Display_Description__c"));
         try {
             member.setLogoUrl(extractURL(record, "Logo_Description__c"));
@@ -173,10 +180,45 @@ public class SalesForceManagerImpl implements SalesForceManager {
      *             expired.
      * 
      */
-    private SalesForceDetails retrieveDetailsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
+    private SalesForceDetails retrieveDetailsFromSalesForce(String accessToken, String memberId, String consortiumLeadId) throws SalesForceUnauthorizedException {
         SalesForceDetails details = new SalesForceDetails();
+        details.setParentOrgName(retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
         return details;
+    }
+
+    private String retrieveParentOrgNameFromSalesForce(String accessToken, String consortiumLeadId) {
+        if (consortiumLeadId == null) {
+            return null;
+        }
+        WebResource resource = createParentOrgResource(consortiumLeadId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        if (response.getStatus() == 401) {
+            LOGGER.debug("Unauthorized response from parent org call = " + response.getEntity(String.class));
+            throw new SalesForceUnauthorizedException(
+                    "Unauthorised response from parent org call, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
+        }
+        if (response.getStatus() != 200) {
+            LOGGER.debug("Error response body from parent org call = " + response.getEntity(String.class));
+            throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase());
+        }
+        JSONObject results = response.getEntity(JSONObject.class);
+        try {
+            JSONArray records = results.getJSONArray("records");
+            if (records.length() > 0) {
+                return extractString(records.getJSONObject(0), "Name");
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting parent org from SalesForce JSON", e);
+        }
+        return null;
+    }
+
+    private WebResource createParentOrgResource(String consortiumLeadId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT Name from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
+        return resource;
     }
 
     /**
@@ -222,7 +264,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
     private WebResource createIntegrationListResource(String memberId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
                 "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
-                        + validateMemberId(memberId) + "'");
+                        + validateSalesForceId(memberId) + "'");
         return resource;
     }
 

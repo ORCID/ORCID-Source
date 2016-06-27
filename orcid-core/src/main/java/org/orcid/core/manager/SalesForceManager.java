@@ -30,14 +30,14 @@ public interface SalesForceManager {
 
     List<SalesForceMember> retrieveMembers();
 
-    SalesForceDetails retrieveDetails(String memberId);
+    SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
 
     /**
-     * @return The memberId, if valid.
+     * @return The sales force object id, if valid.
      * @throws IllegalArgumentException
-     *             if the memberId is not the correct format, or could contain
-     *             something malicious.
+     *             if the sales force object id is not the correct format, or
+     *             could contain something malicious.
      */
-    String validateMemberId(String memberId);
+    String validateSalesForceId(String memberId);
 
 }

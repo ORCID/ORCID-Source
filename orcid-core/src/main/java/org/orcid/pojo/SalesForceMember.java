@@ -33,6 +33,7 @@ public class SalesForceMember {
     private String parentName;
     private String description;
     private URL logoUrl;
+    private String consortiumLeadId;
 
     public String getId() {
         return id;
@@ -98,10 +99,18 @@ public class SalesForceMember {
         this.logoUrl = logoUrl;
     }
 
+    public String getConsortiumLeadId() {
+        return consortiumLeadId;
+    }
+
+    public void setConsortiumLeadId(String consortiumLeadId) {
+        this.consortiumLeadId = consortiumLeadId;
+    }
+
     @Override
     public String toString() {
         return "SalesForceMember [id=" + id + ", name=" + name + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country
-                + ", parentName=" + parentName + ", description=" + description + ", logoUrl=" + logoUrl + "]";
+                + ", parentName=" + parentName + ", description=" + description + ", logoUrl=" + logoUrl + ", consortiumLeadId=" + consortiumLeadId + "]";
     }
 
 }

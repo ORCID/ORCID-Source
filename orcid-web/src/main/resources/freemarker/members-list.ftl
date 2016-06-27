@@ -35,7 +35,7 @@
                         	<span ng-bind-html="renderHtml(member.description)" ng-show="member.description"></span>
                         </p>
 						<div class="clear-fix">
-							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id)">Member details
+							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id, member.consortiumLeadId)">Member details
 								<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayMoreDetails[member.id]==false}"></i>
 							</a>
 							
@@ -46,6 +46,7 @@
                             <div ng-hide="membersListSrvc.memberDetails[member.id]" class="text-center">
                             	<p>No details to display for this member</p>
                             </div>
+                            <div ng-show="membersListSrvc.memberDetails[member.id].parentOrgName">Consortium/Parent Organization: {{membersListSrvc.memberDetails[member.id].parentOrgName}}
                             <div ng-show="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations">
                                 <h3>Integrations</h3>
                                 <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>

@@ -1645,10 +1645,14 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 $rootScope.$apply();
             });
         },
-        getDetails: function(memberId) {
+        getDetails: function(memberId, consortiumLeadId) {
             if(serv.memberDetails[memberId] == null){
+                var url = getBaseUri() + '/members-list/details.json?memberId=' + encodeURIComponent(memberId);
+                if(consortiumLeadId != null){
+                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
+                }
                 $.ajax({
-                    url: getBaseUri() + '/members-list/' + memberId + '/details.json',
+                    url: url,
                     dataType: 'json',
                     cache: true,
                     success: function(data) {
@@ -10738,8 +10742,8 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
     $scope.membersListSrvc = membersListSrvc;
     $scope.displayMoreDetails = {};
     
-    $scope.toggleDisplayMoreDetails = function(memberId){
-        membersListSrvc.getDetails(memberId);
+    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+        membersListSrvc.getDetails(memberId, consortiumLeadId);
         $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
     }
     
