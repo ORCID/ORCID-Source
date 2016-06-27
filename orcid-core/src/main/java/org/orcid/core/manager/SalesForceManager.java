@@ -33,11 +33,11 @@ public interface SalesForceManager {
     List<SalesForceIntegration> retrieveIntegrations(String memberId);
 
     /**
-     * 
+     * @return The memberId, if valid.
      * @throws IllegalArgumentException
      *             if the memberId is not the correct format, or could contain
      *             something malicious.
      */
-    void validateMemberId(String memberId);
+    String validateMemberId(String memberId);
 
 }

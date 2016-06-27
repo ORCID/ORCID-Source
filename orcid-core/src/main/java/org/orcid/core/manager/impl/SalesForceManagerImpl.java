@@ -85,11 +85,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
-    public void validateMemberId(String memberId) {
+    public String validateMemberId(String memberId) {
         if (!memberId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
         }
+        return memberId;
     }
 
     private List<SalesForceMember> retrieveMembersFromsSalesForce(String accessToken) {
@@ -173,7 +174,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
     private WebResource createIntegrationListResource(String memberId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
                 "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
-                        + memberId + "'");
+                        + validateMemberId(memberId) + "'");
         return resource;
     }
 
@@ -190,7 +191,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         }
         return integration;
     }
-    
+
     private JSONObject extractObject(JSONObject parent, String key) throws JSONException {
         if (parent.isNull(key)) {
             return null;
