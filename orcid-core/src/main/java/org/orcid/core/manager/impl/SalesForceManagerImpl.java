@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.exception.SalesForceUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
@@ -70,18 +71,27 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private Client client = Client.create();
 
+    private String accessToken;
+
     @Override
     public List<SalesForceMember> retrieveMembers() {
-        String accessToken = getAccessToken();
-        List<SalesForceMember> members = retrieveMembersFromsSalesForce(accessToken);
-        return members;
+        try {
+            return retrieveMembersFromsSalesForce(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve members list, trying again.");
+            return retrieveMembersFromsSalesForce(getFreshAccessToken());
+        }
     }
 
     @Override
     public List<SalesForceIntegration> retrieveIntegrations(String memberId) {
         validateMemberId(memberId);
-        String accessToken = getAccessToken();
-        return retrieveIntegrationsFromSalesForce(accessToken, memberId);
+        try {
+            return retrieveIntegrationsFromSalesForce(getAccessToken(), memberId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve integrations list, trying again.");
+            return retrieveIntegrationsFromSalesForce(getFreshAccessToken(), memberId);
+        }
     }
 
     @Override
@@ -93,11 +103,23 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return memberId;
     }
 
-    private List<SalesForceMember> retrieveMembersFromsSalesForce(String accessToken) {
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceMember> retrieveMembersFromsSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         List<SalesForceMember> members = new ArrayList<>();
         LOGGER.info("About get list of members from SalesForce");
         WebResource resource = createMemberListResource();
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        if (response.getStatus() == 401) {
+            LOGGER.debug("Unauthorized reponse from members list call = " + response.getEntity(String.class));
+            throw new SalesForceUnauthorizedException(
+                    "Unauthorized reponse from members list call, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
+        }
         if (response.getStatus() != 200) {
             LOGGER.debug("Error response body from members list call = " + response.getEntity(String.class));
             throw new RuntimeException(
@@ -143,10 +165,22 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return member;
     }
 
-    private List<SalesForceIntegration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) {
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceIntegration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         List<SalesForceIntegration> integrations = new ArrayList<>();
         WebResource resource = createIntegrationListResource(memberId);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        if (response.getStatus() == 401) {
+            LOGGER.debug("Unauthorized response from integrations list call = " + response.getEntity(String.class));
+            throw new SalesForceUnauthorizedException("Unauthorised response from integrations list call, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase());
+        }
         if (response.getStatus() != 200) {
             LOGGER.debug("Error response body from integrations list call = " + response.getEntity(String.class));
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
@@ -222,6 +256,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     private String getAccessToken() {
+        if (accessToken == null) {
+            accessToken = getFreshAccessToken();
+        }
+        return accessToken;
+    }
+
+    private String getFreshAccessToken() {
         LOGGER.info("About get SalesForce access token");
         WebResource resource = client.resource(tokenEndPointUrl);
         Form form = new Form();
