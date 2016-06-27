@@ -27,7 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.orcid.core.exception.SalesForceUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
 import org.slf4j.Logger;
@@ -70,38 +72,66 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private Client client = Client.create();
 
+    private String accessToken;
+
     @Override
     public List<SalesForceMember> retrieveMembers() {
-        String accessToken = getAccessToken();
-        List<SalesForceMember> members = retrieveMembersFromsSalesForce(accessToken);
-        return members;
+        try {
+            return retrieveMembersFromSalesForce(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve members list, trying again.", e);
+            return retrieveMembersFromSalesForce(getFreshAccessToken());
+        }
     }
 
     @Override
-    public List<SalesForceIntegration> retrieveIntegrations(String memberId) {
-        validateMemberId(memberId);
-        String accessToken = getAccessToken();
-        return retrieveIntegrationsFromSalesForce(accessToken, memberId);
+    public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
+        validateSalesForceId(memberId);
+        validateSalesForceId(consortiumLeadId);
+        try {
+            return retrieveDetailsFromSalesForce(getAccessToken(), memberId, consortiumLeadId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve details, trying again.", e);
+            return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId, consortiumLeadId);
+        }
     }
 
     @Override
-    public void validateMemberId(String memberId) {
+    public String validateSalesForceId(String memberId) {
         if (!memberId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
         }
+        return memberId;
     }
 
-    private List<SalesForceMember> retrieveMembersFromsSalesForce(String accessToken) {
-        List<SalesForceMember> members = new ArrayList<>();
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceMember> retrieveMembersFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of members from SalesForce");
         WebResource resource = createMemberListResource();
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
         if (response.getStatus() != 200) {
-            LOGGER.debug("Error response body from members list call = " + response.getEntity(String.class));
-            throw new RuntimeException(
-                    "Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
+            throw new RuntimeException("Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
+        return createMembersListFromResponse(response);
+    }
+
+    private WebResource createMemberListResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
+        return resource;
+    }
+
+    private List<SalesForceMember> createMembersListFromResponse(ClientResponse response) {
+        List<SalesForceMember> members = new ArrayList<>();
         JSONObject results = response.getEntity(JSONObject.class);
         try {
             JSONArray records = results.getJSONArray("records");
@@ -112,12 +142,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new RuntimeException("Error getting member records from SalesForce JSON", e);
         }
         return members;
-    }
-
-    private WebResource createMemberListResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
-        return resource;
     }
 
     private SalesForceMember createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
@@ -132,7 +156,16 @@ public class SalesForceManagerImpl implements SalesForceManager {
         }
         member.setResearchCommunity(extractString(record, "Research_Community__c"));
         member.setCountry(extractString(record, "BillingCountry"));
-        // XXX parent org
+        JSONObject opportunitiesObject = extractObject(record, "Opportunities");
+        if (opportunitiesObject != null) {
+            JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
+            for (int i = 0; i < opportunitiesArray.length(); i++) {
+                String consortiumLeadId = extractString(opportunitiesArray.getJSONObject(i), "Consortia_Lead__c");
+                if (consortiumLeadId != null) {
+                    member.setConsortiumLeadId(consortiumLeadId);
+                }
+            }
+        }
         member.setDescription(extractString(record, "Public_Display_Description__c"));
         try {
             member.setLogoUrl(extractURL(record, "Logo_Description__c"));
@@ -142,15 +175,80 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return member;
     }
 
-    private List<SalesForceIntegration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) {
-        List<SalesForceIntegration> integrations = new ArrayList<>();
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private SalesForceDetails retrieveDetailsFromSalesForce(String accessToken, String memberId, String consortiumLeadId) throws SalesForceUnauthorizedException {
+        SalesForceDetails details = new SalesForceDetails();
+        details.setParentOrgName(retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId));
+        details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
+        return details;
+    }
+
+    private String retrieveParentOrgNameFromSalesForce(String accessToken, String consortiumLeadId) {
+        if (consortiumLeadId == null) {
+            return null;
+        }
+        WebResource resource = createParentOrgResource(consortiumLeadId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return extractParentOrgNameFromResponse(response);
+    }
+
+    private WebResource createParentOrgResource(String consortiumLeadId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT Name from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
+        return resource;
+    }
+
+    private String extractParentOrgNameFromResponse(ClientResponse response) {
+        JSONObject results = response.getEntity(JSONObject.class);
+        try {
+            JSONArray records = results.getJSONArray("records");
+            if (records.length() > 0) {
+                return extractString(records.getJSONObject(0), "Name");
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting parent org from SalesForce JSON", e);
+        }
+        return null;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceIntegration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
         WebResource resource = createIntegrationListResource(memberId);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
         if (response.getStatus() != 200) {
-            LOGGER.debug("Error response body from integrations list call = " + response.getEntity(String.class));
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
-                    + response.getStatusInfo().getReasonPhrase());
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
+        return createIntegrationsListFromResponse(response);
+    }
+
+    private WebResource createIntegrationListResource(String memberId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
+                        + validateSalesForceId(memberId) + "'");
+        return resource;
+    }
+
+    private List<SalesForceIntegration> createIntegrationsListFromResponse(ClientResponse response) {
+        List<SalesForceIntegration> integrations = new ArrayList<>();
         JSONObject results = response.getEntity(JSONObject.class);
         try {
             JSONArray records = results.getJSONArray("records");
@@ -170,13 +268,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return integrations;
     }
 
-    private WebResource createIntegrationListResource(String memberId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
-                        + memberId + "'");
-        return resource;
-    }
-
     private SalesForceIntegration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
         SalesForceIntegration integration = new SalesForceIntegration();
         String name = extractString(integrationRecord, "Name");
@@ -190,7 +281,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         }
         return integration;
     }
-    
+
     private JSONObject extractObject(JSONObject parent, String key) throws JSONException {
         if (parent.isNull(key)) {
             return null;
@@ -221,6 +312,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     private String getAccessToken() {
+        if (accessToken == null) {
+            accessToken = getFreshAccessToken();
+        }
+        return accessToken;
+    }
+
+    private String getFreshAccessToken() {
         LOGGER.info("About get SalesForce access token");
         WebResource resource = client.resource(tokenEndPointUrl);
         Form form = new Form();
@@ -237,8 +335,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
                 throw new RuntimeException("Unable to extract access token from response", e);
             }
         } else {
-            throw new RuntimeException(
-                    "Error getting access token from SalesForce, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
+            throw new RuntimeException("Error getting access token from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+    }
+
+    private void checkAuthorization(ClientResponse response) {
+        if (response.getStatus() == 401) {
+            throw new SalesForceUnauthorizedException("Unauthorized reponse from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body= " + response.getEntity(String.class));
         }
     }
 

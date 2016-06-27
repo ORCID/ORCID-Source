@@ -1628,7 +1628,7 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
 orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
-        memberIntegrations: {},
+        memberDetails: {},
         getMembersList: function() {
             $.ajax({
                 url: getBaseUri() + '/members-list/members.json',
@@ -1645,19 +1645,23 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 $rootScope.$apply();
             });
         },
-        getIntegrations: function(memberId) {
-            if(serv.memberIntegrations[memberId] == null){
+        getDetails: function(memberId, consortiumLeadId) {
+            if(serv.memberDetails[memberId] == null){
+                var url = getBaseUri() + '/members-list/details.json?memberId=' + encodeURIComponent(memberId);
+                if(consortiumLeadId != null){
+                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
+                }
                 $.ajax({
-                    url: getBaseUri() + '/members-list/' + memberId + '/integrations.json',
+                    url: url,
                     dataType: 'json',
                     cache: true,
                     success: function(data) {
-                        serv.memberIntegrations[memberId] = data;
+                        serv.memberDetails[memberId] = data;
                         $rootScope.$apply();
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("error with members integrations");
+                    console.log("error with member details");
                     serv.feed = [];
                     $rootScope.$apply();
                 });
@@ -10738,8 +10742,8 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
     $scope.membersListSrvc = membersListSrvc;
     $scope.displayMoreDetails = {};
     
-    $scope.toggleDisplayMoreDetails = function(memberId){
-        membersListSrvc.getIntegrations(memberId);
+    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+        membersListSrvc.getDetails(memberId, consortiumLeadId);
         $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
     }
     

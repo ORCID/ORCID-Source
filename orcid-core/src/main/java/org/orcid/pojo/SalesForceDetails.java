@@ -14,30 +14,34 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.pojo;
 
 import java.util.List;
-
-import org.orcid.pojo.SalesForceDetails;
-import org.orcid.pojo.SalesForceMember;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface SalesForceManager {
+public class SalesForceDetails {
 
-    List<SalesForceMember> retrieveMembers();
+    private String parentOrgName;
+    private List<SalesForceIntegration> integrations;
 
-    SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
+    public String getParentOrgName() {
+        return parentOrgName;
+    }
 
-    /**
-     * @return The sales force object id, if valid.
-     * @throws IllegalArgumentException
-     *             if the sales force object id is not the correct format, or
-     *             could contain something malicious.
-     */
-    String validateSalesForceId(String memberId);
+    public void setParentOrgName(String parentOrgName) {
+        this.parentOrgName = parentOrgName;
+    }
+
+    public List<SalesForceIntegration> getIntegrations() {
+        return integrations;
+    }
+
+    public void setIntegrations(List<SalesForceIntegration> integrations) {
+        this.integrations = integrations;
+    }
 
 }
