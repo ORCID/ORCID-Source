@@ -388,7 +388,11 @@
                 	<strong><@orcid.msg 'workspace.addinformationaboutyou'/></strong>
               	</div>                
         	</div>
-        	<div class="workspace-accordion" id="workspace-accordion">        		
+        	<div class="workspace-accordion" id="workspace-accordion">
+        		<!-- Notification alert -->
+        		<#if RequestParameters['notification']??>        		
+        			<#include "includes/notification_alert.ftl"/>
+        	    </#if>
         		<!-- Personal Information -->
 				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
             		<div class="workspace-accordion-content" ng-if="displayInfo">
