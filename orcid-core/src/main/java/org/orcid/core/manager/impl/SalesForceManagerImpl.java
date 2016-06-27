@@ -118,9 +118,8 @@ public class SalesForceManagerImpl implements SalesForceManager {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
-            LOGGER.debug("Error response body from members list call = " + response.getEntity(String.class));
-            throw new RuntimeException(
-                    "Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
+            throw new RuntimeException("Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
         return createMembersListFromResponse(response);
     }
@@ -198,9 +197,8 @@ public class SalesForceManagerImpl implements SalesForceManager {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
-            LOGGER.debug("Error response body from parent org call = " + response.getEntity(String.class));
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
-                    + response.getStatusInfo().getReasonPhrase());
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
         return extractParentOrgNameFromResponse(response);
     }
@@ -236,9 +234,8 @@ public class SalesForceManagerImpl implements SalesForceManager {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
-            LOGGER.debug("Error response body from integrations list call = " + response.getEntity(String.class));
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
-                    + response.getStatusInfo().getReasonPhrase());
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
         return createIntegrationsListFromResponse(response);
     }
@@ -338,8 +335,8 @@ public class SalesForceManagerImpl implements SalesForceManager {
                 throw new RuntimeException("Unable to extract access token from response", e);
             }
         } else {
-            throw new RuntimeException(
-                    "Error getting access token from SalesForce, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
+            throw new RuntimeException("Error getting access token from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
     }
 
