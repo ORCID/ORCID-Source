@@ -113,7 +113,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
      * 
      */
     private List<SalesForceMember> retrieveMembersFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
-        List<SalesForceMember> members = new ArrayList<>();
         LOGGER.info("About get list of members from SalesForce");
         WebResource resource = createMemberListResource();
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
@@ -123,6 +122,17 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new RuntimeException(
                     "Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = " + response.getStatusInfo().getReasonPhrase());
         }
+        return createMembersListFromResponse(response);
+    }
+
+    private WebResource createMemberListResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
+        return resource;
+    }
+
+    private List<SalesForceMember> createMembersListFromResponse(ClientResponse response) {
+        List<SalesForceMember> members = new ArrayList<>();
         JSONObject results = response.getEntity(JSONObject.class);
         try {
             JSONArray records = results.getJSONArray("records");
@@ -133,12 +143,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new RuntimeException("Error getting member records from SalesForce JSON", e);
         }
         return members;
-    }
-
-    private WebResource createMemberListResource() {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
-        return resource;
     }
 
     private SalesForceMember createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
@@ -198,6 +202,16 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase());
         }
+        return extractParentOrgNameFromResponse(response);
+    }
+
+    private WebResource createParentOrgResource(String consortiumLeadId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT Name from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
+        return resource;
+    }
+
+    private String extractParentOrgNameFromResponse(ClientResponse response) {
         JSONObject results = response.getEntity(JSONObject.class);
         try {
             JSONArray records = results.getJSONArray("records");
@@ -210,12 +224,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return null;
     }
 
-    private WebResource createParentOrgResource(String consortiumLeadId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Name from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
-        return resource;
-    }
-
     /**
      * 
      * @throws SalesForceUnauthorizedException
@@ -224,7 +232,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
      * 
      */
     private List<SalesForceIntegration> retrieveIntegrationsFromSalesForce(String accessToken, String memberId) throws SalesForceUnauthorizedException {
-        List<SalesForceIntegration> integrations = new ArrayList<>();
         WebResource resource = createIntegrationListResource(memberId);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
@@ -233,6 +240,18 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase());
         }
+        return createIntegrationsListFromResponse(response);
+    }
+
+    private WebResource createIntegrationListResource(String memberId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
+                        + validateSalesForceId(memberId) + "'");
+        return resource;
+    }
+
+    private List<SalesForceIntegration> createIntegrationsListFromResponse(ClientResponse response) {
+        List<SalesForceIntegration> integrations = new ArrayList<>();
         JSONObject results = response.getEntity(JSONObject.class);
         try {
             JSONArray records = results.getJSONArray("records");
@@ -250,13 +269,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new RuntimeException("Error getting integrations records from SalesForce JSON", e);
         }
         return integrations;
-    }
-
-    private WebResource createIntegrationListResource(String memberId) {
-        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Integration__c.Name, Integration__c.Description__c, Integration__c.Integration_Stage__c, Integration__c.Integration_URL__c from Account.Integrations__r) from Account WHERE Id='"
-                        + validateSalesForceId(memberId) + "'");
-        return resource;
     }
 
     private SalesForceIntegration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
