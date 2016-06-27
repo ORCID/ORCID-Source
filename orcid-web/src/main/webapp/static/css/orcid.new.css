@@ -6571,9 +6571,6 @@ a:hover .mozilla-badge{
 	height: 30px;
 }
 
-.notification-alert{
-    padding: 15px;
-}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
