@@ -30,7 +30,11 @@ public interface SalesForceManager {
 
     List<SalesForceMember> retrieveMembers();
 
+    List<SalesForceMember> retrieveFreshMembers();
+
     SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
+
+    SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
 
     /**
      * @return The sales force object id, if valid.

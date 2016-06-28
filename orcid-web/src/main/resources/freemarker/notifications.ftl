@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-<#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
 <@protected nav="notifications">
 <#escape x as x?html> 
 <div class="row">

@@ -17,13 +17,18 @@
 package org.orcid.core.utils.activities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.orcid.jaxb.model.record_rc2.GroupAble;
 import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 
 public class ActivitiesGroupGenerator {    
 
     private List<ActivitiesGroup> groups = new ArrayList<ActivitiesGroup>();
+    
+    private Map<GroupAble, ActivitiesGroup> lookup = new HashMap<GroupAble, ActivitiesGroup>();
     
     
     public void group(GroupableActivity activity) {
@@ -31,36 +36,47 @@ public class ActivitiesGroupGenerator {
             //If it is the first activity, create a new group for it
             ActivitiesGroup newGroup = new ActivitiesGroup(activity);
             groups.add(newGroup);
+            for (GroupAble g :newGroup.getGroupKeys()){
+                lookup.put(g, newGroup);
+            }
         } else {            
             //If it is not the first activity, check which groups it belongs to
-            List<Integer> belongsTo = new ArrayList<Integer>();
-            for(int i = 0; i < groups.size(); i++) {
-                ActivitiesGroup group = groups.get(i);
-                if(group.belongsToGroup(activity)) {
-                    belongsTo.add(i);
-                }
+            List<ActivitiesGroup> belongsTo = new ArrayList<ActivitiesGroup>();
+            ActivitiesGroup thisGroup = new ActivitiesGroup(activity);
+            for (GroupAble g :thisGroup.getGroupKeys()){
+                if (lookup.containsKey(g))
+                    belongsTo.add(lookup.get(g));
             }
             
             //If it doesnt belong to any group, create a new group for it
             if(belongsTo.isEmpty()) {
                 ActivitiesGroup newGroup = new ActivitiesGroup(activity);
                 groups.add(newGroup);
+                for (GroupAble g :newGroup.getGroupKeys()){
+                    lookup.put(g, newGroup);
+                }
             } else {
                 //Get the first group it belongs to
-                ActivitiesGroup firstGroup = groups.get(belongsTo.get(0));
+                ActivitiesGroup firstGroup = belongsTo.get(0);
                 firstGroup.add(activity);
                 
                 //If it belongs to other groups, merge them into the first one
                 if(belongsTo.size() > 1) {
                     for(int i = 1; i < belongsTo.size(); i++){
                         //Merge the group
-                        firstGroup.merge(groups.get(i));
+                        firstGroup.merge(belongsTo.get(i));
                         //Remove it from the list of groups
-                        groups.remove(i);
+                        groups.remove(belongsTo.get(i));
                     }                        
+                }
+                for (GroupAble g :thisGroup.getGroupKeys()){
+                    lookup.put(g, firstGroup);
                 }
             }
         }
+        
+        //TODO: make sure this orders correctly
+        //TODO: look at v1.2 post/put work....
     }
     
     public List<ActivitiesGroup> getGroups() {

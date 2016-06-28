@@ -32,7 +32,7 @@
 						<div class="orcid-id-info">
 					    	<span class="mini-orcid-icon"></span>
 					    	<!-- Reference: orcid.js:removeProtocolString() -->
-				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(orcidId)!}</span>
+				       		<span id="orcid-id" class="orcid-id shortURI">${baseDomainRmProtocall}/${(effectiveUserOrcid)!}</span>
 						</div>						
 					</div>
 				</div>

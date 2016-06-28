@@ -16,6 +16,7 @@
  */
 package org.orcid.pojo;
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
@@ -23,7 +24,9 @@ import java.net.URL;
  * @author Will Simpson
  *
  */
-public class SalesForceIntegration {
+public class SalesForceIntegration implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private String description;

@@ -16,7 +16,6 @@
     =============================================================================
 
 -->
-<#-- @ftlvariable name="profile" type="org.orcid.jaxb.model.message.OrcidProfile" -->
 <@protected nav="record">
 <#escape x as x?html>
 <#if emailVerified?? && emailVerified>
@@ -37,10 +36,6 @@
         <strong><@spring.message "orcid.frontend.web.invalid_switch_orcid"/></strong>
     </div>
 </#if>
-
-<script type="text/javascript">
-	orcidVar.notificationsEnabled = ${profile.orcidInternal.preferences.notificationsEnabled?string};
-</script>
 
 <div class="row workspace-top public-profile">
 

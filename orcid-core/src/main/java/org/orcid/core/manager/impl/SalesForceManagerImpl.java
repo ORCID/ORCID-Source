@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
+import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.representation.Form;
+
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 /**
  * 
@@ -70,12 +74,26 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Value("${org.orcid.core.salesForce.apiBaseUrl:https://na11.salesforce.com}")
     private String apiBaseUrl;
 
+    @Resource(name = "salesForceMembersListCache")
+    private SelfPopulatingCache salesForceMembersListCache;
+
+    @Resource(name = "salesForceMemberDetailsCache")
+    private SelfPopulatingCache salesForceMemberDetailsCache;
+
     private Client client = Client.create();
 
     private String accessToken;
 
+    private String releaseName = ReleaseNameUtils.getReleaseName();
+
+    @SuppressWarnings("unchecked")
     @Override
     public List<SalesForceMember> retrieveMembers() {
+        return (List<SalesForceMember>) salesForceMembersListCache.get(releaseName).getObjectValue();
+    }
+
+    @Override
+    public List<SalesForceMember> retrieveFreshMembers() {
         try {
             return retrieveMembersFromSalesForce(getAccessToken());
         } catch (SalesForceUnauthorizedException e) {
@@ -86,8 +104,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Override
     public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
+        return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName)).getObjectValue();
+    }
+
+    @Override
+    public SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId) {
         validateSalesForceId(memberId);
-        validateSalesForceId(consortiumLeadId);
+        if (consortiumLeadId != null) {
+            validateSalesForceId(consortiumLeadId);
+        }
         try {
             return retrieveDetailsFromSalesForce(getAccessToken(), memberId, consortiumLeadId);
         } catch (SalesForceUnauthorizedException e) {
@@ -97,12 +122,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
-    public String validateSalesForceId(String memberId) {
-        if (!memberId.matches("[a-zA-Z0-9]+")) {
+    public String validateSalesForceId(String salesForceId) {
+        if (!salesForceId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
         }
-        return memberId;
+        return salesForceId;
     }
 
     /**
