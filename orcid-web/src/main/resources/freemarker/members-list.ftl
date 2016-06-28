@@ -39,7 +39,7 @@
                         </p>
 						<div class="clear-fix">
 							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id, member.consortiumLeadId)">Member details
-								<i class="glyphicon-chevron-down glyphicon x075" ng-class="{'glyphicon-chevron-right':displayMoreDetails[member.id]==false}"></i>
+								<i class="glyphicon x075" ng-class="displayMoreDetails[member.id] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'"></i>
 							</a>
 							
 						</div>
