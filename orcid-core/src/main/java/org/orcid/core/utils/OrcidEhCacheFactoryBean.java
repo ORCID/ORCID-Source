@@ -21,6 +21,9 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -50,6 +53,8 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     private boolean copyOnWrite = true;
 
     private String strategy = "NONE";
+
+    private CacheEntryFactory cacheEntryFactory;
 
     private Ehcache cache;
 
@@ -109,7 +114,6 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         this.maxElementsOnDisk = maxElementsOnDisk;
     }
 
-
     public String getMaxBytesLocalDisk() {
         return maxBytesLocalDisk;
     }
@@ -134,6 +138,14 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         this.copyOnWrite = copyOnWrite;
     }
 
+    public CacheEntryFactory getCacheEntryFactory() {
+        return cacheEntryFactory;
+    }
+
+    public void setCacheEntryFactory(CacheEntryFactory cacheEntryFactory) {
+        this.cacheEntryFactory = cacheEntryFactory;
+    }
+
     @Override
     public Ehcache getObject() {
         return this.cache;
@@ -154,7 +166,11 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
         Cache existingCache = cacheManager.getCache(cacheName);
         if (existingCache == null) {
             CacheConfiguration config = createConfig();
-            this.cache = new Cache(config);
+            if (cacheEntryFactory != null) {
+                this.cache = new SelfPopulatingCache(new Cache(config), cacheEntryFactory);
+            } else {
+                this.cache = new Cache(config);
+            }
             cacheManager.addCache(this.cache);
         } else {
             this.cache = existingCache;
