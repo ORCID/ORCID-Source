@@ -144,7 +144,7 @@
 	       			</div>
 				</div>
 			</div>
-			<div ng-controller="EmailFrequencyCtrl" ng-show="notificationsEnabled" ng-cloak>
+			<div ng-controller="EmailFrequencyCtrl" ng-cloak>
 				<div class="row bottomBuffer">
     				<strong class="green">${springMacroRequestContext.getMessage("manage.email.email_frequency")}</strong>
     			</div>    			

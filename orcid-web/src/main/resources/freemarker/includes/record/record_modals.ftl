@@ -39,7 +39,7 @@
 										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput"/>																				
 										<span ng-bind="otherName.content" ng-if="otherName.source != orcidId && otherName.source != null"></span>										
 									</div>									    
-									<div class="source" ng-if="otherName.sourceName || otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
+									<div class="source" ng-if="otherName.sourceName || otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null">{{orcidId}}</span></div>
 								</div>							
 								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
 									<ul class="record-settings pull-right">
@@ -105,7 +105,7 @@
 							 	 			</#list>
 							 			</select>										
 									</div>									
-									<div class="source" ng-if="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>
+									<div class="source" ng-if="country.sourceName || country.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="country.sourceName">{{country.sourceName}}</span><span ng-if="country.sourceName == null">{{orcidId}}</span></div>
 								</div> 
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">																				
@@ -173,7 +173,7 @@
 										<input type="text" ng-model="keyword.content" ng-show="keyword.source == orcidId" focus-me="newInput"></input>
 										<span ng-bind="keyword.content" ng-show="keyword.source != orcidId"></span>										
 									</div>
-									<div class="source" ng-if="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
+									<div class="source" ng-if="keyword.sourceName || keyword.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="keyword.sourceName">{{keyword.sourceName}}</span><span ng-if="keyword.sourceName == null">{{orcidId}}</span></div>																			
 								</div>
 								
 								<div class="col-md-6" style="position: static">
@@ -238,7 +238,7 @@
 										<input type="text" ng-model="website.url" ng-show="website.source == orcidId" placeholder="${springMacroRequestContext.getMessage('common.url')}"></input>
  										<a href="{{website.url}}" target="_blank" rel="me nofollow" ng-show="website.source != orcidId" ng-cloak>{{website.urlName != null? website.urlName : website.url}}</a>										
 									</div>
-									<div class="source" ng-if="website.sourceName || website.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
+									<div class="source" ng-if="website.sourceName || website.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="website.sourceName">{{website.sourceName}}</span><span ng-if="website.sourceName == null">{{orcidId}}</span></div>																			
 								</div>
 								
 								<div class="col-md-6" style="position: static">
@@ -309,7 +309,7 @@
 			        						<span ng-show="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}} {{externalIdentifier.reference}}</a></span>
 										</p>										
 									</div>
-									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}</span><span ng-if="externalIdentifier.sourceName == null"><@orcid.msg 'manage_bio_settings.private'/></span></div>																			
+									<div class="source"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="externalIdentifier.sourceName">{{externalIdentifier.sourceName}}</span><span ng-if="externalIdentifier.sourceName == null">{{orcidId}}</span></div>																			
 								</div>
 								
 								<div class="col-md-6" style="position: static">

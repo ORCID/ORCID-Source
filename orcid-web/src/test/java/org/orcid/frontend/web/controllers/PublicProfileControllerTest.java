@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Email;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -111,13 +112,11 @@ public class PublicProfileControllerTest extends DBUnitTest {
         Map<String, Object> model = mav.getModel();
         assertNotNull(model);
         assertTrue(model.containsKey("isPublicProfile"));
-        assertTrue(model.containsKey("orcidId"));
-        assertEquals(userOrcid, model.get("orcidId"));
-        assertTrue(model.containsKey("profile"));
-        OrcidProfile profile = (OrcidProfile) model.get("profile");
-        assertNotNull(profile.getOrcidBio());
-        assertNotNull(profile.getOrcidBio().getBiography());
-        assertEquals("Biography for 0000-0000-0000-0003", profile.getOrcidBio().getBiography().getContent());
+        assertTrue(model.containsKey("effectiveUserOrcid"));
+        assertEquals(userOrcid, model.get("effectiveUserOrcid"));
+        assertTrue(model.containsKey("biography"));
+        Biography biography = (Biography) model.get("biography");
+        assertEquals("Biography for 0000-0000-0000-0003", biography.getContent());
         assertTrue(model.containsKey("displayName"));
         String displayName = (String) model.get("displayName");
         assertEquals("Credit Name", displayName);
@@ -255,12 +254,9 @@ public class PublicProfileControllerTest extends DBUnitTest {
         Map<String, Object> model = mav.getModel();
         assertNotNull(model);
         assertTrue(model.containsKey("isPublicProfile"));
-        assertTrue(model.containsKey("orcidId"));
-        assertEquals(unclaimedUserOrcid, model.get("orcidId"));
-        assertTrue(model.containsKey("profile"));
-        OrcidProfile profile = (OrcidProfile) model.get("profile");
-        assertNotNull(profile.getOrcidBio());
-        assertNull(profile.getOrcidBio().getBiography());
+        assertTrue(model.containsKey("effectiveUserOrcid"));
+        assertEquals(unclaimedUserOrcid, model.get("effectiveUserOrcid"));
+        assertTrue(!model.containsKey("biography"));
         assertFalse(model.containsKey("displayName"));        
         assertFalse(model.containsKey("title"));
         
@@ -339,8 +335,8 @@ public class PublicProfileControllerTest extends DBUnitTest {
     private void assertUnavailableProfileBasicData(ModelAndView mav, String orcid, String displayName) {
         assertEquals("public_profile_unavailable", mav.getViewName());
         Map<String, Object> model = mav.getModel();
-        assertTrue(model.containsKey("orcidId"));
-        assertEquals(orcid, model.get("orcidId"));  
+        assertTrue(model.containsKey("effectiveUserOrcid"));
+        assertEquals(orcid, model.get("effectiveUserOrcid"));  
         if(displayName != null) {
             assertTrue(model.containsKey("displayName"));
             assertEquals(displayName, model.get("displayName"));
