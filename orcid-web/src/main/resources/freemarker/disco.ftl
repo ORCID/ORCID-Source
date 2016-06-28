@@ -30,7 +30,7 @@
         orcidVar.baseUri = '${baseUri}';
         orcidVar.baseUriHttp = '${baseUriHttp}';
         orcidVar.pubBaseUri = '${pubBaseUri}';
-        orcidVar.orcidId = '${(profile.orcidIdentifier.path)!}';
+        orcidVar.orcidId = '${(effectiveUserOrcid)!}';
         orcidVar.orcidIdHash = '${(orcidIdHash)!}';
         orcidVar.realOrcidId = '${realUserOrcid!}';
         orcidVar.jsMessages = JSON.parse("${jsMessagesJson}");

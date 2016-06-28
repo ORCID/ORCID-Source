@@ -2685,12 +2685,6 @@ header overrides
 	height: 80px;
 }
 
-/* Edit Works */
-
-.websites {
-	position: relative;
-}
-
 .websites-vis .privacy-group {	
 	margin-right: 15px;
 }
@@ -6543,9 +6537,19 @@ a:hover .mozilla-badge{
 	margin-bottom: 0;
 }
 
+
+#colorbox, 
+#cboxOverlay, 
+#cboxWrapper{
+	overflow: visible; /* Deal with it only for Modal v2*/
+}
+
+.edit-record-emails .popover-help-container{
+	position: absolute;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
-
 	.container{
 		min-width:320px; /* Resolutions below 320px are not supported */
 	}

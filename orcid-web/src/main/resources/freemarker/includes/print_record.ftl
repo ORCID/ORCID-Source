@@ -18,7 +18,7 @@
 -->
 <#if RequestParameters['print']??>
 	<div class="print-orcid-record">
-		<a href="${baseUriHttp}/${(profile.orcidIdentifier.path)!}" onClick="window.print();return false"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>
+		<a href="${baseUriHttp}/${(effectiveUserOrcid)!}" onClick="window.print();return false"><span class="glyphicon glyphicon-print"></span> Print your ORCID record</a>
 		<#--<@orcid.msg 'id_banner.viewpublicprofile'/>-->
         <div class="popover-help-container">
             <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
@@ -32,7 +32,7 @@
         </div>
     </div>
     <div class="print-orcid-record">
-        <a href="http://pdfmyurl.com/api?license=M9ldpIx9K1iU&url=${baseUriHttp}/${(profile.orcidIdentifier.path)!}&page_size=Letter&orientation=portrait&css_media_type=print&filename=ORCID-record&javascript_time=600"><span class="glyphicon glyphicon-floppy-save"></span></span> Save PDF</a>
+        <a href="http://pdfmyurl.com/api?license=M9ldpIx9K1iU&url=${baseUriHttp}/${(effectiveUserOrcid)!}&page_size=Letter&orientation=portrait&css_media_type=print&filename=ORCID-record&javascript_time=600"><span class="glyphicon glyphicon-floppy-save"></span></span> Save PDF</a>
         <div class="popover-help-container">
             <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
             <div id="save-pdf-help" class="popover bottom">
