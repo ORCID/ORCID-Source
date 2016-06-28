@@ -43,15 +43,11 @@
 
                         <div ng-show="displayMoreDetails[member.id]">
                         	<hr>
-                            <div ng-hide="membersListSrvc.memberIntegrations[member.id]" class="text-center">
-                            	<i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
-                                <!--[if lt IE 8]>
-                                    <!--<img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>-->
-                                <![endif]-->
-                            </div>
-                            <div ng-show="membersListSrvc.memberDetails[member.id].parentOrgName">Consortium/Parent Organization: {{membersListSrvc.memberDetails[member.id].parentOrgName}}</div>
+                            <p><b>Consortium/Parent Organization: </b> 
+                            <span ng-show="membersListSrvc.memberDetails[member.id].parentOrgName">{{membersListSrvc.memberDetails[member.id].parentOrgName}}</span>
+                            <span ng-hide="membersListSrvc.memberDetails[member.id].parentOrgName">None</span>
+                            <h3>Integrations</h3>
                             <div ng-show="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations">
-                                <h3>Integrations</h3>
                                 <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
                                 <p>
                                 	<span ng-bind-html="renderHtml(integration.description)" ng-show="integration.description">
@@ -64,8 +60,8 @@
 	                                </span>
                                 </p>
                             </div>
-                            <div ng-show="!membersListSrvc.memberIntegrations[member.id].lenth">
-                            	<p>This member has not completed any integrations yet.</p>
+                            <div ng-hide="membersListSrvc.memberDetails[member.id].integrations.length"> 
+                                <p>This member has not completed any integrations.</p>
                             </div>
                         </div>
                         <hr></hr>
