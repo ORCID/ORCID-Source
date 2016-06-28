@@ -102,7 +102,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
         validateSalesForceId(memberId);
-        validateSalesForceId(consortiumLeadId);
+        if (consortiumLeadId != null) {
+            validateSalesForceId(consortiumLeadId);
+        }
         try {
             return retrieveDetailsFromSalesForce(getAccessToken(), memberId, consortiumLeadId);
         } catch (SalesForceUnauthorizedException e) {
@@ -112,12 +114,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
-    public String validateSalesForceId(String memberId) {
-        if (!memberId.matches("[a-zA-Z0-9]+")) {
+    public String validateSalesForceId(String salesForceId) {
+        if (!salesForceId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
         }
-        return memberId;
+        return salesForceId;
     }
 
     /**
