@@ -44,19 +44,13 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     @Resource
     private WorkManager workManager;
 
-    @Cacheable(value = "pub-min-works-maps", key = "#profile.getCacheKey()")
-    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(OrcidProfile profile) {
+    @Cacheable(value = "pub-min-works-maps", key = "#orcid.concat('-').concat(#lastModified)")
+    public LinkedHashMap<Long, WorkForm> pubMinWorksMap(String orcid, long lastModified) {
         LinkedHashMap<Long, WorkForm> workMap = new LinkedHashMap<>();
-        long lastModified = 0;
-        if(profile.extractLastModifiedDate() != null) {
-            lastModified = profile.extractLastModifiedDate().getTime();
-        }
-        List<Work> works = workManager.findPublicWorks(profile.getOrcidIdentifier().getPath(), lastModified);
-        if (works != null) {
-            for (Work work : works) {                
-                workMap.put(work.getPutCode(), WorkForm.valueOf(work));                
-            }                                
-        }
+        List<Work> works = workManager.findPublicWorks(orcid, lastModified);
+        if (works != null)
+            for (Work work : works)                
+                workMap.put(work.getPutCode(), WorkForm.valueOf(work));                          
         return workMap;
     }
     

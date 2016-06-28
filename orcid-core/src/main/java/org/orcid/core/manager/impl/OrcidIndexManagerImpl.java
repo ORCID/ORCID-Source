@@ -471,7 +471,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                     break;
                 case WOSUID:
                     profileIndexDocument.setWosuid(entry.getValue());
-                case XBL:
+                case ZBL:
                     profileIndexDocument.setZbl(entry.getValue());
                     break;
                 }
