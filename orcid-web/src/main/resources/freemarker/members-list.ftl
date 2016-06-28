@@ -27,7 +27,7 @@
                     <![endif]-->
                 </div>
                 <div ng-show="membersListSrvc.membersList">
-                    <div class="member" ng-repeat="member in membersListSrvc.membersList">
+                    <div class="member" ng-repeat="member in membersListSrvc.membersList | orderBy : 'name'">
                         <h2>{{member.name}}</h2>
                         <p>{{member.researchCommunity}} | {{member.country}}</p>
                         <p>
