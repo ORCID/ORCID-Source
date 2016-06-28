@@ -6003,7 +6003,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
 
     $scope.loadWorkTypes = function(){
         var workCategory = "";
-        $scope.types = null;
         if($scope.editWork != null && $scope.editWork.workCategory != null && $scope.editWork.workCategory.value != null && $scope.editWork.workCategory.value != "")
             workCategory = $scope.editWork.workCategory.value;
         else
