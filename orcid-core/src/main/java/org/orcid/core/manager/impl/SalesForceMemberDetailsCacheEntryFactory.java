@@ -11,14 +11,15 @@ import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
  * @author Will Simpson
  *
  */
-public class SalesForceMembersListCacheEntryFactory implements CacheEntryFactory {
+public class SalesForceMemberDetailsCacheEntryFactory implements CacheEntryFactory {
 
     @Resource
     private SalesForceManager salesForceManager;
 
     @Override
     public Object createEntry(Object key) throws Exception {
-        return salesForceManager.retrieveFreshMembers();
+        SalesForceMemberDetailsCacheKey detailsCacheKey = (SalesForceMemberDetailsCacheKey) key;
+        return salesForceManager.retrieveFreshDetails(detailsCacheKey.getMemberId(), detailsCacheKey.getConsotiumLeadId());
     }
 
 }

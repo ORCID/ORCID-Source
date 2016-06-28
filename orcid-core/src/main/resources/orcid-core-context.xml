@@ -580,12 +580,25 @@
         <property name="maxElementsInMemory" value="5" />
         <property name="timeToLiveSeconds" value="3600" />
         <property name="timeToIdleSeconds" value="3600" />
-        <property name="maxElementsOnDisk" value="5" />
-        <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="strategy" value="NONE" />
         <property name="copyOnRead" value="false" />
         <property name="copyOnWrite" value="false" />
         <property name="cacheEntryFactory">
             <bean class="org.orcid.core.manager.impl.SalesForceMembersListCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceMemberDetailsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-member-details" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="timeToLiveSeconds" value="3600" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="strategy" value="NONE" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+        <property name="cacheEntryFactory">
+            <bean class="org.orcid.core.manager.impl.SalesForceMemberDetailsCacheEntryFactory" />
         </property>
     </bean>
     

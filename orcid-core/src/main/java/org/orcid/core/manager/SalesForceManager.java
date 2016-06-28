@@ -34,6 +34,8 @@ public interface SalesForceManager {
 
     SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
 
+    SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
+
     /**
      * @return The sales force object id, if valid.
      * @throws IllegalArgumentException

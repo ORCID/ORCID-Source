@@ -77,6 +77,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
 
+    @Resource(name = "salesForceMemberDetailsCache")
+    private SelfPopulatingCache salesForceMemberDetailsCache;
+
     private Client client = Client.create();
 
     private String accessToken;
@@ -101,6 +104,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Override
     public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
+        return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName)).getObjectValue();
+    }
+
+    @Override
+    public SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId) {
         validateSalesForceId(memberId);
         if (consortiumLeadId != null) {
             validateSalesForceId(consortiumLeadId);
