@@ -18,7 +18,6 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -128,9 +127,6 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
         assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
-        //TODO: We should enable this in a later release
-        //assertTrue(entity2.getDisplayIndex() > entity3.getDisplayIndex());
-        //assertTrue(entity1.getDisplayIndex() > entity2.getDisplayIndex());
         
         //Rollback all changes
         workDao.remove(entity1.getId());
@@ -138,6 +134,28 @@ public class WorkManagerTest extends BaseTest {
         workDao.remove(entity3.getId());
     }
     
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Work w1 = getWork("fromUI-1");
+        w1 = workManager.createWork(claimedOrcid, w1, false);
+        WorkEntity w = workDao.find(w1.getPutCode());
+        
+        assertNotNull(w1);
+        assertEquals(Long.valueOf(1), w.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Work w1 = getWork("fromAPI-1");
+        w1 = workManager.createWork(claimedOrcid, w1, true);
+        WorkEntity w = workDao.find(w1.getPutCode());
+        
+        assertNotNull(w1);
+        assertEquals(Long.valueOf(0), w.getDisplayIndex());
+    }
+        
     private Work getWork(String extIdValue) {
         Work work = new Work();
         WorkTitle title = new WorkTitle();

@@ -40,7 +40,7 @@ import org.orcid.persistence.constants.SiteConstants;
  */
 @Entity
 @Table(name = "researcher_url")
-public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware {
+public class ResearcherUrlEntity extends SourceAwareEntity<Long> implements Comparable<ResearcherUrlEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -632507196189018770L;
 

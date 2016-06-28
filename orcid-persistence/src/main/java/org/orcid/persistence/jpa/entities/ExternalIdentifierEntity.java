@@ -40,7 +40,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  */
 @Entity
 @Table(name = "external_identifier")
-public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements Comparable<ExternalIdentifierEntity>, ProfileAware {
+public class ExternalIdentifierEntity extends SourceAwareEntity<Long> implements Comparable<ExternalIdentifierEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = 1L;
 

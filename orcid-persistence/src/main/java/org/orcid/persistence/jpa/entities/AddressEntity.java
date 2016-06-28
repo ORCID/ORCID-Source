@@ -41,7 +41,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  */
 @Entity
 @Table(name = "address")
-public class AddressEntity extends SourceAwareEntity<Long> implements ProfileAware {
+public class AddressEntity extends SourceAwareEntity<Long> implements ProfileAware, DisplayIndexInterface {
     private static final long serialVersionUID = -331185018871126442L;
     private Long id;
     private Iso3166Country iso2Country;

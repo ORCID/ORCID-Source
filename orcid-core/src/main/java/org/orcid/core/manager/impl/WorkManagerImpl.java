@@ -31,6 +31,7 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -213,14 +214,8 @@ public class WorkManagerImpl implements WorkManager {
             workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        setIncomingWorkPrivacy(workEntity, profile);
-        
-        if(isApiRequest) {
-            workEntity.setDisplayIndex(0L);
-        } else {
-            workEntity.setDisplayIndex(1L);    
-        }                
-        
+        setIncomingWorkPrivacy(workEntity, profile);        
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
