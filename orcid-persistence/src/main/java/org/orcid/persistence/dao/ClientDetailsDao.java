@@ -34,6 +34,8 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
 
     Date getLastModified(String clientId);
     
+    Date getLastModifiedByIdP(String idp);
+    
     void updateLastModified(String clientId);
     
     void updateClientType(ClientType clientType, String clientId);
@@ -59,4 +61,6 @@ public interface ClientDetailsDao extends GenericDao<ClientDetailsEntity, String
     boolean existsAndIsNotPublicClient(String clientId);
     
     Date getLastModifiedIfNotPublicClient(String clientId);
+    
+    ClientDetailsEntity findByIdP(String idp);
 }

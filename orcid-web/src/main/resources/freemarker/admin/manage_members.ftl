@@ -234,7 +234,7 @@
 									<div ng-repeat='error in member.salesforceId.errors' ng-bind-html="error"></div>
 								</span>	
 							</div>
-						</div>
+						</div>									
 						<!-- email -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12">
@@ -310,6 +310,16 @@
 								</span>	
 							</div>
 						</div>
+						<!-- IdP-->
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<span><@orcid.msg 'manage.developer_tools.client.idp'/></span><br />
+								<input type="text" ng-model="client.authenticationProviderId.value" class="full-width-input" />
+								<span class="orcid-error" ng-show="client.authenticationProviderId.errors.length > 0">
+									<div ng-repeat='error in client.authenticationProviderId.errors' ng-bind-html="error"></div>
+								</span>	
+							</div>
+						</div>
 						<!-- Description -->
 						<div class="row">
 							<div class="col-md-12 col-sm-12 col-xs-12 dt-description">
@@ -336,8 +346,7 @@
 									<div ng-repeat='error in client.persistentTokenEnabled.errors' ng-bind-html="error"></div>
 								</span>	
 							</div>
-						</div>			
-															
+						</div>
 						<!-- Redirect uris -->
 						<div class="row">			
 							<div class="col-md-12 col-sm-12 col-xs-12">

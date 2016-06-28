@@ -73,6 +73,7 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
     private SortedSet<ClientRedirectUriEntity> clientRegisteredRedirectUris;
     private List<ClientGrantedAuthorityEntity> clientGrantedAuthorities = Collections.emptyList();
     private String groupProfileId;
+    private String authenticationProviderId;
 
     private Set<CustomEmailEntity> customEmails = Collections.emptySet();
     private int accessTokenValiditySeconds = DEFAULT_TOKEN_VALIDITY;
@@ -455,4 +456,12 @@ public class ClientDetailsEntity extends BaseEntity<String> implements ClientDet
         return false;
     }
 
+    @Column(name = "authentication_provider_id")
+    public String getAuthenticationProviderId() {
+        return authenticationProviderId;
+    }
+
+    public void setAuthenticationProviderId(String authenticationProviderId) {
+        this.authenticationProviderId = authenticationProviderId;
+    }    
 }

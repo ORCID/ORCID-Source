@@ -16,6 +16,7 @@
  */
 package org.orcid.core.manager;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,10 @@ import org.orcid.core.exception.OrcidNotificationAlreadyReadException;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
+import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 
 public interface NotificationManager {
@@ -90,5 +92,9 @@ public interface NotificationManager {
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
 
     public String createClaimVerificationUrl(String email, String baseUri);
+    
+    void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
+    
+    public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
 
 }

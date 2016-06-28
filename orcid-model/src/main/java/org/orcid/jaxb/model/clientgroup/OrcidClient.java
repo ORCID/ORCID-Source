@@ -67,7 +67,7 @@ import org.orcid.jaxb.model.message.OrcidType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "displayName", "website", "shortDescription", "redirectUris", "clientId", "clientSecret", "errors" })
+@XmlType(propOrder = { "displayName", "website", "shortDescription", "idp", "redirectUris", "clientId", "clientSecret", "errors" })
 @XmlRootElement(name = "orcid-client")
 public class OrcidClient implements Serializable {
 
@@ -79,6 +79,8 @@ public class OrcidClient implements Serializable {
     protected String website;
     @XmlElement(name = "short-description", required = true)
     protected String shortDescription;
+    @XmlElement(name = "idp", required = true)
+    protected String idp;
     @XmlElement(name = "redirect-uris", required = true)
     protected RedirectUris redirectUris;
     @XmlElement(name = "client-id")
@@ -90,7 +92,7 @@ public class OrcidClient implements Serializable {
     @XmlAttribute
     protected ClientType type;
     @XmlTransient
-    protected boolean persistentTokenEnabled;
+    protected boolean persistentTokenEnabled;    
 
     /**
      * Gets the value of the displayName property.
@@ -281,5 +283,25 @@ public class OrcidClient implements Serializable {
      */
     public void setPersistentTokenEnabled(boolean persistentTokenEnabled) {
         this.persistentTokenEnabled = persistentTokenEnabled;
+    }
+
+    /**
+     * Gets the value of the persistentTokenEnabled property.
+     * 
+     * @return the value of the idp
+     */
+    public String getIdp() {
+        return idp;
+    }
+    
+    /**
+     * Sets the value of the idp property.
+     * 
+     * @param value
+     *            allowed object is {@link String }
+     * 
+     */
+    public void setIdp(String idp) {
+        this.idp = idp;
     }
 }

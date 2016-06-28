@@ -21,17 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ma.glasnost.orika.MapperFacade;
-
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
+
+import ma.glasnost.orika.MapperFacade;
 
 /**
  * 
@@ -47,6 +49,7 @@ public class JpaJaxbNotificationAdapterImpl implements JpaJaxbNotificationAdapte
         JAXB2JPA_CLASS_MAP.put(NotificationPermission.class, NotificationAddItemsEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationCustom.class, NotificationCustomEntity.class);
         JAXB2JPA_CLASS_MAP.put(NotificationAmended.class, NotificationAmendedEntity.class);
+        JAXB2JPA_CLASS_MAP.put(NotificationInstitutionalConnection.class, NotificationInstitutionalConnectionEntity.class);
     }
 
     public void setMapperFacade(MapperFacade mapperFacade) {

@@ -393,6 +393,8 @@
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
 
+	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
+
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames" value="classpath:i18n/api,classpath:i18n/email,classpath:i18n/javascript,classpath:i18n/messages" />
@@ -747,6 +749,6 @@
 	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />
+	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />		
 	
 </beans>

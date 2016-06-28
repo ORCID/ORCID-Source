@@ -69,7 +69,11 @@ public enum RedirectUriType {
     IMPORT_PEER_REVIEW_WIZARD("import-peer-review-wizard"),
     
     @XmlEnumValue("sso-authentication")
-    SSO_AUTHENTICATION("sso-authentication");
+    SSO_AUTHENTICATION("sso-authentication"),
+    
+    @XmlEnumValue("institutional-sign-in")
+    INSTITUTIONAL_SIGN_IN("institutional-sign-in");
+        
     //@formatter:on
 
     private final String value;

@@ -17,23 +17,20 @@
 package org.orcid.frontend.spring;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.frontend.web.controllers.ShibbolethController;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.persistence.jpa.entities.UserconnectionEntity;
-import org.orcid.persistence.jpa.entities.UserconnectionPK;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 
@@ -44,6 +41,9 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
     @Value("${org.orcid.shibboleth.enabled:false}")
     private boolean enabled;
 
+    @Resource
+    private InstitutionalSignInManager institutionalSignInManager;
+    
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         linkShibbolethAccount(request, response);
         String targetUrl = getTargetUrl(request, response, authentication);
@@ -51,7 +51,7 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         response.getWriter().println("{\"success\": true, \"url\": \"" + targetUrl.replaceAll("^/", "") + "\"}");
     }
 
-    public void linkShibbolethAccount(HttpServletRequest request, HttpServletResponse response) {
+    public void linkShibbolethAccount(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         Map<String, String> headers = new HashMap<String, String>();
 
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -63,23 +63,11 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
         checkEnabled();
         RemoteUser remoteUser = ShibbolethController.retrieveRemoteUser(headers);
         String providerId = headers.get(SHIB_IDENTITY_PROVIDER_HEADER);
-        UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), providerId,
-                remoteUser.getIdType());
-        if (userConnectionEntity == null) {
-            userConnectionEntity = new UserconnectionEntity();
-            String randomId = Long.toString(new Random(Calendar.getInstance().getTimeInMillis()).nextLong());
-            UserconnectionPK pk = new UserconnectionPK(randomId, providerId, remoteUser.getUserId());
-            OrcidProfile profile = getRealProfile();
-            userConnectionEntity.setOrcid(profile.getOrcidIdentifier().getPath());
-            userConnectionEntity.setProfileurl(profile.getOrcidIdentifier().getUri());
-            userConnectionEntity.setDisplayname(ShibbolethController.retrieveDisplayName(headers));
-            userConnectionEntity.setRank(1);
-            userConnectionEntity.setId(pk);
-            userConnectionEntity.setLinked(true);
-            userConnectionEntity.setLastLogin(new Date());
-            userConnectionEntity.setIdType(remoteUser.getIdType());
-            userConnectionDao.persist(userConnectionEntity);
-        }
+        String remoteUserId = remoteUser.getUserId();
+        String idType = remoteUser.getIdType();
+        String displayName = ShibbolethController.retrieveDisplayName(headers);
+        String userOrcid = getRealUserOrcid();                
+        institutionalSignInManager.createUserConnectionAndNotify(idType, remoteUserId, displayName, providerId, userOrcid);
     }
 
     private void checkEnabled() {
@@ -87,5 +75,4 @@ public class ShibbolethAjaxAuthenticationSuccessHandler extends AjaxAuthenticati
             throw new FeatureDisabledException();
         }
     }
-
 }

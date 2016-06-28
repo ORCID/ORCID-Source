@@ -392,7 +392,7 @@
             claimed="true"
             reviewed="true"
             record_locked="false"
-            enable_notifications="true"
+            enable_notifications="false"
             />
             
 	<profile
@@ -1713,6 +1713,17 @@
         client_source_id="APP-5555555555555555"
         last_modified="2016-04-01 15:31:00.00"
     />        
+      
+	<email
+        orcid="0000-0000-0000-0002"
+        email="public_0000-0000-0000-0002@test.orcid.org"
+        is_primary="true"
+        is_current="true"
+        is_verified="false"
+        visibility="PUBLIC"
+        client_source_id="APP-5555555555555555"
+        last_modified="2016-04-01 15:31:00.00"
+    />  
       
 	<email
         orcid="0000-0000-0000-0003"

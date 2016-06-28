@@ -108,6 +108,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         for (OrcidClient createdClient : createdClients) {
             assertNotNull(createdClient.getClientId());
             assertNotNull(createdClient.getClientSecret());
+            assertNotNull(createdClient.getIdp());
             createdClientsMappedByName.put(createdClient.getDisplayName(), createdClient);
         }
         OrcidClient complexityClient = createdClientsMappedByName.get("Ecological Complexity");
@@ -155,6 +156,7 @@ public class OrcidClientGroupManagerTest extends BaseTest {
         for (OrcidClient createdClient : createdClients) {
             assertNotNull(createdClient.getClientId());
             assertNotNull(createdClient.getClientSecret());
+            assertNotNull(createdClient.getIdp());
             createdClientsMappedByName.put(createdClient.getDisplayName(), createdClient);
         }
         OrcidClient complexityClient = createdClientsMappedByName.get("Ecological Complexity");

@@ -31,6 +31,7 @@
         <display-name>Ecological Complexity</display-name>
         <website>http://www.journals.elsevier.com/ecological-complexity</website>
         <short-description>An International Journal on Biocomplexity in the Environment and Theoretical Ecology</short-description>
+        <idp>IdP-1</idp>
         <redirect-uris>
             <redirect-uri scope="/orcid-profile/create /orcid-bio/read-limited" type="grant-read-wizard">http://www.journals.elsevier.com/ecological-complexity/orcid-callback</redirect-uri>
         </redirect-uris>
@@ -39,6 +40,7 @@
         <display-name>Ecological Economics</display-name>
         <website>http://www.journals.elsevier.com/ecological-economics</website>
         <short-description>The Transdisciplinary Journal of the International Society for Ecological Economics (ISEE)</short-description>
+        <idp>IdP-2</idp>
         <redirect-uris>
             <redirect-uri scope="/orcid-bio/read-limited" type="default">http://www.journals.elsevier.com/ecological-economics/orcid-callback</redirect-uri>
         </redirect-uris>
