@@ -216,7 +216,7 @@ public class WorkBaseEntity extends SourceAwareEntity<Long> {
      * Currently only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
      *
      */
-    @Column(name = "display_index", updatable = false, insertable = false)
+    @Column(name = "display_index", updatable = false)
     public Long getDisplayIndex() {
         return displayIndex;
     }

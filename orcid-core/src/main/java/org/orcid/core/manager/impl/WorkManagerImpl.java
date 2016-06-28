@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -54,9 +53,6 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private WorkDao workDao;
-
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -180,11 +176,11 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work, boolean applyAPIValidations) {
+    public Work createWork(String orcid, Work work, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
-        if (applyAPIValidations) {
-            activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
+        if (isApiRequest) {
+            activityValidator.validateWork(work, sourceEntity, true, isApiRequest, null);
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
@@ -218,8 +214,13 @@ public class WorkManagerImpl implements WorkManager {
         } 
         
         setIncomingWorkPrivacy(workEntity, profile);
-        workEntity.setDisplayIndex(0L);
-        //workDao.increaseDisplayIndexOnAllElements(orcid);
+        
+        if(isApiRequest) {
+            workEntity.setDisplayIndex(0L);
+        } else {
+            workEntity.setDisplayIndex(1L);    
+        }                
+        
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
@@ -228,7 +229,7 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public Work updateWork(String orcid, Work work, boolean applyAPIValidations) {
+    public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -237,8 +238,8 @@ public class WorkManagerImpl implements WorkManager {
         String existingSourceId = workEntity.getSourceId();
         String existingClientSourceId = workEntity.getClientSourceId();
         
-        if (applyAPIValidations) {
-            activityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
+        if (isApiRequest) {
+            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());
             
             Date lastModified = profileEntityManager.getLastModified(orcid);
             long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();

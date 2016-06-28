@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -73,9 +72,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource
     private SourceManager sourceManager;
-    
-    @Resource
-    private LocaleManager localeManager;
     
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -297,8 +293,13 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
         setIncomingWorkPrivacy(profileFundingEntity, profile);
-        profileFundingEntity.setDisplayIndex(0L);
-        //profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
+        
+        if(isApiRequest) {
+            profileFundingEntity.setDisplayIndex(0L);
+        } else {
+            profileFundingEntity.setDisplayIndex(1L);
+        }
+        
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if(isApiRequest) {

@@ -231,7 +231,7 @@ public class ProfileFundingEntity extends SourceAwareEntity<Long> implements Com
      * Currently only only updatable via ProfileWorkDaoImpl.updateToMaxDisplay
      *
      */    
-    @Column(name = "display_index", updatable=false, insertable=false)
+    @Column(name = "display_index", updatable=false)
     public Long getDisplayIndex() {
         return displayIndex;
     }
