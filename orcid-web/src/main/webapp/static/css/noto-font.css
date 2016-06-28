@@ -72,6 +72,15 @@ ul.menu-options li a{
 	font-size: 11px;
 }
 
-.workspace-right h3, .workspace-body-list h3{
-	font-size: 18px;
+.workspace-right h3, .workspace-body-list h3,
+.admin-options .workspace-accordion-item p a{
+	font-size: 17px;
+}
+
+.workspace-peer-review .peer-review-title{
+	font-size: 17px;
+}
+
+.source-line-peer-review{
+	font-size: 13px;
 }
