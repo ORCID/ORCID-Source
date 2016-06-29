@@ -163,7 +163,7 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Cache existingCache = cacheManager.getCache(cacheName);
+        Ehcache existingCache = cacheManager.getEhcache(cacheName);
         if (existingCache == null) {
             CacheConfiguration config = createConfig();
             if (cacheEntryFactory != null) {
