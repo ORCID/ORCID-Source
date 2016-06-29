@@ -5920,12 +5920,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
             					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
             			}
             		}
-            	}
+            	}            	
             	if(getParameterByName('import_works_wizard') != 'true') {
             		$scope.selectedWorkType = 'All';
                     $scope.selectedGeoArea = 'All';
             	}
-            	//$scope.processWorkImportWizardList();
             	$scope.$apply();
             }
         }).fail(function() {
