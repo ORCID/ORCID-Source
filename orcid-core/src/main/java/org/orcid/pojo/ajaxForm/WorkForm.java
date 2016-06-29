@@ -27,6 +27,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.orcid.jaxb.model.common_rc2.CreatedDate;
 import org.orcid.jaxb.model.common_rc2.SourceClientId;
 import org.orcid.jaxb.model.common_rc2.SourceOrcid;
+import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
@@ -394,7 +395,9 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set url
         if (!PojoUtil.isEmpty(this.getUrl())) {
-            work.setUrl(new org.orcid.jaxb.model.common_rc2.Url(this.getUrl().getValue()));
+            work.setUrl(new Url(this.getUrl().getValue()));
+        } else {
+            work.setUrl(new Url());
         }
 
         // Set visibility
