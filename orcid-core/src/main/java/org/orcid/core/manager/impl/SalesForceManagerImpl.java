@@ -68,10 +68,10 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Value("${org.orcid.core.salesForce.password}")
     private String password;
 
-    @Value("${org.orcid.core.salesForce.tokenEndPointUrl}")
+    @Value("${org.orcid.core.salesForce.tokenEndPointUrl:https://login.salesforce.com/services/oauth2/token}")
     private String tokenEndPointUrl;
 
-    @Value("${org.orcid.core.salesForce.apiBaseUrl}")
+    @Value("${org.orcid.core.salesForce.apiBaseUrl:https://na11.salesforce.com}")
     private String apiBaseUrl;
 
     @Resource(name = "salesForceMembersListCache")
