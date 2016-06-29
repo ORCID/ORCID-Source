@@ -11364,16 +11364,8 @@ orcidNgModule.filter("filterImportWizards", function(){
     					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
     						output.push(input[i]);
     					}    					
-    				}else{
-    					var matchType = false;
-    					var matchGeo = false;    					
-    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
-    						matchType = true;
-    					}
-    					if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-    						matchGeo = true;
-    					}
-    					if (matchType && matchGeo){
+    				}else{    				   					
+    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
         					output.push(input[i]);
         				}
     				}
