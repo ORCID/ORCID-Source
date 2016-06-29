@@ -1660,6 +1660,55 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
     return serv; 
 }]);
 
+orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
+    var serv = {
+        membersList: null,
+        memberDetails: {},
+        getMembersList: function() {
+            $.ajax({
+                url: getBaseUri() + '/members-list/members.json',
+                dataType: 'json',
+                cache: true,
+                success: function(data) {
+                    serv.membersList = data;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with members list");
+                serv.feed = [];
+                $rootScope.$apply();
+            });
+        },
+        getDetails: function(memberId, consortiumLeadId) {
+            if(serv.memberDetails[memberId] == null){
+                var url = getBaseUri() + '/members-list/details.json?memberId=' + encodeURIComponent(memberId);
+                if(consortiumLeadId != null){
+                    url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
+                }
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                    success: function(data) {
+                        serv.memberDetails[memberId] = data;
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with member details");
+                    serv.feed = [];
+                    $rootScope.$apply();
+                });
+            }
+        }
+    };
+
+    // populate the members feed
+    serv.getMembersList();
+    return serv; 
+}]);
+
 
 orcidNgModule.filter('urlProtocol', function(){
     return function(url){
@@ -10802,6 +10851,21 @@ orcidNgModule.controller('LinkAccountController',['$scope', 'discoSrvc', functio
             $scope.loadedFeed = true;
         }
     });
+    
+}]);
+
+orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+    $scope.membersListSrvc = membersListSrvc;
+    $scope.displayMoreDetails = {};
+    
+    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+        membersListSrvc.getDetails(memberId, consortiumLeadId);
+        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+    }
+    
+    $scope.renderHtml = function (htmlCode) {
+        return $sce.trustAsHtml(htmlCode);
+    };
     
 }]);
 

@@ -8064,3 +8064,11 @@ a:hover .mozilla-badge{
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
 	
 }
+
+.member-logo{
+	max-width: 150px;
+	max-height: 150px;
+	display: block;
+	float: left;
+	margin: 0 10px 10px 0;
+}
