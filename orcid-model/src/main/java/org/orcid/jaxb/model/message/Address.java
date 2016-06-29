@@ -23,12 +23,12 @@
 
 package org.orcid.jaxb.model.message;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * <p>Java class for anonymous complex type.
@@ -60,9 +60,6 @@ public class Address implements Serializable {
     private static final long serialVersionUID = 1L;
     protected Country country;
 
-    @XmlTransient
-    protected Source source;
-    
     /**
      * Gets the value of the country property.
      * 
@@ -85,15 +82,7 @@ public class Address implements Serializable {
      */
     public void setCountry(Country value) {
         this.country = value;
-    }    
-    
-    public Source getSource() {
-        return source;
-    }
-
-    public void setSource(Source source) {
-        this.source = source;
-    }
+    }            
 
     @Override
     public int hashCode() {

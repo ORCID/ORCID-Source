@@ -182,10 +182,10 @@ public class OrcidMessageUtil {
         }
     }
     
-    public void setSourceName(Address element) {
-        if(element.getSource() != null && element.getSource().retrieveSourcePath() != null) {
-            SourceName sourceName = getSourceName(element.getSource().retrieveSourcePath());
-            element.getSource().setSourceName(sourceName);
+    public void setSourceName(Address element) {        
+        if(element.getCountry() != null && element.getCountry().getSource() != null && element.getCountry().getSource().retrieveSourcePath() != null) {
+            SourceName sourceName = getSourceName(element.getCountry().getSource().retrieveSourcePath());
+            element.getCountry().getSource().setSourceName(sourceName);
         }
     }
     

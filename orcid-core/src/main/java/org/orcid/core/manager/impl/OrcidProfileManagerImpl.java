@@ -63,7 +63,6 @@ import org.orcid.core.security.OrcidWebRole;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.message.ActivitiesContainer;
 import org.orcid.jaxb.model.message.Activity;
-import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Affiliations;
 import org.orcid.jaxb.model.message.Biography;
@@ -472,10 +471,10 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             }
                         
             //Address
-            if(bio.getContactDetails() != null && bio.getContactDetails().getAddress() != null) {
-                Address address = bio.getContactDetails().getAddress(); 
-                if(address.getSource() == null || PojoUtil.isEmpty(address.getSource().retrieveSourcePath())) {
-                    address.setSource(source);
+            if(bio.getContactDetails() != null && bio.getContactDetails().getAddress() != null && bio.getContactDetails().getAddress().getCountry() != null) {
+                Country country = bio.getContactDetails().getAddress().getCountry(); 
+                if(country.getSource() == null || PojoUtil.isEmpty(country.getSource().retrieveSourcePath())) {
+                    country.setSource(source);
                 }
             }            
             
