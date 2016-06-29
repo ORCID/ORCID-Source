@@ -420,19 +420,26 @@
 					           	</div>
 							</div>
 							<#if RequestParameters['import_works_wizard']??>
-								<div id="workFilters" class="col-md-12 col-sm-12 col-xs-12">
-									
-									<@orcid.msg 'workspace.link_works.filter.worktype'/>
-									<select ng-options="wt as wt for wt in workType" ng-init="selectedWorkType = 'All'" ng-model="selectedWorkType"></select>
-									
-											
-									<@orcid.msg 'workspace.link_works.filter.geographicalarea'/>
-									<select ng-options="ga as ga for ga in geoArea" ng-init="selectedGeoArea = 'All'" ng-model="selectedGeoArea"></select>
-									
-									
+								<div class="row">
+									<div id="workFilters">
+										<form class="form-inline">
+											<div class="col-md-5 col-sm-5 col-xs-12">
+												<div class="form-group">
+		    										<label for="work-type"><@orcid.msg 'workspace.link_works.filter.worktype'/></label>
+		    										<select id="work-type" ng-options="wt as wt for wt in workType" ng-init="selectedWorkType = 'All'" ng-model="selectedWorkType"></select>
+		  										</div>
+	  										</div>
+	  										<div class="col-md-7 col-sm-7 col-xs-12">
+		  										<div class="form-group geo-area-group">
+		    										<label for="geo-area"><@orcid.msg 'workspace.link_works.filter.geographicalarea'/></label>
+		    										<select ng-options="ga as ga for ga in geoArea" ng-init="selectedGeoArea = 'All'" ng-model="selectedGeoArea"></select>
+		  										</div>
+		  									</div>  
+										</form>
+										<hr />
+									</div>
 								</div>
-							</#if>
-														
+							</#if>					
 							<div class="row wizards">								
 								<div class="col-md-12 col-sm-12 col-xs-12">
 								<div ng-repeat="wtw in workImportWizardsOriginal | orderBy: 'displayName' | filterImportWizards : selectedWorkType : selectedGeoArea">
