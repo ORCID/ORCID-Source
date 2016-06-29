@@ -68,7 +68,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Value("${org.orcid.core.salesForce.password}")
     private String password;
 
-    @Value("${org.orcid.core.salesForce.tokenEndPointUrl:https://login.salesforce.com/services/oauth2/token}")
+    @Value("${org.orcid.core.salesForce.tokenEndPointUrl}")
     private String tokenEndPointUrl;
 
     @Value("${org.orcid.core.salesForce.apiBaseUrl:https://na11.salesforce.com}")
