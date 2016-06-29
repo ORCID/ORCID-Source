@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -169,11 +170,7 @@ public class AddressManagerImpl implements AddressManager {
             newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         }        
         
-        /*
-        for (AddressEntity existing : existingAddresses)
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
-         */
-        newEntity.setDisplayIndex(0L); 
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         setIncomingPrivacy(newEntity, profile);
         addressDao.persist(newEntity);
         return adapter.toAddress(newEntity);

@@ -893,7 +893,7 @@ public class MemberV2ApiServiceDelegatorImpl
     @Override
     public Response viewBiography(String orcid) {
         Biography bio = null;
-        try {
+        try {            
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);
             bio = biographyManager.getBiography(orcid);
             orcidSecurityManager.checkVisibility(bio, orcid);            

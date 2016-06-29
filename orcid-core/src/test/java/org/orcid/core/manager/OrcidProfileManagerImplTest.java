@@ -1759,8 +1759,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         assertEquals(org.orcid.jaxb.model.common_rc2.Iso3166Country.US, profileEntity.getAddresses().iterator().next().getIso2Country());
         
         //Update all values
-        profile.getOrcidBio().getBiography().setContent("This is my biography # 2");
-        profile.getOrcidBio().getContactDetails().getAddress().setSource(null);
+        profile.getOrcidBio().getBiography().setContent("This is my biography # 2");        
         profile.getOrcidBio().getContactDetails().getAddress().setCountry(new Country(Iso3166Country.CR));        
         profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setSource(null);
         profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdCommonName(new ExternalIdCommonName("common-name-2"));
@@ -1845,8 +1844,7 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         orcidProfileManager.updateOrcidProfile(profile);
         
         //Everything should be updated but the address, because the record is claimed
-        profile.getOrcidBio().getBiography().setContent("This is my biography # 3");
-        profile.getOrcidBio().getContactDetails().getAddress().setSource(null);
+        profile.getOrcidBio().getBiography().setContent("This is my biography # 3");        
         profile.getOrcidBio().getContactDetails().getAddress().setCountry(new Country(Iso3166Country.PE));        
         profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setSource(null);
         profile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier().get(0).setExternalIdCommonName(new ExternalIdCommonName("common-name-3"));

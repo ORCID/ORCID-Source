@@ -164,7 +164,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (Visibility.PRIVATE.equals(name.getVisibility())) {
             throw new OrcidVisibilityException();
         }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
+        boolean hasReadLimitedScope = hasScope(ScopePathType.ORCID_BIO_READ_LIMITED);
         if (!hasReadLimitedScope) {
             if (Visibility.LIMITED.equals(name.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");
@@ -177,7 +177,7 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
         if (Visibility.PRIVATE.equals(biography.getVisibility())) {
             throw new OrcidVisibilityException();
         }
-        boolean hasReadLimitedScope = hasScope(ScopePathType.PERSON_READ_LIMITED);
+        boolean hasReadLimitedScope = hasScope(ScopePathType.ORCID_BIO_READ_LIMITED);
         if (!hasReadLimitedScope) {
             if (Visibility.LIMITED.equals(biography.getVisibility())) {
                 throw new OrcidUnauthorizedException("You dont have permissions to view this element");

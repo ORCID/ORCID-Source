@@ -97,6 +97,19 @@ public class NotificationController extends BaseController {
             @RequestParam(value = "includeArchived", defaultValue = "false") boolean includeArchived) {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
+        addSubjectToNotifications(notifications);
+        return notifications;
+    }
+
+    @RequestMapping("/notification-alerts.json")
+    public @ResponseBody List<Notification> getNotificationAlertJson() {
+        String currentOrcid = getCurrentUserOrcid();
+        List<Notification> notifications = notificationManager.findNotificationAlertsByOrcid(currentOrcid);
+        addSubjectToNotifications(notifications);
+        return notifications;
+    }
+
+    private void addSubjectToNotifications(List<Notification> notifications) {
         for (Notification notification : notifications) {
             if (notification instanceof NotificationPermission) {
                 NotificationPermission naa = (NotificationPermission) notification;
@@ -111,12 +124,11 @@ public class NotificationController extends BaseController {
                 na.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, na.getNotificationType().value())));
             } else if (notification instanceof NotificationInstitutionalConnection) {
                 NotificationInstitutionalConnection nic = (NotificationInstitutionalConnection) notification;
-                nic.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, nic.getNotificationType().value())));                                
+                nic.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, nic.getNotificationType().value())));
             }
         }
-        return notifications;
     }
-
+    
     @RequestMapping("/unreadCount.json")
     public @ResponseBody int getUnreadCountJson() {
         String currentOrcid = getCurrentUserOrcid();

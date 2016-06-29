@@ -93,6 +93,32 @@ public class OtherNameManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, otherName.getVisibility());       
     }
     
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        OtherName otherName = getOtherName();
+        otherName.setContent(otherName.getContent() + " fromUI");
+        
+        otherName = otherNameManager.createOtherName(claimedOrcid, otherName, false);
+        otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
+        
+        assertNotNull(otherName);
+        assertEquals(Long.valueOf(1), otherName.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        OtherName otherName = getOtherName();
+        otherName.setContent(otherName.getContent() + " fromAPI");
+        
+        otherName = otherNameManager.createOtherName(claimedOrcid, otherName, true);
+        otherName = otherNameManager.getOtherName(claimedOrcid, otherName.getPutCode());
+        
+        assertNotNull(otherName);
+        assertEquals(Long.valueOf(0), otherName.getDisplayIndex());
+    }
+    
     private OtherName getOtherName() {
         OtherName otherName = new OtherName();
         otherName.setContent("other-name");

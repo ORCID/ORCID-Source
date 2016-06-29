@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.orcid.core.adapter.JpaJaxbFundingAdapter;
-import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrgManager;
@@ -33,6 +32,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -73,9 +73,6 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
     
     @Resource
     private SourceManager sourceManager;
-    
-    @Resource
-    private LocaleManager localeManager;
     
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
@@ -296,9 +293,8 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
         profileFundingEntity.setProfile(profile);
-        setIncomingWorkPrivacy(profileFundingEntity, profile);
-        profileFundingEntity.setDisplayIndex(0L);
-        //profileFundingDao.increaseDisplayIndexOnAllElements(orcid);
+        setIncomingWorkPrivacy(profileFundingEntity, profile);        
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(profileFundingEntity, isApiRequest);        
         profileFundingDao.persist(profileFundingEntity);
         profileFundingDao.flush();
         if(isApiRequest) {
@@ -351,8 +347,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         orcidSecurityManager.checkSource(pfe);
         
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
-        pfe.setVisibility(originalVisibility);
-        
+        pfe.setVisibility(originalVisibility);        
         
         //Be sure it doesn't overwrite the source
         pfe.setSourceId(existingSourceId);

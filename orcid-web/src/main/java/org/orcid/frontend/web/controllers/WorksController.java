@@ -34,13 +34,12 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.CitationType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.jaxb.model.record_rc2.WorkCategory;
 import org.orcid.jaxb.model.record_rc2.WorkType;
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.KeyValue;
 import org.orcid.pojo.ajaxForm.Citation;
@@ -102,7 +101,7 @@ public class WorksController extends BaseWorkspaceController {
             for (String workId : workIds) {
                 workIdLs.add(new Long(workId));
             }
-            workManager.removeWorks(getCurrentUserOrcid(), workIdLs);
+            workManager.removeWorks(getEffectiveUserOrcid(), workIdLs);
         }
         return workIdLs;
     }
@@ -172,20 +171,17 @@ public class WorksController extends BaseWorkspaceController {
 
     private void initializeFields(WorkForm w) {
         if (w.getVisibility() == null) {
-            ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+            ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
             org.orcid.jaxb.model.message.Visibility v = org.orcid.jaxb.model.message.Visibility.fromValue(profile.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.WORKS_DEFAULT.getVisibility().value() : profile.getActivitiesVisibilityDefault().value());
             w.setVisibility(v);
         }
 
         if (w.getTitle() == null) {
-            Text wtt = new Text();
-            wtt.setRequired(true);
-            w.setTitle(wtt);
+            w.setTitle(new Text());
         }
 
         if (w.getSubtitle() == null) {
-            Text wst = new Text();
-            w.setSubtitle(wst);
+            w.setSubtitle(new Text());
         }
 
         if (w.getTranslatedTitle() == null) {
@@ -230,10 +226,9 @@ public class WorksController extends BaseWorkspaceController {
 
         if (w.getWorkExternalIdentifiers() == null || w.getWorkExternalIdentifiers().isEmpty()) {
             WorkExternalIdentifier wei = new WorkExternalIdentifier();
-            Text wdiT = new Text();
             Text wdiType = new Text();
             wdiType.setValue(new String());
-            wei.setWorkExternalIdentifierId(wdiT);
+            wei.setWorkExternalIdentifierId(new Text());
             wei.setWorkExternalIdentifierType(wdiType);
             wei.setRelationship(Text.valueOf(Relationship.SELF.value()));
             List<WorkExternalIdentifier> wdiL = new ArrayList<WorkExternalIdentifier>();
@@ -242,8 +237,7 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         if (PojoUtil.isEmpty(w.getUrl())) {
-            Text uText = new Text();
-            w.setUrl(uText);
+            w.setUrl(new Text());
         }
 
         if (w.getContributors() == null || w.getContributors().isEmpty()) {
@@ -252,8 +246,7 @@ public class WorksController extends BaseWorkspaceController {
         }
 
         if (PojoUtil.isEmpty(w.getShortDescription())) {
-            Text disText = new Text();
-            w.setShortDescription(disText);
+            w.setShortDescription(new Text());
         }
 
         if (PojoUtil.isEmpty(w.getLanguageCode())) {
@@ -300,7 +293,7 @@ public class WorksController extends BaseWorkspaceController {
 
         java.util.Date lastModified = profileEntityManager.getLastModified(getEffectiveUserOrcid());
         long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-        Work work = workManager.getWork(this.getCurrentUserOrcid(), workId, lastModifiedTime);
+        Work work = workManager.getWork(this.getEffectiveUserOrcid(), workId, lastModifiedTime);
 
         if (work != null) {
             WorkForm workForm = WorkForm.valueOf(work);
@@ -342,7 +335,7 @@ public class WorksController extends BaseWorkspaceController {
                             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(contributorOrcid);
                             String publicContributorCreditName = cacheManager.getPublicCreditName(profileEntity);
                             contributor.setCreditName(Text.valueOf(publicContributorCreditName));
-                            if(contributorOrcid.equals(getCurrentUserOrcid())) {                                
+                            if(contributorOrcid.equals(getEffectiveUserOrcid())) {                                
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(Visibility.PUBLIC));
                             } else if (profileEntity.getRecordNameEntity() != null && profileEntity.getRecordNameEntity().getVisibility() != null) {                                
                                 contributor.setCreditNameVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profileEntity.getRecordNameEntity().getVisibility()));
@@ -402,14 +395,11 @@ public class WorksController extends BaseWorkspaceController {
     }
 
     private void addWork(WorkForm workForm) {
-        // Get current profile
-        OrcidProfile currentProfile = getEffectiveProfile();
-
         Work newWork = workForm.toWork();
         newWork.setPutCode(null);
 
         // Create work
-        newWork = workManager.createWork(currentProfile.getOrcidIdentifier().getPath(), newWork, false);
+        newWork = workManager.createWork(getEffectiveUserOrcid(), newWork, false);
 
         // Set the id in the work to be returned
         Long workId = newWork.getPutCode();
@@ -418,7 +408,7 @@ public class WorksController extends BaseWorkspaceController {
 
     private void updateWork(WorkForm workForm) throws Exception {
         // Get current profile
-        String userOrcid = getCurrentUserOrcid();
+        String userOrcid = getEffectiveUserOrcid();
         if (!userOrcid.equals(workForm.getSource())) {
             throw new Exception(getMessage("web.orcid.activity_incorrectsource.exception"));
         }

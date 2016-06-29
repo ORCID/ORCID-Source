@@ -764,9 +764,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             
             Address address = new Address();
             Country country = new Country(Iso3166Country.fromValue(primary.getIso2Country().value()));
+            country.setSource(source);
             country.setVisibility(Visibility.fromValue(primary.getVisibility().value()));
             address.setCountry(country);
-            address.setSource(source);            
             contactDetails.setAddress(address);
         }  
     }       

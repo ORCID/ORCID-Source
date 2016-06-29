@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ProfileKeywordManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -152,11 +153,7 @@ public class ProfileKeywordManagerImpl implements ProfileKeywordManager {
         } 
         
         setIncomingPrivacy(newEntity, profile);
-        /*
-        for (ProfileKeywordEntity existing : existingKeywords)
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
-         */
-        newEntity.setDisplayIndex(0L);
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         profileKeywordDao.persist(newEntity);
         return adapter.toKeyword(newEntity);
     }

@@ -32,6 +32,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
@@ -288,11 +289,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         } 
         
         setIncomingPrivacy(newEntity, profile);
-        /*
-        for (ResearcherUrlEntity existing : existingResearcherUrls)
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);           
-         */
-        newEntity.setDisplayIndex(0L);
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         researcherUrlDao.persist(newEntity);
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(newEntity);
     }

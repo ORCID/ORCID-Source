@@ -79,7 +79,7 @@ public class AddressManagerTest extends BaseTest {
     @Test
     public void testAddAddressToUnclaimedRecordPreserveAddressVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));   
-        Address address = getAddress();
+        Address address = getAddress(Iso3166Country.CR);
         
         address = addressManager.createAddress(unclaimedOrcid, address, true);
         address = addressManager.getAddress(unclaimedOrcid, address.getPutCode());
@@ -91,7 +91,7 @@ public class AddressManagerTest extends BaseTest {
     @Test
     public void testAddAddressToClaimedRecordPreserveUserDefaultVisibility() {
         when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
-        Address address = getAddress();
+        Address address = getAddress(Iso3166Country.US);
         
         address = addressManager.createAddress(claimedOrcid, address, true);
         address = addressManager.getAddress(claimedOrcid, address.getPutCode());
@@ -100,9 +100,33 @@ public class AddressManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, address.getVisibility());  
     }
     
-    private Address getAddress() {
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        Address address = getAddress(Iso3166Country.MX);
+        
+        address = addressManager.createAddress(claimedOrcid, address, false);
+        address = addressManager.getAddress(claimedOrcid, address.getPutCode());
+        
+        assertNotNull(address);
+        assertEquals(Long.valueOf(1), address.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));                
+        Address address = getAddress(Iso3166Country.PE);
+        
+        address = addressManager.createAddress(claimedOrcid, address, true);
+        address = addressManager.getAddress(claimedOrcid, address.getPutCode());
+        
+        assertNotNull(address);
+        assertEquals(Long.valueOf(0), address.getDisplayIndex());       
+    }
+    
+    private Address getAddress(Iso3166Country country) {
         Address address = new Address();
-        address.setCountry(new Country(Iso3166Country.US));
+        address.setCountry(new Country(country));
         address.setVisibility(Visibility.PUBLIC);
         return address;
     }

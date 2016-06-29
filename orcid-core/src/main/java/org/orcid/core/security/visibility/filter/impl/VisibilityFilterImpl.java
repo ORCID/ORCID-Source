@@ -24,8 +24,9 @@ import org.orcid.core.security.visibility.filter.VisibilityFilter;
 import org.orcid.core.tree.TreeCleaner;
 import org.orcid.core.tree.TreeCleaningDecision;
 import org.orcid.core.tree.TreeCleaningStrategy;
+import org.orcid.jaxb.model.message.Address;
 import org.orcid.jaxb.model.message.Affiliation;
-import org.orcid.jaxb.model.message.ExternalIdentifier;
+import org.orcid.jaxb.model.message.Country;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.Orcid;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
@@ -33,9 +34,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidSearchResults;
 import org.orcid.jaxb.model.message.OrcidWork;
-import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.PrivateVisibleToSource;
-import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
@@ -44,8 +43,6 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javassist.compiler.ast.Keyword;
 
 /**
  * I would imagine the first time you see this class, it may be a bit confusing.
@@ -163,6 +160,34 @@ public class VisibilityFilterImpl implements VisibilityFilter {
                                     }
                                 }
                             } 
+                        }
+                        
+                        //If it is the address field, the visibility and source fields are inside the country element
+                        if(Address.class.isAssignableFrom(clazz)) {                            
+                            Address address = (Address) obj;
+                            //Remove empty addresses
+                            if(address.getCountry() == null) {
+                                decision = TreeCleaningDecision.CLEANING_REQUIRED;
+                            } else {
+                                Country country = address.getCountry();
+                                //Allow public addresses
+                                if(Visibility.PUBLIC.equals(country.getVisibility())) {
+                                    decision = TreeCleaningDecision.IGNORE;
+                                } else if(visibilitySet.contains(Visibility.LIMITED)) {
+                                    //Allow limited visibility when possible
+                                    if(Visibility.LIMITED.equals(country.getVisibility())) {
+                                        decision = TreeCleaningDecision.IGNORE;
+                                    } else {
+                                        //As last resource, check the source
+                                        Source source = country.getSource();
+                                        if(source != null && sourceId.equals(source.retrieveSourcePath())) {
+                                            decision = TreeCleaningDecision.IGNORE;                                           
+                                        } else {
+                                            decision = TreeCleaningDecision.CLEANING_REQUIRED;
+                                        }
+                                    }                                    
+                                }
+                            }
                         }
                         
                         //if we have a source, and that source can read limited, also return the private things they own

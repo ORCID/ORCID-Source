@@ -43,7 +43,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
  **/
 @Entity
 @Table(name = "other_name")
-public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware {
+public class OtherNameEntity extends SourceAwareEntity<Long> implements Comparable<OtherNameEntity>, ProfileAware, DisplayIndexInterface {
 
     private static final long serialVersionUID = -3227122865862310024L;
 

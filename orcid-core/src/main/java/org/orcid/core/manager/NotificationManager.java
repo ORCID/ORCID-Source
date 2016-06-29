@@ -75,6 +75,8 @@ public interface NotificationManager {
 
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults);
 
+    public List<Notification> findNotificationAlertsByOrcid(String orcid);
+
     public Notification findById(Long id);
 
     public Notification findByOrcidAndId(String orcid, Long id);
@@ -92,9 +94,9 @@ public interface NotificationManager {
     public boolean sendServiceAnnouncement_1_For_2015(OrcidProfile orcidProfile);
 
     public String createClaimVerificationUrl(String email, String baseUri);
-    
+
     void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException;
-    
+
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException;
 
 }
