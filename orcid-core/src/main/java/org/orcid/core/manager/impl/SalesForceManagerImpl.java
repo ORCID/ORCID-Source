@@ -71,7 +71,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Value("${org.orcid.core.salesForce.tokenEndPointUrl}")
     private String tokenEndPointUrl;
 
-    @Value("${org.orcid.core.salesForce.apiBaseUrl:https://na11.salesforce.com}")
+    @Value("${org.orcid.core.salesForce.apiBaseUrl}")
     private String apiBaseUrl;
 
     @Resource(name = "salesForceMembersListCache")
