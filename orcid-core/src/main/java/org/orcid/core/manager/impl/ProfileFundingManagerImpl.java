@@ -347,8 +347,7 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         orcidSecurityManager.checkSource(pfe);
         
         jpaJaxbFundingAdapter.toProfileFundingEntity(funding, pfe);
-        pfe.setVisibility(originalVisibility);
-        
+        pfe.setVisibility(originalVisibility);        
         
         //Be sure it doesn't overwrite the source
         pfe.setSourceId(existingSourceId);
