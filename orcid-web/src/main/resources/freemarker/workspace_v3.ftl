@@ -421,14 +421,21 @@
 							</div>
 							<#if RequestParameters['import_works_wizard']??>
 								<div id="workFilters" class="col-md-12 col-sm-12 col-xs-12">
-									<@orcid.msg 'workspace.link_works.filter.worktype'/>&nbsp;&nbsp;<select ng-options="wt as wt for wt in workType" ng-model="selectedWorkType" ng-change="processWorkImportWizardList()"></select>
-									<@orcid.msg 'workspace.link_works.filter.geographicalarea'/>&nbsp;&nbsp;<select ng-options="ga as ga for ga in geoArea" ng-model="selectedGeoArea" ng-change="processWorkImportWizardList()"></select>
+									
+									<@orcid.msg 'workspace.link_works.filter.worktype'/>
+									<select ng-options="wt as wt for wt in workType" ng-init="selectedWorkType = 'All'" ng-model="selectedWorkType"></select>
+									
+											
+									<@orcid.msg 'workspace.link_works.filter.geographicalarea'/>
+									<select ng-options="ga as ga for ga in geoArea" ng-init="selectedGeoArea = 'All'" ng-model="selectedGeoArea"></select>
+									
+									
 								</div>
 							</#if>
-							<br>
-							<div class="row wizards">
+														
+							<div class="row wizards">								
 								<div class="col-md-12 col-sm-12 col-xs-12">
-				    		    	<div ng-repeat="wtw in workImportWizards">
+								<div ng-repeat="wtw in workImportWizardsOriginal | orderBy: 'displayName' | filterImportWizards : selectedWorkType : selectedGeoArea">
 				                   		<strong><a ng-click="openImportWizardUrlFilter('<@orcid.rootPath '/oauth/authorize'/>', wtw)">{{wtw.displayName}}</a></strong><br />					                   							                   		                		
 				                 		<div class="justify">												
 											<p class="wizard-description" ng-class="{'ellipsis-on' : wizardDescExpanded[wtw.clientId] == false || wizardDescExpanded[wtw.clientId] == null}">
@@ -441,6 +448,8 @@
 				                	</div>
 								</div>
 							</div>
+							
+							
 						</div>						
 					</div>
 					<!-- Bulk Edit -->					
