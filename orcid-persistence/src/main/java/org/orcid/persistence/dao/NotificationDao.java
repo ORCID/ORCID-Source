@@ -35,6 +35,8 @@ public interface NotificationDao extends GenericDao<NotificationEntity, Long> {
 
     List<NotificationEntity> findUnsentByOrcid(String orcid);
     
+    List<NotificationEntity> findNotificationAlertsByOrcid(String orcid);
+    
     int getUnreadCount(String orcid);
 
     List<String> findOrcidsWithNotificationsToSend();
