@@ -1600,7 +1600,6 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             
         }
     };
-    serv.getNotifications();    
     return serv;
 }]);
 
@@ -7498,6 +7497,7 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
         }
     });
 
+    notificationsSrvc.getNotifications();
         
 }]);
 
