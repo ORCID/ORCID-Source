@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -64,6 +65,9 @@ public class Country implements Serializable, VisibilityType {
     @XmlAttribute(name = "visibility")
     protected Visibility visibility;
 
+    @XmlTransient
+    protected Source source;
+    
     public Country() {
         super();
     }
@@ -126,6 +130,14 @@ public class Country implements Serializable, VisibilityType {
         this.visibility = value;
     }
 
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
