@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
@@ -43,7 +44,6 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager {
 
@@ -135,11 +135,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         }
                 
         setIncomingPrivacy(newEntity, profile);
-        /*
-        for (ExternalIdentifierEntity existing : existingExternalIdentifiers)
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
-         */        
-        newEntity.setDisplayIndex(0L);
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         externalIdentifierDao.persist(newEntity);
         return jpaJaxbExternalIdentifierAdapter.toExternalIdentifier(newEntity);
     }

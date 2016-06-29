@@ -18,7 +18,6 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -131,15 +130,36 @@ public class ProfileFundingManagerTest extends BaseTest {
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
         assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
-        //TODO: We should enable this in a later release
-        //assertTrue(entity2.getDisplayIndex() > entity3.getDisplayIndex());
-        //assertTrue(entity1.getDisplayIndex() > entity2.getDisplayIndex());
         
         //Rollback all changes
         profileFundingDao.remove(entity1.getId());
         profileFundingDao.remove(entity2.getId());
         profileFundingDao.remove(entity3.getId());
     } 
+    
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        
+        Funding f1 = getFunding("fromUI-1");
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, false);
+        ProfileFundingEntity f = profileFundingDao.find(f1.getPutCode());
+        
+        assertNotNull(f);
+        assertEquals(Long.valueOf(1), f.getDisplayIndex());        
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        
+        Funding f1 = getFunding("fromAPI-1");
+        f1 = profileFundingManager.createFunding(claimedOrcid, f1, true);
+        ProfileFundingEntity f = profileFundingDao.find(f1.getPutCode());
+        
+        assertNotNull(f);
+        assertEquals(Long.valueOf(0), f.getDisplayIndex());
+    }
     
     private Funding getFunding(String grantNumber) {
         Funding funding = new Funding();

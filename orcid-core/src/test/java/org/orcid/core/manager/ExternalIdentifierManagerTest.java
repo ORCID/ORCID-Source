@@ -136,6 +136,30 @@ public class ExternalIdentifierManagerTest extends BaseTest {
         fail();
     }
     
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        extId.setType(extId.getType() + System.currentTimeMillis());
+        PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, false);
+        extId1 = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId1.getPutCode());
+        
+        assertNotNull(extId1);
+        assertEquals(Long.valueOf(1), extId1.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PersonExternalIdentifier extId = getExternalIdentifier();
+        extId.setType(extId.getType() + System.currentTimeMillis());
+        PersonExternalIdentifier extId1 = externalIdentifierManager.createExternalIdentifier(claimedOrcid, extId, true);
+        extId1 = externalIdentifierManager.getExternalIdentifier(claimedOrcid, extId1.getPutCode());
+        
+        assertNotNull(extId1);
+        assertEquals(Long.valueOf(0), extId1.getDisplayIndex());
+    }
+    
     private PersonExternalIdentifier getExternalIdentifier() {
         PersonExternalIdentifier extId = new PersonExternalIdentifier();
         extId.setRelationship(Relationship.SELF);

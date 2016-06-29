@@ -42,7 +42,7 @@ import org.orcid.utils.OrcidStringUtils;
 
 @Entity
 @Table(name = "peer_review")
-public class PeerReviewEntity extends SourceAwareEntity<Long> implements Comparable<PeerReviewEntity>, ProfileAware {
+public class PeerReviewEntity extends SourceAwareEntity<Long> implements Comparable<PeerReviewEntity>, ProfileAware, DisplayIndexInterface {
     
     private static final long serialVersionUID = -172752706595347541L;
     private Long id;
@@ -237,7 +237,7 @@ public class PeerReviewEntity extends SourceAwareEntity<Long> implements Compara
      *
      */
 
-    @Column(name = "display_index", updatable=false, insertable=false)
+    @Column(name = "display_index", updatable=false)
     public Long getDisplayIndex() {
         return displayIndex;
     }

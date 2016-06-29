@@ -93,22 +93,22 @@ public interface WorkManager {
      * 
      * @param work
      *            The work that will be persited
-     * @param applyValidations
-     *          Should the work be validated?           
+     * @param isApiRequest
+     *          Does the request comes from the API?
      * @return the work already persisted on database
      * */
-    Work createWork(String orcid, Work work, boolean applyValidations);
+    Work createWork(String orcid, Work work, boolean isApiRequest);
 
     /**
      * Edits an existing work
      * 
      * @param work
      *            The work to be edited
-     * @param applyValidations
-     *          Should the work be validated?    
+     * @param isApiRequest
+     *          Does the request comes from the API? 
      * @return The updated entity
      * */
-    Work updateWork(String orcid, Work work, boolean applyValidations); 
+    Work updateWork(String orcid, Work work, boolean isApiRequest); 
     
     boolean checkSourceAndRemoveWork(String orcid, Long workId);
     

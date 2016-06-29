@@ -93,6 +93,32 @@ public class ProfileKeywordManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, keyword.getVisibility());
     }
 
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Keyword keyword = getKeyword();
+        keyword.setContent(keyword.getContent() + " fromUI1");
+        
+        keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, false);
+        keyword = profileKeywordManager.getKeyword(claimedOrcid, keyword.getPutCode());
+
+        assertNotNull(keyword);
+        assertEquals(Long.valueOf(1), keyword.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Keyword keyword = getKeyword();
+        keyword.setContent(keyword.getContent() + " fromAPI1");        
+        
+        keyword = profileKeywordManager.createKeyword(claimedOrcid, keyword, true);
+        keyword = profileKeywordManager.getKeyword(claimedOrcid, keyword.getPutCode());
+
+        assertNotNull(keyword);
+        assertEquals(Long.valueOf(0), keyword.getDisplayIndex());
+    }
+    
     private Keyword getKeyword() {
         Keyword keyword = new Keyword();
         keyword.setContent("keyword-1");
