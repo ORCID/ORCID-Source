@@ -103,6 +103,22 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
+    public List<SalesForceMember> retrieveConsortia() {
+        // XXX Implement cache
+        return retrieveFreshConsortia();
+    }
+
+    @Override
+    public List<SalesForceMember> retrieveFreshConsortia() {
+        try {
+            return retrieveConsortiaFromSalesForce(getAccessToken());
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve consortia list, trying again.", e);
+            return retrieveConsortiaFromSalesForce(getFreshAccessToken());
+        }
+    }
+
+    @Override
     public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
         return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName)).getObjectValue();
     }
@@ -152,6 +168,31 @@ public class SalesForceManagerImpl implements SalesForceManager {
     private WebResource createMemberListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
                 "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
+        return resource;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceMember> retrieveConsortiaFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of consortia from SalesForce");
+        WebResource resource = createConsortiaListResource();
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting consortia list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return createMembersListFromResponse(response);
+    }
+
+    private WebResource createConsortiaListResource() {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT Id, Name, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c > TODAY) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
         return resource;
     }
 
