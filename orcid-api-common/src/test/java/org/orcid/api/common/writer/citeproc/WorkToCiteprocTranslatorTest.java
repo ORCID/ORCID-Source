@@ -25,7 +25,7 @@ import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 import de.undercouch.citeproc.csl.CSLItemData;
-import junit.framework.Assert;
+import org.junit.Assert;
 
 public class WorkToCiteprocTranslatorTest {
 
