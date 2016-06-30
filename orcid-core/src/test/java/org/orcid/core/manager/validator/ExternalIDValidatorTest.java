@@ -22,7 +22,6 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.BaseTest;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;

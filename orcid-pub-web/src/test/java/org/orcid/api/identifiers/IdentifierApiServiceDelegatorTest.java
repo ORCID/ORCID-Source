@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.identifiers.delegator.IdentifierApiServiceDelegator;
 import org.orcid.api.identifiers.delegator.impl.IdentifierApiServiceDelegatorImpl.IdentifierTypeWithDescription;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

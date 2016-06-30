@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.orcid.jaxb.model.message.Contributor;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.WorkContributors;
-import org.orcid.jaxb.model.record_rc2.Relationship;
 
 /**
  * 
