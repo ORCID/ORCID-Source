@@ -2555,7 +2555,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     };
     
     $scope.addNewModal = function() {         
-        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":null,"sourceName":"", "displayIndex": 1};        
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 1};        
         $scope.websitesForm.websites.push(tmpObj);
         $scope.updateDisplayIndex();
         $scope.newInput = true; 
