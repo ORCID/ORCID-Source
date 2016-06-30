@@ -22,22 +22,21 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
@@ -76,7 +75,26 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             "orcid-generated:this\"is\"a\"test\"",
             "orcid-generated:this<is>a<test>",
             "orcid-generated:this¢is¢a¢test¢");
-    
+
+    @Before
+    public void cleanUpOldTest() throws JSONException {
+        String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
+
+        // clean up group IDs before test
+        int page = 1;
+        GroupIdRecords groupsContainer = memberV2ApiClient.getGroupIdRecords(100, page, token).getEntity(GroupIdRecords.class);
+        ArrayList<Long> putsToDelete = new ArrayList<Long>();
+        while (groupsContainer.getTotal() > 0) {
+            for (GroupIdRecord groupIdRecord : groupsContainer.getGroupIdRecord())
+                if (groupIdRecord.getGroupId().startsWith("orcid-generated:"))
+                    putsToDelete.add(groupIdRecord.getPutCode());
+            page++;
+            groupsContainer = memberV2ApiClient.getGroupIdRecords(100, page, token).getEntity(GroupIdRecords.class);
+        }
+        for (Long putCode : putsToDelete)
+            memberV2ApiClient.deleteGroupIdRecord(putCode, token);
+    }
+
     @Test
     public void testGetGroupIdRecordsWithSeveralFormats() throws JSONException, InterruptedException, URISyntaxException, UnsupportedEncodingException {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
@@ -98,8 +116,6 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             GroupIdRecord groupFromWebPage = JsonUtils.readObjectFromJsonString(groupElementString, GroupIdRecord.class);
             assertNotNull(groupFromWebPage);
             assertEquals("Missing " + groupId, groupId, groupFromWebPage.getGroupId());
-            
-            memberV2ApiClient.deleteGroupIdRecord(g1.getPutCode(), token);
         }
         
         for(String invdalidGroupId : INVALID_GROUP_IDS) {            
