@@ -39,6 +39,10 @@ public class DateUtils {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("(\\d+)(?:-(\\d+))?(?:-(\\d+))?(T\\d\\d:\\d\\d:\\d\\d)?");
 
+    //Thread safe: see source http://www.docjar.com/html/api/com/sun/org/apache/xerces/internal/jaxp/datatype/DatatypeFactoryImpl.java.html
+    //see also analysis: http://www.javajirawat.com/2015/09/xmlgregoriancalendar-datatypefactory.html
+    private static DatatypeFactory dataTypeFactory;
+    
     /**
      * @see http 
      *      ://www.crossref.org/schema/info/CrossRefSchemaDocumentation4.1.0.pdf
@@ -158,11 +162,15 @@ public class DateUtils {
     }
 
     private static DatatypeFactory createDataTypeFactory() {
-        DatatypeFactory dataTypeFactory;
-        try {
-            dataTypeFactory = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException e) {
-            throw new RuntimeException("Couldn't create org.orcid.test.data type factory", e);
+        if (dataTypeFactory == null){
+            synchronized (DateUtils.class){
+                if (dataTypeFactory == null)
+                    try {
+                        dataTypeFactory = DatatypeFactory.newInstance();
+                    } catch (DatatypeConfigurationException e) {
+                        throw new RuntimeException("Couldn't create org.orcid.test.data type factory", e);
+                    }
+            }
         }
         return dataTypeFactory;
     }

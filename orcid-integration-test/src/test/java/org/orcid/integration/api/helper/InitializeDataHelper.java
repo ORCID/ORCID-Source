@@ -214,7 +214,7 @@ public class InitializeDataHelper {
         String description = value;
         String website = value + "_website";
             
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, website, clientType, createScopes(clientType),
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, null, website, clientType, createScopes(clientType),
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
         
         OrcidClient client =  adapter.toOrcidClient(clientDetails);

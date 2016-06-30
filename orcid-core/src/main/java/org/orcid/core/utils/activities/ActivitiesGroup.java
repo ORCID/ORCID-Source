@@ -87,6 +87,12 @@ public class ActivitiesGroup {
         activities.add(activity);
     }
     
+    @Deprecated
+    /** This method is only used by tests to confirm accuracy of ActivitiesGroupGenerator and should not be used in production
+     * 
+     * @param activity
+     * @return
+     */
     public boolean belongsToGroup(GroupableActivity activity) {
         boolean isPeerReview = PeerReviewSummary.class.isAssignableFrom(activity.getClass());
         //If there are no grouping keys

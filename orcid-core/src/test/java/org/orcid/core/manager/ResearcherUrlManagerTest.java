@@ -94,6 +94,32 @@ public class ResearcherUrlManagerTest extends BaseTest {
         assertEquals(Visibility.LIMITED, rUrl.getVisibility());
     }
 
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        ResearcherUrl rUrl = getResearcherUrl();
+        rUrl.getUrl().setValue(rUrl.getUrl().getValue() + "/fromUI");
+        
+        rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, false);
+        rUrl = researcherUrlManager.getResearcherUrl(claimedOrcid, rUrl.getPutCode());
+        
+        assertNotNull(rUrl);
+        assertEquals(Long.valueOf(1), rUrl.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));        
+        ResearcherUrl rUrl = getResearcherUrl();
+        rUrl.getUrl().setValue(rUrl.getUrl().getValue() + "/fromAPI");
+        
+        rUrl = researcherUrlManager.createResearcherUrl(claimedOrcid, rUrl, true);
+        rUrl = researcherUrlManager.getResearcherUrl(claimedOrcid, rUrl.getPutCode());
+                
+        assertNotNull(rUrl);
+        assertEquals(Long.valueOf(0), rUrl.getDisplayIndex());
+    }
+    
     private ResearcherUrl getResearcherUrl() {
         ResearcherUrl rUrl = new ResearcherUrl();
         rUrl.setUrl(new Url("http://orcid.org"));

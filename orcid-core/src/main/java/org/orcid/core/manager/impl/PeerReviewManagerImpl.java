@@ -34,6 +34,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -153,11 +154,10 @@ public class PeerReviewManagerImpl implements PeerReviewManager {
             entity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);        
+        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);      
         entity.setProfile(profile);        
         setIncomingPrivacy(entity, profile);
-        entity.setDisplayIndex(0L);
-        //peerReviewDao.increaseDisplayIndexOnAllElements(orcid);
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(entity, isApiRequest);
         peerReviewDao.persist(entity);
         peerReviewDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.PEER_REVIEW, createItem(entity));

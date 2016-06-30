@@ -308,7 +308,7 @@ public class FundingForm implements ErrorsInterface, Serializable {
         if (!PojoUtil.isEmpty(url))
             result.setUrl(new Url(url.getValue()));
         else
-            result.setUrl(new Url(""));
+            result.setUrl(new Url());
         if (visibility != null)
             result.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(visibility.getVisibility().value()));
 

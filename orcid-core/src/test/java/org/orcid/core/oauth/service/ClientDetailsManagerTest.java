@@ -83,32 +83,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
                 checkClientDetails(clientDetails);
             }
         }
-    }
-
-    @Test
-    @Rollback
-    @Transactional
-    public void testCreateClientDetailsFromStrings() throws Exception {
-        String clientId = "4444-4444-4444-4499";
-        String clientSecret = "Zq7ldGbUvzbEMNysSbbUq4dLRrxEUApgdcofn8xDke4=";
-        Set<String> clientScopes = new HashSet<String>();
-        clientScopes.add("/orcid-profile/create");
-        Set<String> clientResourceIds = new HashSet<String>();
-        clientResourceIds.add("orcid-t2-api");
-        Set<String> clientAuthorizedGrantTypes = new HashSet<String>();
-        clientAuthorizedGrantTypes.add("client_credentials");
-        clientAuthorizedGrantTypes.add("authorization_code");
-        clientAuthorizedGrantTypes.add("refresh_token");
-        Set<RedirectUri> clientRegisteredRedirectUris = new HashSet<RedirectUri>();
-        clientRegisteredRedirectUris.add(new RedirectUri("http://www.google.com/"));
-        List<String> clientGrantedAuthorities = new ArrayList<String>();
-        clientGrantedAuthorities.add("ROLE_ADMIN");
-
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4499", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, clientId,
-                clientSecret, ClientType.CREATOR, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
-        assertNotNull(clientDetails);
-        checkClientDetails(clientDetails);
-    }
+    }    
 
     @Test
     @Rollback
@@ -127,7 +102,7 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE,
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails("4444-4444-4444-4446", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE,
                 ClientType.CREATOR, clientScopes, clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         assertNotNull(clientDetails);
         checkClientDetails(clientDetails);
@@ -150,24 +125,8 @@ public class ClientDetailsManagerTest extends DBUnitTest {
         List<String> clientGrantedAuthorities = new ArrayList<String>();
         clientGrantedAuthorities.add("ROLE_ADMIN");
 
-        clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
+        clientDetailsManager.createClientDetails("8888-9999-9999-9999", CLIENT_NAME, CLIENT_DESCRIPTION, null, CLIENT_WEBSITE, ClientType.CREATOR, clientScopes,
                 clientResourceIds, clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
-    }
-
-    @Test
-    @Rollback
-    @Transactional
-    public void testDeleteClientDetail() throws Exception {
-        List<ClientDetailsEntity> all = clientDetailsManager.getAll();
-        assertEquals(9, all.size());
-        for (ClientDetailsEntity clientDetailsEntity : all) {
-            if (!"APP-5555555555555555".equals(clientDetailsEntity.getId()) &&
-                    !"APP-5555555555555556".equals(clientDetailsEntity.getId())) {
-                clientDetailsManager.deleteClientDetail(clientDetailsEntity.getId());
-            }
-        }
-        all = clientDetailsManager.getAll();
-        assertEquals(2, all.size());
     }
 
     private void checkClientDetails(ClientDetailsEntity clientDetails) {

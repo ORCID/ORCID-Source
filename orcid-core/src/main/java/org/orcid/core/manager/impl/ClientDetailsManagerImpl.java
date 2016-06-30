@@ -33,7 +33,7 @@ import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.manager.AppIdGenerationManager;
 import org.orcid.core.manager.ClientDetailsManager;
 import org.orcid.core.manager.EncryptionManager;
-import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
@@ -49,7 +49,6 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.ClientResourceIdEntity;
 import org.orcid.persistence.jpa.entities.ClientScopeEntity;
 import org.orcid.persistence.jpa.entities.ClientSecretEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.common.exceptions.InvalidClientException;
@@ -77,12 +76,12 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     
     @Resource
     private Jpa2JaxbAdapter jpaJaxbAdapter;
-    
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
 
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
+    
+    @Resource
+    private ProfileEntityManager profileEntityManager;
     
     /**
      * Load a client by the client id. This method must NOT return null.
@@ -138,81 +137,17 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
      * @return
      */
     @Override
-    public ClientDetailsEntity createClientDetails(String groupOrcid, String name, String description, String website, ClientType clientType, Set<String> clientScopes,
-            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
-        ProfileEntity groupProfileEntity = profileEntityCacheManager.retrieve(groupOrcid);
-        if (groupProfileEntity == null) {
-            throw new IllegalArgumentException("ORCID does not exist for " + groupOrcid + " cannot continue");
+    public ClientDetailsEntity createClientDetails(String memberId, String name, String description, String idp, String website, ClientType clientType, Set<String> clientScopes,
+            Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes, Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {        
+        if (!profileEntityManager.orcidExists(memberId)) {
+            throw new IllegalArgumentException("ORCID does not exist for " + memberId + " cannot continue");
         } else {
             String clientSecret = encryptionManager.encryptForInternalUse(UUID.randomUUID().toString());
             String clientId = appIdGenerationManager.createNewAppId();
-            return populateClientDetailsEntity(clientId, groupProfileEntity, name, description, website, clientSecret, clientType, clientScopes, clientResourceIds,
+            return populateClientDetailsEntity(clientId, memberId, name, description, idp, website, clientSecret, clientType, clientScopes, clientResourceIds,
                     clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
         }
-    }
-
-    /**
-     * Creates a new {@link ClientDetailsEntity} using the component parts, and
-     * not the underyling entity directly.
-     * 
-     * @param name
-     *            The client name
-     * @param description
-     *            The client description
-     * @param website
-     *            The client website
-     * @param clientId
-     *            the client id that will be used to retrieve this entity from
-     *            the database
-     * @param clientSecret
-     *            the secret that will be used for authentication/authorisation
-     * @param clientScopes
-     *            the scopes that this client can request
-     * @param clientResourceIds
-     *            the resource ids that this client has access to
-     * @param clientAuthorizedGrantTypes
-     *            the grant types that this client has been granted. Clients
-     *            will commonly be granted "client_credentials" and
-     *            "authorization_code"
-     * @param clientRegisteredRedirectUris
-     *            The redirect URIs that can be legally requested by the client.
-     * @param clientGrantedAuthorities
-     *            the authorities that can be used to. These are likely to be
-     *            only "ROLE_CLIENT"
-     * @return
-     */
-    @Override
-    public ClientDetailsEntity createClientDetails(String orcid, String name, String description, String website, String clientId, String clientSecret,
-            ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
-            Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {        
-        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);
-        if (profileEntity == null) {
-            throw new IllegalArgumentException("The ORCID does not exist for " + orcid);
-        }
-
-        return populateClientDetailsEntity(clientId, profileEntity, name, description, website, clientSecret, clientType, clientScopes, clientResourceIds,
-                clientAuthorizedGrantTypes, clientRegisteredRedirectUris, clientGrantedAuthorities);
-    }
-
-    /**
-     * Creates a new {@link ClientDetailsEntity} using the actual entity. This
-     * is called by
-     * {@link #createClientDetails(String, String, String, java.util.Set, java.util.Set, java.util.Set, java.util.Set, java.util.List)}
-     * to create a new entity
-     * 
-     * @param clientDetailsEntity
-     * @return
-     */
-    @Override
-    public ClientDetailsEntity createClientDetails(ClientDetailsEntity clientDetailsEntity) {
-        persist(clientDetailsEntity);
-        return findByClientId(clientDetailsEntity.getId());
-    }
-
-    @Override
-    public void deleteClientDetail(String clientId) {
-        removeByClientId(clientId);
-    }
+    }   
 
     @Override
     public void addClientRedirectUri(String clientId, String uri) {
@@ -281,7 +216,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         return clientAuthorisedGrantTypeEntities;
     }
 
-    public ClientDetailsEntity populateClientDetailsEntity(String clientId, ProfileEntity profileEntity, String name, String description, String website,
+    public ClientDetailsEntity populateClientDetailsEntity(String clientId, String memberId, String name, String description, String idp, String website,
             String clientSecret, ClientType clientType, Set<String> clientScopes, Set<String> clientResourceIds, Set<String> clientAuthorizedGrantTypes,
             Set<RedirectUri> clientRegisteredRedirectUris, List<String> clientGrantedAuthorities) {
         ClientDetailsEntity clientDetailsEntity = new ClientDetailsEntity();
@@ -289,6 +224,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientType(clientType);
         clientDetailsEntity.setClientName(name);
         clientDetailsEntity.setClientDescription(description);
+        clientDetailsEntity.setAuthenticationProviderId(idp);
         clientDetailsEntity.setClientWebsite(website);
         clientDetailsEntity.setClientSecretForJpa(clientSecret, true);
         clientDetailsEntity.setDecryptedClientSecret(encryptionManager.decryptForInternalUse(clientSecret));
@@ -298,8 +234,9 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         clientDetailsEntity.setClientRegisteredRedirectUris(getClientRegisteredRedirectUris(clientRegisteredRedirectUris, clientDetailsEntity));
         clientDetailsEntity.setPersistentTokensEnabled(true);
         clientDetailsEntity.setClientGrantedAuthorities(getClientGrantedAuthorities(clientGrantedAuthorities, clientDetailsEntity));
-        clientDetailsEntity.setGroupProfileId(profileEntity.getId());
-        return createClientDetails(clientDetailsEntity);
+        clientDetailsEntity.setGroupProfileId(memberId);
+        clientDetailsDao.persist(clientDetailsEntity);
+        return clientDetailsEntity;
     }
 
     @Override
@@ -328,13 +265,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override
     public void removeByClientId(String clientId) {
         clientDetailsDao.remove(clientId);
-    }
-
-    @Override
-    public void persist(ClientDetailsEntity clientDetails) {
-        clientDetailsDao.persist(clientDetails);
-        clientDetailsDao.updateLastModified(clientDetails.getId());
-    }
+    }    
 
     @Override
     public ClientDetailsEntity merge(ClientDetailsEntity clientDetails) {
@@ -343,12 +274,7 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
         // Evict the name in the source name manager
         sourceNameCacheManager.remove(result.getId());        
         return result;
-    }
-
-    @Override
-    public void remove(String clientId) {
-        clientDetailsDao.remove(clientId);
-    }
+    }   
 
     @Override
     public List<ClientDetailsEntity> getAll() {
@@ -470,5 +396,26 @@ public class ClientDetailsManagerImpl implements ClientDetailsManager {
     @Override    
     public Date getLastModified(String clientId) {
         return clientDetailsDao.getLastModified(clientId);
+    }
+
+    @Override    
+    public Date getLastModifiedByIdp(String idp) {
+        try {
+            return clientDetailsDao.getLastModifiedByIdP(idp);
+        } catch(Exception e) {
+            LOGGER.warn("There is no client with the IdP: " + idp);
+        }
+        return null;
+    }
+    
+    @Override
+    public ClientDetailsEntity findByIdP(String idp) {
+        try {
+            ClientDetailsEntity result = clientDetailsDao.findByIdP(idp);
+            return result;
+        } catch(Exception e) {
+            LOGGER.warn("There is no client with the IdP: " + idp);
+        }
+        return null;
     }
 }

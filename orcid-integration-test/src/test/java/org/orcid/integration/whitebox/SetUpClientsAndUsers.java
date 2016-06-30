@@ -719,8 +719,7 @@ public class SetUpClientsAndUsers {
         String name = params.get(CLIENT_NAME);
         String description = params.get(CLIENT_DESCRIPTION);
         String website = params.get(CLIENT_WEBSITE);
-        String clientId = params.get(CLIENT_ID);
-        ProfileEntity memberEntity = new ProfileEntity(params.get(MEMBER_ID));
+        String clientId = params.get(CLIENT_ID);        
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
 
         Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
@@ -735,7 +734,7 @@ public class SetUpClientsAndUsers {
         //Add notifications scope
         scopes.add(ScopePathType.PREMIUM_NOTIFICATION.value());
         
-        clientDetailsManager.populateClientDetailsEntity(clientId, memberEntity, name, description, website, clientSecret, clientType, scopes,
+        clientDetailsManager.populateClientDetailsEntity(clientId, MEMBER_ID, name, description, null, website, clientSecret, clientType, scopes,
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
     }
     

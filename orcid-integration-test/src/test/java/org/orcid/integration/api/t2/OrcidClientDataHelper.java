@@ -175,13 +175,7 @@ public class OrcidClientDataHelper implements InitializingBean {
         workExternalIdentifier.setWorkExternalIdentifierType(WorkExternalIdentifierType.DOI);
         workExternalIdentifier.setWorkExternalIdentifierId(new WorkExternalIdentifierId("1234/abc123"));
         return orcidWork;
-    }
-
-    public void deleteClientId(String clientId) {
-        if (!StringUtils.isBlank(clientId)) {
-            clientDetailsManager.remove(clientId);
-        }
-    }
+    }    
 
     public void deleteGroupOrcid(String orcid) {
         if (!StringUtils.isBlank(orcid)) {

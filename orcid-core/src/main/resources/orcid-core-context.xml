@@ -392,6 +392,10 @@
 	<bean id="identityProviderManager" class="org.orcid.core.manager.impl.IdentityProviderManagerImpl" />
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
+    
+    <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl" />
+
+	<bean id="institutionalSignInManager" class="org.orcid.core.manager.impl.InstitutionalSignInManagerImpl" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
@@ -572,6 +576,34 @@
         <property name="copyOnWrite" value="false" />
     </bean>
     
+    <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-members-list" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="5" />
+        <property name="timeToLiveSeconds" value="3600" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="strategy" value="NONE" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+        <property name="cacheEntryFactory">
+            <bean class="org.orcid.core.manager.impl.SalesForceMembersListCacheEntryFactory" />
+        </property>
+    </bean>
+    
+    <bean id="salesForceMemberDetailsCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="sales-force-member-details" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="1000" />
+        <property name="timeToLiveSeconds" value="3600" />
+        <property name="timeToIdleSeconds" value="3600" />
+        <property name="strategy" value="NONE" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+        <property name="cacheEntryFactory">
+            <bean class="org.orcid.core.manager.impl.SalesForceMemberDetailsCacheEntryFactory" />
+        </property>
+    </bean>
+    
     <!-- 
     <bean id="identifierTypesCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="identifierTypes" />
@@ -747,6 +779,6 @@
 	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />
+	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />		
 	
 </beans>

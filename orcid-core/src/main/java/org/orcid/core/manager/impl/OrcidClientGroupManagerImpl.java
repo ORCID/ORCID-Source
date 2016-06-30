@@ -534,6 +534,7 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         clientDetailsEntity.setClientDescription(client.getShortDescription());
         clientDetailsEntity.setClientWebsite(client.getWebsite());
         clientDetailsEntity.setPersistentTokensEnabled(client.isPersistentTokenEnabled());
+        clientDetailsEntity.setAuthenticationProviderId(client.getIdp());
         Set<ClientRedirectUriEntity> clientRedirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
         Map<String, ClientRedirectUriEntity> clientRedirectUriEntitiesMap = ClientRedirectUriEntity.mapByUriAndType(clientRedirectUriEntities);
         clientRedirectUriEntities.clear();
@@ -631,8 +632,9 @@ public class OrcidClientGroupManagerImpl implements OrcidClientGroupManager {
         String name = orcidClient.getDisplayName();
         String description = orcidClient.getShortDescription();
         String website = orcidClient.getWebsite();
-
-        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, website, clientType, createScopes(clientType),
+        String idp = orcidClient.getIdp();
+        
+        ClientDetailsEntity clientDetails = clientDetailsManager.createClientDetails(groupOrcid, name, description, idp, website, clientType, createScopes(clientType),
                 clientResourceIds, clientAuthorizedGrantTypes, redirectUrisToAdd, clientGrantedAuthorities);
         return clientDetails;
     }

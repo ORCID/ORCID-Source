@@ -66,6 +66,16 @@ public class NotificationDaoImpl extends GenericDaoImpl<NotificationEntity, Long
     }
 
     @Override
+    public List<NotificationEntity> findNotificationAlertsByOrcid(String orcid) {
+        TypedQuery<NotificationEntity> query = entityManager.createQuery(
+                "from NotificationEntity where notificationType = 'INSTITUTIONAL_CONNECTION' and readDate is null and archivedDate is null and orcid = :orcid order by dateCreated desc",
+                NotificationEntity.class);
+        query.setParameter("orcid", orcid);
+        query.setMaxResults(3);
+        return query.getResultList();
+    }
+
+    @Override
     public int getUnreadCount(String orcid) {
         TypedQuery<Long> query = entityManager.createQuery("select count(*) from NotificationEntity where readDate is null and archivedDate is null and orcid = :orcid",
                 Long.class);

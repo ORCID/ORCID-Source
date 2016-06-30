@@ -267,6 +267,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             client.setShortDescription(clientDetailsEntity.getClientDescription());
             client.setWebsite(clientDetailsEntity.getClientWebsite());
             client.setPersistentTokenEnabled(clientDetailsEntity.isPersistentTokensEnabled());
+            client.setIdp(clientDetailsEntity.getAuthenticationProviderId());
             Set<ClientRedirectUriEntity> redirectUriEntities = clientDetailsEntity.getClientRegisteredRedirectUris();
             RedirectUris redirectUris = new RedirectUris();
             client.setRedirectUris(redirectUris);
@@ -763,9 +764,9 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             
             Address address = new Address();
             Country country = new Country(Iso3166Country.fromValue(primary.getIso2Country().value()));
+            country.setSource(source);
             country.setVisibility(Visibility.fromValue(primary.getVisibility().value()));
             address.setCountry(country);
-            address.setSource(source);            
             contactDetails.setAddress(address);
         }  
     }       

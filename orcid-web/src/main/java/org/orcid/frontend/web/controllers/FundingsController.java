@@ -33,8 +33,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.orcid.core.adapter.Jaxb2JpaAdapter;
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
@@ -47,7 +45,6 @@ import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.persistence.dao.OrgDisambiguatedDao;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -85,16 +82,7 @@ public class FundingsController extends BaseWorkspaceController {
     private static final String DEFAULT_FUNDING_EXTERNAL_IDENTIFIER_TYPE_CODE = "grant_number";
 
     @Resource
-    private ProfileDao profileDao;
-
-    @Resource
-    ProfileFundingManager profileFundingManager;
-
-    @Resource
-    private Jaxb2JpaAdapter jaxb2JpaAdapter;
-
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
+    private ProfileFundingManager profileFundingManager;
 
     @Resource
     private OrgDisambiguatedSolrDao orgDisambiguatedSolrDao;
@@ -147,7 +135,7 @@ public class FundingsController extends BaseWorkspaceController {
         result.setFundingTitle(title);
         result.setUrl(new Text());
         
-        ProfileEntity profile = profileEntityCacheManager.retrieve(getCurrentUserOrcid());
+        ProfileEntity profile = profileEntityCacheManager.retrieve(getEffectiveUserOrcid());
         Visibility v = Visibility.valueOf(profile.getActivitiesVisibilityDefault() == null ? OrcidVisibilityDefaults.FUNDING_DEFAULT.getVisibility() : profile.getActivitiesVisibilityDefault());
         
         result.setVisibility(v);
@@ -851,6 +839,6 @@ public class FundingsController extends BaseWorkspaceController {
     @RequestMapping(value = "/updateToMaxDisplay.json", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateToMaxDisplay(HttpServletRequest request, @RequestParam(value = "putCode") Long putCode) {        
-        return profileFundingManager.updateToMaxDisplay(getCurrentUserOrcid(), putCode);
+        return profileFundingManager.updateToMaxDisplay(getEffectiveUserOrcid(), putCode);
     }                
 }

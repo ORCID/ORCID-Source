@@ -21,6 +21,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -60,6 +62,8 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     private boolean isLinked;
 
     private String idType;
+    
+    private UserConnectionStatus connectionSatus = UserConnectionStatus.STARTED;
 
     public UserconnectionEntity() {
     }
@@ -198,4 +202,14 @@ public class UserconnectionEntity extends BaseEntity<UserconnectionPK> implement
     public void setIdType(String idType) {
         this.idType = idType;
     }
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    public UserConnectionStatus getConnectionSatus() {
+        return connectionSatus;
+    }
+
+    public void setConnectionSatus(UserConnectionStatus connectionSatus) {
+        this.connectionSatus = connectionSatus;
+    }        
 }

@@ -66,6 +66,29 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
         }
         return clientDetails;
     }
+    
+    @Override
+    public ClientDetailsEntity retrieveByIdP(String idp) throws IllegalArgumentException {
+        Object key = new ClientIdCacheKey("IdP+" + idp, releaseName);
+        Date dbDate = retrieveLastModifiedDateByIdP(idp);
+        ClientDetailsEntity clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+        if (needsFresh(dbDate, clientDetails)) {
+            try {
+                synchronized (lockers.obtainLock(idp)) {
+                    clientDetails = toClientDetailsEntity(clientDetailsCache.get(key));
+                    if (needsFresh(dbDate, clientDetails)) {
+                        clientDetails = clientDetailsManager.findByIdP(idp);
+                        if(clientDetails == null)
+                            throw new IllegalArgumentException("Invalid idp " + idp);
+                        clientDetailsCache.put(new Element(key, clientDetails));
+                    }
+                }
+            } finally {
+                lockers.releaseLock(idp);
+            }
+        }
+        return clientDetails;
+    }
 
     @Override
     public void put(ClientDetailsEntity clientDetailsEntity) {
@@ -100,6 +123,16 @@ public class ClientDetailsEntityCacheManagerImpl implements ClientDetailsEntityC
             date = clientDetailsManager.getLastModified(clientId);
         } catch (javax.persistence.NoResultException e) {
              LOG.debug("Missing lastModifiedDate clientId:" + clientId);   
+        }
+        return date;
+    }
+    
+    private Date retrieveLastModifiedDateByIdP(String idp) {
+        Date date = null;
+        try {
+            date = clientDetailsManager.getLastModifiedByIdp(idp);
+        } catch (javax.persistence.NoResultException e) {
+             LOG.debug("Missing lastModifiedDate idp:" + idp);   
         }
         return date;
     }

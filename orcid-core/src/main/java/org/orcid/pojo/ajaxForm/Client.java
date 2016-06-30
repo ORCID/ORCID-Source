@@ -40,6 +40,7 @@ public class Client implements ErrorsInterface, Serializable {
     private Text type; 
     private Text memberId;
     private Text memberName;
+    private Text authenticationProviderId;
     private Checkbox persistentTokenEnabled;
     private List<RedirectUri> redirectUris;
     private Set<String> scopes;
@@ -67,6 +68,9 @@ public class Client implements ErrorsInterface, Serializable {
                 client.setScopes(clientDetails.getScope());
             
             client.setMemberId(Text.valueOf(clientDetails.getGroupProfileId()));
+            if(!PojoUtil.isEmpty(clientDetails.getAuthenticationProviderId())) {
+                client.setAuthenticationProviderId(Text.valueOf(clientDetails.getAuthenticationProviderId()));
+            }
         }
         return client;
     }
@@ -101,6 +105,10 @@ public class Client implements ErrorsInterface, Serializable {
             }
         }
 
+        if(orcidClient.getIdp() != null) {
+            client.setAuthenticationProviderId(Text.valueOf(orcidClient.getIdp()));
+        }
+        
         client.setRedirectUris(redirectUris);
 
         return client;
@@ -112,6 +120,9 @@ public class Client implements ErrorsInterface, Serializable {
         orcidClient.setWebsite(this.website.getValue());
         orcidClient.setShortDescription(this.shortDescription.getValue());
         orcidClient.setClientId(this.clientId.getValue());
+        if(this.getAuthenticationProviderId() != null) {
+            orcidClient.setIdp(this.getAuthenticationProviderId().getValue());
+        }
         if (!PojoUtil.isEmpty(this.clientSecret))
             orcidClient.setClientSecret(this.clientSecret.getValue());
         if (!PojoUtil.isEmpty(this.type))
@@ -225,5 +236,13 @@ public class Client implements ErrorsInterface, Serializable {
 
     public void setMemberName(Text memberName) {
         this.memberName = memberName;
-    }           
+    }
+
+    public Text getAuthenticationProviderId() {
+        return authenticationProviderId;
+    }
+
+    public void setAuthenticationProviderId(Text authenticationProviderId) {
+        this.authenticationProviderId = authenticationProviderId;
+    }
 }

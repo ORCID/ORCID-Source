@@ -28,8 +28,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonUtils {
 
+    static ObjectMapper mapper = new ObjectMapper(); //thread safe!
+    static ObjectMapper mapperFromJSON = new ObjectMapper(); //thread safe!
+    static {
+        mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true); 
+    }
+    
     public static String convertToJsonString(Object object) {
-        ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.writeValueAsString(object);
         } catch (IOException e) {
@@ -38,10 +43,8 @@ public class JsonUtils {
     }
 
     public static <T> T readObjectFromJsonString(String jsonString, Class<T> clazz) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         try {
-            return mapper.readValue(jsonString, clazz);
+            return mapperFromJSON.readValue(jsonString, clazz);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

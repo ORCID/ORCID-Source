@@ -182,18 +182,21 @@ public class ManageMembersController extends BaseController {
     @RequestMapping(value = "/update-client.json", method = RequestMethod.POST)
     public @ResponseBody
     Client updateClient(@RequestBody Client client) {
-        // Clean the error list
+        // Clean the error list 
         client.setErrors(new ArrayList<String>());
         // Validate fields
         groupAdministratorController.validateDisplayName(client);
         groupAdministratorController.validateWebsite(client);
         groupAdministratorController.validateShortDescription(client);
-        groupAdministratorController.validateRedirectUris(client, true);
-
+        groupAdministratorController.validateRedirectUris(client, true);        
         copyErrors(client.getDisplayName(), client);
         copyErrors(client.getWebsite(), client);
         copyErrors(client.getShortDescription(), client);
-
+        if(client.getAuthenticationProviderId() != null) {
+            validateIdP(client);
+            copyErrors(client.getAuthenticationProviderId(), client);
+        }
+        
         for (RedirectUri redirectUri : client.getRedirectUris()) {
             copyErrors(redirectUri, client);
         }
@@ -302,6 +305,25 @@ public class ManageMembersController extends BaseController {
             }
         }
     }    
+    
+    private void validateIdP(Client client) {
+        if(client != null) {
+            if(!PojoUtil.isEmpty(client.getAuthenticationProviderId())) {
+                client.getAuthenticationProviderId().setErrors(new ArrayList<String>());
+                boolean redirectUriFound = false;
+                if(client.getRedirectUris() != null) {
+                    for(RedirectUri rUri : client.getRedirectUris()) {
+                        if(RedirectUriType.INSTITUTIONAL_SIGN_IN.value().equals(rUri.getType().getValue())) {
+                            redirectUriFound = true;
+                        }
+                    }
+                }
+                if(!redirectUriFound) {                    
+                    setError(client.getAuthenticationProviderId(), "manage.developer_tools.client.idp.error.no_redirect_uri_found");
+                }
+            }
+        }
+    }
 }
 
 class ResultContainer implements Serializable {

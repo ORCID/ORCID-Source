@@ -95,6 +95,12 @@
                 </ul>
                 </#if>
             </p>
+            <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
+            <p> 
+            	<div>
+            		<img src="${baseUri}/static/img/request.png">&nbsp;<@emailMacros.msg 'email.institutional_connection.1' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}.&nbsp;<@emailMacros.msg 'email.institutional_connection.2' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}&nbsp;<@emailMacros.msg 'email.institutional_connection.3' />&nbsp;<a href="${notification.authorizationUrl}"><@emailMacros.msg "email.institutional_connection.here" /></a>&nbsp;<@emailMacros.msg 'email.institutional_connection.4' />&nbsp;
+            	</div>
+            </p>
             <#else>
             ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
             </#if>

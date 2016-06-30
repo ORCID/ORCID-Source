@@ -25,10 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.api.OrcidApiConstants;
-import org.orcid.core.manager.ClientDetailsManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
+import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -40,10 +41,11 @@ import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.NotificationDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -69,16 +72,16 @@ public class NotificationController extends BaseController {
     private TemplateManager templateManager;
 
     @Resource
-    private ClientDetailsManager clientDetailsManager;
-
-    @Resource
     private EncryptionManager encryptionManager;
     
     @Resource
     private OrcidUrlManager orcidUrlManager;
     
     @Resource
-    private ProfileDao profileDao;
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
     @RequestMapping
     public ModelAndView getNotifications() {
@@ -94,6 +97,19 @@ public class NotificationController extends BaseController {
             @RequestParam(value = "includeArchived", defaultValue = "false") boolean includeArchived) {
         String currentOrcid = getCurrentUserOrcid();
         List<Notification> notifications = notificationManager.findByOrcid(currentOrcid, includeArchived, firstResult, maxResults);
+        addSubjectToNotifications(notifications);
+        return notifications;
+    }
+
+    @RequestMapping("/notification-alerts.json")
+    public @ResponseBody List<Notification> getNotificationAlertJson() {
+        String currentOrcid = getCurrentUserOrcid();
+        List<Notification> notifications = notificationManager.findNotificationAlertsByOrcid(currentOrcid);
+        addSubjectToNotifications(notifications);
+        return notifications;
+    }
+
+    private void addSubjectToNotifications(List<Notification> notifications) {
         for (Notification notification : notifications) {
             if (notification instanceof NotificationPermission) {
                 NotificationPermission naa = (NotificationPermission) notification;
@@ -106,11 +122,13 @@ public class NotificationController extends BaseController {
             } else if (notification instanceof NotificationAmended) {
                 NotificationAmended na = (NotificationAmended) notification;
                 na.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, na.getNotificationType().value())));
+            } else if (notification instanceof NotificationInstitutionalConnection) {
+                NotificationInstitutionalConnection nic = (NotificationInstitutionalConnection) notification;
+                nic.setSubject(getMessage(buildInternationalizationKey(NotificationType.class, nic.getNotificationType().value())));
             }
         }
-        return notifications;
     }
-
+    
     @RequestMapping("/unreadCount.json")
     public @ResponseBody int getUnreadCountJson() {
         String currentOrcid = getCurrentUserOrcid();
@@ -148,6 +166,22 @@ public class NotificationController extends BaseController {
         return mav;
     }
 
+    @RequestMapping(value = "/INSTITUTIONAL_CONNECTION/{id}/notification.html", produces = OrcidApiConstants.HTML_UTF)
+    public ModelAndView getInstitutionalConnectionNotificationHtml(@PathVariable("id") String id) throws UnsupportedEncodingException {
+        ModelAndView mav = new ModelAndView();        
+        Notification notification = notificationManager.findByOrcidAndId(getCurrentUserOrcid(), Long.valueOf(id));
+        String clientId = notification.getSource().retrieveSourcePath();
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        String authorizationUrl = notificationManager.buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
+        addSourceDescription(notification);
+        mav.addObject("notification", notification);               
+        mav.addObject("baseUri", getBaseUri());
+        mav.addObject("clientId", clientId);
+        mav.addObject("authorizationUrl", authorizationUrl);
+        mav.setViewName("notification/institutional_connection_notification");
+        return mav;
+    }
+    
     @RequestMapping(value = "{id}/read.json")
     public @ResponseBody Notification flagAsRead(@PathVariable("id") String id) {
         String currentUserOrcid = getCurrentUserOrcid();
@@ -162,6 +196,12 @@ public class NotificationController extends BaseController {
         return notificationManager.findByOrcidAndId(currentUserOrcid, Long.valueOf(id));
     }
 
+    @RequestMapping(value = "{id}/no_redirect/action", method = RequestMethod.GET)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void executeActionNoRedirect(@PathVariable("id") String id) {
+        notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));        
+    }
+    
     @RequestMapping(value = "{id}/action", method = RequestMethod.GET)
     public ModelAndView executeAction(@PathVariable("id") String id, @RequestParam(value = "target") String redirectUri) {
         notificationManager.setActionedDate(getCurrentUserOrcid(), Long.valueOf(id));
@@ -231,7 +271,7 @@ public class NotificationController extends BaseController {
         if (source != null) {
             String sourcePath = source.retrieveSourcePath();
             if (sourcePath != null) {
-                ClientDetailsEntity clientDetails = clientDetailsManager.findByClientId(sourcePath);
+                ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(sourcePath);
                 if (clientDetails != null) {
                     notification.setSourceDescription(clientDetails.getClientDescription());
                 }

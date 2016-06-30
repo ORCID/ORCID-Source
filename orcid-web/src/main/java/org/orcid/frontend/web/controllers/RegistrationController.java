@@ -382,7 +382,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = { "/registerConfirm.json", "/shibboleth/registerConfirm.json" }, method = RequestMethod.POST)
-    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) {
+    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) throws UnsupportedEncodingException {
         Redirect r = new Redirect();
 
         boolean usedCaptcha = false;

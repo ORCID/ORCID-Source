@@ -17,6 +17,7 @@
 package org.orcid.core.manager.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +32,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
 import org.orcid.core.constants.EmailConstants;
@@ -40,6 +42,7 @@ import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.CustomEmailManager;
+import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
@@ -49,6 +52,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.message.Delegation;
 import org.orcid.jaxb.model.message.DelegationDetails;
 import org.orcid.jaxb.model.message.Email;
@@ -60,20 +64,25 @@ import org.orcid.jaxb.model.message.Source;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
@@ -87,7 +96,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Will Simpson
  */
 public class NotificationManagerImpl implements NotificationManager {
-
+ 
     private static final String UPDATE_NOTIFY_ORCID_ORG = "update@notify.orcid.org";
 
     private static final String SUPPORT_VERIFY_ORCID_ORG = "support@verify.orcid.org";
@@ -113,6 +122,8 @@ public class NotificationManagerImpl implements NotificationManager {
     private static final String WILDCARD_WEBSITE = "${website}";
 
     private static final String WILDCARD_DESCRIPTION = "${description}";
+    
+    private static final String AUTHORIZATION_END_POINT = "{0}/oauth/authorize?response_type=code&client_id={1}&scope={2}&redirect_uri={3}";
 
     @Resource
     private MessageSource messages;
@@ -171,6 +182,9 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private EmailManager emailManager;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationManagerImpl.class);
 
@@ -202,6 +216,14 @@ public class NotificationManagerImpl implements NotificationManager {
 
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
+    }
+    
+    public void setNotificationDao(NotificationDao notificationDao) {
+        this.notificationDao = notificationDao;
+    }
+    
+    public void setMailGunManager(MailGunManager mailGunManager) {
+        this.mailGunManager = mailGunManager;
     }
 
     @Override
@@ -388,11 +410,21 @@ public class NotificationManagerImpl implements NotificationManager {
         templateParams.put("locale", locale);
     }
 
+    public void addMessageParams(Map<String, Object> templateParams, Locale locale) {
+        templateParams.put("messages", this.messages);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale", locale);
+    }
+    
     public String getSubject(String code, OrcidProfile orcidProfile) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, null, locale);
     }
 
+    private String getSubject(String code, Locale locale) {
+        return messages.getMessage(code, null, locale);
+    }
+    
     private String getSubject(String code, OrcidProfile orcidProfile, String... args) {
         Locale locale = localeManager.getLocaleFromOrcidProfile(orcidProfile);
         return messages.getMessage(code, args, locale);
@@ -423,7 +455,22 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     public String deriveEmailFriendlyName(ProfileEntity profileEntity) {
-        return deriveEmailFriendlyName(jpa2JaxbAdapter.toOrcidProfile(profileEntity));
+        String result = null;
+        if(profileEntity != null && profileEntity.getRecordNameEntity() != null) {
+            RecordNameEntity recordName = profileEntity.getRecordNameEntity();
+            if(!PojoUtil.isEmpty(recordName.getCreditName())) {
+                result = recordName.getCreditName();
+            } else {
+                if(!PojoUtil.isEmpty(recordName.getGivenNames()))
+                    result = recordName.getGivenNames();
+                if(!PojoUtil.isEmpty(recordName.getFamilyName()))
+                    result += " " + recordName.getFamilyName();
+            }                                               
+        }
+        if(PojoUtil.isEmpty(result)) {
+            result = LAST_RESORT_ORCID_USER_EMAIL_NAME; 
+        }
+        return result;
     }
 
     @Override
@@ -883,7 +930,7 @@ public class NotificationManagerImpl implements NotificationManager {
         notificationDao.persist(notificationEntity);
         return notificationAdapter.toNotification(notificationEntity);
     }
-
+                    
     @Override
     public List<Notification> findUnsentByOrcid(String orcid) {
         return notificationAdapter.toNotification(notificationDao.findUnsentByOrcid(orcid));
@@ -893,6 +940,12 @@ public class NotificationManagerImpl implements NotificationManager {
     @Transactional(readOnly = true)
     public List<Notification> findByOrcid(String orcid, boolean includeArchived, int firstResult, int maxResults) {
         return notificationAdapter.toNotification(notificationDao.findByOrcid(orcid, includeArchived, firstResult, maxResults));
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Notification> findNotificationAlertsByOrcid(String orcid) {
+        return notificationAdapter.toNotification(notificationDao.findNotificationAlertsByOrcid(orcid));
     }
 
     @Override
@@ -946,4 +999,80 @@ public class NotificationManagerImpl implements NotificationManager {
         return notificationAdapter.toNotification(notificationEntity);
     }
 
+    @Override
+    public void sendAcknowledgeMessage(String userOrcid, String clientId) throws UnsupportedEncodingException {
+        ProfileEntity profileEntity = profileEntityCacheManager.retrieve(userOrcid);
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId); 
+        Locale userLocale = (profileEntity.getLocale() == null || profileEntity.getLocale().value() == null) ? Locale.ENGLISH : LocaleUtils.toLocale(profileEntity.getLocale().value());
+        String subject = getSubject("email.subject.institutional_sign_in", userLocale);
+        String authorizationUrl = buildAuthorizationUrlForInstitutionalSignIn(clientDetails);
+        
+        // Create map of template params
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("emailName", deriveEmailFriendlyName(profileEntity));
+        templateParams.put("orcid", userOrcid);
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());        
+        templateParams.put("subject", subject);
+        templateParams.put("clientName", clientDetails.getClientName());
+        templateParams.put("authorization_url", authorizationUrl);
+        
+        addMessageParams(templateParams, userLocale);
+
+        // Generate body from template
+        String body = templateManager.processTemplate("authenticate_request_email.ftl", templateParams);
+        // Generate html from template
+        String html = templateManager.processTemplate("authenticate_request_email_html.ftl", templateParams);
+
+        boolean notificationsEnabled = profileEntity.getEnableNotifications();
+        if (notificationsEnabled) {
+            NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
+            notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);            
+            notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
+            NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);            
+            notificationEntity.setProfile(new ProfileEntity(userOrcid));
+            notificationEntity.setClientSourceId(clientId);                                    
+            notificationDao.persist(notificationEntity);                                   
+        } else {            
+            Emails emails = emailManager.getEmails(userOrcid, (profileEntity.getLastModified() == null ? System.currentTimeMillis() : profileEntity.getLastModified().getTime()));
+            String primaryEmail = null;
+            if(emails == null || emails.getEmails() == null)  {
+                throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
+            }
+            for(org.orcid.jaxb.model.record_rc2.Email email : emails.getEmails()) {
+                if(email.isPrimary()) {
+                    primaryEmail = email.getEmail();
+                }
+            }
+            mailGunManager.sendEmail(UPDATE_NOTIFY_ORCID_ORG, primaryEmail, subject, body, html);
+        }
+    }
+    
+    public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
+        ClientRedirectUriEntity rUri = getRedirectUriForInstitutionalSignIn(clientDetails);
+        String urlEncodedScopes = URLEncoder.encode(rUri.getPredefinedClientScope(), "UTF-8");
+        String urlEncodedRedirectUri = URLEncoder.encode(rUri.getRedirectUri(), "UTF-8");
+        return MessageFormat.format(AUTHORIZATION_END_POINT, orcidUrlManager.getBaseUrl(), clientDetails.getClientId(), urlEncodedScopes, urlEncodedRedirectUri);        
+    }
+    
+    private ClientRedirectUriEntity getRedirectUriForInstitutionalSignIn(ClientDetailsEntity clientDetails) {
+        if(clientDetails == null) {
+            throw new IllegalArgumentException("Unable to find valid redirect uris for null client details");
+        }
+        
+        if(clientDetails.getClientRegisteredRedirectUris() == null) {
+            throw new IllegalArgumentException("Unable to find valid redirect uris for client: " + clientDetails.getId());
+        }
+        
+        ClientRedirectUriEntity result = null;
+        
+        //Look for the redirect uri of INSTITUTIONAL_SIGN_IN type or if none if found, return the first DEFAULT one 
+        for(ClientRedirectUriEntity redirectUri : clientDetails.getClientRegisteredRedirectUris()) {
+            if(RedirectUriType.INSTITUTIONAL_SIGN_IN.value().equals(redirectUri.getRedirectUriType())) {
+                result = redirectUri;
+                break;
+            } 
+        }
+        
+        return result;
+    }
 }

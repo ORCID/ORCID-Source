@@ -18,7 +18,6 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -129,14 +128,33 @@ public class PeerReviewManagerTest extends BaseTest {
         assertNotNull(entity2.getDisplayIndex());
         assertNotNull(entity3.getDisplayIndex());
         assertEquals(Long.valueOf(0), entity3.getDisplayIndex());
-        //TODO: We should enable this in a later release
-        //assertTrue(entity2.getDisplayIndex() > entity3.getDisplayIndex());
-        //assertTrue(entity1.getDisplayIndex() > entity2.getDisplayIndex());
         
         //Rollback all changes
         peerReviewDao.remove(entity1.getId());
         peerReviewDao.remove(entity2.getId());
         peerReviewDao.remove(entity3.getId());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_1_FromUI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PeerReview p1 = getPeerReview("fromUI-1");
+        p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, false);
+        PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
+        
+        assertNotNull(p);
+        assertEquals(Long.valueOf(1), p.getDisplayIndex());
+    }
+    
+    @Test
+    public void displayIndexIsSetTo_0_FromAPI() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        PeerReview p1 = getPeerReview("fromAPI-1");
+        p1 = peerReviewManager.createPeerReview(claimedOrcid, p1, true);
+        PeerReviewEntity p = peerReviewDao.find(p1.getPutCode());
+        
+        assertNotNull(91);
+        assertEquals(Long.valueOf(0), p.getDisplayIndex());
     }
     
     private PeerReview getPeerReview(String extIdValue) {

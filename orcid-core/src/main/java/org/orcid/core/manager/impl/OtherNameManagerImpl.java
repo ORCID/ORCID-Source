@@ -33,6 +33,7 @@ import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -158,13 +159,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
                 newEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         setIncomingPrivacy(newEntity, profile);
-        /*
-        for (OtherNameEntity existing : existingOtherNames) {
-            existing.setDisplayIndex(existing.getDisplayIndex() + 1);
-            otherNameDao.merge(existing);
-        }
-        */
-        newEntity.setDisplayIndex(0L);
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(newEntity, isApiRequest);
         otherNameDao.persist(newEntity);
         return jpaJaxbOtherNameAdapter.toOtherName(newEntity);
     }

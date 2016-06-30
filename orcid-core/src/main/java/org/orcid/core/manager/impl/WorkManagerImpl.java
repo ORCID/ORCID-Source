@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -32,6 +31,7 @@ import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
+import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
@@ -54,9 +54,6 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource
     private WorkDao workDao;
-
-    @Resource
-    private Jpa2JaxbAdapter jpa2JaxbAdapter;
 
     @Resource
     private JpaJaxbWorkAdapter jpaJaxbWorkAdapter;
@@ -180,21 +177,19 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public Work createWork(String orcid, Work work, boolean applyAPIValidations) {
+    public Work createWork(String orcid, Work work, boolean isApiRequest) {
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         
-        if (applyAPIValidations) {
-            activityValidator.validateWork(work, sourceEntity, true, applyAPIValidations, null);
-            
-            Date lastModified = profileEntityManager.getLastModified(orcid);
-            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
-            List<MinimizedWorkEntity> works = workEntityCacheManager.retrieveMinimizedWorks(orcid, lastModifiedTime);
+        if (isApiRequest) {
+            activityValidator.validateWork(work, sourceEntity, true, isApiRequest, null);
             // If it is the user adding the peer review, allow him to add
             // duplicates
             if (!sourceEntity.getSourceId().equals(orcid)) {
-                if (works != null) {
-                    List<Work> workEntities = jpaJaxbWorkAdapter.toMinimizedWork(works);
-                    for (Work existing : workEntities) {
+                Date lastModified = profileEntityManager.getLastModified(orcid);
+                long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+                List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
+                if (existingWorks != null) {
+                    for (Work existing : existingWorks) {
                         activityValidator.checkExternalIdentifiersForDuplicates(work.getExternalIdentifiers(), existing.getExternalIdentifiers(), existing.getSource(),
                                 sourceEntity);
                     }
@@ -219,9 +214,8 @@ public class WorkManagerImpl implements WorkManager {
             workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
         } 
         
-        setIncomingWorkPrivacy(workEntity, profile);
-        workEntity.setDisplayIndex(0L);
-        //workDao.increaseDisplayIndexOnAllElements(orcid);
+        setIncomingWorkPrivacy(workEntity, profile);        
+        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, isApiRequest);        
         workDao.persist(workEntity);
         workDao.flush();
         notificationManager.sendAmendEmail(orcid, AmendedSection.WORK, createItem(workEntity));
@@ -230,7 +224,7 @@ public class WorkManagerImpl implements WorkManager {
 
     @Override
     @Transactional
-    public Work updateWork(String orcid, Work work, boolean applyAPIValidations) {
+    public Work updateWork(String orcid, Work work, boolean isApiRequest) {
         WorkEntity workEntity = workDao.getWork(orcid, work.getPutCode());
         Visibility originalVisibility = Visibility.fromValue(workEntity.getVisibility().value());
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
@@ -239,9 +233,13 @@ public class WorkManagerImpl implements WorkManager {
         String existingSourceId = workEntity.getSourceId();
         String existingClientSourceId = workEntity.getClientSourceId();
         
-        if (applyAPIValidations) {
-            activityValidator.validateWork(work, sourceEntity, false, applyAPIValidations, workEntity.getVisibility());
-            List<Work> existingWorks = this.findWorks(orcid, System.currentTimeMillis());            
+        if (isApiRequest) {
+            activityValidator.validateWork(work, sourceEntity, false, isApiRequest, workEntity.getVisibility());
+            
+            Date lastModified = profileEntityManager.getLastModified(orcid);
+            long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+            List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);       
+            
             for (Work existing : existingWorks) {
                 // Dont compare the updated peer review with the DB version
                 if (!existing.getPutCode().equals(work.getPutCode())) {
