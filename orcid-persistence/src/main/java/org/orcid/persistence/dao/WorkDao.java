@@ -17,7 +17,6 @@
 package org.orcid.persistence.dao;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;

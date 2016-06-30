@@ -16,7 +16,7 @@
  */
 package org.orcid.persistence.dao;
 
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;

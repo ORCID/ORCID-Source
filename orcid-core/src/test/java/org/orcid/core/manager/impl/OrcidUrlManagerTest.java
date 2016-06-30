@@ -33,7 +33,6 @@ import org.orcid.core.BaseTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * 

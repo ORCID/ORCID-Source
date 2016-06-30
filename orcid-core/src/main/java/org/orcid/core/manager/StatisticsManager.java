@@ -18,8 +18,6 @@ package org.orcid.core.manager;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 import org.orcid.core.utils.statistics.StatisticsEnum;
 import org.orcid.jaxb.model.statistics.StatisticsSummary;
 import org.orcid.jaxb.model.statistics.StatisticsTimeline;

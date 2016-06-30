@@ -36,7 +36,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

@@ -19,8 +19,6 @@ package org.orcid.persistence.messaging;
 import javax.annotation.Resource;
 
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Component;
 
 // use @Component or add as a bean in the XML config.
 public class EchoTestMessageListener3 {

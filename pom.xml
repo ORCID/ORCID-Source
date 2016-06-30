@@ -706,6 +706,11 @@ the software.
                 <artifactId>jersey-apache-client</artifactId>
                 <version>${jersey.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
 
             <!-- Web -->
             <dependency>
@@ -875,7 +880,7 @@ the software.
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.1</version>
+                <version>3.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

@@ -28,12 +28,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;

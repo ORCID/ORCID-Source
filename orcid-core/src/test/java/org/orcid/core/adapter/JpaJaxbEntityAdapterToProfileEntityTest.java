@@ -16,8 +16,8 @@
  */
 package org.orcid.core.adapter;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -46,13 +46,11 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
-import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
-import org.orcid.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;

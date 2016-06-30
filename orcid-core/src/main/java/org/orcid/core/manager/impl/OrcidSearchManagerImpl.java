@@ -27,9 +27,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.orcid.core.exception.OrcidSearchException;
-import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.OrcidProfileCacheManager;
-import org.orcid.core.manager.OrcidProfileManagerReadOnly;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.FundingList;

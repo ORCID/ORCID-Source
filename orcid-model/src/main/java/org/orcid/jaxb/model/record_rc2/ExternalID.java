@@ -24,9 +24,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /** New external identifier class

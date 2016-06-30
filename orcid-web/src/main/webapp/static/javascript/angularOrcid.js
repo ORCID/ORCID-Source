@@ -1676,9 +1676,10 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
         memberDetails: {},
+        consortiaList: null,
         getMembersList: function() {
             $.ajax({
-                url: getBaseUri() + '/members-list/members.json',
+                url: getBaseUri() + '/members/members.json',
                 dataType: 'json',
                 cache: true,
                 success: function(data) {
@@ -1694,7 +1695,7 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
         },
         getDetails: function(memberId, consortiumLeadId) {
             if(serv.memberDetails[memberId] == null){
-                var url = getBaseUri() + '/members-list/details.json?memberId=' + encodeURIComponent(memberId);
+                var url = getBaseUri() + '/members/details.json?memberId=' + encodeURIComponent(memberId);
                 if(consortiumLeadId != null){
                     url += '&consortiumLeadId=' + encodeURIComponent(consortiumLeadId);
                 }
@@ -1713,11 +1714,25 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                     $rootScope.$apply();
                 });
             }
-        }
+        },
+        getConsortiaList: function() {
+            $.ajax({
+                url: getBaseUri() + '/consortia/consortia.json',
+                dataType: 'json',
+                cache: true,
+                success: function(data) {
+                    serv.consortiaList = data;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with consortia list");
+                serv.feed = [];
+                $rootScope.$apply();
+            });
+        },
     };
 
-    // populate the members feed
-    serv.getMembersList();
     return serv; 
 }]);
 
@@ -10889,8 +10904,28 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
         return $sce.trustAsHtml(htmlCode);
     };
     
+    // populate the members feed
+    membersListSrvc.getMembersList();
+    
 }]);
 
+orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+    $scope.membersListSrvc = membersListSrvc;
+    $scope.displayMoreDetails = {};
+    
+    $scope.toggleDisplayMoreDetails = function(memberId, consortiumLeadId){
+        membersListSrvc.getDetails(memberId, consortiumLeadId);
+        $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
+    }
+    
+    $scope.renderHtml = function (htmlCode) {
+        return $sce.trustAsHtml(htmlCode);
+    };
+    
+    // populate the consortia feed
+    membersListSrvc.getConsortiaList();
+    
+}]);
 
 orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){
 	$scope.emailSrvc = emailSrvc;

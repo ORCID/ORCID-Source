@@ -27,8 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 

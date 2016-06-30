@@ -19,7 +19,6 @@ package org.orcid.frontend.web.controllers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -43,7 +42,6 @@ import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Email;

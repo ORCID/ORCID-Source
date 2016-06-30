@@ -18,7 +18,6 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 
 public interface OtherNameDao extends GenericDao<OtherNameEntity, Long> {
