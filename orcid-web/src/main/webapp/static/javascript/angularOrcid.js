@@ -7549,11 +7549,8 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', functi
 // Controller for notifications
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
-    notificationsSrvc.displayBody = {};
-    
+    notificationsSrvc.displayBody = {};    
     $scope.notificationsSrvc = notificationsSrvc;
-    
-    
     $scope.notifications = notificationsSrvc.notifications;
     $scope.showMore = notificationsSrvc.showMore;
     $scope.areMore = notificationsSrvc.areMore;
@@ -7562,9 +7559,7 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
     $scope.notificationsSrvc = notificationsSrvc;
     $scope.bulkChecked = notificationsSrvc.bulkChecked;
-    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;    
-    
-
+    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
     $scope.toggleDisplayBody = function (notificationId) {
         $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
         notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
