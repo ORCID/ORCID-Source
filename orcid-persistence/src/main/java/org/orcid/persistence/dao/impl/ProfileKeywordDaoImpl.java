@@ -21,7 +21,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -43,7 +42,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @SuppressWarnings("unchecked")
     @Cacheable(value = "dao-keywords", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id = :orcid order by displayIndex desc");
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id = :orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -51,7 +50,7 @@ public class ProfileKeywordDaoImpl extends GenericDaoImpl<ProfileKeywordEntity, 
     @Override
     @SuppressWarnings("unchecked")
     public List<ProfileKeywordEntity> getProfileKeywors(String orcid, org.orcid.jaxb.model.common_rc2.Visibility visibility) {
-        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc");
+        Query query = entityManager.createQuery("FROM ProfileKeywordEntity WHERE profile.id=:orcid AND visibility=:visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();

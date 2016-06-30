@@ -2544,20 +2544,20 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         $scope.showEdit = false;
     };
 
-    $scope.addNew = function() {
-        for (var idx in $scope.websitesForm.websites)
+    $scope.updateDisplayIndex = function() {
+    	for (var idx in $scope.websitesForm.websites)
             $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
-        $scope.websitesForm.websites.push({ url: "", urlName: "", displayIndex: "0" });
     };
     
-    $scope.addNewModal = function() {
-        var idx = $scope.getLastDisplayIndex();        
-        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":null,"sourceName":"", "displayIndex": 0};        
-        tmpObj['source'] = $scope.orcidId;
-        tmpObj['displayIndex'] = 0;
-        for (var idx in $scope.websitesForm.websites)
-            $scope.websitesForm.websites[idx]['displayIndex'] = $scope.websitesForm.websites.length - idx;
+    $scope.addNew = function() {
+    	$scope.websitesForm.websites.push({ url: "", urlName: "", displayIndex: "1" });
+    	$scope.updateDisplayIndex();
+    };
+    
+    $scope.addNewModal = function() {         
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":null,"sourceName":"", "displayIndex": 1};        
         $scope.websitesForm.websites.push(tmpObj);
+        $scope.updateDisplayIndex();
         $scope.newInput = true; 
     };
 
@@ -2571,7 +2571,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 var websites = $scope.websitesForm.websites;
                 var len = websites.length;
                 //Iterate over all elements to:
-                // -> see if they have the same visibility, to set the default  visibility element
+                // -> see if they have the same visibility, to set the default visibility element
                 // -> set the default protocol when needed
                 if(len > 0) {
                 	while (len--) {
@@ -2608,14 +2608,12 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 				$scope.defaultVisibility = null;
                 				break;
                 			}
-                		}                		
-                        
+                		}                        
                     }
                 } else {
                 	$scope.defaultVisibility = $scope.websitesForm.visibility.visibility;
                 }
-                
-                
+                                
                 $scope.$apply();
             }
         }).fail(function(){
@@ -2651,8 +2649,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
         		}
         	}
         }  
-    	
-        
+    	        
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
         while (len--) {
@@ -2715,8 +2712,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;
     }
-    
-    
+        
     $scope.openEditModal = function(){        
         $.colorbox({
             scrolling: true,
@@ -2725,13 +2721,15 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
                 $('#cboxClose').remove();
                 if ($scope.websitesForm.websites.length == 0){
                     $scope.addNewModal();
-                }
-                if ($scope.websitesForm.websites.length == 1){
-                	if($scope.websitesForm.websites[0].source == null){
-                		$scope.websitesForm.websites[0].source = $scope.orcidId;
-                		$scope.websitesForm.websites[0].sourceName = "";
-                	}
-                }
+                } else {
+                	if ($scope.websitesForm.websites.length == 1){
+                    	if($scope.websitesForm.websites[0].source == null){
+                    		$scope.websitesForm.websites[0].source = $scope.orcidId;
+                    		$scope.websitesForm.websites[0].sourceName = "";
+                    	}
+                    }
+                    $scope.updateDisplayIndex();
+                }                
             },
             width: formColorBoxResize(),
             onComplete: function() {
@@ -2768,23 +2766,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             $scope.websitesForm.websites[index]['displayIndex'] = tempDisplayIndex;
             $scope.websitesForm.websites[index + 1] = temp;
         }
-    };
-    
-    $scope.getLastDisplayIndex = function(){        
-        var last = 0;
-        var current = 0;
-        
-        var websites = $scope.websitesForm.websites;
-        var len = websites.length;
-        while (len--) {            
-            current = websites[len].displayIndex;
-            if (current > last){
-                last = websites[len].displayIndex;
-            }
-        }       
-        return last;
-    };
-    
+    };      
 
     $scope.getWebsitesForm();
 }]);
@@ -2811,18 +2793,20 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         $scope.showEdit = false;
     };
 
-    $scope.addNew = function() {
-    	for (var idx in $scope.keywordsForm.keyword)
+    $scope.updateDisplayIndex = function(){
+    	for (var idx in $scope.keywordsForm.keywords)
     		$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
-        $scope.keywordsForm.keywords.push({content: "", displayIndex: "0"});
     };
     
-    $scope.addNewModal = function() {        
-        var idx = $scope.getLastDisplayIndex();
-        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":$scope.orcidId,"sourceName":""};
-        for (var idx in $scope.keywordsForm.keywords)
-        	$scope.keywordsForm.keywords[idx]['displayIndex'] = $scope.keywordsForm.keywords.length - idx;
+    $scope.addNew = function() {
+    	$scope.keywordsForm.keywords.push({content: "", displayIndex: "1"});    	
+    	$scope.updateDisplayIndex();
+    };
+    
+    $scope.addNewModal = function() {                
+        var tmpObj = {"errors":[],"putCode":null,"content":"","visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":$scope.orcidId,"sourceName":""};
         $scope.keywordsForm.keywords.push(tmpObj);
+        $scope.updateDisplayIndex();
         $scope.newInput = true;
     };
 
@@ -2973,6 +2957,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
                     $scope.addNewModal();
                     $scope.newInput = true;
                     
+                } else{
+                	$scope.updateDisplayIndex();
                 }
             },
             width: formColorBoxResize(),
@@ -3012,21 +2998,6 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
         }
     };
     
-    $scope.getLastDisplayIndex = function(){        
-        var last = 0;
-        var current = 0;
-        
-        var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;
-        while (len--) {            
-            current = keywords[len].displayIndex;
-            if (current > last){
-                last = keywords[len].displayIndex;
-            }
-        }       
-        return last;
-    }    
-
     $scope.getKeywordsForm();
 }]);
 
@@ -3106,18 +3077,21 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $scope.showEdit = false;
     };
 
-    $scope.addNew = function() {        
-        for (var idx in $scope.otherNamesForm.otherNames)
+    $scope.updateDisplayIndex = function(){
+    	for (var idx in $scope.otherNamesForm.otherNames) {        	
         	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
-        $scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "0" });
+        }
     };
     
-    $scope.addNewModal = function() {    	
-    	var idx = $scope.getLastDisplayIndex();        
-        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 0};
-        for (var idx in $scope.otherNamesForm.otherNames)
-        	$scope.otherNamesForm.otherNames[idx]['displayIndex'] = $scope.otherNamesForm.otherNames.length - idx;
-        $scope.otherNamesForm.otherNames.push(tmpObj);
+    $scope.addNew = function() {
+    	$scope.otherNamesForm.otherNames.push({ url: "", urlName: "", displayIndex: "1" });
+    	$scope.updateDisplayIndex();   	        
+    };
+    
+    $scope.addNewModal = function() {    	    	
+        var tmpObj = {"errors":[],"url":null,"urlName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"source":$scope.orcidId,"sourceName":"", "displayIndex": 1};        
+        $scope.otherNamesForm.otherNames.push(tmpObj);        
+        $scope.updateDisplayIndex();          
         $scope.newInput = true;
     };
 
@@ -3265,7 +3239,9 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
                 if ($scope.otherNamesForm.otherNames.length == 0){
                     $scope.addNewModal();
                     $scope.newInput = true;
-                }    
+                }   else {
+                	$scope.updateDisplayIndex();
+                } 
             },
             width: formColorBoxResize(),
             onComplete: function() {
@@ -3303,22 +3279,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             $scope.otherNamesForm.otherNames[index + 1] = temp;
         }
     };
-    
-    $scope.getLastDisplayIndex = function(){        
-        var last = 0;
-        var current = 0;
-        
-        var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;
-        while (len--) {            
-            current = otherNames[len].displayIndex;
-            if (current > last){
-                last = otherNames[len].displayIndex;
-            }
-        }       
-        return last;
-    }
-    
+           
     $scope.getOtherNamesForm();
 }]);
 
@@ -3466,13 +3427,13 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 			}
                 		}                 		                		                	
                     }
-                	var lowestDisplayIndex = null;
+                	var highestDisplayIndex = null;
 	            	//We have to iterate on them again to select the primary address
                 	for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
 	                	//Set the primary element based on the display index
-	            		if($scope.primaryElementIndex == null || lowestDisplayIndex > $scope.countryForm.addresses[i].displayIndex) {
+	            		if($scope.primaryElementIndex == null || highestDisplayIndex < $scope.countryForm.addresses[i].displayIndex) {
 	            			$scope.primaryElementIndex = i;
-	            			lowestDisplayIndex = $scope.countryForm.addresses[i].displayIndex;
+	            			highestDisplayIndex = $scope.countryForm.addresses[i].displayIndex;
 	            		}
                 	}
                 } else {
@@ -3501,8 +3462,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             		for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
             			if($scope.countryForm.addresses[i].visibility == null) {
             				$scope.countryForm.addresses[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-            			}
-            			        			
+            			}            			        			
             			$scope.countryForm.addresses[i].visibility.visibility = $scope.defaultVisibility; 
             		}
             	}
@@ -3580,13 +3540,15 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 $('#cboxClose').remove();
                 if ($scope.countryForm.addresses.length == 0){                	
                     $scope.addNewModal();
-                }
-                if ($scope.countryForm.addresses.length == 1){
-                    if($scope.countryForm.addresses[0].source == null){
-                    	$scope.countryForm.addresses[0].source = $scope.orcidId;
-                    	$scope.countryForm.addresses[0].sourceName = "";
+                } else {
+                	if ($scope.countryForm.addresses.length == 1){
+                        if($scope.countryForm.addresses[0].source == null){
+                        	$scope.countryForm.addresses[0].source = $scope.orcidId;
+                        	$scope.countryForm.addresses[0].sourceName = "";
+                        }
                     }
-                }
+                	$scope.updateDisplayIndex();
+                }                
             },
  
             width: formColorBoxResize(),
@@ -3615,12 +3577,15 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         }
     };
     
-    $scope.addNewModal = function() {
-    	var idx = $scope.getLastDisplayIndex();
-        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":0,"source":$scope.orcidId,"sourceName":""};
-        for (var idx in $scope.countryForm.addresses)
-        	$scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;
-        $scope.countryForm.addresses.push(tmpObj);        
+    $scope.updateDisplayIndex = function(){
+    	for (var idx in $scope.countryForm.addresses)
+        	$scope.countryForm.addresses[idx]['displayIndex'] = $scope.countryForm.addresses.length - idx;                       
+    };
+    
+    $scope.addNewModal = function() {    	
+        var tmpObj = {"errors":[],"iso2Country": null,"countryName":null,"putCode":null,"visibility":{"errors":[],"required":true,"getRequiredMessage":null,"visibility":$scope.newElementDefaultVisibility},"displayIndex":1,"source":$scope.orcidId,"sourceName":""};
+        $scope.countryForm.addresses.push(tmpObj);
+        $scope.updateDisplayIndex();
         $scope.newInput = true; 
     };
     
@@ -3646,20 +3611,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         }
     };
      
-    $scope.getLastDisplayIndex = function(){        
-		var last = 0;
-		var current = 0;
-		var countries = $scope.countryForm.addresses;
-		var len = countries.length;         
-		while (len--) {            
-		    current = countries[len].displayIndex;
-		    if (current > last){
-		        last = countries[len].displayIndex;
-		    }
-		}         
-		return last;
-    };
-
     $scope.getCountryForm();
 }]);
 
@@ -3815,44 +3766,13 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
             $scope.externalIdentifiersForm.externalIdentifiers[index]['displayIndex'] = tempDisplayIndex;
             $scope.externalIdentifiersForm.externalIdentifiers[index + 1] = temp;
         }
-    };
-    
-    $scope.getLastDisplayIndex = function(){
-        var last = 0;
-        var current = 0;
-        
-        var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-        var len = externalIdentifiers.length;
-        while (len--) {
-            current = externalIdentifiers[len].displayIndex;
-            if (current > last){
-                last = externalIdentifiers[len].displayIndex;
-            }
-        }
-        
-        return last;
-   };
-   
+    };           
    
    //To fix displayIndex values that comes with -1
    $scope.displayIndexInit = function(){
-	   var externalIdentifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-	   var len = externalIdentifiers.length;
-	   var displayIndex = 0;
-	   var lastDisplayIndex = $scope.getLastDisplayIndex();
-	   
-	   if(lastDisplayIndex == -1)
-		   displayIndex = 0;
-	   else
-		   displayIndex = lastDisplayIndex;
-	   
-       while (len--) {
-    	    if (externalIdentifiers[len].displayIndex == -1){
-    	    	displayIndex++;
-            	externalIdentifiers[len].displayIndex = displayIndex;	
-    	    }
-       }
-       $scope.externalIdentifiersForm.externalIdentifiers = externalIdentifiers;       
+	   for (var idx in $scope.externalIdentifiersForm.externalIdentifiers) {        	
+		   $scope.externalIdentifiersForm.externalIdentifiers[idx]['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers.length - idx;
+       }       
    }
    
    $scope.showTooltip = function(elem, event){
@@ -3879,9 +3799,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
    }
     
    //init
-   $scope.getExternalIdentifiersForm();
-   
-
+   $scope.getExternalIdentifiersForm();  
 }]);
 
 orcidNgModule.controller('ResetPasswordCtrl', ['$scope', '$compile', 'commonSrvc',function ($scope, $compile, commonSrvc) {

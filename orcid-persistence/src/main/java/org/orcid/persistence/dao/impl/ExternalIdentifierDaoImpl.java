@@ -55,7 +55,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @Override
     @Cacheable(value = "dao-external-identifiers", key = "#orcid.concat('-').concat(#lastModified)")
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, long lastModified) {
-        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid");
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         return query.getResultList();
     }
@@ -63,7 +63,7 @@ public class ExternalIdentifierDaoImpl extends GenericDaoImpl<ExternalIdentifier
     @SuppressWarnings("unchecked")
     @Override
     public List<ExternalIdentifierEntity> getExternalIdentifiers(String orcid, Visibility visibility) {
-        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and visibility = :visibility");
+        Query query = entityManager.createQuery("FROM ExternalIdentifierEntity WHERE owner.id = :orcid and visibility = :visibility order by displayIndex desc, dateCreated asc");
         query.setParameter("orcid", orcid);
         query.setParameter("visibility", visibility);
         return query.getResultList();
