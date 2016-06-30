@@ -22,8 +22,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import org.orcid.api.common.writer.stats.StatsTimelineList;
 import org.orcid.api.t1.stats.delegator.StatsApiServiceDelegator;
 import org.orcid.core.api.OrcidApiConstants;

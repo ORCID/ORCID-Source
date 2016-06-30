@@ -26,13 +26,10 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OtherName;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.message.VisibilityType;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
-import java.util.Collection;
 
 /**
  * @author Declan Newman (declan) Date: 16/03/2012

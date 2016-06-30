@@ -21,7 +21,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.ProfileKeywordDao;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.springframework.cache.annotation.Cacheable;

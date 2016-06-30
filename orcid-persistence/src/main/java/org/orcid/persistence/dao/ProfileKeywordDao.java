@@ -18,7 +18,6 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 
 public interface ProfileKeywordDao extends GenericDao<ProfileKeywordEntity, Long> {

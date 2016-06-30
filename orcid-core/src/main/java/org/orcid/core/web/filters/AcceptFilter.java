@@ -20,7 +20,6 @@ import static org.orcid.core.api.OrcidApiConstants.*;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
