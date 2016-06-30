@@ -6558,6 +6558,7 @@ a:hover .mozilla-badge{
     height: auto;
     padding: 15px; 
     overflow: hidden;
+    margin-bottom: 15px;
 }
 
 .notification-alert-title{
