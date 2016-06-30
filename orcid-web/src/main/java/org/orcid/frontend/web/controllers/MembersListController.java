@@ -36,27 +36,37 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-@RequestMapping("/members-list")
 public class MembersListController extends BaseController {
 
     @Resource
     private SalesForceManager salesForceManager;
 
-    @RequestMapping
+    @RequestMapping("/members")
     public ModelAndView membersList() {
         ModelAndView mav = new ModelAndView("members-list");
         return mav;
     }
-
-    @RequestMapping(value = "/members.json", method = RequestMethod.GET)
+    
+    @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
     public @ResponseBody List<SalesForceMember> retrieveMembers() {
         return salesForceManager.retrieveMembers();
     }
 
-    @RequestMapping(value = "/details.json", method = RequestMethod.GET)
+    @RequestMapping(value = "/members/details.json", method = RequestMethod.GET)
     public @ResponseBody SalesForceDetails retrieveDetails(@RequestParam("memberId") String memberId,
             @RequestParam(value = "consortiumLeadId", required = false) String consortiumLeadId) {
         return salesForceManager.retrieveDetails(memberId, consortiumLeadId);
+    }
+
+    @RequestMapping("/consortia")
+    public ModelAndView consortiaList() {
+        ModelAndView mav = new ModelAndView("consortia-list");
+        return mav;
+    }
+    
+    @RequestMapping(value = "/consortia/consortia.json", method = RequestMethod.GET)
+    public @ResponseBody List<SalesForceMember> retrieveConsortia() {
+        return salesForceManager.retrieveConsortia();
     }
 
 }
