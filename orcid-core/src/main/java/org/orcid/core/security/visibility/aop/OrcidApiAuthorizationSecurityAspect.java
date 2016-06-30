@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.message.VisibilityType;
 import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -385,10 +386,12 @@ public class OrcidApiAuthorizationSecurityAspect {
         for(String availableScope : availableScopes) {
             String [] simpleScopes = availableScope.split(" ");
             for(String simpleScope : simpleScopes) {
-                ScopePathType scopePathType = ScopePathType.fromValue(simpleScope);
-                for(String requiredScope: requiredScopes) {
-                    if(scopePathType.hasScope(requiredScope))
-                        return true;
+                if(!PojoUtil.isEmpty(simpleScope)) {
+                    ScopePathType scopePathType = ScopePathType.fromValue(simpleScope);
+                    for(String requiredScope: requiredScopes) {
+                        if(scopePathType.hasScope(requiredScope))
+                            return true;
+                    }
                 }
             }            
         }
