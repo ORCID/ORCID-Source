@@ -843,7 +843,7 @@ public class ManageProfileController extends BaseWorkspaceController {
         
         if(form.getAddresses().isEmpty()) {
             AddressForm address = new AddressForm();
-            address.setDisplayIndex(0L);
+            address.setDisplayIndex(1L);
             address.setVisibility(org.orcid.pojo.ajaxForm.Visibility.valueOf(profile.getActivitiesVisibilityDefault()));
             form.getAddresses().add(address);
         }                
