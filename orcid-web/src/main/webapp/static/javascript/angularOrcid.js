@@ -1419,6 +1419,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
         bulkChecked: false,
         bulkArchiveMap: [],
         selectionActive: false,
+        notificationAlerts: [],
         getNotifications: function() {
             var url = getBaseUri() + '/inbox/notifications.json?firstResult=' + serv.firstResult + '&maxResults=' + serv.maxResults;             
             if(serv.showArchived){
@@ -1447,6 +1448,20 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
+            });
+        },
+        getNotificationAlerts: function(){
+        	$.ajax({
+                url: getBaseUri() + '/inbox/notification-alerts.json',
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                	serv.notificationAlerts = data;                	
+                	console.log(data);
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("getNotificationsAlerts error in notificationsSrvc");
             });
         },
         reloadNotifications: function() {
@@ -1487,6 +1502,9 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             return serv.areMoreFlag;
         },
         flagAsRead: function(notificationId) {
+        	
+        	console.log(notificationId);
+        	
             $.ajax({
                 url: getBaseUri() + '/inbox/' + notificationId + '/read.json',
                 type: 'POST',
@@ -1579,25 +1597,20 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             
         },
         checkSelection: function(){
-            
             var count = 0;
-            var totalNotifications = 0;
-            
-            serv.selectionActive = false;            
-            
+            var totalNotifications = 0;            
+            serv.selectionActive = false;
             for (putCode in serv.bulkArchiveMap){                
                 if(serv.bulkArchiveMap[putCode] == true){
                     serv.selectionActive = true;
                     count++;
                 }
             }                      
-            
             for (i = 0; i < serv.notifications.length; i++)                
                 if (serv.notifications[i].archivedDate == null)
                     totalNotifications++;            
             
             totalNotifications == count ? serv.bulkChecked = true :	serv.bulkChecked = false;
-            
         }
     };
     return serv;
@@ -7455,6 +7468,7 @@ orcidNgModule.controller('SocialCtrl',['$scope', '$compile', 'discoSrvc', functi
 orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificationsSrvc', function ($scope, $compile, notificationsSrvc){
     $scope.displayBody = {};
     notificationsSrvc.displayBody = {};    
+    $scope.notificationsSrvc = notificationsSrvc;
     $scope.notifications = notificationsSrvc.notifications;
     $scope.showMore = notificationsSrvc.showMore;
     $scope.areMore = notificationsSrvc.areMore;
@@ -7463,9 +7477,7 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
     $scope.reloadNotifications = notificationsSrvc.reloadNotifications;
     $scope.notificationsSrvc = notificationsSrvc;
     $scope.bulkChecked = notificationsSrvc.bulkChecked;
-    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;    
-    
-
+    $scope.bulkArchiveMap = notificationsSrvc.bulkArchiveMap;
     $scope.toggleDisplayBody = function (notificationId) {
         $scope.displayBody[notificationId] = !$scope.displayBody[notificationId];        
         notificationsSrvc.displayBody[notificationId] = $scope.displayBody[notificationId]; 
@@ -7479,7 +7491,12 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
         }
     });
 
-    notificationsSrvc.getNotifications();
+    notificationsSrvc.getNotifications();    
+    notificationsSrvc.getNotificationAlerts();
+    
+    //console.log($scope.notificationsSrvc.notificationAlerts);
+    
+    console.log('Loaded');
         
 }]);
 
