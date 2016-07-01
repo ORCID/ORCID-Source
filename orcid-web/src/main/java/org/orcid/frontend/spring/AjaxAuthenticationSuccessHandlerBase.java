@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.LocaleUtils;
 import org.orcid.core.manager.InternalSSOManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.SourceManager;
@@ -31,6 +32,7 @@ import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.utils.OrcidRequestUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.web.servlet.LocaleContextResolver;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticationSuccessHandler {
@@ -52,6 +54,9 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
 
     @Resource
     protected UserConnectionDao userConnectionDao;
+
+    @Resource
+    protected LocaleContextResolver localeContextResolver;
 
     protected String getTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
@@ -83,7 +88,8 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
     private void checkLocale(HttpServletRequest request, HttpServletResponse response, String orcidId) {
         Locale lastKnownLocale = profileDao.retrieveLocale(orcidId);
         if (lastKnownLocale != null) {
-
+            localeContextResolver.setLocale(request, response, LocaleUtils.toLocale(lastKnownLocale.value()));
+        } else {
             // have to read the cookie directly since spring has
             // populated the request locale yet
             CookieLocaleResolver clr = new CookieLocaleResolver();
@@ -94,9 +100,7 @@ public class AjaxAuthenticationSuccessHandlerBase extends SimpleUrlAuthenticatio
 
             // update the users preferences, so that
             // send out emails in their last chosen language
-            if (!lastKnownLocale.equals(cookieLocale)) {
-                profileDao.updateLocale(orcidId, cookieLocale);
-            }
+            profileDao.updateLocale(orcidId, cookieLocale);
         }
     }
 
