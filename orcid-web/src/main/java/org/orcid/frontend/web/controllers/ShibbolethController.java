@@ -16,6 +16,7 @@
  */
 package org.orcid.frontend.web.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -27,10 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.manager.IdentityProviderManager;
+import org.orcid.core.manager.InstitutionalSignInManager;
 import org.orcid.frontend.web.exception.FeatureDisabledException;
 import org.orcid.frontend.web.util.RemoteUser;
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.dao.UserConnectionDao;
+import org.orcid.persistence.jpa.entities.UserConnectionStatus;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +93,9 @@ public class ShibbolethController extends BaseController {
 
     @Resource
     private IdentityProviderDao identityProviderDao;
+    
+    @Resource
+    private InstitutionalSignInManager institutionalSignInManager;
 
     @RequestMapping(value = { "/signin" }, method = RequestMethod.GET)
     public ModelAndView signinHandler(HttpServletRequest request, HttpServletResponse response, @RequestHeader Map<String, String> headers, ModelAndView mav) {
@@ -107,19 +113,29 @@ public class ShibbolethController extends BaseController {
             mav.addObject("institutionContactEmail", identityProviderManager.retrieveContactEmailByProviderid(shibIdentityProvider));
             return mav;
         }
-
+        
         // Check if the Shibboleth user is already linked to an ORCID account.
         // If so sign them in automatically.
         UserconnectionEntity userConnectionEntity = userConnectionDao.findByProviderIdAndProviderUserIdAndIdType(remoteUser.getUserId(), shibIdentityProvider,
                 remoteUser.getIdType());
         if (userConnectionEntity != null) {
             try {
+                //Check if the user has been notified
+                if(!UserConnectionStatus.NOTIFIED.equals(userConnectionEntity.getConnectionSatus())) {
+                    try {
+                        institutionalSignInManager.sendNotification(userConnectionEntity.getOrcid(), shibIdentityProvider);
+                        userConnectionEntity.setConnectionSatus(UserConnectionStatus.NOTIFIED);
+                    } catch(UnsupportedEncodingException e) {
+                        LOGGER.error("Unable to send institutional sign in notification to user " + userConnectionEntity.getOrcid(), e);
+                    }
+                }
+                
                 PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken(userConnectionEntity.getOrcid(), remoteUser.getUserId());
                 token.setDetails(new WebAuthenticationDetails(request));
                 Authentication authentication = authenticationManager.authenticate(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 userConnectionEntity.setLastLogin(new Date());
-                userConnectionDao.merge(userConnectionEntity);
+                userConnectionDao.merge(userConnectionEntity);                
             } catch (AuthenticationException e) {
                 // this should never happen
                 SecurityContextHolder.getContext().setAuthentication(null);

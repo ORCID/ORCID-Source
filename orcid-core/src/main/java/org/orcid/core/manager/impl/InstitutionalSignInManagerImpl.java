@@ -77,7 +77,8 @@ public class InstitutionalSignInManagerImpl implements InstitutionalSignInManage
         sendNotification(userOrcid, providerId);
     }        
     
-    private void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
+    @Override
+    public void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException {
         try {
             ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieveByIdP(providerId);
             boolean clientKnowsUser = doesClientKnowUser(userOrcid, clientDetails.getClientId());
