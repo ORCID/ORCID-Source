@@ -5834,29 +5834,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     		loadWorkImportWizardList();
     	}
     	$scope.workImportWizard = !$scope.workImportWizard;
-    };
-    
-    $scope.processWorkImportWizardList = function() {
-    	$scope.workImportWizards = [];
-    	for(var i = 0; i < $scope.workImportWizardsOriginal.length; i ++) {
-    		for(var j = 0; j < $scope.workImportWizardsOriginal[i].redirectUris.redirectUri.length; j ++) {
-    			if(($scope.selectedWorkType == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].actType['import-works-wizard'], $scope.selectedWorkType))&&
-    					($scope.selectedGeoArea == 'All' || contains($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'], $scope.selectedGeoArea))) {
-    				$scope.workImportWizards.push($scope.workImportWizardsOriginal[i]);
-    				break;
-    			}
-    		}
-    	}
-    	$scope.workImportWizards.sort(function(obj1, obj2){
-    		if(obj1.displayName < obj2.displayName) {
-    			return -1;
-    		}
-    		if(obj1.displayName > obj2.displayName) {
-    			return 1;
-    		}
-    		return 0;
-    	})
-    }
+    };   
 
     function loadWorkImportWizardList() {
     	$.ajax({
@@ -5888,12 +5866,11 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
             					$scope.geoArea.push($scope.workImportWizardsOriginal[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'][k]);
             			}
             		}
-            	}
+            	}            	
             	if(getParameterByName('import_works_wizard') != 'true') {
             		$scope.selectedWorkType = 'All';
                     $scope.selectedGeoArea = 'All';
             	}
-            	$scope.processWorkImportWizardList();
             	$scope.$apply();
             }
         }).fail(function() {
@@ -11338,8 +11315,36 @@ orcidNgModule.filter('orderObjectBy', function() {
 	    });
 	    if(reverse) filtered.reverse();
 	    return filtered;
-	  };
-	});
+	 };
+});
+
+orcidNgModule.filter("filterImportWizards", function(){	
+    return function(input, selectedWorkType, selectedGeoArea) {
+    	var output = [];    	
+    	if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
+    		output = input;
+    	}else{
+    		for(var i = 0; i < input.length; i ++) {
+        		for(var j = 0; j <  input[i].redirectUris.redirectUri.length; j ++) {
+    				if (selectedWorkType == 'All'){
+    					if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
+    						output.push(input[i]);
+    					}
+    				}else if(selectedGeoArea == 'All'){
+    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
+    						output.push(input[i]);
+    					}    					
+    				}else{    				   					
+    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
+        					output.push(input[i]);
+        				}
+    				}
+        		}
+        	}    		
+    	}
+    	return output;
+    };
+});
 
 /*
  * For forms submitted using the default submit function (Scope: document)
