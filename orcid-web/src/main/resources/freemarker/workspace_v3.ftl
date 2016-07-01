@@ -389,10 +389,8 @@
               	</div>                
         	</div>
         	<div class="workspace-accordion" id="workspace-accordion">
-        		<!-- Notification alert -->
-        		<#if RequestParameters['notification']??>        		
-        			<#include "includes/notification_alert.ftl"/>
-        	    </#if>
+        		<!-- Notification alert -->        		        		
+        		<#include "includes/notification_alert.ftl"/>        	    
         		<!-- Personal Information -->
 				<div id="workspace-personal" class="workspace-accordion-item workspace-accordion-active" ng-controller="PersonalInfoCtrl">        			
             		<div class="workspace-accordion-content" ng-if="displayInfo">
