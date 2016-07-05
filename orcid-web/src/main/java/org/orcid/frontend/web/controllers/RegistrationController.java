@@ -272,7 +272,7 @@ public class RegistrationController extends BaseController {
                 try {
                     reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.info("error parsing users family name from oauth url", e);
+                    LOGGER.debug("error parsing users family name from oauth url", e);
                 }
 
             Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
@@ -280,7 +280,7 @@ public class RegistrationController extends BaseController {
                 try {
                     reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.info("error parsing users family name from oauth url", e);
+                    LOGGER.debug("error parsing users family name from oauth url", e);
                 }
         }
         long numVal = generateRandomNumForValidation();
@@ -1036,7 +1036,7 @@ public class RegistrationController extends BaseController {
     }
 
     private List<OrcidProfile> findPotentialDuplicatesByFirstNameLastName(String firstName, String lastName) {
-        LOGGER.info("About to search for potential duplicates during registration for first name={}, last name={}", firstName, lastName);
+        LOGGER.debug("About to search for potential duplicates during registration for first name={}, last name={}", firstName, lastName);
         List<OrcidProfile> orcidProfiles = new ArrayList<OrcidProfile>();
         SearchOrcidSolrCriteria queryForm = new SearchOrcidSolrCriteria();
 
@@ -1050,7 +1050,7 @@ public class RegistrationController extends BaseController {
                 orcidProfiles.add(searchResult.getOrcidProfile());
             }
         }
-        LOGGER.info("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { orcidProfiles.size(), firstName, lastName });
+        LOGGER.debug("Found {} potential duplicates during registration for first name={}, last name={}", new Object[] { orcidProfiles.size(), firstName, lastName });
         return orcidProfiles;
 
     }
@@ -1083,11 +1083,11 @@ public class RegistrationController extends BaseController {
         String sessionId = request.getSession() == null ? null : request.getSession().getId();
         String email = profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue();
 
-        LOGGER.info("About to create profile from registration email={}, sessionid={}", email, sessionId);
+        LOGGER.debug("About to create profile from registration email={}, sessionid={}", email, sessionId);
         profileToSave = registrationManager.createMinimalRegistration(profileToSave, usedCaptchaVerification);
         notificationManager.sendWelcomeEmail(profileToSave, profileToSave.getOrcidBio().getContactDetails().retrievePrimaryEmail().getValue());
         request.getSession().setAttribute(ManageProfileController.CHECK_EMAIL_VALIDATED, false);
-        LOGGER.info("Created profile from registration orcid={}, email={}, sessionid={}",
+        LOGGER.debug("Created profile from registration orcid={}, email={}, sessionid={}",
                 new Object[] { profileToSave.getOrcidIdentifier().getPath(), email, sessionId });
         return profileToSave;
     }
