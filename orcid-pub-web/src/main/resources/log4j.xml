@@ -35,6 +35,12 @@
 		</layout>
 	</appender>
 
+	<appender name="CONSOLE_SHORTTRACE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %p [%t] %c{1}.%M(%L) | %m%n%m%n%throwable{1}" />
+		</layout>
+	</appender>
+
 	<!-- 3rd party Loggers -->
 	<logger name="org.springframework">
 		<level value="WARN" />
@@ -46,6 +52,15 @@
 	
 	<logger name="com.mchange.v2">
 	   <level value="WARN" />
+	</logger>
+
+	<logger name="com.sun.jersey.spi.container.servlet.WebComponent.filterFormParameters">
+	   <level value="OFF" />
+	</logger>
+
+	<logger name="org.xml.sax.SAXParseException">
+	   <level value="WARN" />
+	   <appender-ref ref="CONSOLE_SHORTTRACE"/>
 	</logger>
 
 	<!-- Root Logger -->

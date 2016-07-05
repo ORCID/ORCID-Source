@@ -64,7 +64,7 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
                 synchronized (lockers.obtainLock(sourceId)) {
                     sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
                     if(sourceName == null) {
-                        LOGGER.info("Fetching source name for: " + sourceId);
+                        LOGGER.debug("Fetching source name for: " + sourceId);
                         sourceName = getSourceName(sourceId);
                         // If the source name is null and no exception was
                         // thrown, it means it is not public, so, lets store an

@@ -211,12 +211,12 @@ public class EncryptionManagerImpl implements EncryptionManager, PasswordEncoder
      */
     @Override
     public boolean isPasswordValid(String encPass, String rawPass, Object salt) {
-        LOGGER.info("About to start password check");
+        LOGGER.debug("About to start password check");
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         boolean result = hashMatches(rawPass, encPass);
         stopWatch.stop();
-        LOGGER.info("Password check took {} ms", stopWatch.getTime());
+        LOGGER.debug("Password check took {} ms", stopWatch.getTime());
         return result;
     }
 
