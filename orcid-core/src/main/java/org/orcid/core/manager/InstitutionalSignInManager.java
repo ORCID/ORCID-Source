@@ -19,5 +19,7 @@ package org.orcid.core.manager;
 import java.io.UnsupportedEncodingException;
 
 public interface InstitutionalSignInManager {
-    void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid) throws UnsupportedEncodingException;    
+    void createUserConnectionAndNotify(String idType, String remoteUserId, String displayName, String providerId, String userOrcid) throws UnsupportedEncodingException;
+
+    void sendNotification(String userOrcid, String providerId) throws UnsupportedEncodingException;
 }
