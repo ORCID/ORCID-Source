@@ -98,8 +98,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-emails")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-public-id")), webDriver);
-        WebElement privateVisibility = webDriver.findElement(By.id("email-" + emailValue + "-public-id"));
-        privateVisibility.click();
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("email-" + emailValue + "-public-id")), webDriver);
+
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
 
         // Verify
@@ -149,8 +149,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
 
         // Set Private Visibility
-        WebElement privateVisibility = webDriver.findElement(By.id("other-names-private-id"));
-        privateVisibility.click();
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("other-names-private-id")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-other-names")), webDriver);
 
         // Verify
@@ -192,8 +191,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         WebElement toClick = null;
         for (WebElement element : otherNames) {
             if (otherNameValue.equals(element.getAttribute("value"))) {
-                toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
-                toClick.click();
+                BBBUtil.ngAwareClick(element.findElement(By.xpath(".//following-sibling::a[1]")), webDriver);
+                
                 break;
             }
         }
@@ -216,10 +215,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         selectBox.selectByValue("IN");
 
         // Set Private Visibility
-        WebElement privateVisibility = webDriver.findElement(By.id("country-private-id"));
-        privateVisibility.click();
-        WebElement saveButton = webDriver.findElement(By.id("save-country"));
-        saveButton.click();
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("country-private-id")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-country")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
 
         // Verify
@@ -237,8 +234,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-country")), webDriver);
-        privateVisibility = webDriver.findElement(By.id("country-public-id"));
-        privateVisibility.click();
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("country-public-id")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-country")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-country")), webDriver);
 
@@ -258,8 +254,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         selectBox = new Select(webDriver.findElement(By.id("country")));
         selectedCountry = selectBox.getFirstSelectedOption();
         selectBox.selectByValue(initialValue);
-        saveButton = webDriver.findElement(By.id("save-country"));
-        saveButton.click();
+        BBBUtil.ngAwareClick( webDriver.findElement(By.id("save-country")), webDriver);
+
     }
 
     @Test
@@ -324,8 +320,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         List<WebElement> keywords = webDriver.findElements(By.xpath("//input[@name='keyword']"));
         for (WebElement element : keywords) {
             if (keywordValue.equals(element.getAttribute("value"))) {
-                WebElement toClick = element.findElement(By.xpath(".//following-sibling::a[1]"));
-                toClick.click();
+                BBBUtil.ngAwareClick(element.findElement(By.xpath(".//following-sibling::a[1]")), webDriver);                
                 break;
             }
         }
@@ -367,8 +362,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
 
         // Set Private Visibility
-        WebElement privateVisibility = webDriver.findElement(By.id("websites-private-id"));
-        privateVisibility.click();
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("websites-private-id")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-websites")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
 
@@ -426,10 +420,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         Actions action = new Actions(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")), webDriver);
-        WebElement container = webDriver.findElement(By.id("add-education-container"));
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        action.moveToElement(container).moveToElement(webDriver.findElement(By.id("add-education"))).click().build().perform();
+        WebElement container = webDriver.findElement(By.id("add-education-container"));
+        BBBUtil.ngAwareClick(container, webDriver);
+        BBBUtil.ngAwareClick(container.findElement(By.id("add-education")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
@@ -701,10 +695,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set public
         showMyOrcidPage();
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
         workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        WebElement publicVisibilityIcon = workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a"));
-        publicVisibilityIcon.click();
+        BBBUtil.ngAwareClick(workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
 
         // Check public page
@@ -750,8 +742,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
         WebElement peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
-        WebElement privateVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a"));
-        privateVisibilityIcon.click();
+        BBBUtil.ngAwareClick(peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
 
         // Check the public page
@@ -768,8 +759,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
         peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
-        WebElement publicVisibilityIcon = peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a"));
-        publicVisibilityIcon.click();
+        BBBUtil.ngAwareClick(peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
 
         // Check the public page
