@@ -65,15 +65,25 @@ public class SourceNameCacheManagerImpl implements SourceNameCacheManager {
                     sourceName = getSourceNameFromCache(sourceNameCache.get(cacheKey));
                     if(sourceName == null) {
                         LOGGER.info("Fetching source name for: " + sourceId);
-                        sourceName = getSourceName(sourceId);                        
-                        sourceNameCache.put(new Element(cacheKey, sourceName));
+                        sourceName = getSourceName(sourceId);
+                        // If the source name is null and no exception was
+                        // thrown, it means it is not public, so, lets store an
+                        // empty string
+                        if (sourceName == null) {
+                            sourceNameCache.put(new Element(cacheKey, StringUtils.EMPTY));
+                        } else {
+                            sourceNameCache.put(new Element(cacheKey, sourceName));
+                        }                        
                     }                    
                 }
             } finally {
                 lockers.releaseLock(sourceId);
             }            
         }
-        
+        //If source name is empty, it means the name is not public, so, return a null value instead
+        if(StringUtils.EMPTY.equals(sourceName)) {
+            return null;
+        }
         return sourceName;
     }    
 
