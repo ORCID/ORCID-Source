@@ -54,15 +54,12 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             HttpServletResponse response = (HttpServletResponse) res;
             HttpSession session = request.getSession(false);
             SecurityContext sci = null;
-
-            if (session != null)
-                sci = (SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT");
-
-            if (BaseController.getCurrentUser(sci) == null) {
+            if (session != null) {
+                sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
+            } else if (BaseController.getCurrentUser(sci) == null) {
                 response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + request.getQueryString());
                 return;
             }
-
         }
         chain.doFilter(req, res);
     }
