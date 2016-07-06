@@ -74,6 +74,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -306,7 +307,14 @@ public class BaseController {
     }
 
     protected OrcidProfileUserDetails getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityContext context = SecurityContextHolder.getContext();
+        return getCurrentUser(context);
+    }
+
+    public static OrcidProfileUserDetails getCurrentUser(SecurityContext context) {
+        if (context == null) 
+            return null;
+        Authentication authentication = context.getAuthentication();
         if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)
                 && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
             return ((OrcidProfileUserDetails) authentication.getPrincipal());
