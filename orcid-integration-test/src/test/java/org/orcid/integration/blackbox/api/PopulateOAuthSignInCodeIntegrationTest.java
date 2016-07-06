@@ -83,7 +83,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);               
         assertTrue(webDriver.findElement(element).getAttribute("value").equals(this.getUser1UserName()));
         // make sure register
-        assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals(this.getUser1UserName()));
 
         // populating check populating orcid
         url = authorizeScreen + "&email=spike@milligan.com&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();
@@ -112,6 +112,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test existing email
         url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
+        
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         element = By.xpath("//input[@name='userId']");
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);                
@@ -120,7 +121,7 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         assertNotNull(inputElement.getAttribute("value"));
         assertEquals(scapedEmail, inputElement.getAttribute("value"));
         // make sure register
-        assertTrue(webDriver.findElement(By.xpath("//input[@name='email']")).getAttribute("value").equals(""));
+        assertTrue(webDriver.findElement(By.xpath("//input[@name='userId']")).getAttribute("value").equals(scapedEmail));
 
         // populating check populating orcid
         url = authorizeScreen + "&email=" + scapedEmail + "&family_names=test_family_names&given_names=test_given_name&orcid=" + this.getUser1OrcidId();

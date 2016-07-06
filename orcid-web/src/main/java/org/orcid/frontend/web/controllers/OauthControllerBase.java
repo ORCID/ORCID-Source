@@ -148,7 +148,7 @@ public class OauthControllerBase extends BaseController {
                     tempEmail = URLDecoder.decode(tempEmail, "UTF-8").trim();
                 } catch (UnsupportedEncodingException e) {
                 }
-                if (emailManager.emailExists(tempEmail)) {
+                if (!PojoUtil.isEmpty(tempEmail)) {
                     email = tempEmail;
                 }
             }
