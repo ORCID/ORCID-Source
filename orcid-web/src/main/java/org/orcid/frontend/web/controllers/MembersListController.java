@@ -24,6 +24,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +45,13 @@ public class MembersListController extends BaseController {
     @RequestMapping("/members")
     public ModelAndView membersList() {
         ModelAndView mav = new ModelAndView("members-list");
+        return mav;
+    }
+    
+    @RequestMapping("/members/{memberSlug}")
+    public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
+        ModelAndView mav = new ModelAndView("member-page");
+        mav.addObject("memberName", memberSlug);
         return mav;
     }
     
