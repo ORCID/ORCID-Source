@@ -16,6 +16,7 @@
  */
 package org.orcid.core.oauth.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -42,11 +43,14 @@ import org.orcid.core.oauth.OrcidOauth2ClientAuthentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
@@ -58,7 +62,6 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * @author Will Simpson
  */
-@Transactional
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
@@ -241,6 +244,39 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         //Confirm the token expires in 20 years
         assertFalse(tokenExpiration.after(in20years));
     }                            
+    
+    
+    @Test    
+    public void tokenExpiredDoesntWorkTest() {
+        OrcidOauth2TokenDetail expiredToken = new OrcidOauth2TokenDetail();
+        expiredToken.setApproved(true);
+        expiredToken.setAuthenticationKey("authentication-key");
+        expiredToken.setClientDetailsId("4444-4444-4444-4441");        
+        expiredToken.setProfile(new ProfileEntity("4444-4444-4444-4442"));
+        expiredToken.setResourceId("orcid");
+        expiredToken.setScope("/read-limited");
+        expiredToken.setTokenExpiration(new Date(System.currentTimeMillis() - 1000));
+        expiredToken.setTokenValue("token-value");
+        
+        orcidOauthTokenDetailService.removeConflictsAndCreateNew(expiredToken);
+        
+        // The first time we try to use it, we get a InvalidTokenException with message Access token expired: token-value
+        try {
+            tokenServices.loadAuthentication("token-value");
+            fail();
+        } catch(InvalidTokenException e) {
+            assertEquals("Access token expired: token-value", e.getMessage());
+        }
+        
+        
+        // Second time we try to use it, we get a InvalidTokenException with message Invalid access token: token-value
+        try {
+            tokenServices.loadAuthentication("token-value");
+            fail();
+        } catch(InvalidTokenException e) {
+            assertEquals("Invalid access token: token-value", e.getMessage());
+        }
+    }
     
     /**
      * Load authentication using a persistent token
