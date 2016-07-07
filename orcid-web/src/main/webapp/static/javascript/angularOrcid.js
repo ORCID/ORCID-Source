@@ -1676,6 +1676,7 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
         memberDetails: {},
+        currentMemberDetails: null,
         consortiaList: null,
         getMembersList: function() {
             $.ajax({
@@ -1710,6 +1711,25 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function() {
                     // something bad is happening!
                     console.log("error with member details");
+                    serv.feed = [];
+                    $rootScope.$apply();
+                });
+            }
+        },
+        getCurrentMemberDetailsBySlug: function(memberSlug) {
+            if(serv.currentMemberDetails == null){
+                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                    success: function(data) {
+                        serv.currentMemberDetails = data;
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with member details by slug");
                     serv.feed = [];
                     $rootScope.$apply();
                 });
@@ -10794,8 +10814,21 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
         return $sce.trustAsHtml(htmlCode);
     };
     
+    $scope.getMemberPageUrl = function(slug) {
+        return orcidVar.baseUri + '/members/' + slug;
+    }
+    
     // populate the members feed
     membersListSrvc.getMembersList();
+    
+}]);
+
+orcidNgModule.controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+    $scope.membersListSrvc = membersListSrvc;
+    
+    $scope.renderHtml = function (htmlCode) {
+        return $sce.trustAsHtml(htmlCode);
+    };
     
 }]);
 

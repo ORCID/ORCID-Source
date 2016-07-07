@@ -51,7 +51,7 @@ public class MembersListController extends BaseController {
     @RequestMapping("/members/{memberSlug}")
     public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
         ModelAndView mav = new ModelAndView("member-page");
-        mav.addObject("memberName", memberSlug);
+        mav.addObject("memberSlug", memberSlug);
         return mav;
     }
     
@@ -64,6 +64,11 @@ public class MembersListController extends BaseController {
     public @ResponseBody SalesForceDetails retrieveDetails(@RequestParam("memberId") String memberId,
             @RequestParam(value = "consortiumLeadId", required = false) String consortiumLeadId) {
         return salesForceManager.retrieveDetails(memberId, consortiumLeadId);
+    }
+    
+    @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
+    public @ResponseBody SalesForceDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
+        return salesForceManager.retrieveDetailsBySlug(memberSlug);
     }
 
     @RequestMapping("/consortia")

@@ -39,6 +39,8 @@ public interface SalesForceManager {
     SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
 
     SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
+    
+    SalesForceDetails retrieveDetailsBySlug(String memberSlug);
 
     /**
      * @return The sales force object id, if valid.

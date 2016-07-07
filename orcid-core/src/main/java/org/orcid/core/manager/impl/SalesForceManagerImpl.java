@@ -16,10 +16,12 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -38,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.github.slugify.Slugify;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -85,6 +88,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
     private String accessToken;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
+
+    private Slugify slugify;
+    {
+        try {
+            slugify = new Slugify();
+        } catch (IOException e) {
+            throw new RuntimeException("Error initializing slugify", e);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -135,6 +147,18 @@ public class SalesForceManagerImpl implements SalesForceManager {
             LOGGER.debug("Unauthorized to retrieve details, trying again.", e);
             return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId, consortiumLeadId);
         }
+    }
+
+    @Override
+    public SalesForceDetails retrieveDetailsBySlug(String memberSlug) {
+        List<SalesForceMember> members = retrieveMembers();
+        Optional<SalesForceMember> match = members.stream().filter(e -> memberSlug.equals(e.getSlug())).findFirst();
+        if (match.isPresent()) {
+            SalesForceMember salesForceMember = match.get();
+            return (SalesForceDetails) salesForceMemberDetailsCache
+                    .get(new SalesForceMemberDetailsCacheKey(salesForceMember.getId(), salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
+        }
+        throw new IllegalArgumentException("No member details found for " + memberSlug);
     }
 
     @Override
@@ -214,6 +238,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         String name = extractString(record, "Name");
         SalesForceMember member = new SalesForceMember();
         member.setName(name);
+        member.setSlug(slugify.slugify(name));
         member.setId(extractString(record, "Id"));
         try {
             member.setWebsiteUrl(extractURL(record, "Website"));
