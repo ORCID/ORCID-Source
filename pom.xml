@@ -448,11 +448,6 @@ the software.
 
         <!-- Test -->
         <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-junit3</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
