@@ -96,6 +96,8 @@ public class BaseController {
 
     private String devSandboxUrl;
 
+    private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
+    
     private String aboutUri;
 
     private String knowledgeBaseUri;
@@ -307,20 +309,7 @@ public class BaseController {
     }
 
     protected OrcidProfileUserDetails getCurrentUser() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        return getCurrentUser(context);
-    }
-
-    public static OrcidProfileUserDetails getCurrentUser(SecurityContext context) {
-        if (context == null) 
-            return null;
-        Authentication authentication = context.getAuthentication();
-        if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)
-                && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal());
-        } else {
-            return null;
-        }
+        return baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
     }
 
     protected String getCurrentUserOrcid() {

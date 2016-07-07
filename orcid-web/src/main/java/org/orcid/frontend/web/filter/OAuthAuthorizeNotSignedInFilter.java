@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.orcid.core.manager.impl.OrcidUrlManager;
-import org.orcid.frontend.web.controllers.BaseController;
+import org.orcid.frontend.web.controllers.BaseControllerUtil;
 import org.springframework.security.core.context.SecurityContext;
 
 /**
@@ -40,6 +40,8 @@ import org.springframework.security.core.context.SecurityContext;
  */
 public class OAuthAuthorizeNotSignedInFilter implements Filter {
 
+    BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
+    
     @Resource
     protected OrcidUrlManager orcidUrlManager;
 
@@ -54,10 +56,10 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             HttpServletResponse response = (HttpServletResponse) res;
             HttpSession session = request.getSession(false);
             SecurityContext sci = null;
-            if (session != null) {
+            if (session != null)
                 sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
-            } else if (BaseController.getCurrentUser(sci) == null) {
-                response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + request.getQueryString());
+            if (baseControllerUtil.getCurrentUser(sci) == null) {
+                response.sendRedirect(request.getContextPath() + "/oauth/signin?" + request.getQueryString());
                 return;
             }
         }
