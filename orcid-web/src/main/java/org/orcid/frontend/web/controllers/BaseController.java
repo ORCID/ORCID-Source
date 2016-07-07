@@ -74,6 +74,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
@@ -95,6 +96,8 @@ public class BaseController {
 
     private String devSandboxUrl;
 
+    private BaseControllerUtil baseControllerUtil = new BaseControllerUtil();
+    
     private String aboutUri;
 
     private String knowledgeBaseUri;
@@ -306,13 +309,7 @@ public class BaseController {
     }
 
     protected OrcidProfileUserDetails getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if ((authentication instanceof UsernamePasswordAuthenticationToken || authentication instanceof PreAuthenticatedAuthenticationToken)
-                && authentication.getPrincipal() instanceof OrcidProfileUserDetails) {
-            return ((OrcidProfileUserDetails) authentication.getPrincipal());
-        } else {
-            return null;
-        }
+        return baseControllerUtil.getCurrentUser(SecurityContextHolder.getContext());
     }
 
     protected String getCurrentUserOrcid() {

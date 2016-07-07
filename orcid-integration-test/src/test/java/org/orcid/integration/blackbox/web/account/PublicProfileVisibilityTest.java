@@ -36,7 +36,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.By.ById;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -45,12 +44,12 @@ import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.integration.blackbox.client.OrcidUi;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -188,7 +187,6 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         List<WebElement> otherNames = webDriver.findElements(By.xpath("//input[@name='other-name']"));
-        WebElement toClick = null;
         for (WebElement element : otherNames) {
             if (otherNameValue.equals(element.getAttribute("value"))) {
                 BBBUtil.ngAwareClick(element.findElement(By.xpath(".//following-sibling::a[1]")), webDriver);
@@ -417,7 +415,6 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     @Test
     public void educationPrivacyTest() {
-        Actions action = new Actions(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")), webDriver);
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")), webDriver);
