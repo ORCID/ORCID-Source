@@ -57,6 +57,8 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  */
 public class SalesForceManagerImpl implements SalesForceManager {
 
+    private static final String SLUG_SEPARATOR = "-";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceManager.class);
 
     @Value("${org.orcid.core.salesForce.clientId}")
@@ -151,12 +153,14 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Override
     public SalesForceDetails retrieveDetailsBySlug(String memberSlug) {
+        String id = memberSlug.substring(0, memberSlug.indexOf(SLUG_SEPARATOR));
+        validateSalesForceId(id);
         List<SalesForceMember> members = retrieveMembers();
-        Optional<SalesForceMember> match = members.stream().filter(e -> memberSlug.equals(e.getSlug())).findFirst();
+        Optional<SalesForceMember> match = members.stream().filter(e -> id.equals(e.getId())).findFirst();
         if (match.isPresent()) {
             SalesForceMember salesForceMember = match.get();
-            return (SalesForceDetails) salesForceMemberDetailsCache
-                    .get(new SalesForceMemberDetailsCacheKey(salesForceMember.getId(), salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
+            return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(id, salesForceMember.getConsortiumLeadId(), releaseName))
+                    .getObjectValue();
         }
         throw new IllegalArgumentException("No member details found for " + memberSlug);
     }
@@ -236,10 +240,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private SalesForceMember createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
         String name = extractString(record, "Name");
+        String id = extractString(record, "Id");
         SalesForceMember member = new SalesForceMember();
         member.setName(name);
-        member.setSlug(slugify.slugify(name));
-        member.setId(extractString(record, "Id"));
+        member.setId(id);
+        member.setSlug(id + SLUG_SEPARATOR + slugify.slugify(name));
         try {
             member.setWebsiteUrl(extractURL(record, "Website"));
         } catch (MalformedURLException e) {
