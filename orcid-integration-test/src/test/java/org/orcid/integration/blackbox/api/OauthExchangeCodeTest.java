@@ -92,7 +92,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
     }
 
     private String getAuthorizationCode() {
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), "/activities/update", null, this.getUser1UserName(), this.getUser1Password(), webDriver);        
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), "/activities/update", null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);        
         Matcher matcher = Pattern.compile("code=(.+)").matcher(currentUrl);
         assertTrue(matcher.find());
         return matcher.group(1);
