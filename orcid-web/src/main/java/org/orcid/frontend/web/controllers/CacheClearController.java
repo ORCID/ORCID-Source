@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
+
 /**
  * @author rcpeters
  */
@@ -39,6 +41,9 @@ public class CacheClearController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
+    @Resource(name = "salesForceMembersListCache")
+    private SelfPopulatingCache salesForceMembersListCache;
+
     @RequestMapping(value = "/thirdPartyLinkManager.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearThirdPartyLinkManager() {
         thirdPartyLinkManager.evictAll();
@@ -48,6 +53,12 @@ public class CacheClearController extends BaseWorkspaceController {
     @RequestMapping(value = "/profileEntityCache.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearProfileEntityCacheManager() {
         profileEntityCacheManager.removeAll();
+        return new Errors();
+    }
+
+    @RequestMapping(value = "/salesForceCache.json", method = RequestMethod.GET)
+    public @ResponseBody Errors clearSalesForceCacheManager() {
+        salesForceMembersListCache.removeAll();
         return new Errors();
     }
 
