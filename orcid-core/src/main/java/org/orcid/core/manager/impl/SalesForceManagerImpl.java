@@ -396,6 +396,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
         if (StringUtils.isBlank(urlString)) {
             return null;
         }
+        // We were getting a
+        // http://www.fileformat.info/info/unicode/char/feff/index.htm at the
+        // beginning of one logo URL from SF.
+        urlString = urlString.replaceAll("\\p{C}", "");
+        urlString = urlString.trim();
         if (!urlString.matches("^.*?://.*")) {
             urlString = "http://" + urlString;
         }
