@@ -17,6 +17,13 @@
 package org.orcid.frontend.web.filter;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilterTestFakeEnums;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
@@ -36,6 +44,7 @@ import static org.mockito.Mockito.*;
 
 public class OAuthAuthorizeNotSignedInFilterTest {
 
+    
     @Test
     public void nullSession() throws IOException, ServletException {
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -44,6 +53,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
+        setUpRequestForExpectedSpringFoo(request);
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession(false)).thenReturn(null);
 
@@ -52,6 +62,14 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
         verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
+    }
+
+    public void setUpRequestForExpectedSpringFoo(HttpServletRequest request) {
+        when(request.getHeaderNames()).thenReturn( new Vector<String>().elements());
+        when(request.getLocales()).thenReturn(new Vector<Locale>().elements());
+        when(request.getParameterMap()).thenReturn(new HashMap<String,String[]>());
+        when(request.getScheme()).thenReturn("i hate you with all my heart spring mvc");
+        when(request.getRequestURL()).thenReturn(new StringBuffer("really, we should break up"));
     }
 
     @Test
@@ -63,6 +81,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
+        setUpRequestForExpectedSpringFoo(request);
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
         when(request.getSession(false)).thenReturn(session);
@@ -84,6 +103,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
+        setUpRequestForExpectedSpringFoo(request);
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
         when(request.getSession(false)).thenReturn(session);
