@@ -52,14 +52,12 @@ import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Declan Newman (declan) Date: 20/04/2012
  */
-@Transactional
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class OrcidTokenStoreServiceTest extends DBUnitTest {
@@ -82,11 +80,10 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
                 "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
-    @Test
+    @Test 
     @Transactional
-    @Rollback
     public void testReadAuthentication() throws Exception {
-        OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthentication("some-long-oauth2-token-value-1");
+        OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthentication("persistent-token-2");
         assertNotNull(oAuth2Authentication);
         OAuth2Request oAuth2Request = oAuth2Authentication.getOAuth2Request();
         assertNotNull(oAuth2Request);
@@ -97,7 +94,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Test
     @Transactional
-    @Rollback
     public void testStoreAccessToken() throws Exception {
         String clientId = "4444-4444-4444-4441";
         DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken("some-long-oauth2-token-value-9");
@@ -127,8 +123,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void testReadAccessToken() throws Exception {
         OAuth2AccessToken oAuth2AccessToken = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
         assertNotNull(oAuth2AccessToken);
@@ -136,7 +130,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Test
     @Transactional
-    @Rollback
     public void testRemoveAccessToken() throws Exception {
         OAuth2AccessToken accessToken = new DefaultOAuth2AccessToken("some-long-oauth2-token-value-1");
         orcidTokenStoreService.removeAccessToken(accessToken);
@@ -146,7 +139,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Test
     @Transactional
-    @Rollback
     public void testReadAuthenticationForRefreshToken() throws Exception {
         OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("some-long-oauth2-refresh-value-1");
         OAuth2Authentication oAuth2Authentication = orcidTokenStoreService.readAuthenticationForRefreshToken(refreshToken);
@@ -155,27 +147,24 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
 
     @Test
     @Transactional
-    @Rollback
     public void testRemoveRefreshToken() throws Exception {
-        OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
+        OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-3");
         orcidTokenStoreService.removeRefreshToken(token.getRefreshToken());
-        OAuth2RefreshToken refreshToken = orcidTokenStoreService.readRefreshToken("some-long-oauth2-refresh-value-1");
+        OAuth2RefreshToken refreshToken = orcidTokenStoreService.readRefreshToken("some-long-oauth2-refresh-value-3");
         assertNull(refreshToken);
     }
 
     @Test
     @Transactional
-    @Rollback
     public void testRemoveAccessTokenUsingRefreshToken() throws Exception {
-        OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
+        OAuth2AccessToken token = orcidTokenStoreService.readAccessToken("persistent-token-1");
         orcidTokenStoreService.removeAccessTokenUsingRefreshToken(token.getRefreshToken());
-        token = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
+        token = orcidTokenStoreService.readAccessToken("persistent-token-1");
         assertNull(token);
     }
 
     @Test
     @Transactional
-    @Rollback
     public void testGetAccessToken() throws Exception {
         String clientId = "4444-4444-4444-4441";
         Map<String, String> parameters = new HashMap<String, String>();
@@ -204,8 +193,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void testFindTokensByUserName() throws Exception {
         Collection<OAuth2AccessToken> tokensByUserName = orcidTokenStoreService.findTokensByClientIdAndUserName("4444-4444-4444-4441", "4444-4444-4444-4441");
         assertNotNull(tokensByUserName);
@@ -213,8 +200,6 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void testFindTokensByClientId() throws Exception {
         Collection<OAuth2AccessToken> tokensByClientId = orcidTokenStoreService.findTokensByClientId("4444-4444-4444-4441");
         assertNotNull(tokensByClientId);

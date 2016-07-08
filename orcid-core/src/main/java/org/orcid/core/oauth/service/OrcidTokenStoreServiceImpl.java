@@ -53,6 +53,7 @@ import org.springframework.security.oauth2.provider.token.AuthenticationKeyGener
 import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -132,7 +133,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      *            The token to remove from the database.
      */
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void removeAccessToken(OAuth2AccessToken accessToken) {
         orcidOauthTokenDetailService.disableAccessToken(accessToken.getValue());
     }
