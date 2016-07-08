@@ -28,8 +28,17 @@ public class SalesForceDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private SalesForceMember member;
     private String parentOrgName;
     private List<SalesForceIntegration> integrations;
+
+    public SalesForceMember getMember() {
+        return member;
+    }
+
+    public void setMember(SalesForceMember member) {
+        this.member = member;
+    }
 
     public String getParentOrgName() {
         return parentOrgName;
