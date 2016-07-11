@@ -31,7 +31,7 @@ When reading a list of activities, a summary of each activity is returned. The s
 
 An example work summary is below, fields to note are:
 
-The parent *work-summary* field, which has attributes for the put-code and path to access the individual work. The *visibility* attribute indicates who can access this item and the *display-index* indicates the order the researcher has ranked this item within its group, higher display indexes appear first. 
+The parent *work-summary* field, which has attributes for the put-code and path to access the individual work. The *visibility* attribute indicates who can access this item and the *display-index* indicates the order the researcher has ranked this item within its group, higher display indexes appear first. By deafulat all items added via the API will have their display index set to 0, the display index will update when the order is edited by the researcher.
 
 ```
 <work:work-summary put-code="142937" path="/0000-0001-6737-6852/work/142937" visibility="public" display-index="0">
