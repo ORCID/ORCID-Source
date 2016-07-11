@@ -88,7 +88,7 @@
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<p><@orcid.msg 'email.institutional_connection.1' /> ${notification.source.sourceName.content}.<br/>
-    	<@orcid.msg 'email.institutional_connection.2' /> ${notification.source.sourceName.content} <@orcid.msg 'email.institutional_connection.3' /> <a ng-click="actioned('${notification.putCode?c}')"><@orcid.msg 'email.institutional_connection.here' /></a> <@orcid.msg 'email.institutional_connection.4' /></p>                
+    	<@orcid.msg 'email.institutional_connection.2' /> <a ng-click="actioned('${notification.putCode?c}')"><@orcid.msg 'email.institutional_connection.here' /></a> <@orcid.msg 'email.institutional_connection.3' /></p>                
         <div class="pull-right margin-top">
     		<a ng-click="archive('${notification.putCode?c}')" target="_parent" ng-hide="archivedDate" class="">Archive</a>
     	</div>
