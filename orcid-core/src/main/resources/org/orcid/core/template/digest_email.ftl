@@ -57,7 +57,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 </#list>
 </#if>
 <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
-<@emailMacros.msg 'email.institutional_connection.1' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}.&nbsp;<@emailMacros.msg 'email.institutional_connection.2' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}&nbsp;<@emailMacros.msg 'email.institutional_connection.3' />&nbsp;${notification.authorizationUrl}&nbsp;<@emailMacros.msg 'email.institutional_connection.4' />&nbsp;
+<@emailMacros.msg 'email.institutional_connection.1' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}.&nbsp;<@emailMacros.msg 'email.institutional_connection.2' />&nbsp;${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action&nbsp;<@emailMacros.msg 'email.institutional_connection.3' />&nbsp;
 <#else>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
 </#if>

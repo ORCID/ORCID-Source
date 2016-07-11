@@ -32,7 +32,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @DiscriminatorValue("PERMISSION")
-public class NotificationAddItemsEntity extends NotificationEntity {
+public class NotificationAddItemsEntity extends NotificationEntity implements ActionableNotificationEntity {
 
     private static final long serialVersionUID = 1L;
 
