@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import java.util.List;
 
+import org.orcid.pojo.SalesForceConsortium;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 
@@ -36,10 +37,14 @@ public interface SalesForceManager {
 
     List<SalesForceMember> retrieveFreshConsortia();
 
+    SalesForceConsortium retrieveConsortium(String consortiumId);
+
+    SalesForceConsortium retrieveFreshConsortium(String consortiumId);
+
     SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
 
     SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
-    
+
     SalesForceDetails retrieveDetailsBySlug(String memberSlug);
 
     /**
