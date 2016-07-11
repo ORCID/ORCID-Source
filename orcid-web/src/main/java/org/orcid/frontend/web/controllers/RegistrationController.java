@@ -17,7 +17,6 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -94,6 +92,7 @@ import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Registration;
+import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidRequestUtil;
@@ -250,39 +249,22 @@ public class RegistrationController extends BaseController {
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);
-        if (savedRequest != null) {
-            String url = savedRequest.getRedirectUrl();
-
-            Matcher emailMatcher = emailPattern.matcher(url);
-            if (emailMatcher.find()) {
-                String tempEmail = emailMatcher.group(1);
-                try {
-                    tempEmail = URLDecoder.decode(tempEmail, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                }
-                if (!orcidProfileManager.emailExists(tempEmail)) {
-                    reg.getEmail().setValue(tempEmail);
-                }
+        
+        RequestInfoForm requestInfoForm  = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
+        if(requestInfoForm != null) {
+            if(!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
+                reg.getEmail().setValue(requestInfoForm.getUserEmail());
+            } 
+            
+            if(!PojoUtil.isEmpty(requestInfoForm.getUserGivenNames())) {
+                reg.getGivenNames().setValue(requestInfoForm.getUserGivenNames());
             }
-
-            Matcher givenNamesMatcher = givenNamesPattern.matcher(url);
-            if (givenNamesMatcher.find())
-                try {
-                    reg.getGivenNames().setValue(URLDecoder.decode(givenNamesMatcher.group(1), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    LOGGER.debug("error parsing users family name from oauth url", e);
-                }
-
-            Matcher familyNamesMatcher = familyNamesPattern.matcher(url);
-            if (familyNamesMatcher.find())
-                try {
-                    reg.getFamilyNames().setValue(URLDecoder.decode(familyNamesMatcher.group(1), "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    LOGGER.debug("error parsing users family name from oauth url", e);
-                }
-        }
+            
+            if(!PojoUtil.isEmpty(requestInfoForm.getUserFamilyNames())) {
+                reg.getFamilyNames().setValue(requestInfoForm.getUserFamilyNames());
+            }                                
+        }               
+        
         long numVal = generateRandomNumForValidation();
         reg.setValNumServer(numVal);
         reg.setValNumClient(0);

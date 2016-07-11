@@ -36,7 +36,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.RedirectMismatchException;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
-import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,46 +51,42 @@ public class OauthLoginController extends OauthControllerBase {
 
     @RequestMapping(value = { "/oauth/signin", "/oauth/login" }, method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
-        // find client name if available
-        SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request, response);        
+        String url = request.getQueryString();
         boolean showLogin = false; // default to Reg
-        if (savedRequest != null) {
-            String url = savedRequest.getRedirectUrl();
-            // Get and save the request information form
-            RequestInfoForm requestInfoForm = generateRequestInfoForm(url);
-            request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
+        // Get and save the request information form
+        RequestInfoForm requestInfoForm = generateRequestInfoForm(url);
+        request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
 
-            if (url.toLowerCase().contains("show_login=true")) {
-                showLogin = true;
-            }   
-            
-            //Check if userId is set so we should show the login screen
-            if(!PojoUtil.isEmpty(requestInfoForm.getUserId())) {
-                showLogin = true;
-            }
-                                                            
-            // Check that the client have the required permissions
-            // Get client name
-            ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
-
-            // validate client scopes
-            try {
-                authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
-                orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
-            } catch (InvalidScopeException | LockedException e) {
-                String redirectUriWithParams = requestInfoForm.getRedirectUrl();
-                if (e instanceof InvalidScopeException) {
-                    redirectUriWithParams += "?error=invalid_scope&error_description=" + e.getMessage();
-                } else {
-                    redirectUriWithParams += "?error=client_locked&error_description=" + e.getMessage();
-                }
-                RedirectView rView = new RedirectView(redirectUriWithParams);
-                ModelAndView error = new ModelAndView();
-                error.setView(rView);
-                return error;
-            }
+        if (url.toLowerCase().contains("show_login=true")) {
+            showLogin = true;
+        }   
+        
+        //Check if userId is set so we should show the login screen
+        if(!PojoUtil.isEmpty(requestInfoForm.getUserId())) {
+            showLogin = true;
         }
+                                                        
+        // Check that the client have the required permissions
+        // Get client name
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(requestInfoForm.getClientId());
 
+        // validate client scopes
+        try {
+            authorizationEndpoint.validateScope(requestInfoForm.getScopesAsString(), clientDetails);
+            orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
+        } catch (InvalidScopeException | LockedException e) {
+            String redirectUriWithParams = requestInfoForm.getRedirectUrl();
+            if (e instanceof InvalidScopeException) {
+                redirectUriWithParams += "?error=invalid_scope&error_description=" + e.getMessage();
+            } else {
+                redirectUriWithParams += "?error=client_locked&error_description=" + e.getMessage();
+            }
+            RedirectView rView = new RedirectView(redirectUriWithParams);
+            ModelAndView error = new ModelAndView();
+            error.setView(rView);
+            return error;
+        }
+        
         mav.addObject("hideUserVoiceScript", true);
         mav.addObject("showLogin", String.valueOf(showLogin));
         mav.setViewName("oauth_login");

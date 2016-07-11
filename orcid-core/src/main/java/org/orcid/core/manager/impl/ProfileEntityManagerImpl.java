@@ -897,7 +897,12 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         notificationManager.sendAmendEmail(deactivated, AmendedSection.UNKNOWN);
         return false;
-    }    
+    }
+
+    @Override
+    public void updateLocale(String orcid, Locale locale) {
+        profileDao.updateLocale(orcid, locale);
+    }
 }
 
 class GroupableActivityComparator implements Comparator<GroupableActivity> {

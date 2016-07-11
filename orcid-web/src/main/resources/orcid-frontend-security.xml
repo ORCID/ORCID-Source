@@ -138,6 +138,7 @@
 	<sec:http pattern="/oauth/.*" access-denied-page="/oauth/signin"
 		access-decision-manager-ref="accessDecisionManager" create-session="ifRequired"
 		path-type="regex">
+		<sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="oAuthAuthorizeNotSignedInFilter" />
 		<sec:csrf token-repository-ref="csrfTokenRepo"/>
 		<sec:intercept-url pattern="/oauth/login(\?.*)?"
 			access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -365,6 +366,8 @@
 		<property name="targetUrl" value="/my-orcid" />
 		<property name="switchFailureUrl" value="/signin" />
 	</bean>
+	
+	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
 		
 	<bean id="authorizationCodeTokenGranter"
 		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
