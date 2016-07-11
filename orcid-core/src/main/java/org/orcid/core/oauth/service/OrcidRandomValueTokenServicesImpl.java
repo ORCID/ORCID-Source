@@ -16,6 +16,9 @@
  */
 package org.orcid.core.oauth.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -215,7 +218,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         this.customTokenEnhancer = customTokenEnhancer;
     }        
     
-    public boolean tokenAlreadyExists(String clientId, String userId, Collection<String> scopes) {
+    public boolean longLifeTokenExist(String clientId, String userId, Collection<String> scopes) {
         Collection<OAuth2AccessToken> existingTokens = orcidtokenStore.findTokensByClientIdAndUserName(clientId, userId);
         
         if(existingTokens == null || existingTokens.isEmpty()) {
@@ -223,7 +226,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         }
         
         for(OAuth2AccessToken token : existingTokens) {
-            if(!token.isExpired()) {
+            if(!token.isExpired() && token.getExpiration().after(java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1)))) {
                 if(token.getScope().containsAll(scopes) && scopes.containsAll(token.getScope())) {
                     return true;
                 }

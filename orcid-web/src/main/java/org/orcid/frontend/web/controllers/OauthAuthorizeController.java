@@ -58,6 +58,7 @@ public class OauthAuthorizeController extends OauthControllerBase {
     @RequestMapping(value = "/oauth/confirm_access", method = RequestMethod.GET)
     public ModelAndView loginGetHandler(HttpServletRequest request, HttpServletResponse response, ModelAndView mav) throws UnsupportedEncodingException {
         //Get and save the request information form
+
         RequestInfoForm requestInfoForm = generateRequestInfoForm(request);
         request.getSession().setAttribute(REQUEST_INFO_FORM, requestInfoForm);
                 
@@ -94,8 +95,8 @@ public class OauthAuthorizeController extends OauthControllerBase {
         }
 
         if (usePersistentTokens) {
-            boolean tokenAlreadyExists = tokenServices.tokenAlreadyExists(requestInfoForm.getClientId(), getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
-            if (tokenAlreadyExists) {
+            boolean tokenLongLifeAlreadyExists = tokenServices.longLifeTokenExist(requestInfoForm.getClientId(), getEffectiveUserOrcid(), OAuth2Utils.parseParameterList(requestInfoForm.getScopesAsString()));
+            if (tokenLongLifeAlreadyExists) {
                 AuthorizationRequest authorizationRequest = (AuthorizationRequest) request.getSession().getAttribute("authorizationRequest");
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 Map<String, String> requestParams = new HashMap<String, String>();
