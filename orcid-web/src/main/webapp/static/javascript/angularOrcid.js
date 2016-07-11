@@ -7474,10 +7474,6 @@ orcidNgModule.controller('NotificationsCtrl',['$scope', '$compile', 'notificatio
 
     notificationsSrvc.getNotifications();    
     notificationsSrvc.getNotificationAlerts();
-    
-    //console.log($scope.notificationsSrvc.notificationAlerts);
-    
-    console.log('Loaded');
         
 }]);
 
