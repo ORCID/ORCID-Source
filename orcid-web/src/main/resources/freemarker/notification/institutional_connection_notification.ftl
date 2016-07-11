@@ -69,17 +69,6 @@
 			$parentScope.$apply();
 		  };	
 		  
-		  $scope.actioned = function(id) {
-			  //Set the actioned date
-			  $http({
-				  method: 'GET',
-				  url: '${baseUri}/inbox/' + id + '/no_redirect/action'})
-			  	.then(function successCallback(response) {
-			  		window.open('${authorizationUrl}','_blank');
-				}, function errorCallback(response) {
-					console.log("Unable to set actioned date on notification");
-				});	
-		  }
 		});
 	</script>
 	<!--  Do not remove -->
@@ -88,7 +77,7 @@
 <body data-baseurl="<@orcid.rootPath '/'/>" ng-app="appInFrame" ng-controller="iframeController"> 
     <div>        	        	
     	<p><@orcid.msg 'email.institutional_connection.1' /> ${notification.source.sourceName.content}.<br/>
-    	<@orcid.msg 'email.institutional_connection.2' /> <a ng-click="actioned('${notification.putCode?c}')"><@orcid.msg 'email.institutional_connection.here' /></a> <@orcid.msg 'email.institutional_connection.3' /></p>                
+    	<@orcid.msg 'email.institutional_connection.2' /> <a href="<@orcid.rootPath '/inbox'/>/${notification.putCode?c}/action?target=${notification.authorizationUrl.uri?url}" target="_blank"><@orcid.msg 'email.institutional_connection.here' /></a> <@orcid.msg 'email.institutional_connection.3' /></p>                
         <div class="pull-right margin-top">
     		<a ng-click="archive('${notification.putCode?c}')" target="_parent" ng-hide="archivedDate" class="">Archive</a>
     	</div>
