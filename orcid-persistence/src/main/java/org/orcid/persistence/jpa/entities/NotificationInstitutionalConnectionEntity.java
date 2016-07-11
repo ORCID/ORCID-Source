@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("INSTITUTIONAL_CONNECTION")
-public class NotificationInstitutionalConnectionEntity extends NotificationEntity {
+public class NotificationInstitutionalConnectionEntity extends NotificationEntity implements ActionableNotificationEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,6 +35,6 @@ public class NotificationInstitutionalConnectionEntity extends NotificationEntit
 
     public void setAuthorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
-    } 
-    
+    }
+
 }

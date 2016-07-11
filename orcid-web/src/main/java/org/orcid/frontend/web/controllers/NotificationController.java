@@ -43,8 +43,8 @@ import org.orcid.jaxb.model.notification_rc2.Notification;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
 import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.NotificationDao;
+import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -209,7 +209,7 @@ public class NotificationController extends BaseController {
             throw new RuntimeException("Problem decoding " + encryptedId, e);
         }
         Long id = Long.valueOf(idString);
-        NotificationAddItemsEntity notification = (NotificationAddItemsEntity) notificationDao.find(id);
+        ActionableNotificationEntity notification = (ActionableNotificationEntity) notificationDao.find(id);
         String redirectUrl = notification.getAuthorizationUrl();
         String notificationOrcid = notification.getProfile().getId();
         OrcidProfileUserDetails user = getCurrentUser();
