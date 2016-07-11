@@ -22,16 +22,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.BiographyManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.ExternalIdentifierManager;
@@ -48,6 +53,7 @@ import org.orcid.core.manager.RecordNameManager;
 import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.WorkManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
@@ -59,6 +65,7 @@ import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
@@ -87,6 +94,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
@@ -186,6 +194,18 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     
     @Resource
     private SourceManager sourceManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+    
+    @Resource
+    private OrcidUrlManager orcidUrlManager;
+    
+    @Resource
+    private LocaleManager localeManager;
     
     /**
      * Fetch a ProfileEntity from the database Instead of calling this function,
@@ -629,9 +649,74 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
    
     @Override
-    public List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
-        return jpa2JaxbAdapter.getApplications(tokenDetails);
+    public List<ApplicationSummary> getApplications(String orcid) {
+        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
+        List<ApplicationSummary> applications = new ArrayList<ApplicationSummary>();
+        if(tokenDetails != null && !tokenDetails.isEmpty()) {
+            for(OrcidOauth2TokenDetail token : tokenDetails) {
+                if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
+                    ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(token.getClientDetailsId());
+                    if(client != null) {
+                        ApplicationSummary applicationSummary = new ApplicationSummary();
+                        // Check the scopes
+                        Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
+                        Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
+                        String scopeFullPath = ScopePathType.class.getName() + ".";
+                        for (ScopePathType tempScope : scopesGrantedToClient) {                            
+                            scopePathMap.put(tempScope, localeManager.resolveMessage(scopeFullPath + tempScope.toString()));
+                        }
+                        //If there is at least one scope in this token, fill the application summary element
+                        if(!scopePathMap.isEmpty()) {
+                            applicationSummary.setScopePaths(scopePathMap);
+                            applicationSummary.setOrcidHost(orcidUrlManager.getBaseHost());                        
+                            applicationSummary.setOrcidUri(orcidUrlManager.getBaseUriHttp() + "/" + client.getId());
+                            applicationSummary.setOrcidPath(client.getId());
+                            applicationSummary.setName(client.getClientName());
+                            applicationSummary.setWebsiteValue(client.getClientWebsite());
+                            applicationSummary.setApprovalDate(token.getDateCreated());
+                            applicationSummary.setTokenId(String.valueOf(token.getId()));
+                            // Add member information
+                            if (!PojoUtil.isEmpty(client.getGroupProfileId())) {
+                                ProfileEntity member = profileEntityCacheManager.retrieve(client.getGroupProfileId());
+                                applicationSummary.setGroupOrcidPath(member.getId());
+                                applicationSummary.setGroupName(getMemberDisplayName(member));
+                            }
+                            applications.add(applicationSummary);
+                        }
+                    }
+                }
+            }
+        }
+        return applications;
     }
+                    
+    private String getMemberDisplayName(ProfileEntity member) {   
+        RecordNameEntity recordName = member.getRecordNameEntity(); 
+        if(recordName == null) {
+            return StringUtils.EMPTY;
+        }
+        
+        //If it is a member, return the credit name
+        if(OrcidType.GROUP.equals(member.getOrcidType())) {
+            return recordName.getCreditName();                    
+        }
+        
+        Visibility namesVisibilty = recordName.getVisibility();   
+        if(Visibility.PUBLIC.equals(namesVisibilty)) {
+            if(!PojoUtil.isEmpty(recordName.getCreditName())) {
+                return recordName.getCreditName();
+            } else {
+                String displayName = recordName.getGivenNames();
+                String familyName = recordName.getFamilyName();
+                if (StringUtils.isNotBlank(familyName)) {
+                    displayName += " " + familyName;
+                }                
+                return displayName;
+            }
+        }
+        
+        return StringUtils.EMPTY;
+    }   
 
     @Override
     public String getOrcidHash(String orcid) throws NoSuchAlgorithmException {

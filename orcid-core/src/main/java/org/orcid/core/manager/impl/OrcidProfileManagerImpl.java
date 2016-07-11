@@ -99,7 +99,6 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ResearcherUrl;
 import org.orcid.jaxb.model.message.ResearcherUrls;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.Source;
@@ -128,7 +127,6 @@ import org.orcid.persistence.jpa.entities.EmailEventEntity;
 import org.orcid.persistence.jpa.entities.EmailEventType;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrcidGrantedAuthority;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -1519,39 +1517,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         if (visibilityType != null) {
             visibilityType.setVisibility(Visibility.PRIVATE);
         }
-    }
-    
-    @Override
-    @Transactional
-    public OrcidProfile revokeApplication(String userOrcid, String applicationClientId, Collection<ScopePathType> scopes) {
-        ProfileEntity existingProfile = profileDao.find(userOrcid);
-        if (existingProfile == null) {
-            return null;
-        }
-        Set<OrcidOauth2TokenDetail> tokenDetails = existingProfile.getTokenDetails();
-        if (tokenDetails != null) {
-            Iterator<OrcidOauth2TokenDetail> tokenDetailIterator = tokenDetails.iterator();
-            while (tokenDetailIterator.hasNext()) {
-                OrcidOauth2TokenDetail tokenDetail = tokenDetailIterator.next();
-                if (tokenDetail.getClientDetailsId().equals(applicationClientId)) {
-                    String tokenScope = tokenDetail.getScope();
-                    if (tokenScope != null) {
-                        Set<ScopePathType> tokenScopes = ScopePathType.getScopesFromSpaceSeparatedString(tokenScope);
-                        if (new HashSet<ScopePathType>(scopes).equals(tokenScopes)) {
-                            // Remove from DB
-                            orcidOauth2TokenDetailDao.remove(tokenDetail.getId());
-                            // Remove from in memory object cached by Hibernate
-                            tokenDetailIterator.remove();
-                        }
-                    }
-                }
-            }
-        }
-        orcidOauth2TokenDetailDao.flush();
-        OrcidProfile updatedOrcidProfile = convertToOrcidProfile(existingProfile, LoadOptions.ALL);
-        orcidProfileCacheManager.put(userOrcid, updatedOrcidProfile);
-        return updatedOrcidProfile;
-    }
+    }        
 
     /**
      * Checks that the email is not already being used

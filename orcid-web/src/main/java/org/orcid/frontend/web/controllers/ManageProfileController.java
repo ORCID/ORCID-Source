@@ -18,7 +18,6 @@ package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +63,6 @@ import org.orcid.jaxb.model.message.EncryptedSecurityAnswer;
 import org.orcid.jaxb.model.message.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
@@ -79,7 +77,6 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
 import org.orcid.persistence.jpa.entities.UserconnectionEntity;
@@ -167,9 +164,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private EmailManager emailManager;
 
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenService;
-
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
@@ -184,6 +178,9 @@ public class ManageProfileController extends BaseWorkspaceController {
     
     @Resource
     private BiographyManager biographyManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
@@ -368,11 +365,10 @@ public class ManageProfileController extends BaseWorkspaceController {
         return manageSocialAccount;
     }
 
-    @RequestMapping(value = "/revoke-application")
-    public @ResponseBody boolean revokeApplication(@RequestParam("applicationOrcid") String applicationOrcid,
-            @RequestParam(value = "scopePaths", required = false, defaultValue = "") ScopePathType[] scopePaths) {
+    @RequestMapping(value = "/revoke-application", method = RequestMethod.POST)
+    public @ResponseBody boolean revokeApplication(@RequestParam("tokenId") String tokenId) {
         String userOrcid = getCurrentUserOrcid();
-        orcidProfileManager.revokeApplication(userOrcid, applicationOrcid, Arrays.asList(scopePaths));
+        orcidOauth2TokenDetailService.disableAccessToken(Long.valueOf(tokenId), userOrcid);
         return true;
     }
 
@@ -1057,10 +1053,7 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     @RequestMapping(value = { "/get-trusted-orgs" }, method = RequestMethod.GET)
     public @ResponseBody List<ApplicationSummary> getTrustedOrgs() {
-        String orcid = getCurrentUserOrcid();
-        List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
-        List<ApplicationSummary> trustedOrgsList = profileEntityManager.getApplications(tokenDetails);
-        return trustedOrgsList;
+        return profileEntityManager.getApplications(getCurrentUserOrcid());
     }
 
     /**
