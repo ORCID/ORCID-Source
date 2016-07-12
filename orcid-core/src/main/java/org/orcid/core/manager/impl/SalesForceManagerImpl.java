@@ -33,6 +33,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
 import org.orcid.pojo.SalesForceConsortium;
+import org.orcid.pojo.SalesForceContact;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
@@ -181,6 +182,22 @@ public class SalesForceManagerImpl implements SalesForceManager {
                     .getObjectValue();
         }
         throw new IllegalArgumentException("No member details found for " + memberSlug);
+    }
+
+    @Override
+    public List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId) {
+        // XXX Implement cache
+        return retrieveFreshContactsByOpportunityId(opportunityId);
+    }
+
+    @Override
+    public List<SalesForceContact> retrieveFreshContactsByOpportunityId(String opportunityId) {
+        try {
+            return retrieveContactsFromSalesForce(getAccessToken(), opportunityId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
+            return retrieveContactsFromSalesForce(getFreshAccessToken(), opportunityId);
+        }
     }
 
     @Override
@@ -462,6 +479,63 @@ public class SalesForceManagerImpl implements SalesForceManager {
             LOGGER.info("Malformed resource URL for member: {}", name, e);
         }
         return integration;
+    }
+
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceContact> retrieveContactsFromSalesForce(String accessToken, String opportunityId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of contacts from SalesForce");
+        validateSalesForceId(opportunityId);
+        WebResource resource = createContactsResource(opportunityId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return createContactsFromResponse(response);
+    }
+
+    private WebResource createContactsResource(String opportunityId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('Main Contact','Tech Lead')) FROM Opportunity WHERE Id='"
+                        + validateSalesForceId(opportunityId) + "'");
+        return resource;
+    }
+
+    private List<SalesForceContact> createContactsFromResponse(ClientResponse response) {
+        ArrayList<SalesForceContact> contacts = new ArrayList<>();
+        JSONObject results = response.getEntity(JSONObject.class);
+        try {
+            JSONArray records = results.getJSONArray("records");
+            if (records.length() > 0) {
+                JSONObject firstRecord = records.getJSONObject(0);
+                JSONObject opportunityContactRoleObject = extractObject(firstRecord, "OpportunityContactRoles");
+                if (opportunityContactRoleObject != null) {
+                    JSONArray contactRecords = opportunityContactRoleObject.getJSONArray("records");
+                    for (int i = 0; i < contactRecords.length(); i++) {
+                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(i)));
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
+        }
+        return contacts;
+    }
+
+    private SalesForceContact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {
+        SalesForceContact contact = new SalesForceContact();
+        contact.setRole(extractString(contactRecord, "Role"));
+        JSONObject contactDetails = extractObject(contactRecord, "Contact");
+        contact.setName(extractString(contactDetails, "Name"));
+        contact.setEmail(extractString(contactDetails, "Email"));
+        return contact;
     }
 
     private JSONObject extractObject(JSONObject parent, String key) throws JSONException {

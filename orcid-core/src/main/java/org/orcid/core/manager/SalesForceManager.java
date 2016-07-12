@@ -19,6 +19,7 @@ package org.orcid.core.manager;
 import java.util.List;
 
 import org.orcid.pojo.SalesForceConsortium;
+import org.orcid.pojo.SalesForceContact;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 
@@ -46,6 +47,10 @@ public interface SalesForceManager {
     SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
 
     SalesForceDetails retrieveDetailsBySlug(String memberSlug);
+
+    List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId);
+
+    List<SalesForceContact> retrieveFreshContactsByOpportunityId(String opportunityId);
 
     /**
      * @return The sales force object id, if valid.
