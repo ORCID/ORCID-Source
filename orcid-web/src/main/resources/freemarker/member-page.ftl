@@ -38,8 +38,8 @@
                     <p>{{contact.name}}</p>
                     <p><a href="mailto:{{contact.email}}">{{contact.email}}</a></p>
                 </div>
-                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
-                    <p>This member has not completed any integrations.</p>
+                <div ng-hide="membersListSrvc.currentMemberDetails.contacts.length"> 
+                    <p>This member does not have contact details.</p>
                 </div>
                 <hr></hr>
                 <h3>Integrations</h3>
@@ -58,6 +58,13 @@
                 </div>
                 <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
                     <p>This member has not completed any integrations.</p>
+                </div>
+                <h3>Consortium Members</h3>
+                <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'name'">
+                    <p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.name}}</a></p>
+                </div>
+                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
+                    <p>This member does not have sub members.</p>
                 </div>
             </div>
         </div>

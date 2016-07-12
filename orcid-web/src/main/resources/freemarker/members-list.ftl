@@ -38,7 +38,7 @@
                         	<span ng-bind-html="renderHtml(member.description)" ng-show="member.description"></span>
                         </p>
 						<div class="clear-fix">
-						    <a ng-href="{{getMemberPageUrl(member.slug)}}">Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
+						    <a ng-href="{{membersListSrvc.getMemberPageUrl(member.slug)}}">Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
 						</div>
                         <hr></hr>
                     </div>

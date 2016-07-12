@@ -1751,6 +1751,9 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 $rootScope.$apply();
             });
         },
+        getMemberPageUrl: function(slug) {
+            return orcidVar.baseUri + '/members/' + slug;
+        }
     };
 
     return serv; 
@@ -10817,10 +10820,6 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
     $scope.renderHtml = function (htmlCode) {
         return $sce.trustAsHtml(htmlCode);
     };
-    
-    $scope.getMemberPageUrl = function(slug) {
-        return orcidVar.baseUri + '/members/' + slug;
-    }
     
     // populate the members feed
     membersListSrvc.getMembersList();

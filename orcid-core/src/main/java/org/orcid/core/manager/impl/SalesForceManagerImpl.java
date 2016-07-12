@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -385,16 +387,25 @@ public class SalesForceManagerImpl implements SalesForceManager {
         SalesForceDetails details = new SalesForceDetails();
         details.setParentOrgName(retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
+        details.setContacts(findContacts(memberId, consortiumLeadId));
+        details.setSubMembers(findSubMembers(memberId));
+        return details;
+    }
+
+    private List<SalesForceContact> findContacts(String memberId, String consortiumLeadId) {
         if (consortiumLeadId != null) {
             SalesForceConsortium consortium = retrieveConsortium(consortiumLeadId);
             Optional<SalesForceOpportunity> opp = consortium.getOpportunities().stream().filter(e -> memberId.equals(e.getTargetAccountId())).findFirst();
             if (opp.isPresent()) {
                 String oppId = opp.get().getId();
-                List<SalesForceContact> contacts = retrieveContactsByOpportunityId(oppId);
-                details.setContacts(contacts);
+                return retrieveContactsByOpportunityId(oppId);
             }
         }
-        return details;
+        return Collections.emptyList();
+    }
+
+    private List<SalesForceMember> findSubMembers(String memberId) {
+        return retrieveMembers().stream().filter(e -> memberId.equals(e.getConsortiumLeadId())).collect(Collectors.toList());
     }
 
     private String retrieveParentOrgNameFromSalesForce(String accessToken, String consortiumLeadId) {

@@ -32,6 +32,7 @@ public class SalesForceDetails implements Serializable {
     private String parentOrgName;
     private List<SalesForceIntegration> integrations;
     private List<SalesForceContact> contacts;
+    private List<SalesForceMember> subMembers;
 
     public SalesForceMember getMember() {
         return member;
@@ -63,6 +64,14 @@ public class SalesForceDetails implements Serializable {
 
     public void setContacts(List<SalesForceContact> contacts) {
         this.contacts = contacts;
+    }
+
+    public List<SalesForceMember> getSubMembers() {
+        return subMembers;
+    }
+
+    public void setSubMembers(List<SalesForceMember> subMembers) {
+        this.subMembers = subMembers;
     }
 
 }
