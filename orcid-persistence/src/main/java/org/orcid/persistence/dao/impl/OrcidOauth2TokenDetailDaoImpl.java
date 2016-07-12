@@ -129,7 +129,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
     
     @Override
     public List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName) {
-        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where clientDetailsId = :clientId and profile.id = :userName",
+        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where clientDetailsId = :clientId and profile.id = :userName",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("clientId", clientId);
         query.setParameter("userName", userName);

@@ -17,11 +17,13 @@
 package org.orcid.core.oauth.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -179,7 +181,24 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
         if(PojoUtil.isEmpty(userOrcid) || tokenId == null) {
             throw new IllegalArgumentException("One of the provided params is empty: userOrcid='" + userOrcid + "' tokenId='" + String.valueOf(tokenId) + "'");
         }
-        orcidOauth2TokenDetailDao.disableAccessTokenById(tokenId, userOrcid);
+        
+        //Iterate over all tokens that belongs to this user and client, to remove all the ones that have the same scopes
+        OrcidOauth2TokenDetail tokenToDisable = orcidOauth2TokenDetailDao.find(tokenId);
+        String scopesToDisableString = tokenToDisable.getScope();
+        Set<ScopePathType> scopesToDisable = ScopePathType.getScopesFromSpaceSeparatedString(scopesToDisableString);
+        
+        List<OrcidOauth2TokenDetail> allTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(tokenToDisable.getClientDetailsId(), userOrcid);
+        //Iterate over all tokens and verify we disable all the ones that have the same scopes
+        for(OrcidOauth2TokenDetail token : allTokens) {
+            if(token.getTokenDisabled() == null || !token.getTokenDisabled()) {
+                if(!PojoUtil.isEmpty(token.getScope())) {
+                    Set<ScopePathType> tokenScopes = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
+                    if(scopesToDisable.equals(tokenScopes)) {
+                        orcidOauth2TokenDetailDao.disableAccessTokenById(token.getId(), userOrcid);
+                    }                
+                }            
+            }
+        }                        
     }
         
     /**

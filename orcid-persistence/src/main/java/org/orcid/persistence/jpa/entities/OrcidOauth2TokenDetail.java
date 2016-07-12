@@ -164,7 +164,7 @@ public class OrcidOauth2TokenDetail extends BaseEntity<Long> implements ProfileA
         this.state = state;
     }
 
-    @Column(name = "scope_type", length = 50)
+    @Column(name = "scope_type", length = 500)
     public String getScope() {
         return scope;
     }
