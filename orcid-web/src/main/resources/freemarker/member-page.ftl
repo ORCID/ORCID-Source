@@ -28,7 +28,7 @@
             <div class="clear-fix">
                 <p>
                     <b>Consortium/Parent Organization: </b> 
-                    <span ng-show="membersListSrvc.currentMemberDetails.parentOrgName">{{membersListSrvc.currentMemberDetails.parentOrgName}}</span>
+                    <span ng-show="membersListSrvc.currentMemberDetails.parentOrgName"><a ng-href="{{membersListSrvc.getMemberPageUrl(membersListSrvc.currentMemberDetails.parentOrgSlug)}}">{{membersListSrvc.currentMemberDetails.parentOrgName}}</a></span>
                     <span ng-hide="membersListSrvc.currentMemberDetails.parentOrgName">None</span>
                 </p>
                 <hr></hr>
@@ -59,6 +59,7 @@
                 <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
                     <p>This member has not completed any integrations.</p>
                 </div>
+                <hr></hr>
                 <h3>Consortium Members</h3>
                 <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'name'">
                     <p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.name}}</a></p>

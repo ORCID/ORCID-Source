@@ -349,7 +349,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         SalesForceMember member = new SalesForceMember();
         member.setName(name);
         member.setId(id);
-        member.setSlug(id + SLUG_SEPARATOR + slugify.slugify(name));
+        member.setSlug(createSlug(id, name));
         try {
             member.setWebsiteUrl(extractURL(record, "Website"));
         } catch (MalformedURLException e) {
@@ -385,7 +385,9 @@ public class SalesForceManagerImpl implements SalesForceManager {
      */
     private SalesForceDetails retrieveDetailsFromSalesForce(String accessToken, String memberId, String consortiumLeadId) throws SalesForceUnauthorizedException {
         SalesForceDetails details = new SalesForceDetails();
-        details.setParentOrgName(retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId));
+        String parentOrgName = retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId);
+        details.setParentOrgName(parentOrgName);
+        details.setParentOrgSlug(createSlug(consortiumLeadId, parentOrgName));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
         details.setContacts(findContacts(memberId, consortiumLeadId));
         details.setSubMembers(findSubMembers(memberId));
@@ -608,6 +610,10 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new IllegalArgumentException("Unable to extract ID, url = " + url);
         }
         return url.substring(slashIndex + 1);
+    }
+
+    private String createSlug(String id, String name) {
+        return id + SLUG_SEPARATOR + slugify.slugify(name);
     }
 
     private String getAccessToken() {

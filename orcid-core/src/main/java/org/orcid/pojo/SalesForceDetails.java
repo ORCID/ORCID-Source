@@ -30,6 +30,7 @@ public class SalesForceDetails implements Serializable {
 
     private SalesForceMember member;
     private String parentOrgName;
+    private String parentOrgSlug;
     private List<SalesForceIntegration> integrations;
     private List<SalesForceContact> contacts;
     private List<SalesForceMember> subMembers;
@@ -48,6 +49,14 @@ public class SalesForceDetails implements Serializable {
 
     public void setParentOrgName(String parentOrgName) {
         this.parentOrgName = parentOrgName;
+    }
+
+    public String getParentOrgSlug() {
+        return parentOrgSlug;
+    }
+
+    public void setParentOrgSlug(String parentOrgSlug) {
+        this.parentOrgSlug = parentOrgSlug;
     }
 
     public List<SalesForceIntegration> getIntegrations() {
