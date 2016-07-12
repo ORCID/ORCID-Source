@@ -44,6 +44,9 @@ public class CacheClearController extends BaseWorkspaceController {
     @Resource(name = "salesForceMembersListCache")
     private SelfPopulatingCache salesForceMembersListCache;
 
+    @Resource(name = "salesForceMemberDetailsCache")
+    private SelfPopulatingCache salesForceMemberDetailsCache;
+
     @RequestMapping(value = "/thirdPartyLinkManager.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearThirdPartyLinkManager() {
         thirdPartyLinkManager.evictAll();
@@ -59,6 +62,7 @@ public class CacheClearController extends BaseWorkspaceController {
     @RequestMapping(value = "/salesForceCache.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearSalesForceCacheManager() {
         salesForceMembersListCache.removeAll();
+        salesForceMemberDetailsCache.removeAll();
         return new Errors();
     }
 
