@@ -60,4 +60,10 @@ public interface SalesForceManager {
      */
     String validateSalesForceId(String memberId);
 
+    /**
+     * Clear caches
+     * 
+     */
+    void evictAll();
+
 }

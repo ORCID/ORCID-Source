@@ -19,14 +19,13 @@ package org.orcid.frontend.web.controllers;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.ProfileEntityCacheManager;
+import org.orcid.core.manager.SalesForceManager;
 import org.orcid.core.manager.ThirdPartyLinkManager;
 import org.orcid.pojo.ajaxForm.Errors;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 /**
  * @author rcpeters
@@ -41,11 +40,8 @@ public class CacheClearController extends BaseWorkspaceController {
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
 
-    @Resource(name = "salesForceMembersListCache")
-    private SelfPopulatingCache salesForceMembersListCache;
-
-    @Resource(name = "salesForceMemberDetailsCache")
-    private SelfPopulatingCache salesForceMemberDetailsCache;
+    @Resource
+    private SalesForceManager salesForceManager;
 
     @RequestMapping(value = "/thirdPartyLinkManager.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearThirdPartyLinkManager() {
@@ -61,8 +57,7 @@ public class CacheClearController extends BaseWorkspaceController {
 
     @RequestMapping(value = "/salesForceCache.json", method = RequestMethod.GET)
     public @ResponseBody Errors clearSalesForceCacheManager() {
-        salesForceMembersListCache.removeAll();
-        salesForceMemberDetailsCache.removeAll();
+        salesForceManager.evictAll();
         return new Errors();
     }
 

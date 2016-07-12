@@ -211,6 +211,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return salesForceId;
     }
 
+    @Override
+    public void evictAll() {
+        salesForceMembersListCache.removeAll();
+        salesForceMemberDetailsCache.removeAll();
+    }
+
     /**
      * 
      * @throws SalesForceUnauthorizedException
