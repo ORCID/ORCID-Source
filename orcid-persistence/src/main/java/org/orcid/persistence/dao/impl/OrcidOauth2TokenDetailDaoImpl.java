@@ -113,7 +113,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     public List<OrcidOauth2TokenDetail> findByUserName(String userName) {
-        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from " + "OrcidOauth2TokenDetail where profile.id = :userName",
+        TypedQuery<OrcidOauth2TokenDetail> query = entityManager.createQuery("from OrcidOauth2TokenDetail where profile.id = :userName and tokenExpiration > now() and (tokenDisabled IS NULL OR tokenDisabled = FALSE)",
                 OrcidOauth2TokenDetail.class);
         query.setParameter("userName", userName);
         return query.getResultList();
@@ -146,6 +146,18 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
         }
     }
 
+    @Override
+    @Transactional
+    public void disableAccessTokenById(Long tokenId, String userOrcid) {
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE where id = :tokenId and profile.id = :userOrcid");
+        query.setParameter("tokenId", tokenId);
+        query.setParameter("userOrcid", userOrcid);
+        int count = query.executeUpdate();
+        if (count == 0) {
+            LOGGER.debug("Cannot remove the token with id {0}", tokenId);
+        }
+    }
+    
     @Override
     public void disableAccessTokenByRefreshToken(String refreshTokenValue) {
         Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE where " + "refreshTokenValue = :refreshTokenValue");

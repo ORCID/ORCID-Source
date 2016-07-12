@@ -16,8 +16,6 @@
  */
 package org.orcid.core.adapter;
 
-import java.util.List;
-
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.jaxb.model.clientgroup.OrcidClient;
 import org.orcid.jaxb.model.clientgroup.OrcidClientGroup;
@@ -26,11 +24,9 @@ import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidIdBase;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
-import org.orcid.pojo.ApplicationSummary;
 
 /**
  * orcid-persistence - Dec 7, 2011 - Jaxb2JpaAdapter
@@ -53,6 +49,4 @@ public interface Jpa2JaxbAdapter {
     OrcidIdBase getOrcidIdBase(String id);
     
     DisambiguatedOrganization getDisambiguatedOrganization(OrgDisambiguatedEntity orgDisambiguatedEntity);
-
-	List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
 }

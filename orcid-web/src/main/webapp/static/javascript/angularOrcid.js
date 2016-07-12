@@ -8112,11 +8112,7 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
     $scope.confirmRevoke = function(applicationSummary){
         $scope.appName = applicationSummary.name;
-        $scope.appClientId = applicationSummary.orcidPath;
-        $scope.appScopePaths = [];
-        for (var scopePath in applicationSummary.scopePaths) {
-        	 $scope.appScopePaths.push(scopePath);
-    	}
+        $scope.tokenId = applicationSummary.tokenId;
         $.colorbox({
             html : $compile($('#confirm-revoke-access-modal').html())($scope),
             transition: 'fade',
@@ -8131,11 +8127,10 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 
     $scope.revokeAccess = function(){
         $.ajax({
-            url: getBaseUri() + '/account/revoke-application.json?applicationOrcid='+$scope.appClientId+'&scopePaths='+$scope.appScopePaths,
+            url: getBaseUri() + '/account/revoke-application.json?tokenId='+$scope.tokenId,
             type: 'POST',
             success: function(data) {
                 $scope.getApplications();
-                $scope.$apply();
                 $scope.closeModal();
             }
         }).fail(function() {

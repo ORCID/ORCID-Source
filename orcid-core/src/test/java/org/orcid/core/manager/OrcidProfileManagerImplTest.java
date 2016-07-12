@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -1052,34 +1051,6 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
             else
                 assertEquals(Visibility.PRIVATE, work.getVisibility());
         }
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testRevokeApplication() {
-        OrcidProfile userProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
-    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
-    	assertEquals(1, tokenDetails.size());
-    	orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID,
-              Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE }));
-    	tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
-    	assertEquals(0, tokenDetails.size());
-    }
-
-    @Test
-    @Transactional
-    @Rollback(true)
-    public void testRevokeApplicationWithWrongScope() {
-    	OrcidProfile userProfile = orcidProfileManager.retrieveOrcidProfile(DELEGATE_ORCID);
-    	List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
-    	assertEquals(1, tokenDetails.size());
-
-        // Shouldn't remove the token because scopes different
-        orcidProfileManager.revokeApplication(DELEGATE_ORCID, APPLICATION_ORCID, Arrays.asList(new ScopePathType[] { ScopePathType.ORCID_BIO_READ_LIMITED }));
-
-        tokenDetails = orcidOauth2TokenDetailDao.findByUserName(userProfile.getOrcidIdentifier().getPath());
-    	assertEquals(1, tokenDetails.size());
     }
 
     @Test

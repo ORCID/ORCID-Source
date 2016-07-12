@@ -20,9 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -38,7 +36,6 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
-import org.orcid.core.security.DefaultPermissionChecker;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.JsonUtils;
@@ -153,7 +150,6 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.FuzzyDateEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionByEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -822,86 +818,6 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             return sponsor;
         }
         return null;
-    }
-
-    @Override
-    public List<org.orcid.pojo.ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails) {
-        List<org.orcid.pojo.ApplicationSummary> applications = new ArrayList<org.orcid.pojo.ApplicationSummary>();
-
-        if (tokenDetails != null && !tokenDetails.isEmpty()) {
-            // verify tokens don't need scopes removed.
-            DefaultPermissionChecker defaultPermissionChecker = (DefaultPermissionChecker) permissionChecker;
-
-            for (OrcidOauth2TokenDetail tokenDetail : tokenDetails)
-                defaultPermissionChecker.removeUserGrantWriteScopePastValitity(tokenDetail);
-
-            for (OrcidOauth2TokenDetail tokenDetail : tokenDetails) {
-                if (tokenDetail.getTokenDisabled() == null || !tokenDetail.getTokenDisabled()) {
-                    org.orcid.pojo.ApplicationSummary applicationSummary = new org.orcid.pojo.ApplicationSummary();
-                    ClientDetailsEntity acceptedClient = clientDetailsEntityCacheManager.retrieve(tokenDetail.getClientDetailsId());
-
-                    if (acceptedClient != null) {
-                        OrcidIdBase idBase = getOrcidIdBase(acceptedClient.getClientId());
-                        applicationSummary.setOrcidHost(idBase.getHost());
-                        applicationSummary.setOrcidPath(idBase.getPath());
-                        applicationSummary.setOrcidUri(idBase.getUri());
-                        applicationSummary.setName(acceptedClient.getClientName());
-                        applicationSummary.setWebsiteValue(acceptedClient.getClientWebsite());
-                        applicationSummary.setApprovalDate(tokenDetail.getDateCreated());
-                        // add group information
-                        if (!PojoUtil.isEmpty(acceptedClient.getGroupProfileId())) {
-                            ProfileEntity groupEntity = profileEntityCacheManager.retrieve(acceptedClient.getGroupProfileId());
-                            applicationSummary.setGroupOrcidPath(groupEntity.getId());
-                            applicationSummary.setGroupName(getGroupDisplayName(groupEntity));
-                        }
-
-                        // Scopes
-                        Set<ScopePathType> scopesGrantedToClient = ScopePathType.getScopesFromSpaceSeparatedString(tokenDetail.getScope());
-                        Map<ScopePathType, String> scopePathMap = new HashMap<ScopePathType, String>();
-                        StringBuffer tempBuffer;
-                        for (ScopePathType tempScope : scopesGrantedToClient) {
-                            tempBuffer = new StringBuffer();
-                            tempBuffer.append(tempScope.getClass().getName()).append(".").append(tempScope.toString());
-                            scopePathMap.put(tempScope, localeManager.resolveMessage(tempBuffer.toString()));
-                        }
-                        if(!scopePathMap.isEmpty()) {
-                        	applicationSummary.setScopePaths(scopePathMap);
-                        	applications.add(applicationSummary);
-                        }
-                    }
-
-                }
-            }
-        }
-
-        return applications;
-
-    }    
-
-    private String getGroupDisplayName(ProfileEntity groupProfile) {   
-        RecordNameEntity recordName = groupProfile.getRecordNameEntity(); 
-        if(recordName == null) {
-            return StringUtils.EMPTY;
-        }
-        
-        String creditName = recordName.getCreditName();
-        if (!PojoUtil.isEmpty(creditName)) {
-            if (groupProfile.getGroupType() != null) {
-                // It's a member so, it will definitely have a credit name. Use
-                // it regardless of privacy.
-                return creditName;
-            }
-            org.orcid.jaxb.model.common_rc2.Visibility namesVisibilty = recordName.getVisibility();
-            if (Visibility.PUBLIC.equals(namesVisibilty)) {
-                return creditName;
-            }
-        }
-        String displayName = recordName.getGivenNames();
-        String familyName = recordName.getFamilyName();
-        if (StringUtils.isNotBlank(familyName)) {
-            displayName += " " + familyName;
-        }
-        return displayName;                       
     }
 
     public OrcidWork getOrcidWork(WorkEntity work) {
