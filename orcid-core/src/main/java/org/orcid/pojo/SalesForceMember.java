@@ -30,10 +30,10 @@ public class SalesForceMember implements Serializable {
 
     private String id;
     private String name;
+    private String slug;
     private URL websiteUrl;
     private String researchCommunity;
     private String country;
-    private String parentName;
     private String description;
     private URL logoUrl;
     private String consortiumLeadId;
@@ -52,6 +52,14 @@ public class SalesForceMember implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public URL getWebsiteUrl() {
@@ -76,14 +84,6 @@ public class SalesForceMember implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public String getParentName() {
-        return parentName;
-    }
-
-    public void setParentName(String parentName) {
-        this.parentName = parentName;
     }
 
     public String getDescription() {
@@ -112,8 +112,8 @@ public class SalesForceMember implements Serializable {
 
     @Override
     public String toString() {
-        return "SalesForceMember [id=" + id + ", name=" + name + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity + ", country=" + country
-                + ", parentName=" + parentName + ", description=" + description + ", logoUrl=" + logoUrl + ", consortiumLeadId=" + consortiumLeadId + "]";
+        return "SalesForceMember [id=" + id + ", name=" + name + ", slug=" + slug + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity
+                + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", consortiumLeadId=" + consortiumLeadId + "]";
     }
 
 }

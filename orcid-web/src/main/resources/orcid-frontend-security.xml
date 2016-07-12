@@ -302,7 +302,7 @@
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/members/.*"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
-            <sec:intercept-url pattern="/consortia(\?.*)?"
+        <sec:intercept-url pattern="/consortia(\?.*)?"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/consortia/.*"
             access="IS_AUTHENTICATED_ANONYMOUSLY" />
