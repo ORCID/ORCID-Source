@@ -985,14 +985,21 @@ public class NotificationManagerImpl implements NotificationManager {
 
     @Override
     @Transactional
-    public Notification setActionedDate(String orcid, Long id) {
+    public Notification setActionedAndReadDate(String orcid, Long id) {
         NotificationEntity notificationEntity = notificationDao.findByOricdAndId(orcid, id);
         if (notificationEntity == null) {
             return null;
         }
 
+        Date now = new Date();
+
         if (notificationEntity.getActionedDate() == null) {
-            notificationEntity.setActionedDate(new Date());
+            notificationEntity.setActionedDate(now);
+            notificationDao.merge(notificationEntity);
+        }
+
+        if (notificationEntity.getReadDate() == null) {
+            notificationEntity.setReadDate(now);
             notificationDao.merge(notificationEntity);
         }
 

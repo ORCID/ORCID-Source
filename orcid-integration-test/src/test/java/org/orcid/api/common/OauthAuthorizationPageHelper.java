@@ -29,7 +29,7 @@ public class OauthAuthorizationPageHelper {
 
     public static String authorizationScreenUrl = "%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s";
     
-    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, WebDriver webDriver) {
+    public static String loginAndAuthorize(String baseUrl, String clientId, String redirectUri, String scopes, String stateParam, String userId, String password, boolean longLife, WebDriver webDriver) {
         String formattedAuthorizationScreen = String.format(authorizationScreenUrl, baseUrl, clientId, scopes, redirectUri);
         
         if(!PojoUtil.isEmpty(stateParam)) {
@@ -41,8 +41,33 @@ public class OauthAuthorizationPageHelper {
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@name='userId']")), webDriver);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+
+        By userIdElementLocator = By.id("userId");
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
+        userIdElement.sendKeys(userId);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        WebElement passwordElement = webDriver.findElement(By.id("password"));
+        passwordElement.sendKeys(password);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        if (!longLife) {
+            //     enablePersistentToken
+            WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
+            if (persistentElement.isSelected())
+                    BBBUtil.ngAwareClick(persistentElement,webDriver);
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        }
         
-        loginOnOauthorizationScreen(webDriver, userId, password);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("login-authorize-button")));
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
+
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
+            public Boolean apply(WebDriver d) {
+                return d.getTitle().equals("ORCID Playground");
+            }
+        });
         
         String result = webDriver.getCurrentUrl();
         return result;
@@ -64,28 +89,7 @@ public class OauthAuthorizationPageHelper {
         String result = loggedInDriver.getCurrentUrl();        
         return result;
     }
-    
-    public static void loginOnOauthorizationScreen(final WebDriver webDriver, String userId, String password) {
-        By userIdElementLocator = By.id("userId");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        WebElement userIdElement = webDriver.findElement(userIdElementLocator);
-        userIdElement.sendKeys(userId);
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        WebElement passwordElement = webDriver.findElement(By.id("password"));
-        passwordElement.sendKeys(password);
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfElementLocated(By.id("login-authorize-button")));
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("login-authorize-button")),webDriver);
-
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.getTitle().equals("ORCID Playground");
-            }
-        });
-    }
-    
+        
     private static void clickAuthorizeOnAuthorizeScreen(final WebDriver webDriver) {
         By userIdElementLocator = By.id("authorize");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(userIdElementLocator));

@@ -42,6 +42,7 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
@@ -127,14 +128,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                 addActivitiesMessageCount++;
                 NotificationPermission permissionNotification = (NotificationPermission) notification;
                 activityCount += permissionNotification.getItems().getItems().size();
-                String encryptedPutCode = encryptionManager.encryptForExternalUse(String.valueOf(permissionNotification.getPutCode()));
-                try {
-                    permissionNotification.setEncryptedPutCode(Base64.encodeBase64URLSafeString(encryptedPutCode.getBytes("UTF-8")));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("Problem base 64 encoding notification put code for notification id = " + permissionNotification.getPutCode(), e);
-                }
-            }
-            if (notification instanceof NotificationAmended) {
+                permissionNotification.setEncryptedPutCode(encryptAndEncodePutCode(permissionNotification.getPutCode()));
+            } else if (notification instanceof NotificationInstitutionalConnection) {
+                notification.setEncryptedPutCode(encryptAndEncodePutCode(notification.getPutCode()));
+            } else if (notification instanceof NotificationAmended) {
                 amendedMessageCount++;
             }
         }
@@ -165,6 +162,15 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         emailMessage.setBodyHtml(bodyHtml);
         return emailMessage;
 
+    }
+
+    private String encryptAndEncodePutCode(Long putCode) {
+        String encryptedPutCode = encryptionManager.encryptForExternalUse(String.valueOf(putCode));
+        try {
+            return Base64.encodeBase64URLSafeString(encryptedPutCode.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Problem base 64 encoding notification put code for notification id = " + putCode, e);
+        }
     }
 
     @Override

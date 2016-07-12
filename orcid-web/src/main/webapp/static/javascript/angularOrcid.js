@@ -1771,6 +1771,10 @@ orcidNgModule.filter('urlProtocol', function(){
     }
 });
 
+orcidNgModule.filter('uri', function() {
+    return window.encodeURIComponent;
+});
+
 orcidNgModule.filter('latex', function(){
     return function(input){
         if (input == null) return "";

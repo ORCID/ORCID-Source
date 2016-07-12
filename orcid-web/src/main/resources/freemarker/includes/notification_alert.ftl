@@ -26,7 +26,7 @@
 		</p>		
 		<div class="pull-right">			
 			<a ng-click="notificationsSrvc.flagAsRead(notification.putCode);notificationsSrvc.archive(notification.putCode); alert['$index'] = !alert['$index']" class="cancel"><@orcid.msg 'notifications.alert_close'/></a>
-			<a href="{{notification.authorizationUrl.uri}}" target="_blank" class="btn btn-primary"><@orcid.msg 'notifications.alert_link'/></a>
+			<a ng-href="<@orcid.rootPath '/inbox'/>/{{notification.putCode}}/action?target={{notification.authorizationUrl.uri | uri}}" target="_blank" class="btn btn-primary"><@orcid.msg 'notifications.alert_link'/></a>
 		</div>	
 	</div>
 </div>

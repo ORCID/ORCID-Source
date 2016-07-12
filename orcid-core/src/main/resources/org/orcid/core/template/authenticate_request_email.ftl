@@ -20,7 +20,7 @@
 <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg 'email.institutional_connection.1' /> ${clientName}.<br />
-<@emailMacros.msg 'email.institutional_connection.2' /> ${clientName} <@emailMacros.msg 'email.institutional_connection.3' /> <a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a> <@emailMacros.msg 'email.institutional_connection.4' />
+<@emailMacros.msg 'email.institutional_connection.2' /> <a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a> <@emailMacros.msg 'email.institutional_connection.3' />
 
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}/home?lang=${locale}
