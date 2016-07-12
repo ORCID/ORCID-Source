@@ -424,12 +424,13 @@
     </bean>
 
     <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
-    <constructor-arg>
-        <list>
-            <ref bean="clientCredentialsTokenGranter"/>
-            <ref bean="authorizationCodeTokenGranter"/>
-        </list>
-    </constructor-arg>
+	    <constructor-arg>
+	        <list>
+	            <ref bean="clientCredentialsTokenGranter"/>
+	            <ref bean="authorizationCodeTokenGranter"/>
+	            <ref bean="refreshTokenTokenGranter"/>
+	        </list>
+	    </constructor-arg>
     </bean>
     
     <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
@@ -443,4 +444,15 @@
         <constructor-arg ref="tokenServices"/>
         <constructor-arg ref="orcidClientCredentialsChecker"/>
     </bean>
+    
+    
+    
+    <bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker">
+        <constructor-arg ref="oAuth2RequestFactory" />
+    </bean>
+    <bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">
+        <constructor-arg ref="tokenServices"/>
+        <constructor-arg ref="orcidClientCredentialsChecker"/>
+    </bean>
+    
 </beans>

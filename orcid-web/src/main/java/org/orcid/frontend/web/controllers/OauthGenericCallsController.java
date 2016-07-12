@@ -67,6 +67,10 @@ public class OauthGenericCallsController extends OauthControllerBase {
         if (StringUtils.isNotEmpty(scopeList)) {
             scopes = OAuth2Utils.parseParameterList(scopeList);
         }
+        String authorization = request.getHeader("Authorization");
+        if(!PojoUtil.isEmpty(authorization)) {
+            //TODO
+        }
         Response res = null;
         try {
             res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);

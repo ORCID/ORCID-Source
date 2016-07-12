@@ -29,6 +29,7 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.oauth.OrcidRefreshTokenTokenGranter;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -150,6 +151,13 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "false");
             }                        
         }
+        
+        //If it is a refresh token request, set the needed authorization parameters
+        if(OrcidRefreshTokenTokenGranter.REFRESH_TOKEN.equals(grantType)) {
+            ///TODO
+        }
+        
+        
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
         }        
