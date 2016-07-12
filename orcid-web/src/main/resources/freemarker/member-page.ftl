@@ -31,6 +31,17 @@
                     <span ng-show="membersListSrvc.currentMemberDetails.parentOrgName">{{membersListSrvc.currentMemberDetails.parentOrgName}}</span>
                     <span ng-hide="membersListSrvc.currentMemberDetails.parentOrgName">None</span>
                 </p>
+                <hr></hr>
+                <h3>Contacts</h3>
+                <div ng-show="membersListSrvc.currentMemberDetails.contacts" ng-repeat="contact in membersListSrvc.currentMemberDetails.contacts | orderBy : 'role'">
+                    <p><b>{{contact.role}}</b></p>
+                    <p>{{contact.name}}</p>
+                    <p><a href="mailto:{{contact.email}}">{{contact.email}}</a></p>
+                </div>
+                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
+                    <p>This member has not completed any integrations.</p>
+                </div>
+                <hr></hr>
                 <h3>Integrations</h3>
                 <div ng-show="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations">
                     <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>

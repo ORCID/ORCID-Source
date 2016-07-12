@@ -385,6 +385,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
         SalesForceDetails details = new SalesForceDetails();
         details.setParentOrgName(retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
+        if (consortiumLeadId != null) {
+            SalesForceConsortium consortium = retrieveConsortium(consortiumLeadId);
+            Optional<SalesForceOpportunity> opp = consortium.getOpportunities().stream().filter(e -> memberId.equals(e.getTargetAccountId())).findFirst();
+            if (opp.isPresent()) {
+                String oppId = opp.get().getId();
+                List<SalesForceContact> contacts = retrieveContactsByOpportunityId(oppId);
+                details.setContacts(contacts);
+            }
+        }
         return details;
     }
 
