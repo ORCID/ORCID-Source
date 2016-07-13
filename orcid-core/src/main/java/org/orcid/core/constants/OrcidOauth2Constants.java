@@ -37,4 +37,6 @@ public class OrcidOauth2Constants {
     public static final String JUST_REGISTERED = "justRegistered";
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String AUTHORIZATION = "authorization";
+    public static final String REVOKE_OLD = "revoke_old";
+    public static final String EXPIRE_IN = "expire_in";
 }

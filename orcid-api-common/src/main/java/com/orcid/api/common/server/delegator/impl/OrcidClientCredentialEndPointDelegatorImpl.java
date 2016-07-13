@@ -74,6 +74,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         String refreshToken = formParams.getFirst("refresh_token");
         String scopeList = formParams.getFirst("scope");
         String grantType = formParams.getFirst("grant_type");
+        Boolean revokeOld = formParams.containsKey("revoke_old") ? Boolean.valueOf(formParams.getFirst("revoke_old")) : false;
+        Long expireIn = formParams.containsKey("expires_in") ? Long.valueOf(formParams.getFirst("expires_in")) : -1;
+        
         String bearerToken = null;
         Set<String> scopes = new HashSet<String>();
         if (StringUtils.isNotEmpty(scopeList)) {
@@ -88,6 +91,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                             authHeaderValue = authHeaderValue.substring(0, commaIndex);
                     }
                     bearerToken = authHeaderValue;
+                    if(PojoUtil.isEmpty(bearerToken)) {
+                        throw new IllegalArgumentException("Refresh token request doesnt include the authorization");
+                    }
                 }            
             }                       
         }
@@ -141,18 +147,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
             throw new OrcidInvalidScopeException(message);
         }
-        
-        if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
-            if(PojoUtil.isEmpty(bearerToken)) {
-                throw new IllegalArgumentException("Refresh token request doesnt include the authorization");
-            }
-        }
-        
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken);
+                
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expireIn);
         return getResponse(token);
     }
 
-    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization) {        
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expireIn) {        
         String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();
         
@@ -185,8 +185,9 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         //If it is a refresh token request, set the needed authorization parameters
         if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             authorizationParameters.put(OrcidOauth2Constants.AUTHORIZATION, authorization);
-        }
-        
+            authorizationParameters.put(OrcidOauth2Constants.REVOKE_OLD, String.valueOf(revokeOld));
+            authorizationParameters.put(OrcidOauth2Constants.EXPIRE_IN, String.valueOf(expireIn));
+        }        
         
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);

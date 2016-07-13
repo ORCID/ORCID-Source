@@ -17,7 +17,10 @@
 package org.orcid.core.oauth;
 
 import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
@@ -30,22 +33,30 @@ public class OrcidRefreshTokenTokenGranter implements TokenGranter {
 
     private final AuthorizationServerTokenServices tokenServices;
 
-    public OrcidRefreshTokenTokenGranter(OrcidClientCredentialsChecker clientCredentialsChecker, AuthorizationServerTokenServices tokenServices) {
+    private final OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    
+    public OrcidRefreshTokenTokenGranter(OrcidClientCredentialsChecker clientCredentialsChecker, AuthorizationServerTokenServices tokenServices, OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
         this.clientCredentialsChecker = clientCredentialsChecker;
         this.tokenServices = tokenServices;
+        this.orcidOauth2TokenDetailDao = orcidOauth2TokenDetailDao;
     }
 
-    @Override
-    // TODO! Here we need the token info, we need the scopes only in the case
-    // the user provided that info, if not, we will take them from the existing
-    // token if they exists
-    // Scopes comes in requestParameters["scope"]
+    @Override 
     public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
         if (!OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             return null;
         }
+        
+        String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
+        
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
+        
+        //TODO: compare token values against the user, the refresh token and other validations
         String clientId = tokenRequest.getClientId();
-        String scopes = tokenRequest.getRequestParameters().get("scope");
+        String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
+        String revokeOldString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD);
+        String expireInString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN);
+        
         return null;
     }
 }
