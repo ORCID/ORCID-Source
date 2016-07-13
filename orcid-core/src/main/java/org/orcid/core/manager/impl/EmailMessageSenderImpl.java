@@ -155,6 +155,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subject", subject);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
+        
+        System.out.print(bodyText);
+        
+        
         EmailMessage emailMessage = new EmailMessage();
 
         emailMessage.setSubject(subject);
