@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -44,16 +43,16 @@ import org.springframework.security.core.context.SecurityContext;
 import static org.mockito.Mockito.*;
 
 public class OAuthAuthorizeNotSignedInFilterTest {
-    
+
     @InjectMocks
     OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
-    
+
     @Mock
     OrcidUrlManager orcidUrlManager;
-    
+
     @Mock
     HttpServletRequest request;
-    
+
     @Mock
     HttpServletResponse response;
 
@@ -65,22 +64,22 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
     @Mock
     SecurityContext context;
-    
+
     @Mock
     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
-    
+
     @Mock
     OrcidProfileUserDetails orcidProfileUserDetails;
 
     @Before
     public void setup() {
-            MockitoAnnotations.initMocks(this);
-            when(orcidUrlManager.getBaseUrl()).thenReturn("http://test.com");
-            when(request.getHeaderNames()).thenReturn(new Vector<String>().elements());
-            when(request.getLocales()).thenReturn(new Vector<Locale>().elements());
-            when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>());
-            when(request.getScheme()).thenReturn("i hate you with all my heart spring mvc");
-            when(request.getRequestURL()).thenReturn(new StringBuffer("really, we should break up"));
+        MockitoAnnotations.initMocks(this);
+        when(orcidUrlManager.getBaseUrl()).thenReturn("http://test.com");
+        when(request.getHeaderNames()).thenReturn(new Vector<String>().elements());
+        when(request.getLocales()).thenReturn(new Vector<Locale>().elements());
+        when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>());
+        when(request.getScheme()).thenReturn("i hate you with all my heart spring mvc");
+        when(request.getRequestURL()).thenReturn(new StringBuffer("really, we should break up"));
     }
 
     @Test
@@ -89,7 +88,7 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession(false)).thenReturn(null);
-        
+
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
         verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
