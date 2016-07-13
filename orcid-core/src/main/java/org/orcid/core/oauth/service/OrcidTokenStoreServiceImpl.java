@@ -413,7 +413,9 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
         List<OAuth2AccessToken> accessTokens = new ArrayList<OAuth2AccessToken>();
         if (details != null && !details.isEmpty()) {
             for (OrcidOauth2TokenDetail detail : details) {
-                accessTokens.add(getOauth2AccessTokenFromDetails(detail));
+                if(detail.getTokenDisabled() == null || !detail.getTokenDisabled()) {
+                    accessTokens.add(getOauth2AccessTokenFromDetails(detail));
+                }                
             }
         }
         return accessTokens;
