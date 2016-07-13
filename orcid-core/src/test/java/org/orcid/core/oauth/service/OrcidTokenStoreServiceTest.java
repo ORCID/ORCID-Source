@@ -219,28 +219,26 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         String clientId = "4444-4444-4444-4441";
         String userId = "0000-0000-0000-0001";
         OrcidOauth2TokenDetail token1 = createAccessToken("enabled-1", "/read-limited", clientId, userId, false);
-        OrcidOauth2TokenDetail token2 = createAccessToken("enabled-2", "/read-limited", clientId, userId, false);
-        OrcidOauth2TokenDetail token3 = createAccessToken("enabled-3", "/read-limited", clientId, userId, false);
-        
-        OrcidOauth2TokenDetail disabledToken1 = createAccessToken("disabled-1", "/read-limited", clientId, userId, true);
-        OrcidOauth2TokenDetail disabledToken2 = createAccessToken("disabled-2", "/read-limited", clientId, userId, true);
-        OrcidOauth2TokenDetail disabledToken3 = createAccessToken("disabled-3", "/read-limited", clientId, userId, true);
-        
         assertNotNull(token1);
         assertNotNull(token1.getId());
         
+        OrcidOauth2TokenDetail token2 = createAccessToken("enabled-2", "/read-limited", clientId, userId, false);
         assertNotNull(token2);
         assertNotNull(token2.getId());
         
+        OrcidOauth2TokenDetail token3 = createAccessToken("enabled-3", "/read-limited", clientId, userId, false);
         assertNotNull(token3);
         assertNotNull(token3.getId());
         
+        OrcidOauth2TokenDetail disabledToken1 = createAccessToken("disabled-1", "/read-limited", clientId, userId, true);
         assertNotNull(disabledToken1);
         assertNotNull(disabledToken1.getId());
         
+        OrcidOauth2TokenDetail disabledToken2 = createAccessToken("disabled-2", "/read-limited", clientId, userId, true);
         assertNotNull(disabledToken2);
         assertNotNull(disabledToken2.getId());
         
+        OrcidOauth2TokenDetail disabledToken3 = createAccessToken("disabled-3", "/read-limited", clientId, userId, true);
         assertNotNull(disabledToken3);
         assertNotNull(disabledToken3.getId());
         
