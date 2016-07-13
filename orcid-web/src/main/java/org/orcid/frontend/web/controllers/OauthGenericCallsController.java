@@ -17,25 +17,20 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.message.ErrorDesc;
-import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Controller("oauthGenericCallsController")
 public class OauthGenericCallsController extends OauthControllerBase {
@@ -52,32 +48,10 @@ public class OauthGenericCallsController extends OauthControllerBase {
     @Resource
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
     
-    @RequestMapping(value = "/oauth/token", method = RequestMethod.POST)
+    @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
     public @ResponseBody Object obtainOauth2TokenPost(HttpServletRequest request) {
-        String clientId = request.getParameter("client_id");
-        String clientSecret = request.getParameter("client_secret");
-        String code = request.getParameter("code");
-        String state = request.getParameter("state");
-        String redirectUri = request.getParameter("redirect_uri");
-        String resourceId = request.getParameter("resource_id");
-        String refreshToken = request.getParameter("refresh_token");
-        String scopeList = request.getParameter("scope");
-        String grantType = request.getParameter("grant_type");
-        Set<String> scopes = new HashSet<String>();
-        if (StringUtils.isNotEmpty(scopeList)) {
-            scopes = OAuth2Utils.parseParameterList(scopeList);
-        }
-        String authorization = request.getHeader("Authorization");
-        if(!PojoUtil.isEmpty(authorization)) {
-            //TODO
-        }
-        Response res = null;
-        try {
-            res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
-        } catch (Exception e) {
-            return getLegacyOrcidEntity("OAuth2 problem", e);
-        }
-        return JsonUtils.convertToJsonString(res.getEntity());
+        //TODO generate the formParams map and get the authorization param
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);        
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
@@ -148,12 +122,5 @@ public class OauthGenericCallsController extends OauthControllerBase {
     public @ResponseBody OauthRegistrationForm validateEmailConfirm(@RequestBody OauthRegistrationForm reg) {
         registrationController.regEmailConfirmValidate(reg);
         return reg;
-    }
-    
-    private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
-        OrcidMessage entity = new OrcidMessage();
-        entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        entity.setErrorDesc(new ErrorDesc(prefix + " : " + e.getMessage()));
-        return entity;
-    }
+    }        
 }

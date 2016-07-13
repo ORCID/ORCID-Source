@@ -86,7 +86,7 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
             throw new OrcidInvalidScopeException(message);
         }
         
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state);
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, null);
         return getResponse(token);                
     }
 

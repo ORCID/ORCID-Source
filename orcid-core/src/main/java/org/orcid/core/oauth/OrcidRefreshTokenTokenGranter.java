@@ -16,6 +16,7 @@
  */
 package org.orcid.core.oauth;
 
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.TokenRequest;
@@ -26,8 +27,6 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
  * @author Angel Montenegro
  */
 public class OrcidRefreshTokenTokenGranter implements TokenGranter {
-    public static final String REFRESH_TOKEN = "refresh_token";
-    
     private final OrcidClientCredentialsChecker clientCredentialsChecker;
 
     private final AuthorizationServerTokenServices tokenServices;
@@ -44,7 +43,7 @@ public class OrcidRefreshTokenTokenGranter implements TokenGranter {
     //TODO! Here we need the token info, we need the scopes only in the case the user provided that info, if not, we will take them from the existing token if they exists
     //Scopes comes in requestParameters["scope"]
     public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
-        if (!REFRESH_TOKEN.equals(grantType)) {
+        if (!OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             return null;
         }
         String clientId = tokenRequest.getClientId();

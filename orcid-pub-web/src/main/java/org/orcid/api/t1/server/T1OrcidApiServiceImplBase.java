@@ -36,15 +36,14 @@ import static org.orcid.core.api.OrcidApiConstants.WORKS_PATH;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -64,7 +63,6 @@ import org.orcid.core.manager.impl.ValidationManagerImpl;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 
 import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
@@ -560,7 +558,6 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     }
 
     /**
-     * 
      * @param formParams
      * @return
      */
@@ -568,20 +565,8 @@ abstract public class T1OrcidApiServiceImplBase implements OrcidApiService<Respo
     @Path(T2OrcidApiService.OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
-        String clientId = formParams.getFirst("client_id");
-        String clientSecret = formParams.getFirst("client_secret");
-        String code = formParams.getFirst("code");
-        String state = formParams.getFirst("state");
-        String redirectUri = formParams.getFirst("redirect_uri");
-        String resourceId = formParams.getFirst("resource_id");
-        String refreshToken = formParams.getFirst("refresh_token");
-        String scopeList = formParams.getFirst("scope");
-        Set<String> scopes = new HashSet<String>();
-        if (StringUtils.isNotEmpty(scopeList)) {
-            scopes = OAuth2Utils.parseParameterList(scopeList);
-        }
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
+    public Response obtainOauth2TokenPost(@HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization, MultivaluedMap<String, String> formParams) {
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
     }
 
 }

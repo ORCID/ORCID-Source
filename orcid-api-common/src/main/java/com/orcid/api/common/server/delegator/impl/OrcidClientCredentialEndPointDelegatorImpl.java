@@ -18,18 +18,19 @@ package com.orcid.api.common.server.delegator.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.core.oauth.OrcidRefreshTokenTokenGranter;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2AuthoriziationCodeDetail;
@@ -65,9 +66,33 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     protected LocaleManager localeManager;
     
     @Transactional
-    public Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
-            String redirectUri, String resourceId) {
-
+    public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
+        String clientId = formParams.getFirst("client_id");
+        String code = formParams.getFirst("code");
+        String state = formParams.getFirst("state");
+        String redirectUri = formParams.getFirst("redirect_uri");
+        String refreshToken = formParams.getFirst("refresh_token");
+        String scopeList = formParams.getFirst("scope");
+        String grantType = formParams.getFirst("grant_type");
+        String bearerToken = null;
+        Set<String> scopes = new HashSet<String>();
+        if (StringUtils.isNotEmpty(scopeList)) {
+            scopes = OAuth2Utils.parseParameterList(scopeList);
+        }
+        if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
+            if(!PojoUtil.isEmpty(authorization)) {
+                if ((authorization.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase()))) {
+                    String authHeaderValue = authorization.substring(OAuth2AccessToken.BEARER_TYPE.length()).trim();
+                    int commaIndex = authHeaderValue.indexOf(',');
+                    if (commaIndex > 0) {
+                            authHeaderValue = authHeaderValue.substring(0, commaIndex);
+                    }
+                    bearerToken = authHeaderValue;
+                }            
+            }                       
+        }
+        
+        
         LOGGER.info("OAuth2 authorization requested: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
                 grantType, refreshToken, code, scopes, state, redirectUri });
 
@@ -91,7 +116,6 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
 
         try {
-            boolean isClientCredentialsGrantType = OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);            
             if (scopes != null) {
                 List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
@@ -100,7 +124,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                         // You should not allow any internal scope here! go away!
                         String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
                         throw new OrcidInvalidScopeException(message);
-                    } else if(isClientCredentialsGrantType) {
+                    } else if(OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
                         if(!scopeType.isClientCreditalScope())
                             toRemove.add(scope);
                     } else {
@@ -112,17 +136,23 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 for (String remove : toRemove) {
                     scopes.remove(remove);
                 }
-            }
+            }                        
         } catch (IllegalArgumentException iae) {
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
             throw new OrcidInvalidScopeException(message);
         }
         
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state);
+        if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
+            if(PojoUtil.isEmpty(bearerToken)) {
+                throw new IllegalArgumentException("Refresh token request doesnt include the authorization");
+            }
+        }
+        
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken);
         return getResponse(token);
     }
 
-    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state) {        
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization) {        
         String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();
         
@@ -153,8 +183,8 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
         
         //If it is a refresh token request, set the needed authorization parameters
-        if(OrcidRefreshTokenTokenGranter.REFRESH_TOKEN.equals(grantType)) {
-            ///TODO
+        if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
+            authorizationParameters.put(OrcidOauth2Constants.AUTHORIZATION, authorization);
         }
         
         
