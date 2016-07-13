@@ -17,14 +17,19 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Enumeration;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.utils.JsonUtils;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -48,10 +53,21 @@ public class OauthGenericCallsController extends OauthControllerBase {
     @Resource
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
     
+    @Context
+    private UriInfo uriInfo;
+    
     @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
     public @ResponseBody Object obtainOauth2TokenPost(HttpServletRequest request) {
-        //TODO generate the formParams map and get the authorization param
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);        
+        String authorization = request.getHeader("Authorization");
+        Enumeration<String> paramNames = request.getParameterNames();
+        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        while(paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+            formParams.add(paramName, request.getParameter(paramName));
+        }
+                        
+        Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
+        return JsonUtils.convertToJsonString(response.getEntity());
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)

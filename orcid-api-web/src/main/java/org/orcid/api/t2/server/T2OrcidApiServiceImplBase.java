@@ -43,6 +43,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -805,7 +806,7 @@ abstract public class T2OrcidApiServiceImplBase implements T2OrcidApiService<Res
     @Path(OAUTH_TOKEN)
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response obtainOauth2TokenPost(@HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization, MultivaluedMap<String, String> formParams) {
+    public Response obtainOauth2TokenPost(@HeaderParam("Authorization") @DefaultValue(StringUtils.EMPTY) String authorization, @FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
         return orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
     }
 

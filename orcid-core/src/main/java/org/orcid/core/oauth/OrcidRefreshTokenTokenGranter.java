@@ -20,7 +20,6 @@ import org.orcid.core.constants.OrcidOauth2Constants;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.TokenRequest;
-import org.springframework.security.oauth2.provider.authentication.BearerTokenExtractor;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 
 /**
@@ -30,18 +29,17 @@ public class OrcidRefreshTokenTokenGranter implements TokenGranter {
     private final OrcidClientCredentialsChecker clientCredentialsChecker;
 
     private final AuthorizationServerTokenServices tokenServices;
-    
-    //TODO!!!! should this go here?
-    private BearerTokenExtractor tokenExtractor = new BearerTokenExtractor();
-    
-   public OrcidRefreshTokenTokenGranter(OrcidClientCredentialsChecker clientCredentialsChecker, AuthorizationServerTokenServices tokenServices) {
+
+    public OrcidRefreshTokenTokenGranter(OrcidClientCredentialsChecker clientCredentialsChecker, AuthorizationServerTokenServices tokenServices) {
         this.clientCredentialsChecker = clientCredentialsChecker;
         this.tokenServices = tokenServices;
     }
-    
+
     @Override
-    //TODO! Here we need the token info, we need the scopes only in the case the user provided that info, if not, we will take them from the existing token if they exists
-    //Scopes comes in requestParameters["scope"]
+    // TODO! Here we need the token info, we need the scopes only in the case
+    // the user provided that info, if not, we will take them from the existing
+    // token if they exists
+    // Scopes comes in requestParameters["scope"]
     public OAuth2AccessToken grant(String grantType, TokenRequest tokenRequest) {
         if (!OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             return null;
