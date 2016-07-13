@@ -267,13 +267,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             String primaryOrcid = primaryProfile.getId();
             
             // Remove works
-            if (deprecated.getWorks() != null) {
-                for (WorkEntity work : deprecated.getWorks()) {
-                    List<Long> works = new ArrayList<Long>();
-                    works.add(work.getId());
-                    workManager.removeWorks(deprecated.getId(), works);
-                }
-            }
+            workManager.removeAllWorks(deprecatedOrcid);
             
             // Remove funding
             if (deprecated.getProfileFunding() != null) {
