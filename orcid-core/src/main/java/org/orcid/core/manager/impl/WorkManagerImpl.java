@@ -140,6 +140,11 @@ public class WorkManagerImpl implements WorkManager {
         return workDao.removeWorks(clientOrcid, workIds);
     }
 
+    @Override
+    public void removeAllWorks(String orcid) {
+        workDao.removeWorks(orcid);
+    }
+    
     /**
      * Sets the display index of the new work
      * 

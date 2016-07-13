@@ -910,9 +910,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         toClear.setIndexingStatus(IndexingStatus.REINDEX);
         
         // Remove works
-        if (toClear.getWorks() != null) {
-            toClear.getWorks().clear();
-        }
+        workManager.removeAllWorks(orcid);
         
         // Remove funding
         if (toClear.getProfileFunding() != null) {

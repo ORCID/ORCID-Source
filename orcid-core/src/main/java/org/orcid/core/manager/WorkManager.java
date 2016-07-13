@@ -68,6 +68,15 @@ public interface WorkManager {
     boolean removeWorks(String clientOrcid, List<Long> workIds);
     
     /**
+     * Removes all works for an record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all works will be
+     *            removed.
+     */
+    void removeAllWorks(String orcid);
+    
+    /**
      * Sets the display index of the new work
      * @param orcid     
      *          The work owner
