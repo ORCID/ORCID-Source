@@ -46,7 +46,7 @@
 	</bean>
 
 	<bean id="orcidXmlMessageConverter"
-		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 		<property name="supportedMediaTypes">
 			<list value-type="org.springframework.http.MediaType">
 				<bean class="org.springframework.http.MediaType">
@@ -62,29 +62,9 @@
 					<constructor-arg type="java.lang.String" value="vnd.orcid+xml" />
 				</bean>
 			</list>
-		</property>
-		<property name="marshaller" ref="xmlMarshaller" />
-		<property name="unmarshaller" ref="xmlMarshaller" />
+		</property>		
 	</bean>
-
-	<bean name="xmlMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-		<property name="classesToBeBound">
-			<list>
-				<value>org.orcid.jaxb.model.error_rc2.OrcidError</value>
-			</list>
-		</property>
-		<property name="marshallerProperties">
-			<map>
-				<entry>
-					<key>
-						<value>jaxb.formatted.output</value>
-					</key>
-					<value type="boolean">true</value>
-				</entry>
-			</map>
-		</property>
-	</bean>
-
+	
 	<!-- OAUTH2 common configuration -->
 	<bean id="oauthAccessDeniedHandler"
 		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
