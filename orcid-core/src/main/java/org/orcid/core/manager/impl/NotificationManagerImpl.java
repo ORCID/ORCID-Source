@@ -616,6 +616,9 @@ public class NotificationManagerImpl implements NotificationManager {
             String body = templateManager.processTemplate("added_as_delegate_email.ftl", templateParams);
             // Generate html from template
             String html = templateManager.processTemplate("added_as_delegate_email_html.ftl", templateParams);
+            
+            System.out.print(html);
+            
 
             boolean notificationsEnabled = delegateProfileEntity.getEnableNotifications();
             if (notificationsEnabled) {
