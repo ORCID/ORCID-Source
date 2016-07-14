@@ -62,10 +62,9 @@ import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.t2.server.delegator.T2OrcidApiServiceDelegator;
 import org.orcid.api.t2.server.delegator.impl.T2OrcidApiServiceVersionedDelegatorImpl;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
-
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 /**
  * @author Declan Newman (declan) Date: 07/03/2012

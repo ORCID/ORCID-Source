@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
@@ -34,8 +35,6 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
-
-import com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl;
 
 /**
  * 
@@ -66,8 +65,8 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
             throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_not_authenticated.exception"));
         } 
         
-        // Verify it is a client_credentials grant type request
-        if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
+        // Verify it is not a client_credentials nor refresh token grant type request
+        if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType) && !OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             Object params[] = {grantType};
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
@@ -85,8 +84,8 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
             throw new OrcidInvalidScopeException(message);
         }
-        
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, null);
+                
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, null, false, 0L);
         return getResponse(token);                
     }
 

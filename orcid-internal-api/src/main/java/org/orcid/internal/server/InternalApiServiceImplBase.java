@@ -28,18 +28,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -49,15 +45,6 @@ import io.swagger.annotations.ApiOperation;
  * 
  */
 public abstract class InternalApiServiceImplBase {
-    @Context
-    private UriInfo uriInfo;
-
-    @Value("${org.orcid.core.baseUri}")
-    protected String baseUri;
-    
-    @Value("${org.orcid.core.internalApiBaseUri}")
-    protected String internalApiBaseUri;
-
     private InternalApiServiceDelegator serviceDelegator;
 
     @Resource

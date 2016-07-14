@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package com.orcid.api.common.server.delegator;
+package org.orcid.core.oauth;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;

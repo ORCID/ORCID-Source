@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package com.orcid.api.common.server.delegator.impl;
+package org.orcid.core.oauth.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,13 +49,11 @@ import org.springframework.security.oauth2.provider.endpoint.AbstractEndpoint;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
-
 /**
  * @author Declan Newman (declan) Date: 18/04/2012
  */
 @Component("orcidClientCredentialEndPointDelegator")
-public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint implements OrcidClientCredentialEndPointDelegator {
+public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
 

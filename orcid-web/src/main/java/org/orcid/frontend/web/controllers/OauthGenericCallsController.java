@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
@@ -41,8 +42,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Controller("oauthGenericCallsController")

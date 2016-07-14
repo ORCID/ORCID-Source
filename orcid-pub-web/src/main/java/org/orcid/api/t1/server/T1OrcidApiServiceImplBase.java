@@ -61,11 +61,10 @@ import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.api.common.delegator.OrcidApiServiceDelegator;
 import org.orcid.api.common.delegator.impl.OrcidApiServiceVersionedDelegatorImpl;
 import org.orcid.core.manager.impl.ValidationManagerImpl;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 /**
  * @author Declan Newman (declan) Date: 01/03/2012

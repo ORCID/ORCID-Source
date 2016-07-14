@@ -51,6 +51,9 @@ public class OrcidRefreshTokenTokenGranter implements TokenGranter {
         
         OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
         
+        //Verify the token is not expired
+        
+        
         //TODO: compare token values against the user, the refresh token and other validations
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
