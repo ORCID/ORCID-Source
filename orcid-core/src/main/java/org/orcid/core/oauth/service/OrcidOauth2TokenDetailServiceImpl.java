@@ -17,13 +17,16 @@
 package org.orcid.core.oauth.service;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
@@ -154,17 +157,50 @@ public class OrcidOauth2TokenDetailServiceImpl implements OrcidOauth2TokenDetail
     }
 
     /**
-     * This should NOT delete the row, but merely remove the value from it
+     * This should NOT delete the row, but merely set it as disabled 
      * 
      * @param accessToken
      *            the value to use to identify the row containing the access
      *            token
      */
-    @Override
+    @Override    
     public void disableAccessToken(String accessToken) {
         orcidOauth2TokenDetailDao.disableAccessToken(accessToken);
     }
-
+    
+    /**
+     * This should NOT delete the row, but merely set it as disabled
+     * 
+     * @param tokenId
+     *            the id of the token that should be disabled
+     * @param userOrcid
+     *            the id of the user owner of the token
+     */
+    @Override    
+    public void disableAccessToken(Long tokenId, String userOrcid) {
+        if(PojoUtil.isEmpty(userOrcid) || tokenId == null) {
+            throw new IllegalArgumentException("One of the provided params is empty: userOrcid='" + userOrcid + "' tokenId='" + String.valueOf(tokenId) + "'");
+        }
+        
+        //Iterate over all tokens that belongs to this user and client, to remove all the ones that have the same scopes
+        OrcidOauth2TokenDetail tokenToDisable = orcidOauth2TokenDetailDao.find(tokenId);
+        String scopesToDisableString = tokenToDisable.getScope();
+        Set<ScopePathType> scopesToDisable = ScopePathType.getScopesFromSpaceSeparatedString(scopesToDisableString);
+        
+        List<OrcidOauth2TokenDetail> allTokens = orcidOauth2TokenDetailDao.findByClientIdAndUserName(tokenToDisable.getClientDetailsId(), userOrcid);
+        //Iterate over all tokens and verify we disable all the ones that have the same scopes
+        for(OrcidOauth2TokenDetail token : allTokens) {
+            if(token.getTokenDisabled() == null || !token.getTokenDisabled()) {
+                if(!PojoUtil.isEmpty(token.getScope())) {
+                    Set<ScopePathType> tokenScopes = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
+                    if(scopesToDisable.equals(tokenScopes)) {
+                        orcidOauth2TokenDetailDao.disableAccessTokenById(token.getId(), userOrcid);
+                    }                
+                }            
+            }
+        }                        
+    }
+        
     /**
      * This should NOT delete the row, but merely remove the value from it
      * 

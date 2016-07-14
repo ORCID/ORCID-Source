@@ -215,6 +215,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
         return query.executeUpdate() > 0;
     }
     
+    @Override
+    @Transactional
+    public void removeWorks(String orcid) {
+        Query query = entityManager.createQuery("delete from WorkEntity where orcid = :orcid");
+        query.setParameter("orcid", orcid);
+        query.executeUpdate();
+    }
+    
     /**
      * Sets the display index of the new work
      * @param workId

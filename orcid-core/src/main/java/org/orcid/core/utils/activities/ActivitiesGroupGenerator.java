@@ -64,9 +64,11 @@ public class ActivitiesGroupGenerator {
                 if(belongsTo.size() > 1) {
                     for(int i = 1; i < belongsTo.size(); i++){
                         //Merge the group
-                        firstGroup.merge(belongsTo.get(i));
-                        //Remove it from the list of groups
-                        groups.remove(belongsTo.get(i));
+                        if (firstGroup != belongsTo.get(i)){
+                            firstGroup.merge(belongsTo.get(i));
+                            //Remove it from the list of groups
+                            groups.remove(belongsTo.get(i));                            
+                        }
                     }                        
                 }
                 for (GroupAble g :thisGroup.getGroupKeys()){

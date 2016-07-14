@@ -24,6 +24,7 @@ import org.orcid.core.manager.SalesForceManager;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceMember;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,6 +48,13 @@ public class MembersListController extends BaseController {
         return mav;
     }
     
+    @RequestMapping("/members/{memberSlug}")
+    public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
+        ModelAndView mav = new ModelAndView("member-page");
+        mav.addObject("memberSlug", memberSlug);
+        return mav;
+    }
+    
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
     public @ResponseBody List<SalesForceMember> retrieveMembers() {
         return salesForceManager.retrieveMembers();
@@ -56,6 +64,11 @@ public class MembersListController extends BaseController {
     public @ResponseBody SalesForceDetails retrieveDetails(@RequestParam("memberId") String memberId,
             @RequestParam(value = "consortiumLeadId", required = false) String consortiumLeadId) {
         return salesForceManager.retrieveDetails(memberId, consortiumLeadId);
+    }
+    
+    @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
+    public @ResponseBody SalesForceDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
+        return salesForceManager.retrieveDetailsBySlug(memberSlug);
     }
 
     @RequestMapping("/consortia")

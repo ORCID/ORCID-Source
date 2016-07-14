@@ -102,6 +102,15 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
     boolean removeWork(String orcid, Long workId);
     
     /**
+     * Removes all works for an record. Careful!
+     * 
+     * @param orcid
+     *            The ORCID iD of the record from which all works will be
+     *            removed.
+     */
+    void removeWorks(String orcid);
+    
+    /**
      * Sets the display index of the new work
      * @param workId
      *          The work id

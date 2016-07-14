@@ -1676,6 +1676,7 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
         membersList: null,
         memberDetails: {},
+        currentMemberDetails: null,
         consortiaList: null,
         getMembersList: function() {
             $.ajax({
@@ -1715,6 +1716,25 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 });
             }
         },
+        getCurrentMemberDetailsBySlug: function(memberSlug) {
+            if(serv.currentMemberDetails == null){
+                var url = getBaseUri() + '/members/detailsBySlug.json?memberSlug=' + encodeURIComponent(memberSlug);
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    cache: true,
+                    success: function(data) {
+                        serv.currentMemberDetails = data;
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    // something bad is happening!
+                    console.log("error with member details by slug");
+                    serv.feed = [];
+                    $rootScope.$apply();
+                });
+            }
+        },
         getConsortiaList: function() {
             $.ajax({
                 url: getBaseUri() + '/consortia/consortia.json',
@@ -1731,6 +1751,9 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
                 $rootScope.$apply();
             });
         },
+        getMemberPageUrl: function(slug) {
+            return orcidVar.baseUri + '/members/' + slug;
+        }
     };
 
     return serv; 
@@ -8112,11 +8135,7 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
     $scope.confirmRevoke = function(applicationSummary){
         $scope.appName = applicationSummary.name;
-        $scope.appClientId = applicationSummary.orcidPath;
-        $scope.appScopePaths = [];
-        for (var scopePath in applicationSummary.scopePaths) {
-        	 $scope.appScopePaths.push(scopePath);
-    	}
+        $scope.tokenId = applicationSummary.tokenId;
         $.colorbox({
             html : $compile($('#confirm-revoke-access-modal').html())($scope),
             transition: 'fade',
@@ -8131,11 +8150,10 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 
     $scope.revokeAccess = function(){
         $.ajax({
-            url: getBaseUri() + '/account/revoke-application.json?applicationOrcid='+$scope.appClientId+'&scopePaths='+$scope.appScopePaths,
+            url: getBaseUri() + '/account/revoke-application.json?tokenId='+$scope.tokenId,
             type: 'POST',
             success: function(data) {
                 $scope.getApplications();
-                $scope.$apply();
                 $scope.closeModal();
             }
         }).fail(function() {
@@ -10796,6 +10814,15 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
     
     // populate the members feed
     membersListSrvc.getMembersList();
+    
+}]);
+
+orcidNgModule.controller('MemberPageController',['$scope', '$sce', 'membersListSrvc', function ($scope, $sce, membersListSrvc){
+    $scope.membersListSrvc = membersListSrvc;
+    
+    $scope.renderHtml = function (htmlCode) {
+        return $sce.trustAsHtml(htmlCode);
+    };
     
 }]);
 

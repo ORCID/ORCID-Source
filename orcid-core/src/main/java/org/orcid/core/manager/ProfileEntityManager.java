@@ -75,7 +75,7 @@ public interface ProfileEntityManager {
 
     boolean reviewProfile(String orcid);
     
-    List<ApplicationSummary> getApplications(List<OrcidOauth2TokenDetail> tokenDetails);
+    List<ApplicationSummary> getApplications(String orcid);
     
     String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
     

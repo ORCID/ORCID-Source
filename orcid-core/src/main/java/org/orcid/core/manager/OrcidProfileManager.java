@@ -16,7 +16,6 @@
  */
 package org.orcid.core.manager;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,7 +23,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 
 /**
@@ -133,22 +131,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
      * @param orcidProfile
      *            The works to add to the profile.
      */
-    void addOrcidWorks(OrcidProfile orcidProfile);
-
-    /**
-     * Deletes an approved client application's token from a profile.
-     * 
-     * @param userOrcid
-     *            The ORCID of the user from which to delete the approved
-     *            application's token.
-     * @param applicationOrcid
-     *            The ORCID of the client application for which to remove a
-     *            token from the user's profile.
-     * @param scopes
-     *            The scopes of the token.
-     * @return
-     */
-    OrcidProfile revokeApplication(String userOrcid, String applicationOrcid, Collection<ScopePathType> scopes);
+    void addOrcidWorks(OrcidProfile orcidProfile);    
 
     /**
      * Deletes an entire ORCID profile - use with care...

@@ -28,8 +28,20 @@ public class SalesForceDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private SalesForceMember member;
     private String parentOrgName;
+    private String parentOrgSlug;
     private List<SalesForceIntegration> integrations;
+    private List<SalesForceContact> contacts;
+    private List<SalesForceMember> subMembers;
+
+    public SalesForceMember getMember() {
+        return member;
+    }
+
+    public void setMember(SalesForceMember member) {
+        this.member = member;
+    }
 
     public String getParentOrgName() {
         return parentOrgName;
@@ -39,12 +51,36 @@ public class SalesForceDetails implements Serializable {
         this.parentOrgName = parentOrgName;
     }
 
+    public String getParentOrgSlug() {
+        return parentOrgSlug;
+    }
+
+    public void setParentOrgSlug(String parentOrgSlug) {
+        this.parentOrgSlug = parentOrgSlug;
+    }
+
     public List<SalesForceIntegration> getIntegrations() {
         return integrations;
     }
 
     public void setIntegrations(List<SalesForceIntegration> integrations) {
         this.integrations = integrations;
+    }
+
+    public List<SalesForceContact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<SalesForceContact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public List<SalesForceMember> getSubMembers() {
+        return subMembers;
+    }
+
+    public void setSubMembers(List<SalesForceMember> subMembers) {
+        this.subMembers = subMembers;
     }
 
 }

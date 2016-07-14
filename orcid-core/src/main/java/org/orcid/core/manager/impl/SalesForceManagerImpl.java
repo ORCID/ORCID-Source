@@ -16,10 +16,14 @@
  */
 package org.orcid.core.manager.impl;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
@@ -30,14 +34,18 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.pojo.SalesForceConsortium;
+import org.orcid.pojo.SalesForceContact;
 import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
+import org.orcid.pojo.SalesForceOpportunity;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.github.slugify.Slugify;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -53,6 +61,8 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  *
  */
 public class SalesForceManagerImpl implements SalesForceManager {
+
+    private static final String SLUG_SEPARATOR = "-";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceManager.class);
 
@@ -85,6 +95,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
     private String accessToken;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
+
+    private Slugify slugify;
+    {
+        try {
+            slugify = new Slugify();
+        } catch (IOException e) {
+            throw new RuntimeException("Error initializing slugify", e);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -119,6 +138,22 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
+    public SalesForceConsortium retrieveConsortium(String consortiumId) {
+        // XXX Implement cache
+        return retrieveFreshConsortium(consortiumId);
+    }
+
+    @Override
+    public SalesForceConsortium retrieveFreshConsortium(String consortiumId) {
+        try {
+            return retrieveConsortiumFromSalesForce(getAccessToken(), consortiumId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve consortium, trying again.", e);
+            return retrieveConsortiumFromSalesForce(getFreshAccessToken(), consortiumId);
+        }
+    }
+
+    @Override
     public SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId) {
         return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName)).getObjectValue();
     }
@@ -138,12 +173,48 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
+    public SalesForceDetails retrieveDetailsBySlug(String memberSlug) {
+        String id = memberSlug.substring(0, memberSlug.indexOf(SLUG_SEPARATOR));
+        validateSalesForceId(id);
+        List<SalesForceMember> members = retrieveMembers();
+        Optional<SalesForceMember> match = members.stream().filter(e -> id.equals(e.getId())).findFirst();
+        if (match.isPresent()) {
+            SalesForceMember salesForceMember = match.get();
+            return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(id, salesForceMember.getConsortiumLeadId(), releaseName))
+                    .getObjectValue();
+        }
+        throw new IllegalArgumentException("No member details found for " + memberSlug);
+    }
+
+    @Override
+    public List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId) {
+        // XXX Implement cache
+        return retrieveFreshContactsByOpportunityId(opportunityId);
+    }
+
+    @Override
+    public List<SalesForceContact> retrieveFreshContactsByOpportunityId(String opportunityId) {
+        try {
+            return retrieveContactsFromSalesForce(getAccessToken(), opportunityId);
+        } catch (SalesForceUnauthorizedException e) {
+            LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
+            return retrieveContactsFromSalesForce(getFreshAccessToken(), opportunityId);
+        }
+    }
+
+    @Override
     public String validateSalesForceId(String salesForceId) {
         if (!salesForceId.matches("[a-zA-Z0-9]+")) {
             // Could be malicious, so give no further info.
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+
+    @Override
+    public void evictAll() {
+        salesForceMembersListCache.removeAll();
+        salesForceMemberDetailsCache.removeAll();
     }
 
     /**
@@ -196,6 +267,74 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return resource;
     }
 
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private SalesForceConsortium retrieveConsortiumFromSalesForce(String accessToken, String consortiumId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of consortium from SalesForce");
+        validateSalesForceId(consortiumId);
+        WebResource resource = createConsortiumResource(consortiumId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting consortium from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return createConsortiumFromResponse(response);
+    }
+
+    private WebResource createConsortiumResource(String consortiumId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT (SELECT Id, Account.Name FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c > TODAY) from Account WHERE Id='"
+                        + validateSalesForceId(consortiumId) + "'");
+        return resource;
+    }
+
+    private SalesForceConsortium createConsortiumFromResponse(ClientResponse response) {
+        JSONObject results = response.getEntity(JSONObject.class);
+        try {
+            int numFound = extractInt(results, "totalSize");
+            if (numFound == 0) {
+                return null;
+            }
+            SalesForceConsortium consortium = new SalesForceConsortium();
+            List<SalesForceOpportunity> opportunityList = new ArrayList<>();
+            consortium.setOpportunities(opportunityList);
+            JSONArray records = results.getJSONArray("records");
+            JSONObject firstRecord = records.getJSONObject(0);
+            JSONObject opportunities = extractObject(firstRecord, "ConsortiaOpportunities__r");
+            JSONArray opportunityRecords = opportunities.getJSONArray("records");
+            for (int i = 0; i < opportunityRecords.length(); i++) {
+                SalesForceOpportunity salesForceOpportunity = new SalesForceOpportunity();
+                JSONObject opportunity = opportunityRecords.getJSONObject(i);
+                salesForceOpportunity.setId(extractOpportunityId(opportunity));
+                salesForceOpportunity.setTargetAccountId(extractAccountId(opportunity));
+                opportunityList.add(salesForceOpportunity);
+            }
+            return consortium;
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting consortium record from SalesForce JSON", e);
+        }
+    }
+
+    private String extractOpportunityId(JSONObject opportunity) throws JSONException {
+        JSONObject opportunityAttributes = extractObject(opportunity, "attributes");
+        String opportunityUrl = extractString(opportunityAttributes, "url");
+        return extractIdFromUrl(opportunityUrl);
+    }
+
+    private String extractAccountId(JSONObject opportunity) throws JSONException {
+        JSONObject account = extractObject(opportunity, "Account");
+        JSONObject accountAttributes = extractObject(account, "attributes");
+        String accountUrl = extractString(accountAttributes, "url");
+        String accountId = extractIdFromUrl(accountUrl);
+        return accountId;
+    }
+
     private List<SalesForceMember> createMembersListFromResponse(ClientResponse response) {
         List<SalesForceMember> members = new ArrayList<>();
         JSONObject results = response.getEntity(JSONObject.class);
@@ -212,9 +351,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private SalesForceMember createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
         String name = extractString(record, "Name");
+        String id = extractString(record, "Id");
         SalesForceMember member = new SalesForceMember();
         member.setName(name);
-        member.setId(extractString(record, "Id"));
+        member.setId(id);
+        member.setSlug(createSlug(id, name));
         try {
             member.setWebsiteUrl(extractURL(record, "Website"));
         } catch (MalformedURLException e) {
@@ -250,9 +391,29 @@ public class SalesForceManagerImpl implements SalesForceManager {
      */
     private SalesForceDetails retrieveDetailsFromSalesForce(String accessToken, String memberId, String consortiumLeadId) throws SalesForceUnauthorizedException {
         SalesForceDetails details = new SalesForceDetails();
-        details.setParentOrgName(retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId));
+        String parentOrgName = retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId);
+        details.setParentOrgName(parentOrgName);
+        details.setParentOrgSlug(createSlug(consortiumLeadId, parentOrgName));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
+        details.setContacts(findContacts(memberId, consortiumLeadId));
+        details.setSubMembers(findSubMembers(memberId));
         return details;
+    }
+
+    private List<SalesForceContact> findContacts(String memberId, String consortiumLeadId) {
+        if (consortiumLeadId != null) {
+            SalesForceConsortium consortium = retrieveConsortium(consortiumLeadId);
+            Optional<SalesForceOpportunity> opp = consortium.getOpportunities().stream().filter(e -> memberId.equals(e.getTargetAccountId())).findFirst();
+            if (opp.isPresent()) {
+                String oppId = opp.get().getId();
+                return retrieveContactsByOpportunityId(oppId);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    private List<SalesForceMember> findSubMembers(String memberId) {
+        return retrieveMembers().stream().filter(e -> memberId.equals(e.getConsortiumLeadId())).collect(Collectors.toList());
     }
 
     private String retrieveParentOrgNameFromSalesForce(String accessToken, String consortiumLeadId) {
@@ -348,6 +509,63 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return integration;
     }
 
+    /**
+     * 
+     * @throws SalesForceUnauthorizedException
+     *             If the status code from SalesForce is 401, e.g. access token
+     *             expired.
+     * 
+     */
+    private List<SalesForceContact> retrieveContactsFromSalesForce(String accessToken, String opportunityId) throws SalesForceUnauthorizedException {
+        LOGGER.info("About get list of contacts from SalesForce");
+        validateSalesForceId(opportunityId);
+        WebResource resource = createContactsResource(opportunityId);
+        ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        checkAuthorization(response);
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
+                    + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
+        }
+        return createContactsFromResponse(response);
+    }
+
+    private WebResource createContactsResource(String opportunityId) {
+        WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
+                "SELECT (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('Main Contact','Tech Lead')) FROM Opportunity WHERE Id='"
+                        + validateSalesForceId(opportunityId) + "'");
+        return resource;
+    }
+
+    private List<SalesForceContact> createContactsFromResponse(ClientResponse response) {
+        ArrayList<SalesForceContact> contacts = new ArrayList<>();
+        JSONObject results = response.getEntity(JSONObject.class);
+        try {
+            JSONArray records = results.getJSONArray("records");
+            if (records.length() > 0) {
+                JSONObject firstRecord = records.getJSONObject(0);
+                JSONObject opportunityContactRoleObject = extractObject(firstRecord, "OpportunityContactRoles");
+                if (opportunityContactRoleObject != null) {
+                    JSONArray contactRecords = opportunityContactRoleObject.getJSONArray("records");
+                    for (int i = 0; i < contactRecords.length(); i++) {
+                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(i)));
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
+        }
+        return contacts;
+    }
+
+    private SalesForceContact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {
+        SalesForceContact contact = new SalesForceContact();
+        contact.setRole(extractString(contactRecord, "Role"));
+        JSONObject contactDetails = extractObject(contactRecord, "Contact");
+        contact.setName(extractString(contactDetails, "Name"));
+        contact.setEmail(extractString(contactDetails, "Email"));
+        return contact;
+    }
+
     private JSONObject extractObject(JSONObject parent, String key) throws JSONException {
         if (parent.isNull(key)) {
             return null;
@@ -362,6 +580,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return record.getString(key);
     }
 
+    private int extractInt(JSONObject record, String key) throws JSONException {
+        if (record.isNull(key)) {
+            return -1;
+        }
+        return record.getInt(key);
+    }
+
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
         String urlString = tidyUrl(extractString(record, key));
         return urlString != null ? new URL(urlString) : null;
@@ -371,10 +596,30 @@ public class SalesForceManagerImpl implements SalesForceManager {
         if (StringUtils.isBlank(urlString)) {
             return null;
         }
+        // We were getting a
+        // http://www.fileformat.info/info/unicode/char/feff/index.htm at the
+        // beginning of one logo URL from SF.
+        urlString = urlString.replaceAll("\\p{C}", "");
+        urlString = urlString.trim();
         if (!urlString.matches("^.*?://.*")) {
             urlString = "http://" + urlString;
         }
         return urlString;
+    }
+
+    private String extractIdFromUrl(String url) {
+        if (url == null) {
+            return null;
+        }
+        int slashIndex = url.lastIndexOf('/');
+        if (slashIndex == -1) {
+            throw new IllegalArgumentException("Unable to extract ID, url = " + url);
+        }
+        return url.substring(slashIndex + 1);
+    }
+
+    private String createSlug(String id, String name) {
+        return id + SLUG_SEPARATOR + slugify.slugify(name);
     }
 
     private String getAccessToken() {

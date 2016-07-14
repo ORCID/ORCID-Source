@@ -62,7 +62,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
             if (baseControllerUtil.getCurrentUser(sci) == null) {
                 if (session != null)
                     new HttpSessionRequestCache().saveRequest(request, response);
-                response.sendRedirect(request.getContextPath() + "/oauth/signin?" + request.getQueryString());
+                response.sendRedirect(orcidUrlManager.getBaseUrl() + "/oauth/signin?" + request.getQueryString());
                 return;
             }
         }

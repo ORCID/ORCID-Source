@@ -57,7 +57,7 @@ public interface OrcidOauth2TokenDetailService {
     List<OrcidOauth2TokenDetail> findByClientIdAndUserName(String clientId, String userName);
     
     /**
-     * This should NOT delete the row, but merely remove the value from it
+     * This should NOT delete the row, but merely set it as disabled
      * 
      * @param accessToken
      *            the value to use to identify the row containing the access
@@ -65,6 +65,17 @@ public interface OrcidOauth2TokenDetailService {
      */
     void disableAccessToken(String accessToken);
 
+    
+    /**
+     * This should NOT delete the row, but merely set it as disabled
+     * 
+     * @param tokenId
+     *            the id of the token that should be disabled
+     * @param userOrcid
+     *            the id of the user owner of the token
+     */
+    void disableAccessToken(Long tokenId, String userOrcid);
+    
     /**
      * This should NOT delete the row, but merely remove the value from it
      * 

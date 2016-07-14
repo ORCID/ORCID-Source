@@ -38,35 +38,8 @@
                         	<span ng-bind-html="renderHtml(member.description)" ng-show="member.description"></span>
                         </p>
 						<div class="clear-fix">
-							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id, member.consortiumLeadId)">Member details
-								<i class="glyphicon x075" ng-class="displayMoreDetails[member.id] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'"></i>
-							</a>
-							
+						    <a ng-href="{{membersListSrvc.getMemberPageUrl(member.slug)}}">Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
 						</div>
-
-                        <div ng-show="displayMoreDetails[member.id]">
-                        	<hr>
-                            <p><b>Consortium/Parent Organization: </b> 
-                            <span ng-show="membersListSrvc.memberDetails[member.id].parentOrgName">{{membersListSrvc.memberDetails[member.id].parentOrgName}}</span>
-                            <span ng-hide="membersListSrvc.memberDetails[member.id].parentOrgName">None</span>
-                            <h3>Integrations</h3>
-                            <div ng-show="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations">
-                                <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
-                                <p>
-                                	<span ng-bind-html="renderHtml(integration.description)" ng-show="integration.description">
-	                                	
-	                                </span>
-	                           </p>
-	                           <p>
-	                                <span ng-show="integration.resourceUrl">
-	                                	<a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
-	                                </span>
-                                </p>
-                            </div>
-                            <div ng-hide="membersListSrvc.memberDetails[member.id].integrations.length"> 
-                                <p>This member has not completed any integrations.</p>
-                            </div>
-                        </div>
                         <hr></hr>
                     </div>
                 </div>
