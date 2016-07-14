@@ -16,10 +16,13 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.Date;
+
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.TokenRequest;
@@ -48,17 +51,24 @@ public class OrcidRefreshTokenTokenGranter implements TokenGranter {
         }
         
         String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
-        
-        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
-        
-        //Verify the token is not expired
-        
-        
-        //TODO: compare token values against the user, the refresh token and other validations
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
         String revokeOldString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD);
         String expireInString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN);
+        String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
+        
+        
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
+        
+        //Verify the token is not expired
+        if(token.getTokenExpiration() != null) {
+            if(token.getTokenExpiration().before(new Date())) {
+                throw new InvalidTokenException("Access token expired: " + authorization);
+            }
+        }
+        
+        //TODO: compare token values against the user, the refresh token and other validations
+        
         
         return null;
     }

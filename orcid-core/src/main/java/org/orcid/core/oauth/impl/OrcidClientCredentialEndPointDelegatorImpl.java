@@ -186,6 +186,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             authorizationParameters.put(OrcidOauth2Constants.AUTHORIZATION, authorization);
             authorizationParameters.put(OrcidOauth2Constants.REVOKE_OLD, String.valueOf(revokeOld));
             authorizationParameters.put(OrcidOauth2Constants.EXPIRE_IN, String.valueOf(expireIn));
+            authorizationParameters.put(OrcidOauth2Constants.REFRESH_TOKEN, String.valueOf(refreshToken));
         }        
         
         if (redirectUri != null) {
@@ -198,12 +199,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         Object params[] = {grantType};
         if (token == null) {
-            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
-                    clientId, grantType, refreshToken, code, scopes, state, redirectUri });
+            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
+                    clientId, grantType, code, scopes, state, redirectUri });
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
-        LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
-                clientId, grantType, refreshToken, code, scopes, state, redirectUri, token });
+        LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
+                clientId, grantType, code, scopes, state, redirectUri, token });
         
         return token;
     }
