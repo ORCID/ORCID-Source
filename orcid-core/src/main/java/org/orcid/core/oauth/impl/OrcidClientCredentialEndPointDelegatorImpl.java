@@ -62,7 +62,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
     @Resource
-    protected LocaleManager localeManager;
+    protected LocaleManager localeManager;        
     
     @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {

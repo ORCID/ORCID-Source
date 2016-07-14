@@ -25,6 +25,8 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
+	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+
 	<!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
@@ -55,14 +57,12 @@
         <sec:user name="ORCID-T1-CLIENT-V1" authorities="ROLE_SYSTEM"/>
     </sec:user-service>
 
-
 	<!-- Create for the filtering of Oauth2 resources -->
     <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="oauthAuthenticationEntryPoint"/>
 	
 	<!-- User web expressions to aid the syntax of protection -->
     <oauth2:web-expression-handler id="oauthWebExpressionHandler" />		
 	
-
 	<!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
     <sec:authentication-manager id="clientAuthenticationManager">
         <sec:authentication-provider ref="orcidAuthenticationProvider" />
@@ -78,64 +78,11 @@
 		<property name="userDetailsService" ref="clientDetailsUserService" />
 	</bean>
 
-	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
-        <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>
-     </bean>
-
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID T1 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
-    </bean>
-	
-    <bean id="oauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
-        <property name="messageConverters">
-            <list>            
-                <ref bean="orcidJsonMessageConverter"/>
-                <ref bean="orcidXmlMessageConverter"/>
-            </list>
-        </property>
-     </bean>
-     
-    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-    	<property name="supportedMediaTypes">
-            <list value-type="org.springframework.http.MediaType">                
-                <bean class="org.springframework.http.MediaType">
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="json"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="orcid+json"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
-                </bean>
-            </list>
-        </property>    
-    </bean>
-    
-    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-    	<property name="supportedMediaTypes">
-            <list value-type="org.springframework.http.MediaType">
-                <bean class="org.springframework.http.MediaType">
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="xml"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="orcid+xml"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
-                </bean>
-            </list>
-        </property>    
-    </bean>        
-    
-    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
-    
-    
+    </bean>	    
+         
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />        
 </beans>      

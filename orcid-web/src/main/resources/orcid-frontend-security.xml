@@ -28,6 +28,8 @@
 
 	<context:annotation-config />
 	
+	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+	
 	<bean class="org.orcid.frontend.spring.web.social.config.SocialConfig"/>
 	
 	<sec:global-method-security pre-post-annotations="enabled" />
@@ -357,8 +359,6 @@
 
     <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
 		
-	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-	
 	<bean id="switchUserProcessingFilter" class="org.orcid.frontend.web.filter.OrcidSwitchUserFilter">
 		<property name="userDetailsService" ref="userDetailsService" />
 		<property name="switchUserUrl" value="/switch-user" />
