@@ -28,14 +28,14 @@
                         <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
                     <![endif]-->
                 </div>
-                <div ng-show="membersListSrvc.consortiaList">
+                <div ng-if="membersListSrvc.consortiaList" ng-cloak>
                     <p>There are {{membersListSrvc.consortiaList.length}} ORCID consortia</p>
                     <div class="member" ng-repeat="member in membersListSrvc.consortiaList | orderBy : 'name'">
-                        <h2>{{member.name}}</h2>
-                        <p>{{member.researchCommunity}} | {{member.country}}</p>
+                        <h2 ng-cloak>{{member.name}}</h2>
+                        <p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
                         <p>
                         	<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}">
-                        	<span ng-bind-html="renderHtml(member.description)" ng-show="member.description"></span>
+                        	<span ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></span>
                         </p>
 						<div class="clear-fix">
 							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id, member.consortiumLeadId)">Consortium details
@@ -44,21 +44,21 @@
 							
 						</div>
 
-                        <div ng-show="displayMoreDetails[member.id]">
+                        <div ng-if="displayMoreDetails[member.id]" ng-cloak>
                         	<hr>
                             <p><b>Consortium/Parent Organization: </b> 
-                            <span ng-show="membersListSrvc.memberDetails[member.id].parentOrgName">{{membersListSrvc.memberDetails[member.id].parentOrgName}}</span>
+                            <span ng-if="membersListSrvc.memberDetails[member.id].parentOrgName" ng-cloak>{{membersListSrvc.memberDetails[member.id].parentOrgName}}</span>
                             <span ng-hide="membersListSrvc.memberDetails[member.id].parentOrgName">None</span>
                             <h3>Integrations</h3>
-                            <div ng-show="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations">
+                            <div ng-if="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations" ng-cloak>
                                 <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
                                 <p>
-                                	<span ng-bind-html="renderHtml(integration.description)" ng-show="integration.description">
+                                	<span ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
 	                                	
 	                                </span>
 	                           </p>
 	                           <p>
-	                                <span ng-show="integration.resourceUrl">
+	                                <span ng-if="integration.resourceUrl" ng-cloak>
 	                                	<a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
 	                                </span>
                                 </p>

@@ -6572,6 +6572,22 @@ a:hover .mozilla-badge{
 	height: 30px;
 }
 
+.member-list [class*="col"]{
+	padding-left: 10px;
+}
+
+.member-list .member-logo{
+	width: auto;
+	height: auto;
+	max-width: 100px;
+	max-height: 100px;
+}
+
+.member-list h3{
+	color: #a6ce39;
+	margin-top: 0;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -7838,6 +7854,10 @@ a:hover .mozilla-badge{
 		vertical-align: initial;		
 	}
 	
+	.member-list p.logo-holder{
+		text-align: center;
+	}
+	
 
 }
 
@@ -8088,12 +8108,4 @@ a:hover .mozilla-badge{
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
 	
-}
-
-.member-logo{
-	max-width: 150px;
-	max-height: 150px;
-	display: block;
-	float: left;
-	margin: 0 10px 10px 0;
 }
