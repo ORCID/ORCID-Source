@@ -20,6 +20,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.Is.is;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -37,7 +40,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -67,6 +72,9 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -129,11 +137,11 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
+    @Transactional    
     public void testRemoveAccessToken() throws Exception {
-        OAuth2AccessToken accessToken = new DefaultOAuth2AccessToken("some-long-oauth2-token-value-1");
+        OAuth2AccessToken accessToken = new DefaultOAuth2AccessToken("code3");
         orcidTokenStoreService.removeAccessToken(accessToken);
-        OAuth2AccessToken oAuth2AccessToken = orcidTokenStoreService.readAccessToken("some-long-oauth2-token-value-1");
+        OAuth2AccessToken oAuth2AccessToken = orcidTokenStoreService.readAccessToken("code3");
         assertNull(oAuth2AccessToken);
     }
 
@@ -204,5 +212,55 @@ public class OrcidTokenStoreServiceTest extends DBUnitTest {
         Collection<OAuth2AccessToken> tokensByClientId = orcidTokenStoreService.findTokensByClientId("4444-4444-4444-4441");
         assertNotNull(tokensByClientId);
         assertEquals(1, tokensByClientId.size());
+    }
+    
+    @Test
+    public void testDisabledTokensAreNotReturnedWhenLookingByClientAndUserName() {
+        String clientId = "4444-4444-4444-4441";
+        String userId = "0000-0000-0000-0001";
+        OrcidOauth2TokenDetail token1 = createAccessToken("enabled-1", "/read-limited", clientId, userId, false);
+        assertNotNull(token1);
+        assertNotNull(token1.getId());
+        
+        OrcidOauth2TokenDetail token2 = createAccessToken("enabled-2", "/read-limited", clientId, userId, false);
+        assertNotNull(token2);
+        assertNotNull(token2.getId());
+        
+        OrcidOauth2TokenDetail token3 = createAccessToken("enabled-3", "/read-limited", clientId, userId, false);
+        assertNotNull(token3);
+        assertNotNull(token3.getId());
+        
+        OrcidOauth2TokenDetail disabledToken1 = createAccessToken("disabled-1", "/read-limited", clientId, userId, true);
+        assertNotNull(disabledToken1);
+        assertNotNull(disabledToken1.getId());
+        
+        OrcidOauth2TokenDetail disabledToken2 = createAccessToken("disabled-2", "/read-limited", clientId, userId, true);
+        assertNotNull(disabledToken2);
+        assertNotNull(disabledToken2.getId());
+        
+        OrcidOauth2TokenDetail disabledToken3 = createAccessToken("disabled-3", "/read-limited", clientId, userId, true);
+        assertNotNull(disabledToken3);
+        assertNotNull(disabledToken3.getId());
+        
+        Collection<OAuth2AccessToken> tokens = orcidTokenStoreService.findTokensByClientIdAndUserName(clientId, userId);
+        assertNotNull(tokens);
+        assertEquals(3, tokens.size());
+        
+        for(OAuth2AccessToken token : tokens) {
+            assertThat(token.getValue(), anyOf(is("enabled-1"), is("enabled-2"), is("enabled-3")));
+        }
+    }
+    
+    private OrcidOauth2TokenDetail createAccessToken(String tokenValue, String scope, String clientId, String userOrcid, boolean disabled) {
+        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
+        token.setApproved(true);
+        token.setClientDetailsId(clientId);
+        token.setDateCreated(new Date());
+        token.setProfile(new ProfileEntity(userOrcid));
+        token.setScope(scope);
+        token.setTokenDisabled(disabled);
+        token.setTokenValue(tokenValue);        
+        orcidOauth2TokenDetailService.saveOrUpdate(token);
+        return token;
     }
 }

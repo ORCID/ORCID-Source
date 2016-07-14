@@ -29,8 +29,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -39,26 +44,37 @@ import static org.mockito.Mockito.*;
 
 public class OAuthAuthorizeNotSignedInFilterTest {
 
-    @Test
-    public void nullSession() throws IOException, ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
+    @InjectMocks
+    OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
 
-        when(request.getContextPath()).thenReturn("http://test.com");
-        when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
-        setUpRequestForExpectedSpringFoo(request);
-        when(request.getQueryString()).thenReturn("test_param=param");
-        when(request.getSession(false)).thenReturn(null);
+    @Mock
+    OrcidUrlManager orcidUrlManager;
 
-        OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
-        oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
+    @Mock
+    HttpServletRequest request;
 
-        verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
-        verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
-    }
+    @Mock
+    HttpServletResponse response;
 
-    public void setUpRequestForExpectedSpringFoo(HttpServletRequest request) {
+    @Mock
+    HttpSession session;
+
+    @Mock
+    FilterChain chain;
+
+    @Mock
+    SecurityContext context;
+
+    @Mock
+    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
+
+    @Mock
+    OrcidProfileUserDetails orcidProfileUserDetails;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        when(orcidUrlManager.getBaseUrl()).thenReturn("http://test.com");
         when(request.getHeaderNames()).thenReturn(new Vector<String>().elements());
         when(request.getLocales()).thenReturn(new Vector<Locale>().elements());
         when(request.getParameterMap()).thenReturn(new HashMap<String, String[]>());
@@ -67,20 +83,26 @@ public class OAuthAuthorizeNotSignedInFilterTest {
     }
 
     @Test
-    public void noSecurityContext() throws IOException, ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        HttpSession session = mock(HttpSession.class);
-        FilterChain chain = mock(FilterChain.class);
-
+    public void nullSession() throws IOException, ServletException {
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
-        setUpRequestForExpectedSpringFoo(request);
+        when(request.getQueryString()).thenReturn("test_param=param");
+        when(request.getSession(false)).thenReturn(null);
+
+        oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
+
+        verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
+        verify(chain, never()).doFilter(Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void noSecurityContext() throws IOException, ServletException {
+        when(request.getContextPath()).thenReturn("http://test.com");
+        when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
         when(request.getSession(false)).thenReturn(session);
 
-        OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
         verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
@@ -89,21 +111,13 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
     @Test
     public void noAuthentication() throws IOException, ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        HttpSession session = mock(HttpSession.class);
-        SecurityContext context = mock(SecurityContext.class);
-        FilterChain chain = mock(FilterChain.class);
-
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
-        setUpRequestForExpectedSpringFoo(request);
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession()).thenReturn(session);
         when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("SPRING_SECURITY_CONTEXT")).thenReturn(context);
 
-        OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
         verify(response).sendRedirect("http://test.com/oauth/signin?test_param=param");
@@ -112,14 +126,6 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
     @Test
     public void hasOrcidProfileUserDetails() throws IOException, ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        HttpSession session = mock(HttpSession.class);
-        SecurityContext context = mock(SecurityContext.class);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = mock(UsernamePasswordAuthenticationToken.class);
-        OrcidProfileUserDetails orcidProfileUserDetails = mock(OrcidProfileUserDetails.class);
-        FilterChain chain = mock(FilterChain.class);
-
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/authorize");
         when(request.getQueryString()).thenReturn("test_param=param");
@@ -130,7 +136,6 @@ public class OAuthAuthorizeNotSignedInFilterTest {
         when(context.getAuthentication()).thenReturn(usernamePasswordAuthenticationToken);
         when(usernamePasswordAuthenticationToken.getPrincipal()).thenReturn(orcidProfileUserDetails);
 
-        OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
         verify(response, never()).sendRedirect(Mockito.anyString());
@@ -139,16 +144,11 @@ public class OAuthAuthorizeNotSignedInFilterTest {
 
     @Test
     public void notUriOauthAuthorize() throws IOException, ServletException {
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        HttpServletResponse response = mock(HttpServletResponse.class);
-        FilterChain chain = mock(FilterChain.class);
-
         when(request.getContextPath()).thenReturn("http://test.com");
         when(request.getRequestURI()).thenReturn("http://test.com/oauth/signin");
         when(request.getQueryString()).thenReturn("test_param=param");
         when(request.getSession(false)).thenReturn(null);
 
-        OAuthAuthorizeNotSignedInFilter oaFilter = new OAuthAuthorizeNotSignedInFilter();
         oaFilter.doFilter((ServletRequest) request, (ServletResponse) response, chain);
 
         verify(response, never()).sendRedirect(Mockito.anyString());
