@@ -249,47 +249,5 @@
         <property name="realmName" value="ORCID T2 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="orcidOauthExceptionRenderer"/>
-    </bean>
-    
-    <!-- Use the composite granter to enable granting of tokens for both client credentials and auth codes -->
-    <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
-        <constructor-arg>
-            <list>
-                <ref bean="clientCredentialsTokenGranter"/>
-                <ref bean="authorizationCodeTokenGranter"/>
-            </list>
-        </constructor-arg>
-    </bean>
-
-    <!-- A token granter for the client credentials -->
-    <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
-        <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="orcidClientCredentialsChecker"/>
-    </bean>
-
-    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">        
-        <constructor-arg ref="oAuth2RequestFactory" />
-    </bean>
-
-    <!-- The 'granter responsible for returning and removing the auth codes -->
-    <bean id="authorizationCodeTokenGranter" class="org.orcid.core.oauth.OrcidAuthorizationCodeTokenGranter">
-        <constructor-arg ref="orcidAuthorizationCodeService"/>
-        <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="clientDetailsManager"/>
-        <constructor-arg ref="oAuth2RequestFactory" />
-    </bean>
-
-    <!-- An extension of RandomValueAuthorizationCodeServices to create and remove authorisation codes -->
-    <bean id="orcidAuthorizationCodeService" class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl"/>
-
-    <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
-    <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
-        <property name="tokenGranter" ref="tokenGranter"/>
-        <property name="clientDetailsService" ref="clientDetailsManager"/>        
-    </bean>    
-    
-    <bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
-        <constructor-arg ref="clientDetailsManager"/>
-    </bean>
-    
+    </bean>            
 </beans>

@@ -66,8 +66,12 @@ public class OauthGenericCallsController extends OauthControllerBase {
             formParams.add(paramName, request.getParameter(paramName));
         }
                         
-        Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
-        return JsonUtils.convertToJsonString(response.getEntity());
+        try {
+            Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
+            return JsonUtils.convertToJsonString(response.getEntity());
+        } catch(Exception e) {
+            return JsonUtils.convertToJsonString(e);
+        }
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
