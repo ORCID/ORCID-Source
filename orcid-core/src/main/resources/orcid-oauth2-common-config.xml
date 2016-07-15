@@ -131,8 +131,7 @@
 	</bean>
 
 	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker">
-		<constructor-arg ref="oAuth2RequestFactory" />
-		<constructor-arg ref="orcidOauth2TokenDetailDao" />
+		<constructor-arg ref="oAuth2RequestFactory" />		
 	</bean>
 	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">
 		<constructor-arg ref="tokenServices" />
