@@ -68,7 +68,9 @@ public class PopulateOAuthSignInCodeIntegrationTest extends BlackBoxBaseRC2 {
         // test populating form with email that doesn't exist
         String url = authorizeScreen + "&email=non_existent@test.com&family_names=test_family_names&given_names=test_given_name";
         webDriver.get(url);
-        By element = By.xpath("//input[@name='email']");
+        BBBUtil.documentReady();
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        By element = By.xpath("//input[@id='register-form-email']");
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(element), webDriver);       
         assertTrue(webDriver.findElement(element).getAttribute("value").equals("non_existent@test.com"));
         assertTrue(webDriver.findElement(By.xpath("//input[@name='familyNames']")).getAttribute("value").equals("test_family_names"));
