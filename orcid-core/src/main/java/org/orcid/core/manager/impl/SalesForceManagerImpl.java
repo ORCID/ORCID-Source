@@ -238,7 +238,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private WebResource createMemberListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
+                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
         return resource;
     }
 
@@ -263,7 +263,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private WebResource createConsortiaListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Id, Name, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c > TODAY) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
+                "SELECT Id, Name, Website, Research_Community__c, BillingCountry, Public_Display_Description__c, Logo_Description__c, (SELECT Opportunity.Id FROM Opportunities WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id IN (SELECT Consortia_Lead__c FROM Opportunity) AND Active_Member__c=TRUE");
         return resource;
     }
 
@@ -366,11 +366,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
         JSONObject opportunitiesObject = extractObject(record, "Opportunities");
         if (opportunitiesObject != null) {
             JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
-            for (int i = 0; i < opportunitiesArray.length(); i++) {
-                String consortiumLeadId = extractString(opportunitiesArray.getJSONObject(i), "Consortia_Lead__c");
-                if (consortiumLeadId != null) {
-                    member.setConsortiumLeadId(consortiumLeadId);
-                }
+            if (opportunitiesArray.length() > 0) {
+                JSONObject mainOpportunity = opportunitiesArray.getJSONObject(0);
+                JSONObject mainOppAttributes = extractObject(mainOpportunity, "attributes");
+                member.setMainOpportunityId(extractIdFromUrl(extractString(mainOppAttributes, "url")));
+                member.setConsortiumLeadId(extractString(mainOpportunity, "Consortia_Lead__c"));
             }
         }
         member.setDescription(extractString(record, "Public_Display_Description__c"));
@@ -395,18 +395,35 @@ public class SalesForceManagerImpl implements SalesForceManager {
         details.setParentOrgName(parentOrgName);
         details.setParentOrgSlug(createSlug(consortiumLeadId, parentOrgName));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
-        details.setContacts(findContacts(memberId, consortiumLeadId));
+        List<SalesForceMember> members = retrieveMembers();
+        Optional<SalesForceMember> match = members.stream().filter(e -> memberId.equals(e.getId())).findFirst();
+        if (match.isPresent()) {
+            SalesForceMember salesForceMember = match.get();
+            details.setMember(salesForceMember);
+            details.setContacts(findContacts(salesForceMember));
+        }
         details.setSubMembers(findSubMembers(memberId));
         return details;
     }
 
-    private List<SalesForceContact> findContacts(String memberId, String consortiumLeadId) {
+    private List<SalesForceContact> findContacts(SalesForceMember member) {
+        String memberId = member.getId();
+        String consortiumLeadId = member.getConsortiumLeadId();
         if (consortiumLeadId != null) {
             SalesForceConsortium consortium = retrieveConsortium(consortiumLeadId);
             Optional<SalesForceOpportunity> opp = consortium.getOpportunities().stream().filter(e -> memberId.equals(e.getTargetAccountId())).findFirst();
             if (opp.isPresent()) {
                 String oppId = opp.get().getId();
                 return retrieveContactsByOpportunityId(oppId);
+            }
+        } else {
+            // It might be a consortium
+            Optional<SalesForceMember> consortium = retrieveConsortia().stream().filter(e -> memberId.equals(e.getId())).findFirst();
+            if (consortium.isPresent()) {
+                String mainOpportunityId = consortium.get().getMainOpportunityId();
+                if (mainOpportunityId != null) {
+                    return retrieveContactsByOpportunityId(mainOpportunityId);
+                }
             }
         }
         return Collections.emptyList();
