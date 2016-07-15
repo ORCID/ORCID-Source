@@ -31,43 +31,22 @@
                 <div ng-if="membersListSrvc.consortiaList" ng-cloak>
                     <p>There are {{membersListSrvc.consortiaList.length}} ORCID consortia</p>
                     <div class="member" ng-repeat="member in membersListSrvc.consortiaList | orderBy : 'name'">
-                        <h2 ng-cloak>{{member.name}}</h2>
-                        <p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
-                        <p>
-                        	<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}">
-                        	<span ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></span>
-                        </p>
-						<div class="clear-fix">
-							<a class="toggle-text" href="" ng-click="toggleDisplayMoreDetails(member.id, member.consortiumLeadId)">Consortium details
-								<i class="glyphicon x075" ng-class="displayMoreDetails[member.id] ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'"></i>
-							</a>
-							
-						</div>
-
-                        <div ng-if="displayMoreDetails[member.id]" ng-cloak>
-                        	<hr>
-                            <p><b>Consortium/Parent Organization: </b> 
-                            <span ng-if="membersListSrvc.memberDetails[member.id].parentOrgName" ng-cloak>{{membersListSrvc.memberDetails[member.id].parentOrgName}}</span>
-                            <span ng-hide="membersListSrvc.memberDetails[member.id].parentOrgName">None</span>
-                            <h3>Integrations</h3>
-                            <div ng-if="membersListSrvc.memberDetails[member.id].integrations" ng-repeat="integration in membersListSrvc.memberDetails[member.id].integrations" ng-cloak>
-                                <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
-                                <p>
-                                	<span ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
-	                                	
-	                                </span>
-	                           </p>
-	                           <p>
-	                                <span ng-if="integration.resourceUrl" ng-cloak>
-	                                	<a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
-	                                </span>
-                                </p>
-                            </div>
-                            <div ng-hide="membersListSrvc.memberDetails[member.id].integrations.length"> 
-                                <p>This member has not completed any integrations.</p>
-                            </div>
-                        </div>
-                        <hr></hr>
+                        <hr />
+	                    	<div class="col-md-12 col-sm-12 col-xs-12">
+	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
+	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
+	                        </div>
+	                        <div class="col-md-2 col-sm-2 col-xs-12">
+	                        	<p class="logo-holder">
+	                        		<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}"  ng-cloak>
+	                        	</p>
+	                        </div>
+	                        <div class="col-md-10 col-sm-10 col-xs-12">
+	                        	<p ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></p>
+	                        	<p>
+	                        		<a ng-href="{{membersListSrvc.getMemberPageUrl(member.slug)}}" ng-cloak>Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
+	                        	</p>
+	                        </div>
                     </div>
                 </div>
             </div>
