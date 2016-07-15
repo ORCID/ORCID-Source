@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -266,21 +267,23 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         int privacyIndex = getPrivacyIndex(changeTo);
         
         try {
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
             By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
             (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
             BBBUtil.ngAwareClick(webDriver.findElement(openEditOtherNames), webDriver);
             
-            By namesVisibility = By.xpath("//div[@id = 'other-names-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
-            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
-            namesVisibilityElement.click();
+            By namesVisibility = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(namesVisibility));
+            List<WebElement> namesVisibilityElements = webDriver.findElements(namesVisibility);
+               for (WebElement webElement:namesVisibilityElements)
+                   BBBUtil.ngAwareClick(webElement, webDriver);
             
-            By saveButton = By.xpath("//div[@id = 'other-names-section']//ul[@class='workspace-section-toolbar']//li[2]//button");
+            By saveButton = By.xpath("//button[@ng-click='setOtherNamesForm(true)']");
             (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
             WebElement button = webDriver.findElement(saveButton);
-            button.click();
-            Thread.sleep(1000);
+            BBBUtil.ngAwareClick(button, webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         } catch (Exception e) {
             System.out.println("Unable to find biography-visibility-limited element");
             e.printStackTrace();
@@ -290,10 +293,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     
     private void changeBioVisibility(Visibility changeTo) throws Exception {
         int privacyIndex = getPrivacyIndex(changeTo);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         
         try {
             By bioOPrivacySelectorLimited = By.xpath("//div[@id = 'bio-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a"); 
-            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.presenceOfElementLocated(bioOPrivacySelectorLimited));            
+            (new WebDriverWait(webDriver, WAIT)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(bioOPrivacySelectorLimited));            
             WebElement bioOPrivacySelectorLimitedElement = webDriver.findElement(bioOPrivacySelectorLimited);
             bioOPrivacySelectorLimitedElement.click();  
             Thread.sleep(1000);
