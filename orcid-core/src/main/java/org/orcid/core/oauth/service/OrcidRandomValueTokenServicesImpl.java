@@ -32,7 +32,10 @@ import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +79,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     @Value("${org.orcid.core.token.write_validity_seconds:false}")
     private boolean customSupportRefreshToken;
+    
+    @Resource
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
@@ -241,25 +247,54 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     
     @Override
-    public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest)
-            throws AuthenticationException {
+    public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest) throws AuthenticationException {
         String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
         Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRE_IN)
-                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;        
-        
-        //Check if the refresh token is enabled
+                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;
+        Boolean revokeOld = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.REVOKE_OLD) ? true
+                : Boolean.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD));
+
+        // Check if the refresh token is enabled
         if (!customSupportRefreshToken) {
             throw new InvalidGrantException("Invalid refresh token: " + refreshTokenValue);
         }
-        //Check if the client support refresh token
+        // Check if the client support refresh token
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
-        if(!clientDetails.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.REFRESH_TOKEN)) {
+        if (!clientDetails.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.REFRESH_TOKEN)) {
             throw new InvalidGrantException("Client " + clientId + " doesnt have refresh token enabled");
         }
+
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
         
-        String revokeOldString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD);
+        OrcidOauth2TokenDetail newToken = new OrcidOauth2TokenDetail();
+        newToken.setApproved(true);
+        
+        newToken.setClientDetailsId(clientId);
+        newToken.setDateCreated(new Date());
+        newToken.setLastModified(new Date());
+        newToken.setPersistent(token.isPersistent());
+        ProfileEntity profileEntity = new ProfileEntity(token.getProfile().getId());
+        newToken.setProfile(profileEntity);
+        newToken.setRedirectUri(token.getRedirectUri());
+        newToken.setResourceId(token.getResourceId());
+        newToken.setResponseType(token.getResponseType());
+        newToken.setState(token.getState());
+        newToken.setTokenDisabled(false);
+        newToken.setTokenType(token.getTokenType());
+        newToken.setVersion(token.getVersion());
+        
+        //TODO: Set this values
+        newToken.setAuthenticationKey(null);//TODO: Generate the authentication key
+        newToken.setScope(null);//TODO: Set the scopes
+        newToken.setTokenValue(null); //TODO: Set the token value
+        newToken.setTokenExpiration(null); //TODO: Set the token expiration
+        
+        //TODO: Store the new token and return it
+        
+        //TODO: Transform the OrcidOauth2TokenDetail into a OAuth2AccessToken and return it
+        
         return null;
     }
 }
