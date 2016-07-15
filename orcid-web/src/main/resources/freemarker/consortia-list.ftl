@@ -19,8 +19,9 @@
 <@public classes=['home'] nav="consortia-list">
     <div class="row">        
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
-            <h1>ORCID Member Organizations</h1>
-            <p>ORCID is a non-profit organization supported by a global community of organizational members, including research organizations, publishers, funders, professional associations, and other stakeholders in the research ecosystem. Interested in becoming a member? <a href="<@orcid.rootPath '/about/membership'/>">Learn more about membership</a></p>
+            <h1>ORCID Consortia Members</h1>
+            <p>Consortia are groups of 5 or more non-profit and/or governmental organizations organizations taking a coordinated approach to ORCID implementation.
+			Interested in joining ORCID as a consortium? <a href="<@orcid.rootPath '/about/membership'/>">Learn more about membership</a></p>
             <div ng-controller="ConsortiaListController">
                 <div ng-hide="membersListSrvc.consortiaList != null" class="text-center">
                     <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
