@@ -77,12 +77,19 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    @Value("${org.orcid.core.token.write_validity_seconds:false}")
     private boolean customSupportRefreshToken;
     
     @Resource
-    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
+    private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;        
     
+    public boolean isCustomSupportRefreshToken() {
+        return customSupportRefreshToken;
+    }
+
+    public void setCustomSupportRefreshToken(boolean customSupportRefreshToken) {
+        this.customSupportRefreshToken = customSupportRefreshToken;
+    }
+
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
         OrcidOauth2AuthInfo authInfo = new OrcidOauth2AuthInfo(authentication);
@@ -242,9 +249,6 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         
         return false;
     }
-    
-    
-    
     
     @Override
     public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest) throws AuthenticationException {
