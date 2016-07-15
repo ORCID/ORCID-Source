@@ -30,21 +30,15 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.pojo.ajaxForm.PojoUtil;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
-import org.springframework.security.oauth2.provider.OAuth2Request;
-import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenRequest;
 
 /**
  * @author Angel Montenegro
  */
 public class OrcidRefreshTokenChecker {
-    @Value("${org.orcid.core.token.write_validity_seconds:3600}")
-    private int shotTokenValidity;
-
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
 
@@ -54,17 +48,10 @@ public class OrcidRefreshTokenChecker {
     @Resource
     private OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
 
-    private final OAuth2RequestFactory oAuth2RequestFactory;
-
-    public OrcidRefreshTokenChecker(OAuth2RequestFactory oAuth2RequestFactory) {
-        this.oAuth2RequestFactory = oAuth2RequestFactory;
-    }
-
-    public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
+    public void validateRequest(String grantType, TokenRequest tokenRequest, Long requestTimeInMillis) {
         String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
-        String revokeOldString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD);
         Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRE_IN)
                 ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;
         String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
@@ -115,24 +102,12 @@ public class OrcidRefreshTokenChecker {
         }
 
         // Validate the expiration for the new token is no later than the parent
-        // token expiration
-        if (expireIn <= 0) {
-            // shotTokenValidity should never be used, but, set this validation
-            // just in case
-            expireIn = token.getTokenExpiration() == null ? shotTokenValidity : token.getTokenExpiration().getTime();
-        } else {
-            //Validate that it will expire before the parent token
-            long parentTokenExpiration = token.getTokenExpiration() == null ? shotTokenValidity : token.getTokenExpiration().getTime();
-            long newTokenExpiration = System.currentTimeMillis() + expireIn;
-            if(newTokenExpiration > parentTokenExpiration) {
-                throw new InvalidScopeException("Token expiration cant be after " + token.getTokenExpiration());
-            }
+        // token expiration. token.getTokenExpiration() must never be null, if
+        // it is, assume the token expiration is now
+        long parentTokenExpiration = token.getTokenExpiration() == null ? System.currentTimeMillis() : token.getTokenExpiration().getTime();
+        long newTokenExpiration = requestTimeInMillis + (expireIn * 1000);
+        if (newTokenExpiration > parentTokenExpiration) {
+            throw new InvalidScopeException("Token expiration cant be after " + token.getTokenExpiration());
         }
-        
-        //TODO: Set the token expiration 
-        //TODO: disable the other token if needed
-        
-        // TODO
-        return null;
     }
 }

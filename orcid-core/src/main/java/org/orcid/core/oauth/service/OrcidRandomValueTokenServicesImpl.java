@@ -41,9 +41,12 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.TokenRequest;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -71,8 +74,8 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
     
-    public OrcidRandomValueTokenServicesImpl() {        
-    }
+    @Value("${org.orcid.core.token.write_validity_seconds:false}")
+    private boolean customSupportRefreshToken;
     
     @Override
     public OAuth2AccessToken createAccessToken(OAuth2Authentication authentication) throws AuthenticationException {
@@ -232,5 +235,31 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         }
         
         return false;
+    }
+    
+    
+    
+    
+    @Override
+    public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest)
+            throws AuthenticationException {
+        String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
+        String clientId = tokenRequest.getClientId();
+        String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
+        Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRE_IN)
+                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;        
+        
+        //Check if the refresh token is enabled
+        if (!customSupportRefreshToken) {
+            throw new InvalidGrantException("Invalid refresh token: " + refreshTokenValue);
+        }
+        //Check if the client support refresh token
+        ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);
+        if(!clientDetails.getAuthorizedGrantTypes().contains(OrcidOauth2Constants.REFRESH_TOKEN)) {
+            throw new InvalidGrantException("Client " + clientId + " doesnt have refresh token enabled");
+        }
+        
+        String revokeOldString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD);
+        return null;
     }
 }
