@@ -16,6 +16,18 @@
  */
 package org.orcid.core.oauth;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.orcid.core.constants.OrcidOauth2Constants;
+import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
+import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenRequest;
@@ -25,12 +37,57 @@ import org.springframework.security.oauth2.provider.TokenRequest;
  */
 public class OrcidRefreshTokenChecker {
     private final OAuth2RequestFactory oAuth2RequestFactory;
+    private final OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao;
     
-    public OrcidRefreshTokenChecker(OAuth2RequestFactory oAuth2RequestFactory) {
+    public OrcidRefreshTokenChecker(OAuth2RequestFactory oAuth2RequestFactory, OrcidOauth2TokenDetailDao orcidOauth2TokenDetailDao) {
         this.oAuth2RequestFactory = oAuth2RequestFactory;
+        this.orcidOauth2TokenDetailDao = orcidOauth2TokenDetailDao;
     }
     
     public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
+        String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
+        String clientId = tokenRequest.getClientId();
+        String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
+        String revokeOldString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD);
+        String expireInString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN);
+        String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
+                
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
+        
+        //Verify the token is not expired
+        if(token.getTokenExpiration() != null) {
+            if(token.getTokenExpiration().before(new Date())) {
+                throw new InvalidTokenException("Access token expired: " + authorization);
+            }
+        }
+        
+        //Verify access token and refresh token are linked
+        if(!refreshToken.equals(token.getRefreshTokenValue())) {
+            throw new InvalidTokenException("Token and refresh token does not match");
+        }
+        
+        //Verify scopes are not wider than the token scopes
+        if(PojoUtil.isEmpty(scopes)) {
+            scopes = token.getScope();
+        } else {
+            Set<ScopePathType> requiredScopes = ScopePathType.getScopesFromSpaceSeparatedString(scopes);
+            Set<ScopePathType> simpleTokenScopes = ScopePathType.getScopesFromSpaceSeparatedString(token.getScope());
+            //This collection contains all tokens that should be allowed given the scopes that the parent token contains
+            Set<ScopePathType> combinedTokenScopes = new HashSet<ScopePathType>();
+            for(ScopePathType scope : simpleTokenScopes) {
+                combinedTokenScopes.addAll(scope.combined());
+            }
+            
+            //Check that all requiredScopes are included in the list of combinedTokenScopes
+            for(ScopePathType scope : requiredScopes) {
+                if(!combinedTokenScopes.contains(scope)) {
+                    throw new InvalidScopeException("The given scope '" + scope + "' is not included in the parent token");
+                }
+            }
+        }
+        
+        
+        //TODO
         return null;
     }
 }
