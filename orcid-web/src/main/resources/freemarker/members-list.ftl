@@ -34,7 +34,7 @@
 	                
 	                <div ng-show="membersListSrvc.membersList">
 	                	<div class="col-md-12 col-sm-12 col-xs-12">
-	                    	<p ng-cloak>There are {{membersListSrvc.membersList.length}} ORCID members</p>
+	                    	<p ng-cloak>There are currently {{membersListSrvc.membersList.length}} ORCID member organizations.</p>
 	                    </div>
 	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | orderBy : 'name'">
 	                    	<hr />
@@ -42,13 +42,11 @@
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
 	                        </div>
-	                        <div class="col-md-2 col-sm-2 col-xs-12">
-	                        	<p class="logo-holder">
-	                        		<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}"  ng-cloak>
-	                        	</p>
-	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
-	                        	<p ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></p>
+	                        	<p>
+		                        	<img class="member-logo" src="{{member.logoUrl}}"  ng-cloak ng-if="member.logoUrl">
+		                        	<span class="member-decsription" ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></span>
+	                        	</p>
 	                        	<p>
 	                        		<a ng-href="{{membersListSrvc.getMemberPageUrl(member.slug)}}" ng-cloak>Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
 	                        	</p>

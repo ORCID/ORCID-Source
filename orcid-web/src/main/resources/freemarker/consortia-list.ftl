@@ -17,7 +17,7 @@
 
 -->
 <@public classes=['home'] nav="consortia-list">
-    <div class="row">        
+    <div class="member-list row">        
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <h1>ORCID Consortia Members</h1>
             <p>Consortia are groups of 5 or more non-profit and/or governmental organizations organizations taking a coordinated approach to ORCID implementation.
@@ -30,20 +30,18 @@
                     <![endif]-->
                 </div>
                 <div ng-if="membersListSrvc.consortiaList" ng-cloak>
-                    <p>There are {{membersListSrvc.consortiaList.length}} ORCID consortia</p>
+                    <p>There are currently {{membersListSrvc.consortiaList.length}} ORCID consortia members.</p>
                     <div class="member" ng-repeat="member in membersListSrvc.consortiaList | orderBy : 'name'">
                         <hr />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
 	                        </div>
-	                        <div class="col-md-2 col-sm-2 col-xs-12">
-	                        	<p class="logo-holder">
-	                        		<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}"  ng-cloak>
-	                        	</p>
-	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
-	                        	<p ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></p>
+	                        	<p>
+		                        	<img class="member-logo" src="{{member.logoUrl}}"  ng-cloak ng-if="member.logoUrl">
+		                        	<span class="member-decsription" ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></span>
+	                        	</p>
 	                        	<p>
 	                        		<a ng-href="{{membersListSrvc.getMemberPageUrl(member.slug)}}" ng-cloak>Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
 	                        	</p>
