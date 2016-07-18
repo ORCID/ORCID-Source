@@ -419,5 +419,11 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             }
         }
         return accessTokens;
-    }       
+    }  
+    
+    public String getAuthenticationKeyFromToken(String tokenValue) {
+        OrcidOauth2TokenDetail detail = orcidOauthTokenDetailService.findNonDisabledByTokenValue(tokenValue);
+        OAuth2Authentication authentication = getOAuth2AuthenticationFromDetails(detail);
+        return KEY_GENERATOR.extractKey(authentication);
+    }
 }

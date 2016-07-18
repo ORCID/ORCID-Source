@@ -74,7 +74,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         String scopeList = formParams.getFirst("scope");
         String grantType = formParams.getFirst("grant_type");
         Boolean revokeOld = formParams.containsKey("revoke_old") ? Boolean.valueOf(formParams.getFirst("revoke_old")) : false;
-        Long expireIn = formParams.containsKey("expires_in") ? Long.valueOf(formParams.getFirst("expires_in")) : -1;
+        Long expireIn = formParams.containsKey("expires_in") ? Long.valueOf(formParams.getFirst("expires_in")) : 0L;
         
         String bearerToken = null;
         Set<String> scopes = new HashSet<String>();

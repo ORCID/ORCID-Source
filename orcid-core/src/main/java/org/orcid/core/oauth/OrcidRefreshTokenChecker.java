@@ -79,6 +79,11 @@ public class OrcidRefreshTokenChecker {
             throw new InvalidTokenException("Token and refresh token does not match");
         }
 
+        // Verify the token is not disabled
+        if(token.getTokenDisabled() != null && token.getTokenDisabled()) {
+            throw new InvalidTokenException("Parent token is disabled");
+        }
+        
         // Verify scopes are not wider than the token scopes
         if (PojoUtil.isEmpty(scopes)) {
             scopes = token.getScope();
@@ -100,7 +105,7 @@ public class OrcidRefreshTokenChecker {
                 }
             }
         }
-
+        
         // Validate the expiration for the new token is no later than the parent
         // token expiration. token.getTokenExpiration() must never be null, if
         // it is, assume the token expiration is now
