@@ -6595,6 +6595,10 @@ a:hover .mozilla-badge{
 	margin: 0 0 10px 0;
 }
 
+.member-list a{
+	white-space: nowrap;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -7871,10 +7875,6 @@ a:hover .mozilla-badge{
 	.member-list .member-description{
 		display: block;
 		clear: both;
-	}
-
-	.member-list a{
-		white-space: nowrap;
 	}
 	
 
