@@ -443,6 +443,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
                 String oppId = opp.get().getId();
                 return retrieveContactsByOpportunityId(oppId);
             }
+        } else {
+            // It might be a consortium
+            Optional<SalesForceMember> consortium = retrieveConsortia().stream().filter(e -> memberId.equals(e.getId())).findFirst();
+            if (consortium.isPresent()) {
+                String mainOpportunityId = consortium.get().getMainOpportunityId();
+                if (mainOpportunityId != null) {
+                    return retrieveContactsByOpportunityId(mainOpportunityId);
+                }
+            }
         }
         return Collections.emptyList();
     }

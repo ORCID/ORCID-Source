@@ -49,7 +49,7 @@ public interface SalesForceManager {
     SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
 
     SalesForceDetails retrieveDetailsBySlug(String memberSlug);
-    
+
     List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId);
 
     Map<String, List<SalesForceContact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
