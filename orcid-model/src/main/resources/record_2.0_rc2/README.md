@@ -5,13 +5,6 @@ As of 2016-07-15 changes to v2.0_rc2 will be avoided. Further model changes will
 A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone
 undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
 
-# ORCID API v2.0_rc2 Guide
-
-## Current State (Release Candidate Stable)
-v2.0_rc2 is in current development and should be avoided.
-A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone 
-undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
-
 ## XSDs and current state (all stable)
 - [activities-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd) 
 **stable**, developement ongoing
