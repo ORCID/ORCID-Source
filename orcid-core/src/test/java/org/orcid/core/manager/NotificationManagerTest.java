@@ -220,7 +220,7 @@ public class NotificationManagerTest extends DBUnitTest {
         delegateEmail.setVerified(true);
         delegateProfileEntity.setPrimaryEmail(delegateEmail);
         delegateProfileEntity.setSendChangeNotifications(true);
-        delegateProfileEntity.setSendAdministrativeChangeNotifications(true);
+        //delegateProfileEntity.setSendAdministrativeChangeNotifications(true);
         profileDao.merge(delegateProfileEntity);
 
         for (Locale locale : Locale.values()) {
