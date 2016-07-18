@@ -52,8 +52,8 @@ public class OrcidRefreshTokenChecker {
         String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
-        Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRE_IN)
-                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;
+        Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRES_IN)
+                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
         String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
 
         OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
@@ -101,7 +101,7 @@ public class OrcidRefreshTokenChecker {
             // combinedTokenScopes
             for (ScopePathType scope : requiredScopes) {
                 if (!combinedTokenScopes.contains(scope)) {
-                    throw new InvalidScopeException("The given scope '" + scope + "' is not included in the parent token");
+                    throw new InvalidScopeException("The given scope '" + scope.value() + "' is not allowed for the parent token");
                 }
             }
         }

@@ -264,10 +264,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
 
-        Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRE_IN)
-                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;
-        Boolean revokeOld = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.REVOKE_OLD) ? true
-                : Boolean.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD));
+        Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRES_IN)
+                ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
+        Boolean revokeOld = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.REVOKE_OLD) ? Boolean.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD)) : true;
 
         // Check if the refresh token is enabled
         if (!customSupportRefreshToken) {
@@ -311,7 +310,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             newToken.setScope(scopes);
         }
 
-        if (OrcidTokenStoreServiceImpl.class.isAssignableFrom(orcidTokenStore.getClass())) {
+        if (orcidTokenStore instanceof OrcidTokenStoreServiceImpl) {
             OrcidTokenStoreServiceImpl tokenStore = (OrcidTokenStoreServiceImpl) orcidTokenStore;
             newToken.setAuthenticationKey(tokenStore.getAuthenticationKeyFromToken(parentTokenValue));
         } else {

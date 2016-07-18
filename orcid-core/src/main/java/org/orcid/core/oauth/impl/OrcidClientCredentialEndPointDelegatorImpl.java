@@ -66,15 +66,15 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     
     @Transactional
     public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
-        String clientId = formParams.getFirst("client_id");
         String code = formParams.getFirst("code");
-        String state = formParams.getFirst("state");
-        String redirectUri = formParams.getFirst("redirect_uri");
-        String refreshToken = formParams.getFirst("refresh_token");
-        String scopeList = formParams.getFirst("scope");
-        String grantType = formParams.getFirst("grant_type");
-        Boolean revokeOld = formParams.containsKey("revoke_old") ? Boolean.valueOf(formParams.getFirst("revoke_old")) : false;
-        Long expireIn = formParams.containsKey("expires_in") ? Long.valueOf(formParams.getFirst("expires_in")) : 0L;
+        String clientId = formParams.getFirst(OrcidOauth2Constants.CLIENT_ID_PARAM);        
+        String state = formParams.getFirst(OrcidOauth2Constants.STATE_PARAM);
+        String redirectUri = formParams.getFirst(OrcidOauth2Constants.REDIRECT_URI_PARAM);
+        String refreshToken = formParams.getFirst(OrcidOauth2Constants.REFRESH_TOKEN);
+        String scopeList = formParams.getFirst(OrcidOauth2Constants.SCOPE_PARAM);
+        String grantType = formParams.getFirst(OrcidOauth2Constants.GRANT_TYPE);
+        Boolean revokeOld = formParams.containsKey(OrcidOauth2Constants.REVOKE_OLD) ? Boolean.valueOf(formParams.getFirst(OrcidOauth2Constants.REVOKE_OLD)) : true;
+        Long expireIn = formParams.containsKey(OrcidOauth2Constants.EXPIRES_IN) ? Long.valueOf(formParams.getFirst(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
         
         String bearerToken = null;
         Set<String> scopes = new HashSet<String>();
@@ -185,7 +185,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             authorizationParameters.put(OrcidOauth2Constants.AUTHORIZATION, authorization);
             authorizationParameters.put(OrcidOauth2Constants.REVOKE_OLD, String.valueOf(revokeOld));
-            authorizationParameters.put(OrcidOauth2Constants.EXPIRE_IN, String.valueOf(expireIn));
+            authorizationParameters.put(OrcidOauth2Constants.EXPIRES_IN, String.valueOf(expireIn));
             authorizationParameters.put(OrcidOauth2Constants.REFRESH_TOKEN, String.valueOf(refreshToken));
         }        
         

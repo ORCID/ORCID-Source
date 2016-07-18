@@ -31,6 +31,8 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.utils.JsonUtils;
+import org.orcid.jaxb.model.message.ErrorDesc;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
 import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -42,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Controller("oauthGenericCallsController")
@@ -69,7 +72,10 @@ public class OauthGenericCallsController extends OauthControllerBase {
             Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
             return JsonUtils.convertToJsonString(response.getEntity());
         } catch(Exception e) {
-            return JsonUtils.convertToJsonString(e);
+            OrcidMessage errorMessage = new OrcidMessage();
+            errorMessage.setMessageVersion("1.2");
+            errorMessage.setErrorDesc(new ErrorDesc(e.getMessage()));
+            return JsonUtils.convertToJsonString(errorMessage);
         }
     }
     
