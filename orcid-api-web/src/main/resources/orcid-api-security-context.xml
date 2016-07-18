@@ -128,6 +128,6 @@
     <bean id="orcidOauthAuthenticationEntryPoint" class="org.orcid.api.common.exception.OrcidOAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID T2 API" />
         <property name="typeName" value="Bearer"/>
-        <property name="exceptionRenderer" ref="orcidOauthExceptionRenderer"/>
+        <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
     </bean>           
 </beans>
