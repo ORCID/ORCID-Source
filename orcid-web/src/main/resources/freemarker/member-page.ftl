@@ -25,13 +25,11 @@
 		            <h1 ng-cloak>{{membersListSrvc.currentMemberDetails.member.name}}</h1>
 		            <p ng-cloak>{{membersListSrvc.currentMemberDetails.member.researchCommunity}} | {{membersListSrvc.currentMemberDetails.member.country}}</p>
 		        </div>
-		        <div class="col-md-2 col-sm-2 col-xs-12">
-		            <p class="logo-holder">
-		                <img class="member-logo" ng-hide="membersListSrvc.currentMemberDetails.member.logoUrl == null" src="{{membersListSrvc.currentMemberDetails.member.logoUrl}}">
-		            </p>
-		        </div>
-		        <div class="col-md-10 col-sm-10 col-xs-12">
-		        	<p ng-bind-html="renderHtml(membersListSrvc.currentMemberDetails.member.description)" ng-if="membersListSrvc.currentMemberDetails.member.description" ng-cloak></p>		        	
+		        <div class="col-md-10 col-sm-10 col-xs-12">		       
+		       		<p>
+                    	<img class="member-logo" src="{{membersListSrvc.currentMemberDetails.member.logoUrl}}"  ng-cloak ng-if="membersListSrvc.currentMemberDetails.member.logoUrl">
+                    	<span class="member-decsription" ng-bind-html="renderHtml(membersListSrvc.currentMemberDetails.member.description)" ng-if="membersListSrvc.currentMemberDetails.member.description" ng-cloak></span>
+	                </p>	
 		        </div>
 		        <hr />
 		        <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.parentOrgName">		        	

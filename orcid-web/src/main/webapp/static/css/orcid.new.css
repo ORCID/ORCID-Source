@@ -6581,11 +6581,22 @@ a:hover .mozilla-badge{
 	height: auto;
 	max-width: 100px;
 	max-height: 100px;
+	float: left;
+	margin: 0 10px 0 0;
 }
 
 .member-list h3{
 	color: #a6ce39;
 	margin-top: 0;
+}
+
+.member-list ul{
+	padding: 0;
+	margin: 0 0 10px 0;
+}
+
+.member-list a{
+	white-space: nowrap;
 }
 
 
@@ -7854,8 +7865,16 @@ a:hover .mozilla-badge{
 		vertical-align: initial;		
 	}
 	
-	.member-list p.logo-holder{
-		text-align: center;
+	/*Member list*/
+	.member-list .member-logo{
+		display: block;
+		float: none;
+		margin: 10px;
+	}
+
+	.member-list .member-description{
+		display: block;
+		clear: both;
 	}
 	
 
