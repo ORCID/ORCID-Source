@@ -80,10 +80,10 @@ public class OrcidRefreshTokenChecker {
         }
 
         // Verify the token is not disabled
-        if(token.getTokenDisabled() != null && token.getTokenDisabled()) {
+        if (token.getTokenDisabled() != null && token.getTokenDisabled()) {
             throw new InvalidTokenException("Parent token is disabled");
         }
-        
+
         // Verify scopes are not wider than the token scopes
         if (PojoUtil.isEmpty(scopes)) {
             scopes = token.getScope();
@@ -105,13 +105,11 @@ public class OrcidRefreshTokenChecker {
                 }
             }
         }
-        
+
         // Validate the expiration for the new token is no later than the parent
-        // token expiration. token.getTokenExpiration() must never be null, if
-        // it is, assume the token expiration is now
+        // token expiration.
         long parentTokenExpiration = token.getTokenExpiration() == null ? System.currentTimeMillis() : token.getTokenExpiration().getTime();
-        long newTokenExpiration = requestTimeInMillis + (expireIn * 1000);
-        if (newTokenExpiration > parentTokenExpiration) {
+        if (expireIn > parentTokenExpiration) {
             throw new InvalidScopeException("Token expiration cant be after " + token.getTokenExpiration());
         }
     }

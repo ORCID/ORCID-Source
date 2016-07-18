@@ -39,5 +39,5 @@ public class OrcidOauth2Constants {
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String AUTHORIZATION = "authorization";
     public static final String REVOKE_OLD = "revoke_old";
-    public static final String EXPIRES_IN = "expires_in";
+    public static final String EXPIRES_IN = "expires_in";    
 }

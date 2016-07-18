@@ -74,7 +74,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         String scopeList = formParams.getFirst(OrcidOauth2Constants.SCOPE_PARAM);
         String grantType = formParams.getFirst(OrcidOauth2Constants.GRANT_TYPE);
         Boolean revokeOld = formParams.containsKey(OrcidOauth2Constants.REVOKE_OLD) ? Boolean.valueOf(formParams.getFirst(OrcidOauth2Constants.REVOKE_OLD)) : true;
-        Long expireIn = formParams.containsKey(OrcidOauth2Constants.EXPIRES_IN) ? Long.valueOf(formParams.getFirst(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
+        Long expiresIn = calculateExpiresIn(formParams);
         
         String bearerToken = null;
         Set<String> scopes = new HashSet<String>();
@@ -147,11 +147,37 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
             throw new OrcidInvalidScopeException(message);
         }
                 
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expireIn);
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expiresIn);
         return getResponse(token);
     }
 
-    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expireIn) {        
+    /**
+     * Calculates the real value of the "expires_in" param based on the current time
+     * 
+     * @param formParams
+     *          The params container
+     *          
+     * @return the expiration time in milliseconds based on the param OrcidOauth2Constants.EXPIRES_IN.
+     * @throws IllegalArgumentException in case the parameter is not a number 
+     * */
+    private Long calculateExpiresIn(MultivaluedMap<String, String> formParams) {
+        if(!formParams.containsKey(OrcidOauth2Constants.EXPIRES_IN)){
+            return 0L;
+        }
+        
+        String expiresInParam = formParams.getFirst(OrcidOauth2Constants.EXPIRES_IN);
+        Long result = 0L;
+        
+        try {
+            result = Long.valueOf(expiresInParam);
+        } catch(Exception e) {
+            throw new IllegalArgumentException(expiresInParam + " is not a number");
+        }
+        
+        return result == 0 ? result : (System.currentTimeMillis() + (result * 1000));
+    }
+    
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expiresIn) {        
         String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();
         
@@ -185,7 +211,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
             authorizationParameters.put(OrcidOauth2Constants.AUTHORIZATION, authorization);
             authorizationParameters.put(OrcidOauth2Constants.REVOKE_OLD, String.valueOf(revokeOld));
-            authorizationParameters.put(OrcidOauth2Constants.EXPIRES_IN, String.valueOf(expireIn));
+            authorizationParameters.put(OrcidOauth2Constants.EXPIRES_IN, String.valueOf(expiresIn));
             authorizationParameters.put(OrcidOauth2Constants.REFRESH_TOKEN, String.valueOf(refreshToken));
         }        
         

@@ -263,8 +263,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         String parentTokenValue = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
         String clientId = tokenRequest.getClientId();
         String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
-
-        Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRES_IN)
+        Long expiresIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRES_IN)
                 ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRES_IN)) : 0L;
         Boolean revokeOld = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.REVOKE_OLD) ? Boolean.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REVOKE_OLD)) : true;
 
@@ -295,10 +294,12 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         newToken.setResponseType(parentToken.getResponseType());
         newToken.setState(parentToken.getState());
         newToken.setTokenDisabled(false);
-        if(expireIn <= 0) {
+        if(expiresIn <= 0) {
+            //If expiresIn is 0 or less, set the parent token 
             newToken.setTokenExpiration(parentToken.getTokenExpiration());
         } else {
-            newToken.setTokenExpiration(new Date(expireIn));   
+            //Assumes expireIn already contains the real expired time expressed in millis 
+            newToken.setTokenExpiration(new Date(expiresIn));   
         }        
         newToken.setTokenType(parentToken.getTokenType());
         newToken.setTokenValue(UUID.randomUUID().toString());

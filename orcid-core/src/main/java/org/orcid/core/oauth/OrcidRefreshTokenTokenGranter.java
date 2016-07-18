@@ -45,7 +45,7 @@ public class OrcidRefreshTokenTokenGranter implements TokenGranter {
         orcidRefreshTokenChecker.validateRequest(grantType, tokenRequest, requestTimeInMillis);
         
         //If no exception is thrown we are ready to create the new token
-        String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);
+        String refreshToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.REFRESH_TOKEN);               
         
         return tokenServices.refreshAccessToken(refreshToken, tokenRequest);
     }
