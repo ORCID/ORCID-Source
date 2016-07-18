@@ -19,28 +19,28 @@
 <@public classes=['home']>
     <div class="row member-list" ng-controller="MemberPageController" ng-init="membersListSrvc.getCurrentMemberDetailsBySlug('${memberSlug}')">
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
+        	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> All members</a></p>
         	<div class="row">
         		<div class="col-md-12 col-sm-12 col-xs-12">
 		            <h1 ng-cloak>{{membersListSrvc.currentMemberDetails.member.name}}</h1>
 		            <p ng-cloak>{{membersListSrvc.currentMemberDetails.member.researchCommunity}} | {{membersListSrvc.currentMemberDetails.member.country}}</p>
 		        </div>
-		        <div class="col-md-2 col-sm-2 col-xs-12">
-		            <p class="logo-holder">
-		                <img class="member-logo" ng-hide="membersListSrvc.currentMemberDetails.member.logoUrl == null" src="{{membersListSrvc.currentMemberDetails.member.logoUrl}}">
-		            </p>
-		        </div>
-		        <div class="col-md-10 col-sm-10 col-xs-12">
-		        	<p ng-bind-html="renderHtml(membersListSrvc.currentMemberDetails.member.description)" ng-if="membersListSrvc.currentMemberDetails.member.description" ng-cloak></p>		        	
+		        <div class="col-md-10 col-sm-10 col-xs-12">		       
+		       		<p>
+                    	<img class="member-logo" src="{{membersListSrvc.currentMemberDetails.member.logoUrl}}"  ng-cloak ng-if="membersListSrvc.currentMemberDetails.member.logoUrl">
+                    	<span class="member-decsription" ng-bind-html="renderHtml(membersListSrvc.currentMemberDetails.member.description)" ng-if="membersListSrvc.currentMemberDetails.member.description" ng-cloak></span>
+	                </p>	
 		        </div>
 		        <hr />
-		        <div class="col-md-12 col-sm-12 col-xs-12">		        	
+		        <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.parentOrgName">		        	
                     <h3>Consortium/Parent Organization: </h3>
                     <p> 
 	                    <span ng-show="membersListSrvc.currentMemberDetails.parentOrgName" ng-cloak><a ng-href="{{membersListSrvc.getMemberPageUrl(membersListSrvc.currentMemberDetails.parentOrgSlug)}}">{{membersListSrvc.currentMemberDetails.parentOrgName}}</a></span>
 	                    <span ng-hide="membersListSrvc.currentMemberDetails.parentOrgName" ng-cloak>None</span>
 	                </p>
-	            </div>
 	            <hr />
+	            </div>
+	            
 	            <div class="col-md-12 col-sm-12 col-xs-12">   
 	                <h3>Contacts</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.contacts" ng-repeat="contact in membersListSrvc.currentMemberDetails.contacts | orderBy : 'role'" ng-cloak>
@@ -52,7 +52,7 @@
 	                </div>
 	                
 	                <div ng-hide="membersListSrvc.currentMemberDetails.contacts.length" ng-cloak> 
-	                    <p>This member does not have contact details.</p>
+	                    <p>This member has not provided contact details.</p>
 	                </div>	                
 	            </div> 
 	            <hr />
@@ -74,18 +74,18 @@
 	                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
 	                    <p>This member has not completed any integrations.</p>
 	                </div>
+	                <hr />
 				</div>
-	            <hr />
-	            <div class="col-md-12 col-sm-12 col-xs-12">
+	            <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.subMembers.length">
 	                <h3>Consortium Members</h3>
 	                <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'name'">
 						<p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.name}}</a></p>
 	                </div>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
-						<p>This member does not have sub members.</p>
+						<p>This consortium does not have any members yet.</p>
 	                </div>
+	                <hr />
 		        </div>
-		        <hr />
             </div>
         </div>
     </div>
