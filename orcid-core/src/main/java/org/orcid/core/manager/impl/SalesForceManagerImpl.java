@@ -20,8 +20,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,7 @@ import org.orcid.pojo.SalesForceDetails;
 import org.orcid.pojo.SalesForceIntegration;
 import org.orcid.pojo.SalesForceMember;
 import org.orcid.pojo.SalesForceOpportunity;
+import org.orcid.pojo.SalesForceSubMember;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +65,10 @@ import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
  *
  */
 public class SalesForceManagerImpl implements SalesForceManager {
+
+    private static final String MAIN_CONTACT_ROLE = "Main Contact";
+
+    private static final String TECH_LEAD_ROLE = "Tech Lead";
 
     private static final String SLUG_SEPARATOR = "-";
 
@@ -180,25 +188,35 @@ public class SalesForceManagerImpl implements SalesForceManager {
         Optional<SalesForceMember> match = members.stream().filter(e -> id.equals(e.getId())).findFirst();
         if (match.isPresent()) {
             SalesForceMember salesForceMember = match.get();
-            return (SalesForceDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(id, salesForceMember.getConsortiumLeadId(), releaseName))
-                    .getObjectValue();
+            SalesForceDetails details = (SalesForceDetails) salesForceMemberDetailsCache
+                    .get(new SalesForceMemberDetailsCacheKey(id, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
+            details.setMember(salesForceMember);
+            return details;
         }
         throw new IllegalArgumentException("No member details found for " + memberSlug);
     }
 
     @Override
     public List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId) {
-        // XXX Implement cache
-        return retrieveFreshContactsByOpportunityId(opportunityId);
+        List<String> opportunityIds = new ArrayList<>();
+        opportunityIds.add(opportunityId);
+        Map<String, List<SalesForceContact>> results = retrieveFreshContactsByOpportunityId(opportunityIds);
+        return results.get(opportunityId);
     }
 
     @Override
-    public List<SalesForceContact> retrieveFreshContactsByOpportunityId(String opportunityId) {
+    public Map<String, List<SalesForceContact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
+        // XXX Implement cache
+        return retrieveFreshContactsByOpportunityId(opportunityIds);
+    }
+
+    @Override
+    public Map<String, List<SalesForceContact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds) {
         try {
-            return retrieveContactsFromSalesForce(getAccessToken(), opportunityId);
+            return retrieveContactsFromSalesForce(getAccessToken(), opportunityIds);
         } catch (SalesForceUnauthorizedException e) {
             LOGGER.debug("Unauthorized to retrieve contacts, trying again.", e);
-            return retrieveContactsFromSalesForce(getFreshAccessToken(), opportunityId);
+            return retrieveContactsFromSalesForce(getFreshAccessToken(), opportunityIds);
         }
     }
 
@@ -209,6 +227,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
             throw new IllegalArgumentException();
         }
         return salesForceId;
+    }
+
+    private String validateSalesForceIdsAndConcatenate(Collection<String> salesForceIds) {
+        salesForceIds.stream().forEach(e -> validateSalesForceId(e));
+        return "'" + String.join("','", salesForceIds) + "'";
     }
 
     @Override
@@ -289,7 +312,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     private WebResource createConsortiumResource(String consortiumId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Id, Account.Name FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_End_Date__c > TODAY) from Account WHERE Id='"
+                "SELECT (SELECT Id, Account.Name FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
                         + validateSalesForceId(consortiumId) + "'");
         return resource;
     }
@@ -307,18 +330,23 @@ public class SalesForceManagerImpl implements SalesForceManager {
             JSONArray records = results.getJSONArray("records");
             JSONObject firstRecord = records.getJSONObject(0);
             JSONObject opportunities = extractObject(firstRecord, "ConsortiaOpportunities__r");
-            JSONArray opportunityRecords = opportunities.getJSONArray("records");
-            for (int i = 0; i < opportunityRecords.length(); i++) {
-                SalesForceOpportunity salesForceOpportunity = new SalesForceOpportunity();
-                JSONObject opportunity = opportunityRecords.getJSONObject(i);
-                salesForceOpportunity.setId(extractOpportunityId(opportunity));
-                salesForceOpportunity.setTargetAccountId(extractAccountId(opportunity));
-                opportunityList.add(salesForceOpportunity);
+            if (opportunities != null) {
+                JSONArray opportunityRecords = opportunities.getJSONArray("records");
+                for (int i = 0; i < opportunityRecords.length(); i++) {
+                    SalesForceOpportunity salesForceOpportunity = new SalesForceOpportunity();
+                    JSONObject opportunity = opportunityRecords.getJSONObject(i);
+                    salesForceOpportunity.setId(extractOpportunityId(opportunity));
+                    JSONObject account = extractObject(opportunity, "Account");
+                    salesForceOpportunity.setTargetAccountId(extractAccountId(account));
+                    salesForceOpportunity.setAccountName(extractString(account, "Name"));
+                    opportunityList.add(salesForceOpportunity);
+                }
+                return consortium;
             }
-            return consortium;
         } catch (JSONException e) {
             throw new RuntimeException("Error getting consortium record from SalesForce JSON", e);
         }
+        return null;
     }
 
     private String extractOpportunityId(JSONObject opportunity) throws JSONException {
@@ -327,8 +355,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return extractIdFromUrl(opportunityUrl);
     }
 
-    private String extractAccountId(JSONObject opportunity) throws JSONException {
-        JSONObject account = extractObject(opportunity, "Account");
+    private String extractAccountId(JSONObject account) throws JSONException {
         JSONObject accountAttributes = extractObject(account, "attributes");
         String accountUrl = extractString(accountAttributes, "url");
         String accountId = extractIdFromUrl(accountUrl);
@@ -416,21 +443,29 @@ public class SalesForceManagerImpl implements SalesForceManager {
                 String oppId = opp.get().getId();
                 return retrieveContactsByOpportunityId(oppId);
             }
-        } else {
-            // It might be a consortium
-            Optional<SalesForceMember> consortium = retrieveConsortia().stream().filter(e -> memberId.equals(e.getId())).findFirst();
-            if (consortium.isPresent()) {
-                String mainOpportunityId = consortium.get().getMainOpportunityId();
-                if (mainOpportunityId != null) {
-                    return retrieveContactsByOpportunityId(mainOpportunityId);
-                }
-            }
         }
         return Collections.emptyList();
     }
 
-    private List<SalesForceMember> findSubMembers(String memberId) {
-        return retrieveMembers().stream().filter(e -> memberId.equals(e.getConsortiumLeadId())).collect(Collectors.toList());
+    private List<SalesForceSubMember> findSubMembers(String memberId) {
+        SalesForceConsortium consortium = retrieveConsortium(memberId);
+        if (consortium != null) {
+            List<String> opportunityIds = consortium.getOpportunities().stream().map(e -> e.getId()).collect(Collectors.toList());
+            Map<String, List<SalesForceContact>> contactsMap = retrieveContactsByOpportunityId(opportunityIds);
+            List<SalesForceSubMember> subMembers = consortium.getOpportunities().stream().map(o -> {
+                SalesForceSubMember subMember = new SalesForceSubMember();
+                subMember.setOpportunity(o);
+                subMember.setSlug(createSlug(o.getTargetAccountId(), o.getAccountName()));
+                List<SalesForceContact> contactsList = contactsMap.get(o.getId());
+                Optional<SalesForceContact> mainContactOptional = contactsList.stream().filter(c -> MAIN_CONTACT_ROLE.equals(c.getRole())).findFirst();
+                if (mainContactOptional.isPresent()) {
+                    subMember.setMainContact(mainContactOptional.get());
+                }
+                return subMember;
+            }).collect(Collectors.toList());
+            return subMembers;
+        }
+        return Collections.emptyList();
     }
 
     private String retrieveParentOrgNameFromSalesForce(String accessToken, String consortiumLeadId) {
@@ -533,10 +568,11 @@ public class SalesForceManagerImpl implements SalesForceManager {
      *             expired.
      * 
      */
-    private List<SalesForceContact> retrieveContactsFromSalesForce(String accessToken, String opportunityId) throws SalesForceUnauthorizedException {
+    private Map<String, List<SalesForceContact>> retrieveContactsFromSalesForce(String accessToken, Collection<String> opportunityIds)
+            throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
-        validateSalesForceId(opportunityId);
-        WebResource resource = createContactsResource(opportunityId);
+        validateSalesForceIdsAndConcatenate(opportunityIds);
+        WebResource resource = createContactsResource(opportunityIds);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
@@ -546,32 +582,35 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return createContactsFromResponse(response);
     }
 
-    private WebResource createContactsResource(String opportunityId) {
+    private WebResource createContactsResource(Collection<String> opportunityIds) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('Main Contact','Tech Lead')) FROM Opportunity WHERE Id='"
-                        + validateSalesForceId(opportunityId) + "'");
+                "SELECT Id, (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('" + MAIN_CONTACT_ROLE + "','" + TECH_LEAD_ROLE
+                        + "')) FROM Opportunity WHERE Id IN (" + validateSalesForceIdsAndConcatenate(opportunityIds) + ")");
         return resource;
     }
 
-    private List<SalesForceContact> createContactsFromResponse(ClientResponse response) {
-        ArrayList<SalesForceContact> contacts = new ArrayList<>();
+    private Map<String, List<SalesForceContact>> createContactsFromResponse(ClientResponse response) {
+        Map<String, List<SalesForceContact>> map = new HashMap<>();
         JSONObject results = response.getEntity(JSONObject.class);
         try {
             JSONArray records = results.getJSONArray("records");
-            if (records.length() > 0) {
-                JSONObject firstRecord = records.getJSONObject(0);
-                JSONObject opportunityContactRoleObject = extractObject(firstRecord, "OpportunityContactRoles");
+            for (int i = 0; i < records.length(); i++) {
+                JSONObject record = records.getJSONObject(i);
+                String oppId = extractString(record, "Id");
+                List<SalesForceContact> contacts = new ArrayList<>();
+                JSONObject opportunityContactRoleObject = extractObject(record, "OpportunityContactRoles");
                 if (opportunityContactRoleObject != null) {
                     JSONArray contactRecords = opportunityContactRoleObject.getJSONArray("records");
-                    for (int i = 0; i < contactRecords.length(); i++) {
-                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(i)));
+                    for (int j = 0; j < contactRecords.length(); j++) {
+                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(j)));
                     }
                 }
+                map.put(oppId, contacts);
             }
         } catch (JSONException e) {
             throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
         }
-        return contacts;
+        return map;
     }
 
     private SalesForceContact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {

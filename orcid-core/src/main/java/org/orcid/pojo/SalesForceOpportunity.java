@@ -25,6 +25,7 @@ public class SalesForceOpportunity {
 
     private String id;
     private String targetAccountId;
+    private String accountName;
 
     public String getId() {
         return id;
@@ -42,9 +43,17 @@ public class SalesForceOpportunity {
         this.targetAccountId = targetAccountId;
     }
 
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
+
     @Override
     public String toString() {
-        return "SalesForceOpportunity [id=" + id + ", targetAccountId=" + targetAccountId + "]";
+        return "SalesForceOpportunity [id=" + id + ", targetAccountId=" + targetAccountId + ", accountName=" + accountName + "]";
     }
 
 }

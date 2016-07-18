@@ -78,8 +78,8 @@
 				</div>
 	            <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.subMembers.length">
 	                <h3>Consortium Members</h3>
-	                <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'name'">
-						<p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.name}}</a></p>
+	                <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
+						<p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a>&nbsp;<span>{{subMember.mainContact.name}}</span>&nbsp;<a ng-href="mailto:{{subMember.mainContact.email}}">{{subMember.mainContact.email}}</a></p>
 	                </div>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
 						<p>This consortium does not have any members yet.</p>
