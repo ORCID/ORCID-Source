@@ -19,12 +19,14 @@ package org.orcid.core.oauth.service;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
@@ -36,6 +38,7 @@ import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -251,10 +254,11 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     }
     
     @Override
-    public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest) throws AuthenticationException {
-        String authorization = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
+    public OAuth2AccessToken refreshAccessToken(String refreshTokenValue, TokenRequest tokenRequest) throws AuthenticationException {       
+        String parentToken = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.AUTHORIZATION);
         String clientId = tokenRequest.getClientId();
-        String scopes = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
+        String scopeList = tokenRequest.getRequestParameters().get(OAuth2Utils.SCOPE);
+        
         Long expireIn = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.EXPIRE_IN)
                 ? Long.valueOf(tokenRequest.getRequestParameters().get(OrcidOauth2Constants.EXPIRE_IN)) : 0L;
         Boolean revokeOld = tokenRequest.getRequestParameters().containsKey(OrcidOauth2Constants.REVOKE_OLD) ? true
@@ -270,7 +274,7 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             throw new InvalidGrantException("Client " + clientId + " doesnt have refresh token enabled");
         }
 
-        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(authorization);
+        OrcidOauth2TokenDetail token = orcidOauth2TokenDetailDao.findByTokenValue(parentToken);
         
         OrcidOauth2TokenDetail newToken = new OrcidOauth2TokenDetail();
         newToken.setApproved(true);
@@ -289,16 +293,28 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
         newToken.setTokenType(token.getTokenType());
         newToken.setVersion(token.getVersion());
         
+        newToken.setTokenValue(UUID.randomUUID().toString()); 
+        newToken.setRefreshTokenValue(UUID.randomUUID().toString());
+        
+        if(PojoUtil.isEmpty(scopeList)) {
+            newToken.setScope(token.getScope());
+        } else {
+            newToken.setScope(scopeList);
+        }
+        
+        newToken.setTokenExpiration(new Date(expireIn)); 
+        
         //TODO: Set this values
-        newToken.setAuthenticationKey(null);//TODO: Generate the authentication key
-        newToken.setScope(null);//TODO: Set the scopes
-        newToken.setTokenValue(null); //TODO: Set the token value
-        newToken.setTokenExpiration(null); //TODO: Set the token expiration
+        //
+        OAuth2Authentication authentication = orcidtokenStore.readAuthentication(parentToken);        
+        newToken.setAuthenticationKey(null);//TODO: Generate the authentication key        
+        
+        
         
         //TODO: Store the new token and return it
         
         //TODO: Transform the OrcidOauth2TokenDetail into a OAuth2AccessToken and return it
-        
+                
         return null;
     }
 }
