@@ -89,7 +89,6 @@
 			<list>
 				<ref bean="clientCredentialsTokenGranter" />
 				<ref bean="authorizationCodeTokenGranter" />
-				<ref bean="refreshTokenTokenGranter" />
 			</list>
 		</constructor-arg>
 	</bean>
