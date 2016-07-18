@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.ErrorDesc;
 import org.orcid.jaxb.model.message.OrcidMessage;
@@ -41,8 +42,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 @Controller("oauthGenericCallsController")
 public class OauthGenericCallsController extends OauthControllerBase {
