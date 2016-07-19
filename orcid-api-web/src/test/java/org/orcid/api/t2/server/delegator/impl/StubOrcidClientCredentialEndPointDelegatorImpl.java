@@ -20,7 +20,7 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 
 
 

@@ -39,12 +39,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
+import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.orcid.api.common.server.delegator.OrcidClientCredentialEndPointDelegator;
 
 import io.swagger.annotations.ApiOperation;
 

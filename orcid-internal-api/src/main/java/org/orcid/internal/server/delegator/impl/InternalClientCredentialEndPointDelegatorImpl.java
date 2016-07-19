@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
@@ -34,8 +35,6 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
-
-import com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl;
 
 /**
  * 
