@@ -62,7 +62,7 @@
 	
 	<!-- User web expressions to aid the syntax of protection -->
     <oauth2:web-expression-handler id="oauthWebExpressionHandler" />		
-	
+
 	<!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
     <sec:authentication-manager id="clientAuthenticationManager">
         <sec:authentication-provider ref="orcidAuthenticationProvider" />

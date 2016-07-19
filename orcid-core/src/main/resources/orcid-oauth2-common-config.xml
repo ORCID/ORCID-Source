@@ -136,4 +136,5 @@
 		<constructor-arg ref="orcidRefreshTokenChecker" />		
 		<constructor-arg ref="tokenServices" />
 	</bean>
+
 </beans>

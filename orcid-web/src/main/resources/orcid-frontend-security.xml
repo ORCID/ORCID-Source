@@ -27,13 +27,10 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<context:annotation-config />
-	
 	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
-	
+	<sec:global-method-security pre-post-annotations="enabled" />
 	<bean class="org.orcid.frontend.spring.web.social.config.SocialConfig"/>
 	
-	<sec:global-method-security pre-post-annotations="enabled" />
-
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />

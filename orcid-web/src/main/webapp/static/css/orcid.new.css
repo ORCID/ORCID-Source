@@ -6572,6 +6572,46 @@ a:hover .mozilla-badge{
 	height: 30px;
 }
 
+.member-list [class*="col"]{
+	padding-left: 10px;
+}
+
+.member-list .member-logo{
+	width: auto;
+	height: auto;
+	max-width: 100px;
+	max-height: 100px;
+	float: left;
+	margin: 0 10px 0 0;
+}
+
+.member-list h3{
+	color: #a6ce39;
+	margin-top: 0;
+}
+
+.member-list ul{
+	padding: 0;
+	margin: 0 0 16px 0;
+}
+
+.member-list a{
+	white-space: nowrap;
+}
+
+.member-list table, .member-list tbody, .member-list tr{
+	width: 100%;
+}
+
+.member-list tr{
+	border-bottom: 1px solid #eee;
+}
+
+.member-list td, .member-list th{
+	vertical-align: top;
+	padding: 10px 10px 10px 0;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
@@ -7838,6 +7878,38 @@ a:hover .mozilla-badge{
 		vertical-align: initial;		
 	}
 	
+	/*Member list*/
+	.member-list .member-logo{
+		display: block;
+		float: none;
+		margin: 10px;
+	}
+
+	.member-list .member-description{
+		display: block;
+		clear: both;
+	}
+
+	/* Force table to not be like tables anymore */
+	.member-list table, .member-list tbody, .member-list th, .member-list td, .member-list tr { 
+		display: block;
+	}
+
+	.member-list th { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	.member-list td { 
+		padding: 0;
+	}
+
+	.member-list tr { 
+		padding: 10px 0 10px 0;
+	}
+
+	
 
 }
 
@@ -8088,12 +8160,4 @@ a:hover .mozilla-badge{
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) , only screen and (min-device-pixel-ratio: 2) {
 	
-}
-
-.member-logo{
-	max-width: 150px;
-	max-height: 150px;
-	display: block;
-	float: left;
-	margin: 0 10px 10px 0;
 }
