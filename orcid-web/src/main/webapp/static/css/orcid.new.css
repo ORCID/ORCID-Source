@@ -1903,6 +1903,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	margin-bottom: 0px;
 }
 
+.no-margin-top {
+	margin-top: 0px;
+}
+
 .affiliation-type {
     font-size: 16px;
     font-style: italic;
@@ -6604,12 +6608,6 @@ a:hover .mozilla-badge{
 	word-break: normal;
 }
 
-/*.member-list table{
-	width: 100%;
-	table-layout:fixed;
-	
-}*/
-
 .member-list td, .member-list th{
 	width: 33%;
 }
@@ -6621,6 +6619,10 @@ a:hover .mozilla-badge{
 .member-list td, .member-list th{
 	vertical-align: top;
 	padding: 10px 10px 10px 0;
+}
+
+.member-list .selected{
+	color: #a6ce39;
 }
 
 
@@ -7920,8 +7922,6 @@ a:hover .mozilla-badge{
 	.member-list tr { 
 		padding: 10px 0 10px 0;
 	}
-
-	
 
 }
 

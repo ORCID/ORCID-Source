@@ -18,9 +18,16 @@
 -->
 <@public classes=['home']>
     <div class="row member-list" ng-controller="MemberPageController" ng-init="membersListSrvc.getCurrentMemberDetailsBySlug('${memberSlug}')">
+    	
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
         	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> All members</a></p>
-        	<div class="row">
+        	<div ng-hide="membersListSrvc.currentMemberDetails != null" class="text-center" ng-cloak>
+	                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+	                    <!--[if lt IE 8]>
+	                        <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+	                    <![endif]-->
+	    	</div>
+        	<div class="row" ng-show="membersListSrvc.currentMemberDetails">
         		<div class="col-md-12 col-sm-12 col-xs-12">
 		            <h1 ng-cloak>{{membersListSrvc.currentMemberDetails.member.name}}</h1>
 		            <p ng-cloak>{{membersListSrvc.currentMemberDetails.member.researchCommunity}} | {{membersListSrvc.currentMemberDetails.member.country}}</p>

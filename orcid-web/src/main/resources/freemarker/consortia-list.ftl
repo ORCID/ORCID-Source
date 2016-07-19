@@ -31,8 +31,11 @@
                 </div>
                 <div ng-if="membersListSrvc.consortiaList" ng-cloak>
                     <p>There are currently {{membersListSrvc.consortiaList.length}} ORCID consortia members.</p>
+                    <p>
+	            		<a href="<@orcid.rootPath '/members'/>">All members</a> | <a class="selected" href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
+	            	</p>
                     <div class="member" ng-repeat="member in membersListSrvc.consortiaList | orderBy : 'name'">
-                        <hr />
+                        <hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
