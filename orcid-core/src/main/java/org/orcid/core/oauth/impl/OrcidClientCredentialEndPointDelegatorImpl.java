@@ -95,8 +95,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                     }
                 }            
             }                       
-        }
-        
+        }        
         
         LOGGER.info("OAuth2 authorization requested: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
                 grantType, refreshToken, code, scopes, state, redirectUri });

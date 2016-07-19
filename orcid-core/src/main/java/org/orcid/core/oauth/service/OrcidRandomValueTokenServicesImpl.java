@@ -29,7 +29,9 @@ import javax.annotation.Resource;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2AuthInfo;
+import org.orcid.core.oauth.OrcidOauth2UserAuthentication;
 import org.orcid.core.oauth.OrcidRandomValueTokenServices;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -42,6 +44,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
@@ -50,9 +53,11 @@ import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidTokenException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.TokenRequest;
+import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -88,6 +93,9 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
     
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource
+    private AuthenticationKeyGenerator authenticationKeyGenerator;
     
     public boolean isCustomSupportRefreshToken() {
         return customSupportRefreshToken;
@@ -311,15 +319,14 @@ public class OrcidRandomValueTokenServicesImpl extends DefaultTokenServices impl
             newToken.setScope(scopes);
         }
 
-        if (orcidTokenStore instanceof OrcidTokenStoreServiceImpl) {
-            OrcidTokenStoreServiceImpl tokenStore = (OrcidTokenStoreServiceImpl) orcidTokenStore;
-            newToken.setAuthenticationKey(tokenStore.getAuthenticationKeyFromToken(parentTokenValue));
-        } else {
-            // If the token store is not of OrcidTokenStoreServiceImpl type,
-            // copy the authentication key from the parent token
-            newToken.setAuthenticationKey(parentToken.getAuthenticationKey());
-        }
-
+        //Generate an authentication object to be able to generate the authentication key
+        Set<String> scopesSet = OAuth2Utils.parseParameterList(newToken.getScope());
+        AuthorizationRequest request = new AuthorizationRequest(clientId, scopesSet);        
+        request.setApproved(true);
+        Authentication authentication = new OrcidOauth2UserAuthentication(profileEntity, true);        
+        OrcidOAuth2Authentication orcidAuthentication = new OrcidOAuth2Authentication(request, authentication, newToken.getTokenValue());
+        newToken.setAuthenticationKey(authenticationKeyGenerator.extractKey(orcidAuthentication));
+        
         // Store the new token and return it
         orcidOauth2TokenDetailDao.persist(newToken);
 
