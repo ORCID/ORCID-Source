@@ -525,6 +525,21 @@ orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     return actBulkSrvc;
 }]);
 
+orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
+    var bioBulkSrvc = {
+            initScope: function($scope) {
+                $scope.bulkEditShow = false;
+                $scope.bulkEditMap = {};
+                $scope.bulkChecked = false;
+                $scope.bulkDisplayToggle = false;
+                $scope.toggleSelectMenu = function(){                	
+                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
+                };
+            }
+    };
+    return bioBulkSrvc;
+}]);
+
 orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
     var commonSrvc = {
             copyErrorsLeft: function (data1, data2) {

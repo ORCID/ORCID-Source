@@ -29,15 +29,20 @@
 					</h1>
 				</div>			
 			</div>
-			<#if RequestParameters['bulkPrivacy']??>
+
+			
+			
+			<#if RequestParameters['bulkEdit']??>
+				<!-- Bulk edit -->
 				<div class="bulk-edit-area">
-				<div class="row bottomBuffer">
-					<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">								
 						 <a href="" class="pull-right">Hide bulk edit</a>
 					</div>
 				</div>
 				<div class="row bottomBuffer">					
 					<div class="col-md-12 col-sm-12 col-xs-12">
+						<h4>Bulk edit</h4>
 						<ol class="bulk-modal-list">
 							<li>
 								Select items: Click the checkbox beside each item. Use the checkbox to the right to select or deselect all.
@@ -48,9 +53,6 @@
 						</ol>
 					</div>
 				</div>
-
-
-
 				<div class="row">
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<ul class="inline-list pull-right bulk-edit bulk-edit-modal">							
@@ -91,6 +93,9 @@
 				</div>
 				</div>
 			</#if>
+
+
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
@@ -105,7 +110,8 @@
 								</div>							
 								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
 									<ul class="record-settings pull-right">
-										<li>												
+										<li>					
+											<input type="checkbox" class="bio-item"/>							
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
 										</li>
 										<li>																						

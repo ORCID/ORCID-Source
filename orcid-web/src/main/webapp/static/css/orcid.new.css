@@ -6601,6 +6601,7 @@ a:hover .mozilla-badge{
 
 .bulk-edit-area{
 	border-bottom: 1px solid rgb(166, 206, 57);
+	padding: 5px;
 }	
 
 .bulk-edit-modal{
@@ -6608,12 +6609,12 @@ a:hover .mozilla-badge{
 	width: auto;
 	border: none;
 	padding: 0;
-	margin-right: 33px;
+	margin-right: 27px;
 }
 
 .bulk-edit-modal .bulk-trash{
 	margin-right: 15px;
-	padding-top: 27px;
+	padding-top: 24px;
 	color: #C9C9CA;
 	font-size: 18px;
 }
@@ -6631,7 +6632,11 @@ a:hover .mozilla-badge{
 }
 
 .bulk-modal-list{
-	padding-left: 20px;
+	padding-left: 15px;
+}
+
+.edit-record input[type=checkbox]{
+	margin: 0 5px 0 0;
 }
 
 
