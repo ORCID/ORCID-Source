@@ -60,16 +60,13 @@
 	                <h3>Integrations</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
 	                    <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
-	                    <p>
-	                        <span ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
-	                            
-	                        </span>
-	                   </p>
-	                   <p>
-	                        <span ng-if="integration.resourceUrl" >
+	                    <ul>
+	                        <li ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
+	                        </li>
+	                        <li ng-if="integration.resourceUrl" >
 	                            <a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
-	                        </span>
-	                    </p>
+	                        </li>
+	                    </ul>
 	                </div>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
 	                    <p>This member has not completed any integrations.</p>
