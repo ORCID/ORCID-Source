@@ -380,6 +380,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         when(orcidProfileManager.retrieveOrcidProfileByEmail(any(String.class))).thenReturn(getOrcidToTestClaim(false));
         when(encryptionManager.decryptForExternalUse(any(String.class))).thenReturn(email);
         HttpServletRequest request = mock(HttpServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
         when(request.getAttribute(DispatcherServlet.LOCALE_RESOLVER_ATTRIBUTE)).thenReturn(null);
         when(request.getLocale()).thenReturn(java.util.Locale.US);
                 
@@ -393,7 +394,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         claim.setSendOrcidNews(checked);
         claim.setTermsOfUse(checked);
         try {
-            claim = registrationController.submitClaimJson(request, email, claim);
+            claim = registrationController.submitClaimJson(request, response, email, claim);
             assertNotNull(claim);
             assertTrue(claim.getErrors().isEmpty());
             assertTrue("Value was: " + claim.getUrl(), claim.getUrl().endsWith("/my-orcid?recordClaimed"));
