@@ -110,7 +110,7 @@ public class OrcidRefreshTokenChecker {
         // token expiration.
         long parentTokenExpiration = token.getTokenExpiration() == null ? System.currentTimeMillis() : token.getTokenExpiration().getTime();
         if (expireIn > parentTokenExpiration) {
-            throw new InvalidScopeException("Token expiration cant be after " + token.getTokenExpiration());
+            throw new IllegalArgumentException("Token expiration can't be after " + token.getTokenExpiration());
         }
     }
 }
