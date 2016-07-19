@@ -6592,11 +6592,24 @@ a:hover .mozilla-badge{
 
 .member-list ul{
 	padding: 0;
-	margin: 0 0 10px 0;
+	margin: 0 0 16px 0;
 }
 
 .member-list a{
 	white-space: nowrap;
+}
+
+.member-list table, .member-list tbody, .member-list tr{
+	width: 100%;
+}
+
+.member-list tr{
+	border-bottom: 1px solid #eee;
+}
+
+.member-list td, .member-list th{
+	vertical-align: top;
+	padding: 10px 10px 10px 0;
 }
 
 
@@ -7876,6 +7889,26 @@ a:hover .mozilla-badge{
 		display: block;
 		clear: both;
 	}
+
+	/* Force table to not be like tables anymore */
+	.member-list table, .member-list tbody, .member-list th, .member-list td, .member-list tr { 
+		display: block;
+	}
+
+	.member-list th { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	.member-list td { 
+		padding: 0;
+	}
+
+	.member-list tr { 
+		padding: 10px 0 10px 0;
+	}
+
 	
 
 }

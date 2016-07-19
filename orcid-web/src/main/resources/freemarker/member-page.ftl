@@ -60,16 +60,13 @@
 	                <h3>Integrations</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
 	                    <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
-	                    <p>
-	                        <span ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
-	                            
-	                        </span>
-	                   </p>
-	                   <p>
-	                        <span ng-if="integration.resourceUrl" >
+	                    <ul>
+	                        <li ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
+	                        </li>
+	                        <li ng-if="integration.resourceUrl" >
 	                            <a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
-	                        </span>
-	                    </p>
+	                        </li>
+	                    </ul>
 	                </div>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
 	                    <p>This member has not completed any integrations.</p>
@@ -78,13 +75,23 @@
 				</div>
 	            <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.subMembers.length">
 	                <h3>Consortium Members</h3>
-	                <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
-						<p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a>&nbsp;<span>{{subMember.mainContact.name}}</span>&nbsp;<a ng-href="mailto:{{subMember.mainContact.email}}">{{subMember.mainContact.email}}</a></p>
-	                </div>
+	                <table ng-show="membersListSrvc.currentMemberDetails.subMembers">
+	                	<tr>
+	                		<th>Member Name</th>
+	                		<th>Main Contact</th>
+	                		<th>Email</th>
+	                	</tr>
+	                	<tr ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
+							<td><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></td>
+							<td><span>{{subMember.mainContact.name}}</span></td>
+							<td><a ng-href="mailto:{{subMember.mainContact.email}}">{{subMember.mainContact.email}}</a></td>
+	                	</tr>
+	                </table>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
 						<p>This consortium does not have any members yet.</p>
+						<hr />
 	                </div>
-	                <hr />
+	                
 		        </div>
             </div>
         </div>
