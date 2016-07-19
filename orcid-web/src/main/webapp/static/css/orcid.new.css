@@ -6599,6 +6599,42 @@ a:hover .mozilla-badge{
 	white-space: nowrap;
 }
 
+.bulk-edit-area{
+	border-bottom: 1px solid rgb(166, 206, 57);
+}	
+
+.bulk-edit-modal{
+	min-height: auto;
+	width: auto;
+	border: none;
+	padding: 0;
+	margin-right: 33px;
+}
+
+.bulk-edit-modal .bulk-trash{
+	margin-right: 15px;
+	padding-top: 27px;
+	color: #C9C9CA;
+	font-size: 18px;
+}
+
+.bulk-edit-modal .custom-control-title{	
+	display: block;
+	width: 100%;
+	margin-left: 7px;
+	text-transform: uppercase;
+	font-size: 13px;
+}
+
+.bulk-edit-modal #custom-control-x{
+	margin-right: 60px;
+}
+
+.bulk-modal-list{
+	padding-left: 20px;
+}
+
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
