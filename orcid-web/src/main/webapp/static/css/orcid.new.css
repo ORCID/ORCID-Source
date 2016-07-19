@@ -6599,8 +6599,19 @@ a:hover .mozilla-badge{
 	white-space: nowrap;
 }
 
-.member-list table, .member-list tbody, .member-list tr{
+.member-list table a{
+	white-space: normal;
+	word-break: normal;
+}
+
+/*.member-list table{
 	width: 100%;
+	table-layout:fixed;
+	
+}*/
+
+.member-list td, .member-list th{
+	width: 33%;
 }
 
 .member-list tr{
@@ -7893,6 +7904,7 @@ a:hover .mozilla-badge{
 	/* Force table to not be like tables anymore */
 	.member-list table, .member-list tbody, .member-list th, .member-list td, .member-list tr { 
 		display: block;
+		width: 100%;
 	}
 
 	.member-list th { 
