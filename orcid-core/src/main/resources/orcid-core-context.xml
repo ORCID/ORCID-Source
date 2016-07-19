@@ -65,8 +65,8 @@
     <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
         <property name="orcidtokenStore" ref="orcidTokenStore" />        
         <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
-        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:false}" />
-        <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:false}" />
+        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
+        <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
 	
 	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />
