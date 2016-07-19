@@ -36,7 +36,7 @@
 <#list digestEmail.notificationsBySourceId[sourceId].notificationsByType[notificationType] as notification>
 
 <#if notificationType == 'PERMISSION'>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject}<#else><@emailMacros.msg "email.digest.requesttoadd" /></#if>
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}: <#if notification.notificationSubject??>${notification.notificationSubject} <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if><#else><@emailMacros.msg "email.digest.requesttoadd" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></#if>
 <#assign itemsByType=notification.items.itemsByType>
 <#list itemsByType?keys?sort as itemType>
 <@emailMacros.msg "email.common.recordsection." + itemType /> (${itemsByType[itemType]?size})
@@ -49,7 +49,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 </#list>
 <#elseif notificationType == 'AMENDED'>
 <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
-<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" />
+<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
 <#if notification.items??>
 
 <#list notification.items.items as item>
@@ -57,9 +57,9 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 </#list>
 </#if>
 <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
-<@emailMacros.msg 'email.institutional_connection.1' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}.&nbsp;<@emailMacros.msg 'email.institutional_connection.2' />&nbsp;${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action&nbsp;<@emailMacros.msg 'email.institutional_connection.3' />&nbsp;
+<@emailMacros.msg 'email.institutional_connection.1' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}.&nbsp;<@emailMacros.msg 'email.institutional_connection.2' />&nbsp;${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action&nbsp;<@emailMacros.msg 'email.institutional_connection.3' />&nbsp; <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
 <#else>
-${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} 
 </#if>
 
 </#list>

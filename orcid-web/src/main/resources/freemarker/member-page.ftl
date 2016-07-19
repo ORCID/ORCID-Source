@@ -18,9 +18,16 @@
 -->
 <@public classes=['home']>
     <div class="row member-list" ng-controller="MemberPageController" ng-init="membersListSrvc.getCurrentMemberDetailsBySlug('${memberSlug}')">
+    	
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
         	<p><a href="<@orcid.rootPath '/members'/>"><i class="glyphicon x075 glyphicon-chevron-left"></i> All members</a></p>
-        	<div class="row">
+        	<div ng-hide="membersListSrvc.currentMemberDetails != null" class="text-center" ng-cloak>
+	                    <i class="glyphicon glyphicon-refresh spin x4 green" id="spinner"></i>
+	                    <!--[if lt IE 8]>
+	                        <img src="${staticCdn}/img/spin-big.gif" width="85" height ="85"/>
+	                    <![endif]-->
+	    	</div>
+        	<div class="row" ng-show="membersListSrvc.currentMemberDetails">
         		<div class="col-md-12 col-sm-12 col-xs-12">
 		            <h1 ng-cloak>{{membersListSrvc.currentMemberDetails.member.name}}</h1>
 		            <p ng-cloak>{{membersListSrvc.currentMemberDetails.member.researchCommunity}} | {{membersListSrvc.currentMemberDetails.member.country}}</p>
@@ -60,16 +67,13 @@
 	                <h3>Integrations</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
 	                    <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
-	                    <p>
-	                        <span ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
-	                            
-	                        </span>
-	                   </p>
-	                   <p>
-	                        <span ng-if="integration.resourceUrl" >
+	                    <ul>
+	                        <li ng-bind-html="renderHtml(integration.description)" ng-if="integration.description" ng-cloak>
+	                        </li>
+	                        <li ng-if="integration.resourceUrl" >
 	                            <a href="{{integration.resourceUrl}}" target="_blank">Learn more about this integration</a>
-	                        </span>
-	                    </p>
+	                        </li>
+	                    </ul>
 	                </div>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.integrations.length"> 
 	                    <p>This member has not completed any integrations.</p>
@@ -78,13 +82,23 @@
 				</div>
 	            <div class="col-md-12 col-sm-12 col-xs-12" ng-if="membersListSrvc.currentMemberDetails.subMembers.length">
 	                <h3>Consortium Members</h3>
-	                <div ng-show="membersListSrvc.currentMemberDetails.subMembers" ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'name'">
-						<p><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.name}}</a></p>
-	                </div>
+	                <table ng-show="membersListSrvc.currentMemberDetails.subMembers">
+	                	<tr>
+	                		<th>Member Name</th>
+	                		<th>Main Contact</th>
+	                		<th>Email</th>
+	                	</tr>
+	                	<tr ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
+							<td><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></td>
+							<td><span>{{subMember.mainContact.name}}</span></td>
+							<td><a ng-href="mailto:{{subMember.mainContact.email}}">{{subMember.mainContact.email}}</a></td>
+	                	</tr>
+	                </table>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
 						<p>This consortium does not have any members yet.</p>
+						<hr />
 	                </div>
-	                <hr />
+	                
 		        </div>
             </div>
         </div>

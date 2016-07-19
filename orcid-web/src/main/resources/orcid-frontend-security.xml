@@ -30,6 +30,8 @@
 	
 	<bean class="org.orcid.frontend.spring.web.social.config.SocialConfig"/>
 	
+	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+	
 	<sec:global-method-security pre-post-annotations="enabled" />
 
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
@@ -357,8 +359,6 @@
 
     <bean id="jsonpCallbackFilterWeb" class="org.orcid.core.web.filters.JsonpCallbackFilterWeb" />
 		
-	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
-	
 	<bean id="switchUserProcessingFilter" class="org.orcid.frontend.web.filter.OrcidSwitchUserFilter">
 		<property name="userDetailsService" ref="userDetailsService" />
 		<property name="switchUserUrl" value="/switch-user" />
@@ -369,14 +369,6 @@
 	
 	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
 		
-	<bean id="authorizationCodeTokenGranter"
-		class="org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter">
-		<constructor-arg ref="orcidAuthorizationCodeService" />
-		<constructor-arg ref="tokenServices" />
-		<constructor-arg ref="clientDetailsManager" />
-		<constructor-arg ref="oAuth2RequestFactory" />
-	</bean>
-
 	<bean id="orcidAuthorizationCodeService"
 		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />
 
@@ -407,11 +399,7 @@
 	<bean id="languagesMap"
 		class="org.orcid.frontend.web.util.LanguagesMap" />
 
-	<bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
-        <constructor-arg ref="clientDetailsManager"/>
-    </bean>	
-    
-        <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
+	<bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
         <property name="filters">
             <list>
                 <ref bean="clientCredentialsTokenEndpointFilter"/>
@@ -421,26 +409,5 @@
     <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
-    </bean>
-
-    <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
-    <constructor-arg>
-        <list>
-            <ref bean="clientCredentialsTokenGranter"/>
-            <ref bean="authorizationCodeTokenGranter"/>
-        </list>
-    </constructor-arg>
-    </bean>
-    
-    <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
-        <property name="tokenGranter" ref="tokenGranter"/>
-        <property name="clientDetailsService" ref="clientDetailsManager"/>        
-    </bean>
-    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
-        <constructor-arg ref="oAuth2RequestFactory" />
-    </bean>
-    <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
-        <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="orcidClientCredentialsChecker"/>
-    </bean>
+    </bean>    
 </beans>

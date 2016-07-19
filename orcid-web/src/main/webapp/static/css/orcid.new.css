@@ -1903,6 +1903,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	margin-bottom: 0px;
 }
 
+.no-margin-top {
+	margin-top: 0px;
+}
+
 .affiliation-type {
     font-size: 16px;
     font-style: italic;
@@ -6592,11 +6596,33 @@ a:hover .mozilla-badge{
 
 .member-list ul{
 	padding: 0;
-	margin: 0 0 10px 0;
+	margin: 0 0 16px 0;
 }
 
 .member-list a{
 	white-space: nowrap;
+}
+
+.member-list table a{
+	white-space: normal;
+	word-break: normal;
+}
+
+.member-list td, .member-list th{
+	width: 33%;
+}
+
+.member-list tr{
+	border-bottom: 1px solid #eee;
+}
+
+.member-list td, .member-list th{
+	vertical-align: top;
+	padding: 10px 10px 10px 0;
+}
+
+.member-list .selected{
+	color: #a6ce39;
 }
 
 .bulk-edit-area{
@@ -6638,7 +6664,6 @@ a:hover .mozilla-badge{
 .edit-record input[type=checkbox]{
 	margin: 0 5px 0 0;
 }
-
 
 
 /* Media Queries */
@@ -7917,7 +7942,26 @@ a:hover .mozilla-badge{
 		display: block;
 		clear: both;
 	}
-	
+
+	/* Force table to not be like tables anymore */
+	.member-list table, .member-list tbody, .member-list th, .member-list td, .member-list tr { 
+		display: block;
+		width: 100%;
+	}
+
+	.member-list th { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	.member-list td { 
+		padding: 0;
+	}
+
+	.member-list tr { 
+		padding: 10px 0 10px 0;
+	}
 
 }
 

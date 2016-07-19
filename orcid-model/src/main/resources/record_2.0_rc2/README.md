@@ -5,46 +5,39 @@ As of 2016-07-15 changes to v2.0_rc2 will be avoided. Further model changes will
 A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone
 undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
 
-# ORCID API v2.0_rc2 Guide
-
-## Current State (Release Candidate **Not Stable**)
-v2.0_rc2 is in current development and should be avoided.
-A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone 
-undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
-
-## XSDs and current state (none stable)
+## XSDs and current state (all stable)
 - [activities-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd) 
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [address-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/address-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [common-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0_rc2/common-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [education-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/education-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [email-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/email-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [employment-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/employment-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [error-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/error-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [external-identifier-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/external-identifier-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [funding-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/funding-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [keyword-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/keyword-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [other-names-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/other-name-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [peer-review-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/peer-review-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [person-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/person-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [personal-details-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/personal-details-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [researcher-url-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/researcher-url-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [work-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/work-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 
 ##Changes:
 ###Person section
