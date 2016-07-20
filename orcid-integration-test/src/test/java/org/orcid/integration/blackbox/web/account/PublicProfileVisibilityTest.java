@@ -93,41 +93,49 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
         // Change Visibility to public
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-emails")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-emails")), webDriver);
+        By editEmailBy = By.xpath("//div[@ng-controller='EmailsCtrl']//span[@ng-click='openEditModal()']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(editEmailBy), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(editEmailBy), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-public-id")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("email-" + emailValue + "-public-id")), webDriver);
-
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
+      
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@ng-controller='EmailEditCtrl']//a[@name='privacy-toggle-3-public']")), webDriver);
+        List<WebElement> elements = webDriver.findElements(By.xpath("//div[@ng-controller='EmailEditCtrl']//a[@name='privacy-toggle-3-public']"));
+        for (WebElement element : elements) {
+            BBBUtil.ngAwareClick(element, webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        }
+        
         // Verify
         showPublicProfilePage();
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email']")), webDriver);
+        
 
         // Revert Visibility to private
         showMyOrcidPage();
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-emails")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("email-" + emailValue + "-private-id")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("email-" + emailValue + "-private-id")), webDriver);
-        // Verify
-        // TODO: figure out how to know when the post response returns.
+        editEmailBy = By.xpath("//div[@ng-controller='EmailsCtrl']//span[@ng-click='openEditModal()']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(editEmailBy), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(editEmailBy), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
+      
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@ng-controller='EmailEditCtrl']//a[@name='privacy-toggle-3-private']")), webDriver);
+        elements = webDriver.findElements(By.xpath("//div[@ng-controller='EmailEditCtrl']//a[@name='privacy-toggle-3-private']"));
+        for (WebElement element : elements) {
+            BBBUtil.ngAwareClick(element, webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        }
+
         showMyOrcidPage();
 
         try {
-            showPublicProfilePage();
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email' and text() = '" + emailValue + "']")));
+                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@name='email']")));
             fail("Just found email '" + emailValue + "' that should be private");
         } catch (Exception e) {
 
         }
 
-        // Rollback changes
-        accountSettingsPage = orcidUi.getAccountSettingsPage();
-        accountSettingsPage.visit();
-        emailsSection = accountSettingsPage.getEmailsSection();
-        emailsSection.toggleEdit();
-        emailsSection.removeEmail(emailValue);
     }
 
     @Test
