@@ -3377,6 +3377,17 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         $scope.bulkEditShow = !$scope.bulkEditShow;
 	      
     };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+        var putCodes = new Array();
+        for (var idx in $scope.otherNamesForm.otherNames)
+            if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode])
+                for (var idj in $scope.otherNamesForm.otherNames) {
+                    putCodes.push($scope.otherNamesForm.otherNames[idx].putCode);
+                    $scope.otherNamesForm.otherNames[idj].visibility = priv;
+                }
+        worksSrvc.updateVisibility(putCodes, priv);
+    };
            
     $scope.getOtherNamesForm();
 }]);
@@ -3459,7 +3470,8 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
     
     $scope.hideTooltip = function(tp){
     	$scope.showElement[tp] = false;
-    }
+    }   
+    
 
 
     $scope.getBiographyForm();
