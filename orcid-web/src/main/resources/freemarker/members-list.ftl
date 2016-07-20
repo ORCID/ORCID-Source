@@ -22,7 +22,9 @@
         	<div class="row">
         		<div class="col-md-12 col-sm-12 col-xs-12">
 		            <h1>ORCID Member Organizations</h1>
-		            <p>ORCID is a non-profit organization supported by a global community of organizational members, including research organizations, publishers, funders, professional associations, and other stakeholders in the research ecosystem. Interested in becoming a member? <a href="<@orcid.rootPath '/about/membership'/>">Learn more about membership</a></p>
+		            <p>ORCID is a non-profit organization supported by a global community of organizational members, including research organizations, publishers, funders, professional associations, and other stakeholders in the research ecosystem. 
+		            Interested in becoming a member? <a href="<@orcid.rootPath '/about/membership'/>">Learn more about membership</a></p>
+	            	
 	            </div>            
 	            <div ng-controller="MembersListController">
 	                <div ng-hide="membersListSrvc.membersList != null" class="text-center" ng-cloak>
@@ -35,9 +37,13 @@
 	                <div ng-show="membersListSrvc.membersList">
 	                	<div class="col-md-12 col-sm-12 col-xs-12">
 	                    	<p ng-cloak>There are currently {{membersListSrvc.membersList.length}} ORCID member organizations.</p>
+	                    	<p>
+	            				<a class="selected" href="<@orcid.rootPath '/members'/>">All members</a> | <a href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
+	            			</p>
+	    
 	                    </div>
 	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | orderBy : 'name'">
-	                    	<hr />
+	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>

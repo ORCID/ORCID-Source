@@ -130,7 +130,8 @@ public class MailGunManager {
             formData.add("html", html);
         }
         formData.add("o:testmode", testmode);
-        LOGGER.debug("Email form data: \n" + formData.toString());
+        if (testmode.equals("yes"))
+            LOGGER.error("Email form data: \n" + formData.toString());
         // the filter is used to prevent sending email to users in qa and
         // sandbox
         if (to.matches(filter)) {
