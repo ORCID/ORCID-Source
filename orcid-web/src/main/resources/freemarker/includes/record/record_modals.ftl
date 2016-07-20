@@ -77,16 +77,16 @@
 								</div>
 							</li>					
 							<li>
-								<span class="glyphicon glyphicon-trash bulk-trash" ng-click=""></span>
+								<span class="glyphicon glyphicon-trash bulk-trash" ng-click="bulkDelete()"></span>
 							</li>
 							<li>
 								<span class="custom-control-title">Edit</span>
 								<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
 				             		questionClick="toggleClickPrivacyHelp($index)"
 				             		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             		publicClick="setPrivacyModal('PUBLIC', $event, otherName)" 
-		                	     	limitedClick="setPrivacyModal('LIMITED', $event, otherName)" 
-		                	     	privateClick="setPrivacyModal('PRIVATE', $event, otherName)"
+				             		publicClick="setBulkGroupPrivacy('PUBLIC', $event, otherName)" 
+		                	     	limitedClick="setBulkGroupPrivacy('LIMITED', $event, otherName)" 
+		                	     	privateClick="setBulkGroupPrivacy('PRIVATE', $event, otherName)"
 		                	     	elementId="$index" />
 							</li>							
 						</ul>
@@ -139,9 +139,13 @@
 					</div>
 					<div class="record-buttons" ng-if="bulkEditShow == false">
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
-			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
+			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
 			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
+					<div class="record-buttons" ng-if="bulkEditShow">							        	      		
+			            <a class="cancel-option pull-right" ng-click="closeEditModal()">Close</a>
+					</div>
+
 				</div>
 			</div>
 		</div>

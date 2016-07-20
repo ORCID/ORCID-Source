@@ -527,15 +527,15 @@ orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
     var bioBulkSrvc = {
-            initScope: function($scope) {
-                $scope.bulkEditShow = false;
-                $scope.bulkEditMap = {};
-                $scope.bulkChecked = false;
-                $scope.bulkDisplayToggle = false;
-                $scope.toggleSelectMenu = function(){                	
-                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
-                };
-            }
+        initScope: function($scope) {
+            $scope.bulkEditShow = false;
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            $scope.bulkDisplayToggle = false;
+            $scope.toggleSelectMenu = function(){                	
+                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
+            };
+        }
     };
     return bioBulkSrvc;
 }]);
@@ -3226,24 +3226,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }        
     };
 
-    $scope.setOtherNamesForm = function(v2){       
-    	//Remove once V2 API functionality is live
-        if(v2) {
-        	$scope.otherNamesForm.visibility = null;
-        } else {
-        	//Set the default visibility to each of the elements        	
-        	if($scope.defaultVisibility != null) {
-        		if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null) {
-        			for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
-        				if($scope.otherNamesForm.otherNames[i].visibility == null) {
-        					$scope.otherNamesForm.otherNames[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-        				}  			        			
-        				$scope.otherNamesForm.otherNames[i].visibility.visibility = $scope.defaultVisibility; 
-        			}
-        		}
-        	}
-        }     
-        
+    $scope.setOtherNamesForm = function(bulk){
+        $scope.otherNamesForm.visibility = null; //Old
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
@@ -3254,7 +3238,9 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
                     $scope.close();
-                    $.colorbox.close();
+                	if (!bulk){
+                		$.colorbox.close();	
+                	}                    
                 $scope.$apply();
             }
         }).fail(function() {
@@ -3324,8 +3310,9 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         $.colorbox.resize();
     }
     
-    $scope.closeEditModal = function(){        
+    $scope.closeEditModal = function(){    	
         $.colorbox.close();
+        $scope.bulkEditShow = false;
     }
     
     $scope.swapUp = function(index){
@@ -3370,7 +3357,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
             $scope.bulkChecked = false;
             for (var idx in $scope.otherNamesForm.otherNames)
                 $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = false;
-            $.colorbox.resize({height: '645px'});
+            $.colorbox.resize({height: '700px'});
         }else{        	
     	    $.colorbox.resize({height: '490px'});	
         };
@@ -3379,15 +3366,24 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
-        var putCodes = new Array();
-        for (var idx in $scope.otherNamesForm.otherNames)
+    	for (var idx in $scope.otherNamesForm.otherNames)
             if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode])
-                for (var idj in $scope.otherNamesForm.otherNames) {
-                    putCodes.push($scope.otherNamesForm.otherNames[idx].putCode);
-                    $scope.otherNamesForm.otherNames[idj].visibility = priv;
-                }
-        worksSrvc.updateVisibility(putCodes, priv);
+            	$scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;
+        $scope.setOtherNamesForm(true);
     };
+    
+    $scope.bulkDelete = function(){
+    	var itemsToDelete = [];
+    	var otherNames = $scope.otherNamesForm.otherNames;
+    	for (var idx in $scope.otherNamesForm.otherNames){    		
+    		if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode]){
+    			itemsToDelete.push(idx);    			
+    			//$scope.deleteOtherName($scope.otherNamesForm.otherNames[idx]);    			
+    		}	
+    	}
+    	otherNames.splice(itemsToDelete,1);
+    }
+    
            
     $scope.getOtherNamesForm();
 }]);
@@ -5687,9 +5683,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.deleteBulkConfirm = function(idx) {
         $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
-        $scope.bulkDeleteSubmit = false;
-        for (var idx in worksSrvc.groups)
-            console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
+        $scope.bulkDeleteSubmit = false;        
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
                 $scope.bulkDeleteCount++;
