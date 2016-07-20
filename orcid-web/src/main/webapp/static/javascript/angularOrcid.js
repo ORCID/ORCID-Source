@@ -1471,8 +1471,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
-                	serv.notificationAlerts = data;                	
-                	console.log(data);
+                	serv.notificationAlerts = data;
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -3127,7 +3126,8 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
 }]);
 
 
-orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope, $compile) {
+orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile ,bioBulkSrvc) {
+	bioBulkSrvc.initScope($scope);	
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
@@ -3348,6 +3348,34 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
             $scope.otherNamesForm.otherNames[index + 1] = temp;
         }
+    };    
+    
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in $scope.otherNamesForm.otherNames)
+            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = bool;
+    };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in $scope.otherNamesForm.otherNames)
+            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.toggleBulkEdit = function() {    	    	
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in $scope.otherNamesForm.otherNames)
+                $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = false;
+            $.colorbox.resize({height: '645px'});
+        }else{        	
+    	    $.colorbox.resize({height: '490px'});	
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+	      
     };
            
     $scope.getOtherNamesForm();

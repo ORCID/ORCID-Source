@@ -33,19 +33,20 @@
 			
 			
 			<#if RequestParameters['bulkEdit']??>
-				<!-- Bulk edit -->
-				<div class="bulk-edit-area">
-				<div class="row">
-					<div class="col-md-12 col-sm-12 col-xs-12">								
-						 <a href="" class="pull-right">Hide bulk edit</a>
-					</div>
+			<!-- Bulk edit -->
+			<div class="row">
+				<div class="col-md-12 col-sm-12 col-xs-12">								
+					<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow">Hide bulk edit</a>
+					<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow == false">Show bulk edit</a>
 				</div>
+			</div>
+			<div class="bulk-edit-area" ng-if="bulkEditShow">				
 				<div class="row bottomBuffer">					
 					<div class="col-md-12 col-sm-12 col-xs-12">
 						<h4>Bulk edit</h4>
 						<ol class="bulk-modal-list">
 							<li>
-								Select items: Click the checkbox beside each item. Use the checkbox to the right to select or deselect all.
+								Select items: Click the checkbox beside each item. Use the checkbox to the bottom to select or deselect all.
 							</li>
 							<li>
 								Select editing action: Click the trash can to delete all selected items or click a privacy setting to apply that setting to all selected items.
@@ -91,7 +92,7 @@
 						</ul>
 					</div>
 				</div>
-				</div>
+			</div>
 			</#if>
 
 
@@ -100,7 +101,7 @@
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
 						<div class="scroll-area">		
-	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak> 								
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
 										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput"/>																				
@@ -111,7 +112,7 @@
 								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>					
-											<input type="checkbox" class="bio-item"/>							
+											<input type="checkbox" class="bio-item" ng-model="bulkEditMap[otherName.putCode]" ng-if="bulkEditShow"/>							
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
 										</li>
 										<li>																						
@@ -136,7 +137,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="record-buttons">
+					<div class="record-buttons" ng-if="bulkEditShow == false">
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
 			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
 			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
