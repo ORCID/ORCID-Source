@@ -68,7 +68,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
             version = matcher.group(1);
         }
         
-        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method)) {
+        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path)) {
             if(!RequestMethod.GET.name().equals(method)) {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    

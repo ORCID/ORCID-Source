@@ -201,6 +201,25 @@ public class ApiVersionCheckFilterTest {
             fail();
         }
     }
+        
+    @Test
+    public void apiOauthTokenTest() {
+        MockHttpServletRequest mockReq = new MockHttpServletRequest();
+        mockReq.setAttribute("X-Forwarded-Proto", "https");
+        OrcidHttpServletRequestWrapper requestWrapper = new OrcidHttpServletRequestWrapper(mockReq);                
+        WebApplication webApp = Mockito.mock(WebApplication.class, Mockito.RETURNS_MOCKS);
+        URI baseUri = URI.create("http://localhost:8443/orcid-api-web/");
+        URI requestUri = URI.create("http://localhost:8443/orcid-api-web/oauth/token");
+        InBoundHeaders headers = new InBoundHeaders();
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
+        try {
+            ContainerRequest containerRequest = new ContainerRequest(webApp, "POST", baseUri, requestUri, headers, inputStream);
+            ApiVersionCheckFilter filter = new ApiVersionCheckFilter(requestWrapper);
+            filter.filter(containerRequest);
+        } catch (Exception e) {
+            fail();
+        }
+    }
     
     private ApiVersionCheckFilter getApiVersionCheckFilter(String scheme) {
         LocaleManager localeManager = Mockito.mock(LocaleManager.class);
