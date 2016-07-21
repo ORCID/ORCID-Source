@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.orcid.core.security.UnclaimedProfileExistsException;
 import org.orcid.core.security.aop.LockedException;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.pojo.ajaxForm.OauthAuthorizeForm;
@@ -31,6 +32,7 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
@@ -143,7 +145,17 @@ public class OauthLoginController extends OauthControllerBase {
                     form.setRedirectUrl(view.getUrl());
                     willBeRedirected = true;
                 } catch (AuthenticationException ae) {
-                    form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+                    if(ae.getCause() instanceof DisabledException){
+                        form.getErrors().add(getMessage("orcid.frontend.security.orcid_deactivated"));
+                    } else if(ae.getCause() instanceof UnclaimedProfileExistsException) {
+                        String email = PojoUtil.isEmpty(form.getUserName()) ? null : form.getUserName().getValue();
+                        String resendEmailUrl = createResendClaimUrl(email, request);
+                        String errorMessage = getMessage("orcid.frontend.security.unclaimed_exists");
+                        errorMessage = errorMessage.replace("{{resendClaimUrl}}", resendEmailUrl);
+                        form.getErrors().add(errorMessage);
+                    } else {
+                        form.getErrors().add(getMessage("orcid.frontend.security.bad_credentials"));
+                    }                                            
                 }
             }
         } else {
