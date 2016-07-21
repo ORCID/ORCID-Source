@@ -532,7 +532,8 @@ orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
             $scope.bulkEditMap = {};
             $scope.bulkChecked = false;
             $scope.bulkDisplayToggle = false;
-            $scope.toggleSelectMenu = function(){                	
+            $scope.toggleSelectMenu = function(){
+            	console.log('Click');
                 $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
             };
         }
@@ -1312,7 +1313,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("$EmailEditCtrl.deleteEmail() error");
+                    console.log("emailSrvc.deleteEmail() error");
                 });
             },
             initInputEmail: function () {
@@ -2439,7 +2440,10 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
     };
 }]);
 
-orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,function EmailEditCtrl($scope, $compile, emailSrvc) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc', 'bioBulkSrvc' ,function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc) {
+	
+	bioBulkSrvc.initScope($scope);
+	
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
@@ -2591,6 +2595,54 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.hideTooltip = function(el){
     	$scope.showElement[el] = false;
     };
+    
+    /* Bulk edit */
+    
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in emailSrvc.emails.emails)
+            $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = bool;
+    };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in $scope.otherNamesForm.otherNames)
+            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.toggleBulkEdit = function() {                
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in emailSrvc.emails.emails)
+                $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = false;
+            $.colorbox.resize({height: '700px'});
+        }else{          
+            $.colorbox.resize({height: '490px'});   
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+          
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+        for (var idx in $scope.otherNamesForm.otherNames)
+            if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode])
+                $scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;        
+    };
+    
+    $scope.bulkDelete = function(){     
+        var otherNames = $scope.otherNamesForm.otherNames;
+        var len = otherNames.length;
+        while (len--)            
+            if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[len].putCode])                
+                otherNames.splice(len,1);
+        
+        $scope.otherNamesForm.otherNames = otherNames;
+    };
+    
+    
 }]);
 
 orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', function WebsitesCtrl($scope, $compile, bioBulkSrvc) {
@@ -11063,7 +11115,7 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     
 }]);
 
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){	
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -11081,6 +11133,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	}
 	
 	$scope.openEditModal = function(){
+		
 	    var HTML = '<div class="lightbox-container">\
 	    				<div class="edit-record edit-record-emails" style="position: relative">\
 	    					<div class="row bottomBuffer">\

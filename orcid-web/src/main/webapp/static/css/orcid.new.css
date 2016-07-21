@@ -6285,7 +6285,7 @@ a:hover .mozilla-badge{
 	min-height: 450px;
 	height: auto;
 	padding: 15px 0 15px 15px;
-	overflow: hidden;	 
+	overflow: visible;	 
 }
 
 .edit-record-emails{	
@@ -6451,7 +6451,7 @@ a:hover .mozilla-badge{
 } 
 
 .email-pop-up .editTablePadCell35{
-	margin-right: 15px;	
+	margin-right: 20px;	
 	margin-left: 15px;	
 }
 
@@ -6625,6 +6625,8 @@ a:hover .mozilla-badge{
 	color: #a6ce39;
 }
 
+/* Bulk edit bio*/
+
 .bulk-edit-area{
 	border-bottom: 1px solid rgb(166, 206, 57);
 	padding: 5px;
@@ -6667,6 +6669,10 @@ a:hover .mozilla-badge{
 
 .edit-record input[type=checkbox]{
 	margin: 0 5px 0 0;
+}
+
+.bulk-edit-email{
+	margin: 0 -30px 0 0;
 }
 
 

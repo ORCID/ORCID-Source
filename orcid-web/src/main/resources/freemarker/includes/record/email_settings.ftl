@@ -25,19 +25,24 @@
 	        <div class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
 	        	<span ng-repeat='error in emailSrvc.emails.errors' ng-bind-html="error"></span>
 	        </div>
+
+			<div class="bulk-edit-email" ng-include="'bulk-edit-email'"></div>
+
 	        <!-- Start -->
 	        <div class="row">
 	            <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
-	        </div>			
+	        </div>
 	        <!-- Email table -->
 	        <div class="table-responsive bottomBuffer" style="position: static">
 	            <table class="table" style="position: static">
 	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" name="email">
 	                    <!-- Primary Email -->
-	                    <td ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-3 col-xs-12 email">
+	                    <td ng-class="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" ng-cloak>
+							<input type="checkbox" class="bio-item" ng-model="bulkEditMap[_.putCode]" ng-if="bulkEditShow"/>							
+							<span>{{email.value}}</span>
 	                    </td>
 	                    <!-- Set Primary options -->
-	                    <td>
+						<td>							
 	                        <span ng-hide="email.primary"> <a href=""
 	                            ng-click="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
 	                        </span> <span ng-show="email.primary" class="muted" style="color: #bd362f;">
@@ -173,4 +178,71 @@
 			</div>			
 	    </div>
 	</td>
+</script>
+
+<script type="text/ng-template" id="bulk-edit-email">
+<#if RequestParameters['bulkEdit']??>	
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">								
+			<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow">Hide bulk edit</a>
+			<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow == false">Show bulk edit</a>
+		</div>
+	</div>
+
+	<div class="bulk-edit-area" ng-if="bulkEditShow">				
+		
+		<div class="row bottomBuffer">					
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h4>Bulk edit</h4>
+				<ol class="bulk-modal-list">
+					<li>
+						Select items: Click the checkbox beside each item. Use the checkbox to the bottom to select or deselect all.
+					</li>
+					<li>
+						Select editing action: Click the trash can to delete all selected items or click a privacy setting to apply that setting to all selected items.
+					</li>
+				</ol>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<ul class="inline-list pull-right bulk-edit bulk-edit-modal">							
+					<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
+						<span class="custom-control-title">Select</span>
+						<div id="custom-control-x">									
+							<div class="custom-control-x" >
+								<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu();$event.stopPropagation()">										
+									<span class="custom-checkbox-parent">
+										<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked}"></div>
+									</span>										
+									<div class="custom-control-arrow" ng-click=""></div>														
+								</div>
+								<div>
+									<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle}">
+									 	<li><a ng-click="bulkChangeAll(true)"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
+							    		<li><a ng-click="bulkChangeAll(false)"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>							          							          
+									</ul>			
+								</div>
+							</div>									
+						</div>
+					</li>					
+					<li>
+						<span class="glyphicon glyphicon-trash bulk-trash" ng-click="bulkDelete()"></span>
+					</li>
+					<li>
+						<span class="custom-control-title">Edit</span>
+						<@orcid.privacyToggle3  angularModel=""
+		             		questionClick=""
+		             		clickedClassCheck="" 
+		             		publicClick="setBulkGroupPrivacy('PUBLIC', $event, null)" 
+                	     	limitedClick="setBulkGroupPrivacy('LIMITED', $event, null)" 
+                	     	privateClick="setBulkGroupPrivacy('PRIVATE', $event, null)"
+                	     	elementId="" />
+					</li>							
+				</ul>
+			</div>
+		</div>
+	</div>
+</#if>
 </script>
