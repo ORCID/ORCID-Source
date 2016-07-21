@@ -138,7 +138,7 @@ public class OrcidOauth2TokenDetailDaoImpl extends GenericDaoImpl<OrcidOauth2Tok
 
     @Override
     public void disableAccessToken(String accessTokenValue) {
-        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE where " + "tokenValue = :accessTokenValue");
+        Query query = entityManager.createQuery("update OrcidOauth2TokenDetail set tokenDisabled = TRUE where tokenValue = :accessTokenValue");
         query.setParameter("accessTokenValue", accessTokenValue);
         int count = query.executeUpdate();
         if (count == 0) {

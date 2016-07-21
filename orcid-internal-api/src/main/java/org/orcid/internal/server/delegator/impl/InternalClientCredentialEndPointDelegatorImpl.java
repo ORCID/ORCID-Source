@@ -20,12 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.exception.OrcidInvalidScopeException;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.internal.server.delegator.InternalClientCredentialEndPointDelegator;
+import org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.dao.OrcidOauth2AuthoriziationCodeDetailDao;
 import org.slf4j.Logger;
@@ -34,15 +36,15 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnsupportedGrantTypeException;
-
-import com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
  * @author Angel Montenegro
  * 
  */
-public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl implements InternalClientCredentialEndPointDelegator {
+public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCredentialEndPointDelegatorImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidClientCredentialEndPointDelegatorImpl.class);
 
@@ -53,23 +55,28 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
     protected LocaleManager localeManager;
     
     @Override
-    public Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
-            String redirectUri, String resourceId) {
-        
-        LOGGER.info("OAuth2 authorization requested to the internal API: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
-                grantType, refreshToken, code, scopes, state, redirectUri });
-
-        Authentication client = getClientAuthentication();
-        if (!client.isAuthenticated()) {
-            LOGGER.info("Not authenticated for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
-                    clientId, grantType, refreshToken, code, scopes, state, redirectUri });
-            throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_not_authenticated.exception"));
-        } 
+    @Transactional
+    public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
+        String clientId = formParams.getFirst("client_id");                             
+        String scopeList = formParams.getFirst("scope");
+        String grantType = formParams.getFirst("grant_type");
         
         // Verify it is a client_credentials grant type request
         if(!OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
             Object params[] = {grantType};
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
+        }
+        
+        Authentication client = getClientAuthentication();
+        if (!client.isAuthenticated()) {
+            LOGGER.info("Not authenticated for OAuth2: clientId={}, grantType={}, scope={}", new Object[] {
+                    clientId, grantType, scopeList });
+            throw new InsufficientAuthenticationException(localeManager.resolveMessage("apiError.client_not_authenticated.exception"));
+        } 
+        
+        Set<String> scopes = new HashSet<String>();
+        if (StringUtils.isNotEmpty(scopeList)) {
+            scopes = OAuth2Utils.parseParameterList(scopeList);
         }
         
         // Verify it is requesting an internal scope
@@ -86,8 +93,7 @@ public class InternalClientCredentialEndPointDelegatorImpl extends OrcidClientCr
             throw new OrcidInvalidScopeException(message);
         }
         
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state);
-        return getResponse(token);                
+        OAuth2AccessToken token = generateToken(client, scopes, null, null, grantType, null, null, null, false, 0L);
+        return getResponse(token);
     }
-
 }

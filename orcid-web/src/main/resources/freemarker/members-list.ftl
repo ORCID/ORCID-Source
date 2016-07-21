@@ -22,7 +22,9 @@
         	<div class="row">
         		<div class="col-md-12 col-sm-12 col-xs-12">
 		            <h1>ORCID Member Organizations</h1>
-		            <p>ORCID is a non-profit organization supported by a global community of organizational members, including research organizations, publishers, funders, professional associations, and other stakeholders in the research ecosystem. Interested in becoming a member? <a href="<@orcid.rootPath '/about/membership'/>">Learn more about membership</a></p>
+		            <p>ORCID is a non-profit organization supported by a global community of organizational members, including research organizations, publishers, funders, professional associations, and other stakeholders in the research ecosystem. 
+		            Interested in becoming a member? <a href="<@orcid.rootPath '/about/membership'/>">Learn more about membership</a></p>
+	            	
 	            </div>            
 	            <div ng-controller="MembersListController">
 	                <div ng-hide="membersListSrvc.membersList != null" class="text-center" ng-cloak>
@@ -34,22 +36,24 @@
 	                
 	                <div ng-show="membersListSrvc.membersList">
 	                	<div class="col-md-12 col-sm-12 col-xs-12">
-	                    	<p ng-cloak>There are {{membersListSrvc.membersList.length}} ORCID members</p>
+	                    	<p ng-cloak>There are currently {{membersListSrvc.membersList.length}} ORCID member organizations.</p>
+	                    	<p>
+	            				<a class="selected" href="<@orcid.rootPath '/members'/>">All members</a> | <a href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
+	            			</p>
+	    
 	                    </div>
 	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | orderBy : 'name'">
-	                    	<hr />
+	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
 	                        	<p ng-cloak>{{member.researchCommunity}} | {{member.country}}</p>
 	                        </div>
-	                        <div class="col-md-2 col-sm-2 col-xs-12">
-	                        	<p class="logo-holder">
-	                        		<img class="member-logo" ng-hide="member.logoUrl == null" src="{{member.logoUrl}}"  ng-cloak>
-	                        	</p>
-	                        </div>
 	                        <div class="col-md-10 col-sm-10 col-xs-12">
-	                        	<p ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></p>
 	                        	<p>
+		                        	<img class="member-logo" src="{{member.logoUrl}}"  ng-cloak ng-if="member.logoUrl">
+		                        	<span class="member-decsription" ng-bind-html="renderHtml(member.description)" ng-if="member.description" ng-cloak></span>
+	                        	</p>
+	                        	<p class="clear-fix">
 	                        		<a ng-href="{{membersListSrvc.getMemberPageUrl(member.slug)}}" ng-cloak>Member details <i class="glyphicon x075 glyphicon-chevron-right"></i></a>
 	                        	</p>
 	                        </div>

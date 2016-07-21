@@ -20,13 +20,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.core.constants.OrcidOauth2Constants;
 import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -72,7 +75,10 @@ public class OrcidClientCredentialsCheckerTest {
         String clientId = "APP-1";
         setupMocks(clientId, memberId);
         Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.FUNDING_CREATE.value()));
-        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), clientId, requestedScopes, "client_credentials"));
+        Map<String, String> requestParams = new HashMap <String, String>();
+        requestParams.put(OrcidOauth2Constants.SCOPE_PARAM, ScopePathType.FUNDING_CREATE.value());
+        
+        checker.validateCredentials("client_credentials", new TokenRequest(requestParams, clientId, requestedScopes, "client_credentials"));
     }
 
     @Test
@@ -81,7 +87,9 @@ public class OrcidClientCredentialsCheckerTest {
         String clientId = "APP-1";
         setupMocks(clientId, memberId);
         Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));
-        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), clientId, requestedScopes, "client_credentials"));
+        Map<String, String> requestParams = new HashMap <String, String>();
+        requestParams.put(OrcidOauth2Constants.SCOPE_PARAM, ScopePathType.READ_PUBLIC.value());
+        checker.validateCredentials("client_credentials", new TokenRequest(requestParams, clientId, requestedScopes, "client_credentials"));
     }
 
     @Test
@@ -90,7 +98,9 @@ public class OrcidClientCredentialsCheckerTest {
         String clientId = "APP-1";
         setupMocks(clientId, memberId);
         Set<String> requestedScopes = new HashSet<String>(Arrays.asList(ScopePathType.READ_PUBLIC.value()));
-        checker.validateCredentials("client_credentials", new TokenRequest(Collections.<String, String> emptyMap(), clientId, requestedScopes, "client_credentials"));
+        Map<String, String> requestParams = new HashMap <String, String>();
+        requestParams.put(OrcidOauth2Constants.SCOPE_PARAM, ScopePathType.READ_PUBLIC.value());        
+        checker.validateCredentials("client_credentials", new TokenRequest(requestParams, clientId, requestedScopes, "client_credentials"));
     }
     
     private void setupMocks(String clientId, String memberId) {

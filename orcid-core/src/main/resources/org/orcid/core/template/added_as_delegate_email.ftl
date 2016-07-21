@@ -25,9 +25,5 @@
 
 <@emailMacros.msg "email.added_as_delegate.if_you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.if_you_have.2" />${grantingOrcidEmail}<@emailMacros.msg "email.added_as_delegate.if_you_have.3" />
 
-
-<@emailMacros.msg "email.common.kind_regards" />
-${baseUri}/home?lang=${locale}
-
 <@emailMacros.msg "email.common.you_have_received_this_email" />
 <#include "email_footer.ftl"/>

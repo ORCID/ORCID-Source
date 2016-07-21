@@ -14,16 +14,15 @@
  *
  * =============================================================================
  */
-package com.orcid.api.common.server.delegator;
+package org.orcid.core.oauth;
 
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import java.util.Set;
 
 /**
  * @author Declan Newman (declan) Date: 18/04/2012
  */
 public interface OrcidClientCredentialEndPointDelegator {
 
-    Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
-            String redirectUri, String resourceId);
+    Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams);
 }

@@ -39,15 +39,12 @@
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.added_as_delegate.if_you_have.1" />${grantingOrcidName}<@emailMacros.msg "email.added_as_delegate.if_you_have.2" />${grantingOrcidEmail}<@emailMacros.msg "email.added_as_delegate.if_you_have.3" />
-		    </p>
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>				
-		    </p>
+		    </p>		    
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
 			</p>
-			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
+			<hr />
+			<p>
 			   <#include "email_footer_html.ftl"/>
 			</p>
 		 </div>

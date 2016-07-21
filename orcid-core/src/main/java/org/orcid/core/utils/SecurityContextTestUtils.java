@@ -70,6 +70,7 @@ public class SecurityContextTestUtils {
                 Collections.<GrantedAuthority> emptyList(), true, scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(),
                 Collections.<String, Serializable> emptyMap());
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
+        when(mockedAuthentication.isAuthenticated()).thenReturn(true);
     }
 
     static public void setUpSecurityContextForClientOnly() {
@@ -107,6 +108,8 @@ public class SecurityContextTestUtils {
         OAuth2Request authorizationRequest = new OAuth2Request(Collections.<String, String> emptyMap(), clientId, Collections.<GrantedAuthority> emptyList(), true,
                 scopes, Collections.<String> emptySet(), null, Collections.<String> emptySet(), Collections.<String, Serializable> emptyMap());
         when(mockedAuthentication.getOAuth2Request()).thenReturn(authorizationRequest);
+        when(mockedAuthentication.isAuthenticated()).thenReturn(true);
+        when(mockedAuthentication.getName()).thenReturn(clientId);
     }
 
     static public void setUpSecurityContextForAnonymous() {

@@ -36,6 +36,7 @@ public class SalesForceMember implements Serializable {
     private String country;
     private String description;
     private URL logoUrl;
+    private String mainOpportunityId;
     private String consortiumLeadId;
 
     public String getId() {
@@ -102,6 +103,14 @@ public class SalesForceMember implements Serializable {
         this.logoUrl = logoUrl;
     }
 
+    public String getMainOpportunityId() {
+        return mainOpportunityId;
+    }
+
+    public void setMainOpportunityId(String mainOpportunityId) {
+        this.mainOpportunityId = mainOpportunityId;
+    }
+
     public String getConsortiumLeadId() {
         return consortiumLeadId;
     }
@@ -113,7 +122,8 @@ public class SalesForceMember implements Serializable {
     @Override
     public String toString() {
         return "SalesForceMember [id=" + id + ", name=" + name + ", slug=" + slug + ", websiteUrl=" + websiteUrl + ", researchCommunity=" + researchCommunity
-                + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", consortiumLeadId=" + consortiumLeadId + "]";
+                + ", country=" + country + ", description=" + description + ", logoUrl=" + logoUrl + ", mainOpportunityId=" + mainOpportunityId + ", consortiumLeadId="
+                + consortiumLeadId + "]";
     }
 
 }
