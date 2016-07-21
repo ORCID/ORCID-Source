@@ -72,12 +72,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.validation.BindingResult;
@@ -495,7 +492,7 @@ public class BaseController {
         return false;
     }
 
-    private String createResendClaimUrl(String email, HttpServletRequest request) {
+    protected String createResendClaimUrl(String email, HttpServletRequest request) {
         String urlEncodedEmail = null;
         try {
             urlEncodedEmail = URLEncoder.encode(email, "UTF-8");
