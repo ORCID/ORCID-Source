@@ -386,8 +386,7 @@ public class SetUpClientsAndUsers {
         setUpAddresses(user1OrcidId);
         setUpKeywords(user1OrcidId);
         setUpOtherNames(user1OrcidId);
-        setUpEmails(user1OrcidId);
-        setUpExternalIdentifiers(user1OrcidId);
+        setUpEmails(user1OrcidId);        
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
@@ -721,7 +720,6 @@ public class SetUpClientsAndUsers {
         String website = params.get(CLIENT_WEBSITE);
         String clientId = params.get(CLIENT_ID);        
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
-
         String memberId = params.get(MEMBER_ID);
         
         Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();
@@ -907,38 +905,7 @@ public class SetUpClientsAndUsers {
         email.setId("limited@test.orcid.org");
         emailDao.persist(email);
     }
-    
-    /**
-     * Set up external identifiers
-     * Please see tests: 
-     *  ExternalIdentifiersTest.testGetExternalIdentifiersWihtMembersAPI
-     *  ExternalIdentifiersTest.testCreateGetUpdateAndDeleteExternalIdentifier
-     *  ExternalIdentifiersTest.testGetExternalIdentifiersWihtPublicAPI
-     * */
-    public void setUpExternalIdentifiers(String orcid) {
-        ExternalIdentifierEntity e1 = new ExternalIdentifierEntity();
-        e1.setDateCreated(new Date());
-        e1.setDisplayIndex(0L);
-        e1.setExternalIdCommonName("A-0001");
-        e1.setExternalIdReference("A-0001");
-        e1.setExternalIdUrl("http://ext-id/A-0001");
-        e1.setClientSourceId(client1ClientId);
-        e1.setOwner(new ProfileEntity(orcid));
-        e1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        externalIdentifierDao.persist(e1);
-                
-        ExternalIdentifierEntity e2 = new ExternalIdentifierEntity();
-        e2.setDateCreated(new Date());
-        e2.setDisplayIndex(0L);
-        e2.setExternalIdCommonName("A-0002");
-        e2.setExternalIdReference("A-0002");
-        e2.setExternalIdUrl("http://ext-id/A-0002");
-        e2.setClientSourceId(client1ClientId);
-        e2.setOwner(new ProfileEntity(orcid));
-        e2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.LIMITED);        
-        externalIdentifierDao.persist(e2);                        
-    }   
-    
+        
     /**
      * Set up delegates
      * Please see tests: 

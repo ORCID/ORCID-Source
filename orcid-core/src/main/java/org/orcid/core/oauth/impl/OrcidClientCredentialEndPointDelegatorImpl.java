@@ -18,11 +18,13 @@ package org.orcid.core.oauth.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,12 +62,41 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
     private OrcidOauth2AuthoriziationCodeDetailDao orcidOauth2AuthoriziationCodeDetailDao;
     
     @Resource
-    protected LocaleManager localeManager;
+    protected LocaleManager localeManager;        
     
     @Transactional
-    public Response obtainOauth2Token(String clientId, String clientSecret, String refreshToken, String grantType, String code, Set<String> scopes, String state,
-            String redirectUri, String resourceId) {
-
+    public Response obtainOauth2Token(String authorization, MultivaluedMap<String, String> formParams) {
+        String code = formParams.getFirst("code");
+        String clientId = formParams.getFirst(OrcidOauth2Constants.CLIENT_ID_PARAM);        
+        String state = formParams.getFirst(OrcidOauth2Constants.STATE_PARAM);
+        String redirectUri = formParams.getFirst(OrcidOauth2Constants.REDIRECT_URI_PARAM);
+        String refreshToken = formParams.getFirst(OrcidOauth2Constants.REFRESH_TOKEN);
+        String scopeList = formParams.getFirst(OrcidOauth2Constants.SCOPE_PARAM);
+        String grantType = formParams.getFirst(OrcidOauth2Constants.GRANT_TYPE);
+        Boolean revokeOld = formParams.containsKey(OrcidOauth2Constants.REVOKE_OLD) ? Boolean.valueOf(formParams.getFirst(OrcidOauth2Constants.REVOKE_OLD)) : true;
+        Long expiresIn = calculateExpiresIn(formParams);
+        
+        String bearerToken = null;
+        Set<String> scopes = new HashSet<String>();
+        if (StringUtils.isNotEmpty(scopeList)) {
+            scopes = OAuth2Utils.parseParameterList(scopeList);
+        }
+        if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
+            if(!PojoUtil.isEmpty(authorization)) {
+                if ((authorization.toLowerCase().startsWith(OAuth2AccessToken.BEARER_TYPE.toLowerCase()))) {
+                    String authHeaderValue = authorization.substring(OAuth2AccessToken.BEARER_TYPE.length()).trim();
+                    int commaIndex = authHeaderValue.indexOf(',');
+                    if (commaIndex > 0) {
+                            authHeaderValue = authHeaderValue.substring(0, commaIndex);
+                    }
+                    bearerToken = authHeaderValue;
+                    if(PojoUtil.isEmpty(bearerToken)) {
+                        throw new IllegalArgumentException("Refresh token request doesnt include the authorization");
+                    }
+                }            
+            }                       
+        }        
+        
         LOGGER.info("OAuth2 authorization requested: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] { clientId,
                 grantType, refreshToken, code, scopes, state, redirectUri });
 
@@ -89,7 +120,6 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         }
 
         try {
-            boolean isClientCredentialsGrantType = OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType);            
             if (scopes != null) {
                 List<String> toRemove = new ArrayList<String>();
                 for (String scope : scopes) {
@@ -98,7 +128,7 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                         // You should not allow any internal scope here! go away!
                         String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
                         throw new OrcidInvalidScopeException(message);
-                    } else if(isClientCredentialsGrantType) {
+                    } else if(OrcidOauth2Constants.GRANT_TYPE_CLIENT_CREDENTIALS.equals(grantType)) {
                         if(!scopeType.isClientCreditalScope())
                             toRemove.add(scope);
                     } else {
@@ -110,17 +140,43 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 for (String remove : toRemove) {
                     scopes.remove(remove);
                 }
-            }
+            }                        
         } catch (IllegalArgumentException iae) {
             String message = localeManager.resolveMessage("apiError.9015.developerMessage", new Object[]{});
             throw new OrcidInvalidScopeException(message);
         }
-        
-        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state);
+                
+        OAuth2AccessToken token = generateToken(client, scopes, code, redirectUri, grantType, refreshToken, state, bearerToken, revokeOld, expiresIn);
         return getResponse(token);
     }
 
-    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state) {        
+    /**
+     * Calculates the real value of the "expires_in" param based on the current time
+     * 
+     * @param formParams
+     *          The params container
+     *          
+     * @return the expiration time in milliseconds based on the param OrcidOauth2Constants.EXPIRES_IN.
+     * @throws IllegalArgumentException in case the parameter is not a number 
+     * */
+    private Long calculateExpiresIn(MultivaluedMap<String, String> formParams) {
+        if(!formParams.containsKey(OrcidOauth2Constants.EXPIRES_IN)){
+            return 0L;
+        }
+        
+        String expiresInParam = formParams.getFirst(OrcidOauth2Constants.EXPIRES_IN);
+        Long result = 0L;
+        
+        try {
+            result = Long.valueOf(expiresInParam);
+        } catch(Exception e) {
+            throw new IllegalArgumentException(expiresInParam + " is not a number");
+        }
+        
+        return result == 0 ? result : (System.currentTimeMillis() + (result * 1000));
+    }
+    
+    protected OAuth2AccessToken generateToken(Authentication client, Set<String> scopes, String code, String redirectUri, String grantType, String refreshToken, String state, String authorization, boolean revokeOld, Long expiresIn) {        
         String clientId = client.getName();
         Map<String, String> authorizationParameters = new HashMap<String, String>();
         
@@ -149,6 +205,15 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
                 authorizationParameters.put(OrcidOauth2Constants.IS_PERSISTENT, "false");
             }                        
         }
+        
+        //If it is a refresh token request, set the needed authorization parameters
+        if(OrcidOauth2Constants.REFRESH_TOKEN.equals(grantType)) {
+            authorizationParameters.put(OrcidOauth2Constants.AUTHORIZATION, authorization);
+            authorizationParameters.put(OrcidOauth2Constants.REVOKE_OLD, String.valueOf(revokeOld));
+            authorizationParameters.put(OrcidOauth2Constants.EXPIRES_IN, String.valueOf(expiresIn));
+            authorizationParameters.put(OrcidOauth2Constants.REFRESH_TOKEN, String.valueOf(refreshToken));
+        }        
+        
         if (redirectUri != null) {
             authorizationParameters.put(OAuth2Utils.REDIRECT_URI, redirectUri);
         }        
@@ -159,12 +224,12 @@ public class OrcidClientCredentialEndPointDelegatorImpl extends AbstractEndpoint
         OAuth2AccessToken token = getTokenGranter().grant(grantType, tokenRequest);
         Object params[] = {grantType};
         if (token == null) {
-            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
-                    clientId, grantType, refreshToken, code, scopes, state, redirectUri });
+            LOGGER.info("Unsupported grant type for OAuth2: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}", new Object[] {
+                    clientId, grantType, code, scopes, state, redirectUri });
             throw new UnsupportedGrantTypeException(localeManager.resolveMessage("apiError.unsupported_client_type.exception", params));
         }
-        LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, refreshToken={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
-                clientId, grantType, refreshToken, code, scopes, state, redirectUri, token });
+        LOGGER.info("OAuth2 access token granted: clientId={}, grantType={}, code={}, scopes={}, state={}, redirectUri={}, token={}", new Object[] {
+                clientId, grantType, code, scopes, state, redirectUri, token });
         
         return token;
     }

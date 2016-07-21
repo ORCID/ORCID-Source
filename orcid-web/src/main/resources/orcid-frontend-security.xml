@@ -27,13 +27,10 @@
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
 	<context:annotation-config />
-	
+	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+	<sec:global-method-security pre-post-annotations="enabled" />
 	<bean class="org.orcid.frontend.spring.web.social.config.SocialConfig"/>
 	
-	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
-	
-	<sec:global-method-security pre-post-annotations="enabled" />
-
 	<bean id="authorizationEndpoint" class="org.orcid.core.oauth.service.OrcidAuthorizationEndpoint">
 		<property name="authorizationCodeServices" ref="orcidAuthorizationCodeService" />
 		<property name="clientDetailsService" ref="clientDetailsManager" />
@@ -367,10 +364,7 @@
 		<property name="switchFailureUrl" value="/signin" />
 	</bean>
 	
-	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />
-		
-	<bean id="orcidAuthorizationCodeService"
-		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />
+	<bean id="oAuthAuthorizeNotSignedInFilter" class="org.orcid.frontend.web.filter.OAuthAuthorizeNotSignedInFilter" />			
 
 	<oauth2:resource-server id="resourceServerFilter"
 		resource-id="orcid" token-services-ref="tokenServices" />
@@ -409,5 +403,5 @@
     <bean id="clientCredentialsTokenEndpointFilter" class="org.orcid.api.common.security.oauth.OrcidWebOauth2TokenEndPointFilter">
         <property name="authenticationEntryPoint" ref="oauthAuthenticationEntryPoint"/>
         <property name="authenticationManager" ref="clientAuthenticationManager"/>
-    </bean>    
+    </bean>        
 </beans>

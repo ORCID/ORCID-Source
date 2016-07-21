@@ -17,13 +17,16 @@
 package org.orcid.frontend.web.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Enumeration;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
@@ -36,12 +39,12 @@ import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Controller("oauthGenericCallsController")
 public class OauthGenericCallsController extends OauthControllerBase {
@@ -51,28 +54,28 @@ public class OauthGenericCallsController extends OauthControllerBase {
     @Resource
     private OrcidClientCredentialEndPointDelegator orcidClientCredentialEndPointDelegator;
     
-    @RequestMapping(value = "/oauth/token", method = RequestMethod.POST)
+    @Context
+    private UriInfo uriInfo;
+    
+    @RequestMapping(value = "/oauth/token", consumes = MediaType.APPLICATION_FORM_URLENCODED, produces = MediaType.APPLICATION_JSON)
     public @ResponseBody Object obtainOauth2TokenPost(HttpServletRequest request) {
-        String clientId = request.getParameter("client_id");
-        String clientSecret = request.getParameter("client_secret");
-        String code = request.getParameter("code");
-        String state = request.getParameter("state");
-        String redirectUri = request.getParameter("redirect_uri");
-        String resourceId = request.getParameter("resource_id");
-        String refreshToken = request.getParameter("refresh_token");
-        String scopeList = request.getParameter("scope");
-        String grantType = request.getParameter("grant_type");
-        Set<String> scopes = new HashSet<String>();
-        if (StringUtils.isNotEmpty(scopeList)) {
-            scopes = OAuth2Utils.parseParameterList(scopeList);
+        String authorization = request.getHeader("Authorization");
+        Enumeration<String> paramNames = request.getParameterNames();
+        MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
+        while(paramNames.hasMoreElements()) {
+            String paramName = paramNames.nextElement();
+            formParams.add(paramName, request.getParameter(paramName));
         }
-        Response res = null;
+                        
         try {
-            res = orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
-        } catch (Exception e) {
-            return getLegacyOrcidEntity("OAuth2 problem", e);
+            Response response = orcidClientCredentialEndPointDelegator.obtainOauth2Token(authorization, formParams);
+            return JsonUtils.convertToJsonString(response.getEntity());
+        } catch(Exception e) {
+            OrcidMessage errorMessage = new OrcidMessage();
+            errorMessage.setMessageVersion("1.2");
+            errorMessage.setErrorDesc(new ErrorDesc(e.getMessage()));
+            return JsonUtils.convertToJsonString(errorMessage);
         }
-        return JsonUtils.convertToJsonString(res.getEntity());
     }
     
     @RequestMapping(value = "/oauth/custom/authorize/get_request_info_form.json", method = RequestMethod.GET)
@@ -143,12 +146,5 @@ public class OauthGenericCallsController extends OauthControllerBase {
     public @ResponseBody OauthRegistrationForm validateEmailConfirm(@RequestBody OauthRegistrationForm reg) {
         registrationController.regEmailConfirmValidate(reg);
         return reg;
-    }
-    
-    private OrcidMessage getLegacyOrcidEntity(String prefix, Throwable e) {
-        OrcidMessage entity = new OrcidMessage();
-        entity.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        entity.setErrorDesc(new ErrorDesc(prefix + " : " + e.getMessage()));
-        return entity;
-    }
+    }        
 }

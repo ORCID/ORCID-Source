@@ -65,10 +65,13 @@
     <bean id="tokenServices" class="org.orcid.core.oauth.service.OrcidRandomValueTokenServicesImpl">               
         <property name="orcidtokenStore" ref="orcidTokenStore" />        
         <property name="customTokenEnhancer" ref="orcidTokenEnhancer" />
-        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:false}" />
+        <property name="supportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
+        <property name="customSupportRefreshToken" value="${org.orcid.core.oauth.supportRefreshToken:true}" />
     </bean>
 	
 	<bean id="orcidTokenEnhancer" class="org.orcid.core.oauth.OrcidTokenEnhancer" />
+	
+	<bean id="authenticationKeyGenerator" class="org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator" />	
 	
 	<!-- 
 	<bean id="serviceAnnouncement_1_For_2015" class="org.orcid.core.profileEvent.ServiceAnnouncement_1_For_2015" scope="prototype" />	
@@ -779,6 +782,5 @@
 	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />		
-	
+	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />			
 </beans>

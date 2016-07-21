@@ -29,10 +29,15 @@ public class OrcidOauth2Constants {
     public static final String DATE_CREATED = "date_created";
     public static final String CLIENT_ID = "client_id";
     public static final String ORCID = "orcid";
+    public static final String NAME = "name";
     public static final String CLIENT_ID_PARAM = "client_id";
     public static final String SCOPE_PARAM = "scope";
     public static final String STATE_PARAM = "state";
     public static final String RESPONSE_TYPE_PARAM = "response_type";
     public static final String REDIRECT_URI_PARAM = "redirect_uri";
     public static final String JUST_REGISTERED = "justRegistered";
+    public static final String REFRESH_TOKEN = "refresh_token";
+    public static final String AUTHORIZATION = "authorization";
+    public static final String REVOKE_OLD = "revoke_old";
+    public static final String EXPIRES_IN = "expires_in";    
 }

@@ -20,9 +20,6 @@ import static org.orcid.core.api.OrcidApiConstants.INTERNAL_API_PERSON_READ;
 import static org.orcid.core.api.OrcidApiConstants.MEMBER_INFO;
 import static org.orcid.core.api.OrcidApiConstants.STATUS_PATH;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -31,18 +28,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.lang.StringUtils;
 import org.orcid.api.common.T2OrcidApiService;
 import org.orcid.core.oauth.OrcidClientCredentialEndPointDelegator;
 import org.orcid.internal.server.delegator.InternalApiServiceDelegator;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.ApiOperation;
@@ -53,15 +45,6 @@ import io.swagger.annotations.ApiOperation;
  * 
  */
 public abstract class InternalApiServiceImplBase {
-    @Context
-    private UriInfo uriInfo;
-
-    @Value("${org.orcid.core.baseUri}")
-    protected String baseUri;
-    
-    @Value("${org.orcid.core.internalApiBaseUri}")
-    protected String internalApiBaseUri;
-
     private InternalApiServiceDelegator serviceDelegator;
 
     @Resource
@@ -92,19 +75,7 @@ public abstract class InternalApiServiceImplBase {
     @Produces(value = { MediaType.APPLICATION_JSON })
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response obtainOauth2TokenPost(@FormParam("grant_type") String grantType, MultivaluedMap<String, String> formParams) {
-        String clientId = formParams.getFirst("client_id");
-        String clientSecret = formParams.getFirst("client_secret");
-        String code = formParams.getFirst("code");
-        String state = formParams.getFirst("state");
-        String redirectUri = formParams.getFirst("redirect_uri");
-        String resourceId = formParams.getFirst("resource_id");
-        String refreshToken = formParams.getFirst("refresh_token");
-        String scopeList = formParams.getFirst("scope");
-        Set<String> scopes = new HashSet<String>();
-        if (StringUtils.isNotEmpty(scopeList)) {
-            scopes = OAuth2Utils.parseParameterList(scopeList);
-        }
-        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(clientId, clientSecret, refreshToken, grantType, code, scopes, state, redirectUri, resourceId);
+        return orcidClientCredentialEndPointDelegator.obtainOauth2Token(null, formParams);
     }
     
     @GET

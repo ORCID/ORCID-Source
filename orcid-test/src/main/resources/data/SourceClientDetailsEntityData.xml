@@ -81,8 +81,10 @@
     
     <client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="authorization_code" />
 	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="client_credentials" />
+	<client_authorised_grant_type client_details_id="APP-5555555555555555" grant_type="refresh_token" />
 	<client_authorised_grant_type client_details_id="APP-5555555555555556" grant_type="authorization_code" />
 	<client_authorised_grant_type client_details_id="APP-5555555555555556" grant_type="client_credentials" />
+	<client_authorised_grant_type client_details_id="APP-5555555555555556" grant_type="refresh_token" />
 	
 	
 	<client_granted_authority client_details_id="APP-5555555555555555" granted_authority="ROLE_CLIENT"/>
