@@ -50,7 +50,6 @@ import org.springframework.security.oauth2.provider.AuthorizationRequest;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.AuthenticationKeyGenerator;
-import org.springframework.security.oauth2.provider.token.DefaultAuthenticationKeyGenerator;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -75,7 +74,8 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
     @Resource
     private OrcidOAuth2RequestValidator orcidOAuth2RequestValidator;
     
-    private static final AuthenticationKeyGenerator KEY_GENERATOR = new DefaultAuthenticationKeyGenerator();
+    @Resource
+    private AuthenticationKeyGenerator authenticationKeyGenerator;
 
     /**
      * Read the authentication stored under the specified token value.
@@ -215,7 +215,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
      */
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
-        String authKey = KEY_GENERATOR.extractKey(authentication);
+        String authKey = authenticationKeyGenerator.extractKey(authentication);
         List<OrcidOauth2TokenDetail> details = orcidOauthTokenDetailService.findByAuthenticationKey(authKey);
         // Since we are now able to have more than one token for the combo
         // user-scopes, we will need to return the oldest token, the first token
@@ -344,7 +344,7 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             detail = new OrcidOauth2TokenDetail();
         }
         String clientId = authorizationRequest.getClientId();
-        String authKey = KEY_GENERATOR.extractKey(authentication);
+        String authKey = authenticationKeyGenerator.extractKey(authentication);
         detail.setAuthenticationKey(authKey);
         detail.setClientDetailsId(clientId);
 
@@ -419,5 +419,5 @@ public class OrcidTokenStoreServiceImpl implements TokenStore {
             }
         }
         return accessTokens;
-    }       
+    }          
 }

@@ -80,6 +80,17 @@ public class T2OAuthOrcidApiClientImpl implements T2OAuthAPIService<ClientRespon
 
     @Override
     @POST
+    @Path(T2OrcidApiService.OAUTH_TOKEN)
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public ClientResponse obtainOauth2RefreshTokenPost(String grantType, String token, MultivaluedMap<String, String> formParams) {
+        WebResource resource = orcidClientHelper.createRootResource(T2OrcidApiService.OAUTH_TOKEN);
+        WebResource.Builder builder = resource.header("Authorization", "Bearer " + token);
+        return builder.entity(formParams).post(ClientResponse.class);
+    }
+    
+    @Override
+    @POST
     @Produces(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Consumes(value = { VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PROFILE_POST_PATH)

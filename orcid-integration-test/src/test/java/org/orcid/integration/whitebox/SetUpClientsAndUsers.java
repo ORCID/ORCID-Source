@@ -721,7 +721,6 @@ public class SetUpClientsAndUsers {
         String website = params.get(CLIENT_WEBSITE);
         String clientId = params.get(CLIENT_ID);        
         String clientSecret = encryptionManager.encryptForInternalUse(params.get(CLIENT_SECRET));
-
         String memberId = params.get(MEMBER_ID);
         
         Set<String> scopes = orcidClientGroupManager.premiumCreatorScopes();

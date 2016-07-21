@@ -105,7 +105,7 @@
     <bean id="jsonpCallbackFilter" class="org.orcid.core.web.filters.JsonpCallbackFilter" />
     
     <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />         
-    
+
     <!-- Add in order for it to be referenced in the filter order -->
     <bean id="customFilters" class="org.springframework.web.filter.CompositeFilter">
         <property name="filters">
@@ -129,5 +129,5 @@
         <property name="realmName" value="ORCID T2 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
-    </bean>           
+    </bean>
 </beans>

@@ -61,7 +61,7 @@
     <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="oauthAuthenticationEntryPoint"/>
 	
 	<!-- User web expressions to aid the syntax of protection -->
-    <oauth2:web-expression-handler id="oauthWebExpressionHandler" />			
+    <oauth2:web-expression-handler id="oauthWebExpressionHandler" />		
 
 	<!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
     <sec:authentication-manager id="clientAuthenticationManager">
@@ -82,7 +82,7 @@
         <property name="realmName" value="ORCID T1 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
-    </bean>
-	
-    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
+    </bean>	    
+         
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />        
 </beans>      
