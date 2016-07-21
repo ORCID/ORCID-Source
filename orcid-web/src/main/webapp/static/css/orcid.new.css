@@ -6628,7 +6628,7 @@ a:hover .mozilla-badge{
 .bulk-edit-area{
 	border-bottom: 1px solid rgb(166, 206, 57);
 	padding: 5px;
-}	
+}
 
 .bulk-edit-modal{
 	min-height: auto;
@@ -6643,6 +6643,7 @@ a:hover .mozilla-badge{
 	padding-top: 24px;
 	color: #C9C9CA;
 	font-size: 18px;
+	cursor: pointer;
 }
 
 .bulk-edit-modal .custom-control-title{	

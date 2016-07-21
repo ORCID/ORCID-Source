@@ -30,72 +30,7 @@
 				</div>			
 			</div>
 
-			
-			
-			<#if RequestParameters['bulkEdit']??>
-			<!-- Bulk edit -->
-			<div class="row">
-				<div class="col-md-12 col-sm-12 col-xs-12">								
-					<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow">Hide bulk edit</a>
-					<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow == false">Show bulk edit</a>
-				</div>
-			</div>
-			<div class="bulk-edit-area" ng-if="bulkEditShow">				
-				<div class="row bottomBuffer">					
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<h4>Bulk edit</h4>
-						<ol class="bulk-modal-list">
-							<li>
-								Select items: Click the checkbox beside each item. Use the checkbox to the bottom to select or deselect all.
-							</li>
-							<li>
-								Select editing action: Click the trash can to delete all selected items or click a privacy setting to apply that setting to all selected items.
-							</li>
-						</ol>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-sm-12 col-xs-12">
-						<ul class="inline-list pull-right bulk-edit bulk-edit-modal">							
-							<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
-								<span class="custom-control-title">Select</span>
-								<div id="custom-control-x">									
-									<div class="custom-control-x" >
-										<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu();$event.stopPropagation()">										
-											<span class="custom-checkbox-parent">
-												<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked}"></div>
-											</span>										
-											<div class="custom-control-arrow" ng-click=""></div>														
-										</div>
-										<div>
-											<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle}">
-											 	<li><a ng-click="bulkChangeAll(true)"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
-									    		<li><a ng-click="bulkChangeAll(false)"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>							          							          
-											</ul>			
-										</div>
-									</div>									
-								</div>
-							</li>					
-							<li>
-								<span class="glyphicon glyphicon-trash bulk-trash" ng-click="bulkDelete()"></span>
-							</li>
-							<li>
-								<span class="custom-control-title">Edit</span>
-								<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
-				             		questionClick="toggleClickPrivacyHelp($index)"
-				             		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             		publicClick="setBulkGroupPrivacy('PUBLIC', $event, otherName)" 
-		                	     	limitedClick="setBulkGroupPrivacy('LIMITED', $event, otherName)" 
-		                	     	privateClick="setBulkGroupPrivacy('PRIVATE', $event, otherName)"
-		                	     	elementId="$index" />
-							</li>							
-						</ul>
-					</div>
-				</div>
-			</div>
-			</#if>
-
-
+			<div ng-include="'bulk-edit'"></div>
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
@@ -137,15 +72,11 @@
 							</div>
 						</div>
 					</div>
-					<div class="record-buttons" ng-if="bulkEditShow == false">
+					<div class="record-buttons">
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
 			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
 			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
-					</div>
-					<div class="record-buttons" ng-if="bulkEditShow">							        	      		
-			            <a class="cancel-option pull-right" ng-click="closeEditModal()">Close</a>
-					</div>
-
+					</div>					
 				</div>
 			</div>
 		</div>
@@ -164,6 +95,9 @@
 					</h1>
 				</div>			
 			</div>
+
+			<div ng-include="'bulk-edit'"></div>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
@@ -182,7 +116,8 @@
 								</div> 
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">																				
-										<li ng-init="">												
+										<li>			
+											<input type="checkbox" class="bio-item" ng-model="bulkEditMap[country.putCode]" ng-if="bulkEditShow"/>									
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
 										</li>
 										<li>
@@ -214,7 +149,7 @@
 					</div>					
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
-		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 				</div>
@@ -236,6 +171,9 @@
 					</h1>					
 				</div>			
 			</div>
+
+			<div ng-include="'bulk-edit'"></div>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">					
 					<div class="fixed-area" scroll>
@@ -251,7 +189,8 @@
 								
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
-										<li>												
+										<li>					
+											<input type="checkbox" class="bio-item" ng-model="bulkEditMap[keyword.putCode]" ng-if="bulkEditShow"/>							
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
 										</li>
 										<li>																						
@@ -278,7 +217,7 @@
 					</div>
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
-		            	<button class="btn btn-primary pull-right" ng-click="setKeywordsForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<button class="btn btn-primary pull-right" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 				</div>
@@ -300,6 +239,9 @@
 					</h1>
 				</div>			
 			</div>
+		
+			<div ng-include="'bulk-edit'"></div>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
@@ -316,7 +258,8 @@
 								
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
-										<li>												
+										<li>	
+											<input type="checkbox" class="bio-item" ng-model="bulkEditMap[website.putCode]" ng-if="bulkEditShow"/>											
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)"></span>
 										</li>
 										<li>																						
@@ -349,7 +292,7 @@
 					
 					<div class="record-buttons">						
 						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
-		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 				</div>
@@ -370,6 +313,9 @@
 					</h1>
 				</div>			
 			</div>
+
+			<div ng-include="'bulk-edit'"></div>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
@@ -387,7 +333,8 @@
 								
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
-										<li>												
+										<li>		
+											<input type="checkbox" class="bio-item" ng-model="bulkEditMap[externalIdentifier.putCode]" ng-if="bulkEditShow"/>										
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
 										</li>
 										<li>																						
@@ -418,11 +365,75 @@
 						</div>
 					</div>
 					<div class="record-buttons">	
-		            	<button class="btn btn-primary pull-right" ng-click="setExternalIdentifiersForm(true)"><@spring.message "freemarker.btnsavechanges"/></button>
+		            	<button class="btn btn-primary pull-right" ng-click="setExternalIdentifiersForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</script>
+
+<script type="text/ng-template" id="bulk-edit">
+<#if RequestParameters['bulkEdit']??>	
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">								
+			<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow">Hide bulk edit</a>
+			<a ng-click="toggleBulkEdit()" class="pull-right" ng-if="bulkEditShow == false">Show bulk edit</a>
+		</div>
+	</div>
+	<div class="bulk-edit-area" ng-if="bulkEditShow">				
+		<div class="row bottomBuffer">					
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<h4>Bulk edit</h4>
+				<ol class="bulk-modal-list">
+					<li>
+						Select items: Click the checkbox beside each item. Use the checkbox to the bottom to select or deselect all.
+					</li>
+					<li>
+						Select editing action: Click the trash can to delete all selected items or click a privacy setting to apply that setting to all selected items.
+					</li>
+				</ol>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<ul class="inline-list pull-right bulk-edit bulk-edit-modal">							
+					<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
+							<span class="custom-control-title">Select</span>
+							<div id="custom-control-x">									
+								<div class="custom-control-x" >
+									<div class="dropdown-custom-menu" id="dropdown-custom-menu" ng-click="toggleSelectMenu();$event.stopPropagation()">										
+										<span class="custom-checkbox-parent">
+											<div class="custom-checkbox" id="custom-checkbox" ng-click="swapbulkChangeAll();$event.stopPropagation();" ng-class="{'custom-checkbox-active':bulkChecked}"></div>
+										</span>										
+										<div class="custom-control-arrow" ng-click=""></div>														
+									</div>
+									<div>
+										<ul class="dropdown-menu" role="menu" id="special-menu" ng-class="{'block': bulkDisplayToggle}">
+										 	<li><a ng-click="bulkChangeAll(true)"><@orcid.msg 'workspace.bulkedit.selected.all'/></a></li>
+								    		<li><a ng-click="bulkChangeAll(false)"><@orcid.msg 'workspace.bulkedit.selected.none'/></a></li>							          							          
+										</ul>			
+									</div>
+								</div>									
+							</div>
+						</li>					
+						<li>
+							<span class="glyphicon glyphicon-trash bulk-trash" ng-click="bulkDelete()"></span>
+						</li>
+						<li>
+							<span class="custom-control-title">Edit</span>
+							<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
+			             		questionClick="toggleClickPrivacyHelp($index)"
+			             		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             		publicClick="setBulkGroupPrivacy('PUBLIC', $event, otherName)" 
+	                	     	limitedClick="setBulkGroupPrivacy('LIMITED', $event, otherName)" 
+	                	     	privateClick="setBulkGroupPrivacy('PRIVATE', $event, otherName)"
+	                	     	elementId="$index" />
+						</li>							
+					</ul>
+				</div>
+			</div>
+		</div>
+</#if>
 </script>
