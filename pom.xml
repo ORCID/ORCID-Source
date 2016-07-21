@@ -54,6 +54,7 @@ the software.
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>
 		<module>orcid-internal-api</module>
+		<module>orcid-activemq</module>
     </modules>
 
 

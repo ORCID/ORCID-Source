@@ -129,6 +129,7 @@
                     <excludes>
                        <exclude>**/.gitignore</exclude>
                        <exclude>**/rebel.xml</exclude>
+                       <exclude>**/scripts/*sh</exclude>
                     </excludes>
                 </configuration>
             </plugin>
