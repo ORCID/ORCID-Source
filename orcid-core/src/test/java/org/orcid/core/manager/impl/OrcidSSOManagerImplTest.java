@@ -88,12 +88,12 @@ public class OrcidSSOManagerImplTest extends BaseTest {
         }
 
         Set<ClientAuthorisedGrantTypeEntity> grantTypeList = clientDetails.getClientAuthorizedGrantTypes();
-        assertEquals(2, grantTypeList.size());
+        assertEquals(3, grantTypeList.size());
         
         Set<String> grantTypes = clientDetails.getAuthorizedGrantTypes();
         assertTrue(grantTypes.contains("authorization_code"));
         assertTrue(grantTypes.contains("client_credentials"));
-        
+        assertTrue(grantTypes.contains("refresh_token"));
 
         List<ClientGrantedAuthorityEntity> grantedAuthList = clientDetails.getClientGrantedAuthorities();
         assertEquals(1, grantedAuthList.size());
