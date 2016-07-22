@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jpa2JaxbAdapter;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AddressManager;
@@ -106,7 +107,6 @@ import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
-import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -643,9 +643,15 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
    
     @Override
+    public void disableApplication(Long tokenId, String userOrcid) {
+        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
+    }    
+    
+    @Override
     public List<ApplicationSummary> getApplications(String orcid) {
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
         List<ApplicationSummary> applications = new ArrayList<ApplicationSummary>();
+        Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications = new HashMap<Pair<String, Set<ScopePathType>>, ApplicationSummary>();
         if(tokenDetails != null && !tokenDetails.isEmpty()) {
             for(OrcidOauth2TokenDetail token : tokenDetails) {
                 if (token.getTokenDisabled() == null || !token.getTokenDisabled()) {
@@ -675,13 +681,41 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                                 applicationSummary.setGroupOrcidPath(member.getId());
                                 applicationSummary.setGroupName(getMemberDisplayName(member));
                             }
-                            applications.add(applicationSummary);
+                            
+                            if(shouldBeAddedToTheApplicationsList(applicationSummary, scopesGrantedToClient, existingApplications)) {
+                                applications.add(applicationSummary);
+                            }
                         }
                     }
                 }
             }
-        }
+        }        
+        
         return applications;
+    }
+    
+    private boolean shouldBeAddedToTheApplicationsList(ApplicationSummary application , Set<ScopePathType> scopes, Map<Pair<String, Set<ScopePathType>>, ApplicationSummary> existingApplications) {
+        boolean result = false;
+        Pair<String, Set<ScopePathType>> key = Pair.of(application.getOrcidPath(), scopes);
+        if(!existingApplications.containsKey(key)) {
+            result = true;
+        } else {
+            Date existingAppCreatedDate = existingApplications.get(key).getApprovalDate();
+            
+            //This case should never happen
+            if(existingAppCreatedDate == null) {
+                result = true;
+            }
+            
+            if(application.getApprovalDate().before(existingAppCreatedDate)) {
+                result = true;
+            }
+        }
+         
+        if(result) {
+            existingApplications.put(key, application);
+        }                                        
+        return result;
     }
                     
     private String getMemberDisplayName(ProfileEntity member) {   
