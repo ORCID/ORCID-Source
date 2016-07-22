@@ -643,6 +643,11 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
     }
    
     @Override
+    public void disableApplication(Long tokenId, String userOrcid) {
+        orcidOauth2TokenService.disableAccessToken(tokenId, userOrcid);
+    }    
+    
+    @Override
     public List<ApplicationSummary> getApplications(String orcid) {
         List<OrcidOauth2TokenDetail> tokenDetails = orcidOauth2TokenService.findByUserName(orcid);
         List<ApplicationSummary> applications = new ArrayList<ApplicationSummary>();
