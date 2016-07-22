@@ -16,12 +16,9 @@
  */
 package org.orcid.integration.blackbox.api.v2.rc2;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -66,7 +63,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
 
     @Before
     public void setUpData() throws Exception {
-        String accessToken = getAccessToken(getClient2ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         if(!allSet) {
             //Create public other name
