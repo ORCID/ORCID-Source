@@ -423,13 +423,13 @@
 						</li>
 						<li>
 							<span class="custom-control-title">Edit</span>
-							<@orcid.privacyToggle3  angularModel=""
-			             		questionClick=""
-			             		clickedClassCheck="" 
-			             		publicClick="setBulkGroupPrivacy('PUBLIC', $event, null)" 
-	                	     	limitedClick="setBulkGroupPrivacy('LIMITED', $event, null)" 
-	                	     	privateClick="setBulkGroupPrivacy('PRIVATE', $event, null)"
-	                	     	elementId="" />
+							<@orcid.privacyToggle3  angularModel="bioModel"
+			             		questionClick="toggleClickPrivacyHelp($index)"
+			             		clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+			             		publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
+	                	     	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
+	                	     	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
+	                	     	elementId="$index" />
 						</li>							
 					</ul>
 				</div>
