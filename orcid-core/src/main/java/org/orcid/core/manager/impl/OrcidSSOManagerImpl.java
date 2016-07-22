@@ -203,6 +203,7 @@ public class OrcidSSOManagerImpl implements OrcidSSOManager {
         Set<String> clientAuthorizedGrantTypes = new HashSet<>();
         clientAuthorizedGrantTypes.add("authorization_code");
         clientAuthorizedGrantTypes.add("client_credentials");
+        clientAuthorizedGrantTypes.add("refresh_token");
         return clientAuthorizedGrantTypes;
     }
 
