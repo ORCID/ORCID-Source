@@ -358,6 +358,11 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         return query.getSingleResult();
     }
 
+    /** Fetches the last modified from the database
+     * Do not call unless it also manages the request level cache 
+     * @See ProfileLastModifiedAspect
+     * 
+     */
     @SuppressWarnings("unchecked")
     public Date retrieveLastModifiedDate(String orcid) {
         Query nativeQuery = entityManager.createNativeQuery("Select p.last_modified FROM profile p WHERE p.orcid =:orcid");

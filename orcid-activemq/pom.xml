@@ -7,7 +7,7 @@
   <name>ORCID - ActiveMQ</name>
   <url>http://maven.apache.org</url>
   
-      <properties>
+    <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
     
@@ -19,10 +19,10 @@
   </parent>
   
   <dependencies>
-          <dependency>
+      <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-        </dependency>
+      </dependency>
 	  <dependency>
 	      <groupId>org.apache.activemq</groupId>
 	      <artifactId>activemq-broker</artifactId>
@@ -30,14 +30,15 @@
 	  </dependency>
   	  <dependency>
 	      <groupId>org.apache.activemq</groupId>
-	      <artifactId>activemq-console</artifactId>
-	  	  <version>5.13.3</version>
-	  </dependency>
-  	  <dependency>
-	      <groupId>org.apache.activemq</groupId>
 	      <artifactId>activemq-spring</artifactId>
 	  	  <version>5.13.3</version>
 	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-kahadb-store -->
+ 	<dependency>
+ 	    <groupId>org.apache.activemq</groupId>
+	    <artifactId>activemq-kahadb-store</artifactId>
+	    <version>5.13.3</version>
+	</dependency>
   </dependencies>
   
   <build>

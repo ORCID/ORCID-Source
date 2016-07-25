@@ -29,6 +29,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.PriorityOrdered;
@@ -79,6 +80,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         this.enabled = enabled;
     }
 
+    /** Runs after any method that updates a record.
+     * Updates the last modified and refreshes the request-scope last modified cache.
+     * 
+     * @param joinPoint
+     * @param orcid
+     */
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(orcid, ..)")
     public void updateProfileLastModified(JoinPoint joinPoint, String orcid) {
         if (!enabled) {
@@ -90,7 +97,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             }
         }
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        messaging.sendMap(ImmutableMap.of("orcid", orcid, "method", joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()),
+        messaging.sendMap(ImmutableMap.of(
+                MessageConstants.TYPE.value,MessageConstants.TYPE_LAST_UPDATED.value,
+                MessageConstants.ORCID.value, orcid, 
+                MessageConstants.DATE.value, ""+retrieveLastModifiedDate(orcid).getTime(), 
+                MessageConstants.METHOD.value, joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()),
                 JmsDestination.UPDATED_ORCIDS);
     }
 
@@ -108,6 +119,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         return PRECEDENCE;
     }
 
+    /** Updates the last modified date and clears the request-scope last modified cache.
+     * 
+     * @param orcid
+     */
     public void updateLastModifiedDateAndIndexingStatus(String orcid) {
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -115,6 +130,12 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);
     }
 
+    /** Fetches the last modified from the request-scope last modified cache
+     * If not present, fetches from the DB and populates the request-scope last modified cache.
+     * 
+     * @param orcid
+     * @return
+     */
     public Date retrieveLastModifiedDate(String orcid) {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         Date lastMod = null;
