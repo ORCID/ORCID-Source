@@ -16,6 +16,9 @@
  */
 package org.orcid.core.manager;
 
+import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
+import org.w3c.dom.Element;
+
 /**
  * 
  * @author Will Simpson
@@ -26,5 +29,7 @@ public interface IdentityProviderManager {
     void loadIdentityProviders();
 
     String retrieveContactEmailByProviderid(String providerid);
+
+    IdentityProviderEntity createEntityFromXml(Element idpElement);
 
 }

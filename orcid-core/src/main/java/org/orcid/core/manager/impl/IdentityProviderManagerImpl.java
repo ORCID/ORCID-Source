@@ -84,24 +84,38 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         String[] metadataUrls = StringUtils.split(metadataUrlsString);
         XPath xpath = createXPath();
         XPathExpression entityDescriptorXpath = compileXPath(xpath, "//saml2:EntityDescriptor");
-        XPathExpression displayNameXpath = compileXPath(xpath, "string(.//mdui:DisplayName[1])");
-        XPathExpression supportContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='support'])[1]/saml2:EmailAddress[1])");
-        XPathExpression adminContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='administrative'])[1]/saml2:EmailAddress[1])");
-        XPathExpression techContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='technical'])[1]/saml2:EmailAddress[1])");
+
         for (String metadataUrl : metadataUrls) {
             Document document = downloadMetadata(metadataUrl);
             NodeList nodes = evaluateXPathNodeList(entityDescriptorXpath, document);
             for (int i = 0; i < nodes.getLength(); i++) {
                 Element element = (Element) nodes.item(i);
-                String entityId = element.getAttribute("entityID");
-                String displayName = evaluateXPathString(displayNameXpath, element);
-                String supportEmail = tidyEmail(evaluateXPathString(supportContactXpath, element));
-                String adminEmail = tidyEmail(evaluateXPathString(adminContactXpath, element));
-                String techEmail = tidyEmail(evaluateXPathString(techContactXpath, element));
-                LOGGER.info("Found entityID: {}, displayName: {}, supportEmail: {}", new Object[] { entityId, displayName, supportEmail });
-                saveOrUpdateIdentityProvider(entityId, displayName, supportEmail, adminEmail, techEmail);
+                IdentityProviderEntity incoming = createEntityFromXml(element);
+                LOGGER.info("Found identity provider: {}", incoming.toShortString());
+                saveOrUpdateIdentityProvider(incoming);
             }
         }
+    }
+
+    @Override
+    public IdentityProviderEntity createEntityFromXml(Element idpElement) {
+        XPath xpath = createXPath();
+        XPathExpression displayNameXpath = compileXPath(xpath, "string(.//mdui:DisplayName[1])");
+        XPathExpression supportContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='support'])[1]/saml2:EmailAddress[1])");
+        XPathExpression adminContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='administrative'])[1]/saml2:EmailAddress[1])");
+        XPathExpression techContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='technical'])[1]/saml2:EmailAddress[1])");
+        String entityId = idpElement.getAttribute("entityID");
+        String displayName = evaluateXPathString(displayNameXpath, idpElement);
+        String supportEmail = tidyEmail(evaluateXPathString(supportContactXpath, idpElement));
+        String adminEmail = tidyEmail(evaluateXPathString(adminContactXpath, idpElement));
+        String techEmail = tidyEmail(evaluateXPathString(techContactXpath, idpElement));
+        IdentityProviderEntity identityProviderEntity = new IdentityProviderEntity();
+        identityProviderEntity.setProviderid(entityId);
+        identityProviderEntity.setDisplayName(displayName);
+        identityProviderEntity.setSupportEmail(supportEmail);
+        identityProviderEntity.setAdminEmail(adminEmail);
+        identityProviderEntity.setTechEmail(techEmail);
+        return identityProviderEntity;
     }
 
     private Document downloadMetadata(String metadataUrl) {
@@ -113,17 +127,18 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         return document;
     }
 
-    private void saveOrUpdateIdentityProvider(String entityId, String displayName, String supportEmail, String adminEmail, String techEmail) {
-        IdentityProviderEntity entity = identityProviderDao.findByProviderid(entityId);
+    private void saveOrUpdateIdentityProvider(IdentityProviderEntity incoming) {
+        IdentityProviderEntity entity = identityProviderDao.findByProviderid(incoming.getProviderid());
         if (entity == null) {
-            entity = new IdentityProviderEntity();
+            identityProviderDao.persist(incoming);
+        } else {
+            entity.setProviderid(incoming.getProviderid());
+            entity.setDisplayName(incoming.getDisplayName());
+            entity.setSupportEmail(incoming.getSupportEmail());
+            entity.setAdminEmail(incoming.getAdminEmail());
+            entity.setTechEmail(incoming.getTechEmail());
+            identityProviderDao.merge(entity);
         }
-        entity.setProviderid(entityId);
-        entity.setDisplayName(displayName);
-        entity.setSupportEmail(supportEmail);
-        entity.setAdminEmail(adminEmail);
-        entity.setTechEmail(techEmail);
-        identityProviderDao.merge(entity);
     }
 
     private NodeList evaluateXPathNodeList(XPathExpression xpathExpression, Node node) {
