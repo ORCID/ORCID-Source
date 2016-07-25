@@ -54,16 +54,16 @@ public class LastModifiedMessage {
     }
     
     public String getOrcid(){
-        return map.get(MessageConstants.ORCID);
+        return map.get(MessageConstants.ORCID.value);
     }
     
     @SuppressWarnings("deprecation")
     public Date getLastUpdated(){
-        return new Date(map.get(MessageConstants.DATE));
+        return new Date(map.get(MessageConstants.DATE.value));
     }
     
     public String getMethod(){
-        return map.get(MessageConstants.METHOD);
+        return map.get(MessageConstants.METHOD.value);
     }
     
     public Map<String,String> getMap(){

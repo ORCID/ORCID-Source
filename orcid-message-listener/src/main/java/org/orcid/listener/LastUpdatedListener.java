@@ -26,18 +26,17 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 /** This class forms the basis of the message drive data dump and SOLR index updater.
- * It is intened to be a stand alone application but can sit alongside other modules in dev, QA and sandbox.
+ * It is intended to be a stand alone application but can sit alongside other modules in dev, QA and sandbox.
  * 
  * @author tom
  *
  */
 @Component
-public class LastModifiedListener {
+public class LastUpdatedListener {
     
-    //fields are date, method, orcid - see MessageConstants
-    Logger LOG = LoggerFactory.getLogger(LastModifiedListener.class);
+    Logger LOG = LoggerFactory.getLogger(LastUpdatedListener.class);
         
-    @JmsListener(id="LastModifiedListener", destination=MessageConstants.Queues.UPDATED_ORCIDS)
+    @JmsListener(destination=MessageConstants.Queues.UPDATED_ORCIDS)
     public void processMessage(final Map<String,String> map) {
         LOG.debug("Recieved last updated message");
         map.forEach((k,v)->LOG.debug(k+"->"+v));   
