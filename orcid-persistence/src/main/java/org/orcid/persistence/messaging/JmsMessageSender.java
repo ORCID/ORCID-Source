@@ -20,6 +20,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
+import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.JmsException;
@@ -44,19 +47,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class JmsMessageSender {
 
-    public static final String TEST = "test";
-    public static final String TEST_REPLY = "test_reply";
-    public static final String UPDATED_ORCIDS = "updated_orcids";
-    
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessageSender.class);
     
     private boolean enabled = false;    
     private boolean discardForAWhile = false;
     
     public enum JmsDestination{
-        TEST(JmsMessageSender.TEST),
-        TEST_REPLY(JmsMessageSender.TEST_REPLY), 
-        UPDATED_ORCIDS(JmsMessageSender.UPDATED_ORCIDS);
+        TEST(MessageConstants.Queues.TEST),
+        TEST_REPLY(MessageConstants.Queues.TEST_REPLY), 
+        UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS);
         public final String value;
         JmsDestination(String value){
             this.value = value;
@@ -82,6 +81,10 @@ public class JmsMessageSender {
         }catch(JmsException e){
             flagConnectionProblem(e);
         }
+    }
+    
+    public void send(LastModifiedMessage mess){
+        this.sendMap(mess.getMap(), JmsDestination.UPDATED_ORCIDS);
     }
     
     /** Silenty discard messages for a while

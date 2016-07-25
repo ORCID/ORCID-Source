@@ -29,6 +29,7 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,17 +102,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         
         //messaging
         Date last = retrieveLastModifiedDate(orcid);
-        //quick workaround to cope with records that have not been modified (from tests)
-        String lastStr = "";
-        if (last != null)
-            lastStr = ""+last.getTime();
-        //send
-        messaging.sendMap(ImmutableMap.of(
-                MessageConstants.TYPE.value,MessageConstants.TYPE_LAST_UPDATED.value,
-                MessageConstants.ORCID.value, orcid, 
-                MessageConstants.DATE.value, ""+lastStr, 
-                MessageConstants.METHOD.value, joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()),
-                JmsDestination.UPDATED_ORCIDS);
+        LastModifiedMessage mess = new LastModifiedMessage(
+                orcid,
+                joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName(),
+                last);
+        messaging.send(mess);
     }
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")

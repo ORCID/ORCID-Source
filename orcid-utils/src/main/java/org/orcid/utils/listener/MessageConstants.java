@@ -24,11 +24,17 @@ package org.orcid.utils.listener;
  *
  */
 public enum MessageConstants {
-
+    
     ORCID("o"),DATE("d"),METHOD("m"),
     TYPE("t"),
     TYPE_LAST_UPDATED("lu");
     
+    public static class Queues{
+        public static final String UPDATED_ORCIDS = "updated_orcids";        
+        public static final String TEST = "test";
+        public static final String TEST_REPLY = "test_reply";
+    }
+        
     public final String value;
     
     MessageConstants(String s){

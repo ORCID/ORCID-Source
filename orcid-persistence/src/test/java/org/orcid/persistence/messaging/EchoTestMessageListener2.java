@@ -18,6 +18,7 @@ package org.orcid.persistence.messaging;
 
 import javax.annotation.Resource;
 
+import org.orcid.utils.listener.MessageConstants;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 
@@ -29,8 +30,8 @@ public class EchoTestMessageListener2 {
     @Resource
     JmsMessageSender sender;
     
-    @JmsListener(destination=JmsMessageSender.TEST)
-    @SendTo(JmsMessageSender.TEST_REPLY)
+    @JmsListener(destination=MessageConstants.Queues.TEST)
+    @SendTo(MessageConstants.Queues.TEST_REPLY)
     public String processMessage(String text) {
       lastMessage = text;
       return "Echo: "+ text;

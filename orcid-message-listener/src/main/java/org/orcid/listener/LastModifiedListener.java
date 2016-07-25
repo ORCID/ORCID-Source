@@ -18,6 +18,8 @@ package org.orcid.listener;
 
 import java.util.Map;
 
+import org.orcid.utils.listener.LastModifiedMessage;
+import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -34,12 +36,14 @@ public class LastModifiedListener {
     
     //fields are date, method, orcid - see MessageConstants
     Logger LOG = LoggerFactory.getLogger(LastModifiedListener.class);
-    
-    public static final String UPDATED_ORCIDS = "updated_orcids";
-    
-    @JmsListener(id="LastModifiedListener", destination=UPDATED_ORCIDS)
+        
+    @JmsListener(id="LastModifiedListener", destination=MessageConstants.Queues.UPDATED_ORCIDS)
     public void processMessage(final Map<String,String> map) {
         LOG.debug("Recieved last updated message");
-        map.forEach((k,v)->LOG.debug(k+"->"+v));            
+        map.forEach((k,v)->LOG.debug(k+"->"+v));   
+        
+        //alternative
+        LastModifiedMessage m = new LastModifiedMessage(map);
+        LOG.debug(m.getOrcid());
     }
 }
