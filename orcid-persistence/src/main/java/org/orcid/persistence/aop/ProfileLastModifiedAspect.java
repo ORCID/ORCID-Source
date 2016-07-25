@@ -96,11 +96,20 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
                 LOGGER.debug("Invalid ORCID for last modified date update: orcid={}, join point={}", orcid, joinPoint);
             }
         }
+        
         profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        
+        //messaging
+        Date last = retrieveLastModifiedDate(orcid);
+        //quick workaround to cope with records that have not been modified (from tests)
+        String lastStr = "";
+        if (last != null)
+            lastStr = ""+last.getTime();
+        //send
         messaging.sendMap(ImmutableMap.of(
                 MessageConstants.TYPE.value,MessageConstants.TYPE_LAST_UPDATED.value,
                 MessageConstants.ORCID.value, orcid, 
-                MessageConstants.DATE.value, ""+retrieveLastModifiedDate(orcid).getTime(), 
+                MessageConstants.DATE.value, ""+lastStr, 
                 MessageConstants.METHOD.value, joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName()),
                 JmsDestination.UPDATED_ORCIDS);
     }
