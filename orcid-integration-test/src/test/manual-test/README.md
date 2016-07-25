@@ -1,9 +1,6 @@
-# Manual Testing
-Steps to be completed before each release
+# Manual Test
 
-##User Interface
-
-###Register/Verify/Signin
+##Register/Verify
 1. Visit https://qa.orcid.org/register
 2. Create new account:
     * First name: ma_test
@@ -18,13 +15,15 @@ Steps to be completed before each release
 6. Click (or copy/paste) email verification link
 7. When redirected to https://qa.orcid.org/signin, sign in using ma_test credentials created in previous steps
 5. Visit https://qa.orcid.org/signout
-9. Visit https://qa.orcid.org/signin sign in using a UnitedID account and complete steps to link it to the account created today.
-11. Check that the notification to link the account to Manually Testing Credentials comes up and click Connect
+
+##Sign In
+1. Visit https://qa.orcid.org/signin sign in using a UnitedID account and complete steps to link it to the account created today.
+2. Check that the notification to link the account to Manually Testing Credentials comes up and click Connect
 5. Visit https://qa.orcid.org/signout
-11. Visit https://qa.orcid.org/signin sign in using a Google account not linked to an existing ORCID record, complete steps to link it to the account created today.
+4. Visit https://qa.orcid.org/signin sign in using a Google account not linked to an existing ORCID record, complete steps to link it to the account created today.
 5. Visit https://qa.orcid.org/account and revoke Google and UnitedID account access
 
-###Reset password
+##Reset password
 1. Visit https://qa.orcid.org/reset-password and reset the password for ma_test_[DD][month][YYYY]@mailinator.com
 2. Visit http://mailinator.com and check ma_test_[DD][month][YYYY]@mailinator.com
 3. Open message from reset@notify.orcid.org with subject [ORCID] About your password reset request 
@@ -33,7 +32,7 @@ Steps to be completed before each release
 6. Visit https://qa.orcid.org/signin and sign in using the new password created in the previous steps
 7. Visit https://qa.orcid.org/signout
 
-###My-ORCID
+##My-ORCID
 1. Visit https://qa.orcid.org/my-orcid
 2. Add a published name: Published Name
 3. Add an also know as name: Other Name
@@ -51,8 +50,7 @@ Steps to be completed before each release
       * Verify ma_test_[DD][month][YYYY]_01@mailinator.com is visible
 13. Visit https://qa.orcid.org/signout
 
-##API
-###Public Authenticate
+##Public API Authenticate
 1. Go to https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/authenticate&redirect_uri=https://developers.google.com/oauthplayground
 
 2. Register for a new account and grant authorization
@@ -69,7 +67,7 @@ Steps to be completed before each release
     curl -i -L -H 'Accept: application/json' --data 'client_id=[public client id]&client_secret=[public client secret]&grant_type=authorization_code&code=[code]&redirect_uri=https://developers.google.com/oauthplayground' 'https://qa.orcid.org/oauth/token' -k
     ```
 
-### Public Read and Search
+## Public API Read/Search
 1. Generate a read-public token:
 
     ```
@@ -109,7 +107,7 @@ Steps to be completed before each release
     
 13. Visit https://qa.orcid.org/signout
 
-###1.2 Post and Update 
+##Member API 1.2 Post/Update 
 1. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/orcid-bio/update /orcid-works/create /orcid-works/update /affiliations/create /affiliations/update /funding/create /funding/update /orcid-profile/read-limited&redirect_uri=https://developers.google.com/oauthplayground
 
 2. Log into the account created for testing today and grant short lived authorization
@@ -126,7 +124,7 @@ Steps to be completed before each release
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[orcid id]/orcid-works' -L -i -k
     ```
 
-5. Update the ma test work with: 
+5. Update the ma test work: 
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work2.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[orcid id]/orcid-works' -L -i -k
@@ -140,7 +138,7 @@ Steps to be completed before each release
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_fund.xml' -X POST 'http://api.qa.orcid.org/v1.2/[orcid id]/funding' -L -i -k
     ```
 
-8. Update funding with: 
+8. Update the ma test funding: 
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_fund2.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[orcid id]/funding' -L -i -k
@@ -154,7 +152,7 @@ Steps to be completed before each release
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_edu.xml' -X POST 'http://api.qa.orcid.org/v1.2/[orcid id]/affiliations' -L -i -k
     ```
 
-11. Update education: 
+11. Update the ma test education: 
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_edu2.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[orcid id]/affiliations' -L -i -k
@@ -167,33 +165,30 @@ Steps to be completed before each release
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_bio.xml' -X PUT 'http://api.qa.orcid.org/v1.2/[orcid id]/orcid-bio' -L -i -k
     ```
-15. Check that the new bio items are added, and the manually added items are not affected
+15. Check that the researcher URL, keyword, and identifier are added and the manually added biography items are not affected
 
-15. Attempt to access the wrong record with:
+15. Attempt to access the wrong record - check that this fails
     
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/0000-0002-2619-0514/orcid-works' -L -i -k
     ```
-Check that this fails
 
-16. Attempt to post to a record without a token
+16. Attempt to post to a record without a token - check that this fails
 
 	```
 	curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[orcid id]/orcid-works' -L -i -k
 	```
-Check that this fails
 
 17. Go to https://qa.orcid.org/account and revoke the permission
 
-18. Check that the token no longer works by attempting to post a work 
+18. Check that the token no longer works by attempting to post a work - check that this fails
     
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [1.2 token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[orcid id]/orcid-works' -L -i -k
     ```
-Check that this fails
 
 
-###2.0 Post and Update
+##Member API 2.0 Post/Update/Notifications
 1. Log into the account created for testing today 
 
 2. Go to https://qa.orcid.org/oauth/authorize?client_id=[client id]&response_type=code&scope=/read-limited /activities/update /orcid-bio/update&redirect_uri=https://developers.google.com/oauthplayground
@@ -226,7 +221,8 @@ Check that this fails
 "external-id-relationship": "SELF"}]}}}' -L -i -k
     ```
     
-13. Attempt to update an item without a token
+13. Attempt to update an item without a token - check that this fails
+
     ```
     curl -H 'Content-Type: application/orcid+json' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]' -d '{
 "put-code":"[put-code]",
@@ -238,7 +234,6 @@ Check that this fails
 "external-id-type": "doi",
 "external-id-relationship": "SELF"}]}}}' -L -i -k
     ```
-check that this fails
 
 8. Delete the work:
  
@@ -274,15 +269,13 @@ check that this fails
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_identifier.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/external-identifiers' -L -i -k
     ```
 
-12. Attempt to post to a record without a token
+12. Attempt to post to a record without a token - check that this fails
 
 	```
 	curl -H 'Content-Type: application/orcid+xml' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
 	```
-	
-check that this fails
 
-14. Attempt to update an item you are not the source of
+14. Attempt to update an item you are not the source of - check that this fails
         ```
     curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]-3' -d '{
 "put-code":"[put-code]-3",
@@ -294,7 +287,6 @@ check that this fails
 "external-id-type": "doi",
 "external-id-relationship": "SELF"}]}}}' -L -i -k
     ```
-check that this fails
 
 15. Post a notification
 	```
@@ -305,8 +297,8 @@ check that this fails
 	* Check that notification to add a work has posted
 	* Check that notifications from the previous updates have posted
 
-###Refresh tokens
-1. Generate a new token with the same scopes and expiration at the 2.0 token and do not revoke the original token
+##Refresh tokens
+1. Generate a new token with the same scopes and expiration as the 2.0 token and do not revoke the original token
 
 ```
 curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
@@ -330,31 +322,31 @@ curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 tok
 curl -i -L -k -H 'Authorization: Bearer [2.0 token]' -d 'refresh_token=[2.0 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=true' -d 'scope=/read-limited' -d 'expires_in=600' https://qa.orcid.org/oauth/token
 ```
 
-2. Check the new token can't be used to post items by attempting to post the test work - this should fail
+2. Check the new token can't be used to post items by attempting to post the test work - check that this fails
 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
 ```
 
-2. Check the original token was revoked by attempting to post the test work - this should fail
+2. Check the original token was revoked by attempting to post the test work - check that this fails
 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/xml' -d '@ma2_work.xml' -X POST 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work' -L -i -k
 ```
 
-3. Check that the new token can be used to read the record
+3. Check that the new token can be used to read the record - check that this fails
 
 ```
 curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [refreshed2]' -H 'Accept: application/xml' 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/record' -L -i -k
 ```
 
-4. Check that you can't generate a refresh token using a revoked token
+4. Check that you can't generate a refresh token using a revoked token - check that this fails
 
 ```
 curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refresh]' -d 'grant_type=refresh_token' -d 'client_id=[client id]' -d 'client_secret=[client secret]' -d 'revoke_old=false' https://qa.orcid.org/oauth/token
 ```
 
-###Creating and Claiming records
+##Member API 1.2 Creating/Claiming
 
 1. Get a token to create records
 	
@@ -379,7 +371,7 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
 
 7. Change the information added to the record to limited
 
-7. Try to post to the record using the create token- this should fail
+7. Try to post to the record using the create token - check that this fails
 	
 	```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer [create token]' -H 'Accept: application/xml' -d '@ma_work.xml' -X POST 'http://api.qa.orcid.org/v1.2/[new id]/orcid-works' -L -i -k
@@ -393,7 +385,7 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
 	
 
 ##Privacy Check
-###Check Public record
+###Public Record
 1. Visit http://qa.orcid.org/0000-0002-3874-7658
 
 2. Check that the following fields are shown
@@ -451,7 +443,7 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
     ```
 
 
-###Check Limited record
+###Limited Record
 1. Visit http://qa.orcid.org/0000-0001-7325-5491
 
 2. Check that no information is displayed other than the ORCID iD
@@ -519,25 +511,25 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer ba290a09-b757-4583-a5af-bd55d7087467' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/email' -L -i -k
     ```
 
-8. Read with revoked access token  1.2 (should fail). Check that an error message is returned
+8. Read with revoked access token  1.2. Check that an error message is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 63409312-5ef6-4051-988c-f33b0fcea09f' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-8. Read record with revoked access token  2.0_rc2 (should fail). Check that an error message is returned
+8. Read record with revoked access token  2.0_rc2. Check that an error message is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 63409312-5ef6-4051-988c-f33b0fcea09f' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
     ```
 
-9. Read with an access token for another record 1.2 (should fail). Check that an error is returned
+9. Read with an access token for another record 1.2. Check that an error is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v1.2/0000-0001-7325-5491/orcid-profile' -L -i -k
     ```
 
-10. Read record with access token for another record 2.0_rc2 (should fail). Check that an error is returned
+10. Read record with access token for another record 2.0_rc2. Check that an error is returned
 
     ```
     curl -H 'Content-Type: application/orcid+xml' -H 'Authorization: Bearer 2283056e-6a4a-4c80-b3a0-beaa102161d0' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0001-7325-5491/record' -L -i -k
@@ -654,7 +646,7 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
     ```
 
 
-###Check Private record
+###Private Record
 1. Visit http://qa.orcid.org/0000-0003-2366-2712
 
 2. Check that no information is displayed other than the ORCID iD
@@ -701,7 +693,7 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
     curl -H 'Content-Type: application/xml' -H 'Authorization: Bearer 6ae41a5b-abf9-4922-bbb4-08ed8508b4ce' -X GET 'https://api.qa.orcid.org/v2.0_rc2/0000-0003-2366-2712/email' -L -i -k
     ```
 
-###Check scopes and methods
+##Scopes/Methods
 
 1. Attempt to get a /read-limited token with a public client at https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/read-limited&redirect_uri=https://developers.google.com/oauthplayground
 
