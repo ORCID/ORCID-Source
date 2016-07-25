@@ -17,12 +17,16 @@
 package org.orcid.persistence.jpa.entities;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -43,6 +47,7 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
     private String techEmail;
     private Date lastFailed;
     private int failedCount;
+    private List<IdentityProviderNameEntity> names;
 
     @Override
     @Id
@@ -116,6 +121,15 @@ public class IdentityProviderEntity extends BaseEntity<Long> {
 
     public void setFailedCount(int failedCount) {
         this.failedCount = failedCount;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "identityProvider", orphanRemoval = true)
+    public List<IdentityProviderNameEntity> getNames() {
+        return names;
+    }
+
+    public void setNames(List<IdentityProviderNameEntity> names) {
+        this.names = names;
     }
 
     @Override

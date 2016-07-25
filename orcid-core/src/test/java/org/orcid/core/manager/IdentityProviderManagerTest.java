@@ -1,8 +1,28 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.core.manager;
 
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,6 +31,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Test;
 import org.orcid.core.manager.impl.IdentityProviderManagerImpl;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
+import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -34,6 +55,15 @@ public class IdentityProviderManagerTest {
         IdentityProviderEntity result = identityProviderManager.createEntityFromXml(idpElement);
         assertNotNull(result);
         assertEquals("https://idp.example.ch/idp/shibboleth", result.getProviderid());
+        List<IdentityProviderNameEntity> names = result.getNames();
+        assertNotNull(names);
+        assertEquals(4, names.size());
+        Map<String, IdentityProviderNameEntity> mapByLang = names.stream().collect(Collectors.toMap(IdentityProviderNameEntity::getLang, Function.identity()));
+        assertEquals("Universität Example Display", mapByLang.get("de").getDisplayName());
+        assertEquals("University of Example Display", mapByLang.get("en").getDisplayName());
+        assertEquals("Université de Example Display", mapByLang.get("fr").getDisplayName());
+        assertEquals("Università di Example Display", mapByLang.get("it").getDisplayName());
+        // Old way of doing just a single name.
         assertEquals("Universität Example Display", result.getDisplayName());
         assertEquals("support@example.ch", result.getSupportEmail());
         assertNull(result.getAdminEmail());

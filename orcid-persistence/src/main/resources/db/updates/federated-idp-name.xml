@@ -1,0 +1,58 @@
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+        
+    <changeSet id="CREATE-IDP-NAME-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="identity_provider_name"/>
+            </not>
+        </preConditions>
+        <createTable tableName="identity_provider_name">
+            <column name="id" type="bigint">
+                <constraints nullable="false" primaryKey="true"
+                    primaryKeyName="identity_provider_name_pkey" />
+            </column>
+            <column name="date_created" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_modified" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="identity_provider_id" type="bigint" />
+            <column name="display_name" type="VARCHAR(1000)" />
+            <column name="lang" type="VARCHAR(1000)" />
+        </createTable>
+        <addForeignKeyConstraint constraintName="identity_provider_name_identity_provider_id_fk"
+                                 baseTableName="identity_provider_name" baseColumnNames="identity_provider_id" baseTableSchemaName="public" 
+                                 referencedTableName="identity_provider" referencedColumnNames="id" referencedTableSchemaName="public"/>
+    </changeSet>
+    
+    <changeSet id="ADD-SEQUENCE-FOR-IDP-NAME" author="Will Simpson" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="identity_provider_name_seq" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="identity_provider_name_seq" />
+    </changeSet>
+
+    <changeSet id="ADD-AUTO-COL-FOR-IDP-NAME" author="Will Simpson" dbms="hsqldb">
+        <addAutoIncrement tableName="identity_provider_name"
+            columnName="id" columnDataType="bigint" />
+    </changeSet>
+    
+</databaseChangeLog>

@@ -18,6 +18,8 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -34,9 +36,13 @@ import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.utils.NamespaceMap;
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
+import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -60,6 +66,9 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
 
     @Resource
     private IdentityProviderDao identityProviderDao;
+
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
 
@@ -100,22 +109,46 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     @Override
     public IdentityProviderEntity createEntityFromXml(Element idpElement) {
         XPath xpath = createXPath();
-        XPathExpression displayNameXpath = compileXPath(xpath, "string(.//mdui:DisplayName[1])");
+        XPathExpression mainDisplayNameXpath = compileXPath(xpath, "string(.//saml2:IDPSSODescriptor//mdui:DisplayName[1])");
+        XPathExpression displayNamesXpath = compileXPath(xpath, ".//saml2:IDPSSODescriptor//mdui:DisplayName");
         XPathExpression supportContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='support'])[1]/saml2:EmailAddress[1])");
         XPathExpression adminContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='administrative'])[1]/saml2:EmailAddress[1])");
         XPathExpression techContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='technical'])[1]/saml2:EmailAddress[1])");
+
         String entityId = idpElement.getAttribute("entityID");
-        String displayName = evaluateXPathString(displayNameXpath, idpElement);
+        String mainDisplayName = evaluateXPathString(mainDisplayNameXpath, idpElement);
         String supportEmail = tidyEmail(evaluateXPathString(supportContactXpath, idpElement));
         String adminEmail = tidyEmail(evaluateXPathString(adminContactXpath, idpElement));
         String techEmail = tidyEmail(evaluateXPathString(techContactXpath, idpElement));
+        List<IdentityProviderNameEntity> nameEntities = createNameEntitiesFromXml(idpElement, displayNamesXpath);
+
         IdentityProviderEntity identityProviderEntity = new IdentityProviderEntity();
         identityProviderEntity.setProviderid(entityId);
-        identityProviderEntity.setDisplayName(displayName);
+        // Old way
+        identityProviderEntity.setDisplayName(mainDisplayName);
+        // New way
+        identityProviderEntity.setNames(nameEntities);
         identityProviderEntity.setSupportEmail(supportEmail);
         identityProviderEntity.setAdminEmail(adminEmail);
         identityProviderEntity.setTechEmail(techEmail);
         return identityProviderEntity;
+    }
+
+    private List<IdentityProviderNameEntity> createNameEntitiesFromXml(Element idpElement, XPathExpression displayNamesXpath) {
+        List<IdentityProviderNameEntity> nameEntities = new ArrayList<>();
+        NodeList displayNames = evaluateXPathNodeList(displayNamesXpath, idpElement);
+        if (displayNames != null) {
+            for (int i = 0; i < displayNames.getLength(); i++) {
+                Element displayNameElement = (Element) displayNames.item(i);
+                String lang = displayNameElement.getAttribute("xml:lang");
+                String displayName = displayNameElement.getTextContent();
+                IdentityProviderNameEntity nameEntity = new IdentityProviderNameEntity();
+                nameEntity.setLang(lang);
+                nameEntity.setDisplayName(displayName);
+                nameEntities.add(nameEntity);
+            }
+        }
+        return nameEntities;
     }
 
     private Document downloadMetadata(String metadataUrl) {
@@ -128,16 +161,62 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     }
 
     private void saveOrUpdateIdentityProvider(IdentityProviderEntity incoming) {
-        IdentityProviderEntity entity = identityProviderDao.findByProviderid(incoming.getProviderid());
-        if (entity == null) {
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                saveOrUpdateIdentityProviderInTransaction(incoming);
+            }
+        });
+    }
+
+    private void saveOrUpdateIdentityProviderInTransaction(IdentityProviderEntity incoming) {
+        IdentityProviderEntity existing = identityProviderDao.findByProviderid(incoming.getProviderid());
+        if (existing == null) {
             identityProviderDao.persist(incoming);
         } else {
-            entity.setProviderid(incoming.getProviderid());
-            entity.setDisplayName(incoming.getDisplayName());
-            entity.setSupportEmail(incoming.getSupportEmail());
-            entity.setAdminEmail(incoming.getAdminEmail());
-            entity.setTechEmail(incoming.getTechEmail());
-            identityProviderDao.merge(entity);
+            existing.setProviderid(incoming.getProviderid());
+            existing.setDisplayName(incoming.getDisplayName());
+            existing.setSupportEmail(incoming.getSupportEmail());
+            existing.setAdminEmail(incoming.getAdminEmail());
+            existing.setTechEmail(incoming.getTechEmail());
+            mergeNames(incoming, existing);
+            identityProviderDao.merge(existing);
+        }
+    }
+
+    private void mergeNames(IdentityProviderEntity incoming, IdentityProviderEntity existing) {
+        List<IdentityProviderNameEntity> existingNames = existing.getNames();
+        List<IdentityProviderNameEntity> incomingNames = incoming.getNames();
+        if (existingNames != null) {
+            Map<String, IdentityProviderNameEntity> incomingNamesMappedByLang = incomingNames.stream()
+                    .collect(Collectors.toMap(IdentityProviderNameEntity::getLang, Function.identity()));
+            // Update existing name entities
+            existingNames.stream().forEach(e -> {
+                IdentityProviderNameEntity incomingName = incomingNamesMappedByLang.get(e.getLang());
+                if (incomingName != null) {
+                    e.setDisplayName(incoming.getDisplayName());
+                }
+            });
+            // Remove existing names that are not in the incoming
+            // list
+            existingNames.removeIf(e -> {
+                return incomingNames.stream().noneMatch(i -> {
+                    String existingDisplayName = e.getDisplayName();
+                    return i.getDisplayName().equals(existingDisplayName);
+                });
+            });
+            // Add new names
+            Map<String, IdentityProviderNameEntity> existingNamesMappedByLang = existingNames.stream()
+                    .collect(Collectors.toMap(IdentityProviderNameEntity::getLang, Function.identity()));
+            incomingNames.stream().forEach(i -> {
+                if (!existingNamesMappedByLang.containsKey(i.getLang())) {
+                    i.setIdentityProvider(existing);
+                    existingNames.add(i);
+                }
+            });
+        } else {
+            incomingNames.stream().forEach(i -> i.setIdentityProvider(incoming));
+            existing.setNames(incomingNames);
         }
     }
 
