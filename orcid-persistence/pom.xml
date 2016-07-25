@@ -65,7 +65,6 @@
             <groupId>org.orcid</groupId>
             <artifactId>orcid-utils</artifactId>
             <version>1.1.5-SNAPSHOT</version>
-            <scope>test</scope>
         </dependency>
         <!-- ##External dependencies## -->
 

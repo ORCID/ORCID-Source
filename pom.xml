@@ -41,6 +41,7 @@ the software.
     </properties>
 
     <modules>
+        <module>orcid-utils</module>
         <module>orcid-core</module>
         <module>orcid-web</module>
         <module>orcid-persistence</module>
@@ -49,7 +50,6 @@ the software.
         <module>orcid-pub-web</module>
         <module>orcid-api-web</module>
         <module>orcid-scheduler-web</module>
-        <module>orcid-utils</module>
         <module>orcid-test</module>
         <module>orcid-solr-web</module>
         <module>orcid-integration-test</module>

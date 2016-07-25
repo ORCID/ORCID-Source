@@ -18,7 +18,6 @@ package org.orcid.listener;
 
 import java.util.Map;
 
-import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
@@ -33,7 +32,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LastModifiedListener {
     
-    //fields are date, method, orcid
+    //fields are date, method, orcid - see MessageConstants
     Logger LOG = LoggerFactory.getLogger(LastModifiedListener.class);
     
     public static final String UPDATED_ORCIDS = "updated_orcids";
