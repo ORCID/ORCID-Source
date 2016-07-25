@@ -25,11 +25,11 @@ public class IdentityProviderManagerTest {
     private IdentityProviderManager identityProviderManager = new IdentityProviderManagerImpl();
 
     @Test
-    public void testCreateEntityFromXml() throws SAXException, IOException, ParserConfigurationException {
+    public void testCreateEntityFromXmlWithLegacyNames() throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(getClass().getResourceAsStream("example_idp.xml"));
+        Document doc = dBuilder.parse(getClass().getResourceAsStream("example_idp_legacy.xml"));
         Element idpElement = doc.getDocumentElement();
         IdentityProviderEntity result = identityProviderManager.createEntityFromXml(idpElement);
         assertNotNull(result);
