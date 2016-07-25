@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2.xsd" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2.xsd">
+    <message-version>1.2</message-version>
+    <orcid-profile>
+        <orcid-activities>
+            <affiliations>
+                <affiliation>
+                    <type>education</type>
+                    <department-name>1.2 Post</department-name>
+                    <organization>
+                        <name>ORCID</name>
+                        <address>
+                            <city>Bethesda</city>
+                            <region>MD</region>
+                            <country>US</country>
+                        </address>
+                        <disambiguated-organization>
+                            <disambiguated-organization-identifier>ringgold</disambiguated-organization-identifier>
+                            <disambiguation-source>385488</disambiguation-source>
+                        </disambiguated-organization>
+                    </organization>
+                </affiliation>
+            </affiliations>
+     
+        </orcid-activities>
+    </orcid-profile>
+    
+</orcid-message>

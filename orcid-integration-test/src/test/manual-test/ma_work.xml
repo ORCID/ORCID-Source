@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2.xsd">
+    <message-version>1.2</message-version>
+    <orcid-profile>
+        <orcid-activities>
+            <orcid-works>
+               
+                <orcid-work>
+                    <work-title>
+                        <title>API 1.2 post</title>
+                    </work-title>
+                    <work-type>book</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>0000</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                   </orcid-work>
+            </orcid-works>      
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

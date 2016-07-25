@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notification:notification
+    xsi:schemaLocation="http://www.orcid.org/ns/notification https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/notification_2.0_rc2/notification-permission-2.0_rc2.xsd"
+    xmlns:common="http://www.orcid.org/ns/common"
+    xmlns:notification="http://www.orcid.org/ns/notification"
+    xmlns:activities="http://www.orcid.org/ns/activities"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <notification:notification-type>permission</notification:notification-type>
+    <notification:authorization-url>
+        <!-- API user can specify just the path if they want. -->
+        <notification:uri>https://qa.orcid.org/oauth/authorize?client_id=APP-5G54N5YFOKGV5Z0X&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=https://developers.google.com/oauthplayground</notification:uri>
+        <notification:path>/oauth/authorize?client_id=APP-5G54N5YFOKGV5Z0X&amp;response_type=code&amp;scope=/orcid-works/create&amp;redirect_uri=https://developers.google.com/oauthplayground</notification:path>
+        <notification:host>orcid.org</notification:host>
+    </notification:authorization-url>
+    <notification:notification-subject>Notification 2.0_rc manual test</notification:notification-subject>
+    <notification:notification-intro>Short text</notification:notification-intro>
+    <notification:items>
+        <notification:item>
+            <notification:item-type>work</notification:item-type>
+            <notification:item-name>Work title</notification:item-name>
+            <common:external-id>
+                <common:external-id-type>doi</common:external-id-type>
+                <common:external-id-value>1234</common:external-id-value>
+                <common:external-id-url>http://dx.doi.org/1234</common:external-id-url>
+            </common:external-id>
+        </notification:item>
+        </notification:items>
+</notification:notification>
