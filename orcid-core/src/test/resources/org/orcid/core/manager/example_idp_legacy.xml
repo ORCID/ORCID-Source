@@ -16,7 +16,7 @@
       <ds:KeyInfo>
         <ds:X509Data>
           <ds:X509Certificate>
-                      CERTINFO
+CERTINFO
           </ds:X509Certificate>
         </ds:X509Data>
       </ds:KeyInfo>
@@ -36,7 +36,7 @@
       <ds:KeyInfo>
         <ds:X509Data>
           <ds:X509Certificate>
-                      CERTINFO
+CERTINFO
           </ds:X509Certificate>
         </ds:X509Data>
       </ds:KeyInfo>
