@@ -40,6 +40,7 @@ import org.orcid.core.utils.NamespaceMap;
 import org.orcid.persistence.dao.IdentityProviderDao;
 import org.orcid.persistence.jpa.entities.IdentityProviderEntity;
 import org.orcid.persistence.jpa.entities.IdentityProviderNameEntity;
+import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +55,8 @@ import org.w3c.dom.NodeList;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+
+import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
 /**
  * 
@@ -76,6 +79,11 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     @Resource
     private LocaleManager localeManager;
 
+    @Resource(name = "identityProviderNameCache")
+    private SelfPopulatingCache identityProviderNameCache;
+
+    private String releaseName = ReleaseNameUtils.getReleaseName();
+
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
 
     @Override
@@ -85,13 +93,11 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
 
     @Override
     public String retrieveIdentitifyProviderName(String providerid, Locale locale) {
-        // XXX Implement cache
-        return retrieveFreshIdentitifyProviderName(providerid, locale);
+        return (String) identityProviderNameCache.get(new IdentityProviderNameCacheKey(providerid, locale, releaseName)).getObjectValue();
     }
 
     @Override
     public String retrieveFreshIdentitifyProviderName(String providerid, Locale locale) {
-        // XXX Implement cache
         IdentityProviderEntity idp = identityProviderDao.findByProviderid(providerid);
         List<IdentityProviderNameEntity> names = idp.getNames();
         if (names != null) {
