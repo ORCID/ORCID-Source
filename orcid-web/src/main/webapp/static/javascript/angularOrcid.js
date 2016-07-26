@@ -1456,8 +1456,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
-                	serv.notificationAlerts = data;                	
-                	console.log(data);
+                	serv.notificationAlerts = data;
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -5720,13 +5719,13 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         });
     };
 
-    $scope.openBibTextWizard = function () {
+    $scope.openBibTextWizard = function () {    	
         $scope.bibtexParsingError = false;
         $scope.showBibtexImportWizard = !($scope.showBibtexImportWizard);
         $scope.bulkEditShow = false;
         $scope.worksFromBibtex = null;
         $scope.workImportWizard = false;
-        $scope.showBibtexExport = false;
+        $scope.showBibtexExport = false;        
     };
 
     $scope.bibtextCancel = function(){
@@ -6199,7 +6198,9 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     	$scope.showElement[key] = false;
     };
     
-    $scope.openFileDialog = function(){    	
+    $scope.openFileDialog = function(){
+    	$scope.textFiles = [];
+    	$scope.bibtexParsingError = false;
     	$timeout(function() { //To avoid '$apply already in progress' error
     	    angular.element('#inputBibtex').trigger('click');
     	}, 0);
