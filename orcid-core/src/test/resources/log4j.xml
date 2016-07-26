@@ -22,7 +22,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 	<appender name="FILE_APPENDER" class="org.apache.log4j.RollingFileAppender">
-		<param name="File" value="./logs/orcid-web.log" />
+		<param name="File" value="./logs/persistence-build.log" />
 		<param name="Append" value="true" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p [%t] %C{2} (%F:%L) - %m%n" />
@@ -30,50 +30,31 @@
 	</appender>
 
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-		<param name="Threshold" value="INFO"/>
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="WEB %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
+			<param name="ConversionPattern" value="%d %p [%t] %c{1}.%M(%L) | %m%n" />
 		</layout>
 	</appender>
-
-	<appender name="CONSOLE_SHORTTRACE" class="org.apache.log4j.ConsoleAppender">
-		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %p [%t] %c{1}.%M(%L) | %m%n%m%n%throwable{1}" />
-		</layout>
-	</appender>
-
 
 	<!-- 3rd party Loggers -->
 	<logger name="org.springframework">
 		<level value="WARN" />
 	</logger>
-    
-    <logger name="org.springframework.security">
-        <level value="DEBUG" />
-    </logger>
 
 	<logger name="org.hibernate">
 		<level value="INFO" />
 	</logger>
 	
-	<logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener">
-		<level value="WARN" />
-	</logger>
-	
 	<logger name="com.mchange.v2">
 	   <level value="WARN" />
 	</logger>
-
-	<logger name="com.sun.jersey.spi.container.servlet.WebComponent.filterFormParameters">
-	   <level value="OFF" />
+	
+	<logger name="org.dbunit">
+		<level value="WARN" />
 	</logger>
 	
-	<logger name="org.xml.sax.SAXParseException">
-	   <level value="WARN" />
-	   <appender-ref ref="CONSOLE_SHORTTRACE"/>
+	<logger name="com.sun.jersey.api.client.filter.LoggingFilter">
+	   <level value="DEBUG" />
 	</logger>
-
-	
 
 	<!-- Root Logger -->
 	<root>

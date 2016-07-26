@@ -54,9 +54,7 @@ import org.springframework.security.oauth2.common.exceptions.InvalidTokenExcepti
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 
@@ -88,8 +86,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }          
     
     @Test
-    @Transactional
-    @Rollback
     public void testCreateReadLimitedAccessToken() {
         Date earliestExpiry = oneHoursTime();        
         Map<String, String> authorizationParameters = new HashMap<>();
@@ -111,8 +107,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void testCreateAddWorkAccessToken() {
         Date earliestExpiry = oneHoursTime();
 
@@ -134,8 +128,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void testReissuedAccessTokenHasUpdatedExpiration() throws InterruptedException {
         Date earliestExpiry = oneHoursTime();
         
@@ -186,8 +178,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
      * Check that the token created with a non persistent code will expire within an hour 
      * */
     @Test
-    @Transactional
-    @Rollback
     public void tokenExpireInAnHourTest() throws InterruptedException {
         Map<String, String> authorizationParameters = new HashMap<>();
         String clientId = "4444-4444-4444-4441";
@@ -205,16 +195,13 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
         Thread.sleep(2000);
         
         //The token expires in less than one hour
-        assertFalse(tokenExpiration.after(oneHoursTime()));
-        
+        assertFalse(tokenExpiration.after(oneHoursTime()));        
     }
 
     /**
      * Check that the token created with a persistent code will expire within 20 years
      * */
     @Test
-    @Transactional
-    @Rollback
     public void tokenExpireIn20YearsTest() throws InterruptedException {
         Date in20years = twentyYearsTime();
         
@@ -282,8 +269,6 @@ public class OrcidRandomValueTokenServicesTest extends DBUnitTest {
      * Load authentication using a persistent token
      * */
     @Test
-    @Transactional
-    @Rollback
     public void loadAuthenticationWithPersistentTokenTest() {
         try {
             OAuth2Authentication result = tokenServices.loadAuthentication("persistent-token-2");

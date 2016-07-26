@@ -2,7 +2,7 @@
 
 ##Prerequisites 
 
-1. Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
+* Install [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html). Add an environment variable JAVA_HOME. (Verify Java. Go to cmd and type "java -version". It should display the version of Java)
 
 * Install [Java JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html). see: [OSX](http://stackoverflow.com/questions/12245179/how-to-install-unlimited-strength-jce-for-jre-7-in-macosx) or [Windows](http://help.boomi.com/atomsphere/GUID-D7FA3445-6483-45C5-85AD-60CA5BB15719.html)
     
@@ -32,7 +32,7 @@
 We'll set up postgres using the default settings in 
 [staging-persistence.properties](https://github.com/ORCID/ORCID-Source/blob/master/orcid-persistence/src/main/resources/staging-persistence.properties). Please change usernames and passwords for any production environments.
 
-1.  Become postgres user
+*  Become postgres user
 
     ```
     sudo su - postgres
@@ -42,29 +42,29 @@ We'll set up postgres using the default settings in
     psql -U postgres
     ```
     
-4. Set up database
+* Set up database
 
     ```
     psql -c "CREATE DATABASE orcid;"     
     psql -c "CREATE USER orcid WITH PASSWORD 'orcid';" 
-    psql -c "GRANT ALL PRIVILEGES ON DATABASE orcid to orcid;"
+    psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE orcid to orcid;"
     
     psql -c "CREATE DATABASE statistics;" 
     psql -c "CREATE USER statistics WITH PASSWORD 'statistics';" 
-    psql -c "GRANT ALL PRIVILEGES ON DATABASE statistics to statistics;"
+    psql -d postgres -c "GRANT ALL PRIVILEGES ON DATABASE statistics to statistics;"
     
     psql -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
     psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
-    psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
+    psql -d postgres -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
     
-5. Exit postgres user prompt
+* Exit postgres user prompt
     
     ```
     exit
     ```
 
-6. Verify user login and database exist
+* Verify user login and database exist
 
     ```
     psql -U orcid -d orcid -c "\list" -h localhost
@@ -74,7 +74,7 @@ We'll set up postgres using the default settings in
 
 ## Clone the git repository
 
-1. Make a git directory if one doesn't exist
+* Make a git directory if one doesn't exist
 
 
     ```
@@ -93,7 +93,7 @@ We'll set up postgres using the default settings in
 ## Clone the git ORCID-Fonts-Dot-Com repository
 Do to licensing issues this is only available to ORCID.org employees.
 
-1. Clone the ORCID-Fonts-Dot-Com repository into the static directory
+* Clone the ORCID-Fonts-Dot-Com repository into the static directory
 
 	```
     git clone git@github.com:ORCID/ORCID-Fonts-Dot-Com.git ~/git/ORCID-Source/orcid-web/src/main/webapp/static/ORCID-Fonts-Dot-Com
@@ -101,7 +101,7 @@ Do to licensing issues this is only available to ORCID.org employees.
 
 
 ## Run Maven Task - First Time Only
-1. maven clean install
+* maven clean install
 
     ```
     cd ~/git/ORCID-Source
@@ -138,7 +138,7 @@ psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-i
 ## Eclipse Setup (Spring Tool Suite Eclipse)
 These instructions are for Spring Tool Suite for Eclipse. 
 
-1. Download and install Spring Tool Suite for Eclipse:
+* Download and install Spring Tool Suite for Eclipse:
 http://www.springsource.org/downloads/sts-ggts
 
 * Select File-> Import -> Git -> Project from Git, Click Next.
@@ -169,7 +169,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Click on Add.
 
-* Expand the folder Apache, select Apache Tomcat v7.0 and click Next.
+* Expand the folder Apache, select Apache Tomcat and click Next.
 
 * Browse to the directory of apache tomcat in the file system and click Finish.
 
@@ -179,7 +179,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Filter for 'Server', select and click Next.
 
-* Expand the folder Apache, select Apache Tomcat v7.0.
+* Expand the folder Apache, select Apache Tomcat.
 
 * Field 'Server Runtime Environment' should point to the newly added server runtime for tomcat.
 
@@ -187,7 +187,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Select Window -> Show View -> Servers
 
-* Double Click "Apache Tomcat Server 7.0"
+* Double Click "Apache Tomcat Server"
 
 * Select Open launch configuration
 
@@ -204,39 +204,30 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Save and close the server configuration view.
 
-* Right click on "Apache Tomcat Server 7.0".
+* Right click on "Apache Tomcat Server".
 
 * Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web, orcid-solr-web, orcid-integration-test and orcid-web
 
-* Right click on "Apache Tomcat Server 7.0"
-
-* Select Debug
-
-* Point your browser to http://localhost:8080/orcid-web/my-orcid
-
-* You should see a login page.
-
-* Click OK.
 
 ### Setting up Eclipse to use ORCID formatting rules 
-1. Select Eclipse (or Spring Tool Suit) -> Preferences -> Java -> Code style -> Formatter -> Import
+* Select Eclipse (or Spring Tool Suit) -> Preferences -> Java -> Code style -> Formatter -> Import
 
-* Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
+  * Navigate to ~/git/ORCID-Source and select eclipse_formatter.xml
 
-* Click "Apply"
+  * Click "Apply"
 
-2. Select Eclipse (or Spring Tool Suit) -> Preferences -> JavaScript -> Code style -> Formatter -> Import
+* Select Eclipse (or Spring Tool Suit) -> Preferences -> JavaScript -> Code style -> Formatter -> Import
 
-* Navigate to ~/git/ORCID-Source and select eclipse_javascript_formatter.xml
+  * Navigate to ~/git/ORCID-Source and select eclipse_javascript_formatter.xml
 
-* Click "Apply"
+  * Click "Apply"
 
 ### Disabling JPA facet for orcid-persistence
-1. Select Eclipse (or Spring Tool Suit) -> Preferences -> Validation 
+* Select Eclipse (or Spring Tool Suit) -> Preferences -> Validation 
 
-* Uncheck the JPA validatior checkboxes
+  * Uncheck the JPA validatior checkboxes
 
-* Click "Ok"
+  * Click "Ok"
 
 ### Enabling https
 
@@ -250,6 +241,32 @@ Find the **service** element/tag and the following connector:
 Please notice that you should update the path on "*keystoreFile*" and "*truststoreFile*"; that path should point to the root path where you have the ORCID code. 
 
 When this it is done, restart the server.
+
+### Testing your set up
+* Right click on "Apache Tomcat Server"
+
+* Select Debug
+
+* Point your browser to https://localhost:8443/orcid-web/signin
+
+* You should see a login page.
+
+* Click OK.
+ 
+##Updating
+* Get latest version
+	```
+	cd ~/git/ORCID-Source
+	git checkout master
+	git pull
+	```
+
+* In Spring Tool Suite go to Package Explorer
+
+* Select all items
+
+* Right click, and select refresh
+
 
 # Testing
 ##Automated Testing

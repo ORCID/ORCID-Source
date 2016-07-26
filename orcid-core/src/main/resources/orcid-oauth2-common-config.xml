@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<!-- Message converters -->
+	<bean id="orcidJsonMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list value-type="org.springframework.http.MediaType">
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg type="java.lang.String" value="application" />
+					<constructor-arg type="java.lang.String" value="json" />
+				</bean>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg type="java.lang.String" value="application" />
+					<constructor-arg type="java.lang.String" value="orcid+json" />
+				</bean>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg type="java.lang.String" value="application" />
+					<constructor-arg type="java.lang.String" value="vnd.orcid+json" />
+				</bean>
+			</list>
+		</property>
+		<property name="prettyPrint" value="true" />
+	</bean>
+
+	<bean id="orcidXmlMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list value-type="org.springframework.http.MediaType">
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg type="java.lang.String" value="application" />
+					<constructor-arg type="java.lang.String" value="xml" />
+				</bean>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg type="java.lang.String" value="application" />
+					<constructor-arg type="java.lang.String" value="orcid+xml" />
+				</bean>
+				<bean class="org.springframework.http.MediaType">
+					<constructor-arg type="java.lang.String" value="application" />
+					<constructor-arg type="java.lang.String" value="vnd.orcid+xml" />
+				</bean>
+			</list>
+		</property>		
+	</bean>
+	
+	<!-- OAUTH2 common configuration -->
+	<bean id="oauthAccessDeniedHandler"
+		class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
+		<property name="exceptionRenderer" ref="oauthExceptionRenderer" />
+	</bean>
+
+	<bean id="oauthExceptionRenderer"
+		class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
+		<property name="messageConverters">
+			<list>
+				<ref bean="orcidJsonMessageConverter" />
+				<ref bean="orcidXmlMessageConverter" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- Use the composite granter to enable granting of tokens for both client 
+		credentials and auth codes -->
+	<bean id="tokenGranter"
+		class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
+		<constructor-arg>
+			<list>
+				<ref bean="clientCredentialsTokenGranter" />
+				<ref bean="authorizationCodeTokenGranter" />
+				<ref bean="refreshTokenTokenGranter" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- A token granter for the client credentials -->
+	<bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
+		<constructor-arg ref="tokenServices" />
+		<constructor-arg ref="orcidClientCredentialsChecker" />
+	</bean>
+
+	<bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">
+		<constructor-arg ref="oAuth2RequestFactory" />
+	</bean>
+
+	<!-- The 'granter responsible for returning and removing the auth codes -->
+	<bean id="authorizationCodeTokenGranter" class="org.orcid.core.oauth.OrcidAuthorizationCodeTokenGranter">
+		<constructor-arg ref="orcidAuthorizationCodeService" />
+		<constructor-arg ref="tokenServices" />
+		<constructor-arg ref="clientDetailsManager" />
+		<constructor-arg ref="oAuth2RequestFactory" />
+	</bean>
+
+	<!-- An extension of RandomValueAuthorizationCodeServices to create and 
+		remove authorisation codes -->
+	<bean id="orcidAuthorizationCodeService"
+		class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl" />
+
+	<!-- As we have a Jersey endpoint, we need to create an extension to the 
+		Spring MVC, so we use a delegator -->
+	<bean id="orcidClientCredentialEndPointDelegator"
+		class="org.orcid.core.oauth.impl.OrcidClientCredentialEndPointDelegatorImpl">
+		<property name="tokenGranter" ref="tokenGranter" />
+		<property name="clientDetailsService" ref="clientDetailsManager" />
+	</bean>
+
+	<bean id="oAuth2RequestFactory"
+		class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
+		<constructor-arg ref="clientDetailsManager" />
+	</bean>
+
+	<bean id="orcidRefreshTokenChecker" class="org.orcid.core.oauth.OrcidRefreshTokenChecker" />
+	
+	<bean id="refreshTokenTokenGranter" class="org.orcid.core.oauth.OrcidRefreshTokenTokenGranter">		
+		<constructor-arg ref="orcidRefreshTokenChecker" />		
+		<constructor-arg ref="tokenServices" />
+	</bean>	
+</beans>

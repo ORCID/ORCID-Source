@@ -933,7 +933,7 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
-    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
+    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
             throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         claim.setErrors(new ArrayList<String>());
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8")).trim();
@@ -972,7 +972,12 @@ public class RegistrationController extends BaseController {
         orcidProfile.setPassword(claim.getPassword().getValue());
         orcidProfileManager.updatePasswordInformation(orcidProfile);
         automaticallyLogin(request, claim.getPassword().getValue(), orcidProfile);
-        claim.setUrl(getBaseUri() + "/my-orcid?recordClaimed");
+        //detech this situation
+        String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
+        if (targetUrl==null)
+           claim.setUrl(getBaseUri() + "/my-orcid?recordClaimed");
+        else
+            claim.setUrl(targetUrl);
         return claim;
     }
 

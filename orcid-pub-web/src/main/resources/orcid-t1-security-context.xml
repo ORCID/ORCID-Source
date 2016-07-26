@@ -25,6 +25,8 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd">
 
+	<import resource="classpath*:orcid-oauth2-common-config.xml"/>
+
 	<!-- Authenticate the client before reaching the token endpoint -->
     <sec:http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="clientAuthenticationManager">
         <sec:intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
@@ -55,13 +57,11 @@
         <sec:user name="ORCID-T1-CLIENT-V1" authorities="ROLE_SYSTEM"/>
     </sec:user-service>
 
-
 	<!-- Create for the filtering of Oauth2 resources -->
     <oauth2:resource-server id="resourceServerFilter" resource-id="orcid" token-services-ref="tokenServices" entry-point-ref="oauthAuthenticationEntryPoint"/>
 	
 	<!-- User web expressions to aid the syntax of protection -->
     <oauth2:web-expression-handler id="oauthWebExpressionHandler" />		
-	
 
 	<!-- The authentication manager that wraps the client details user service, that performs a db lookup -->
     <sec:authentication-manager id="clientAuthenticationManager">
@@ -78,103 +78,11 @@
 		<property name="userDetailsService" ref="clientDetailsUserService" />
 	</bean>
 
-	<bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler">
-        <property name ="exceptionRenderer" ref="oauthExceptionRenderer"/>
-     </bean>
-
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
         <property name="realmName" value="ORCID T1 API" />
         <property name="typeName" value="Bearer"/>
         <property name="exceptionRenderer" ref="oauthExceptionRenderer"/>
-    </bean>
-	
-    <bean id="oauthExceptionRenderer" class="org.springframework.security.oauth2.provider.error.DefaultOAuth2ExceptionRenderer">
-        <property name="messageConverters">
-            <list>            
-                <ref bean="orcidJsonMessageConverter"/>
-                <ref bean="orcidXmlMessageConverter"/>
-            </list>
-        </property>
-     </bean>
-     
-    <bean id="orcidJsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-    	<property name="supportedMediaTypes">
-            <list value-type="org.springframework.http.MediaType">                
-                <bean class="org.springframework.http.MediaType">
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="json"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="orcid+json"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="vnd.orcid+json"/>
-                </bean>
-            </list>
-        </property>    
-    </bean>
-    
-    <bean id="orcidXmlMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-    	<property name="supportedMediaTypes">
-            <list value-type="org.springframework.http.MediaType">
-                <bean class="org.springframework.http.MediaType">
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="xml"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="orcid+xml"/>
-                </bean>
-                <bean class="org.springframework.http.MediaType"> 
-                    <constructor-arg type="java.lang.String" value="application"/>
-                    <constructor-arg type="java.lang.String" value="vnd.orcid+xml"/>
-                </bean>
-            </list>
-        </property>    
-    </bean>        
-    
-    <!-- As we have a Jersey endpoint, we need to create an extension to the Spring MVC, so we use a delegator -->
-    <bean id="orcidClientCredentialEndPointDelegator" class="com.orcid.api.common.server.delegator.impl.OrcidClientCredentialEndPointDelegatorImpl">
-        <property name="tokenGranter" ref="tokenGranter"/>
-        <property name="clientDetailsService" ref="clientDetailsManager"/>
-    </bean>
-    
-    <!-- Use the composite granter to enable granting of tokens for both client credentials and auth codes -->
-    <bean id="tokenGranter" class="org.springframework.security.oauth2.provider.CompositeTokenGranter">
-        <constructor-arg>
-            <list>
-                <ref bean="clientCredentialsTokenGranter"/>
-                <ref bean="authorizationCodeTokenGranter"/>
-            </list>
-        </constructor-arg>
-    </bean>
-    
-    <!-- A token granter for the client credentials -->
-    <bean id="clientCredentialsTokenGranter" class="org.orcid.core.oauth.OrcidClientCredentialsTokenGranter">
-        <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="orcidClientCredentialsChecker"/>
-    </bean>
-    
-    <bean id="orcidClientCredentialsChecker" class="org.orcid.core.oauth.OrcidClientCredentialsChecker">        
-        <constructor-arg ref="oAuth2RequestFactory" />
-    </bean>
-    
-    <!-- The 'granter responsible for returning and removing the auth codes -->
-    <bean id="authorizationCodeTokenGranter" class="org.orcid.core.oauth.OrcidAuthorizationCodeTokenGranter">
-        <constructor-arg ref="orcidAuthorizationCodeService"/>
-        <constructor-arg ref="tokenServices"/>
-        <constructor-arg ref="clientDetailsManager"/>
-        <constructor-arg ref="oAuth2RequestFactory" />
-    </bean>
-    
-    <!-- An extension of RandomValueAuthorizationCodeServices to create and remove authorisation codes -->
-    <bean id="orcidAuthorizationCodeService" class="org.orcid.core.oauth.service.OrcidAuthorizationCodeServiceImpl"/>
-        
-    <bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
-        <constructor-arg ref="clientDetailsManager"/>
-    </bean>
-    
-    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />
+    </bean>	    
+         
+    <bean id="apiVersionFilter" class="org.orcid.core.web.filters.ApiVersionFilter" />        
 </beans>      

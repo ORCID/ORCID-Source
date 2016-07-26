@@ -1,46 +1,74 @@
 # ORCID API v2.0_rc2 Guide
 
-## Current State (Release Candidate **Not Stable**)
-v2.0_rc2 is in current development and should be avoided.
-A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone 
+## Current State (Release Candidate Stable)
+As of 2016-07-15 changes to v2.0_rc2 will be avoided. Further model changes will be expressed in rc_3.
+A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone
 undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
 
-## XSDs and current state (none stable)
+## XSDs and current state (all stable)
 - [activities-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/activities-2.0_rc2.xsd) 
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [address-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/address-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [common-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0_rc2/common-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [education-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/education-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [email-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/email-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [employment-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/employment-2.0_rc2.xsd)
 **not stable**, developement ongoing
 - [error-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/error-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [external-identifier-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/external-identifier-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [funding-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/funding-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [keyword-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/keyword-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [other-names-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/other-name-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [peer-review-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/peer-review-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [person-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/person-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [personal-details-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/personal-details-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [researcher-url-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/researcher-url-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 - [work-2.0_rc2.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/work-2.0_rc2.xsd)
-**not stable**, developement ongoing
+**stable**, developement ongoing
 
 ##Changes:
-Addition of person sections: address, email, external-identifiers, keywords, name, other-names, person, personal-details, and researcher-urls.
+###Person section
+
+- Addition of [person section](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/person-2.0_rc2.xsd) corresponding to the v1.2 orcid-bio field. The children of the person field are:
+  - [address](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/address-2.0_rc2.xsd)
+  - [email](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/email-2.0_rc2.xsd)
+  - [external-identifiers](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/person-external-identifier-2.0_rc2.xsd)
+  - [keywords](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/keyword-2.0_rc2.xsd)
+  - [other-names](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/other-name-2.0_rc2.xsd)
+  - [personal-details](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/personal-details-2.0_rc2.xsd)
+  - [researcher-urls](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc2/researcher-url-2.0_rc2.xsd)
+- Source and creation date is captured with other-names, country, keywords, researcher-urls, and external identifiers.
+- Display index is returned with repeatable person fields
+- Address (county) is repeatable
+- API 2.0_rc2 can not be used to edit non-repeatable person fields: give-name, family-name, biography. 
+
+###External identifiers
+
+ - Identifiers now use the common schema element *external-id* this affects how identifiers are recorded in the works, funding and peer-review sections
+```
+<external-id>
+    <external-id-type/>
+    <external-id-value/>
+    <external-id-url/>  
+</external-id>
+```
+
+###Last modified dates
+
+ - Last-modified-date is now available for every section of the record, in addition to the last-modified-date on individual items.
 
 ## Sample XML files:
 

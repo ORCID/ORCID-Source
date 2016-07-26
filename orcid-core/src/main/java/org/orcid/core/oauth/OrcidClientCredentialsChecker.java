@@ -18,6 +18,7 @@ package org.orcid.core.oauth;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.oauth.service.OrcidOAuth2RequestValidator;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.common.exceptions.InvalidScopeException;
 import org.springframework.security.oauth2.common.util.OAuth2Utils;
@@ -65,7 +67,11 @@ public class OrcidClientCredentialsChecker {
     
     public OAuth2Request validateCredentials(String grantType, TokenRequest tokenRequest) {
         String clientId = tokenRequest.getClientId();
-        Set<String> scopes = tokenRequest.getScope();
+        String scopesString = tokenRequest.getRequestParameters().get(OrcidOauth2Constants.SCOPE_PARAM);
+        Set<String> scopes = new HashSet<String>();
+        if(!PojoUtil.isEmpty(scopesString)) {
+            scopes = OAuth2Utils.parseParameterList(scopesString);
+        }
         ClientDetailsEntity clientDetails = clientDetailsEntityCacheManager.retrieve(clientId);                        
         orcidOAuth2RequestValidator.validateClientIsEnabled(clientDetails);
         validateGrantType(grantType, clientDetails);
@@ -88,11 +94,10 @@ public class OrcidClientCredentialsChecker {
     }
 
     private void validateScope(ClientDetails clientDetails, Set<String> scopes) {
-
         if (clientDetails.isScoped()) {
             Set<String> validScope = clientDetails.getScope();
             if (scopes.isEmpty()) {
-                throw new InvalidScopeException("Invalid scope (none)", validScope);
+                throw new InvalidScopeException("Invalid scope (none)");
             } else if (!containsAny(validScope, ScopePathType.ORCID_PROFILE_CREATE, ScopePathType.WEBHOOK,
             		ScopePathType.PREMIUM_NOTIFICATION, ScopePathType.GROUP_ID_RECORD_READ, ScopePathType.GROUP_ID_RECORD_UPDATE)
             		&& !scopes.contains(ScopePathType.READ_PUBLIC.value()) && scopes.size() == 1) {
