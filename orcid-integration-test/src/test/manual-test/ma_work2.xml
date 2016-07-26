@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2.xsd">
+    <message-version>1.2</message-version>
+    <orcid-profile>
+        <orcid-activities>
+            <orcid-works>
+               
+                <orcid-work>
+                    <work-title>
+                        <title>API 1.2 put</title>
+                    </work-title>
+                    <journal-title>Journal title</journal-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@Book{abramowitz+stegun,
+                            author    = "Milton {Abramowitz} and Irene A. {Stegun}",
+                            title     = "Handbook of Mathematical Functions with
+                            Formulas, Graphs, and Mathematical Tables",
+                            publisher = "Dover",
+                            year      =  1964,
+                            address   = "New York",
+                            edition   = "ninth Dover printing, tenth GPO printing"
+                            }</citation>
+                    </work-citation>
+                    <work-type>book</work-type>
+                    <publication-date>
+                        <year>2016</year>
+                        <month>01</month>
+                        <day>01</day>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>0000</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <url>http://orcid.org/0000</url>
+                   </orcid-work>
+            </orcid-works>      
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

@@ -1,0 +1,26 @@
+<?xml-model href="https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2_rc1.xsd" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2.xsd">
+    <message-version>1.2</message-version>
+    <orcid-profile>
+         <orcid-bio>
+			<researcher-urls>
+                <researcher-url>
+                    <url-name>API added</url-name>
+                    <url>http://google.com/1</url>
+                </researcher-url>
+			</researcher-urls>
+			<keywords>
+                <keyword>keyword API added</keyword>
+            </keywords>
+             <external-identifiers>
+                 <external-identifier>
+                     <external-id-common-name>API added</external-id-common-name>
+                     <external-id-reference>5</external-id-reference>
+                     <external-id-url>www.myid.com/5</external-id-url>
+                 </external-identifier>
+             </external-identifiers>          
+		</orcid-bio>
+	</orcid-profile>    
+</orcid-message>

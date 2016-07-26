@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<orcid-message xmlns="http://www.orcid.org/ns/orcid"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://raw.github.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/orcid-message-1.2.xsd">
+    <message-version>1.2</message-version>
+    <orcid-profile>
+        <orcid-activities>
+            <funding-list>
+                <funding>
+                    <funding-type>grant</funding-type>
+                   <funding-title>
+                        <title>API 1.2 put</title>
+                    </funding-title>
+                    <short-description>Description of the funding</short-description>
+                    <url>http://orcid.org</url>
+                    <start-date>
+                        <year>2016</year>
+                        <month>01</month>
+                    </start-date>
+                    <end-date>
+                        <year>2016</year>
+                        <month>12</month>
+                    </end-date>
+                    <funding-external-identifiers>
+                        <funding-external-identifier>
+                            <funding-external-identifier-type>grant_number</funding-external-identifier-type>
+                            <funding-external-identifier-value>0000</funding-external-identifier-value>
+                            <funding-external-identifier-url>www.orcid.com/0000</funding-external-identifier-url>
+                        </funding-external-identifier>
+                    </funding-external-identifiers>
+                    <organization>
+                        <name>Wellcome Trust</name>
+                        <address>
+                            <city>London</city>
+                            <region>London</region>
+                            <country>GB</country>
+                        </address>
+                        <disambiguated-organization>
+                            <disambiguated-organization-identifier>5072</disambiguated-organization-identifier>
+                            <disambiguation-source>RINGGOLD</disambiguation-source>
+                        </disambiguated-organization>
+                    </organization>
+                </funding>
+                </funding-list>
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

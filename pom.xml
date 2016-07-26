@@ -246,6 +246,7 @@ the software.
                             <exclude>**/src/main/webapp/static/css/idpselect.css</exclude>
                             <exclude>**/src/main/webapp/static/css/idpselect.old.css</exclude>
                             <exclude>**/src/test/javascript/node_modules/**</exclude>
+                            <exclude>**/src/test/manual-test/**</exclude>
                             <exclude>**/src/main/webapp/static/javascript/iframeResizer**</exclude>
                             <exclude>**/*.xsd</exclude>
                             <exclude>**.md</exclude>
