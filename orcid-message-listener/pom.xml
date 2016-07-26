@@ -38,6 +38,16 @@
 	      <artifactId>activemq-spring</artifactId>
 	  	  <version>5.13.3</version>
 	  </dependency>
+	  
+	     <!-- Solr -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+        </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

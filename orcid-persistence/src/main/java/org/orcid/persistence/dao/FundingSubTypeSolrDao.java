@@ -18,7 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
+import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 
 public interface FundingSubTypeSolrDao {
     public void persist(OrgDefinedFundingTypeSolrDocument fundingType);

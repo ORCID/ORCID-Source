@@ -68,7 +68,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifiers;
 import org.orcid.jaxb.model.message.WorkTitle;
 import org.orcid.persistence.dao.SolrDao;
-import org.orcid.persistence.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.springframework.test.annotation.Rollback;
 
 /**

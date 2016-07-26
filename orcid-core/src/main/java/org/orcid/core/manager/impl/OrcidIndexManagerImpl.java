@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 

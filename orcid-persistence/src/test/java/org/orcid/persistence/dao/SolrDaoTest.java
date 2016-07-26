@@ -33,9 +33,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.persistence.solr.entities.OrcidSolrDocument;
-import org.orcid.persistence.solr.entities.OrcidSolrResult;
-import org.orcid.persistence.solr.entities.OrcidSolrResults;
+import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrResult;
+import org.orcid.utils.solr.entities.OrcidSolrResults;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 

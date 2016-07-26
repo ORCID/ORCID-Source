@@ -1845,6 +1845,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
 
     @Override
+    @Deprecated
     public void processProfilesPendingIndexing() {
         // XXX There are some concurrency related edge cases to fix here.
         LOG.info("About to process profiles pending indexing");
