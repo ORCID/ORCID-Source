@@ -57,7 +57,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 </#list>
 </#if>
 <#elseif notificationType == 'INSTITUTIONAL_CONNECTION'>
-<@emailMacros.msg 'email.institutional_connection.1' />&nbsp;${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}.&nbsp;<@emailMacros.msg 'email.institutional_connection.2' />&nbsp;${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action&nbsp;<@emailMacros.msg 'email.institutional_connection.3' />&nbsp; <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
+<@emailMacros.msg 'email.institutional_connection.1' />${(notification.idpName)!}<@emailMacros.msg 'email.institutional_connection.2' /><@emailMacros.msg 'email.institutional_connection.here' /><@emailMacros.msg 'email.institutional_connection.3' />${(notification.source.sourceName.content)!sourceId}<@emailMacros.msg 'email.institutional_connection.4' /> ${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
 <#else>
 ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId} 
 </#if>
