@@ -525,6 +525,23 @@ orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     return actBulkSrvc;
 }]);
 
+orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
+    var bioBulkSrvc = {
+        initScope: function($scope) {
+        	$scope.bioModel = null; //Dummy model to avoid bulk privacy selector fail
+            $scope.bulkEditShow = false;
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            $scope.bulkDisplayToggle = false;
+            $scope.toggleSelectMenu = function(){
+            	console.log('Click');
+                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
+            };
+        }
+    };
+    return bioBulkSrvc;
+}]);
+
 orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
     var commonSrvc = {
             copyErrorsLeft: function (data1, data2) {
@@ -1297,7 +1314,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     }
                 }).fail(function() {
                     // something bad is happening!
-                    console.log("$EmailEditCtrl.deleteEmail() error");
+                    console.log("emailSrvc.deleteEmail() error");
                 });
             },
             initInputEmail: function () {
@@ -1456,8 +1473,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
-                	serv.notificationAlerts = data;                	
-                	console.log(data);
+                	serv.notificationAlerts = data;
                 }
             }).fail(function() {
                 // something bad is happening!
@@ -2576,10 +2592,12 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.hideTooltip = function(el){
     	$scope.showElement[el] = false;
-    };
+    };    
+    
 }]);
 
-orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function WebsitesCtrl($scope, $compile) {
+orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', function WebsitesCtrl($scope, $compile, bioBulkSrvc) {
+	bioBulkSrvc.initScope($scope);
     $scope.showEdit = false;
     $scope.websitesForm = null;
     $scope.privacyHelp = false;
@@ -2768,7 +2786,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
     	$scope.showElement[elem] = false;
     }
         
-    $scope.openEditModal = function(){        
+    $scope.openEditModal = function(){    
+    	$scope.bulkEditShow = false;
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-websites').html())($scope),
@@ -2821,12 +2840,58 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile', function Website
             $scope.websitesForm.websites[index]['displayIndex'] = tempDisplayIndex;
             $scope.websitesForm.websites[index + 1] = temp;
         }
-    };      
+    };
+    
+    /* Bulk edit*/
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in $scope.websitesForm.websites)
+            $scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode] = bool;
+    };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in $scope.websitesForm.websites)
+            $scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.toggleBulkEdit = function() {                
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in $scope.websitesForm.websites)
+                $scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode] = false;
+            $.colorbox.resize({height: '700px'});
+        }else{          
+            $.colorbox.resize({height: '490px'});   
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+          
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+        for (var idx in $scope.websitesForm.websites)
+            if ($scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode])
+                $scope.websitesForm.websites[idx].visibility.visibility = priv;        
+    };
+    
+    $scope.bulkDelete = function(){     
+        var websites = $scope.websitesForm.websites;
+        var len = websites.length;
+        while (len--)            
+            if ($scope.bulkEditMap[$scope.websitesForm.websites[len].putCode])                
+            	websites.splice(len,1);
+        
+        $scope.websitesForm.websites = websites;
+    }
 
     $scope.getWebsitesForm();
 }]);
 
-orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope, $compile) {
+orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', 'bioBulkSrvc',  function ($scope, $compile, bioBulkSrvc) {
+	bioBulkSrvc.initScope($scope);
     $scope.showEdit = false;
     $scope.keywordsForm = null;
     $scope.privacyHelp = false;
@@ -2835,7 +2900,7 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
     $scope.modal = false;
-    $scope.scrollTop = 0;
+    $scope.scrollTop = 0;    
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -3002,7 +3067,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
     }
     
     $scope.openEditModal = function(){
-    	$scope.modal = true;
+    	$scope.bulkEditShow = false;
+    	$scope.modal = true;    	
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-keyword').html())($scope),
@@ -3052,6 +3118,51 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', function ($scope
             $scope.keywordsForm.keywords[index + 1] = temp;
         }
     };
+    
+    /* Bulk edit */
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in $scope.keywordsForm.keywords)
+            $scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode] = bool;
+    };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in $scope.keywordsForm.keywords)
+            $scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.toggleBulkEdit = function() {                
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in $scope.keywordsForm.keywords)
+                $scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode] = false;
+            $.colorbox.resize({height: '700px'});
+        }else{          
+            $.colorbox.resize({height: '490px'});   
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+          
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+        for (var idx in $scope.keywordsForm.keywords)
+            if ($scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode])
+                $scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
+    };
+    
+    $scope.bulkDelete = function(){     
+        var keywords = $scope.keywordsForm.keywords;
+        var len = keywords.length;
+        while (len--)            
+            if ($scope.bulkEditMap[$scope.keywordsForm.keywords[len].putCode])                
+            	keywords.splice(len,1);
+        
+        $scope.keywordsForm.keywords = otherNames;
+    }
     
     $scope.getKeywordsForm();
 }]);
@@ -3112,7 +3223,8 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
 }]);
 
 
-orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope, $compile) {
+orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile ,bioBulkSrvc) {
+	bioBulkSrvc.initScope($scope);	
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
     $scope.privacyHelp = false;
@@ -3211,24 +3323,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         }        
     };
 
-    $scope.setOtherNamesForm = function(v2){       
-    	//Remove once V2 API functionality is live
-        if(v2) {
-        	$scope.otherNamesForm.visibility = null;
-        } else {
-        	//Set the default visibility to each of the elements        	
-        	if($scope.defaultVisibility != null) {
-        		if($scope.otherNamesForm != null && $scope.otherNamesForm.otherNames != null) {
-        			for(var i = 0; i < $scope.otherNamesForm.otherNames.length; i ++) {
-        				if($scope.otherNamesForm.otherNames[i].visibility == null) {
-        					$scope.otherNamesForm.otherNames[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-        				}  			        			
-        				$scope.otherNamesForm.otherNames[i].visibility.visibility = $scope.defaultVisibility; 
-        			}
-        		}
-        	}
-        }     
-        
+    $scope.setOtherNamesForm = function(bulk){
+        $scope.otherNamesForm.visibility = null; //Old
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
@@ -3239,8 +3335,10 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
                     $scope.close();
-                    $.colorbox.close();
-                $scope.$apply();
+                	if (!bulk){
+                		$.colorbox.close();	
+                	}                    
+                $scope.$apply();                
             }
         }).fail(function() {
             // something bad is happening!
@@ -3285,7 +3383,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         }
     };
     
-    $scope.openEditModal = function(){                
+    $scope.openEditModal = function(){    	
+    	$scope.bulkEditShow = false;    	
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-aka').html())($scope),
@@ -3309,8 +3408,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
         $.colorbox.resize();
     }
     
-    $scope.closeEditModal = function(){        
-        $.colorbox.close();
+    $scope.closeEditModal = function(){    	
+        $.colorbox.close();     
     }
     
     $scope.swapUp = function(index){
@@ -3333,7 +3432,51 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile',function ($scope
             $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
             $scope.otherNamesForm.otherNames[index + 1] = temp;
         }
+    };    
+    
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in $scope.otherNamesForm.otherNames)
+            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = bool;
     };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in $scope.otherNamesForm.otherNames)
+            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.toggleBulkEdit = function() {    	    	
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in $scope.otherNamesForm.otherNames)
+                $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = false;
+            $.colorbox.resize({height: '700px'});
+        }else{        	
+    	    $.colorbox.resize({height: '490px'});	
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+	      
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+    	for (var idx in $scope.otherNamesForm.otherNames)
+            if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode])
+            	$scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;        
+    };
+    
+    $scope.bulkDelete = function(){    	
+    	var otherNames = $scope.otherNamesForm.otherNames;
+        var len = otherNames.length;
+        while (len--)            
+        	if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[len].putCode])                
+                otherNames.splice(len,1);
+        
+        $scope.otherNamesForm.otherNames = otherNames;
+    }
            
     $scope.getOtherNamesForm();
 }]);
@@ -3416,14 +3559,16 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
     
     $scope.hideTooltip = function(tp){
     	$scope.showElement[tp] = false;
-    }
+    }   
+    
 
 
     $scope.getBiographyForm();
 
 }]);
 
-orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, $compile) {
+orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',function ($scope, $compile, bioBulkSrvc) {
+	bioBulkSrvc.initScope($scope);
     $scope.showEdit = false;
     $scope.countryForm = null;
     $scope.privacyHelp = false;
@@ -3507,23 +3652,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             $scope.privacyHelp=!$scope.privacyHelp;
     };
 
-    $scope.setCountryForm = function(v2){        
-        if(v2) {
-        	$scope.countryForm.visibility = null;        	
-        } else {
-        	//Set the default visibility to each of the elements
-            if($scope.defaultVisibility != null) {            	
-            	if($scope.countryForm != null && $scope.countryForm.addresses != null) {
-            		for(var i = 0; i < $scope.countryForm.addresses.length; i ++) {
-            			if($scope.countryForm.addresses[i].visibility == null) {
-            				$scope.countryForm.addresses[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-            			}            			        			
-            			$scope.countryForm.addresses[i].visibility.visibility = $scope.defaultVisibility; 
-            		}
-            	}
-            }
-        }                    
-        
+    $scope.setCountryForm = function(v2){
+        $scope.countryForm.visibility = null;
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
             type: 'POST',
@@ -3535,7 +3665,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
                 if ($scope.countryForm.errors.length == 0){
                     $scope.close();
                     $scope.getCountryForm();                
-                    $.colorbox.close();
+                    $.colorbox.close();                    
                 }else{
                     console.log($scope.countryForm.errors);
                 }
@@ -3548,7 +3678,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
         });
     };
     
-    $scope.closeModal = function(){
+    $scope.closeModal = function(){    	
         $.colorbox.close();
     }
 
@@ -3587,7 +3717,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
     	$scope.showElement[elem] = false;	
     }
     
-    $scope.openEditModal = function() {    	
+    $scope.openEditModal = function() {
+    	
+    	$scope.bulkEditShow = false;
+    	
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-country').html())($scope),
@@ -3665,12 +3798,58 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile',function ($scope, 
             $scope.countryForm.addresses[index + 1] = temp;
         }
     };
+    
+    /* Bulk edit */    
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in $scope.countryForm.addresses)
+            $scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode] = bool;
+    };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in $scope.countryForm.addresses)
+            $scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.toggleBulkEdit = function() {    	    	
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in $scope.countryForm.addresses)
+                $scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode] = false;
+            $.colorbox.resize({height: '700px'});
+        }else{        	
+    	    $.colorbox.resize({height: '490px'});	
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+	      
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+    	for (var idx in $scope.countryForm.addresses)
+            if ($scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode])
+            	$scope.countryForm.addresses[idx].visibility.visibility = priv;        
+    };
+    
+    $scope.bulkDelete = function(){    	
+    	var countries = $scope.countryForm.addresses;
+        var len = countries.length;
+        while (len--)            
+        	if ($scope.bulkEditMap[$scope.countryForm.addresses[len].putCode])                
+        		countries.splice(len,1);
+        
+        $scope.countryForm.addresses = countries;
+    }
      
     $scope.getCountryForm();
 }]);
 
 
-orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', function ($scope, $compile){    
+orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile, bioBulkSrvc){
+	bioBulkSrvc.initScope($scope);
 	$scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;
     $scope.primary = true;
@@ -3692,10 +3871,8 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
         });
     }
 
-    $scope.setExternalIdentifiersForm = function(v2){
-        if(v2)
-            $scope.externalIdentifiersForm.visibility = null;         
-        
+    $scope.setExternalIdentifiersForm = function(){    	
+        $scope.externalIdentifiersForm.visibility = null;
         $.ajax({
             url: getBaseUri() + '/my-orcid/externalIdentifiers.json',
             type: 'POST',
@@ -3737,7 +3914,8 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     };  
     
     
-    $scope.openEditModal = function(){
+    $scope.openEditModal = function(){    	
+    	$scope.bulkEditShow = false;
         $.colorbox({
             scrolling: true,
             html: $compile($('#edit-external-identifiers').html())($scope),
@@ -3851,6 +4029,52 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', functi
     
    $scope.closeEditModal = function(){
 	   $.colorbox.close();
+   }
+   
+   /* Bulk edit */
+   
+   $scope.bulkChangeAll = function(bool) {
+       $scope.bulkChecked = bool;
+       $scope.bulkDisplayToggle = false;
+       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
+           $scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode] = bool;
+   };
+   
+   $scope.swapbulkChangeAll = function() {
+       $scope.bulkChecked = !$scope.bulkChecked;
+       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
+           $scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode] = $scope.bulkChecked;
+       $scope.bulkDisplayToggle = false;
+   };
+   
+   $scope.toggleBulkEdit = function() {                
+       if (!$scope.bulkEditShow) {
+           $scope.bulkEditMap = {};
+           $scope.bulkChecked = false;
+           for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
+               $scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode] = false;
+           $.colorbox.resize({height: '700px'});
+       }else{          
+           $.colorbox.resize({height: '490px'});   
+       };
+       $scope.bulkEditShow = !$scope.bulkEditShow;
+         
+   };
+   
+   $scope.setBulkGroupPrivacy = function(priv) {
+       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
+           if ($scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode])
+               $scope.externalIdentifiersForm.externalIdentifiers[idx].visibility.visibility = priv;        
+   };
+   
+   $scope.bulkDelete = function(){     
+       var externalIdenfifiers = $scope.externalIdentifiersForm.externalIdentifiers;
+       var len = externalIdenfifiers.length;
+       while (len--)            
+           if ($scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[len].putCode])                
+        	   externalIdenfifiers.splice(len,1);
+       
+       $scope.externalIdentifiersForm.externalIdentifiers = externalIdenfifiers;
    }
     
    //init
@@ -5632,9 +5856,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
     $scope.deleteBulkConfirm = function(idx) {
         $scope.delCountVerify = 0;
         $scope.bulkDeleteCount = 0;
-        $scope.bulkDeleteSubmit = false;
-        for (var idx in worksSrvc.groups)
-            console.log($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value]);
+        $scope.bulkDeleteSubmit = false;        
         for (var idx in worksSrvc.groups)
             if ($scope.bulkEditMap[worksSrvc.groups[idx].getActive().putCode.value])
                 $scope.bulkDeleteCount++;
@@ -10844,7 +11066,7 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     
 }]);
 
-orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){
+orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsSrvc' ,function ($scope, emailSrvc, $compile, prefsSrvc){	
 	$scope.emailSrvc = emailSrvc;
 	$scope.showEdit = false;
 	$scope.showElement = {};
@@ -10862,6 +11084,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	}
 	
 	$scope.openEditModal = function(){
+		
 	    var HTML = '<div class="lightbox-container">\
 	    				<div class="edit-record edit-record-emails" style="position: relative">\
 	    					<div class="row bottomBuffer">\
