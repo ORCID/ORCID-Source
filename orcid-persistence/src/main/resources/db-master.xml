@@ -210,4 +210,5 @@
     <include file="/db/updates/fix_zbl.xml" />
     <include file="/db/updates/insitutional_sign_in_round_trip.xml" />
     <include file="/db/updates/change_refresh_token_scope_length_on_unit_tests.xml"/>
+    <include file="/db/updates/federated-idp-name.xml" />
 </databaseChangeLog>

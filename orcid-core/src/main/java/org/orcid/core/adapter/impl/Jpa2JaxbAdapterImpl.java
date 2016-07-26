@@ -1075,15 +1075,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         }
         Source source = new Source();        
         if (!PojoUtil.isEmpty(sourceAwareEntity.getSourceId())) {
-            source.setSourceOrcid(new SourceOrcid(sourceAwareEntity.getSourceId()));                
+            source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(sourceAwareEntity.getSourceId())));                
         } 
         
         String clientSourceId = sourceAwareEntity.getClientSourceId();
         if (!PojoUtil.isEmpty(clientSourceId)) {
             if (OrcidStringUtils.isValidOrcid(clientSourceId)) {
-                source.setSourceOrcid(new SourceOrcid(clientSourceId));
+                source.setSourceOrcid(new SourceOrcid(getOrcidIdBase(clientSourceId)));
             } else {
-                source.setSourceClientId(new SourceClientId(clientSourceId));
+                source.setSourceClientId(new SourceClientId(getOrcidIdBase(clientSourceId)));
             }
         }
                 

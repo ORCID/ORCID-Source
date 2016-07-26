@@ -32,10 +32,11 @@ import org.orcid.jaxb.model.notification_rc2.NotificationType;
 public class NotificationInstitutionalConnection extends Notification {
 
     private final static long serialVersionUID = 1L;
-    protected AuthorizationUrl authorizationUrl;    
+    protected AuthorizationUrl authorizationUrl;
     protected XMLGregorianCalendar actionedDate;
     protected String subject;
-    
+    protected String idpName;
+
     {
         notificationType = NotificationType.INSTITUTIONAL_CONNECTION;
     }
@@ -59,7 +60,7 @@ public class NotificationInstitutionalConnection extends Notification {
      */
     public void setAuthorizationUrl(AuthorizationUrl value) {
         this.authorizationUrl = value;
-    }    
+    }
 
     public XMLGregorianCalendar getActionedDate() {
         return actionedDate;
@@ -75,5 +76,14 @@ public class NotificationInstitutionalConnection extends Notification {
 
     public void setSubject(String subject) {
         this.subject = subject;
-    }      
+    }
+
+    public String getIdpName() {
+        return idpName;
+    }
+
+    public void setIdpName(String idpName) {
+        this.idpName = idpName;
+    }
+
 }

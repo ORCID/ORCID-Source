@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<md:EntityDescriptor entityID="https://idp.example.ch/idp/shibboleth" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute" xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi" xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" xmlns:pyff="http://pyff-project.org/NS" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xrd="http://docs.oasis-open.org/ns/xri/xrd-1.0">
+  <md:Extensions>
+    <mdrpi:RegistrationInfo registrationAuthority="http://rr.aai.switch.ch/" registrationInstant="2016-03-14T16:16:50Z">
+      <mdrpi:RegistrationPolicy xml:lang="en">https://www.switch.ch/aai/federation/switchaai/metadata-registration-practice-statement-20110711.txt</mdrpi:RegistrationPolicy>
+    </mdrpi:RegistrationInfo>
+    <mdattr:EntityAttributes>
+      <saml:Attribute Name="http://macedir.org/entity-category-support" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+        <saml:AttributeValue>http://www.geant.net/uri/dataprotection-code-of-conduct/v1</saml:AttributeValue>
+        <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
+      </saml:Attribute>
+    </mdattr:EntityAttributes>
+  </md:Extensions>
+  <md:IDPSSODescriptor errorURL="http://www.example.ch/stic/cad.html" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol urn:mace:shibboleth:1.0">
+    <md:Extensions>
+      <shibmd:Scope regexp="false">example.ch</shibmd:Scope>
+      <mdui:UIInfo>
+        <mdui:DisplayName xml:lang="de">Universität Example Display</mdui:DisplayName>
+        <mdui:DisplayName xml:lang="en">University of Example Display</mdui:DisplayName>
+        <mdui:DisplayName xml:lang="fr">Université de Example Display</mdui:DisplayName>
+        <mdui:DisplayName xml:lang="it">Università di Example Display</mdui:DisplayName>
+        <mdui:Description xml:lang="de">Universität Example Description</mdui:Description>
+        <mdui:Description xml:lang="en">University of Example Description</mdui:Description>
+        <mdui:Description xml:lang="fr">Université de Example Description</mdui:Description>
+        <mdui:Description xml:lang="it">Università di Example Description</mdui:Description>
+        <mdui:InformationURL xml:lang="fr">http://www.example.ch/apropos/index.html</mdui:InformationURL>
+        <mdui:InformationURL xml:lang="en">http://www.example.ch/apropos/index.html</mdui:InformationURL>
+        <mdui:InformationURL xml:lang="de">http://www.example.ch/apropos/index.html</mdui:InformationURL>
+        <mdui:InformationURL xml:lang="it">http://www.example.ch/apropos/index.html</mdui:InformationURL>
+      </mdui:UIInfo>
+      <mdui:DiscoHints>
+        <mdui:DomainHint>example.ch</mdui:DomainHint>
+        <mdui:GeolocationHint>geo:46.194936,6.139927</mdui:GeolocationHint>
+      </mdui:DiscoHints>
+    </md:Extensions>
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>
+CERTINFO
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://idp.example.ch/idp/Artifact" index="1"/>
+    <md:ArtifactResolutionService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.example.ch/idp/profile/SAML2/SOAP/ArtifactResolution" index="2"/>
+    <md:NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</md:NameIDFormat>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+    <md:SingleSignOnService Binding="urn:mace:shibboleth:1.0:profiles:AuthnRequest" Location="https://idp.example.ch/idp/profile/Shibboleth/SSO"/>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect" Location="https://idp.example.ch/idp/profile/SAML2/Redirect/SSO"/>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.example.ch/idp/profile/SAML2/POST/SSO"/>
+    <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign" Location="https://idp.example.ch/idp/profile/SAML2/POST-SimpleSign/SSO"/>
+  </md:IDPSSODescriptor>
+  <md:AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol urn:oasis:names:tc:SAML:1.1:protocol">
+    <md:Extensions>
+      <shibmd:Scope regexp="false">example.ch</shibmd:Scope>
+    </md:Extensions>
+    <md:KeyDescriptor use="signing">
+      <ds:KeyInfo>
+        <ds:X509Data>
+          <ds:X509Certificate>
+CERTINFO
+          </ds:X509Certificate>
+        </ds:X509Data>
+      </ds:KeyInfo>
+    </md:KeyDescriptor>
+    <md:AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://idp.example.ch/idp/AA"/>
+    <md:AttributeService Binding="urn:oasis:names:tc:SAML:2.0:bindings:SOAP" Location="https://idp.example.ch/idp/profile/SAML2/SOAP/AttributeQuery"/>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</md:NameIDFormat>
+    <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
+    <md:NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</md:NameIDFormat>
+  </md:AttributeAuthorityDescriptor>
+  <md:Organization>
+    <md:OrganizationName xml:lang="en">example.ch</md:OrganizationName>
+    <md:OrganizationDisplayName xml:lang="de">Universität Example Display Legacy</md:OrganizationDisplayName>
+    <md:OrganizationDisplayName xml:lang="en">University of Example Display Legacy</md:OrganizationDisplayName>
+    <md:OrganizationDisplayName xml:lang="fr">Université de Example Display Legacy</md:OrganizationDisplayName>
+    <md:OrganizationDisplayName xml:lang="it">Università di Example Display Legacy</md:OrganizationDisplayName>
+    <md:OrganizationURL xml:lang="de">http://www.example.ch/</md:OrganizationURL>
+    <md:OrganizationURL xml:lang="en">http://www.example.ch/</md:OrganizationURL>
+    <md:OrganizationURL xml:lang="fr">http://www.example.ch/</md:OrganizationURL>
+    <md:OrganizationURL xml:lang="it">http://www.example.ch/</md:OrganizationURL>
+  </md:Organization>
+  <md:ContactPerson contactType="support">
+    <md:GivenName>Help</md:GivenName>
+    <md:SurName>Desk for the University of Example Display</md:SurName>
+    <md:EmailAddress>mailto:support@example.ch</md:EmailAddress>
+  </md:ContactPerson>
+  <md:ContactPerson contactType="technical">
+    <md:GivenName>Example DisplayE</md:GivenName>
+    <md:SurName>IdP Administrators</md:SurName>
+    <md:EmailAddress>mailto:technical@example.ch</md:EmailAddress>
+  </md:ContactPerson>
+</md:EntityDescriptor>

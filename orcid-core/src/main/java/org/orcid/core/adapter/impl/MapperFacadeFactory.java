@@ -31,6 +31,8 @@ import org.orcid.core.adapter.impl.jsonidentifiers.SourceNameConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.SourceOrcidConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
 import org.orcid.core.exception.OrcidValidationException;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
+import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;
@@ -62,6 +64,7 @@ import org.orcid.jaxb.model.record_rc2.WorkContributors;
 import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -109,6 +112,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
     
     @Resource
     private SourceNameCacheManager sourceNameCacheManager;
+
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;
+
+    @Resource
+    private IdentityProviderManager identityProviderManager;
 
     @Override
     public MapperFacade getObject() throws Exception {
@@ -176,6 +185,17 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                                 if (authUrl != null) {
                                     authUrl.setPath(extractFullPath(authUrl.getUri()));
                                     authUrl.setHost(orcidUrlManager.getBaseHost());
+                                }
+                                String clientId = entity.getElementSourceId();
+                                if (clientId != null) {
+                                    ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
+                                    if (client != null) {
+                                        String providerId = client.getAuthenticationProviderId();
+                                        if (providerId != null) {
+                                            String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
+                                            notification.setIdpName(idpName);
+                                        }
+                                    }
                                 }
                             }
                         })).register();

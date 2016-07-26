@@ -30,8 +30,9 @@
 	</appender>
 
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Threshold" value="INFO"/>
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %p [%t] %c{1}.%M(%L) | %m%n" />
+			<param name="ConversionPattern" value="INT %-5.5p [%-11.11t] %d{HH:mm:ss,SSS} (%F:%L) | %m %n" />
 		</layout>
 	</appender>
 
@@ -42,6 +43,10 @@
 
 	<logger name="org.hibernate">
 		<level value="INFO" />
+	</logger>
+	
+	<logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener">
+		<level value="WARN" />
 	</logger>
 	
 	<logger name="com.mchange.v2">

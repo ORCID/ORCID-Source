@@ -25,19 +25,22 @@
 	        <div class="orcid-error" ng-show="emailSrvc.emails.errors.length > 0">
 	        	<span ng-repeat='error in emailSrvc.emails.errors' ng-bind-html="error"></span>
 	        </div>
+
 	        <!-- Start -->
 	        <div class="row">
 	            <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
-	        </div>			
+	        </div>
 	        <!-- Email table -->
 	        <div class="table-responsive bottomBuffer" style="position: static">
 	            <table class="table" style="position: static">
 	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" name="email">
 	                    <!-- Primary Email -->
-	                    <td ng-class="{primaryEmail:email.primary}" ng-bind="email.value" class="col-md-3 col-xs-12 email">
+	                    <td ng-class="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" ng-cloak>
+							<input type="checkbox" class="bio-item" ng-model="bulkEditMap[_.putCode]" ng-if="bulkEditShow"/>							
+							<span>{{email.value}}</span>
 	                    </td>
 	                    <!-- Set Primary options -->
-	                    <td>
+						<td>							
 	                        <span ng-hide="email.primary"> <a href=""
 	                            ng-click="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
 	                        </span> <span ng-show="email.primary" class="muted" style="color: #bd362f;">
