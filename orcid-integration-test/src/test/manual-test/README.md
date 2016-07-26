@@ -276,6 +276,7 @@
 	```
 
 14. Attempt to update an item you are not the source of - check that this fails
+
         ```
     curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]-3' -d '{
 "put-code":"[put-code]-3",
@@ -289,6 +290,7 @@
     ```
 
 15. Post a notification
+
 	```
 	curl -i -H 'Authorization: Bearer eafafe49-b5bf-41db-9fb5-ad3a6cba575b' -H 'Content-Type: application/orcid+xml' -X POST -d '@notify.xml' https://api.qa.orcid.org/v2.0_rc2/[orcid id]/notification-permission -k
 	```
