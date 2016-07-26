@@ -18,7 +18,9 @@ package org.orcid.core.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.IdentityProviderManager;
 import org.orcid.core.utils.NamespaceMap;
 import org.orcid.persistence.dao.IdentityProviderDao;
@@ -70,7 +73,35 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     @Resource
     private TransactionTemplate transactionTemplate;
 
+    @Resource
+    private LocaleManager localeManager;
+
     private Pattern mailtoPattern = Pattern.compile("^mailto:");
+
+    @Override
+    public String retrieveIdentitifyProviderName(String providerid) {
+        return retrieveIdentitifyProviderName(providerid, localeManager.getLocale());
+    }
+
+    @Override
+    public String retrieveIdentitifyProviderName(String providerid, Locale locale) {
+        // XXX Implement cache
+        return retrieveFreshIdentitifyProviderName(providerid, locale);
+    }
+
+    @Override
+    public String retrieveFreshIdentitifyProviderName(String providerid, Locale locale) {
+        // XXX Implement cache
+        IdentityProviderEntity idp = identityProviderDao.findByProviderid(providerid);
+        List<IdentityProviderNameEntity> names = idp.getNames();
+        if (names != null) {
+            Optional<IdentityProviderNameEntity> idpNameEntity = names.stream().filter(n -> n.getLang().equals(locale.getLanguage())).findFirst();
+            if (idpNameEntity.isPresent()) {
+                return idpNameEntity.get().getDisplayName();
+            }
+        }
+        return idp.getDisplayName();
+    }
 
     @Override
     public String retrieveContactEmailByProviderid(String providerid) {

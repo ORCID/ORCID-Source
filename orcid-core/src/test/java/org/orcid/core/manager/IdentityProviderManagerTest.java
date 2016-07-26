@@ -80,8 +80,14 @@ public class IdentityProviderManagerTest {
         IdentityProviderEntity result = identityProviderManager.createEntityFromXml(idpElement);
         assertNotNull(result);
         assertEquals("https://registry.shibboleth.example.ac.uk/idp", result.getProviderid());
-        // assertEquals("University of Example Display",
-        // result.getDisplayName());
+        List<IdentityProviderNameEntity> names = result.getNames();
+        assertNotNull(names);
+        assertEquals(1, names.size());
+        IdentityProviderNameEntity name = names.get(0);
+        assertEquals("University of Example Display", name.getDisplayName());
+        assertEquals("en", name.getLang());
+        // Old way of doing just a single name.
+        assertEquals("University of Example Display", result.getDisplayName());
         assertEquals("help@it.example.ac.uk", result.getSupportEmail());
         assertEquals("admin@it.example.ac.uk", result.getAdminEmail());
         assertEquals("sysdev@it.example.ac.uk", result.getTechEmail());
