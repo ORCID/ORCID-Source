@@ -156,9 +156,9 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         String supportEmail = tidyEmail(evaluateXPathString(supportContactXpath, idpElement));
         String adminEmail = tidyEmail(evaluateXPathString(adminContactXpath, idpElement));
         String techEmail = tidyEmail(evaluateXPathString(techContactXpath, idpElement));
-        List<IdentityProviderNameEntity> nameEntities = createNameEntitiesFromXml(idpElement, displayNamesXpath);
+        List<IdentityProviderNameEntity> nameEntities = createNameEntitiesFromXml(displayNamesXpath, idpElement);
         if (nameEntities == null || nameEntities.isEmpty()) {
-            nameEntities = createNameEntitiesFromXml(idpElement, legacyDisplayNamesXpath);
+            nameEntities = createNameEntitiesFromXml(legacyDisplayNamesXpath, idpElement);
         }
 
         IdentityProviderEntity identityProviderEntity = new IdentityProviderEntity();
@@ -171,7 +171,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         return identityProviderEntity;
     }
 
-    private List<IdentityProviderNameEntity> createNameEntitiesFromXml(Element idpElement, XPathExpression displayNamesXpath) {
+    private List<IdentityProviderNameEntity> createNameEntitiesFromXml(XPathExpression displayNamesXpath, Element idpElement) {
         List<IdentityProviderNameEntity> nameEntities = new ArrayList<>();
         NodeList displayNames = evaluateXPathNodeList(displayNamesXpath, idpElement);
         if (displayNames != null) {
