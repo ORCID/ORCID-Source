@@ -277,16 +277,16 @@
 
 14. Attempt to update an item you are not the source of - check that this fails
 
-        ```
+    ```
     curl -H 'Content-Type: application/orcid+json' -H 'Authorization: Bearer [2.0 token]' -H 'Accept: application/json' -X PUT 'https://api.qa.orcid.org/v2.0_rc2/[orcid id]/work/[put-code]-3' -d '{
-"put-code":"[put-code]-3",
-"title": {"title": "API Test Title"},
-"type": "JOURNAL_ARTICLE",
-"external-ids": {
-"external-id": [{
-"external-id-value": "1234",
-"external-id-type": "doi",
-"external-id-relationship": "SELF"}]}}}' -L -i -k
+	"put-code":"[put-code]-3",
+	"title": {"title": "API Test Title"},
+	"type": "JOURNAL_ARTICLE",
+	"external-ids": {
+	"external-id": [{
+	"external-id-value": "1234",
+	"external-id-type": "doi",
+	"external-id-relationship": "SELF"}]}}}' -L -i -k
     ```
 
 15. Post a notification
