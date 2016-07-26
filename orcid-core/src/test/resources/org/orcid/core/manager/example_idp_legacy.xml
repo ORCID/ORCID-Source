@@ -8,9 +8,6 @@
   <md:IDPSSODescriptor protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
     <md:Extensions>
       <shibmd:Scope regexp="false">example.ac.uk</shibmd:Scope>
-      <mdui:UIInfo>
-        <mdui:DisplayName xml:lang="en">University of Example</mdui:DisplayName>
-      </mdui:UIInfo>
     </md:Extensions>
     <md:KeyDescriptor>
       <ds:KeyInfo>

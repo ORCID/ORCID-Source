@@ -142,22 +142,28 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
         XPath xpath = createXPath();
         XPathExpression mainDisplayNameXpath = compileXPath(xpath, "string(.//saml2:IDPSSODescriptor//mdui:DisplayName[1])");
         XPathExpression displayNamesXpath = compileXPath(xpath, ".//saml2:IDPSSODescriptor//mdui:DisplayName");
+        XPathExpression legacyMainDisplayNameXpath = compileXPath(xpath, "string(.//saml2:OrganizationDisplayName[1])");
+        XPathExpression legacyDisplayNamesXpath = compileXPath(xpath, ".//saml2:OrganizationDisplayName");
         XPathExpression supportContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='support'])[1]/saml2:EmailAddress[1])");
         XPathExpression adminContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='administrative'])[1]/saml2:EmailAddress[1])");
         XPathExpression techContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='technical'])[1]/saml2:EmailAddress[1])");
 
         String entityId = idpElement.getAttribute("entityID");
         String mainDisplayName = evaluateXPathString(mainDisplayNameXpath, idpElement);
+        if (StringUtils.isBlank(mainDisplayName)) {
+            mainDisplayName = evaluateXPathString(legacyMainDisplayNameXpath, idpElement);
+        }
         String supportEmail = tidyEmail(evaluateXPathString(supportContactXpath, idpElement));
         String adminEmail = tidyEmail(evaluateXPathString(adminContactXpath, idpElement));
         String techEmail = tidyEmail(evaluateXPathString(techContactXpath, idpElement));
         List<IdentityProviderNameEntity> nameEntities = createNameEntitiesFromXml(idpElement, displayNamesXpath);
+        if (nameEntities == null || nameEntities.isEmpty()) {
+            nameEntities = createNameEntitiesFromXml(idpElement, legacyDisplayNamesXpath);
+        }
 
         IdentityProviderEntity identityProviderEntity = new IdentityProviderEntity();
         identityProviderEntity.setProviderid(entityId);
-        // Old way
         identityProviderEntity.setDisplayName(mainDisplayName);
-        // New way
         identityProviderEntity.setNames(nameEntities);
         identityProviderEntity.setSupportEmail(supportEmail);
         identityProviderEntity.setAdminEmail(adminEmail);

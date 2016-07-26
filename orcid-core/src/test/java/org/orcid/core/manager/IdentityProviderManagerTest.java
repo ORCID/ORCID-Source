@@ -63,7 +63,6 @@ public class IdentityProviderManagerTest {
         assertEquals("University of Example Display", mapByLang.get("en").getDisplayName());
         assertEquals("Université de Example Display", mapByLang.get("fr").getDisplayName());
         assertEquals("Università di Example Display", mapByLang.get("it").getDisplayName());
-        // Old way of doing just a single name.
         assertEquals("Universität Example Display", result.getDisplayName());
         assertEquals("support@example.ch", result.getSupportEmail());
         assertNull(result.getAdminEmail());
@@ -86,7 +85,6 @@ public class IdentityProviderManagerTest {
         IdentityProviderNameEntity name = names.get(0);
         assertEquals("University of Example Display", name.getDisplayName());
         assertEquals("en", name.getLang());
-        // Old way of doing just a single name.
         assertEquals("University of Example Display", result.getDisplayName());
         assertEquals("help@it.example.ac.uk", result.getSupportEmail());
         assertEquals("admin@it.example.ac.uk", result.getAdminEmail());
