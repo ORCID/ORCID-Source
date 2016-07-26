@@ -16,6 +16,8 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
@@ -277,6 +279,109 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
         // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
         try {Thread.sleep(500);} catch(Exception e) {};
+    }
+    
+    public void changeBiography(String bioValue, Visibility changeTo) throws Exception {
+        int privacyIndex = getPrivacyIndex(changeTo);
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        
+        try {
+            By editBio = By.xpath("//div[@ng-controller='BiographyCtrl']//div[@class='row']//div[2]//ul//li//a[@ng-click='toggleEdit()']");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(editBio));
+            WebElement editBioButton = webDriver.findElement(editBio);
+            editBioButton.click();
+            
+            By saveBio = By.xpath("//button[@ng-click='setBiographyForm()']");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(saveBio));
+            
+            //Change the content if needed
+            if(bioValue != null) {
+                By bioTextArea = By.xpath("//textarea[@ng-model='biographyForm.biography.value']");
+                (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(bioTextArea));
+                WebElement bioTextAreaElement = webDriver.findElement(bioTextArea);
+                bioTextAreaElement.clear();
+                bioTextAreaElement.sendKeys(bioValue);
+            }
+            
+            //Change the visibility
+            By bioOPrivacySelector = By.xpath("//div[@id = 'bio-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a"); 
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(bioOPrivacySelector));            
+            WebElement bioOPrivacySelectorLimitedElement = webDriver.findElement(bioOPrivacySelector);
+            bioOPrivacySelectorLimitedElement.click(); 
+            
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        } catch (Exception e) {
+            System.out.println("Unable to find nother-names-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    public void changeNamesVisibility(Visibility changeTo) throws Exception {
+        int privacyIndex = getPrivacyIndex(changeTo);
+        
+        try {                                    
+            By openEditNames = By.xpath("//div[@id = 'names-section']//span[@id = 'open-edit-names']"); 
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(openEditNames));            
+            WebElement openEditNamesElement = webDriver.findElement(openEditNames);
+            openEditNamesElement.click();
+            
+            By namesVisibility = By.xpath("//div[@id = 'names-section']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(namesVisibility));
+            WebElement namesVisibilityElement = webDriver.findElement(namesVisibility);
+            namesVisibilityElement.click();
+            
+            By saveButton = By.xpath("//div[@id = 'names-section']//ul[@class='workspace-section-toolbar']//li[1]//button");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
+            WebElement button = webDriver.findElement(saveButton);
+            button.click();
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            System.out.println("Unable to find names-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    
+    protected void changeOtherNamesVisibility(Visibility changeTo) throws Exception {
+        int privacyIndex = getPrivacyIndex(changeTo);
+        
+        try {
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+            By openEditOtherNames = By.xpath("//div[@id = 'other-names-section']//span[@id = 'open-edit-other-names']"); 
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(openEditOtherNames));            
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+            BBBUtil.ngAwareClick(webDriver.findElement(openEditOtherNames), webDriver);
+            
+            By namesVisibility = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + privacyIndex + "]/a");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(namesVisibility));
+            List<WebElement> namesVisibilityElements = webDriver.findElements(namesVisibility);
+               for (WebElement webElement:namesVisibilityElements)
+                   BBBUtil.ngAwareClick(webElement, webDriver);
+            
+            By saveButton = By.xpath("//button[@ng-click='setOtherNamesForm(true)']");
+            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(saveButton));
+            WebElement button = webDriver.findElement(saveButton);
+            BBBUtil.ngAwareClick(button, webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        } catch (Exception e) {
+            System.out.println("Unable to find biography-visibility-limited element");
+            e.printStackTrace();
+            throw e;
+        }
+    }   
+    
+    protected int getPrivacyIndex(Visibility visibility) {
+        switch(visibility) {
+        case PUBLIC:
+            return 1;
+        case LIMITED:
+            return 2;
+        case PRIVATE:
+            return 3;
+        default:
+            return 1;
+        }
     }
     
     public String getAdminUserName() {
