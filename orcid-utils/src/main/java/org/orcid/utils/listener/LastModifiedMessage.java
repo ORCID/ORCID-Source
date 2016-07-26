@@ -59,7 +59,10 @@ public class LastModifiedMessage {
     
     @SuppressWarnings("deprecation")
     public Date getLastUpdated(){
-        return new Date(map.get(MessageConstants.DATE.value));
+        String time = map.get(MessageConstants.DATE.value);
+        if (time == null)
+            return null;
+        return new Date(Long.valueOf(time));
     }
     
     public String getMethod(){

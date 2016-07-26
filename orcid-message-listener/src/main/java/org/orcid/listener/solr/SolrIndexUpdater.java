@@ -1,23 +1,10 @@
-/**
- * =============================================================================
- *
- * ORCID (R) Open Source
- * http://orcid.org
- *
- * Copyright (c) 2012-2014 ORCID, Inc.
- * Licensed under an MIT-Style License (MIT)
- * http://orcid.org/open-source-license
- *
- * This copyright and license information (including a link to the full license)
- * shall be included in its entirety in all copies or substantial portion of
- * the software.
- *
- * =============================================================================
- */
-package org.orcid.core.manager.impl;
+package org.orcid.listener.solr;
 
+import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
+import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,8 +15,11 @@ import java.util.Map.Entry;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.core.manager.OrcidIndexManager;
-import org.orcid.core.security.visibility.filter.VisibilityFilter;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.orcid.jaxb.model.message.ContactDetails;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.ExternalIdReference;
@@ -53,83 +43,38 @@ import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Subtitle;
 import org.orcid.jaxb.model.message.Title;
 import org.orcid.jaxb.model.message.TranslatedTitle;
-import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.dao.SolrDao;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.dao.NonTransientDataAccessResourceException;
+import org.springframework.stereotype.Component;
 
-@Service
-public class OrcidIndexManagerImpl implements OrcidIndexManager {
+@Component
+public class SolrIndexUpdater {
 
     @Value("${org.orcid.core.indexPublicProfile:true}")
     private boolean indexPublicProfile;
+    
+    @Resource(name = "solrServer")
+    private SolrServer solrServer;
 
-    @Resource
-    private SolrDao solrDao;
-
-    @Resource
-    private ProfileDao profileDao;
-
-    @Resource(name = "visibilityFilter")
-    private VisibilityFilter visibilityFilter;
-
-    private static final Logger LOG = LoggerFactory.getLogger(OrcidIndexManagerImpl.class);
-
-    public void setSolrDao(SolrDao solrDao) {
-        this.solrDao = solrDao;
-    }
-
-    @Override
-    @Deprecated
-    //now going via orcid-message-listener
-    public void persistProfileInformationForIndexingIfNecessary(OrcidProfile orcidProfile) {
-        String orcid = orcidProfile.getOrcidIdentifier().getPath();
-        Date lastModifiedFromSolr = solrDao.retrieveLastModified(orcid);
-        Date lastModifiedFromDb = orcidProfile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-        if (lastModifiedFromDb.equals(lastModifiedFromSolr)) {
-            // Check if re-indexing
-            IndexingStatus indexingStatus = profileDao.retrieveIndexingStatus(orcid);
-            if (!IndexingStatus.REINDEX.equals(indexingStatus)) {
-                // If not re-indexing then skip
-                LOG.info("Index is already up to date for orcid: {}", orcid);
-                return;
-            }
-        }
-        persistProfileInformationForIndexing(orcidProfile);
-    }
-
-    @Override
-    @Deprecated
-    //will be moved to orcid-message-listener
-    public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
-
+    public void updateSolrIndex(OrcidProfile profile){
         // Check if the profile is locked
-        if (orcidProfile.isLocked()) {
-            orcidProfile.downgradeToOrcidIdentifierOnly();
+        if (profile.isLocked()) {
+            profile.downgradeToOrcidIdentifierOnly();
         }
-
-        OrcidMessage messageToFilter = new OrcidMessage();
-        messageToFilter.setOrcidProfile(orcidProfile);
-        OrcidMessage filteredMessage = visibilityFilter.filter(messageToFilter, Visibility.PUBLIC);
-        OrcidProfile filteredProfile = filteredMessage.getOrcidProfile();
 
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
-        profileIndexDocument.setOrcid(filteredProfile.getOrcidIdentifier().getPath());
+        profileIndexDocument.setOrcid(profile.getOrcidIdentifier().getPath());
 
-        OrcidDeprecated orcidDeprecated = filteredProfile.getOrcidDeprecated();
+        OrcidDeprecated orcidDeprecated = profile.getOrcidDeprecated();
         if (orcidDeprecated != null) {
             profileIndexDocument.setPrimaryRecord(orcidDeprecated.getPrimaryRecord() != null ? orcidDeprecated.getPrimaryRecord().getOrcidIdentifier().getPath() : null);
         }
 
-        OrcidBio orcidBio = filteredProfile.getOrcidBio();
+        OrcidBio orcidBio = profile.getOrcidBio();
         if (orcidBio != null) {
             PersonalDetails personalDetails = orcidBio.getPersonalDetails();
             boolean persistPersonalDetails = personalDetails != null;
@@ -187,59 +132,21 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 }
             }
 
-            OrcidActivities orcidActivities = filteredProfile.getOrcidActivities();
-            if (orcidActivities != null) {
-                // Affiliations affiliations =
-                // orcidActivities.getAffiliations();
-                // if (affiliations != null) {
-                // List<Affiliation> pastInsts = affiliations
-                // .getAffiliationsByType(AffiliationType.PAST_INSTITUTION);
-                // if (pastInsts != null && !pastInsts.isEmpty()) {
-                // List<String> pastInstNames = new ArrayList<String>();
-                // for (Affiliation pastAffiliation : pastInsts) {
-                // pastInstNames.add(pastAffiliation
-                // .getAffiliationName());
-                // }
-                //
-                // profileIndexDocument
-                // .setAffiliatePastInstitutionNames(pastInstNames);
-                // }
-                //
-                // List<Affiliation> primaryInsts = affiliations
-                // .getAffiliationsByType(AffiliationType.CURRENT_PRIMARY_INSTITUTION);
-                // if (primaryInsts != null && !primaryInsts.isEmpty()) {
-                // List<String> primaryInstNames = new ArrayList<String>();
-                // for (Affiliation primaryAffiliation : primaryInsts) {
-                // primaryInstNames.add(primaryAffiliation
-                // .getAffiliationName());
-                // }
-                //
-                // profileIndexDocument
-                // .setAffiliatePrimaryInstitutionNames(primaryInstNames);
-                // }
-                //
-                // List<Affiliation> currentNonPrimaryInsts = affiliations
-                // .getAffiliationsByType(AffiliationType.CURRENT_INSTITUTION);
-                // if (currentNonPrimaryInsts != null
-                // && !currentNonPrimaryInsts.isEmpty()) {
-                // List<String> affiliateInstNames = new ArrayList<String>();
-                // for (Affiliation currentAffiliation : currentNonPrimaryInsts)
-                // {
-                // affiliateInstNames.add(currentAffiliation
-                // .getAffiliationName());
-                // }
-                //
-                // profileIndexDocument
-                // .setAffiliateInstitutionNames(affiliateInstNames);
-                // }
-                // }
-
-                List<String> keywords = extractKeywordsAsStringFromBio(orcidBio);
-                if (keywords != null) {
-                    profileIndexDocument.setKeywords(keywords);
-                }
+            OrcidActivities orcidActivities = profile.getOrcidActivities();
+            if (orcidActivities != null) {                
+                if (orcidBio != null && orcidBio.getKeywords() != null) {
+                    List<Keyword> keyWords = orcidBio.getKeywords().getKeyword();
+                    if (keyWords != null && keyWords.size() > 0) {
+                        List<String> keywordValues = new ArrayList<String>();
+                        for (Keyword keyword : keyWords) {
+                            keywordValues.add(keyword.getContent());
+                        }
+                        profileIndexDocument.setKeywords(keywordValues);
+                    }
+                }                
             }
-            List<OrcidWork> orcidWorks = filteredProfile.retrieveOrcidWorks() != null ? filteredProfile.retrieveOrcidWorks().getOrcidWork() : null;
+            
+            List<OrcidWork> orcidWorks = profile.retrieveOrcidWorks() != null ? profile.retrieveOrcidWorks().getOrcidWork() : null;
             if (orcidWorks != null) {
                 List<String> workTitles = new ArrayList<String>();
                 Map<WorkExternalIdentifierType, List<String>> allExternalIdentifiers = new HashMap<WorkExternalIdentifierType, List<String>>();
@@ -253,7 +160,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                              * Creates a map that contains all different
                              * external identifiers for the current work
                              * */
-                            if (nullSafeCheckForWorkExternalIdentifier(workExternalIdentifier)) {
+                            boolean nullSafeCheckForWorkExternalIdentifier = workExternalIdentifier.getWorkExternalIdentifierId() != null && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+                            
+                            if (nullSafeCheckForWorkExternalIdentifier) {
                                 WorkExternalIdentifierType type = workExternalIdentifier.getWorkExternalIdentifierType();
                                 if (!allExternalIdentifiers.containsKey(type)) {
                                     List<String> content = new ArrayList<String>();
@@ -291,7 +200,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
                 addExternalIdentifiersToIndexDocument(profileIndexDocument, allExternalIdentifiers);
             }
 
-            List<Funding> orcidFundings = filteredProfile.retrieveFundings() != null ? filteredProfile.retrieveFundings().getFundings() : null;
+            List<Funding> orcidFundings = profile.retrieveFundings() != null ? profile.retrieveFundings().getFundings() : null;
             if (orcidFundings != null) {
                 List<String> fundingTitle = new ArrayList<String>();
                 for (Funding orcidFunding : orcidFundings) {
@@ -315,8 +224,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
         OrcidMessage orcidMessage = new OrcidMessage();
         orcidMessage.setMessageVersion(OrcidMessage.DEFAULT_VERSION);
-        orcidMessage.setOrcidProfile(filteredProfile);
-        OrcidHistory orcidHistory = filteredProfile.getOrcidHistory();
+        orcidMessage.setOrcidProfile(profile);
+        OrcidHistory orcidHistory = profile.getOrcidHistory();
         if (orcidHistory != null) {
             LastModifiedDate lastModifiedDate = orcidHistory.getLastModifiedDate();
             if (lastModifiedDate != null) {
@@ -330,40 +239,9 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         if (indexPublicProfile) {
             profileIndexDocument.setPublicProfileMessage(orcidMessage.toXmlString());
         }
-        solrDao.persist(profileIndexDocument);
+        this.persist(profileIndexDocument);
     }
-
-    private List<String> extractKeywordsAsStringFromBio(OrcidBio orcidBio) {
-
-        if (orcidBio != null && orcidBio.getKeywords() != null) {
-            List<Keyword> keyWords = orcidBio.getKeywords().getKeyword();
-            if (keyWords != null && keyWords.size() > 0) {
-                List<String> keywordValues = new ArrayList<String>();
-                for (Keyword keyword : keyWords) {
-                    keywordValues.add(keyword.getContent());
-                }
-
-                return keywordValues;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void deleteOrcidProfile(OrcidProfile orcidProfile) {
-        deleteOrcidProfile(orcidProfile.getOrcidIdentifier().getPath());
-
-    }
-
-    @Override
-    public void deleteOrcidProfile(String orcid) {
-        solrDao.removeOrcids(Arrays.asList(orcid));
-    }
-
-    private boolean nullSafeCheckForWorkExternalIdentifier(WorkExternalIdentifier workExternalIdentifier) {
-        return workExternalIdentifier.getWorkExternalIdentifierId() != null && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
-    }
-
+    
     /**
      * Fill all the different external identifiers in the profile index
      * document.
@@ -374,7 +252,49 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
      *            The list of external identifiers
      * */
     private void addExternalIdentifiersToIndexDocument(OrcidSolrDocument profileIndexDocument, Map<WorkExternalIdentifierType, List<String>> externalIdentifiers) {
-        initializeExternalIdentifiersOnIdexDocument(profileIndexDocument);
+        if (profileIndexDocument.getArxiv() == null)
+            profileIndexDocument.setArxiv(new ArrayList<String>());
+        if (profileIndexDocument.getAsin() == null)
+            profileIndexDocument.setAsin(new ArrayList<String>());
+        if (profileIndexDocument.getAsintld() == null)
+            profileIndexDocument.setAsintld(new ArrayList<String>());
+        if (profileIndexDocument.getBibcode() == null)
+            profileIndexDocument.setBibcode(new ArrayList<String>());
+        if (profileIndexDocument.getDigitalObjectIds() == null)
+            profileIndexDocument.setDigitalObjectIds(new ArrayList<String>());
+        if (profileIndexDocument.getEid() == null)
+            profileIndexDocument.setEid(new ArrayList<String>());
+        if (profileIndexDocument.getIsbn() == null)
+            profileIndexDocument.setIsbn(new ArrayList<String>());
+        if (profileIndexDocument.getIssn() == null)
+            profileIndexDocument.setIssn(new ArrayList<String>());
+        if (profileIndexDocument.getJfm() == null)
+            profileIndexDocument.setJfm(new ArrayList<String>());
+        if (profileIndexDocument.getJstor() == null)
+            profileIndexDocument.setJstor(new ArrayList<String>());
+        if (profileIndexDocument.getLccn() == null)
+            profileIndexDocument.setLccn(new ArrayList<String>());
+        if (profileIndexDocument.getMr() == null)
+            profileIndexDocument.setMr(new ArrayList<String>());
+        if (profileIndexDocument.getOclc() == null)
+            profileIndexDocument.setOclc(new ArrayList<String>());
+        if (profileIndexDocument.getOl() == null)
+            profileIndexDocument.setOl(new ArrayList<String>());
+        if (profileIndexDocument.getOsti() == null)
+            profileIndexDocument.setOsti(new ArrayList<String>());
+        if (profileIndexDocument.getOtherIdentifierType() == null)
+            profileIndexDocument.setOtherIdentifierType(new ArrayList<String>());
+        if (profileIndexDocument.getPmc() == null)
+            profileIndexDocument.setPmc(new ArrayList<String>());
+        if (profileIndexDocument.getPmid() == null)
+            profileIndexDocument.setPmid(new ArrayList<String>());
+        if (profileIndexDocument.getRfc() == null)
+            profileIndexDocument.setRfc(new ArrayList<String>());
+        if (profileIndexDocument.getSsrn() == null)
+            profileIndexDocument.setSsrn(new ArrayList<String>());
+        if (profileIndexDocument.getZbl() == null)
+            profileIndexDocument.setZbl(new ArrayList<String>());
+        
         Iterator<Entry<WorkExternalIdentifierType, List<String>>> it = externalIdentifiers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it.next();
@@ -482,50 +402,37 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
             }
         }
     }
-
-    private void initializeExternalIdentifiersOnIdexDocument(OrcidSolrDocument profileIndexDocument) {
-        if (profileIndexDocument.getArxiv() == null)
-            profileIndexDocument.setArxiv(new ArrayList<String>());
-        if (profileIndexDocument.getAsin() == null)
-            profileIndexDocument.setAsin(new ArrayList<String>());
-        if (profileIndexDocument.getAsintld() == null)
-            profileIndexDocument.setAsintld(new ArrayList<String>());
-        if (profileIndexDocument.getBibcode() == null)
-            profileIndexDocument.setBibcode(new ArrayList<String>());
-        if (profileIndexDocument.getDigitalObjectIds() == null)
-            profileIndexDocument.setDigitalObjectIds(new ArrayList<String>());
-        if (profileIndexDocument.getEid() == null)
-            profileIndexDocument.setEid(new ArrayList<String>());
-        if (profileIndexDocument.getIsbn() == null)
-            profileIndexDocument.setIsbn(new ArrayList<String>());
-        if (profileIndexDocument.getIssn() == null)
-            profileIndexDocument.setIssn(new ArrayList<String>());
-        if (profileIndexDocument.getJfm() == null)
-            profileIndexDocument.setJfm(new ArrayList<String>());
-        if (profileIndexDocument.getJstor() == null)
-            profileIndexDocument.setJstor(new ArrayList<String>());
-        if (profileIndexDocument.getLccn() == null)
-            profileIndexDocument.setLccn(new ArrayList<String>());
-        if (profileIndexDocument.getMr() == null)
-            profileIndexDocument.setMr(new ArrayList<String>());
-        if (profileIndexDocument.getOclc() == null)
-            profileIndexDocument.setOclc(new ArrayList<String>());
-        if (profileIndexDocument.getOl() == null)
-            profileIndexDocument.setOl(new ArrayList<String>());
-        if (profileIndexDocument.getOsti() == null)
-            profileIndexDocument.setOsti(new ArrayList<String>());
-        if (profileIndexDocument.getOtherIdentifierType() == null)
-            profileIndexDocument.setOtherIdentifierType(new ArrayList<String>());
-        if (profileIndexDocument.getPmc() == null)
-            profileIndexDocument.setPmc(new ArrayList<String>());
-        if (profileIndexDocument.getPmid() == null)
-            profileIndexDocument.setPmid(new ArrayList<String>());
-        if (profileIndexDocument.getRfc() == null)
-            profileIndexDocument.setRfc(new ArrayList<String>());
-        if (profileIndexDocument.getSsrn() == null)
-            profileIndexDocument.setSsrn(new ArrayList<String>());
-        if (profileIndexDocument.getZbl() == null)
-            profileIndexDocument.setZbl(new ArrayList<String>());
+    
+    //TODO: how does solr dao handle transactions/concurrency?
+    public void persist(OrcidSolrDocument orcidSolrDocument) {
+        try {
+            solrServer.addBean(orcidSolrDocument);
+            solrServer.commit();
+        } catch (SolrServerException se) {
+            throw new NonTransientDataAccessResourceException("Error persisting to SOLR Server", se);
+        } catch (IOException ioe) {
+            throw new NonTransientDataAccessResourceException("IOException when persisting to SOLR", ioe);
+        }
 
     }
+    
+    //TODO: make this cache
+    public Date retrieveLastModified(String orcid) {
+        SolrQuery query = new SolrQuery();
+        query.setQuery(ORCID + ":\"" + orcid + "\"");
+        query.setFields(PROFILE_LAST_MODIFIED_DATE);
+        try {
+            QueryResponse response = solrServer.query(query);
+            List<SolrDocument> results = response.getResults();
+            if (results.isEmpty()) {
+                return null;
+            } else {
+                return (Date) results.get(0).getFieldValue(PROFILE_LAST_MODIFIED_DATE);
+            }
+
+        } catch (SolrServerException e) {
+            throw new NonTransientDataAccessResourceException("Error retrieving last modified date from SOLR Server", e);
+        }
+    }
+    
 }

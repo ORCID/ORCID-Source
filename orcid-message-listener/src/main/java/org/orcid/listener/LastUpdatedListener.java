@@ -18,6 +18,8 @@ package org.orcid.listener;
 
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
@@ -28,6 +30,15 @@ import org.springframework.stereotype.Component;
 /** This class forms the basis of the message drive data dump and SOLR index updater.
  * It is intended to be a stand alone application but can sit alongside other modules in dev, QA and sandbox.
  * 
+ * Example use of a message:
+ * 
+ * LOG.debug("Recieved last updated message");
+ * map.forEach((k,v)->LOG.debug(k+"->"+v));   
+ *       
+ * //alternative
+ * LastModifiedMessage m = new LastModifiedMessage(map);
+ * LOG.debug(m.getOrcid());      
+ * 
  * @author tom
  *
  */
@@ -35,14 +46,19 @@ import org.springframework.stereotype.Component;
 public class LastUpdatedListener {
     
     Logger LOG = LoggerFactory.getLogger(LastUpdatedListener.class);
-        
+    
+    @Resource
+    public LastUpdatedCacheQueue cacheQueue;
+    
     @JmsListener(destination=MessageConstants.Queues.UPDATED_ORCIDS)
     public void processMessage(final Map<String,String> map) {
-        LOG.debug("Recieved last updated message");
-        map.forEach((k,v)->LOG.debug(k+"->"+v));   
-        
-        //alternative
-        LastModifiedMessage m = new LastModifiedMessage(map);
-        LOG.debug(m.getOrcid());
+        LastModifiedMessage message = new LastModifiedMessage(map);
+        LOG.info("Recieved message for orcid "+message.getOrcid() + " "+message.getLastUpdated()); 
+        LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(message.getOrcid());
+        if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
+            cacheQueue.getCache().put(message.getOrcid(), message); 
+        //note this will lose the method information of older messages, but it is currently unused.
     }
+    
+    
 }

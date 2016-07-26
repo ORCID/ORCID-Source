@@ -28,27 +28,23 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd 
         http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.1.xsd">
 
-	<context:component-scan base-package="org.orcid.listener" />
-
-	<!-- ${org.orcid.persistence.properties} gets replaced during the Maven 
-		build, but other properties are escaped from Maven build replacement by preceding 
-		with \ and so are handled by Spring. -->
-	<context:property-placeholder location="\${org.orcid.config.file:}"
-		ignore-resource-not-found="true" ignore-unresolvable="true" />
+	<!--  todo, make this work with command line parameter -->
 	<context:property-placeholder
-		location="classpath:${org.orcid.message-listener.properties}"
+		location="classpath:message-listener.properties"
 		ignore-resource-not-found="true" ignore-unresolvable="true" />
+
+	<context:component-scan base-package="org.orcid.listener" />
 
 	<!--SOLR -->
 	<!-- Confusingly, the client is actually called a server -->
 	<bean id="solrServer" class="org.apache.solr.client.solrj.impl.HttpSolrServer">
-		<constructor-arg value="\${org.orcid.persistence.solr.url}" />
-		<property name="soTimeout" value="\${org.orcid.persistence.solr.socketTimeout}" />
-		<property name="connectionTimeout" value="\${org.orcid.persistence.solr.connectionTimeout}" />
-		<property name="allowCompression" value="\${org.orcid.persistence.solr.allowCompression}" />
-		<property name="maxRetries" value="\${org.orcid.persistence.solr.maxRetries}" />
-		<property name="defaultMaxConnectionsPerHost" value="\${org.orcid.persistence.solr.maxTotalConnections}" />
-		<property name="maxTotalConnections" value="\${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
+		<constructor-arg value="${org.orcid.persistence.solr.url}" />
+		<property name="soTimeout" value="${org.orcid.listener.persistence.solr.socketTimeout}" />
+		<property name="connectionTimeout" value="${org.orcid.persistence.solr.connectionTimeout}" />
+		<property name="allowCompression" value="${org.orcid.persistence.solr.allowCompression}" />
+		<property name="maxRetries" value="${org.orcid.persistence.solr.maxRetries}" />
+		<property name="defaultMaxConnectionsPerHost" value="${org.orcid.persistence.solr.maxTotalConnections}" />
+		<property name="maxTotalConnections" value="${org.orcid.persistence.solr.defaultMaxConnectionsPerHost}" />
 		<property name="parser" ref="responseParser" />
 	</bean>
 
