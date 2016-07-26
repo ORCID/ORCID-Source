@@ -129,7 +129,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     public void loadIdentityProviders() {
         String[] metadataUrls = StringUtils.split(metadataUrlsString);
         XPath xpath = createXPath();
-        XPathExpression entityDescriptorXpath = compileXPath(xpath, "//saml2:EntityDescriptor");
+        XPathExpression entityDescriptorXpath = compileXPath(xpath, "//md:EntityDescriptor");
 
         for (String metadataUrl : metadataUrls) {
             Document document = downloadMetadata(metadataUrl);
@@ -146,13 +146,13 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     @Override
     public IdentityProviderEntity createEntityFromXml(Element idpElement) {
         XPath xpath = createXPath();
-        XPathExpression mainDisplayNameXpath = compileXPath(xpath, "string(.//saml2:IDPSSODescriptor//mdui:DisplayName[1])");
-        XPathExpression displayNamesXpath = compileXPath(xpath, ".//saml2:IDPSSODescriptor//mdui:DisplayName");
-        XPathExpression legacyMainDisplayNameXpath = compileXPath(xpath, "string(.//saml2:OrganizationDisplayName[1])");
-        XPathExpression legacyDisplayNamesXpath = compileXPath(xpath, ".//saml2:OrganizationDisplayName");
-        XPathExpression supportContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='support'])[1]/saml2:EmailAddress[1])");
-        XPathExpression adminContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='administrative'])[1]/saml2:EmailAddress[1])");
-        XPathExpression techContactXpath = compileXPath(xpath, "string((.//saml2:ContactPerson[@contactType='technical'])[1]/saml2:EmailAddress[1])");
+        XPathExpression mainDisplayNameXpath = compileXPath(xpath, "string(.//md:IDPSSODescriptor//mdui:DisplayName[1])");
+        XPathExpression displayNamesXpath = compileXPath(xpath, ".//md:IDPSSODescriptor//mdui:DisplayName");
+        XPathExpression legacyMainDisplayNameXpath = compileXPath(xpath, "string(.//md:OrganizationDisplayName[1])");
+        XPathExpression legacyDisplayNamesXpath = compileXPath(xpath, ".//md:OrganizationDisplayName");
+        XPathExpression supportContactXpath = compileXPath(xpath, "string((.//md:ContactPerson[@contactType='support'])[1]/md:EmailAddress[1])");
+        XPathExpression adminContactXpath = compileXPath(xpath, "string((.//md:ContactPerson[@contactType='administrative'])[1]/md:EmailAddress[1])");
+        XPathExpression techContactXpath = compileXPath(xpath, "string((.//md:ContactPerson[@contactType='technical'])[1]/md:EmailAddress[1])");
 
         String entityId = idpElement.getAttribute("entityID");
         String mainDisplayName = evaluateXPathString(mainDisplayNameXpath, idpElement);
@@ -290,7 +290,7 @@ public class IdentityProviderManagerImpl implements IdentityProviderManager {
     private XPath createXPath() {
         XPath xpath = XPathFactory.newInstance().newXPath();
         NamespaceMap namespaceMap = new NamespaceMap();
-        namespaceMap.putNamespace("saml2", "urn:oasis:names:tc:SAML:2.0:metadata");
+        namespaceMap.putNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata");
         namespaceMap.putNamespace("mdui", "urn:oasis:names:tc:SAML:metadata:ui");
         xpath.setNamespaceContext(namespaceMap);
         return xpath;
