@@ -17,30 +17,34 @@
 package org.orcid.core.manager.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
+import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ResearcherUrlEntity;
+import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
 import org.orcid.pojo.ajaxForm.Text;
@@ -49,37 +53,34 @@ import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-
 /**
  * @author: Declan Newman (declan) Date: 10/02/2012
  */
 @RunWith(OrcidJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:orcid-core-context.xml" })
 public class ProfileEntityManagerImplTest extends DBUnitTest {
-
-    private static final List<String> DATA_FILES = Arrays.asList("/data/EmptyEntityData.xml", "/data/SecurityQuestionEntityData.xml",
-            "/data/SourceClientDetailsEntityData.xml", "/data/ProfileEntityData.xml", "/data/ClientDetailsEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
+    private static final String CLIENT_ID_1 = "APP-5555555555555555";   
+    private static final String USER_ORCID = "0000-0000-0000-0001";    
     
-    @Resource(name = "profileEntityCacheManager")
-    ProfileEntityCacheManager profileEntityCacheManager;
+    @Resource
+    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
     
-    @BeforeClass
-    public static void beforeClass() throws Exception {
-        initDBUnitData(DATA_FILES);
-    }
-    
-    @AfterClass
-    public static void afterClass() throws Exception {
-        removeDBUnitData(Lists.reverse(DATA_FILES));
-    }
-
     @Resource
     private ProfileEntityManager profileEntityManager;
+    
+    @Resource(name = "profileEntityCacheManager")
+    private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @BeforeClass
+    public static void initDBUnitData() throws Exception {
+        initDBUnitData(Arrays.asList("/data/SecurityQuestionEntityData.xml", "/data/SubjectEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+                "/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml"));
+    }
 
-    @Before
-    public void init() {
-        assertNotNull(profileEntityManager);
+    @AfterClass
+    public static void removeDBUnitData() throws Exception {
+        removeDBUnitData(Arrays.asList("/data/ProfileEntityData.xml", "/data/BiographyEntityData.xml", "/data/SourceClientDetailsEntityData.xml",
+                "/data/SubjectEntityData.xml", "/data/SecurityQuestionEntityData.xml"));
     }
 
     @Test
@@ -160,7 +161,176 @@ public class ProfileEntityManagerImplTest extends DBUnitTest {
         assertEquals(3, profile.getResearcherUrls().size());
         for(ResearcherUrlEntity r : profile.getResearcherUrls()) {
             assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE, r.getVisibility());
+        }        
+    }
+    
+    @Test
+    public void testGetApplications() {
+        Date expiration = new Date(System.currentTimeMillis() + 10000);
+        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1", USER_ORCID, expiration, "/read-limited", false);
+        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3", USER_ORCID, expiration, "/activities/update", false);
+        OrcidOauth2TokenDetail token4 = createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/activities/read-limited", false);
+        OrcidOauth2TokenDetail token5 = createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-works/read-limited", false);
+        
+        List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertEquals(5, applications.size());
+        
+        boolean found1 = false, found2=false, found3 = false, found4 = false, found5 = false;
+        
+        for(ApplicationSummary summary : applications) {
+            assertNotNull(summary.getTokenId());
+            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
+                found1 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
+                found2 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
+                found3 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token4.getId()))) {
+                found4 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token5.getId()))) {
+                found5 = true;
+            }              
         }
         
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertTrue(found5);
+        
+        //Assert we can delete them
+        profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
+        profileEntityManager.disableApplication(token5.getId(), USER_ORCID);
+        
+        found1 = found2 = found3 = found4 = found5 = false;
+        
+        applications = profileEntityManager.getApplications(USER_ORCID);
+        assertEquals(3, applications.size());
+        
+        for(ApplicationSummary summary : applications) {
+            assertNotNull(summary.getTokenId());
+            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
+                found1 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
+                found2 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
+                found3 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token4.getId()))) {
+                found4 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token5.getId()))) {
+                found5 = true;
+            }     
+        }
+
+        assertFalse(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found4);
+        assertFalse(found5);
+        
+        //Revoke the others
+        profileEntityManager.disableApplication(token2.getId(), USER_ORCID);
+        profileEntityManager.disableApplication(token3.getId(), USER_ORCID);        
+        profileEntityManager.disableApplication(token4.getId(), USER_ORCID);                
+        
+        applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertTrue(applications.isEmpty());
     }
+    
+    @SuppressWarnings("unused")
+    @Test
+    public void testDontGetDuplicatedApplications() {
+        Date expiration = new Date(System.currentTimeMillis() + 10000);
+        OrcidOauth2TokenDetail token1 = createToken(CLIENT_ID_1, "token-1", USER_ORCID, expiration, "/read-limited", false); // Displayed
+        OrcidOauth2TokenDetail token2 = createToken(CLIENT_ID_1, "token-2", USER_ORCID, expiration, "/orcid-profile/read-limited", false); // Displayed
+        OrcidOauth2TokenDetail token3 = createToken(CLIENT_ID_1, "token-3", USER_ORCID, expiration, "/activities/update", false); // Displayed
+        OrcidOauth2TokenDetail token4 = createToken(CLIENT_ID_1, "token-4", USER_ORCID, expiration, "/read-limited", false);
+        OrcidOauth2TokenDetail token5 = createToken(CLIENT_ID_1, "token-5", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        OrcidOauth2TokenDetail token6 = createToken(CLIENT_ID_1, "token-6", USER_ORCID, expiration, "/activities/update", false);
+        OrcidOauth2TokenDetail token7 = createToken(CLIENT_ID_1, "token-7", USER_ORCID, expiration, "/read-limited", false);
+        OrcidOauth2TokenDetail token8 = createToken(CLIENT_ID_1, "token-8", USER_ORCID, expiration, "/orcid-profile/read-limited", false);
+        OrcidOauth2TokenDetail token9 = createToken(CLIENT_ID_1, "token-9", USER_ORCID, expiration, "/activities/update", false);
+        OrcidOauth2TokenDetail token10 = createToken(CLIENT_ID_1, "token-10", USER_ORCID, expiration, "/person/read-limited", false); // Displayed
+        OrcidOauth2TokenDetail token11 = createToken(CLIENT_ID_1, "token-11", USER_ORCID, expiration, "/person/read-limited", false);
+        
+        List<ApplicationSummary> applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertEquals(4, applications.size());
+        
+        boolean found1 = false, found2 = false, found3 = false, found10 = false;
+        
+        for(ApplicationSummary summary : applications) {
+            assertNotNull(summary.getTokenId());
+            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
+                found1 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
+                found2 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
+                found3 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token10.getId()))) {
+                found10 = true;
+            } 
+        }
+        
+        assertTrue(found1);
+        assertTrue(found2);
+        assertTrue(found3);
+        assertTrue(found10);
+        
+        //Revoke them to check revoking one revokes all the ones with the same scopes
+        profileEntityManager.disableApplication(token1.getId(), USER_ORCID);
+        profileEntityManager.disableApplication(token2.getId(), USER_ORCID);
+        
+        applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertEquals(2, applications.size());
+        
+        found1 = found2 = found3 = found10 = false;
+        
+        for(ApplicationSummary summary : applications) {
+            assertNotNull(summary.getTokenId());
+            if(summary.getTokenId().equals(String.valueOf(token1.getId()))) {
+                found1 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token2.getId()))) {
+                found2 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token3.getId()))) {
+                found3 = true;
+            } else if(summary.getTokenId().equals(String.valueOf(token10.getId()))) {
+                found10 = true;
+            } 
+        }
+        
+        assertFalse(found1);
+        assertFalse(found2);
+        assertTrue(found3);
+        assertTrue(found10);
+        
+        //Revoke them all
+        profileEntityManager.disableApplication(token3.getId(), USER_ORCID);
+        profileEntityManager.disableApplication(token10.getId(), USER_ORCID);
+        
+        applications = profileEntityManager.getApplications(USER_ORCID);
+        assertNotNull(applications);
+        assertTrue(applications.isEmpty());
+    }
+    
+    private OrcidOauth2TokenDetail createToken(String clientId, String tokenValue, String userOrcid, Date expirationDate, String scopes, boolean disabled) {
+        OrcidOauth2TokenDetail token = new OrcidOauth2TokenDetail();
+        token.setApproved(true);
+        token.setClientDetailsId(clientId);
+        token.setDateCreated(new Date());
+        token.setLastModified(new Date());
+        token.setProfile(new ProfileEntity(userOrcid));
+        token.setScope(scopes);
+        token.setTokenDisabled(disabled);
+        token.setTokenExpiration(expirationDate);
+        token.setTokenType("bearer");
+        token.setTokenValue(tokenValue);
+        orcidOauth2TokenDetailService.saveOrUpdate(token);
+        return token;
+    }
+    
 }

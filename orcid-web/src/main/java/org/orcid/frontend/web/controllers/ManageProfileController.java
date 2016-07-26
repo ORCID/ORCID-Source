@@ -36,19 +36,12 @@ import org.eclipse.jetty.util.ajax.JSON;
 import org.orcid.core.manager.AddressManager;
 import org.orcid.core.manager.AdminManager;
 import org.orcid.core.manager.BiographyManager;
-import org.orcid.core.manager.EmailManager;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.NotificationManager;
-import org.orcid.core.manager.OrcidSearchManager;
-import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.OrcidSocialManager;
-import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
-import org.orcid.core.manager.ProfileKeywordManager;
-import org.orcid.core.manager.ResearcherUrlManager;
-import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
@@ -73,7 +66,6 @@ import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
-import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.UserConnectionDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.GivenPermissionToEntity;
@@ -126,28 +118,13 @@ public class ManageProfileController extends BaseWorkspaceController {
     public static String CHECK_EMAIL_VALIDATED = "CHECK_EMAIL_VALIDATED";
 
     @Resource
-    private OrcidSearchManager orcidSearchManager;
-
-    @Resource
     private EncryptionManager encryptionManager;
 
     @Resource
     private NotificationManager notificationManager;
 
     @Resource
-    private ResearcherUrlManager researcherUrlManager;
-
-    @Resource
-    private ProfileKeywordManager profileKeywordManager;
-
-    @Resource
-    private OtherNameManager otherNameManager;
-
-    @Resource
     private ProfileEntityManager profileEntityManager;
-
-    @Resource
-    private ProfileDao profileDao;
 
     @Resource
     private GivenPermissionToDao givenPermissionToDao;
@@ -161,9 +138,6 @@ public class ManageProfileController extends BaseWorkspaceController {
     @Resource
     private OrcidSocialManager orcidSocialManager;
 
-    @Resource
-    private EmailManager emailManager;
-
     @Resource(name = "profileEntityCacheManager")
     private ProfileEntityCacheManager profileEntityCacheManager;
     
@@ -171,17 +145,11 @@ public class ManageProfileController extends BaseWorkspaceController {
     private PersonalDetailsManager personalDetailsManager;
 
     @Resource
-    OrcidSecurityManager orcidSecurityManager;
-    
-    @Resource
     private AddressManager addressManager;
     
     @Resource
     private BiographyManager biographyManager;
     
-    @Resource
-    private OrcidOauth2TokenDetailService orcidOauth2TokenDetailService;
-
     public EncryptionManager getEncryptionManager() {
         return encryptionManager;
     }
@@ -192,18 +160,6 @@ public class ManageProfileController extends BaseWorkspaceController {
 
     public void setNotificationManager(NotificationManager notificationManager) {
         this.notificationManager = notificationManager;
-    }
-
-    public void setResearcherUrlManager(ResearcherUrlManager researcherUrlManager) {
-        this.researcherUrlManager = researcherUrlManager;
-    }
-
-    public void setProfileKeywordManager(ProfileKeywordManager profileKeywordManager) {
-        this.profileKeywordManager = profileKeywordManager;
-    }
-
-    public void setOtherNameManager(OtherNameManager otherNameManager) {
-        this.otherNameManager = otherNameManager;
     }
 
     public void setGivenPermissionToDao(GivenPermissionToDao givenPermissionToDao) {
@@ -368,7 +324,7 @@ public class ManageProfileController extends BaseWorkspaceController {
     @RequestMapping(value = "/revoke-application", method = RequestMethod.POST)
     public @ResponseBody boolean revokeApplication(@RequestParam("tokenId") String tokenId) {
         String userOrcid = getCurrentUserOrcid();
-        orcidOauth2TokenDetailService.disableAccessToken(Long.valueOf(tokenId), userOrcid);
+        profileEntityManager.disableApplication(Long.valueOf(tokenId), userOrcid);
         return true;
     }
 
