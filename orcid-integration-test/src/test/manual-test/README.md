@@ -386,6 +386,9 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
 
 ##Privacy Check
 ###Public Record
+
+This record has every field set to public. Access this record via the API and UI to check that all fields are returned.
+
 1. Visit http://qa.orcid.org/0000-0002-3874-7658
 
 2. Check that the following fields are shown
@@ -444,6 +447,9 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
 
 
 ###Limited Record
+
+This record has ever field set to limited, check that nothing is visible in the UI and that it can only be read on the API with a /read-limited token.
+
 1. Visit http://qa.orcid.org/0000-0001-7325-5491
 
 2. Check that no information is displayed other than the ORCID iD
@@ -647,6 +653,9 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
 
 
 ###Private Record
+
+This record has every fields set to private. Check that no information is displayed in the UI or via the API when accessing it.
+
 1. Visit http://qa.orcid.org/0000-0003-2366-2712
 
 2. Check that no information is displayed other than the ORCID iD
@@ -694,6 +703,8 @@ curl -i -L -k -H 'Authorization: Bearer [1.2 token]' -d 'refresh_token=[1.2 refr
     ```
 
 ##Scopes/Methods
+
+This section checks that clients can only get access based on the allowed scopes for that client type.
 
 1. Attempt to get a /read-limited token with a public client at https://qa.orcid.org/oauth/authorize?client_id=[public client id]&response_type=code&scope=/read-limited&redirect_uri=https://developers.google.com/oauthplayground
 
