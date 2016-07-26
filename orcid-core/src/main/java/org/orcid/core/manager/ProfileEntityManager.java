@@ -27,7 +27,6 @@ import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc2.Person;
-import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ApplicationSummary;
 import org.orcid.pojo.ajaxForm.Claim;
@@ -76,6 +75,8 @@ public interface ProfileEntityManager {
     boolean reviewProfile(String orcid);
     
     List<ApplicationSummary> getApplications(String orcid);
+    
+    void disableApplication(Long tokenId, String userOrcid);
     
     String getOrcidHash(String orcid) throws NoSuchAlgorithmException;
     
