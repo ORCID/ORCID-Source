@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -43,15 +44,14 @@ public class Orcid12APIClient {
         this.baseUri = new URI(baseUri);
     }
     
-    /** Fetches the profile from the ORCID public API
-     *  VERY basic implementation
+    /** Fetches the profile from the ORCID public API v1.2
      * 
      * @param orcid
      * @return
      */
     public OrcidProfile fetchPublicProfile(String orcid){
         WebResource webResource = jerseyClient.resource(baseUri);
-        ClientResponse response = webResource.path(orcid+"/orcid-profile").accept("application/xml").get(ClientResponse.class);
+        ClientResponse response = webResource.path(orcid+"/orcid-profile").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }

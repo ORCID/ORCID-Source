@@ -416,7 +416,7 @@ public class SolrIndexUpdater {
 
     }
     
-    //TODO: make this cache
+    //TODO: make this cache?
     public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORCID + ":\"" + orcid + "\"");

@@ -26,10 +26,6 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalListeners;
 import com.google.common.cache.RemovalNotification;
 
-/** 
- * 
- * Considered using DelayQueue, but this makes it far easier. http://stackoverflow.com/questions/27948867/efficiently-update-an-element-in-a-delayqueue
- */
 @Component
 public class LastUpdatedCacheQueue implements ApplicationListener<ContextClosedEvent>{
 
@@ -52,6 +48,9 @@ public class LastUpdatedCacheQueue implements ApplicationListener<ContextClosedE
      * Note that the cache performs cleanup and does removal as part of get/put operations (better performance in live env)
      * I have made it do these ansynchronously so they do not block access to the cache
      * In testing, set forceCleanup to true or call cache.cleanUp() manually.
+     * 
+     * For more info on guava caches, see https://github.com/google/guava/wiki/CachesExplained
+     * Considered using DelayQueue, but this makes it far easier. http://stackoverflow.com/questions/27948867/efficiently-update-an-element-in-a-delayqueue
      * 
      * @param secondsToWait how long to wait for account activity to stop before performing updates.
      * @param forceCleanup check cache every 10 seconds for expired entries 
