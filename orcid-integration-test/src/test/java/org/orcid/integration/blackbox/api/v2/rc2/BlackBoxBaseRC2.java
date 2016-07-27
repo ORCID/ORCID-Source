@@ -123,6 +123,7 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         return g1;
     }
     
+    @SuppressWarnings({ "deprecation", "rawtypes" })
     public Long createOtherName(String value, String userOrcid, String accessToken) {
         OtherName otherName = new OtherName();
         otherName.setContent(value);

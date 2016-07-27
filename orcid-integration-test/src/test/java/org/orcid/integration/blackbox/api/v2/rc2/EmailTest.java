@@ -77,7 +77,7 @@ public class EmailTest extends BlackBoxBaseRC2 {
     private String limitedEmailValue = "limited@test.orcid.org";
     
     @Before
-    public void before() {
+    public void setUpData() {
         OrcidUi orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);        
         logUserOut();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");

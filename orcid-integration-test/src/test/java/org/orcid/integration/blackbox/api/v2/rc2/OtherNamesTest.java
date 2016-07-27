@@ -26,14 +26,25 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openqa.selenium.By;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
+import org.orcid.integration.blackbox.api.BBBUtil;
+import org.orcid.integration.blackbox.client.DashboardPage;
+import org.orcid.integration.blackbox.client.DashboardPage.OtherNameElement;
+import org.orcid.integration.blackbox.client.DashboardPage.OtherNamesSection;
+import org.orcid.integration.blackbox.client.OrcidUi;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -58,9 +69,46 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
-    /**
-     * PRECONDITIONS: 
-     *          The user should have two public other names "other-name-1" and "other-name-2"
+    boolean allSet = false;
+    private String publicOtherNameValue = "public-other-name";        
+    private String limitedOtherNameValue = "limited-other-name";    
+    
+    @Before
+    public void setUpData() throws Exception {
+        OrcidUi orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);        
+        logUserOut();
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
+        DashboardPage dashboard = orcidUi.getDashboardPage();        
+        OtherNamesSection otherNameSection = dashboard.getOtherNamesSection();
+        otherNameSection.toggleEdit();
+        List<OtherNameElement> otherNameElements = otherNameSection.getOtherNames();
+        Optional<OtherNameElement> publicOtherNameOptional = otherNameElements.stream().filter(e -> e.getValue().equals(publicOtherNameValue)).findFirst();
+        if(!publicOtherNameOptional.isPresent()) {
+            otherNameSection.addOtherName(publicOtherNameValue);                       
+        }
+        
+        Optional<OtherNameElement> limitedOtherNameOptional = otherNameElements.stream().filter(e -> e.getValue().equals(limitedOtherNameValue)).findFirst();
+        if(!limitedOtherNameOptional.isPresent()) {
+            otherNameSection.addOtherName(limitedOtherNameValue);                       
+        }
+        otherNameSection.saveChanges();    
+        
+        otherNameSection.toggleEdit();
+        otherNameElements = otherNameSection.getOtherNames();
+        OtherNameElement publicOtherName = otherNameElements.stream().filter(e -> e.getValue().equals(publicOtherNameValue)).findFirst().get();
+        publicOtherName.changeVisibility(Visibility.PUBLIC);
+        OtherNameElement limitedOtherName = otherNameElements.stream().filter(e -> e.getValue().equals(limitedOtherNameValue)).findFirst().get();
+        limitedOtherName.changeVisibility(Visibility.LIMITED);        
+        otherNameSection.saveChanges();
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+    }
+    
+    /** 
      * @throws JSONException 
      * @throws InterruptedException 
      * */    
@@ -73,11 +121,23 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         OtherNames otherNames = getResponse.getEntity(OtherNames.class);
         assertNotNull(otherNames);
         assertNotNull(otherNames.getOtherNames());
-        assertEquals(2, otherNames.getOtherNames().size());
-        assertThat(otherNames.getOtherNames().get(0).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
-        assertThat(otherNames.getOtherNames().get(1).getContent(), anyOf(is("other-name-1"), is("other-name-2")));
-        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, otherNames.getOtherNames().get(1).getVisibility());
+        
+        //There should be at least two, one public and one limited
+        boolean foundPublic = false;
+        boolean foundLimited = false;
+        
+        for(OtherName otherName : otherNames.getOtherNames()) {
+            if(publicOtherNameValue.equals(otherName.getContent())) {
+                foundPublic = true;
+                assertEquals(Visibility.PUBLIC, otherName.getVisibility());
+            } else if(limitedOtherNameValue.equals(otherName.getContent())) {
+                foundLimited = true;
+                assertEquals(Visibility.LIMITED, otherName.getVisibility());
+            }            
+        }
+        
+        assertTrue(foundPublic);
+        assertTrue(foundLimited);        
     }    
     
     @SuppressWarnings({ "rawtypes", "deprecation" })

@@ -18,8 +18,8 @@
 -->
 
 <script type="text/ng-template" id="edit-aka">	
-	<!-- Other Names -->
-	<div class="lightbox-container">
+	<!-- Other Names -->	
+	<div class="lightbox-container" id="aka-popover">
 		<div class="edit-record edit-aka">
 			<!-- Title -->
 			<div class="row">			
@@ -85,7 +85,7 @@
 
 <script type="text/ng-template" id="edit-country">
 	<!-- Country -->
-	<div class="lightbox-container">
+	<div class="lightbox-container" id="country-popover">
 		<div class="edit-record edit-country">
 			<!-- Title -->
 			<div class="row">			
@@ -161,7 +161,7 @@
 
 <script type="text/ng-template" id="edit-keyword">
 	<!-- Keywords -->
-	<div class="lightbox-container">
+	<div class="lightbox-container" id="keyword-popover">
 		<div class="edit-record edit-keyword">
 			<!-- Title -->
 			<div class="row">			
@@ -224,12 +224,10 @@
 			</div>
 		</div>
 	</div>
-
 </script>
 
-
 <script type="text/ng-template" id="edit-websites">
-	<div class="lightbox-container">
+	<div class="lightbox-container" id="websites-popover">
 		<div class="edit-record edit-websites">
 			<!-- Title -->
 			<div class="row">			
@@ -301,9 +299,8 @@
 	</div>
 </script>
 
-
 <script type="text/ng-template" id="edit-external-identifiers">
-	<div class="lightbox-container">
+	<div class="lightbox-container" id="extids-popover">
 		<div class="edit-record edit-external-identifiers">
 			<!-- Title -->
 			<div class="row">			
