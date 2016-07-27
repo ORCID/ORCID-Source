@@ -33,6 +33,7 @@ public enum MessageConstants {
         public static final String UPDATED_ORCIDS = "updated_orcids";        
         public static final String TEST = "test";
         public static final String TEST_REPLY = "test_reply";
+        public static final String REINDEX = "reindex";
     }
         
     public final String value;

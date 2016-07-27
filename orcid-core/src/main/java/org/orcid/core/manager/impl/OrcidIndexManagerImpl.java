@@ -67,6 +67,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Deprecated
 public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
     @Value("${org.orcid.core.indexPublicProfile:true}")
@@ -108,7 +109,6 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
     @Override
     @Deprecated
-    //will be moved to orcid-message-listener
     public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
 
         // Check if the profile is locked

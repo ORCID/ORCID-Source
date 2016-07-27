@@ -1,44 +1,27 @@
 package org.orcid.listener;
 
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
-
-import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.listener.apiclient.Orcid12APIClient;
-import org.orcid.listener.solr.SolrIndexUpdater;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.stereotype.Component;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalListeners;
-import com.google.common.cache.RemovalNotification;
 
-@Component
-public class LastUpdatedCacheQueue implements ApplicationListener<ContextClosedEvent>{
+public class GenericExpiringQueue<T extends RemovalListener<String, LastModifiedMessage>> implements ApplicationListener<ContextClosedEvent>{
 
-    Logger LOG = LoggerFactory.getLogger(LastUpdatedListener.class);
+    Logger LOG = LoggerFactory.getLogger(GenericExpiringQueue.class);
     private final ExecutorService executor;
     private final ScheduledExecutorService cleanup;
     private final Cache<String, LastModifiedMessage> cacheQueue;
-    
-    @Resource
-    private Orcid12APIClient orcid12ApiClient;
-    
-    @Resource
-    private SolrIndexUpdater solrIndexUpdater;
 
     /** Create a LastUpdatedCacheQueue
      * 
@@ -52,32 +35,20 @@ public class LastUpdatedCacheQueue implements ApplicationListener<ContextClosedE
      * For more info on guava caches, see https://github.com/google/guava/wiki/CachesExplained
      * Considered using DelayQueue, but this makes it far easier. http://stackoverflow.com/questions/27948867/efficiently-update-an-element-in-a-delayqueue
      * 
-     * @param secondsToWait how long to wait for account activity to stop before performing updates.
+     * This class registers itself to listen for context events to ensure threads close on exit
+     * 
+     * @param secondsToWait how long to wait for account activity to stop before processing.
      * @param forceCleanup check cache every 10 seconds for expired entries 
      * - initial delay is 120 seconds to allow server to start
      * - (if false, this happens on get/put instead)
      */
-    @Autowired
-    public LastUpdatedCacheQueue(@Value("${org.orcid.listener.lastUpdateSecondsToWait:300}") int secondsToWait, @Value("${org.orcid.listener.lastUpdateForceCleanup:false}") Boolean forceCleanup){        
+    public GenericExpiringQueue(
+            int secondsToWait, 
+            Boolean forceCleanup,
+            T removalListener){        
         
         //create the listener that does the work when an orcid hasnt been modified in the last five minutes.
-        LOG.info("Creating cacheQueue for last update messages with "+ secondsToWait+" seconds wait and forceCleanup = "+forceCleanup);
-        RemovalListener<String, LastModifiedMessage> removalListener = new RemovalListener<String, LastModifiedMessage>() {
-            public void onRemoval(RemovalNotification<String, LastModifiedMessage> removal) {
-                if (removal.wasEvicted()){
-                    LastModifiedMessage m = removal.getValue();
-                    LOG.info("Removing "+ removal.getKey() + " from cacheQueue");
-                    LOG.info(m.getLastUpdated()+" "+m.getMethod());
-                    OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(m.getOrcid());
-                    Date lastModifiedFromprofile = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-                    Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());
-                    //note this is slightly different from existing behaviour
-                    if (lastModifiedFromprofile.after(lastModifiedFromSolr)) 
-                        solrIndexUpdater.updateSolrIndex(profile);
-                    //now do the same for S3...
-                }
-            }
-          };
+        LOG.info("Creating cacheQueue with "+ secondsToWait+" seconds wait and forceCleanup = "+forceCleanup + "using "+removalListener.getClass().getSimpleName());
         
         //create a thread that does the removal - we can fiddle with the Executor if we need more threads
         executor = Executors.newSingleThreadExecutor(); 

@@ -35,7 +35,7 @@ public class LastModifiedMessage {
      */
     public final Map<String,String> map;
 
-    public LastModifiedMessage(String orcid, String method, Date date){
+    public LastModifiedMessage(String orcid, Date date){
         String lastStr = "";
         if (date != null)
             lastStr = ""+date.getTime();
@@ -43,8 +43,7 @@ public class LastModifiedMessage {
         map = ImmutableMap.of(
                 MessageConstants.TYPE.value,MessageConstants.TYPE_LAST_UPDATED.value,
                 MessageConstants.ORCID.value, orcid, 
-                MessageConstants.DATE.value, ""+lastStr, 
-                MessageConstants.METHOD.value, method);
+                MessageConstants.DATE.value, ""+lastStr);
     }
     
     public LastModifiedMessage(Map<String,String> m){
@@ -63,10 +62,6 @@ public class LastModifiedMessage {
         if (time == null)
             return null;
         return new Date(Long.valueOf(time));
-    }
-    
-    public String getMethod(){
-        return map.get(MessageConstants.METHOD.value);
     }
     
     public Map<String,String> getMap(){

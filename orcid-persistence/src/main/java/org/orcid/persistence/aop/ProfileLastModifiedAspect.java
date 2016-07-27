@@ -102,13 +102,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         this.updateLastModifiedDateAndIndexingStatus(orcid);
         //profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
         
-        //messaging
-        Date last = retrieveLastModifiedDate(orcid);
-        LastModifiedMessage mess = new LastModifiedMessage(
-                orcid,
-                joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName(),
-                last);
-        messaging.send(mess);
+        
     }
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")
@@ -134,6 +128,10 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);
+        //messaging
+        Date last = retrieveLastModifiedDate(orcid);
+        LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
+        messaging.send(mess);
     }
 
     /** Fetches the last modified from the request-scope last modified cache

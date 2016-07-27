@@ -20,10 +20,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.orcid.listener.listeners.updated.UpdatedOrcidExpringQueue;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -43,22 +45,24 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class LastUpdatedListener {
+public class UpdatedOrcidListener {
     
-    Logger LOG = LoggerFactory.getLogger(LastUpdatedListener.class);
+    Logger LOG = LoggerFactory.getLogger(UpdatedOrcidListener.class);
     
     @Resource
-    public LastUpdatedCacheQueue cacheQueue;
+    public UpdatedOrcidExpringQueue cacheQueue;
     
+    /** Queues incoming messages for processing
+     * 
+     * @param map
+     */
     @JmsListener(destination=MessageConstants.Queues.UPDATED_ORCIDS)
     public void processMessage(final Map<String,String> map) {
         LastModifiedMessage message = new LastModifiedMessage(map);
-        LOG.info("Recieved message for orcid "+message.getOrcid() + " "+message.getLastUpdated()); 
+        LOG.info("Recieved "+MessageConstants.Queues.UPDATED_ORCIDS+" message for orcid "+message.getOrcid() + " "+message.getLastUpdated()); 
         LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(message.getOrcid());
         if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
             cacheQueue.getCache().put(message.getOrcid(), message); 
-        //note this will lose the method information of older messages, but it is currently unused.
     }
-    
     
 }

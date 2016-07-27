@@ -1,4 +1,4 @@
-package org.orcid.listener.apiclient;
+package org.orcid.listener.clients;
 
 import java.net.URI;
 import java.net.URISyntaxException;

@@ -1,4 +1,4 @@
-package org.orcid.listener.solr;
+package org.orcid.listener.clients;
 
 import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
 import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
