@@ -14,6 +14,20 @@
  *
  * =============================================================================
  */
+
+/*
+ * Structure of this file:
+ * 
+ *  - Random functions
+ *  - Groupings logic
+ *  - Angular Services
+ *  - Angular Controllers
+ *  - Angular Filters
+ *  - Angular Directives
+ *  - Angular Multiselect Module
+ *  
+ */
+
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
     setTimeout( function() {
@@ -34,7 +48,7 @@ function contains(arr, obj) {
        }
     }
     return false;
-}
+};
 
 function formatDate(oldDate) {
 	var date = new Date(oldDate);
@@ -48,8 +62,7 @@ function formatDate(oldDate) {
 		day = '0' + day;
 	}
 	return (year + '-' + month + '-' + day);
-}
-
+};
 
 function getScripts(scripts, callback) {
     var progress = 0;
@@ -63,6 +76,74 @@ function getScripts(scripts, callback) {
     });
 };
 
+function formColorBoxWidth() {
+    return isMobile()? '100%': '800px';
+}
+
+function formColorBoxResize() {
+    if (isMobile())
+        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
+    else
+        // IE8 and below doesn't take auto height
+        // however the default div height
+        // is auto anyway
+        $.colorbox.resize({width:'800px'});
+}
+
+function fixZindexIE7(target, zindex){
+    if(isIE() == 7){
+        $(target).each(function(){
+            $(this).css('z-index', zindex);
+            --zindex;
+        });
+    }
+}
+
+function emptyTextField(field) {
+    if (field != null
+            && field.value != null
+            && field.value.trim() != '') return false;
+    return true;
+}
+
+function addComma(str) {
+    if (str.length > 0) return str + ', ';
+    return str;
+}
+
+function removeBadContributors(dw) {
+    for (var idx in dw.contributors) {
+        if (dw.contributors[idx].contributorSequence == null
+            && dw.contributors[idx].email == null
+            && dw.contributors[idx].orcid == null
+            && dw.contributors[idx].creditName == null
+            && dw.contributors[idx].contributorRole == null
+            && dw.contributors[idx].creditNameVisibility == null) {
+                dw.contributors.splice(idx,1);
+            }
+    }
+}
+
+function removeBadExternalIdentifiers(dw) {
+    for(var idx in dw.workExternalIdentifiers) {
+        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
+            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
+            dw.workExternalIdentifiers.splice(idx,1);
+        }
+    }
+}
+
+function isEmail(email) {
+    var re = /\S+@\S+\.\S+/;
+    return re.test(email);
+}
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
 
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
@@ -100,7 +181,7 @@ GroupedActivitiesUtil.prototype.group = function(activity, type, groupsArray) {
 
 GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
     for (var idx in groupsArray) {
-        if (groupsArray[idx].hasPut(putCode)) {
+    	if (groupsArray[idx].hasPut(putCode)) {
            groupsArray[idx].rmByPut(putCode);
            if (groupsArray[idx].activitiesCount == 0)
                groupsArray.splice(idx,1);
@@ -109,15 +190,13 @@ GroupedActivitiesUtil.prototype.rmByPut = function(putCode, type, groupsArray) {
                for (var idj in orphans)
                    groupedActivitiesUtil.group(orphans[idj], type, groupsArray);
            }
-       }
+        }
     }
-}
-
+};
 
 var groupedActivitiesUtil = new GroupedActivitiesUtil();
 
 var GroupedActivities = function(type) {
-
     if (GroupedActivities.count == undefined)
         GroupedActivities.count = 1;
     else
@@ -194,8 +273,7 @@ GroupedActivities.prototype.getByPut = function(putCode) {
     return this.activities[putCode];
 };
 
-GroupedActivities.prototype.consistentVis = function() {
-	
+GroupedActivities.prototype.consistentVis = function() {	
 	if (this.type == GroupedActivities.FUNDING)
         var vis = this.getDefault().visibility.visibility;
     else
@@ -220,9 +298,8 @@ GroupedActivities.prototype.getIdentifiersPath = function() {
 };
 
 /*
- * takes a activity and adds it to an existing group or creates
- * a new group
- */
+* takes a activity and adds it to an existing group or creates a new group
+*/
 
 GroupedActivities.prototype.hasKey = function(key) {
     if (key in this._keySet)
@@ -291,8 +368,7 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
 
 GroupedActivities.prototype.keyMatch = function(activity) {
 	var identifiersPath = null;
-    identifiersPath = this.getIdentifiersPath();    
-    
+    identifiersPath = this.getIdentifiersPath();
     if(this.type == GroupedActivities.PEER_REVIEW) {    	
     	if(this.key(activity[identifiersPath]) == '' || typeof this.key(activity[identifiersPath].value) === undefined) return false;
     	if(this.key(activity[identifiersPath]) in this._keySet)
@@ -303,8 +379,7 @@ GroupedActivities.prototype.keyMatch = function(activity) {
             if (this.key(activity[identifiersPath][idx]) in this._keySet)
                 return true;        
         }
-    }
-        
+    }   
     return false;
 };
 
@@ -369,103 +444,6 @@ GroupedActivities.prototype.unionCheck = function() {
     return rmActs;
 };
 
-
-var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
-
-orcidNgModule.directive('ngModelOnblur', function() {
-    return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, elm, attr, ngModelCtrl) {
-            if (attr.type === 'radio' || attr.type === 'checkbox') return;
-
-            elm.unbind('input').unbind('keydown').unbind('change');
-
-            elm.bind("keydown keypress", function(event) {
-                if (event.which === 13) {
-                    scope.$apply(function() {
-                        ngModelCtrl.$setViewValue(elm.val());
-                    });
-                }
-            });
-
-            elm.bind('blur', function() {
-                scope.$apply(function() {
-                    ngModelCtrl.$setViewValue(elm.val());
-                });
-            });
-        }
-    };
-});
-
-orcidNgModule.directive('appFileTextReader', function($q){
-        var slice = Array.prototype.slice;
-        return {
-            restrict: 'A',
-            require: 'ngModel',
-            scope: {
-                updateFn: '&'
-            },
-            link: function(scope, element, attrs, ngModelCtrl){
-                if(!ngModelCtrl) return;
-                ngModelCtrl.$render = function(){};
-                element.bind('change', function(event){
-                    var element = event.target;
-                    $q.all(slice.call(element.files, 0).map(readFile))
-                    .then(function(values){
-                        if(element.multiple){
-                            for(v in values){
-                                ngModelCtrl.$viewValue.push(values[v]);
-                            }
-                        }
-                        else{
-                            ngModelCtrl.$setViewValue(values.length ? values[0] : null);
-                        }
-                        scope.updateFn(scope);
-                        element.value = null;
-                    });
-                    function readFile(file) {
-                        var deferred = $q.defer();
-                        var reader = new FileReader();
-                        reader.onload = function(event){
-                            deferred.resolve(event.target.result);
-                        };
-                        reader.onerror = function(event) {
-                            deferred.reject(event);
-                        };
-                        reader.readAsText(file);
-                        return deferred.promise;
-                    }
-                });//change
-            }//link
-        };//return
-    });//appFilereader
-
-//Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
-orcidNgModule.directive('compile', function($compile) {
-    // directive factory creates a link function
-    return function(scope, element, attrs) {
-      scope.$watch(
-        function(scope) {
-           // watch the 'compile' expression for changes
-          return scope.$eval(attrs.compile);
-        },
-        function(value) {
-          // when the 'compile' expression changes
-          // assign it into the current DOM
-          element.html(value);
-
-          // compile the new DOM and link it to the current
-          // scope.
-          // NOTE: we only compile .childNodes so that
-          // we don't get into infinite loop compiling ourselves
-          $compile(element.contents())(scope);
-        }
-      );
-    };
-  });
-
-
 var ActSortState = function(groupType) {
     this.type = groupType;    
     this.predicateKey = 'date';
@@ -477,7 +455,6 @@ var ActSortState = function(groupType) {
     this.reverseKey['groupName']  = false;
     this.predicate = this.predicateMap[this.type][this.predicateKey];
 };
-
 
 var sortPredicateMap = {};
 sortPredicateMap[GroupedActivities.ABBR_WORK] = {};
@@ -499,7 +476,6 @@ sortPredicateMap[GroupedActivities.PEER_REVIEW]['groupName'] = ['groupName'];
 
 ActSortState.prototype.predicateMap = sortPredicateMap;
 
-
 ActSortState.prototype.sortBy = function(key) {	
         if (this.predicateKey == key){
            this.reverse = !this.reverse;
@@ -510,17 +486,24 @@ ActSortState.prototype.sortBy = function(key) {
 };
 
 
+
+var orcidNgModule = angular.module('orcidApp', ['ngCookies','ngSanitize', 'ui.multiselect', 'vcRecaptcha']);
+
+/*
+ * SERVICES
+ */
+
 orcidNgModule.factory("actBulkSrvc", ['$rootScope', function ($rootScope) {
     var actBulkSrvc = {
-            initScope: function($scope) {
-                $scope.bulkEditShow = false;
-                $scope.bulkEditMap = {};
-                $scope.bulkChecked = false;
-                $scope.bulkDisplayToggle = false;
-                $scope.toggleSelectMenu = function(){                	
-                    $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
-                };
-            }
+    	initScope: function($scope) {
+    		$scope.bulkEditShow = false;
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            $scope.bulkDisplayToggle = false;
+            $scope.toggleSelectMenu = function(){                	
+                $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
+            };
+        }
     };
     return actBulkSrvc;
 }]);
@@ -533,8 +516,7 @@ orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
             $scope.bulkEditMap = {};
             $scope.bulkChecked = false;
             $scope.bulkDisplayToggle = false;
-            $scope.toggleSelectMenu = function(){
-            	console.log('Click');
+            $scope.toggleSelectMenu = function(){            	
                 $scope.bulkDisplayToggle = !$scope.bulkDisplayToggle;                    
             };
         }
@@ -544,186 +526,182 @@ orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
 
 orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
     var commonSrvc = {
-            copyErrorsLeft: function (data1, data2) {
-                for (var key in data1) {
-                    if (key == 'errors') {
-                        data1.errors = data2.errors;
-                    } else {
-                        if (data1[key] != null && data1[key].errors !== undefined)
+    	copyErrorsLeft: function (data1, data2) {
+    		for (var key in data1) {
+    			if (key == 'errors') {
+    				data1.errors = data2.errors;
+                } else {
+                	if (data1[key] != null && data1[key].errors !== undefined)
                         data1[key].errors = data2[key].errors;
-                    };
                 };
-            }
+    		};
+        }
     };
     return commonSrvc;
 }]);
 
-
 orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
-            educations: new Array(),
-            employments: new Array(),
-            loading: false,
-            affiliationsToAddIds: null,
-            addAffiliationToScope: function(path) {
-                if( serv.affiliationsToAddIds.length != 0 ) {
-                    var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
-                    var url = getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds;
-                    
-                    $.ajax({
-                        url: url,                        
-                        headers : {'Content-Type': 'application/json'},
-                        method: 'GET',
-                        success: function(data) {
-                            for (i in data) {
-
-                                if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                        && data[i].affiliationType.value == 'education')
-                                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
-                                else if (data[i].affiliationType != null && data[i].affiliationType.value != null
-                                        && data[i].affiliationType.value == 'employment')
-                                    groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
-                            };
-                            if (serv.affiliationsToAddIds.length == 0) {
-                                serv.loading = false;
-                                $rootScope.$apply();
-                            } else {
-                                $rootScope.$apply();
-                                setTimeout(function () {
-                                    serv.addAffiliationToScope(path);
-                                },50);
-                            }
-                        }
-                    }).fail(function(e) {
-                        console.log(e.statusText);
-                    });
-                } else {
-                    serv.loading = false;
-                };
-            },
-            setIdsToAdd: function(ids) {
-                serv.affiliationsToAddIds = ids;
-            },
-            getAffiliations: function(path) {
-                //clear out current affiliations
-                serv.loading = true;
-                serv.affiliationsToAddIds = null;
-                serv.educations.length = 0;
-                serv.employments.length = 0;
-                //get affiliation ids
+    	educations: new Array(),
+        employments: new Array(),
+        loading: false,
+        affiliationsToAddIds: null,
+        addAffiliationToScope: function(path) {
+            if( serv.affiliationsToAddIds.length != 0 ) {
+                var affiliationIds = serv.affiliationsToAddIds.splice(0,20).join();
+                var url = getBaseUri() + '/' + path + '?affiliationIds=' + affiliationIds;                
                 $.ajax({
-                    url: getBaseUri() + '/' + path,
-                    dataType: 'json',
+                    url: url,                        
+                    headers : {'Content-Type': 'application/json'},
+                    method: 'GET',
                     success: function(data) {
-                        serv.affiliationsToAddIds = data;
-                        serv.addAffiliationToScope('affiliations/affiliations.json');
-                        $rootScope.$apply();
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("error fetching affiliations");
-                });
-            },
-            updateProfileAffiliation: function(aff) {
-                $.ajax({
-                    url: getBaseUri() + '/affiliations/affiliation.json',
-                    type: 'PUT',
-                    data: angular.toJson(aff),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.errors.length != 0){
-                            console.log("Unable to update profile affiliation.");
+                        for (i in data) {
+                            if (data[i].affiliationType != null && data[i].affiliationType.value != null
+                                    && data[i].affiliationType.value == 'education')
+                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.educations);
+                            else if (data[i].affiliationType != null && data[i].affiliationType.value != null
+                                    && data[i].affiliationType.value == 'employment')
+                                groupedActivitiesUtil.group(data[i],GroupedActivities.AFFILIATION,serv.employments);
+                        };
+                        if (serv.affiliationsToAddIds.length == 0) {
+                            serv.loading = false;
+                            $rootScope.$apply();
+                        } else {
+                            $rootScope.$apply();
+                            setTimeout(function () {
+                                serv.addAffiliationToScope(path);
+                            },50);
                         }
-                        $rootScope.$apply();
                     }
-                }).fail(function() {
-                    console.log("Error updating profile affiliation.");
+                }).fail(function(e) {
+                    console.log(e.statusText);
                 });
-            },
-            deleteAffiliation: function(affiliation) {
-                var arr = null;
-                if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
-                        && affiliation.affiliationType.value == 'education')
-                    arr = serv.educations;
-                if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
-                        && affiliation.affiliationType.value == 'employment')
-                    arr = serv.employments;
-                var idx;
-                for (var idx in arr) {
-                    if (arr[idx].activePutCode == affiliation.putCode.value) {
-                        break;
-                    }
+            } else {
+                serv.loading = false;
+            };
+        },
+        setIdsToAdd: function(ids) {
+            serv.affiliationsToAddIds = ids;
+        },
+        getAffiliations: function(path) {
+            //clear out current affiliations
+            serv.loading = true;
+            serv.affiliationsToAddIds = null;
+            serv.educations.length = 0;
+            serv.employments.length = 0;
+            //get affiliation ids
+            $.ajax({
+                url: getBaseUri() + '/' + path,
+                dataType: 'json',
+                success: function(data) {
+                    serv.affiliationsToAddIds = data;
+                    serv.addAffiliationToScope('affiliations/affiliations.json');
+                    $rootScope.$apply();
                 }
-                arr.splice(idx, 1);
-                $.ajax({
-                    url: getBaseUri() + '/affiliations/affiliations.json',
-                    type: 'DELETE',
-                    data: angular.toJson(affiliation),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.errors.length != 0){
-                            console.log("Unable to delete affiliation.");
-                        }
-                        $rootScope.$apply();
+            }).fail(function(){
+                // something bad is happening!
+                console.log("error fetching affiliations");
+            });
+        },
+        updateProfileAffiliation: function(aff) {
+            $.ajax({
+                url: getBaseUri() + '/affiliations/affiliation.json',
+                type: 'PUT',
+                data: angular.toJson(aff),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if(data.errors.length != 0){
+                        console.log("Unable to update profile affiliation.");
                     }
-                }).fail(function() {
-                    console.log("Error deleting affiliation.");
-                });
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                console.log("Error updating profile affiliation.");
+            });
+        },
+        deleteAffiliation: function(affiliation) {
+            var arr = null;
+            if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
+                    && affiliation.affiliationType.value == 'education')
+                arr = serv.educations;
+            if (affiliation.affiliationType != null && affiliation.affiliationType.value != null
+                    && affiliation.affiliationType.value == 'employment')
+                arr = serv.employments;
+            var idx;
+            for (var idx in arr) {
+                if (arr[idx].activePutCode == affiliation.putCode.value) {
+                    break;
+                }
             }
+            arr.splice(idx, 1);
+            $.ajax({
+                url: getBaseUri() + '/affiliations/affiliations.json',
+                type: 'DELETE',
+                data: angular.toJson(affiliation),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if(data.errors.length != 0){
+                        console.log("Unable to delete affiliation.");
+                    }
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                console.log("Error deleting affiliation.");
+            });
+        }
     };
     return serv;
 }]);
 
 orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
     var serv = {
-            displayEducation: true,
-            displayEmployment: true,
-            displayFunding: true,
-            displayPersonalInfo: true,
-            displayWorks: true,
-            displayPeerReview: true,
-            toggleEducation: function() {
-                serv.displayEducation = !serv.displayEducation;
-            },
-            toggleEmployment: function() {
-                serv.displayEmployment = !serv.displayEmployment;
-            },
-            toggleFunding: function() {
-                serv.displayFunding = !serv.displayFunding;
-            },
-            togglePersonalInfo: function() {
-                serv.displayPersonalInfo = !serv.displayPersonalInfo;
-            },
-            toggleWorks: function() {
-                serv.displayWorks = !serv.displayWorks;
-            },
-            togglePeerReview: function() {            	
-            	serv.displayPeerReview = !serv.displayPeerReview;
-            },
-            openEducation: function() {
-                serv.displayEducation = true;
-            },
-            openFunding: function() {
-                serv.displayFunding = true;
-            },
-            openEmployment: function() {
-                serv.displayEmployment = true;
-            },
-            openPersonalInfo: function() {
-                serv.displayPersonalInfo = true;
-            },
-            openWorks: function() {
-                serv.displayWorks = true;
-            },
-            openPeerReview: function() {
-                serv.displayPeerReview = true;
-            },
-            togglePeerReviews : function() {
-            	serv.displayPeerReview = !serv.displayPeerReview;
-            }
-            
+        displayEducation: true,
+        displayEmployment: true,
+        displayFunding: true,
+        displayPersonalInfo: true,
+        displayWorks: true,
+        displayPeerReview: true,
+        toggleEducation: function() {
+            serv.displayEducation = !serv.displayEducation;
+        },
+        toggleEmployment: function() {
+            serv.displayEmployment = !serv.displayEmployment;
+        },
+        toggleFunding: function() {
+            serv.displayFunding = !serv.displayFunding;
+        },
+        togglePersonalInfo: function() {
+            serv.displayPersonalInfo = !serv.displayPersonalInfo;
+        },
+        toggleWorks: function() {
+            serv.displayWorks = !serv.displayWorks;
+        },
+        togglePeerReview: function() {            	
+        	serv.displayPeerReview = !serv.displayPeerReview;
+        },
+        openEducation: function() {
+            serv.displayEducation = true;
+        },
+        openFunding: function() {
+            serv.displayFunding = true;
+        },
+        openEmployment: function() {
+            serv.displayEmployment = true;
+        },
+        openPersonalInfo: function() {
+            serv.displayPersonalInfo = true;
+        },
+        openWorks: function() {
+            serv.displayWorks = true;
+        },
+        openPeerReview: function() {
+            serv.displayPeerReview = true;
+        },
+        togglePeerReviews : function() {
+        	serv.displayPeerReview = !serv.displayPeerReview;
+        }   
     };
     return serv;
 }]);
@@ -733,690 +711,688 @@ orcidNgModule.factory("workspaceSrvc", ['$rootScope', function ($rootScope) {
  * */
 orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
     var fundingSrvc = {
-            fundings: new Array(),
-            groups: new Array(),
-            loading: false,
-            constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-            fundingToAddIds: null,
-            moreDetailsActive: false,
-            addFundingToScope: function(path) {
-                if( fundingSrvc.fundingToAddIds.length != 0 ) {
-                    var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
-                    $.ajax({
-                        url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
-                        dataType: 'json',
-                        success: function(data) {
-                                for (i in data) {
-                                    var funding = data[i];
-                                    groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
-                                };
-                                if (fundingSrvc.fundingToAddIds.length == 0) {
-                                    fundingSrvc.loading = false;
-                                    $rootScope.$apply();
-                                } else {
-                                    $rootScope.$apply();
-                                    setTimeout(function () {
-                                        fundingSrvc.addFundingToScope(path);
-                                    },50);
-                                }
-                        }
-                    }).fail(function() {
-                        console.log("Error fetching fundings");
-                    });
-                } else {
-                    fundingSrvc.loading = false;
-                };
-            },
-            createNew: function(work) {
-                var cloneF = JSON.parse(JSON.stringify(work));
-                cloneF.source = null;
-                cloneF.putCode = null;
-                for (var idx in cloneF.externalIdentifiers)
-                    cloneF.externalIdentifiers[idx].putCode = null;
-                return cloneF;
-            },
-            getEditable: function(putCode, callback) {
-                // first check if they are the current source
-                var funding = fundingSrvc.getFunding(putCode);
-                if (funding.source == orcidVar.orcidId)
-                    callback(funding);
-                else {
-                    var bestMatch = null;
-                    var group = fundingSrvc.getGroup(putCode);
-                    for (var idx in group.activitiess) {
-                        if (group[idx].source == orcidVar.orcidId) {
-                            bestMatch = callback(group[idx]);
-                            break;
-                        }
-                    }
-                    if (bestMatch == null) 
-                        bestMatch = fundingSrvc.createNew(funding);
-                    callback(bestMatch);
-                };
-            },
-            deleteFunding: function(putCode) {
-                var rmFunding;
-                for (var idx in fundingSrvc.groups) {
-                    if (fundingSrvc.groups[idx].hasPut(putCode)) {
-                        rmFunding = fundingSrvc.groups[idx].getByPut(putCode);
-                        break;
-                    };
-                };
-                // remove work on server
-                fundingSrvc.removeFunding(rmFunding);
-            },
-            deleteGroupFunding: function(putCode) {
-                var idx;
-                var rmWorks;
-                for (var idx in fundingSrvc.groups) {
-                    if (fundingSrvc.groups[idx].hasPut(putCode)) {
-                       for (var idj in fundingSrvc.groups[idx].activities) {
-                           fundingSrvc.removeFunding(fundingSrvc.groups[idx].activities[idj]);
-                        }
-                        fundingSrvc.groups.splice(idx,1);
-                        break;
-                    }
-                }
-            },
-            fundingCount: function() {
-                var count = 0;
-                for (var idx in fundingSrvc.groups) {
-                    count += fundingSrvc.groups[idx].activitiesCount;
-                }
-                return count;
-            },
-            getFunding: function(putCode) {
-                for (var idx in fundingSrvc.groups) {
-                        if (fundingSrvc.groups[idx].hasPut(putCode))
-                            return fundingSrvc.groups[idx].getByPut(putCode);
-                }
-                return null;
-            },
-            getFundings: function(path) {
-                //clear out current fundings
-                fundingSrvc.loading = true;
-                fundingSrvc.fundingToAddIds = null;
-                //new way
-                fundingSrvc.groups.length = 0;
-                //get funding ids
+        fundings: new Array(),
+        groups: new Array(),
+        loading: false,
+        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+        fundingToAddIds: null,
+        moreDetailsActive: false,
+        addFundingToScope: function(path) {
+            if( fundingSrvc.fundingToAddIds.length != 0 ) {
+                var fundingIds = fundingSrvc.fundingToAddIds.splice(0,20).join();
                 $.ajax({
-                    url: getBaseUri() + '/'  + path,
+                    url: getBaseUri() + '/' + path + '?fundingIds=' + fundingIds,
                     dataType: 'json',
                     success: function(data) {
-                        fundingSrvc.fundingToAddIds = data;
-                        fundingSrvc.addFundingToScope('fundings/fundings.json');
-                        $rootScope.$apply();
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("error fetching fundings");
-                });
-            },
-            getGroup: function(putCode) {
-                for (var idx in fundingSrvc.groups) {
-                        if (fundingSrvc.groups[idx].hasPut(putCode))
-                            return fundingSrvc.groups[idx];
-                }
-                return null;
-            },
-            makeDefault: function(group, putCode) {
-                group.makeDefault(putCode);
-                $.ajax({
-                    url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
-                    dataType: 'json',
-                    success: function(data) {
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("some bad is hppending");
-                });
-            },
-            removeFunding: function(funding) {
-                $.ajax({
-                    url: getBaseUri() + '/fundings/funding.json',
-                    type: 'DELETE',
-                    data: angular.toJson(funding),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (data.errors.length != 0)
-                           console.log("Unable to delete funding.");
-                        else
-                           groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);
-                        $rootScope.$apply();
+                        for (i in data) {
+                            var funding = data[i];
+                            groupedActivitiesUtil.group(funding,GroupedActivities.FUNDING,fundingSrvc.groups);
+                        };
+                        if (fundingSrvc.fundingToAddIds.length == 0) {
+                            fundingSrvc.loading = false;
+                            $rootScope.$apply();
+                        } else {
+                            $rootScope.$apply();
+                            setTimeout(function () {
+                                fundingSrvc.addFundingToScope(path);
+                            },50);
+                        }
                     }
                 }).fail(function() {
-                    console.log("Error deleting funding.");
+                    console.log("Error fetching fundings");
                 });
-            },
-            setIdsToAdd: function(ids) {
-                fundingSrvc.fundingToAddIds = ids;
-            },
-            setGroupPrivacy: function(putCode, priv) {
+            } else {
+                fundingSrvc.loading = false;
+            };
+        },
+        createNew: function(work) {
+            var cloneF = JSON.parse(JSON.stringify(work));
+            cloneF.source = null;
+            cloneF.putCode = null;
+            for (var idx in cloneF.externalIdentifiers)
+                cloneF.externalIdentifiers[idx].putCode = null;
+            return cloneF;
+        },
+        getEditable: function(putCode, callback) {
+            // first check if they are the current source
+            var funding = fundingSrvc.getFunding(putCode);
+            if (funding.source == orcidVar.orcidId)
+                callback(funding);
+            else {
+                var bestMatch = null;
                 var group = fundingSrvc.getGroup(putCode);
-                for (var idx in group.activities) {
-                    var curPutCode = group.activities[idx].putCode.value;
-                    fundingSrvc.setPrivacy(curPutCode, priv);
-                }
-            },
-            setPrivacy: function(putCode, priv) {
-                var idx;
-                var funding = fundingSrvc.getFunding(putCode);
-                funding.visibility.visibility = priv;
-                fundingSrvc.updateProfileFunding(funding);
-            },
-            updateProfileFunding: function(funding) {
-                $.ajax({
-                    url: getBaseUri() + '/fundings/funding.json',
-                    type: 'PUT',
-                    data: angular.toJson(funding),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if(data.errors.length != 0){
-                            console.log("Unable to update profile funding.");
-                        }
-                        $rootScope.$apply();
+                for (var idx in group.activitiess) {
+                    if (group[idx].source == orcidVar.orcidId) {
+                        bestMatch = callback(group[idx]);
+                        break;
                     }
-                }).fail(function() {
-                    console.log("Error updating profile funding.");
-                });
+                }
+                if (bestMatch == null) 
+                    bestMatch = fundingSrvc.createNew(funding);
+                callback(bestMatch);
+            };
+        },
+        deleteFunding: function(putCode) {
+            var rmFunding;
+            for (var idx in fundingSrvc.groups) {
+                if (fundingSrvc.groups[idx].hasPut(putCode)) {
+                    rmFunding = fundingSrvc.groups[idx].getByPut(putCode);
+                    break;
+                };
+            };
+            // remove work on server
+            fundingSrvc.removeFunding(rmFunding);
+        },
+        deleteGroupFunding: function(putCode) {
+            var idx;
+            var rmWorks;
+            for (var idx in fundingSrvc.groups) {
+                if (fundingSrvc.groups[idx].hasPut(putCode)) {
+                   for (var idj in fundingSrvc.groups[idx].activities) {
+                       fundingSrvc.removeFunding(fundingSrvc.groups[idx].activities[idj]);
+                    }
+                    fundingSrvc.groups.splice(idx,1);
+                    break;
+                }
             }
+        },
+        fundingCount: function() {
+            var count = 0;
+            for (var idx in fundingSrvc.groups) {
+                count += fundingSrvc.groups[idx].activitiesCount;
+            }
+            return count;
+        },
+        getFunding: function(putCode) {
+            for (var idx in fundingSrvc.groups) {
+                    if (fundingSrvc.groups[idx].hasPut(putCode))
+                        return fundingSrvc.groups[idx].getByPut(putCode);
+            }
+            return null;
+        },
+        getFundings: function(path) {
+            //clear out current fundings
+            fundingSrvc.loading = true;
+            fundingSrvc.fundingToAddIds = null;
+            //new way
+            fundingSrvc.groups.length = 0;
+            //get funding ids
+            $.ajax({
+                url: getBaseUri() + '/'  + path,
+                dataType: 'json',
+                success: function(data) {
+                    fundingSrvc.fundingToAddIds = data;
+                    fundingSrvc.addFundingToScope('fundings/fundings.json');
+                    $rootScope.$apply();
+                }
+            }).fail(function(){
+                // something bad is happening!
+                console.log("error fetching fundings");
+            });
+        },
+        getGroup: function(putCode) {
+            for (var idx in fundingSrvc.groups) {
+                    if (fundingSrvc.groups[idx].hasPut(putCode))
+                        return fundingSrvc.groups[idx];
+            }
+            return null;
+        },
+        makeDefault: function(group, putCode) {
+            group.makeDefault(putCode);
+            $.ajax({
+                url: getBaseUri() + '/fundings/updateToMaxDisplay.json?putCode=' + putCode,
+                dataType: 'json',
+                success: function(data) {
+                }
+            }).fail(function(){
+                // something bad is happening!
+                console.log("some bad is hppending");
+            });
+        },
+        removeFunding: function(funding) {
+            $.ajax({
+                url: getBaseUri() + '/fundings/funding.json',
+                type: 'DELETE',
+                data: angular.toJson(funding),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.errors.length != 0)
+                       console.log("Unable to delete funding.");
+                    else
+                       groupedActivitiesUtil.rmByPut(funding.putCode.value, GroupedActivities.FUNDING,fundingSrvc.groups);
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                console.log("Error deleting funding.");
+            });
+        },
+        setIdsToAdd: function(ids) {
+            fundingSrvc.fundingToAddIds = ids;
+        },
+        setGroupPrivacy: function(putCode, priv) {
+            var group = fundingSrvc.getGroup(putCode);
+            for (var idx in group.activities) {
+                var curPutCode = group.activities[idx].putCode.value;
+                fundingSrvc.setPrivacy(curPutCode, priv);
+            }
+        },
+        setPrivacy: function(putCode, priv) {
+            var idx;
+            var funding = fundingSrvc.getFunding(putCode);
+            funding.visibility.visibility = priv;
+            fundingSrvc.updateProfileFunding(funding);
+        },
+        updateProfileFunding: function(funding) {
+            $.ajax({
+                url: getBaseUri() + '/fundings/funding.json',
+                type: 'PUT',
+                data: angular.toJson(funding),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if(data.errors.length != 0){
+                        console.log("Unable to update profile funding.");
+                    }
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                console.log("Error updating profile funding.");
+            });
+        }
     };
     return fundingSrvc;
 }]);
 
 orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
     var worksSrvc = {
-            bibtexJson: {},
-            constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-            groups: new Array(),
-            quickRef: {},
-            loading: false,
-            loadingDetails: false,
-            blankWork: null,
-            details: new Object(), // we should think about putting details in the
-            worksToAddIds: null,             
-            addBibtexJson: function(dw) {
-                if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
-                    try {
-                        worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
-                    } catch (err) {
-                        worksSrvc.bibtexJson[dw.putCode.value] = null;
-                        console.log("couldn't parse bibtex: " + dw.citation.citation.value);
-                    };
+        bibtexJson: {},
+        constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+        groups: new Array(),
+        quickRef: {},
+        loading: false,
+        loadingDetails: false,
+        blankWork: null,
+        details: new Object(), // we should think about putting details in the
+        worksToAddIds: null,             
+        addBibtexJson: function(dw) {
+            if (dw.citation && dw.citation.citationType && dw.citation.citationType.value == 'bibtex') {
+                try {
+                    worksSrvc.bibtexJson[dw.putCode.value] = bibtexParse.toJSON(dw.citation.citation.value);
+                } catch (err) {
+                    worksSrvc.bibtexJson[dw.putCode.value] = null;
+                    console.log("couldn't parse bibtex: " + dw.citation.citation.value);
                 };
-            },
-            addAbbrWorksToScope: function(type) {
-                if (type == worksSrvc.constants.access_type.USER)
-                    var url = getBaseUri() + '/works/works.json?workIds=';
-                else // use the anonymous url
-                    var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
-                if(worksSrvc.worksToAddIds.length != 0 ) {
-                    worksSrvc.loading = true;
-                    var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
-                    $.ajax({
-                        'url': url + workIds,
-                        'dataType': 'json',
-                        'success': function(data) {
-                            $rootScope.$apply(function(){
-                                for (i in data) {
-                                    var dw = data[i];
-                                    removeBadContributors(dw);
-                                    removeBadExternalIdentifiers(dw);
-                                    worksSrvc.addBibtexJson(dw);
-                                    groupedActivitiesUtil.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
-                                };
-                            });
-                            if(worksSrvc.worksToAddIds.length == 0 ) {
-                                worksSrvc.loading = false;
-                                $rootScope.$apply();
-                                fixZindexIE7('.workspace-public workspace-body-list li',99999);
-                                fixZindexIE7('.workspace-toolbar',9999);
-                            } else {
-                                $rootScope.$apply();
-                                setTimeout(function(){
-                                    worksSrvc.addAbbrWorksToScope(type);
-                                },50);
-                            }
-                        }
-                    }).fail(function() {
-                        //$rootScope.$apply(function() {
-                            worksSrvc.loading = false;
-                        //});
-                        console.log("Error fetching works: " + workIds);
-                    });
-                } else {
-                    worksSrvc.loading = false;
-                };
-            },
-            createNew: function(work) {
-                var cloneW = JSON.parse(JSON.stringify(work));
-                cloneW.source = null;
-                cloneW.putCode = null;
-                cloneW.contributors = [];
-                return cloneW;
-            },
-            copyEIs: function(from, to) {
-                // add all identiifers
-                if (to.workExternalIdentifiers == undefined)
-                    to.workExternalIdentifiers = new Array();
-                for (var idx in from.workExternalIdentifiers)
-                    to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
-                return to;
-            },
-            getBlankWork: function(callback) {
-                // if cached return clone of blank
-                if (worksSrvc.blankWork != null)
-                    callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
+            };
+        },
+        addAbbrWorksToScope: function(type) {
+            if (type == worksSrvc.constants.access_type.USER)
+                var url = getBaseUri() + '/works/works.json?workIds=';
+            else // use the anonymous url
+                var url = getBaseUri() + '/' + orcidVar.orcidId +'/works.json?workIds='; // public
+            if(worksSrvc.worksToAddIds.length != 0 ) {
+                worksSrvc.loading = true;
+                var workIds = worksSrvc.worksToAddIds.splice(0,20).join();
                 $.ajax({
-                    url: getBaseUri() + '/works/work.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        blankWork =  data;
-                        callback(data);
+                    'url': url + workIds,
+                    'dataType': 'json',
+                    'success': function(data) {
+                        $rootScope.$apply(function(){
+                            for (i in data) {
+                                var dw = data[i];
+                                removeBadContributors(dw);
+                                removeBadExternalIdentifiers(dw);
+                                worksSrvc.addBibtexJson(dw);
+                                groupedActivitiesUtil.group(dw,GroupedActivities.ABBR_WORK,worksSrvc.groups);
+                            };
+                        });
+                        if(worksSrvc.worksToAddIds.length == 0 ) {
+                            worksSrvc.loading = false;
+                            $rootScope.$apply();
+                            fixZindexIE7('.workspace-public workspace-body-list li',99999);
+                            fixZindexIE7('.workspace-toolbar',9999);
+                        } else {
+                            $rootScope.$apply();
+                            setTimeout(function(){
+                                worksSrvc.addAbbrWorksToScope(type);
+                            },50);
+                        }
                     }
                 }).fail(function() {
-                    console.log("Error fetching blank work");
+                    //$rootScope.$apply(function() {
+                        worksSrvc.loading = false;
+                    //});
+                    console.log("Error fetching works: " + workIds);
                 });
-            },
-            getDetails: function(putCode, type, callback) {
-                if (type == worksSrvc.constants.access_type.USER)
-                    var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
-                else // use the anonymous url
-                    var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
-                if(worksSrvc.details[putCode] == undefined) {
-                    $.ajax({
-                        url: url + putCode,
-                        dataType: 'json',
-                        success: function(data) {
-                            $rootScope.$apply(function () {
-                                removeBadContributors(data);
-                                removeBadExternalIdentifiers(data);
-                                worksSrvc.addBibtexJson(data);
-                                worksSrvc.details[putCode] = data;
-                                if (callback != undefined) callback(worksSrvc.details[putCode]);
-                            });
-                        }
-                    }).fail(function(){
-                        // something bad is happening!
-                        console.log("error fetching works");
-                    });
-                } else {
-                    if (callback != undefined) callback(worksSrvc.details[putCode]);
-                };
-            },
-            getEditable: function(putCode, callback) {
-                // first check if they are the current source
-                var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
-                    if (data.source == orcidVar.orcidId)
-                        callback(data);
-                    else
-                        worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
-                            // in this case we want to open their version
-                            // if they don't have a version yet then copy
-                            // the current one
-                            var bestMatch = null;
-                            for (var idx in worksSrvc.details)
-                                if (worksSrvc.details[idx].source == orcidVar.orcidId) {
-                                    bestMatch = worksSrvc.details[idx];
-                                    break;
-                                }
-                            if (bestMatch == null) {
-                                bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
-                            }
-                            callback(bestMatch);
-                        });
-                });
-            },
-            getGroup: function(putCode) {
-                for (var idx in worksSrvc.groups) {
-                        if (worksSrvc.groups[idx].hasPut(putCode))
-                            return worksSrvc.groups[idx];
+            } else {
+                worksSrvc.loading = false;
+            };
+        },
+        createNew: function(work) {
+            var cloneW = JSON.parse(JSON.stringify(work));
+            cloneW.source = null;
+            cloneW.putCode = null;
+            cloneW.contributors = [];
+            return cloneW;
+        },
+        copyEIs: function(from, to) {
+            // add all identiifers
+            if (to.workExternalIdentifiers == undefined)
+                to.workExternalIdentifiers = new Array();
+            for (var idx in from.workExternalIdentifiers)
+                to.workExternalIdentifiers.push(JSON.parse(JSON.stringify(from.workExternalIdentifiers[idx])));
+            return to;
+        },
+        getBlankWork: function(callback) {
+            // if cached return clone of blank
+            if (worksSrvc.blankWork != null)
+                callback(JSON.parse(JSON.stringify(worksSrvc.blankWork)));
+            $.ajax({
+                url: getBaseUri() + '/works/work.json',
+                dataType: 'json',
+                success: function(data) {
+                    blankWork =  data;
+                    callback(data);
                 }
-                return null;
-            },
-            getGroupDetails: function(putCode, type, callback) {
-                var group = worksSrvc.getGroup(putCode);
-                var needsLoading =  new Array();
-                for (var idx in group.activities) {
-                    needsLoading.push(group.activities[idx].putCode.value)
-                }
-
-                var popFunct = function () {
-                    if (needsLoading.length > 0)
-                        worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
-                    else if (callback != undefined)
-                        callback();
-                };
-                popFunct();
-            },
-            getWork: function(putCode) {
-                for (var idx in worksSrvc.groups) {
-                        if (worksSrvc.groups[idx].hasPut(putCode))
-                            return worksSrvc.groups[idx].getByPut(putCode);
-                }
-                return null;
-            },
-            deleteGroupWorks: function(putCodes) {
-                var rmWorks = new Array();
-                var rmGroups = new Array();
-                for (var idj in putCodes)
-                    for (var idx in worksSrvc.groups) {
-                        if (worksSrvc.groups[idx].hasPut(putCodes[idj])) {
-                            rmGroups.push(idx);
-                            for (var idj in worksSrvc.groups[idx].activities)
-                                rmWorks.push(worksSrvc.groups[idx].activities[idj].putCode.value);
-                        };
-                    }
-                while (rmGroups.length > 0) 
-                    worksSrvc.groups.splice(rmGroups.pop(),1);
-                worksSrvc.removeWorks(rmWorks);
-            },
-            deleteWork: function(putCode) {
-                worksSrvc.removeWorks([putCode], function() {
-                    groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
-                    $rootScope.$apply();
-                });
-            },
-            makeDefault: function(group, putCode) {
-                group.makeDefault(putCode);
+            }).fail(function() {
+                console.log("Error fetching blank work");
+            });
+        },
+        getDetails: function(putCode, type, callback) {
+            if (type == worksSrvc.constants.access_type.USER)
+                var url = getBaseUri() + '/works/getWorkInfo.json?workId=';
+            else // use the anonymous url
+                var url = getBaseUri() + '/' + orcidVar.orcidId + '/getWorkInfo.json?workId='; // public
+            if(worksSrvc.details[putCode] == undefined) {
                 $.ajax({
-                    url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
+                    url: url + putCode,
                     dataType: 'json',
                     success: function(data) {
+                        $rootScope.$apply(function () {
+                            removeBadContributors(data);
+                            removeBadExternalIdentifiers(data);
+                            worksSrvc.addBibtexJson(data);
+                            worksSrvc.details[putCode] = data;
+                            if (callback != undefined) callback(worksSrvc.details[putCode]);
+                        });
                     }
                 }).fail(function(){
                     // something bad is happening!
-                    console.log("some bad is hppending");
+                    console.log("error fetching works");
                 });
-            },
-            loadAbbrWorks: function(access_type) {
-                if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
-                    worksSrvc.worksToAddIds = orcidVar.workIds;
-                    worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
-                } else {
-                    worksSrvc.worksToAddIds = null;
-                    worksSrvc.loading = true;
-                    worksSrvc.groups = new Array();
-                    worksSrvc.details = new Object();
-                    $.ajax({
-                        url: getBaseUri() + '/works/workIds.json',
-                        dataType: 'json',
-                        success: function(data) {
-                            worksSrvc.worksToAddIds = data;
-                            worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
-                            $rootScope.$apply();
+            } else {
+                if (callback != undefined) callback(worksSrvc.details[putCode]);
+            };
+        },
+        getEditable: function(putCode, callback) {
+            // first check if they are the current source
+            var work = worksSrvc.getDetails(putCode, worksSrvc.constants.access_type.USER, function(data) {
+                if (data.source == orcidVar.orcidId)
+                    callback(data);
+                else
+                    worksSrvc.getGroupDetails(putCode, worksSrvc.constants.access_type.USER, function () {
+                        // in this case we want to open their version
+                        // if they don't have a version yet then copy
+                        // the current one
+                        var bestMatch = null;
+                        for (var idx in worksSrvc.details)
+                            if (worksSrvc.details[idx].source == orcidVar.orcidId) {
+                                bestMatch = worksSrvc.details[idx];
+                                break;
+                            }
+                        if (bestMatch == null) {
+                            bestMatch = worksSrvc.createNew(worksSrvc.details[putCode]);
                         }
-                    }).fail(function(){
-                        // something bad is happening!
-                        console.log("error fetching works");
+                        callback(bestMatch);
                     });
-                };
-            },
-            putWork: function(work,sucessFunc, failFunc) {
-                $.ajax({
-                    url: getBaseUri() + '/works/work.json',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    type: 'POST',
-                    data: angular.toJson(work),
-                    success: function(data) {
-                        sucessFunc(data);
-                    }
-                }).fail(function(){
-                    failFunc();
-                });
-            },
-            removeWorks: function(putCodes,callback) {
-                $.ajax({
-                    url: getBaseUri() + '/works/' + putCodes.splice(0,150).join(),
-                    type: 'DELETE',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (putCodes.length > 0) 
-                            worksSrvc.removeWorks(putCodes,callback);
-                        else if (callback)
-                            callback(data);
-                    }
-                }).fail(function() {
-                    console.log("Error deleting works.");
-                });
-            },
-            setGroupPrivacy: function(putCode, priv) {
-                var group = worksSrvc.getGroup(putCode);
-                var putCodes = new Array();
-                for (var idx in group.activities) {
-                    putCodes.push(group.activities[idx].putCode.value);
-                    group.activities[idx].visibility = priv;
-                }
-                worksSrvc.updateVisibility(putCodes, priv);
-            },
-            setPrivacy: function(putCode, priv) {
-                worksSrvc.updateVisibility([putCode], priv);
-            },
-            updateVisibility: function(putCodes, priv) {
-                $.ajax({
-                    url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
-                    type: 'GET',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (putCodes.length > 0)
-                            worksSrvc.updateVisibility(putCodes, priv);
-                    }
-                }).fail(function() {
-                    console.log("Error updating profile work.");
-                });
-            },
-            workCount: function() {
-                var count = 0;
-                for (var idx in worksSrvc.groups) {
-                    count += worksSrvc.groups[idx].activitiesCount;
-                }
-                return count;
-            },
-            worksValidate: function(works,sucessFunc, failFunc) {
-                $.ajax({
-                    url: getBaseUri() + '/works/worksValidate.json',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    type: 'POST',
-                    data: angular.toJson(works),
-                    success: function(data) {
-                        sucessFunc(data);
-                    }
-                }).fail(function(){
-                    failFunc();
-                });
-            },
-            getUniqueDois : function(putCode){
-            	var dois = [];            	
-            	var group = worksSrvc.getGroup(putCode);
-            	
-            	for (var idx in group.activities) {            		
-            		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
-            			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
-            				if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
-            					dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
-            				}
-            			}
-            		}
-                }
-            	
-            	return dois;
+            });
+        },
+        getGroup: function(putCode) {
+            for (var idx in worksSrvc.groups) {
+                    if (worksSrvc.groups[idx].hasPut(putCode))
+                        return worksSrvc.groups[idx];
             }
+            return null;
+        },
+        getGroupDetails: function(putCode, type, callback) {
+            var group = worksSrvc.getGroup(putCode);
+            var needsLoading =  new Array();
+            for (var idx in group.activities) {
+                needsLoading.push(group.activities[idx].putCode.value)
+            }
+
+            var popFunct = function () {
+                if (needsLoading.length > 0)
+                    worksSrvc.getDetails(needsLoading.pop(), type, popFunct);
+                else if (callback != undefined)
+                    callback();
+            };
+            popFunct();
+        },
+        getWork: function(putCode) {
+            for (var idx in worksSrvc.groups) {
+                    if (worksSrvc.groups[idx].hasPut(putCode))
+                        return worksSrvc.groups[idx].getByPut(putCode);
+            }
+            return null;
+        },
+        deleteGroupWorks: function(putCodes) {
+            var rmWorks = new Array();
+            var rmGroups = new Array();
+            for (var idj in putCodes)
+                for (var idx in worksSrvc.groups) {
+                    if (worksSrvc.groups[idx].hasPut(putCodes[idj])) {
+                        rmGroups.push(idx);
+                        for (var idj in worksSrvc.groups[idx].activities)
+                            rmWorks.push(worksSrvc.groups[idx].activities[idj].putCode.value);
+                    };
+                }
+            while (rmGroups.length > 0) 
+                worksSrvc.groups.splice(rmGroups.pop(),1);
+            worksSrvc.removeWorks(rmWorks);
+        },
+        deleteWork: function(putCode) {
+            worksSrvc.removeWorks([putCode], function() {
+                groupedActivitiesUtil.rmByPut(putCode, GroupedActivities.ABBR_WORK, worksSrvc.groups);
+                $rootScope.$apply();
+            });
+        },
+        makeDefault: function(group, putCode) {
+            group.makeDefault(putCode);
+            $.ajax({
+                url: getBaseUri() + '/works/updateToMaxDisplay.json?putCode=' + putCode,
+                dataType: 'json',
+                success: function(data) {
+                }
+            }).fail(function(){
+                // something bad is happening!
+                console.log("some bad is hppending");
+            });
+        },
+        loadAbbrWorks: function(access_type) {
+            if (access_type == worksSrvc.constants.access_type.ANONYMOUS) {
+                worksSrvc.worksToAddIds = orcidVar.workIds;
+                worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.ANONYMOUS);
+            } else {
+                worksSrvc.worksToAddIds = null;
+                worksSrvc.loading = true;
+                worksSrvc.groups = new Array();
+                worksSrvc.details = new Object();
+                $.ajax({
+                    url: getBaseUri() + '/works/workIds.json',
+                    dataType: 'json',
+                    success: function(data) {
+                        worksSrvc.worksToAddIds = data;
+                        worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
+                        $rootScope.$apply();
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("error fetching works");
+                });
+            };
+        },
+        putWork: function(work,sucessFunc, failFunc) {
+            $.ajax({
+                url: getBaseUri() + '/works/work.json',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                type: 'POST',
+                data: angular.toJson(work),
+                success: function(data) {
+                    sucessFunc(data);
+                }
+            }).fail(function(){
+                failFunc();
+            });
+        },
+        removeWorks: function(putCodes,callback) {
+            $.ajax({
+                url: getBaseUri() + '/works/' + putCodes.splice(0,150).join(),
+                type: 'DELETE',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if (putCodes.length > 0) 
+                        worksSrvc.removeWorks(putCodes,callback);
+                    else if (callback)
+                        callback(data);
+                }
+            }).fail(function() {
+                console.log("Error deleting works.");
+            });
+        },
+        setGroupPrivacy: function(putCode, priv) {
+            var group = worksSrvc.getGroup(putCode);
+            var putCodes = new Array();
+            for (var idx in group.activities) {
+                putCodes.push(group.activities[idx].putCode.value);
+                group.activities[idx].visibility = priv;
+            }
+            worksSrvc.updateVisibility(putCodes, priv);
+        },
+        setPrivacy: function(putCode, priv) {
+            worksSrvc.updateVisibility([putCode], priv);
+        },
+        updateVisibility: function(putCodes, priv) {
+            $.ajax({
+                url: getBaseUri() + '/works/' + putCodes.splice(0,150).join() + '/visibility/'+priv,
+                type: 'GET',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if (putCodes.length > 0)
+                        worksSrvc.updateVisibility(putCodes, priv);
+                }
+            }).fail(function() {
+                console.log("Error updating profile work.");
+            });
+        },
+        workCount: function() {
+            var count = 0;
+            for (var idx in worksSrvc.groups) {
+                count += worksSrvc.groups[idx].activitiesCount;
+            }
+            return count;
+        },
+        worksValidate: function(works,sucessFunc, failFunc) {
+            $.ajax({
+                url: getBaseUri() + '/works/worksValidate.json',
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                type: 'POST',
+                data: angular.toJson(works),
+                success: function(data) {
+                    sucessFunc(data);
+                }
+            }).fail(function(){
+                failFunc();
+            });
+        },
+        getUniqueDois : function(putCode){
+        	var dois = [];            	
+        	var group = worksSrvc.getGroup(putCode);
+        	
+        	for (var idx in group.activities) {            		
+        		for (i = 0; i <= group.activities[idx].workExternalIdentifiers.length - 1; i++) {
+        			if (group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierType.value == 'doi'){
+        				if (isIndexOf.call(dois, group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value) == -1){
+        					dois.push(group.activities[idx].workExternalIdentifiers[i].workExternalIdentifierId.value);
+        				}
+        			}
+        		}
+            }
+        	
+        	return dois;
+        }
     };
     return worksSrvc;
 }]);
 
 orcidNgModule.factory("emailSrvc", function ($rootScope) {
     var serv = {
-            emails: null,            
-            inputEmail: null,
-            delEmail: null,
-            primaryEmail: null,
-            popUp: false,
-            addEmail: function() {            	
-                $.ajax({
-                    url: getBaseUri() + '/account/addEmail.json',
-                    data:  angular.toJson(serv.inputEmail),
-                    contentType: 'application/json;charset=UTF-8',
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(data) {
-                        serv.inputEmail = data;
-                        if (serv.inputEmail.errors.length == 0) {
-                            serv.initInputEmail();
-                            serv.getEmails();
-                        }
-                        $rootScope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with multi email");
-                });
-            },
-            getEmails: function(callback) {
-            	
-                $.ajax({
-                    url: getBaseUri() + '/account/emails.json',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {                    	
-                        serv.emails = data;
-                        for (var i in data.emails){
-                            if (data.emails[i].primary){
-                                serv.primaryEmail = data.emails[i];
-                            }
-                        }                                                
-                        $rootScope.$apply();
-                        if (callback)
-                           callback(data);
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with multi email");
-                });
-            },
-            deleteEmail: function (callback) {
-                $.ajax({
-                    url: getBaseUri() + '/account/deleteEmail.json',
-                    type: 'DELETE',
-                    data:  angular.toJson(serv.delEmail),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
+        emails: null,            
+        inputEmail: null,
+        delEmail: null,
+        primaryEmail: null,
+        popUp: false,
+        addEmail: function() {            	
+            $.ajax({
+                url: getBaseUri() + '/account/addEmail.json',
+                data:  angular.toJson(serv.inputEmail),
+                contentType: 'application/json;charset=UTF-8',
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    serv.inputEmail = data;
+                    if (serv.inputEmail.errors.length == 0) {
+                        serv.initInputEmail();
                         serv.getEmails();
-                        if (callback)
-                               callback();
                     }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("emailSrvc.deleteEmail() error");
-                });
-            },
-            initInputEmail: function () {
-                serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
-            },
-            setPrivacy: function(email, priv) {
-                email.visibility = priv;
-                serv.saveEmail();
-            },
-            setPrimary: function(email) {
-                for (i in serv.emails.emails) {
-                    if (serv.emails.emails[i] == email) {
-                        serv.emails.emails[i].primary = true;
-                    } else {
-                        serv.emails.emails[i].primary = false;
-                    }
+                    $rootScope.$apply();
                 }
-                serv.saveEmail();
-            },
-            saveEmail: function(callback) {
-                $.ajax({
-                    url: getBaseUri() + '/account/emails.json',
-                    type: 'POST',
-                    data: angular.toJson(serv.emails),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        serv.data;
-                        $rootScope.$apply();
-                        if (callback)
-                            callback(data);
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with multi email");
-                });
-            },
-            verifyEmail: function(email, callback) {
-                $.ajax({
-                    url: getBaseUri() + '/account/verifyEmail.json',
-                    type: 'get',
-                    data:  { "email": email.value },
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (callback)
-                            callback(data);
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with multi email");
-                });
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with multi email");
+            });
+        },
+        getEmails: function(callback) {
+        	
+            $.ajax({
+                url: getBaseUri() + '/account/emails.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {                    	
+                    serv.emails = data;
+                    for (var i in data.emails){
+                        if (data.emails[i].primary){
+                            serv.primaryEmail = data.emails[i];
+                        }
+                    }                                                
+                    $rootScope.$apply();
+                    if (callback)
+                       callback(data);
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with multi email");
+            });
+        },
+        deleteEmail: function (callback) {
+            $.ajax({
+                url: getBaseUri() + '/account/deleteEmail.json',
+                type: 'DELETE',
+                data:  angular.toJson(serv.delEmail),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    serv.getEmails();
+                    if (callback)
+                           callback();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("emailSrvc.deleteEmail() error");
+            });
+        },
+        initInputEmail: function () {
+            serv.inputEmail = {"value":"","primary":false,"current":true,"verified":false,"visibility":"PRIVATE","errors":[]};
+        },
+        setPrivacy: function(email, priv) {
+            email.visibility = priv;
+            serv.saveEmail();
+        },
+        setPrimary: function(email) {
+            for (i in serv.emails.emails) {
+                if (serv.emails.emails[i] == email) {
+                    serv.emails.emails[i].primary = true;
+                } else {
+                    serv.emails.emails[i].primary = false;
+                }
             }
+            serv.saveEmail();
+        },
+        saveEmail: function(callback) {
+            $.ajax({
+                url: getBaseUri() + '/account/emails.json',
+                type: 'POST',
+                data: angular.toJson(serv.emails),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    serv.data;
+                    $rootScope.$apply();
+                    if (callback)
+                        callback(data);
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with multi email");
+            });
+        },
+        verifyEmail: function(email, callback) {
+            $.ajax({
+                url: getBaseUri() + '/account/verifyEmail.json',
+                type: 'get',
+                data:  { "email": email.value },
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    if (callback)
+                        callback(data);
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with multi email");
+            });
+        }
 
-        };
+    };
 
     return serv;
 });
 
-
-
 orcidNgModule.factory("prefsSrvc", function ($rootScope) {
     var serv = {
-            prefs: null,
-            saved: false,
-            getPrivacyPreferences: function() {
-                $.ajax({
-                    url: getBaseUri() + '/account/preferences.json',
-                    dataType: 'json',
-                    success: function(data) {
-                        serv.prefs = data;
-                        $rootScope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with prefs");
-                });
-            },
-            savePrivacyPreferences: function() {
-                $.ajax({
-                    url: getBaseUri() + '/account/preferences.json',
-                    type: 'POST',
-                    data: angular.toJson(serv.prefs),
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        serv.prefs = data;
-                        serv.saved = true;
-                        $rootScope.$apply();
-                    }
-                }).fail(function() {
-                    // something bad is happening!
-                    console.log("error with prefs");
-                });
-            },
-            clearMessage: function(){
-                serv.saved = false;
-            }
-        };
+        prefs: null,
+        saved: false,
+        getPrivacyPreferences: function() {
+            $.ajax({
+                url: getBaseUri() + '/account/preferences.json',
+                dataType: 'json',
+                success: function(data) {
+                    serv.prefs = data;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with prefs");
+            });
+        },
+        savePrivacyPreferences: function() {
+            $.ajax({
+                url: getBaseUri() + '/account/preferences.json',
+                type: 'POST',
+                data: angular.toJson(serv.prefs),
+                contentType: 'application/json;charset=UTF-8',
+                dataType: 'json',
+                success: function(data) {
+                    serv.prefs = data;
+                    serv.saved = true;
+                    $rootScope.$apply();
+                }
+            }).fail(function() {
+                // something bad is happening!
+                console.log("error with prefs");
+            });
+        },
+        clearMessage: function(){
+            serv.saved = false;
+        }
+    };
 
-        // populate the prefs
-        serv.getPrivacyPreferences();
+    // populate the prefs
+    serv.getPrivacyPreferences();
 
     return serv; 
 });
@@ -1775,328 +1751,259 @@ orcidNgModule.factory("membersListSrvc", ['$rootScope', function ($rootScope) {
     return serv; 
 }]);
 
-
-orcidNgModule.filter('urlProtocol', function(){
-    return function(url){
-    	if (url == null) return url;
-    	if(!url.startsWith('http')) {    			
-            if (url.startsWith('//')){            	
-            	url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
-          	} else {
-          	    url = 'http://' + url;    
-          	}
-        }
-        return url;
-    }
-});
-
-orcidNgModule.filter('uri', function() {
-    return window.encodeURIComponent;
-});
-
-orcidNgModule.filter('latex', function(){
-    return function(input){
-        if (input == null) return "";
-        return latexParseJs.decodeLatex(input);
+orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
+    var peerReviewSrvc = {
+    		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
+    		groups: new Array(),    		
+    		loading: false,
+            loadingDetails: false,
+            quickRef: {},            
+            loadingDetails: false,
+            blankPeerReview: null,
+            details: new Object(), // we should think about putting details in the
+            peerReviewsToAddIds: null,
+            peerReviewGroupDetailsRequested: new Array(),
+            getBlankPeerReview: function(callback) {
+            	 // if cached return clone of blank
+                if (peerReviewSrvc.blankPeerReview != null)
+                    callback(JSON.parse(JSON.stringify(peerReviewSrvc.blankPeerReview)));
+    			$.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+                    dataType: 'json',
+                    success: function(data) {
+                    	callback(data);
+                        $rootScope.$apply();
+                    }
+                }).fail(function() {
+                    console.log("Error fetching blank Peer Review");
+                });                
+            },
+            postPeerReview: function(peer_review, successFunc, failFunc) {            	
+            	$.ajax({
+                    url: getBaseUri() + '/peer-reviews/peer-review.json',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: angular.toJson(peer_review),
+                    success: function(data) {
+                    	successFunc(data);
+                    }
+                }).fail(function(){
+                    failFunc();
+                });
+    		},
+    		createNew: function(peerReview) {
+                var cloneF = JSON.parse(JSON.stringify(peerReview));
+                cloneF.source = null;
+                cloneF.putCode = null;
+                for (var idx in cloneF.externalIdentifiers)
+                    cloneF.externalIdentifiers[idx].putCode = null;
+                return cloneF;
+            },                   
+    		loadPeerReviews: function(access_type) {
+    			if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {    				
+    				peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
+    				peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
+                } else {
+                	peerReviewSrvc.peerReviewsToAddIds = null;
+                	peerReviewSrvc.loading = true;
+                	peerReviewSrvc.groups = new Array();
+                	peerReviewSrvc.details = new Object();
+                    $.ajax({
+                        url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
+                        dataType: 'json',
+                        success: function(data) {
+                        	peerReviewSrvc.peerReviewsToAddIds = data;                        	
+                        	peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
+                            $rootScope.$apply();
+                        }
+                    }).fail(function(){
+                        // something bad is happening!
+                        console.log("error fetching Peer Review");
+                    });
+                };
+    		},    		
+    		addPeerReviewsToScope: function(type) {
+                if (type == peerReviewSrvc.constants.access_type.USER)
+                    var url = getBaseUri() + '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
+                else // use the anonymous url
+                    var url = getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
+                if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
+                	peerReviewSrvc.loading = true;
+                    var peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
+                    $.ajax({
+                        'url': url + peerReviewIds,
+                        'dataType': 'json',
+                        'success': function(data) {
+                            $rootScope.$apply(function(){
+                                for (i in data) {
+                                    var dw = data[i];                                    
+                                    removeBadExternalIdentifiers(dw);                                       
+                                    groupedActivitiesUtil.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
+                                };
+                            });
+                            if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
+                            	peerReviewSrvc.loading = false;
+                                $rootScope.$apply();
+                            } else {
+                                $rootScope.$apply();
+                                setTimeout(function(){
+                                	peerReviewSrvc.addPeerReviewsToScope(type);
+                                },50);
+                            }
+                        }
+                    }).fail(function() {
+                        //$rootScope.$apply(function() {
+                        	peerReviewSrvc.loading = false;
+                        //});
+                        console.log("Error fetching Peer Review: " + peerReviewIds);
+                    });
+                } else {
+                	peerReviewSrvc.loading = false;
+                };
+            },
+            getGroup: function(putCode) {
+                for (var idx in peerReviewSrvc.groups) {
+                        if (peerReviewSrvc.groups[idx].hasPut(putCode))
+                            return peerReviewSrvc.groups[idx];
+                }
+                return null;
+            },
+            getEditable: function(putCode, callback) {
+                // first check if they are the current source
+                var peerReview = peerReviewSrvc.getPeerReview(putCode);
+                if (peerReview.source == orcidVar.orcidId)
+                    callback(peerReview);
+                else {
+                    var bestMatch = null;
+                    var group = peerReviewSrvc.getGroup(putCode);
+                    for (var idx in group.activitiess) {
+                        if (group[idx].source == orcidVar.orcidId) {
+                            bestMatch = callback(group[idx]);
+                            break;
+                        }
+                    }
+                    if (bestMatch == null) 
+                        bestMatch = peerReviewSrvc.createNew(peerReview);
+                    	callback(bestMatch);
+                	};
+            },
+            getPeerReview: function(putCode) {
+                for (var idx in peerReviewSrvc.groups) {
+                        if (peerReviewSrvc.groups[idx].hasPut(putCode))
+                            return peerReviewSrvc.groups[idx].getByPut(putCode);
+                }
+                return null;
+            },
+            deleteGroupPeerReview: function(putCodes) {
+                var rmPeerReview = new Array();
+                var rmGroups = new Array();
+                for (var idj in putCodes)
+                    for (var idx in peerReviewSrvc.groups) {
+                        if (peerReviewSrvc.groups[idx].hasPut(putCodes[idj])) {
+                            rmGroups.push(idx);
+                            for (var idj in peerReviewSrvc.groups[idx].activities)
+                                rmPeerReview.push(peerReviewSrvc.groups[idx].activities[idj].putCode.value);
+                        };
+                    }
+                while (rmGroups.length > 0) 
+                	peerReviewSrvc.groups.splice(rmGroups.pop(),1);
+                peerReviewSrvc.removePeerReview(rmPeerReview);
+            },
+            deletePeerReview: function(putCode) {
+            	peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
+            },
+            makeDefault: function(group, putCode) {
+            	group.makeDefault(putCode);
+                $.ajax({
+                    url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                    }
+                }).fail(function(){
+                    // something bad is happening!
+                    console.log("Error: peerReviewSrvc.makeDefault method");
+                });
+            },
+            removePeerReview: function(putCodes,callback) {
+                $.ajax({
+                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join(),
+                    type: 'DELETE',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (putCodes.length > 0) 
+                        	peerReviewSrvc.removePeerReview(putCodes,callback);
+                        else if (callback)
+                            callback(data);
+                    }
+                }).fail(function() {
+                    console.log("Error deleting Peer Review.");
+                });
+            },
+            setGroupPrivacy: function(putCode, priv) {
+                var group = peerReviewSrvc.getGroup(putCode);
+                var putCodes = new Array();
+                for (var idx in group.activities) {
+                    putCodes.push(group.activities[idx].putCode.value);
+                    group.activities[idx].visibility = priv;
+                }
+                peerReviewSrvc.updateVisibility(putCodes, priv);
+            },
+            setPrivacy: function(putCode, priv) {
+            	peerReviewSrvc.updateVisibility([putCode], priv);
+            },
+            updateVisibility: function(putCodes, priv) {
+                $.ajax({
+                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join() + '/visibility/'+priv.toLowerCase(),
+                    type: 'GET',
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (putCodes.length > 0)
+                        	peerReviewSrvc.updateVisibility(putCodes, priv);
+                    }
+                }).fail(function() {
+                    console.log("Error updating profile Peer Review.");
+                });
+            },
+            peerReviewCount: function() {
+                var count = 0;
+                for (var idx in peerReviewSrvc.groups) {
+                    count += peerReviewSrvc.groups[idx].activitiesCount;
+                }
+                return count;
+            },
+            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
+            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){            		
+            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);            		
+            		var group = peerReviewSrvc.getGroup(putCode);
+            		$.ajax({
+                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
+                        dataType: 'json',
+                        contentType: 'application/json;charset=UTF-8',
+                        type: 'GET',
+                        success: function(data) {
+                        	$rootScope.$apply(function(){
+                        		group.groupName = data.name;
+                        		group.groupDescription = data.description;
+                        		group.groupType = data.type;
+                        	});
+                        }
+                    }).fail(function(xhr, status, error){
+                        console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
+                    });
+            		
+            	}
+            }
     };
-});
-
-
-orcidNgModule.filter('ajaxFormDateToISO8601', function(){
-    return function(input){
-    	if (typeof input != 'undefined'){
-	        var str = '';
-	        if (input.year) str += input.year;
-	        if (input.month) {
-	            if (str.length > 0) str += '-';
-	            str += Number(input.month).pad(2);
-	        }
-	        if (input.day) {
-	            if (str.length > 0)
-	                str += '-';
-	            str += Number(input.day).pad(2);
-	        }
-	        return str;
-    	} else {
-    		return false;
-    	}
-    };
-});
-
-orcidNgModule.filter('humanDate', function($filter){
-    var standardDateFilter = $filter('date');
-    return function(input){
-        var inputDate = new Date(input);
-        var dateNow = new Date();
-        var dateFormat = (inputDate.getYear() === dateNow.getYear() && inputDate.getMonth() === dateNow.getMonth() && inputDate.getDate() === dateNow.getDate())  ? 'HH:mm' : 'yyyy-MM-dd';
-        return standardDateFilter(input, dateFormat);
-    };
-});
-
-
-function formColorBoxWidth() {
-    return isMobile()? '100%': '800px';
-}
-
-function formColorBoxResize() {
-    if (isMobile())
-        $.colorbox.resize({width: formColorBoxWidth(), height: '100%'});
-    else
-        // IE8 and below doesn't take auto height
-        // however the default div height
-        // is auto anyway
-        $.colorbox.resize({width:'800px'});
-}
-
-function fixZindexIE7(target, zindex){
-    if(isIE() == 7){
-        $(target).each(function(){
-            $(this).css('z-index', zindex);
-            --zindex;
-        });
-    }
-}
-
-function emptyTextField(field) {
-    if (field != null
-            && field.value != null
-            && field.value.trim() != '') return false;
-    return true;
-}
-
-function addComma(str) {
-    if (str.length > 0) return str + ', ';
-    return str;
-}
-
-orcidNgModule.filter('contributorFilter', function(){
-    return function(ctrb){
-        var out = '';
-        if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;
-        if (!emptyTextField(ctrb.contributorSequence)) out = addComma(out) + ctrb.contributorSequence.value;
-        if (!emptyTextField(ctrb.orcid)) out = addComma(out) + ctrb.orcid.value;
-        if (!emptyTextField(ctrb.email)) out = addComma(out) + ctrb.email.value;
-        if (out.length > 0) out = '(' + out + ')';
-        return out;
-    };
-});
-
-
-orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
-    return function(workExternalIdentifier, first, last, length, moreInfo){
-
-        var output = '';
-        var ngclass = '';
-        var isPartOf = false;
-        
-        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
-        
-        
-        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;
-        
-        if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;
-
-        var id = workExternalIdentifier.workExternalIdentifierId.value;
-        var type;
-
-        if (workExternalIdentifier.workExternalIdentifierType != null)
-            type = workExternalIdentifier.workExternalIdentifierType.value;
-        if (type != null) {
-        	if(isPartOf) 
-        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-        	else 
-        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
-        }
-        var link = null;
-
-        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
-        	link = workExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type); 
-        	
-        if (link != null){
-        	link = $filter('urlProtocol')(link);
-        	
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
-            
-        }else{
-            output = output + id;        
-        }
-        
-        output += '<div class="popover-pos">\
-			<div class="popover-help-container">\
-	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
-					<div class="arrow"></div>\
-					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
-				    </div>\
-				</div>\
-			</div>\
-	  </div>';
-
-      return output;
-    };
-});
-
-//Currently being used in Fundings only
-orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
-    return function(externalIdentifier, first, last, length, type, moreInfo){
-    	
-    	var ngclass = '';
-    	var output = '';
-
-        if (externalIdentifier == null) return output;
-        
-        //If type is set always come: "grant_number"
-        if (type != null) {
-        	if (type.value == 'grant') {
-        		output += om.get('funding.add.external_id.value.label.grant') + ": ";
-        	} else if (type.value == 'contract') {
-        		output += om.get('funding.add.external_id.value.label.contract') + ": ";
-        	} else {
-        		output += om.get('funding.add.external_id.value.label.award') + ": ";
-        	}
-        }         
-        
-        var value = null;        
-        if(externalIdentifier.value != null){
-        	value = externalIdentifier.value.value;
-        }
-        
-        var link = null;
-        if(externalIdentifier.url != null)
-            link = externalIdentifier.url.value;
-       
-        if(link != null) {
-        	
-        	link = $filter('urlProtocol')(link);
-        	
-        	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
-        	} else {
-        		if(type != null) {
-        			
-        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
-        			
-        			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
-        			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
-        			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
-        			}
-        			
-        		}        		
-        	}
-        } else if(value != null) {
-        	output = output + " " + value;
-        }
-        output += '<div class="popover-pos">\
-        				<div class="popover-help-container">\
-				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
-								<div class="arrow"></div>\
-								<div class="popover-content">\
-							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
-							    </div>\
-							</div>\
-						</div>\
-				  </div>';
-      
-        
-        //if (length > 1 && !last) output = output + ',';
-        	return output;
-    	};
+    return peerReviewSrvc;
 }]);
 
-orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
-    return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
-    	
-    	
-        var output = '';
-        var ngclass = '';
-        var isPartOf = false;
-        var type = null;
-        var link = null;
-        ngclass = 'truncate';
-        
-        if (peerReviewExternalIdentifier == null) return output;
-        
-        if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;
-        
-        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
-        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
-        
-        if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
-            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
-	        if (type != null) {
-	        	if(isPartOf)
-	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
-	        	else 
-	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
-	        }
-        
-        if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
-        	link = peerReviewExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type); 
-        	
-        if (link != null){
-        	link = $filter('urlProtocol')(link);
-            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
-        }else{
-            output += id;        
-        }
-        
-        if (length > 1 && !last) output = output + ',';
-        
-        output += '\
-        <div class="popover-pos">\
-			<div class="popover-help-container">\
-	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
-					<div class="arrow"></div>\
-					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank">'+link+'</a>\
-				    </div>\
-				</div>\
-			</div>\
-	   </div>';
-        
-        if(own)
-        	output = '<br/>' + output;
-        
-       return output;      
-      
-     
-    };
-});
-
-function removeBadContributors(dw) {
-    for (var idx in dw.contributors) {
-        if (dw.contributors[idx].contributorSequence == null
-            && dw.contributors[idx].email == null
-            && dw.contributors[idx].orcid == null
-            && dw.contributors[idx].creditName == null
-            && dw.contributors[idx].contributorRole == null
-            && dw.contributors[idx].creditNameVisibility == null) {
-                dw.contributors.splice(idx,1);
-            }
-    }
-}
-
-function removeBadExternalIdentifiers(dw) {
-    for(var idx in dw.workExternalIdentifiers) {
-        if(dw.workExternalIdentifiers[idx].workExternalIdentifierType == null
-            && dw.workExternalIdentifiers[idx].workExternalIdentifierId == null) {
-            dw.workExternalIdentifiers.splice(idx,1);
-        }
-    }
-}
-
-function isEmail(email) {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
-}
+/*
+ * CONTROLLERS
+ */
 
 orcidNgModule.controller('EditTableCtrl', ['$scope', function ($scope) {
 
@@ -2333,7 +2240,6 @@ orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', functio
     };
 }]);
 
-
 orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.errors = null;
     $scope.password = null;
@@ -2398,7 +2304,6 @@ orcidNgModule.controller('SecurityQuestionEditCtrl', ['$scope', '$compile', func
         $.colorbox.close();
     };
 }]);
-
 
 orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scope, $http) {
     $scope.getChangePassword = function() {
@@ -3222,7 +3127,6 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
     $scope.getNameForm();
 }]);
 
-
 orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile ,bioBulkSrvc) {
 	bioBulkSrvc.initScope($scope);	
     $scope.showEdit = false;
@@ -3555,13 +3459,11 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
     
     $scope.showTooltip = function(tp){
     	$scope.showElement[tp] = true;
-    }
+    };
     
     $scope.hideTooltip = function(tp){
     	$scope.showElement[tp] = false;
-    }   
-    
-
+    };
 
     $scope.getBiographyForm();
 
@@ -4006,7 +3908,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
 	   for (var idx in $scope.externalIdentifiersForm.externalIdentifiers) {        	
 		   $scope.externalIdentifiersForm.externalIdentifiers[idx]['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers.length - idx;
        }       
-   }
+   };
    
    $scope.showTooltip = function(elem, event){
 	   	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
@@ -4020,16 +3922,16 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
 	   	});
 	   	
 	   	$scope.showElement[elem] = true;
-   }
+   };
    
    $scope.hideTooltip = function(elem){
    		$scope.showElement[elem] = false;
-   }
+   };
 
     
    $scope.closeEditModal = function(){
 	   $.colorbox.close();
-   }
+   };
    
    /* Bulk edit */
    
@@ -4075,7 +3977,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
         	   externalIdenfifiers.splice(len,1);
        
        $scope.externalIdentifiersForm.externalIdentifiers = externalIdenfifiers;
-   }
+   };
     
    //init
    $scope.getExternalIdentifiersForm();  
@@ -4439,7 +4341,6 @@ orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', funct
     $scope.getClaim();
 }]);
 
-
 orcidNgModule.controller('VerifyEmailCtrl', ['$scope', '$compile', 'emailSrvc', function ($scope, $compile, emailSrvc) {
     $scope.loading = true;
     $scope.getEmails = function() {
@@ -4670,7 +4571,6 @@ orcidNgModule.controller('PublicEmpAffiliation', ['$scope', '$compile', '$filter
     affiliationsSrvc.setIdsToAdd(orcidVar.affiliationIdsJson);
     affiliationsSrvc.addAffiliationToScope(orcidVar.orcidId +'/affiliations.json');
 }]);
-
 
 orcidNgModule.controller('AffiliationCtrl', ['$scope', '$compile', '$filter', 'affiliationsSrvc', 'workspaceSrvc', 'commonSrvc', function ($scope, $compile, $filter, affiliationsSrvc, workspaceSrvc, commonSrvc){
     $scope.affiliationsSrvc = affiliationsSrvc;
@@ -5445,12 +5345,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     
     $scope.showFundingImportWizard =  function() {
     	$scope.fundingImportWizard = !$scope.fundingImportWizard;    	    	
-    	/*
-        $.colorbox({
-            html : $compile($('#import-funding-modal').html())($scope),
-            onComplete: function() {$.colorbox.resize();}
-        });
-        */    	    	
     };
     
     $scope.toggleWizardDesc = function(id){
@@ -5485,9 +5379,6 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     
 }]);
 
-/**
- * Public Funding Controller
- * */
 orcidNgModule.controller('PublicFundingCtrl',['$scope', '$compile', '$filter', 'workspaceSrvc', 'fundingSrvc', function ($scope, $compile, $filter, workspaceSrvc, fundingSrvc){
     $scope.fundingSrvc = fundingSrvc;
     $scope.workspaceSrvc = workspaceSrvc;
@@ -5743,13 +5634,6 @@ orcidNgModule.controller('PublicWorkCtrl',['$scope', '$compile', '$filter', 'wor
     };
     
 }]);
-
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
 
 orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrvc', 'workspaceSrvc', 'actBulkSrvc', 'commonSrvc', '$timeout', '$q', 
                                       function ($scope, $compile, $filter, worksSrvc, workspaceSrvc, actBulkSrvc, commonSrvc, $timeout, $q) {
@@ -6876,258 +6760,6 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         });
     }
 }]);
-
-
-orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
-    var peerReviewSrvc = {
-    		constants: { 'access_type': { 'USER': 'user', 'ANONYMOUS': 'anonymous'}},
-    		groups: new Array(),    		
-    		loading: false,
-            loadingDetails: false,
-            quickRef: {},            
-            loadingDetails: false,
-            blankPeerReview: null,
-            details: new Object(), // we should think about putting details in the
-            peerReviewsToAddIds: null,
-            peerReviewGroupDetailsRequested: new Array(),
-            getBlankPeerReview: function(callback) {
-            	 // if cached return clone of blank
-                if (peerReviewSrvc.blankPeerReview != null)
-                    callback(JSON.parse(JSON.stringify(peerReviewSrvc.blankPeerReview)));
-    			$.ajax({
-                    url: getBaseUri() + '/peer-reviews/peer-review.json',
-                    dataType: 'json',
-                    success: function(data) {
-                    	callback(data);
-                        $rootScope.$apply();
-                    }
-                }).fail(function() {
-                    console.log("Error fetching blank Peer Review");
-                });                
-            },
-            postPeerReview: function(peer_review, successFunc, failFunc) {            	
-            	$.ajax({
-                    url: getBaseUri() + '/peer-reviews/peer-review.json',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    type: 'POST',
-                    data: angular.toJson(peer_review),
-                    success: function(data) {
-                    	successFunc(data);
-                    }
-                }).fail(function(){
-                    failFunc();
-                });
-    		},
-    		createNew: function(peerReview) {
-                var cloneF = JSON.parse(JSON.stringify(peerReview));
-                cloneF.source = null;
-                cloneF.putCode = null;
-                for (var idx in cloneF.externalIdentifiers)
-                    cloneF.externalIdentifiers[idx].putCode = null;
-                return cloneF;
-            },                   
-    		loadPeerReviews: function(access_type) {
-    			if (access_type == peerReviewSrvc.constants.access_type.ANONYMOUS) {    				
-    				peerReviewSrvc.peerReviewsToAddIds = orcidVar.PeerReviewIds;
-    				peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.ANONYMOUS);
-                } else {
-                	peerReviewSrvc.peerReviewsToAddIds = null;
-                	peerReviewSrvc.loading = true;
-                	peerReviewSrvc.groups = new Array();
-                	peerReviewSrvc.details = new Object();
-                    $.ajax({
-                        url: getBaseUri() + '/peer-reviews/peer-review-ids.json',
-                        dataType: 'json',
-                        success: function(data) {
-                        	peerReviewSrvc.peerReviewsToAddIds = data;                        	
-                        	peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
-                            $rootScope.$apply();
-                        }
-                    }).fail(function(){
-                        // something bad is happening!
-                        console.log("error fetching Peer Review");
-                    });
-                };
-    		},    		
-    		addPeerReviewsToScope: function(type) {
-                if (type == peerReviewSrvc.constants.access_type.USER)
-                    var url = getBaseUri() + '/peer-reviews/get-peer-reviews.json?peerReviewIds=';
-                else // use the anonymous url
-                    var url = getBaseUri() + '/' + orcidVar.orcidId +'/peer-reviews.json?peerReviewIds=';
-                if(peerReviewSrvc.peerReviewsToAddIds.length != 0 ) {
-                	peerReviewSrvc.loading = true;
-                    var peerReviewIds = peerReviewSrvc.peerReviewsToAddIds.splice(0,20).join();
-                    $.ajax({
-                        'url': url + peerReviewIds,
-                        'dataType': 'json',
-                        'success': function(data) {
-                            $rootScope.$apply(function(){
-                                for (i in data) {
-                                    var dw = data[i];                                    
-                                    removeBadExternalIdentifiers(dw);                                       
-                                    groupedActivitiesUtil.group(dw,GroupedActivities.PEER_REVIEW,peerReviewSrvc.groups);
-                                };
-                            });
-                            if(peerReviewSrvc.peerReviewsToAddIds.length == 0 ) {
-                            	peerReviewSrvc.loading = false;
-                                $rootScope.$apply();
-                            } else {
-                                $rootScope.$apply();
-                                setTimeout(function(){
-                                	peerReviewSrvc.addPeerReviewsToScope(type);
-                                },50);
-                            }
-                        }
-                    }).fail(function() {
-                        //$rootScope.$apply(function() {
-                        	peerReviewSrvc.loading = false;
-                        //});
-                        console.log("Error fetching Peer Review: " + peerReviewIds);
-                    });
-                } else {
-                	peerReviewSrvc.loading = false;
-                };
-            },
-            getGroup: function(putCode) {
-                for (var idx in peerReviewSrvc.groups) {
-                        if (peerReviewSrvc.groups[idx].hasPut(putCode))
-                            return peerReviewSrvc.groups[idx];
-                }
-                return null;
-            },
-            getEditable: function(putCode, callback) {
-                // first check if they are the current source
-                var peerReview = peerReviewSrvc.getPeerReview(putCode);
-                if (peerReview.source == orcidVar.orcidId)
-                    callback(peerReview);
-                else {
-                    var bestMatch = null;
-                    var group = peerReviewSrvc.getGroup(putCode);
-                    for (var idx in group.activitiess) {
-                        if (group[idx].source == orcidVar.orcidId) {
-                            bestMatch = callback(group[idx]);
-                            break;
-                        }
-                    }
-                    if (bestMatch == null) 
-                        bestMatch = peerReviewSrvc.createNew(peerReview);
-                    	callback(bestMatch);
-                	};
-            },
-            getPeerReview: function(putCode) {
-                for (var idx in peerReviewSrvc.groups) {
-                        if (peerReviewSrvc.groups[idx].hasPut(putCode))
-                            return peerReviewSrvc.groups[idx].getByPut(putCode);
-                }
-                return null;
-            },
-            deleteGroupPeerReview: function(putCodes) {
-                var rmPeerReview = new Array();
-                var rmGroups = new Array();
-                for (var idj in putCodes)
-                    for (var idx in peerReviewSrvc.groups) {
-                        if (peerReviewSrvc.groups[idx].hasPut(putCodes[idj])) {
-                            rmGroups.push(idx);
-                            for (var idj in peerReviewSrvc.groups[idx].activities)
-                                rmPeerReview.push(peerReviewSrvc.groups[idx].activities[idj].putCode.value);
-                        };
-                    }
-                while (rmGroups.length > 0) 
-                	peerReviewSrvc.groups.splice(rmGroups.pop(),1);
-                peerReviewSrvc.removePeerReview(rmPeerReview);
-            },
-            deletePeerReview: function(putCode) {
-            	peerReviewSrvc.removePeerReview([putCode], function() {peerReviewSrvc.loadPeerReviews(peerReviewSrvc.constants.access_type.USER);});
-            },
-            makeDefault: function(group, putCode) {
-            	group.makeDefault(putCode);
-                $.ajax({
-                    url: getBaseUri() + '/peer-reviews/updateToMaxDisplay.json?putCode=' + putCode,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                    }
-                }).fail(function(){
-                    // something bad is happening!
-                    console.log("Error: peerReviewSrvc.makeDefault method");
-                });
-            },
-            removePeerReview: function(putCodes,callback) {
-                $.ajax({
-                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join(),
-                    type: 'DELETE',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (putCodes.length > 0) 
-                        	peerReviewSrvc.removePeerReview(putCodes,callback);
-                        else if (callback)
-                            callback(data);
-                    }
-                }).fail(function() {
-                    console.log("Error deleting Peer Review.");
-                });
-            },
-            setGroupPrivacy: function(putCode, priv) {
-                var group = peerReviewSrvc.getGroup(putCode);
-                var putCodes = new Array();
-                for (var idx in group.activities) {
-                    putCodes.push(group.activities[idx].putCode.value);
-                    group.activities[idx].visibility = priv;
-                }
-                peerReviewSrvc.updateVisibility(putCodes, priv);
-            },
-            setPrivacy: function(putCode, priv) {
-            	peerReviewSrvc.updateVisibility([putCode], priv);
-            },
-            updateVisibility: function(putCodes, priv) {
-                $.ajax({
-                    url: getBaseUri() + '/peer-reviews/' + putCodes.splice(0,150).join() + '/visibility/'+priv.toLowerCase(),
-                    type: 'GET',
-                    contentType: 'application/json;charset=UTF-8',
-                    dataType: 'json',
-                    success: function(data) {
-                        if (putCodes.length > 0)
-                        	peerReviewSrvc.updateVisibility(putCodes, priv);
-                    }
-                }).fail(function() {
-                    console.log("Error updating profile Peer Review.");
-                });
-            },
-            peerReviewCount: function() {
-                var count = 0;
-                for (var idx in peerReviewSrvc.groups) {
-                    count += peerReviewSrvc.groups[idx].activitiesCount;
-                }
-                return count;
-            },
-            getPeerReviewGroupDetails: function(groupIDPutCode, putCode){
-            	if (peerReviewSrvc.peerReviewGroupDetailsRequested.indexOf(groupIDPutCode) < 0){            		
-            		peerReviewSrvc.peerReviewGroupDetailsRequested.push(groupIDPutCode);            		
-            		var group = peerReviewSrvc.getGroup(putCode);
-            		$.ajax({
-                        url: getBaseUri() + '/public/group/' + groupIDPutCode,
-                        dataType: 'json',
-                        contentType: 'application/json;charset=UTF-8',
-                        type: 'GET',
-                        success: function(data) {
-                        	$rootScope.$apply(function(){
-                        		group.groupName = data.name;
-                        		group.groupDescription = data.description;
-                        		group.groupType = data.type;
-                        	});
-                        }
-                    }).fail(function(xhr, status, error){
-                        console.log("Error: " + status + "\nError: " + error + "\nError detail: " + xhr.responseText);
-                    });
-            		
-            	}
-            }
-    };
-    return peerReviewSrvc;
-}]);
-
 
 orcidNgModule.controller('SearchCtrl',['$scope', '$compile', function ($scope, $compile){
     $scope.hasErrors = false;
@@ -11131,6 +10763,665 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	
 }]);
 
+orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){	
+	
+	$scope.searchFilterChanged = false;
+	$scope.filterActive = false;
+	$scope.conditionsActive = false;
+	$scope.menuVisible = false;
+	$scope.secondaryMenuVisible = {};
+	$scope.tertiaryMenuVisible = {};
+	$scope.searchVisible = false;
+	$scope.settingsVisible = false;
+	
+	$scope.searchFocus = function(){
+		$scope.filterActive = true;
+		$scope.conditionsActive = true;
+	}
+	
+	$scope.searchBlur = function(){		
+		$scope.hideSearchFilter();
+		$scope.conditionsActive = false;		
+	}
+	
+	$scope.filterChange = function(){
+		$scope.searchFilterChanged = true;
+	}
+	
+	$scope.hideSearchFilter = function(){
+		var searchInputValue = document.getElementById("search-input").value;
+		if (searchInputValue === ""){
+			setTimeout(function() {
+                if ($scope.searchFilterChanged === false) {
+                	$scope.filterActive = false;
+                }
+            }, 3000);
+		}
+	}
+	
+	
+	$scope.toggleMenu = function(){
+		$scope.menuVisible = !$scope.menuVisible;
+		$scope.searchVisible = false;
+		$scope.settingsVisible = false;		
+	}
+	
+	$scope.toggleSecondaryMenu = function(submenu){
+		$scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
+	}
+	
+	$scope.toggleTertiaryMenu = function(submenu){
+		$scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
+	}
+	
+	$scope.toggleSearch = function(){
+		$scope.searchVisible = !$scope.searchVisible;
+		$scope.menuVisible = false;		
+		$scope.settingsVisible = false;
+	}
+	
+	$scope.toggleSettings = function(){
+		$scope.settingsVisible = !$scope.settingsVisible;
+		$scope.menuVisible = false;
+		$scope.searchVisible = false;
+	}	
+	
+	$scope.handleMobileMenuOption = function($event){
+		$event.preventDefault();
+		var w = getWindowWidth();			
+		if(w > 767) {				
+			window.location = $event.target.getAttribute('href');
+		}
+	}
+	
+}]);
+
+orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
+	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
+	$scope.showCode = false;
+	$scope.widgetSrvc = widgetSrvc;
+	
+	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
+	
+	$scope.inputTextAreaSelectAll = function($event){
+    	$event.target.select();
+    }
+	
+	$scope.toggleCopyWidget = function(){
+		$scope.showCode = !$scope.showCode;
+	}
+	
+	$scope.hideWidgetCode = function(){
+		$scope.showCode = false;
+	}
+	
+}]);
+
+orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
+	$scope.showSources = new Array();
+	$scope.showPopover = new Array();
+	$scope.toggleSourcesDisplay = function(section){		
+		$scope.showSources[section] = !$scope.showSources[section];		
+	}
+	
+	$scope.showPopover = function(section){
+		$scope.showPopover[section] = true;
+	}	
+	
+	$scope.hidePopover = function(section){
+		$scope.showPopover[section] = false;	
+	}
+}]);
+
+/*
+ * FILTERS
+ */
+
+orcidNgModule.filter('formatBibtexOutput', function () {
+    return function (text) {
+		var str = text.replace(/[\-?_?]/, ' ');
+		return str.toUpperCase();
+    };
+});
+
+
+orcidNgModule.filter('orderObjectBy', function() {
+	  return function(items, field, reverse) {
+	    var filtered = [];
+	    angular.forEach(items, function(item) {
+	      filtered.push(item);
+	    });
+	    filtered.sort(function (a, b) {
+	      return (a[field] > b[field] ? 1 : -1);
+	    });
+	    if(reverse) filtered.reverse();
+	    return filtered;
+	 };
+});
+
+orcidNgModule.filter("filterImportWizards", function(){	
+    return function(input, selectedWorkType, selectedGeoArea) {
+    	var output = [];    	
+    	if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
+    		output = input;
+    	}else{
+    		for(var i = 0; i < input.length; i ++) {
+        		for(var j = 0; j <  input[i].redirectUris.redirectUri.length; j ++) {
+    				if (selectedWorkType == 'All'){
+    					if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
+    						output.push(input[i]);
+    					}
+    				}else if(selectedGeoArea == 'All'){
+    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
+    						output.push(input[i]);
+    					}    					
+    				}else{    				   					
+    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
+        					output.push(input[i]);
+        				}
+    				}
+        		}
+        	}    		
+    	}
+    	return output;
+    };
+});
+
+
+orcidNgModule.filter('urlProtocol', function(){
+    return function(url){
+    	if (url == null) return url;
+    	if(!url.startsWith('http')) {    			
+            if (url.startsWith('//')){            	
+            	url = ('https:' == document.location.protocol ? 'https:' : 'http:') + url;
+          	} else {
+          	    url = 'http://' + url;    
+          	}
+        }
+        return url;
+    }
+});
+
+orcidNgModule.filter('uri', function() {
+    return window.encodeURIComponent;
+});
+
+orcidNgModule.filter('latex', function(){
+    return function(input){
+        if (input == null) return "";
+        return latexParseJs.decodeLatex(input);
+    };
+});
+
+orcidNgModule.filter('ajaxFormDateToISO8601', function(){
+    return function(input){
+    	if (typeof input != 'undefined'){
+	        var str = '';
+	        if (input.year) str += input.year;
+	        if (input.month) {
+	            if (str.length > 0) str += '-';
+	            str += Number(input.month).pad(2);
+	        }
+	        if (input.day) {
+	            if (str.length > 0)
+	                str += '-';
+	            str += Number(input.day).pad(2);
+	        }
+	        return str;
+    	} else {
+    		return false;
+    	}
+    };
+});
+
+orcidNgModule.filter('humanDate', function($filter){
+    var standardDateFilter = $filter('date');
+    return function(input){
+        var inputDate = new Date(input);
+        var dateNow = new Date();
+        var dateFormat = (inputDate.getYear() === dateNow.getYear() && inputDate.getMonth() === dateNow.getMonth() && inputDate.getDate() === dateNow.getDate())  ? 'HH:mm' : 'yyyy-MM-dd';
+        return standardDateFilter(input, dateFormat);
+    };
+});
+
+orcidNgModule.filter('contributorFilter', function(){
+    return function(ctrb){
+        var out = '';
+        if (!emptyTextField(ctrb.contributorRole)) out = out + ctrb.contributorRole.value;
+        if (!emptyTextField(ctrb.contributorSequence)) out = addComma(out) + ctrb.contributorSequence.value;
+        if (!emptyTextField(ctrb.orcid)) out = addComma(out) + ctrb.orcid.value;
+        if (!emptyTextField(ctrb.email)) out = addComma(out) + ctrb.email.value;
+        if (out.length > 0) out = '(' + out + ')';
+        return out;
+    };
+});
+
+orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
+    return function(workExternalIdentifier, first, last, length, moreInfo){
+
+        var output = '';
+        var ngclass = '';
+        var isPartOf = false;
+        
+        if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        
+        
+        if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
+        	isPartOf = true;
+        
+        if (workExternalIdentifier == null) return output;
+        if (workExternalIdentifier.workExternalIdentifierId == null) return output;
+
+        var id = workExternalIdentifier.workExternalIdentifierId.value;
+        var type;
+
+        if (workExternalIdentifier.workExternalIdentifierType != null)
+            type = workExternalIdentifier.workExternalIdentifierType.value;
+        if (type != null) {
+        	if(isPartOf) 
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+        	else 
+        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+        }
+        var link = null;
+
+        if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
+        	link = workExternalIdentifier.url.value;
+        else link = workIdLinkJs.getLink(id,type); 
+        	
+        if (link != null){
+        	link = $filter('urlProtocol')(link);
+        	
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
+            
+        }else{
+            output = output + id;        
+        }
+        
+        output += '<div class="popover-pos">\
+			<div class="popover-help-container">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+					<div class="arrow"></div>\
+					<div class="popover-content">\
+				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    </div>\
+				</div>\
+			</div>\
+	  </div>';
+
+      return output;
+    };
+});
+
+//Currently being used in Fundings only
+orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', function(fundingSrvc, $filter){
+    return function(externalIdentifier, first, last, length, type, moreInfo){
+    	
+    	var ngclass = '';
+    	var output = '';
+
+        if (externalIdentifier == null) return output;
+        
+        //If type is set always come: "grant_number"
+        if (type != null) {
+        	if (type.value == 'grant') {
+        		output += om.get('funding.add.external_id.value.label.grant') + ": ";
+        	} else if (type.value == 'contract') {
+        		output += om.get('funding.add.external_id.value.label.contract') + ": ";
+        	} else {
+        		output += om.get('funding.add.external_id.value.label.award') + ": ";
+        	}
+        }         
+        
+        var value = null;        
+        if(externalIdentifier.value != null){
+        	value = externalIdentifier.value.value;
+        }
+        
+        var link = null;
+        if(externalIdentifier.url != null)
+            link = externalIdentifier.url.value;
+       
+        if(link != null) {
+        	
+        	link = $filter('urlProtocol')(link);
+        	
+        	if(value != null) {
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
+        	} else {
+        		if(type != null) {
+        			
+        			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
+        			
+        			if(type.value == 'grant') {
+        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        			} else if(type.value == 'contract') {
+        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        			} else {
+        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        			}
+        			
+        		}        		
+        	}
+        } else if(value != null) {
+        	output = output + " " + value;
+        }
+        output += '<div class="popover-pos">\
+        				<div class="popover-help-container">\
+				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
+								<div class="arrow"></div>\
+								<div class="popover-content">\
+							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+							    </div>\
+							</div>\
+						</div>\
+				  </div>';
+      
+        
+        //if (length > 1 && !last) output = output + ',';
+        	return output;
+    	};
+}]);
+
+orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
+    return function(peerReviewExternalIdentifier, first, last, length, moreInfo, own){
+    	
+    	
+        var output = '';
+        var ngclass = '';
+        var isPartOf = false;
+        var type = null;
+        var link = null;
+        ngclass = 'truncate';
+        
+        if (peerReviewExternalIdentifier == null) return output;
+        
+        if(peerReviewExternalIdentifier.relationship != null && peerReviewExternalIdentifier.relationship.value == 'part-of')
+        	isPartOf = true;
+        
+        if (peerReviewExternalIdentifier.workExternalIdentifierId == null) return output;
+        var id = peerReviewExternalIdentifier.workExternalIdentifierId.value;        
+        
+        if (peerReviewExternalIdentifier.workExternalIdentifierType != null)
+            type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
+	        if (type != null) {
+	        	if(isPartOf)
+	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+	        	else 
+	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
+	        }
+        
+        if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
+        	link = peerReviewExternalIdentifier.url.value;
+        else link = workIdLinkJs.getLink(id,type); 
+        	
+        if (link != null){
+        	link = $filter('urlProtocol')(link);
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
+        }else{
+            output += id;        
+        }
+        
+        if (length > 1 && !last) output = output + ',';
+        
+        output += '\
+        <div class="popover-pos">\
+			<div class="popover-help-container">\
+	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
+					<div class="arrow"></div>\
+					<div class="popover-content">\
+				    	<a href="'+link+'" target="_blank">'+link+'</a>\
+				    </div>\
+				</div>\
+			</div>\
+	   </div>';
+        
+        if(own)
+        	output = '<br/>' + output;
+        
+       return output;      
+      
+     
+    };
+});
+
+
+/*
+ * DIRECTIVES
+ */
+
+
+
+/*
+ * For forms submitted using the default submit function (Scope: document)
+ * Not necessary to be inside an element, for inputs use ngEnter
+ */
+orcidNgModule.directive('ngEnterSubmit', function($document) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+        	$document.bind("keydown keypress", function(event) {
+                if (event.which === 13) {
+                   element.submit();
+                }
+            });
+
+        }
+    };
+});
+
+/*
+ * For forms submitted using a custom function, Scope: Document
+ * 
+ * Example:
+ * <fn-form update-fn="theCustomFunction()">
+ * 
+ * </fn-form>
+ * 
+ */
+orcidNgModule.directive('fnForm', function($document) {
+    return {
+        restrict: 'E',
+        scope: {
+            updateFn: '&'
+        },
+        link: function(scope, elm, attrs) { 
+            $document.bind("keydown", function(event) {
+                if (event.which === 13) {
+                      scope.updateFn();                      
+                      event.stopPropagation();
+                }
+            });
+                    
+        }
+    }
+});
+
+/*
+ * Scope: element
+ */
+orcidNgModule.directive('ngEnter', function() {
+    return function(scope, element, attrs) {
+        element.bind("keydown keypress", function(event) {
+            if(event.which === 13) {            	
+                scope.$apply(function(){
+                    scope.$eval(attrs.ngEnter, {'event': event});
+                });
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    };
+});
+
+/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
+orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            scope.$watch(function () {
+                return scope.$eval(attrs.bindHtmlCompile);
+            }, function (value) {
+                element.html(value);
+                $compile(element.contents())(scope);
+            });
+        }
+    };
+}]);
+
+orcidNgModule.directive('focusMe', function($timeout) {
+    return {
+      scope: { trigger: '=focusMe' },
+      link: function(scope, element) {
+        scope.$watch('trigger', function(value) {
+          if(value === true) { 
+            //console.log('trigger',value);
+            //$timeout(function() {
+              element[0].focus();
+              scope.trigger = false;
+            //});
+          }
+        });
+      }
+    };
+});
+
+orcidNgModule.directive('scroll', function () {
+    return {
+        restrict: 'A',
+        link: function ($scope, element, attrs) {
+        	$scope.scrollTop = 0;
+            var raw = element[0];
+            element.bind('scroll', function () {
+            	$scope.scrollTop = raw.scrollTop;
+                //$scope.$apply(attrs.scroll);
+            });
+        }
+    }
+});
+
+orcidNgModule.directive('ngModelOnblur', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attr, ngModelCtrl) {
+            if (attr.type === 'radio' || attr.type === 'checkbox') return;
+
+            elm.unbind('input').unbind('keydown').unbind('change');
+
+            elm.bind("keydown keypress", function(event) {
+                if (event.which === 13) {
+                    scope.$apply(function() {
+                        ngModelCtrl.$setViewValue(elm.val());
+                    });
+                }
+            });
+
+            elm.bind('blur', function() {
+                scope.$apply(function() {
+                    ngModelCtrl.$setViewValue(elm.val());
+                });
+            });
+        }
+    };
+});
+
+orcidNgModule.directive('appFileTextReader', function($q){
+        var slice = Array.prototype.slice;
+        return {
+            restrict: 'A',
+            require: 'ngModel',
+            scope: {
+                updateFn: '&'
+            },
+            link: function(scope, element, attrs, ngModelCtrl){
+                if(!ngModelCtrl) return;
+                ngModelCtrl.$render = function(){};
+                element.bind('change', function(event){
+                    var element = event.target;
+                    $q.all(slice.call(element.files, 0).map(readFile))
+                    .then(function(values){
+                        if(element.multiple){
+                            for(v in values){
+                                ngModelCtrl.$viewValue.push(values[v]);
+                            }
+                        }
+                        else{
+                            ngModelCtrl.$setViewValue(values.length ? values[0] : null);
+                        }
+                        scope.updateFn(scope);
+                        element.value = null;
+                    });
+                    function readFile(file) {
+                        var deferred = $q.defer();
+                        var reader = new FileReader();
+                        reader.onload = function(event){
+                            deferred.resolve(event.target.result);
+                        };
+                        reader.onerror = function(event) {
+                            deferred.reject(event);
+                        };
+                        reader.readAsText(file);
+                        return deferred.promise;
+                    }
+                });//change
+            }//link
+        };//return
+    });//appFilereader
+
+//Thanks to: https://docs.angularjs.org/api/ng/service/$compile#attributes
+orcidNgModule.directive('compile', function($compile) {
+    // directive factory creates a link function
+    return function(scope, element, attrs) {
+      scope.$watch(
+        function(scope) {
+           // watch the 'compile' expression for changes
+          return scope.$eval(attrs.compile);
+        },
+        function(value) {
+          // when the 'compile' expression changes
+          // assign it into the current DOM
+          element.html(value);
+
+          // compile the new DOM and link it to the current
+          // scope.
+          // NOTE: we only compile .childNodes so that
+          // we don't get into infinite loop compiling ourselves
+          $compile(element.contents())(scope);
+        }
+      );
+    };
+  });
+
+orcidNgModule.directive('resize', function ($window) {
+	return function ($scope, element) {
+		var w = angular.element($window);
+		/* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */
+		$scope.getWindowWidth = function () {
+			return { 'w': getWindowWidth() };
+		};
+		$scope.$watch($scope.getWindowWidth, function (newValue, oldValue) {			
+            
+			$scope.windowWidth = newValue.w;
+			
+            
+            if($scope.windowWidth > 767){ /* Desktop view */
+            	$scope.menuVisible = true;
+            	$scope.searchVisible = true;
+            	$scope.settingsVisible = true;
+            }else{
+            	$scope.menuVisible = false;
+            	$scope.searchVisible = false;
+            	$scope.settingsVisible = false;
+            }
+            
+		}, true);
+	
+		w.bind('resize', function () {
+			$scope.$apply();
+		});
+	}
+});
 
 /*Angular Multi-selectbox*/
 angular.module('ui.multiselect', [])
@@ -11406,302 +11697,3 @@ angular.module('ui.multiselect', [])
       }
     }
   }]);
-
-
-orcidNgModule.controller('headerCtrl',['$scope', '$window', function ($scope, $window){	
-	
-	$scope.searchFilterChanged = false;
-	$scope.filterActive = false;
-	$scope.conditionsActive = false;
-	$scope.menuVisible = false;
-	$scope.secondaryMenuVisible = {};
-	$scope.tertiaryMenuVisible = {};
-	$scope.searchVisible = false;
-	$scope.settingsVisible = false;
-	
-	$scope.searchFocus = function(){
-		$scope.filterActive = true;
-		$scope.conditionsActive = true;
-	}
-	
-	$scope.searchBlur = function(){		
-		$scope.hideSearchFilter();
-		$scope.conditionsActive = false;		
-	}
-	
-	$scope.filterChange = function(){
-		$scope.searchFilterChanged = true;
-	}
-	
-	$scope.hideSearchFilter = function(){
-		var searchInputValue = document.getElementById("search-input").value;
-		if (searchInputValue === ""){
-			setTimeout(function() {
-                if ($scope.searchFilterChanged === false) {
-                	$scope.filterActive = false;
-                }
-            }, 3000);
-		}
-	}
-	
-	
-	$scope.toggleMenu = function(){
-		$scope.menuVisible = !$scope.menuVisible;
-		$scope.searchVisible = false;
-		$scope.settingsVisible = false;		
-	}
-	
-	$scope.toggleSecondaryMenu = function(submenu){
-		$scope.secondaryMenuVisible[submenu] = !$scope.secondaryMenuVisible[submenu];
-	}
-	
-	$scope.toggleTertiaryMenu = function(submenu){
-		$scope.tertiaryMenuVisible[submenu] = !$scope.tertiaryMenuVisible[submenu];
-	}
-	
-	$scope.toggleSearch = function(){
-		$scope.searchVisible = !$scope.searchVisible;
-		$scope.menuVisible = false;		
-		$scope.settingsVisible = false;
-	}
-	
-	$scope.toggleSettings = function(){
-		$scope.settingsVisible = !$scope.settingsVisible;
-		$scope.menuVisible = false;
-		$scope.searchVisible = false;
-	}	
-	
-	$scope.handleMobileMenuOption = function($event){
-		$event.preventDefault();
-		var w = getWindowWidth();			
-		if(w > 767) {				
-			window.location = $event.target.getAttribute('href');
-		}
-	}
-	
-}]);
-
-orcidNgModule.controller('widgetCtrl',['$scope', 'widgetSrvc', function ($scope, widgetSrvc){
-	$scope.hash = orcidVar.orcidIdHash.substr(0, 6);
-	$scope.showCode = false;
-	$scope.widgetSrvc = widgetSrvc;
-	
-	$scope.widgetURLND = '<div style="width:100%;text-align:center"><iframe src="'+ getBaseUri() + '/static/html/widget.html?orcid=' + orcidVar.orcidId + '&t=' + $scope.hash + '&locale=' + $scope.widgetSrvc.locale + '" frameborder="0" height="310" width="210px" vspace="0" hspace="0" marginheight="5" marginwidth="5" scrolling="no" allowtransparency="true"></iframe></div>';
-	
-	$scope.inputTextAreaSelectAll = function($event){
-    	$event.target.select();
-    }
-	
-	$scope.toggleCopyWidget = function(){
-		$scope.showCode = !$scope.showCode;
-	}
-	
-	$scope.hideWidgetCode = function(){
-		$scope.showCode = false;
-	}
-	
-}]);
-
-orcidNgModule.controller('PublicRecordCtrl',['$scope', '$compile',function ($scope, $compile) {
-	$scope.showSources = new Array();
-	$scope.showPopover = new Array();
-	$scope.toggleSourcesDisplay = function(section){		
-		$scope.showSources[section] = !$scope.showSources[section];		
-	}
-	
-	$scope.showPopover = function(section){
-		$scope.showPopover[section] = true;
-	}	
-	
-	$scope.hidePopover = function(section){
-		$scope.showPopover[section] = false;	
-	}
-}]);
-
-orcidNgModule.directive('resize', function ($window) {
-	return function ($scope, element) {
-		var w = angular.element($window);
-		/* Only used for detecting window resizing, the value returned by w.width() is not accurate, please refer to getWindowWidth() */
-		$scope.getWindowWidth = function () {
-			return { 'w': getWindowWidth() };
-		};
-		$scope.$watch($scope.getWindowWidth, function (newValue, oldValue) {			
-            
-			$scope.windowWidth = newValue.w;
-			
-            
-            if($scope.windowWidth > 767){ /* Desktop view */
-            	$scope.menuVisible = true;
-            	$scope.searchVisible = true;
-            	$scope.settingsVisible = true;
-            }else{
-            	$scope.menuVisible = false;
-            	$scope.searchVisible = false;
-            	$scope.settingsVisible = false;
-            }
-            
-		}, true);
-	
-		w.bind('resize', function () {
-			$scope.$apply();
-		});
-	}
-});
-
-orcidNgModule.filter('formatBibtexOutput', function () {
-    return function (text) {
-		var str = text.replace(/[\-?_?]/, ' ');
-		return str.toUpperCase();
-    };
-});
-
-
-orcidNgModule.filter('orderObjectBy', function() {
-	  return function(items, field, reverse) {
-	    var filtered = [];
-	    angular.forEach(items, function(item) {
-	      filtered.push(item);
-	    });
-	    filtered.sort(function (a, b) {
-	      return (a[field] > b[field] ? 1 : -1);
-	    });
-	    if(reverse) filtered.reverse();
-	    return filtered;
-	 };
-});
-
-orcidNgModule.filter("filterImportWizards", function(){	
-    return function(input, selectedWorkType, selectedGeoArea) {
-    	var output = [];    	
-    	if(selectedWorkType == 'All' && selectedGeoArea == 'All'){
-    		output = input;
-    	}else{
-    		for(var i = 0; i < input.length; i ++) {
-        		for(var j = 0; j <  input[i].redirectUris.redirectUri.length; j ++) {
-    				if (selectedWorkType == 'All'){
-    					if (contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-    						output.push(input[i]);
-    					}
-    				}else if(selectedGeoArea == 'All'){
-    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType)){
-    						output.push(input[i]);
-    					}    					
-    				}else{    				   					
-    					if (contains(input[i].redirectUris.redirectUri[j].actType['import-works-wizard'],selectedWorkType) && contains(input[i].redirectUris.redirectUri[j].geoArea['import-works-wizard'],selectedGeoArea)){
-        					output.push(input[i]);
-        				}
-    				}
-        		}
-        	}    		
-    	}
-    	return output;
-    };
-});
-
-/*
- * For forms submitted using the default submit function (Scope: document)
- * Not necessary to be inside an element, for inputs use ngEnter
- */
-orcidNgModule.directive('ngEnterSubmit', function($document) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attr) {
-        	$document.bind("keydown keypress", function(event) {
-                if (event.which === 13) {
-                   element.submit();
-                }
-            });
-
-        }
-    };
-});
-
-/*
- * For forms submitted using a custom function, Scope: Document
- * 
- * Example:
- * <fn-form update-fn="theCustomFunction()">
- * 
- * </fn-form>
- * 
- */
-orcidNgModule.directive('fnForm', function($document) {
-    return {
-        restrict: 'E',
-        scope: {
-            updateFn: '&'
-        },
-        link: function(scope, elm, attrs) { 
-            $document.bind("keydown", function(event) {
-                if (event.which === 13) {
-                      scope.updateFn();                      
-                      event.stopPropagation();
-                }
-            });
-                    
-        }
-    }
-});
-
-/*
- * Scope: element
- */
-orcidNgModule.directive('ngEnter', function() {
-    return function(scope, element, attrs) {
-        element.bind("keydown keypress", function(event) {
-            if(event.which === 13) {            	
-                scope.$apply(function(){
-                    scope.$eval(attrs.ngEnter, {'event': event});
-                });
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        });
-    };
-});
-
-/*Use instead ng-bind-html when you want to include directives inside the HTML to bind */
-orcidNgModule.directive('bindHtmlCompile', ['$compile', function ($compile) {
-    return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-            scope.$watch(function () {
-                return scope.$eval(attrs.bindHtmlCompile);
-            }, function (value) {
-                element.html(value);
-                $compile(element.contents())(scope);
-            });
-        }
-    };
-}]);
-
-orcidNgModule.directive('focusMe', function($timeout) {
-    return {
-      scope: { trigger: '=focusMe' },
-      link: function(scope, element) {
-        scope.$watch('trigger', function(value) {
-          if(value === true) { 
-            //console.log('trigger',value);
-            //$timeout(function() {
-              element[0].focus();
-              scope.trigger = false;
-            //});
-          }
-        });
-      }
-    };
-});
-
-orcidNgModule.directive('scroll', function () {
-    return {
-        restrict: 'A',
-        link: function ($scope, element, attrs) {
-        	$scope.scrollTop = 0;
-            var raw = element[0];
-            element.bind('scroll', function () {
-            	$scope.scrollTop = raw.scrollTop;
-                //$scope.$apply(attrs.scroll);
-            });
-        }
-    }
-});
