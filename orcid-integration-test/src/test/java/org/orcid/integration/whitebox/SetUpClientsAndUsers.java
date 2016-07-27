@@ -385,8 +385,7 @@ public class SetUpClientsAndUsers {
         //Set up data for user 1
         setUpAddresses(user1OrcidId);
         setUpKeywords(user1OrcidId);
-        setUpOtherNames(user1OrcidId);
-        setUpEmails(user1OrcidId);        
+        setUpOtherNames(user1OrcidId);          
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
@@ -885,26 +884,7 @@ public class SetUpClientsAndUsers {
         k2.setClientSourceId(client1ClientId);
         k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
         profileKeywordDao.persist(k2);
-    }
-    
-    /**
-     * Set up defaut email info
-     * Please see tests: 
-     *  EmailTest.testGetWithMembersAPI
-     * */
-    public void setUpEmails(String orcid) {
-        EmailEntity email = new EmailEntity();
-        email.setDateCreated(new Date());
-        email.setLastModified(new Date());
-        email.setProfile(new ProfileEntity(orcid));
-        email.setClientSourceId(client1ClientId);
-        email.setVisibility(Visibility.LIMITED);
-        email.setVerified(true);
-        email.setCurrent(false);
-        email.setPrimary(false);
-        email.setId("limited@test.orcid.org");
-        emailDao.persist(email);
-    }
+    }        
         
     /**
      * Set up delegates
