@@ -98,7 +98,9 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
             }
         }
         
-        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        //update and clear scope cache
+        this.updateLastModifiedDateAndIndexingStatus(orcid);
+        //profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
         
         //messaging
         Date last = retrieveLastModifiedDate(orcid);
