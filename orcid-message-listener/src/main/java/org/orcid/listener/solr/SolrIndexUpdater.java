@@ -47,12 +47,16 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SolrIndexUpdater {
+
+    Logger LOG = LoggerFactory.getLogger(SolrIndexUpdater.class);
 
     @Value("${org.orcid.core.indexPublicProfile:true}")
     private boolean indexPublicProfile;
@@ -61,6 +65,7 @@ public class SolrIndexUpdater {
     private SolrServer solrServer;
 
     public void updateSolrIndex(OrcidProfile profile){
+        LOG.info("Updating "+profile.getOrcidIdentifier().getPath()+" in SOLR index. indexPublicProfile = "+indexPublicProfile);
         // Check if the profile is locked
         if (profile.isLocked()) {
             profile.downgradeToOrcidIdentifierOnly();

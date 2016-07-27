@@ -2,19 +2,11 @@ package org.orcid.listener.apiclient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.ws.rs.core.MediaType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.message.LastModifiedDate;
-import org.orcid.jaxb.model.message.OrcidHistory;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.listener.LastUpdatedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +23,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 @Component
 public class Orcid12APIClient {
 
-    Logger LOG = LoggerFactory.getLogger(LastUpdatedListener.class);
+    Logger LOG = LoggerFactory.getLogger(Orcid12APIClient.class);
     protected final Client jerseyClient;    
     protected final URI baseUri;
     
