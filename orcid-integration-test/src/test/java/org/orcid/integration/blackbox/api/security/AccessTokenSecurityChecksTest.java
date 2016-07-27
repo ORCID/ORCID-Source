@@ -169,14 +169,8 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
         work.setPutCode(putCode);
         evaluateResponse(memberV2ApiClient.updateWork(orcid, work, accessToken));
 
-        //Check that from this poing we only can see public data
-        ClientResponse r = memberV2ApiClient.getEmails(orcid, accessToken);
-        assertNotNull(r);
-        Emails emails = r.getEntity(Emails.class);
-        assertEquals(1, emails.getEmails().size());
-        assertEquals("user_1@test.orcid.org", emails.getEmails().get(0).getEmail());
         
-        r = memberV2ApiClient.getResearcherUrls(orcid, accessToken);
+        ClientResponse r = memberV2ApiClient.getResearcherUrls(orcid, accessToken);
         ResearcherUrls rUrls = r.getEntity(ResearcherUrls.class);
         if(rUrls != null && rUrls.getResearcherUrls() != null) {
             for(ResearcherUrl obj : rUrls.getResearcherUrls()) {
