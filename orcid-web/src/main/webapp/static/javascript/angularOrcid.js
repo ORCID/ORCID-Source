@@ -28,6 +28,9 @@
  *  
  */
 
+/*
+ * RANDOM FUNCTIONS
+ */
 function openImportWizardUrl(url) {
     var win = window.open(url, "_target");
     setTimeout( function() {
@@ -78,7 +81,7 @@ function getScripts(scripts, callback) {
 
 function formColorBoxWidth() {
     return isMobile()? '100%': '800px';
-}
+};
 
 function formColorBoxResize() {
     if (isMobile())
@@ -88,7 +91,7 @@ function formColorBoxResize() {
         // however the default div height
         // is auto anyway
         $.colorbox.resize({width:'800px'});
-}
+};
 
 function fixZindexIE7(target, zindex){
     if(isIE() == 7){
@@ -97,19 +100,19 @@ function fixZindexIE7(target, zindex){
             --zindex;
         });
     }
-}
+};
 
 function emptyTextField(field) {
     if (field != null
             && field.value != null
             && field.value.trim() != '') return false;
     return true;
-}
+};
 
 function addComma(str) {
     if (str.length > 0) return str + ', ';
     return str;
-}
+};
 
 function removeBadContributors(dw) {
     for (var idx in dw.contributors) {
@@ -122,7 +125,7 @@ function removeBadContributors(dw) {
                 dw.contributors.splice(idx,1);
             }
     }
-}
+};
 
 function removeBadExternalIdentifiers(dw) {
     for(var idx in dw.workExternalIdentifiers) {
@@ -131,20 +134,23 @@ function removeBadExternalIdentifiers(dw) {
             dw.workExternalIdentifiers.splice(idx,1);
         }
     }
-}
+};
 
 function isEmail(email) {
     var re = /\S+@\S+\.\S+/;
     return re.test(email);
-}
+};
 
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
+};
 
+/*
+ * GROUPINGS LOGIC
+ */
 var PRIVACY = {};
 PRIVACY.PUBLIC = 'PUBLIC';
 PRIVACY.LIMITED = 'LIMITED';
@@ -2209,11 +2215,9 @@ orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', f
     };
 }]);
 
-
 orcidNgModule.controller('EmailPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
     $scope.prefsSrvc = prefsSrvc;
 }]);
-
 
 orcidNgModule.controller('DeactivateAccountCtrl', ['$scope', '$compile', function ($scope, $compile) {
     $scope.sendDeactivateEmail = function() {
@@ -3749,7 +3753,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
     $scope.getCountryForm();
 }]);
 
-
 orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile, bioBulkSrvc){
 	bioBulkSrvc.initScope($scope);
 	$scope.externalIdentifiersForm = null;
@@ -4256,7 +4259,6 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     //$scope.getDuplicates();
 
 }]);
-
 
 orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
     $scope.postingClaim = false;
@@ -11190,8 +11192,6 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
  * DIRECTIVES
  */
 
-
-
 /*
  * For forms submitted using the default submit function (Scope: document)
  * Not necessary to be inside an element, for inputs use ngEnter
@@ -11423,7 +11423,10 @@ orcidNgModule.directive('resize', function ($window) {
 	}
 });
 
-/*Angular Multi-selectbox*/
+
+
+
+/* Angular Multi-selectbox */
 angular.module('ui.multiselect', [])
 
 .factory('optionParser', ['$parse', function ($parse) {
@@ -11696,4 +11699,5 @@ angular.module('ui.multiselect', [])
         }
       }
     }
-  }]);
+}]);
+/* Do not add anything below, see file structure at the top of this file */
