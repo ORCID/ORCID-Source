@@ -55,7 +55,8 @@ public class JmsMessageSender {
     public enum JmsDestination{
         TEST(MessageConstants.Queues.TEST),
         TEST_REPLY(MessageConstants.Queues.TEST_REPLY), 
-        UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS);
+        UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS), 
+        REINDEX(MessageConstants.Queues.REINDEX);
         public final String value;
         JmsDestination(String value){
             this.value = value;
@@ -83,8 +84,8 @@ public class JmsMessageSender {
         }
     }
     
-    public void send(LastModifiedMessage mess){
-        this.sendMap(mess.getMap(), JmsDestination.UPDATED_ORCIDS);
+    public void send(LastModifiedMessage mess, JmsDestination d){
+        this.sendMap(mess.getMap(), d);
     }
     
     /** Silenty discard messages for a while

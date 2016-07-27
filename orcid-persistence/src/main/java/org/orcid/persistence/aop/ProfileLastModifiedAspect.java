@@ -131,7 +131,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         //messaging
         Date last = retrieveLastModifiedDate(orcid);
         LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-        messaging.send(mess);
+        messaging.send(mess,JmsDestination.UPDATED_ORCIDS);
     }
 
     /** Fetches the last modified from the request-scope last modified cache

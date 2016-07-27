@@ -46,8 +46,6 @@ public class GenericExpiringQueue<T extends RemovalListener<String, LastModified
             int secondsToWait, 
             Boolean forceCleanup,
             T removalListener){        
-        
-        //create the listener that does the work when an orcid hasnt been modified in the last five minutes.
         LOG.info("Creating cacheQueue with "+ secondsToWait+" seconds wait and forceCleanup = "+forceCleanup + "using "+removalListener.getClass().getSimpleName());
         
         //create a thread that does the removal - we can fiddle with the Executor if we need more threads

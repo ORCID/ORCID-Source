@@ -35,7 +35,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         if (removal.wasEvicted()){
             LastModifiedMessage m = removal.getValue();
             LOG.info("Removing "+ removal.getKey() + " from UpdatedOrcidCacheQueue");
-            LOG.info("Processing " +m.getLastUpdated()+" "+m.getMethod());
+            LOG.info("Processing " +m.getLastUpdated());
             OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(m.getOrcid());
             Date lastModifiedFromprofile = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
             Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());

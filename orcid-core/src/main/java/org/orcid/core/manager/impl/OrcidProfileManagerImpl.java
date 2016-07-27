@@ -133,9 +133,12 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.messaging.JmsMessageSender;
+import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -1844,6 +1847,32 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     static Object executorServiceLock = new Object();
     static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
 
+    @Resource
+    JmsMessageSender messaging;
+    
+    /** Simple method to be called by scheduler.
+     * Looks for profiles with REINDEX flag and adds LastModifiedMessages to the REINDEX queue
+     * Then sets indexing flag to DONE (although there is no guarantee it will be done!)
+     * 
+     */
+    @Override
+    public void processProfilesWithReindexFlagAndAddToMessageQueue(){
+        LOG.info("processing profiles with reindex flag");
+        List<String> orcidsForIndexing = new ArrayList<>();
+        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
+        indexingStatuses.add(IndexingStatus.REINDEX);
+        do{
+            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
+            LOG.info("processing batch of "+orcidsForIndexing.size());
+            for (String orcid : orcidsForIndexing){
+                Date last = profileDao.retrieveLastModifiedDate(orcid);
+                LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
+                messaging.send(mess,JmsDestination.REINDEX);
+                profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+            }
+        }while (!orcidsForIndexing.isEmpty());
+    }
+    
     @Override
     @Deprecated
     public void processProfilesPendingIndexing() {
