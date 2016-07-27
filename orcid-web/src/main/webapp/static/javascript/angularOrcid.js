@@ -2350,7 +2350,8 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
     };
 }]);
 
-orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,function EmailEditCtrl($scope, $compile, emailSrvc) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout',function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout) {
+	bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
@@ -2360,7 +2361,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.showDeleteBox = false;
     $scope.showConfirmationBox = false;
     $scope.showEmailVerifBox = false;
-    $scope.scrollTop = 0;
+    $scope.scrollTop = 0;    
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2429,13 +2430,11 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.closeDeleteBox = function(){
         $scope.showDeleteBox = false;
-    }; 
-    
+    };
     
     $scope.closeVerificationBox = function(){
         $scope.showEmailVerifBox = false;
-    }
-
+    };
 
     $scope.submitModal = function (obj, $event) {
         emailSrvc.inputEmail.password = $scope.password;
@@ -2501,7 +2500,68 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.hideTooltip = function(el){
     	$scope.showElement[el] = false;
-    };    
+    };
+    
+    $scope.toggleBulkEdit = function() {
+        if (!$scope.bulkEditShow) {
+            $scope.bulkEditMap = {};
+            $scope.bulkChecked = false;
+            for (var idx in emailSrvc.emails.emails)
+                $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = false;            
+            
+            $scope.$watch(
+        		function () {        			
+        		   	return angular.element('.bulk-edit-area').length; 
+        		},
+        		function (newValue, oldValue) {        			
+        			if (newValue !== oldValue) {        				
+        				var h = angular.element('.lightbox-container').height();
+        				$.colorbox.resize({height: h});
+        	      	}else{        	      		
+    	      			var h = angular.element('.lightbox-container').height();
+        	            $.colorbox.resize({height: h});        	            
+        	      	}
+        	    }
+        	);
+        };
+        $scope.bulkEditShow = !$scope.bulkEditShow;
+        angular.element('#cboxLoadedContent').css({	  		
+  			overflow: 'visible'
+	  	});	
+          
+    };
+    
+    $scope.bulkChangeAll = function(bool) {
+        $scope.bulkChecked = bool;
+        $scope.bulkDisplayToggle = false;
+        for (var idx in emailSrvc.emails.emails)
+            $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = bool;
+    };
+    
+    $scope.swapbulkChangeAll = function() {
+        $scope.bulkChecked = !$scope.bulkChecked;
+        for (var idx in emailSrvc.emails.emails)
+            $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = $scope.bulkChecked;
+        $scope.bulkDisplayToggle = false;
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+        for (var idx in emailSrvc.emails.emails)
+            if ($scope.bulkEditMap[emailSrvc.emails.emails[idx].value])
+            	emailSrvc.emails.emails[idx].visibility = priv;
+        emailSrvc.saveEmail();
+    };
+    
+    $scope.bulkDelete = function() {     
+        var emails = emailSrvc.emails.emails;
+        var len = emails.length;
+        while (len--)            
+            if ($scope.bulkEditMap[emailSrvc.emails.emails[len].value])                
+                emails.splice(len,1);
+        
+        emailSrvc.emails.emails = emails;
+    }
+    
     
 }]);
 
