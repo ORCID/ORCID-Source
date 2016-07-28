@@ -42,7 +42,7 @@ import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;

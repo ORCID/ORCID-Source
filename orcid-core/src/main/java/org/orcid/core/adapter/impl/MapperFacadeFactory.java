@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.common_rc3.FuzzyDate;
 import org.orcid.jaxb.model.common_rc3.PublicationDate;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;

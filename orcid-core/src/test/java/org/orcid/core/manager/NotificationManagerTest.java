@@ -57,7 +57,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
-import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
+import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
 import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.notification_rc3.NotificationType;
 import org.orcid.persistence.dao.ClientDetailsDao;
