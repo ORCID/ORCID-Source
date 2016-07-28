@@ -323,7 +323,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private Response getOrcidErrorResponse(int errorCode, int status, Throwable t, String version) {
         Object orcidError;
         if (V2_RC2.equals(version)) {
-            orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
+            orcidError = (org.orcid.jaxb.model.error_rc3.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
         } else {
             orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
         }
@@ -364,9 +364,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
         return orcidError;
     }
 
-    private org.orcid.jaxb.model.error_rc2.OrcidError getOrcidErrorV2Rc2(int errorCode, int status, Throwable t) {
+    private org.orcid.jaxb.model.error_rc3.OrcidError getOrcidErrorV2Rc2(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
-        org.orcid.jaxb.model.error_rc2.OrcidError orcidError = new org.orcid.jaxb.model.error_rc2.OrcidError();
+        org.orcid.jaxb.model.error_rc3.OrcidError orcidError = new org.orcid.jaxb.model.error_rc3.OrcidError();
         orcidError.setResponseCode(status);
         orcidError.setErrorCode(errorCode);
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
