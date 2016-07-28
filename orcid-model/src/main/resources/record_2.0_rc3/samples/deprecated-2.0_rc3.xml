@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deprecated:deprecated xmlns:common="http://www.orcid.org/ns/common"
+	xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.orcid.org/ns/deprecated ../deprecated-2.0_rc3.xsd ">
+	<deprecated:deprecated-date>2001-12-31T12:00:00</deprecated:deprecated-date>
+	<deprecated:primary-record>
+		<common:orcid-identifier>
+			<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
+			<common:path>8888-8888-8888-8880</common:path>
+			<common:host>orcid.org</common:host>
+		</common:orcid-identifier>
+	</deprecated:primary-record>
+</deprecated:deprecated>
