@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
 import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.FundingType;
 import org.orcid.persistence.jpa.entities.EndDateEntity;

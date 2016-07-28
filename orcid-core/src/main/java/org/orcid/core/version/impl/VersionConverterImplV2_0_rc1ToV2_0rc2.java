@@ -81,7 +81,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         mapperFactory.getConverterFactory().registerConverter(new WorkExternalIdentifierToExternalIDConverter());
         
         // ACTIVITY SUMMARY
-        mapperFactory.classMap(ActivitiesSummary.class, org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary.class).field("educations", "educations")
+        mapperFactory.classMap(ActivitiesSummary.class, org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary.class).field("educations", "educations")
                 .field("employments", "employments")
                 .field("fundings.fundingGroup{identifiers}", "fundings.fundingGroup{identifiers}")
                 .field("fundings.fundingGroup{fundingSummary}", "fundings.fundingGroup{fundingSummary}")
@@ -89,9 +89,9 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .field("peerReviews.peerReviewGroup{peerReviewSummary}", "peerReviews.peerReviewGroup{peerReviewSummary}")
                 .field("works.workGroup{identifiers}", "works.workGroup{identifiers}")
                 .field("works.workGroup{workSummary}", "works.workGroup{workSummary}")
-                .customize(new CustomMapper<ActivitiesSummary, org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary>() {
+                .customize(new CustomMapper<ActivitiesSummary, org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary>() {
                     @Override
-                    public void mapAtoB(ActivitiesSummary actSummaryRc1, org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary actSummaryRc2,
+                    public void mapAtoB(ActivitiesSummary actSummaryRc1, org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary actSummaryRc2,
                             MappingContext context) {
 
                         SortedSet<Date> latestDates = new TreeSet<>();
@@ -108,56 +108,56 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .register();
 
         // EDUCATION SUMMARY
-        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc2.Educations.class).field("summaries", "summaries")
-                .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record.summary_rc2.Educations>() {
+        mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc3.Educations.class).field("summaries", "summaries")
+                .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record.summary_rc3.Educations>() {
                     @Override
-                    public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc2.Educations educationsRc2, MappingContext context) {
+                    public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc3.Educations educationsRc2, MappingContext context) {
                         educationsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(educationsRc2))));
                     }
                 }).register();
 
         // EMPLOYMENT SUMMARY
-        mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record.summary_rc2.Employments.class).field("summaries", "summaries")
-                .customize(new CustomMapper<Employments, org.orcid.jaxb.model.record.summary_rc2.Employments>() {
+        mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record.summary_rc3.Employments.class).field("summaries", "summaries")
+                .customize(new CustomMapper<Employments, org.orcid.jaxb.model.record.summary_rc3.Employments>() {
                     @Override
-                    public void mapAtoB(Employments employmentsRc1, org.orcid.jaxb.model.record.summary_rc2.Employments employmentsRc2, MappingContext context) {
+                    public void mapAtoB(Employments employmentsRc1, org.orcid.jaxb.model.record.summary_rc3.Employments employmentsRc2, MappingContext context) {
                         employmentsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
                     }
                 }).register();
 
         // FUNDINGS
-        mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.record.summary_rc2.Fundings.class)
+        mapperFactory.classMap(Fundings.class, org.orcid.jaxb.model.record.summary_rc3.Fundings.class)
                 .field("fundingGroup{identifiers}", "fundingGroup{identifiers}")
                 .field("fundingGroup{fundingSummary}", "fundingGroup{fundingSummary}")
-                .customize(new CustomMapper<Fundings, org.orcid.jaxb.model.record.summary_rc2.Fundings>() {
+                .customize(new CustomMapper<Fundings, org.orcid.jaxb.model.record.summary_rc3.Fundings>() {
                     @Override
-                    public void mapAtoB(Fundings fundingsRc1, org.orcid.jaxb.model.record.summary_rc2.Fundings fundingsRc2, MappingContext context) {
+                    public void mapAtoB(Fundings fundingsRc1, org.orcid.jaxb.model.record.summary_rc3.Fundings fundingsRc2, MappingContext context) {
                         fundingsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
                     }
                 }).register();
         
         // PEER REVIEWS
-        mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviews.class)
+        mapperFactory.classMap(PeerReviews.class, org.orcid.jaxb.model.record.summary_rc3.PeerReviews.class)
                 .field("peerReviewGroup{identifiers}", "peerReviewGroup{identifiers}")
                 .field("peerReviewGroup{peerReviewSummary}", "peerReviewGroup{peerReviewSummary}")
-                .customize(new CustomMapper<PeerReviews, org.orcid.jaxb.model.record.summary_rc2.PeerReviews>() {
+                .customize(new CustomMapper<PeerReviews, org.orcid.jaxb.model.record.summary_rc3.PeerReviews>() {
                     @Override
-                    public void mapAtoB(PeerReviews peerReviewsRc1, org.orcid.jaxb.model.record.summary_rc2.PeerReviews peerReviewsRc2, MappingContext context) {
+                    public void mapAtoB(PeerReviews peerReviewsRc1, org.orcid.jaxb.model.record.summary_rc3.PeerReviews peerReviewsRc2, MappingContext context) {
                         peerReviewsRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
                     }
                 }).register();
 
         // WORKS
-        mapperFactory.classMap(Works.class, org.orcid.jaxb.model.record.summary_rc2.Works.class)
+        mapperFactory.classMap(Works.class, org.orcid.jaxb.model.record.summary_rc3.Works.class)
                 .field("workGroup{identifiers}", "workGroup{identifiers}")
                 .field("workGroup{workSummary}", "workGroup{workSummary}")
-                .customize(new CustomMapper<Works, org.orcid.jaxb.model.record.summary_rc2.Works>() {
+                .customize(new CustomMapper<Works, org.orcid.jaxb.model.record.summary_rc3.Works>() {
                     @Override
-                    public void mapAtoB(Works worksRc1, org.orcid.jaxb.model.record.summary_rc2.Works worksRc2, MappingContext context) {
+                    public void mapAtoB(Works worksRc1, org.orcid.jaxb.model.record.summary_rc3.Works worksRc2, MappingContext context) {
                         worksRc2.setLastModifiedDate(
                                 new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(worksRc2))));
                     }
@@ -187,23 +187,23 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc3.Work.class).byDefault().register();
-        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.record.summary_rc2.WorkSummary.class).byDefault().register();
+        mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.record.summary_rc3.WorkSummary.class).byDefault().register();
         
         //FUNDING
         mapperFactory.classMap(Funding.class, org.orcid.jaxb.model.record_rc3.Funding.class).byDefault().register();
-        mapperFactory.classMap(FundingSummary.class, org.orcid.jaxb.model.record.summary_rc2.FundingSummary.class).byDefault().register();
+        mapperFactory.classMap(FundingSummary.class, org.orcid.jaxb.model.record.summary_rc3.FundingSummary.class).byDefault().register();
         
         //EDUCATION
         mapperFactory.classMap(Education.class, org.orcid.jaxb.model.record_rc3.Education.class).byDefault().register();
-        mapperFactory.classMap(EducationSummary.class, org.orcid.jaxb.model.record.summary_rc2.EducationSummary.class).byDefault().register();
+        mapperFactory.classMap(EducationSummary.class, org.orcid.jaxb.model.record.summary_rc3.EducationSummary.class).byDefault().register();
         
         //EMPLOYMENT
         mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.record_rc3.Employment.class).byDefault().register();
-        mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary.class).byDefault().register();
+        mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary.class).byDefault().register();
         
         //PEER REVIEW
         mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc3.PeerReview.class).byDefault().register();        
-        mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();                
+        mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary.class).byDefault().register();                
         
         //NOTIFICATIONS
         mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission.class).byDefault().register();;

@@ -48,7 +48,7 @@ public class V2VersionObjectFactoryTest extends BaseTest {
         FundingSummary fundingSummaryRc1 = new FundingSummary();
         Object result = v2VersionObjectFactory.createEquivalentInstance(fundingSummaryRc1, "2.0_rc2");
         assertNotNull(result);
-        assertTrue("Result should be rc2", result instanceof org.orcid.jaxb.model.record.summary_rc2.FundingSummary);
+        assertTrue("Result should be rc2", result instanceof org.orcid.jaxb.model.record.summary_rc3.FundingSummary);
     }
 
 }

@@ -22,9 +22,9 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;

@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
 import org.orcid.jaxb.model.record_rc3.PeerReviewType;
 import org.orcid.jaxb.model.record_rc3.Role;

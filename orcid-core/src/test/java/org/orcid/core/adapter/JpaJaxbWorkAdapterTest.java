@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.CitationType;
 import org.orcid.jaxb.model.message.Iso3166Country;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;

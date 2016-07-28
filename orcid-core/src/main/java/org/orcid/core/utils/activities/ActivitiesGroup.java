@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
 import org.orcid.jaxb.model.record_rc3.ExternalIdentifiersContainer;
 import org.orcid.jaxb.model.record_rc3.GroupAble;
 import org.orcid.jaxb.model.record_rc3.GroupableActivity;

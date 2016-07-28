@@ -45,7 +45,7 @@ import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.jaxb.model.record_rc3.Education;

@@ -36,7 +36,7 @@ import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;

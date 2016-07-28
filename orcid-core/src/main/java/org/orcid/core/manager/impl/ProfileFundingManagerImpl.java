@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;

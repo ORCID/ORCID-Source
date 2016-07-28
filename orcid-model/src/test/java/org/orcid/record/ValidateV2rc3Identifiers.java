@@ -44,7 +44,7 @@ import org.junit.Test;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.notification.custom.MarshallingTest;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 import org.orcid.jaxb.model.record_rc3.Funding;

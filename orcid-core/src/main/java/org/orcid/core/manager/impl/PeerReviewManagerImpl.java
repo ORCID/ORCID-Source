@@ -39,7 +39,7 @@ import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
 import org.orcid.persistence.dao.PeerReviewDao;
 import org.orcid.persistence.jpa.entities.OrgEntity;
