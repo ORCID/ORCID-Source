@@ -59,15 +59,15 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc3.Education;
+import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc3.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -842,7 +842,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         work1.setPutCode(null);
         work1.setVisibility(Visibility.PUBLIC);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        org.orcid.jaxb.model.record_rc2.WorkTitle title1 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title1 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title1.setTitle(new Title("Work # 1" + time));
         work1.setWorkTitle(title1);
         ExternalID wExtId1 = new ExternalID();
@@ -856,7 +856,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         Work work2 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work2.setPutCode(null);
         work2.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_rc2.WorkTitle title2 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title2 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title2.setTitle(new Title("Work # 2" + time));
         work2.setWorkTitle(title2);
         work2.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -871,7 +871,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         Work work3 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work3.setPutCode(null);
         work3.setVisibility(Visibility.PUBLIC);
-        org.orcid.jaxb.model.record_rc2.WorkTitle title3 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title3 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title3.setTitle(new Title("Work # 3" + time));
         work3.setWorkTitle(title3);        
         work3.getExternalIdentifiers().getExternalIdentifier().clear();
@@ -952,7 +952,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
         Work work1 = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
         work1.setPutCode(null);
         work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        org.orcid.jaxb.model.record_rc2.WorkTitle title1 = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle title1 = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         title1.setTitle(new Title("Work # 1"));
         work1.setWorkTitle(title1);
         ExternalID wExtId1 = new ExternalID();

@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 
 public class WebsiteForm implements ErrorsInterface, Serializable {
 

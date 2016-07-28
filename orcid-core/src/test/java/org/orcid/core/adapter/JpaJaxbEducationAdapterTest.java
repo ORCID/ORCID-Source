@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;

@@ -37,8 +37,8 @@ import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

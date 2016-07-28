@@ -23,7 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbEducationAdapter;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 
 /**

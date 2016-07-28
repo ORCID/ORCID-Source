@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
-import org.orcid.jaxb.model.record_rc2.Activity;
+import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc3.Activity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "summaries" })

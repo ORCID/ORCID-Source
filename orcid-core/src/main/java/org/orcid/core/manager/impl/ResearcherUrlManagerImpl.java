@@ -35,8 +35,8 @@ import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.ResearcherUrlDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -216,7 +216,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
     }
 
     @Override
-    public org.orcid.jaxb.model.record_rc2.ResearcherUrl getResearcherUrl(String orcid, long id) {
+    public org.orcid.jaxb.model.record_rc3.ResearcherUrl getResearcherUrl(String orcid, long id) {
         ResearcherUrlEntity researcherUrlEntity = researcherUrlDao.getResearcherUrl(orcid, id);        
         return jpaJaxbResearcherUrlAdapter.toResearcherUrl(researcherUrlEntity);
     }

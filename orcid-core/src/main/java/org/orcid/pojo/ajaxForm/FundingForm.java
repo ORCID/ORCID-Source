@@ -30,12 +30,12 @@ import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc3.OrganizationDefinedFundingSubType;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.FundingContributor;
-import org.orcid.jaxb.model.record_rc2.FundingContributors;
-import org.orcid.jaxb.model.record_rc2.FundingType;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.FundingContributor;
+import org.orcid.jaxb.model.record_rc3.FundingContributors;
+import org.orcid.jaxb.model.record_rc3.FundingType;
 
 public class FundingForm implements ErrorsInterface, Serializable {
 

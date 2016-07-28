@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 import ma.glasnost.orika.MapperFacade;

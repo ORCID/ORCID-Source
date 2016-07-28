@@ -35,7 +35,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.notification_rc2.NotificationType;
-import org.orcid.jaxb.model.record_rc2.SourceAware;
+import org.orcid.jaxb.model.record_rc3.SourceAware;
 
 import io.swagger.annotations.ApiModelProperty;
 

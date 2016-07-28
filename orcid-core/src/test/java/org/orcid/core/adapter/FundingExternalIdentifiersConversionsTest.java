@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifier;
 import org.orcid.core.adapter.impl.jsonidentifiers.FundingExternalIdentifiers;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 
 public class FundingExternalIdentifiersConversionsTest {
 

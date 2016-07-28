@@ -23,7 +23,7 @@ import ma.glasnost.orika.MapperFacade;
 
 import org.orcid.core.adapter.JpaJaxbPeerReviewAdapter;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
 public class JpaJaxbPeerReviewAdapterImpl implements JpaJaxbPeerReviewAdapter {

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.orcid.jaxb.model.common_rc3.CreatedDate;
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.record_rc2.SourceAware;
+import org.orcid.jaxb.model.record_rc3.SourceAware;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

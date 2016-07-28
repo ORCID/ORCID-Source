@@ -20,10 +20,10 @@ import java.util.Collection;
 
 import org.orcid.jaxb.model.common_rc3.Filterable;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record_rc2.Group;
-import org.orcid.jaxb.model.record_rc2.Person;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc3.Group;
+import org.orcid.jaxb.model.record_rc3.Person;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.Record;
 
 /**
  * @author Will Simpson

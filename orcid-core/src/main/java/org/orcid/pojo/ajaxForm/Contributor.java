@@ -27,9 +27,9 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_rc3.ContributorEmail;
 import org.orcid.jaxb.model.common_rc3.ContributorOrcid;
 import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.record_rc2.FundingContributor;
-import org.orcid.jaxb.model.record_rc2.FundingContributorAttributes;
-import org.orcid.jaxb.model.record_rc2.FundingContributorRole;
+import org.orcid.jaxb.model.record_rc3.FundingContributor;
+import org.orcid.jaxb.model.record_rc3.FundingContributorAttributes;
+import org.orcid.jaxb.model.record_rc3.FundingContributorRole;
 
 public class Contributor implements ErrorsInterface, Serializable {
 

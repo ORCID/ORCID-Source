@@ -25,8 +25,8 @@ import org.orcid.core.exception.ActivityIdentifierValidationException;
 import org.orcid.core.manager.IdentifierTypeManager;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.Items;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 
 public class ExternalIDValidator {
 

@@ -32,11 +32,11 @@ import org.orcid.jaxb.model.message.FuzzyDate;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.WorkCategory;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.record_rc2.CitationType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc3.CitationType;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.utils.OrcidStringUtils;
 
 public class WorkForm implements ErrorsInterface, Serializable {
@@ -236,13 +236,13 @@ public class WorkForm implements ErrorsInterface, Serializable {
                     
                     if(extId.getRelationship() == null) {
                         if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISSN.equals(extId.getType())) {
-                            if(org.orcid.jaxb.model.record_rc2.WorkType.BOOK.equals(work.getWorkType())) {
+                            if(org.orcid.jaxb.model.record_rc3.WorkType.BOOK.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
                                 extId.setRelationship(Relationship.SELF);
                             }
                         } else if(org.orcid.jaxb.model.message.WorkExternalIdentifierType.ISBN.equals(extId.getType())) {
-                            if(org.orcid.jaxb.model.record_rc2.WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || org.orcid.jaxb.model.record_rc2.WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
+                            if(org.orcid.jaxb.model.record_rc3.WorkType.BOOK_CHAPTER.equals(work.getWorkType()) || org.orcid.jaxb.model.record_rc3.WorkType.CONFERENCE_PAPER.equals(work.getWorkType())) {
                                 extId.setRelationship(Relationship.PART_OF);
                             } else {
                                 extId.setRelationship(Relationship.SELF);
@@ -289,7 +289,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
     private static void populateContributors(Work work, WorkForm workForm) {
         List<Contributor> contributorsList = new ArrayList<Contributor>();
         if(work.getWorkContributors() != null) {
-            org.orcid.jaxb.model.record_rc2.WorkContributors contributors = work.getWorkContributors();
+            org.orcid.jaxb.model.record_rc3.WorkContributors contributors = work.getWorkContributors();
             if (contributors != null) {
                 for (org.orcid.jaxb.model.common_rc3.Contributor contributor : contributors.getContributor()) {
                     contributorsList.add(Contributor.valueOf(contributor));
@@ -300,7 +300,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
     }
     
     private static void populateContributors(WorkForm workForm, Work work) {
-        org.orcid.jaxb.model.record_rc2.WorkContributors contributors = new org.orcid.jaxb.model.record_rc2.WorkContributors();
+        org.orcid.jaxb.model.record_rc3.WorkContributors contributors = new org.orcid.jaxb.model.record_rc3.WorkContributors();
         if(workForm.getContributors() != null && !workForm.getContributors().isEmpty()) {
             for(Contributor wfContributor : workForm.getContributors()) {
                 org.orcid.jaxb.model.common_rc3.Contributor workContributor = new org.orcid.jaxb.model.common_rc3.Contributor();
@@ -310,7 +310,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 }
                 
                 if(!PojoUtil.isEmpty(wfContributor.getContributorSequence())) {
-                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.record_rc2.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
+                    contributorAttributes.setContributorSequence(org.orcid.jaxb.model.record_rc3.SequenceType.fromValue(wfContributor.getContributorSequence().getValue()));
                 }                
                 workContributor.setContributorAttributes(contributorAttributes);
                 
@@ -357,10 +357,10 @@ public class WorkForm implements ErrorsInterface, Serializable {
 
         // Set type
         if (!PojoUtil.isEmpty(this.getWorkType())) {
-            work.setWorkType(org.orcid.jaxb.model.record_rc2.WorkType.fromValue(this.getWorkType().getValue()));
+            work.setWorkType(org.orcid.jaxb.model.record_rc3.WorkType.fromValue(this.getWorkType().getValue()));
         }        
         
-        org.orcid.jaxb.model.record_rc2.WorkTitle workTitle = new org.orcid.jaxb.model.record_rc2.WorkTitle();
+        org.orcid.jaxb.model.record_rc3.WorkTitle workTitle = new org.orcid.jaxb.model.record_rc3.WorkTitle();
         // Set title
         if(!PojoUtil.isEmpty(this.getTitle())) {            
             workTitle.setTitle(new org.orcid.jaxb.model.common_rc3.Title(this.getTitle().getValue()));
@@ -432,7 +432,7 @@ public class WorkForm implements ErrorsInterface, Serializable {
                 
         // Set citation
         if(this.getCitation() != null) {
-            org.orcid.jaxb.model.record_rc2.Citation citation = new org.orcid.jaxb.model.record_rc2.Citation();
+            org.orcid.jaxb.model.record_rc3.Citation citation = new org.orcid.jaxb.model.record_rc3.Citation();
             if(!PojoUtil.isEmpty(this.getCitation().getCitation())) {
                 citation.setCitation(this.getCitation().getCitation().getValue());
             }

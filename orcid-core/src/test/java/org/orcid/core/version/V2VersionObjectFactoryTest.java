@@ -40,7 +40,7 @@ public class V2VersionObjectFactoryTest extends BaseTest {
         Work workRc1 = new Work();
         Object result = v2VersionObjectFactory.createEquivalentInstance(workRc1, "2.0_rc2");
         assertNotNull(result);
-        assertTrue("Result should be rc2", result instanceof org.orcid.jaxb.model.record_rc2.Work);
+        assertTrue("Result should be rc2", result instanceof org.orcid.jaxb.model.record_rc3.Work);
     }
 
     @Test

@@ -31,7 +31,7 @@ import org.orcid.core.manager.EmailManager;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc3.Emails;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -164,7 +164,7 @@ public class EmailManagerImpl implements EmailManager {
         } else {
             entities = emailDao.findByOrcid(orcid, Visibility.PUBLIC);
         }
-        List<org.orcid.jaxb.model.record_rc2.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
+        List<org.orcid.jaxb.model.record_rc3.Email> emailList = jpaJaxbEmailAdapter.toEmailList(entities);
         Emails emails = new Emails();
         emails.setEmails(emailList);
         LastModifiedDatesHelper.calculateLatest(emails);

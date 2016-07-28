@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 
 public class ExternalIdentifierForm implements ErrorsInterface, Serializable {
 

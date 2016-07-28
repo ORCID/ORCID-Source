@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc3.OtherName;
 
 public class OtherNameForm implements ErrorsInterface, Serializable {
 

@@ -31,12 +31,12 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
-import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc3.Activity;
+import org.orcid.jaxb.model.record_rc3.Education;
+import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityUtils {

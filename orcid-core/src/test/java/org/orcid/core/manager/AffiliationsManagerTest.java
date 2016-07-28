@@ -42,8 +42,8 @@ import org.orcid.jaxb.model.common_rc3.Organization;
 import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.common_rc3.Year;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc3.Education;
+import org.orcid.jaxb.model.record_rc3.Employment;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 

@@ -930,7 +930,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     @Override
     @Transactional    
-    public void updateNames(String orcid, org.orcid.jaxb.model.record_rc2.PersonalDetails personalDetails) {
+    public void updateNames(String orcid, org.orcid.jaxb.model.record_rc3.PersonalDetails personalDetails) {
         String givenNames = personalDetails.getName().getGivenNames() != null ? personalDetails.getName().getGivenNames().getContent() : null;
         String familyName = personalDetails.getName().getFamilyName() != null ? personalDetails.getName().getFamilyName().getContent() : null;
         String creditName = personalDetails.getName().getCreditName() != null ? personalDetails.getName().getCreditName().getContent() : null;

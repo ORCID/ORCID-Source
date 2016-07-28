@@ -20,8 +20,8 @@ import java.io.Serializable;
 
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

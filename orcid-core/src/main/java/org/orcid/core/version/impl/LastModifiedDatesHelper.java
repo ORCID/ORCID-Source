@@ -28,23 +28,23 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
-import org.orcid.jaxb.model.record_rc2.ActivitiesContainer;
-import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.Group;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.GroupsContainer;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
+import org.orcid.jaxb.model.record_rc3.Activity;
+import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc3.Group;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_rc3.GroupsContainer;
+import org.orcid.jaxb.model.record_rc3.Keyword;
+import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.utils.DateUtils;
 
 public class LastModifiedDatesHelper {
@@ -71,7 +71,7 @@ public class LastModifiedDatesHelper {
         Date latestGrp = null;
         if (groupsContainerRc2.retrieveGroups() != null && !groupsContainerRc2.retrieveGroups().isEmpty()) {
             List<? extends Group> groupsRc1 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
-            List<org.orcid.jaxb.model.record_rc2.Group> groupsRc2 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
+            List<org.orcid.jaxb.model.record_rc3.Group> groupsRc2 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
             if (groupsRc1.get(0).getActivities() != null && !groupsRc1.get(0).getActivities().isEmpty()) {
                 for (int index = 0; index < groupsRc2.size(); index++) {
                     latestGrp = calculateLatest(groupsRc2.get(index));

@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.record_rc2.FamilyName;
-import org.orcid.jaxb.model.record_rc2.GivenNames;
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.FamilyName;
+import org.orcid.jaxb.model.record_rc3.GivenNames;
+import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 
 public class NamesForm implements ErrorsInterface, Serializable {
 

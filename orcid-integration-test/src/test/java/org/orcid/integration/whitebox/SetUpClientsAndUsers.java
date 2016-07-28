@@ -62,10 +62,10 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc2.FamilyName;
-import org.orcid.jaxb.model.record_rc2.GivenNames;
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.FamilyName;
+import org.orcid.jaxb.model.record_rc3.GivenNames;
+import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.orcid.persistence.dao.AddressDao;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
@@ -563,9 +563,9 @@ public class SetUpClientsAndUsers {
             profileDao.updatePreferences(orcid, true, true, true, true, Visibility.PUBLIC, true, 1f);                        
             
             // Set default bio
-            org.orcid.jaxb.model.record_rc2.Biography bio = biographyManager.getBiography(orcid);
+            org.orcid.jaxb.model.record_rc3.Biography bio = biographyManager.getBiography(orcid);
             if (bio == null || bio.getContent() == null) {
-                bio = new org.orcid.jaxb.model.record_rc2.Biography(params.get(BIO)); 
+                bio = new org.orcid.jaxb.model.record_rc3.Biography(params.get(BIO)); 
                 bio.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(OrcidVisibilityDefaults.BIOGRAPHY_DEFAULT.getVisibility().value()));
                 biographyManager.createBiography(orcid, bio);
             } else {

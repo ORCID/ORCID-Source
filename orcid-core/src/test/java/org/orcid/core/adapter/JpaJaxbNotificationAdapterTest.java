@@ -37,7 +37,7 @@ import org.orcid.jaxb.model.notification.permission_rc3.Items;
 import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.notification_rc3.NotificationType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;

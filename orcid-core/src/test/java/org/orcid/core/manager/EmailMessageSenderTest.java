@@ -49,7 +49,7 @@ import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
 import org.orcid.jaxb.model.notification.permission_rc3.Items;
 import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.utils.DateUtils;
 
 /**

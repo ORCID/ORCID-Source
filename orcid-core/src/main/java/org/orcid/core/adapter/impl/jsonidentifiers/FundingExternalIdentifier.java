@@ -27,8 +27,8 @@ import java.io.Serializable;
 
 import org.orcid.core.utils.JsonUtils;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -59,7 +59,7 @@ public class FundingExternalIdentifier implements Serializable, JSONIdentifierAd
         }
     }
 
-    public FundingExternalIdentifier(org.orcid.jaxb.model.record_rc2.ExternalID recordPojo) {
+    public FundingExternalIdentifier(org.orcid.jaxb.model.record_rc3.ExternalID recordPojo) {
         if (recordPojo.getType() != null) {
             this.setType(recordPojo.getType());
         }

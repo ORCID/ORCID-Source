@@ -44,8 +44,8 @@ import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Emails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

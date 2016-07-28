@@ -24,7 +24,7 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.jaxb.model.common_rc3.CreatedDate;
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.utils.DateUtils;
 
 /**

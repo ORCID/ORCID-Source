@@ -39,12 +39,12 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
-import org.orcid.jaxb.model.record_rc2.Group;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.Person;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.Record;
+import org.orcid.jaxb.model.record_rc3.Group;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.Person;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.Record;
 import org.springframework.stereotype.Component;
 
 /**

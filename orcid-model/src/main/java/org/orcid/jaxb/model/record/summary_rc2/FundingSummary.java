@@ -31,12 +31,12 @@ import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.common_rc3.VisibilityType;
-import org.orcid.jaxb.model.record_rc2.Activity;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.jaxb.model.record_rc2.FundingTitle;
-import org.orcid.jaxb.model.record_rc2.FundingType;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.SourceAware;
+import org.orcid.jaxb.model.record_rc3.Activity;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.FundingTitle;
+import org.orcid.jaxb.model.record_rc3.FundingType;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_rc3.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })

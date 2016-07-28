@@ -60,9 +60,9 @@ import org.orcid.jaxb.model.record_rc1.Work;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifier;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierId;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.utils.DateUtils;
 
 public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter {
@@ -186,23 +186,23 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         .register();
         
         // WORK 
-        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc2.Work.class).byDefault().register();
+        mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc3.Work.class).byDefault().register();
         mapperFactory.classMap(WorkSummary.class, org.orcid.jaxb.model.record.summary_rc2.WorkSummary.class).byDefault().register();
         
         //FUNDING
-        mapperFactory.classMap(Funding.class, org.orcid.jaxb.model.record_rc2.Funding.class).byDefault().register();
+        mapperFactory.classMap(Funding.class, org.orcid.jaxb.model.record_rc3.Funding.class).byDefault().register();
         mapperFactory.classMap(FundingSummary.class, org.orcid.jaxb.model.record.summary_rc2.FundingSummary.class).byDefault().register();
         
         //EDUCATION
-        mapperFactory.classMap(Education.class, org.orcid.jaxb.model.record_rc2.Education.class).byDefault().register();
+        mapperFactory.classMap(Education.class, org.orcid.jaxb.model.record_rc3.Education.class).byDefault().register();
         mapperFactory.classMap(EducationSummary.class, org.orcid.jaxb.model.record.summary_rc2.EducationSummary.class).byDefault().register();
         
         //EMPLOYMENT
-        mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.record_rc2.Employment.class).byDefault().register();
+        mapperFactory.classMap(Employment.class, org.orcid.jaxb.model.record_rc3.Employment.class).byDefault().register();
         mapperFactory.classMap(EmploymentSummary.class, org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary.class).byDefault().register();
         
         //PEER REVIEW
-        mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc2.PeerReview.class).byDefault().register();        
+        mapperFactory.classMap(PeerReview.class, org.orcid.jaxb.model.record_rc3.PeerReview.class).byDefault().register();        
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();                
         
         //NOTIFICATIONS

@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
 
 public interface ExternalIdentifierManager {
     void setSourceManager(SourceManager sourceManager); 
