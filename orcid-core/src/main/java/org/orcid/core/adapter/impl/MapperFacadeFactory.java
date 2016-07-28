@@ -61,7 +61,7 @@ import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkContributors;
-import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
+import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;

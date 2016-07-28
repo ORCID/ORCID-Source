@@ -70,7 +70,7 @@ import org.orcid.jaxb.model.notification.permission_rc3.Items;
 import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.notification_rc3.NotificationType;
 import org.orcid.jaxb.model.record_rc3.Emails;
-import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
+import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;

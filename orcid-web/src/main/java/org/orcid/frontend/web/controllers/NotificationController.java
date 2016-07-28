@@ -41,7 +41,7 @@ import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.notification_rc3.NotificationType;
-import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
+import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.jpa.entities.ActionableNotificationEntity;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;

@@ -26,7 +26,7 @@ import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
+import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
 import org.orcid.persistence.jpa.entities.NotificationAddItemsEntity;
 import org.orcid.persistence.jpa.entities.NotificationAmendedEntity;
 import org.orcid.persistence.jpa.entities.NotificationCustomEntity;
