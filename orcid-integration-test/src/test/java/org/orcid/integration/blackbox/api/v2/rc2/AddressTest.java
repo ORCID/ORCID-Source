@@ -28,9 +28,12 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
+import org.orcid.integration.blackbox.web.account.PublicProfileVisibilityTest;
 import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -57,14 +60,20 @@ public class AddressTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    /**
-     * PRECONDITIONS: The user should have one public address US
-     * 
-     * @throws JSONException
-     * @throws InterruptedException
-     */
     @Test
     public void testGetAddressWithMembersAPI() throws InterruptedException, JSONException {
+        //set up
+        signin();
+        showMyOrcidPage();
+        openEditCountryModal();
+        deleteAllCountriesInCountryModal();
+        saveEditCountryModal();
+        openEditCountryModal();
+        setCountryInCountryModal("US");
+        markAllPublicInCountryModal();
+        saveEditCountryModal();
+        
+        //test
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
@@ -79,7 +88,8 @@ public class AddressTest extends BlackBoxBaseRC2 {
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
-    public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
+    public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
 
@@ -174,14 +184,20 @@ public class AddressTest extends BlackBoxBaseRC2 {
         testGetAddressWithMembersAPI();
     }
 
-    /**
-     * PRECONDITIONS: The user should have one public address US
-     * 
-     * @throws JSONException
-     * @throws InterruptedException
-     */
     @Test
     public void testGetAddressWithPublicAPI() throws InterruptedException, JSONException {
+        //set up
+        signin();
+        showMyOrcidPage();
+        openEditCountryModal();
+        deleteAllCountriesInCountryModal();
+        saveEditCountryModal();
+        openEditCountryModal();
+        setCountryInCountryModal("US");
+        markAllPublicInCountryModal();
+        saveEditCountryModal();
+        
+        // test read public works
         ClientResponse response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
@@ -189,7 +205,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
         assertNotNull(addresses.getAddress());
         assertEquals(1, addresses.getAddress().size());
         assertEquals(Visibility.PUBLIC, addresses.getAddress().get(0).getVisibility());
-        assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
+        assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());      
     }
     
     @Test

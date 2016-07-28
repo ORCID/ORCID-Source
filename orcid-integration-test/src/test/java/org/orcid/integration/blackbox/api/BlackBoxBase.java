@@ -28,6 +28,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.OauthHelper;
@@ -370,6 +371,70 @@ public class BlackBoxBase {
             throw e;
         }
     }   
+    
+    public void showMyOrcidPage() {
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+    }
+
+    public void showPublicProfilePage() {
+        webDriver.get(getWebBaseUrl() + "/" + getUser1OrcidId());
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+    }
+    
+    public void signin() {
+        webDriver.get(getWebBaseUrl() + "/signin");
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
+    }
+
+    public void signout() {
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+    }
+    
+    public void openEditCountryModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("country-open-edit-modal")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }
+
+    public void saveEditCountryModal() {
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='colorbox']//button[contains('Save changes',text())]")), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
+        BBBUtil.noCboxOverlay(webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }
+    
+    public void deleteAllCountriesInCountryModal() {
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        By rowBy = By.xpath("//div[@ng-repeat='country in countryForm.addresses']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(rowBy), webDriver);
+        List<WebElement> webElements = webDriver.findElements(rowBy);
+        for (WebElement webElement: webElements) {
+            BBBUtil.ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteCountry(country)']")), webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        }
+    }
+
+    public void setCountryInCountryModal(String countryString) {
+        By selectLocator = By.xpath("//div[@ng-repeat='country in countryForm.addresses']//select[@name='country']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(selectLocator), webDriver);
+        Select selectBox = new Select(webDriver.findElement(selectLocator));
+        selectBox.selectByValue(countryString);
+    }
+
+    public void markAllPublicInCountryModal() {
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-public']")), webDriver);
+    }
+
+    public void markAllPrivateInCountryModal() {
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-private']")), webDriver);
+    }
     
     protected int getPrivacyIndex(Visibility visibility) {
         switch(visibility) {
