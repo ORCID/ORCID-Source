@@ -25,18 +25,18 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc3.CreatedDate;
-import org.orcid.jaxb.model.common_rc3.FuzzyDate;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.VisibilityType;
-import org.orcid.jaxb.model.record_rc3.Activity;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.FundingTitle;
-import org.orcid.jaxb.model.record_rc3.FundingType;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
-import org.orcid.jaxb.model.record_rc3.SourceAware;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
+import org.orcid.jaxb.model.common_rc2.FuzzyDate;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
+import org.orcid.jaxb.model.record_rc2.Activity;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc2.FundingTitle;
+import org.orcid.jaxb.model.record_rc2.FundingType;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
+import org.orcid.jaxb.model.record_rc2.SourceAware;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "createdDate", "lastModifiedDate", "source", "title", "externalIdentifiers", "type", "startDate", "endDate" })

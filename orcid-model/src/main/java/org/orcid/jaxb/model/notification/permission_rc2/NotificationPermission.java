@@ -32,8 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.jaxb.model.notification_rc3.NotificationType;
+import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.notification_rc2.NotificationType;
 
 /**
  * <p>

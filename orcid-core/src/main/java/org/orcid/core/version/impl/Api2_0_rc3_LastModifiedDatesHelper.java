@@ -25,12 +25,12 @@ import java.util.List;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc3.Activity;
-import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Email;
 import org.orcid.jaxb.model.record_rc3.Emails;
@@ -47,11 +47,11 @@ import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.utils.DateUtils;
 
-public class LastModifiedDatesHelper {
+public class Api2_0_rc3_LastModifiedDatesHelper {
 
-    public static Date calculateLatest(ActivitiesContainer actContainerRc2) {
+    public static Date calculateLatest(ActivitiesContainer actContainerRc3) {
         Date latestAct = null;
-        Collection<? extends Activity> activities = actContainerRc2.retrieveActivities();
+        Collection<? extends Activity> activities = actContainerRc3.retrieveActivities();
         if (activities != null && !activities.isEmpty()) {
             Iterator<? extends Activity> activitiesIterator = activities.iterator();
             XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
@@ -61,11 +61,11 @@ public class LastModifiedDatesHelper {
                     latest = activity.getLastModifiedDate().getValue();
                 }
             }
-            actContainerRc2.setLastModifiedDate(new LastModifiedDate(latest));
+            actContainerRc3.setLastModifiedDate(new LastModifiedDate(latest));
             latestAct = latest.toGregorianCalendar().getTime();
         }
         return latestAct;
-    }
+    }        
 
     public static Date calculateLatest(GroupsContainer groupsContainerRc2) {
         Date latestGrp = null;

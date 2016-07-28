@@ -35,7 +35,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.LastModifiedDatesHelper;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
@@ -235,7 +235,7 @@ public class AddressManagerImpl implements AddressManager {
         }           
         
         Addresses result = adapter.toAddressList(addresses);
-        LastModifiedDatesHelper.calculateLatest(result);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
         
         return result;
     }

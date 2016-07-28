@@ -25,10 +25,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.OrcidIdentifier;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidType;
-import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 
 /**
  * 

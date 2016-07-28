@@ -25,9 +25,9 @@ package org.orcid.model.notification.institutional_sign_in_rc2;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.orcid.jaxb.model.notification.permission_rc3.AuthorizationUrl;
-import org.orcid.jaxb.model.notification_rc3.Notification;
-import org.orcid.jaxb.model.notification_rc3.NotificationType;
+import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
+import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.notification_rc2.NotificationType;
 
 public class NotificationInstitutionalConnection extends Notification {
 

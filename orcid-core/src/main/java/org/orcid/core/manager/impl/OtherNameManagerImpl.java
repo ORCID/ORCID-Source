@@ -34,7 +34,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.LastModifiedDatesHelper;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.OtherNames;
@@ -97,7 +97,7 @@ public class OtherNameManagerImpl implements OtherNameManager {
         }
         
         OtherNames result = jpaJaxbOtherNameAdapter.toOtherNameList(otherNameEntityList);
-        LastModifiedDatesHelper.calculateLatest(result);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(result);
         return result;
     }
     

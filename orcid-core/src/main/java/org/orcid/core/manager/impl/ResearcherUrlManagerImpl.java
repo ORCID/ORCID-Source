@@ -33,7 +33,7 @@ import org.orcid.core.manager.ResearcherUrlManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.LastModifiedDatesHelper;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
@@ -211,7 +211,7 @@ public class ResearcherUrlManagerImpl implements ResearcherUrlManager {
         }       
         
         ResearcherUrls rUrls = jpaJaxbResearcherUrlAdapter.toResearcherUrlList(researcherUrlEntities);
-        LastModifiedDatesHelper.calculateLatest(rUrls);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(rUrls);
         return rUrls;
     }
 

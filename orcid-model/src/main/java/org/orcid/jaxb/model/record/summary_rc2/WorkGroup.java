@@ -34,10 +34,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.record_rc3.ExternalIDs;
-import org.orcid.jaxb.model.record_rc3.Group;
-import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
+import org.orcid.jaxb.model.record_rc2.Group;
+import org.orcid.jaxb.model.record_rc2.GroupableActivity;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "lastModifiedDate", "identifiers", "workSummary" })

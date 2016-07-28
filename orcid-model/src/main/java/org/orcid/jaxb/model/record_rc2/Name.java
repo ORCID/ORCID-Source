@@ -25,12 +25,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc3.CreatedDate;
-import org.orcid.jaxb.model.common_rc3.CreditName;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc3.Source;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.common_rc3.VisibilityType;
+import org.orcid.jaxb.model.common_rc2.CreatedDate;
+import org.orcid.jaxb.model.common_rc2.CreditName;
+import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc2.Source;
+import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.VisibilityType;
 
 /**
  * 

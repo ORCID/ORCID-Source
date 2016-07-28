@@ -425,11 +425,13 @@
 	<bean id="v2VersionConverterChain" class="org.orcid.core.version.impl.V2VersionConverterChainImpl">
 	    <property name="converters">
             <list>
-	            <ref bean="versionConverterV2_0_rc1ToV2_0rc2" />
+	            <ref bean="versionConverterV2_0_rc1ToV2_0_rc2" />
+	            <ref bean="versionConverterV2_0_rc2ToV2_0_rc3" />
 	        </list>
 	    </property>
 	</bean>
-    <bean id="versionConverterV2_0_rc1ToV2_0rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0rc2"/>
+    <bean id="versionConverterV2_0_rc1ToV2_0_rc2" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc1ToV2_0_rc2"/>
+	<bean id="versionConverterV2_0_rc2ToV2_0_rc3" class="org.orcid.core.version.impl.VersionConverterImplV2_0_rc2ToV2_0_rc3"/>
 
 	<cache:annotation-driven cache-manager="springCoreCacheManager"/>
 	
