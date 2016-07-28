@@ -27,6 +27,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -160,8 +161,8 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     }
     
     @Override
-    public void detach(MinimizedWorkEntity minimizedWorkEntity) {
-        entityManager.detach(minimizedWorkEntity);        
+    public void detach(WorkBaseEntity workBaseEntity) {
+        entityManager.detach(workBaseEntity);        
     }
     
     /**

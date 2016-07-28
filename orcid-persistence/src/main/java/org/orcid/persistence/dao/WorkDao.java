@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 
@@ -159,7 +160,7 @@ public interface WorkDao extends GenericDao<WorkEntity, Long> {
 
     List<WorkLastModifiedEntity> getPublicWorkLastModifiedList(String orcid);
 
-    void detach(MinimizedWorkEntity minimizedWorkEntity);
+    void detach(WorkBaseEntity workBaseEntity);
     
     boolean increaseDisplayIndexOnAllElements(String orcid);
 
