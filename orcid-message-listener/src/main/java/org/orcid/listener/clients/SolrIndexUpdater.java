@@ -58,7 +58,7 @@ public class SolrIndexUpdater {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexUpdater.class);
 
-    @Value("${org.orcid.core.indexPublicProfile:true}")
+    @Value("${org.orcid.core.indexPublicProfile}")
     private boolean indexPublicProfile;
     
     @Resource(name = "solrServer")

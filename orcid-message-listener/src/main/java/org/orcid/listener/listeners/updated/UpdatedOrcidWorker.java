@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.listener.clients.Orcid12APIClient;
+import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
@@ -24,7 +25,9 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     private Orcid12APIClient orcid12ApiClient;
     @Resource
     private SolrIndexUpdater solrIndexUpdater;
-    
+    @Resource
+    private S3Updater s3Updater;
+
     /** Fetches ORCID profile,
      * compares last modified with SOLR
      * if after SOLR last modified, updates SOLR index
@@ -43,8 +46,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             if (lastModifiedFromprofile.after(lastModifiedFromSolr)) 
                 solrIndexUpdater.updateSolrIndex(profile);
             //now do the same for S3...
-            //pros and cons of doing both in same process.  What if add to SOLR fails...?
-            //shall we split them out?
+            s3Updater.updateS3(profile); 
         }
     }
 }

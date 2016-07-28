@@ -48,7 +48,6 @@ public class Orcid12APIClient {
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
         OrcidMessage output = response.getEntity(OrcidMessage.class);
-        LOG.info(output.toString());
         return output.getOrcidProfile();
     }
 }

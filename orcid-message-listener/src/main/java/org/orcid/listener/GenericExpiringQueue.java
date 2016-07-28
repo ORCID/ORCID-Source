@@ -30,23 +30,22 @@ public class GenericExpiringQueue<T extends RemovalListener<String, LastModified
      * 
      * Note that the cache performs cleanup and does removal as part of get/put operations (better performance in live env)
      * I have made it do these ansynchronously so they do not block access to the cache
-     * In testing, set forceCleanup to true or call cache.cleanUp() manually.
+     * In testing, set forceCleanup to true or call cache.cleanUp() manually.  Forcecleanup delays 120 seconds before starting to clean.
      * 
      * For more info on guava caches, see https://github.com/google/guava/wiki/CachesExplained
      * Considered using DelayQueue, but this makes it far easier. http://stackoverflow.com/questions/27948867/efficiently-update-an-element-in-a-delayqueue
      * 
      * This class registers itself to listen for context events to ensure threads close on exit
      * 
-     * @param secondsToWait how long to wait for account activity to stop before processing.
-     * @param forceCleanup check cache every 10 seconds for expired entries 
-     * - initial delay is 120 seconds to allow server to start
-     * - (if false, this happens on get/put instead)
+     * @param secondsToWait how long the account should be inactive before processing
+     * @param forceCleanup if true, register a thread that automatically scans for inactive entries and evicts them.
+     * @param removalListener the logic to be applied when items are evicted from the cache.
      */
     public GenericExpiringQueue(
             int secondsToWait, 
             Boolean forceCleanup,
             T removalListener){        
-        LOG.info("Creating cacheQueue with "+ secondsToWait+" seconds wait and forceCleanup = "+forceCleanup + "using "+removalListener.getClass().getSimpleName());
+        LOG.info("Creating cacheQueue with "+ secondsToWait+" seconds wait and forceCleanup = "+forceCleanup + " using "+removalListener.getClass().getSimpleName());
         
         //create a thread that does the removal - we can fiddle with the Executor if we need more threads
         executor = Executors.newSingleThreadExecutor(); 
