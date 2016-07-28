@@ -148,16 +148,14 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids) {
-        //batch up list into sets of 50;
+        // batch up list into sets of 50;
         List<MinimizedWorkEntity> list = new ArrayList<MinimizedWorkEntity>();
-        for (List<Long> partition : Lists.partition(ids, 50)){
-            TypedQuery<MinimizedWorkEntity> query = entityManager
-                    .createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
+        for (List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<MinimizedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
             query.setParameter("ids", partition);
-            list.addAll(query.getResultList());            
+            list.addAll(query.getResultList());
         }
         return list;
-        
     }
     
     @Override
