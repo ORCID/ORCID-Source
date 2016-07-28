@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.orcid.core.adapter.JpaJaxbNotificationAdapter;
-import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
+import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;

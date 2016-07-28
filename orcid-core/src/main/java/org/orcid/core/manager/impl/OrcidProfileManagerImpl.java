@@ -111,7 +111,7 @@ import org.orcid.jaxb.model.message.WorkContributors;
 import org.orcid.jaxb.model.message.WorkExternalIdentifier;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.message.WorkType;
-import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.persistence.dao.EmailDao;

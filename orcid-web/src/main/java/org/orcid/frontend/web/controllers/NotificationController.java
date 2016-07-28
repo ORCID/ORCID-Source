@@ -36,7 +36,7 @@ import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Preferences;
-import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
+import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;

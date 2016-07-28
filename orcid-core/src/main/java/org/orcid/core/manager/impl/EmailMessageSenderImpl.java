@@ -39,7 +39,7 @@ import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.jaxb.model.common_rc3.SourceClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
-import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
+import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;

@@ -34,7 +34,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.ItemType;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
