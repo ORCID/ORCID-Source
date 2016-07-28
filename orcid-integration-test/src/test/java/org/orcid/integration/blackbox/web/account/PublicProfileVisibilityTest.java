@@ -209,35 +209,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void countryPrivacyTest() {
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        openEditCountryModal();
         
         //Set everything up by deleting all and adding 1
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        By rowBy = By.xpath("//div[@ng-repeat='country in countryForm.addresses']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(rowBy), webDriver);
-        List<WebElement> webElements = webDriver.findElements(rowBy);
-        for (WebElement webElement: webElements) {
-            BBBUtil.ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteCountry(country)']")), webDriver);
-            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        }
-            
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='colorbox']//a[@ng-click='addNewModal()']/span")), webDriver);        
-        By selectLocator = By.xpath("//div[@ng-repeat='country in countryForm.addresses']//select[@name='country']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(selectLocator), webDriver);
-        
-        Select selectBox = new Select(webDriver.findElement(selectLocator));
-        selectBox.selectByValue("IN");
+        deleteAllCountriesInCountryModal();
+
+        saveEditCountryModal();
+        openEditCountryModal();
+        setCountryInCountryModal("IN");
 
         // Set Private Visibility
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-private']")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='colorbox']//button[contains('Save changes',text())]")), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        markAllPrivateInCountryModal();
+        saveEditCountryModal();
 
         
         // Verify
@@ -254,14 +237,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         // Set Public visibility
         showMyOrcidPage();
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("country-open-edit-modal")), webDriver);
-        // Set Private Visibility
         BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-public']")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='colorbox']//button[contains('Save changes',text())]")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        markAllPublicInCountryModal();
+        saveEditCountryModal();
         
         
         // Verify
@@ -785,30 +764,6 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), peerReview.getPutCode(), accessToken);
         assertNotNull(deleteResponse);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());
-    }
-
-    private void signin() {
-        webDriver.get(getWebBaseUrl() + "/signin");
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
-    }
-
-    private void signout() {
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-    }
-
-    private void showMyOrcidPage() {
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
-        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);
-    }
-
-    private void showPublicProfilePage() {
-        webDriver.get(getWebBaseUrl() + "/" + getUser1OrcidId());
-        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);
     }
 
 }
