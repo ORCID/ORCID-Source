@@ -64,7 +64,7 @@ import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.OrcidMessageUtil;
 import org.orcid.core.utils.SourceUtils;
 import org.orcid.frontend.web.util.LanguagesMap;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Funding;

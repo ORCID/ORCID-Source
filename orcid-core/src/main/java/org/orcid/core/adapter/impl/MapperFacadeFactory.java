@@ -37,7 +37,7 @@ import org.orcid.core.manager.SourceNameCacheManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.common_rc3.FuzzyDate;
 import org.orcid.jaxb.model.common_rc3.PublicationDate;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
 import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;

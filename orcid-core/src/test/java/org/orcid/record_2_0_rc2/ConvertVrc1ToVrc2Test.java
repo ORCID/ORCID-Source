@@ -175,7 +175,7 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
     public void upgradeGroupIdToVrc2Test() throws JAXBException {
 
         JAXBContext jaxbContext1 = JAXBContext.newInstance(GroupIdRecords.class);
-        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.groupid_rc2.GroupIdRecords.class);
+        JAXBContext jaxbContext2 = JAXBContext.newInstance(org.orcid.jaxb.model.groupid_rc3.GroupIdRecords.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext1.createUnmarshaller();
 
         InputStream rc1Stream = ConvertVrc1ToVrc2Test.class.getClassLoader().getResourceAsStream("test-group-id-2.0_rc1.xml");
@@ -184,10 +184,10 @@ public class ConvertVrc1ToVrc2Test extends BaseTest {
         GroupIdRecords rc1Works = (GroupIdRecords) jaxbUnmarshaller.unmarshal(rc1Stream);
 
         jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        org.orcid.jaxb.model.groupid_rc2.GroupIdRecords rc2GroupId1 = (org.orcid.jaxb.model.groupid_rc2.GroupIdRecords) jaxbUnmarshaller.unmarshal(rc2Stream);
+        org.orcid.jaxb.model.groupid_rc3.GroupIdRecords rc2GroupId1 = (org.orcid.jaxb.model.groupid_rc3.GroupIdRecords) jaxbUnmarshaller.unmarshal(rc2Stream);
 
         V2Convertible result = versionConverterV2_0_rc1ToV2_0rc2.upgrade(new V2Convertible(rc1Works, "v2_rc1"));
-        org.orcid.jaxb.model.groupid_rc2.GroupIdRecords rc2GroupId2 = (org.orcid.jaxb.model.groupid_rc2.GroupIdRecords) result.getObjectToConvert();
+        org.orcid.jaxb.model.groupid_rc3.GroupIdRecords rc2GroupId2 = (org.orcid.jaxb.model.groupid_rc3.GroupIdRecords) result.getObjectToConvert();
 
         assertEquals(rc2GroupId1.getLastModifiedDate(), rc2GroupId2.getLastModifiedDate());
     }

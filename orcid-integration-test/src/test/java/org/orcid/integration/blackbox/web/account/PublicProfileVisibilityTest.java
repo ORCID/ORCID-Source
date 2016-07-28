@@ -46,7 +46,7 @@ import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;

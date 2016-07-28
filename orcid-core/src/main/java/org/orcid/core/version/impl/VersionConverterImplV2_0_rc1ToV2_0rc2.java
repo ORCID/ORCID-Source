@@ -165,10 +165,10 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
                 .register();
         
         //GROUP ID
-        mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc2.GroupIdRecords.class)
-        .field("groupIdRecord", "groupIdRecord").customize(new CustomMapper<GroupIdRecords, org.orcid.jaxb.model.groupid_rc2.GroupIdRecords>() {
+        mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords.class)
+        .field("groupIdRecord", "groupIdRecord").customize(new CustomMapper<GroupIdRecords, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords>() {
             @Override
-            public void mapAtoB(GroupIdRecords groupsRc1, org.orcid.jaxb.model.groupid_rc2.GroupIdRecords groupsRc2, MappingContext context) {
+            public void mapAtoB(GroupIdRecords groupsRc1, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords groupsRc2, MappingContext context) {
             	groupsRc2.setLastModifiedDate(
                         new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(LastModifiedDatesHelper.calculateLatest(groupsRc2))));
             }
