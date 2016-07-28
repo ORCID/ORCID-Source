@@ -2455,7 +2455,16 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     $scope.confirmDeleteEmailInline = function(email, $event) {
         $event.preventDefault();
         $scope.showDeleteBox = true;
-        emailSrvc.delEmail = email;        
+        emailSrvc.delEmail = email;
+        
+        $scope.$watch(
+			function () {
+			   	return document.getElementsByClassName('delete-email-box').length; 
+			},
+			function (newValue, oldValue) {				
+				$.colorbox.resize();
+		    }
+		);
     };
 
     $scope.deleteEmail = function () {
@@ -2502,65 +2511,11 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     	$scope.showElement[el] = false;
     };
     
-    $scope.toggleBulkEdit = function() {
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in emailSrvc.emails.emails)
-                $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = false;            
-            
-            $scope.$watch(
-        		function () {        			
-        		   	return angular.element('.bulk-edit-area').length; 
-        		},
-        		function (newValue, oldValue) {        			
-        			if (newValue !== oldValue) {        				
-        				var h = angular.element('.lightbox-container').height();
-        				$.colorbox.resize({height: h});
-        	      	}else{        	      		
-    	      			var h = angular.element('.lightbox-container').height();
-        	            $.colorbox.resize({height: h});        	            
-        	      	}
-        	    }
-        	);
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-        angular.element('#cboxLoadedContent').css({	  		
-  			overflow: 'visible'
-	  	});	
-          
-    };
-    
-    $scope.bulkChangeAll = function(bool) {
-        $scope.bulkChecked = bool;
-        $scope.bulkDisplayToggle = false;
-        for (var idx in emailSrvc.emails.emails)
-            $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = bool;
-    };
-    
-    $scope.swapbulkChangeAll = function() {
-        $scope.bulkChecked = !$scope.bulkChecked;
-        for (var idx in emailSrvc.emails.emails)
-            $scope.bulkEditMap[emailSrvc.emails.emails[idx].value] = $scope.bulkChecked;
-        $scope.bulkDisplayToggle = false;
-    };
-    
     $scope.setBulkGroupPrivacy = function(priv) {
-        for (var idx in emailSrvc.emails.emails)
-            if ($scope.bulkEditMap[emailSrvc.emails.emails[idx].value])
-            	emailSrvc.emails.emails[idx].visibility = priv;
+        for (var idx in emailSrvc.emails.emails)            
+            emailSrvc.emails.emails[idx].visibility = priv;
         emailSrvc.saveEmail();
     };
-    
-    $scope.bulkDelete = function() {     
-        var emails = emailSrvc.emails.emails;
-        var len = emails.length;
-        while (len--)            
-            if ($scope.bulkEditMap[emailSrvc.emails.emails[len].value])                
-                emails.splice(len,1);
-        
-        emailSrvc.emails.emails = emails;
-    }
     
     
 }]);
@@ -2854,7 +2809,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
             	websites.splice(len,1);
         
         $scope.websitesForm.websites = websites;
-    }
+    };
 
     $scope.getWebsitesForm();
 }]);
@@ -10783,7 +10738,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 		
 	    var HTML = '<div class="lightbox-container">\
 	    				<div class="edit-record edit-record-emails" style="position: relative">\
-	    					<div class="row bottomBuffer">\
+	    					<div class="row">\
 	    						<div class="col-md-12 col-sm-12 col-xs-12">\
 	    								<h1 class="lightbox-title pull-left"> Edit Emails </h1>\
 	    						</div>\
