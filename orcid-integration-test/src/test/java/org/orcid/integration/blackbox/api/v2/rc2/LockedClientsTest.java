@@ -16,8 +16,9 @@
  */
 package org.orcid.integration.blackbox.api.v2.rc2;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.annotation.Resource;
@@ -43,31 +44,34 @@ import com.sun.jersey.api.client.ClientResponse;
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class LockedClientsTest extends BlackBoxBaseRC2 {    
     @Resource(name = "memberV2ApiClient_rc2")
-    private MemberV2ApiClientImpl memberV2ApiClient;
-
+    private MemberV2ApiClientImpl memberV2ApiClient;    
+    
     @Test
     public void testMember() throws InterruptedException, JSONException {
-        // unlock to start
-        adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getLockedMemberOrcid());
         // The member must be unlocked to begin the test
-        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), getLockedMemberClient1ClientId(), getLockedMemberClient1ClientSecret(), getLockedMemberClient1RedirectUri());
+        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
+        assertEquals(ClientResponse.Status.OK.getStatusCode(), getAllResponse.getStatus());
         Emails emails = getAllResponse.getEntity(Emails.class);
         assertNotNull(emails);
-        assertNotNull(emails.getEmails());
-        assertFalse(emails.getEmails().isEmpty());
+        assertNotNull(emails.getEmails());        
 
         // Lock and try to get authorization code
-        adminLockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getLockedMemberOrcid());
-        lookForErrorsOnAuthorizationCodePage(this.getLockedMemberClient1ClientId(), ScopePathType.READ_LIMITED.value(), this.getLockedMemberClient1RedirectUri());
+        adminLockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getMember1Orcid());
+        lookForErrorsOnAuthorizationCodePage(this.getClient1ClientId(), ScopePathType.READ_LIMITED.value(), this.getClient1RedirectUri());
 
         // Try to use access token while the client is locked
         getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
-
+        assertEquals(ClientResponse.Status.UNAUTHORIZED.getStatusCode(), getAllResponse.getStatus());
+        String error = getAllResponse.getEntity(String.class);
+        assertNotNull(error);
+        assertTrue(error.contains("invalid_token"));
+        assertTrue(error.contains("The given client " + this.getClient1ClientId() + " is locked because his member " + this.getMember1Orcid() + " is also locked"));
+        
         // unlock to finish
-        adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getLockedMemberOrcid());
+        adminUnlockAccount(this.getAdminUserName(), this.getAdminPassword(), this.getMember1Orcid());
     }
 
     private void lookForErrorsOnAuthorizationCodePage(String clientId, String scopes, String redirectUri) {

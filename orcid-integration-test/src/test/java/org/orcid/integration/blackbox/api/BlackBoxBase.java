@@ -142,33 +142,7 @@ public class BlackBoxBase {
     @Value("${org.orcid.web.testClient2.description}")
     private String client2Description;
     @Value("${org.orcid.web.testClient2.website}")
-    private String client2Website;
-
-    // Member # 2 - Locked
-    @Value("${org.orcid.web.locked.member.id}")
-    private String lockedMemberOrcid;
-    @Value("${org.orcid.web.locked.member.email}")
-    private String lockedMemberEmail;
-    @Value("${org.orcid.web.locked.member.password}")
-    private String lockedMemberPassword;
-    @Value("${org.orcid.web.locked.member.name}")
-    private String lockedMemberName;
-    @Value("${org.orcid.web.locked.member.type}")
-    private String lockedMemberType;
-
-    // Member # 2 - Client
-    @Value("${org.orcid.web.locked.member.client.id}")
-    private String lockedMemberClient1ClientId;
-    @Value("${org.orcid.web.locked.member.client.secret}")
-    private String lockedMemberClient1ClientSecret;
-    @Value("${org.orcid.web.locked.member.client.ruri}")
-    private String lockedMemberClient1RedirectUri;
-    @Value("${org.orcid.web.locked.member.client.name}")
-    private String lockedMemberClient1Name;
-    @Value("${org.orcid.web.locked.member.client.description}")
-    private String lockedMemberClient1Description;
-    @Value("${org.orcid.web.locked.member.client.website}")
-    private String lockedMemberClient1Website;
+    private String client2Website;    
 
     @Value("${org.orcid.web.baseUri:https://localhost:8443/orcid-web}")
     private String webBaseUrl;
@@ -627,50 +601,6 @@ public class BlackBoxBase {
 
     public String getClient2Website() {
         return client2Website;
-    }
-
-    public String getLockedMemberOrcid() {
-        return lockedMemberOrcid;
-    }
-
-    public String getLockedMemberEmail() {
-        return lockedMemberEmail;
-    }
-
-    public String getLockedMemberPassword() {
-        return lockedMemberPassword;
-    }
-
-    public String getLockedMemberName() {
-        return lockedMemberName;
-    }
-
-    public String getLockedMemberType() {
-        return lockedMemberType;
-    }
-
-    public String getLockedMemberClient1ClientId() {
-        return lockedMemberClient1ClientId;
-    }
-
-    public String getLockedMemberClient1ClientSecret() {
-        return lockedMemberClient1ClientSecret;
-    }
-
-    public String getLockedMemberClient1RedirectUri() {
-        return lockedMemberClient1RedirectUri;
-    }
-
-    public String getLockedMemberClient1Name() {
-        return lockedMemberClient1Name;
-    }
-
-    public String getLockedMemberClient1Description() {
-        return lockedMemberClient1Description;
-    }
-
-    public String getLockedMemberClient1Website() {
-        return lockedMemberClient1Website;
     }
 
     public String getWebBaseUrl() {

@@ -236,33 +236,7 @@ public class SetUpClientsAndUsers {
     @Value("${org.orcid.web.testClient2.description}")
     protected String client2Description;
     @Value("${org.orcid.web.testClient2.website}")
-    protected String client2Website;
-
-    // Member # 2 - Locked
-    @Value("${org.orcid.web.locked.member.id}")
-    protected String lockedMemberOrcid;
-    @Value("${org.orcid.web.locked.member.email}")
-    protected String lockedMemberEmail;
-    @Value("${org.orcid.web.locked.member.password}")
-    protected String lockedMemberPassword;
-    @Value("${org.orcid.web.locked.member.name}")
-    protected String lockedMemberName;
-    @Value("${org.orcid.web.locked.member.type}")
-    protected String lockedMemberType;
-
-    // Member # 2 - Client
-    @Value("${org.orcid.web.locked.member.client.id}")
-    protected String lockedMemberClient1ClientId;
-    @Value("${org.orcid.web.locked.member.client.secret}")
-    protected String lockedMemberClient1ClientSecret;
-    @Value("${org.orcid.web.locked.member.client.ruri}")
-    protected String lockedMemberClient1RedirectUri;
-    @Value("${org.orcid.web.locked.member.client.name}")
-    protected String lockedMemberClient1Name;
-    @Value("${org.orcid.web.locked.member.client.description}")
-    protected String lockedMemberClient1Description;
-    @Value("${org.orcid.web.locked.member.client.website}")
-    protected String lockedMemberClient1Website;
+    protected String client2Website;    
 
     @Resource
     protected OrcidProfileManager orcidProfileManager;
@@ -341,16 +315,7 @@ public class SetUpClientsAndUsers {
             createUser(member1Params);
         } else {
             clearRegistry(member1Profile, member1Params);
-        }
-
-        // Create locked member
-        Map<String, String> lockedMemberParams = getParams(lockedMemberOrcid);
-        OrcidProfile lockedMemberProfile = orcidProfileManager.retrieveOrcidProfile(lockedMemberOrcid);
-        if (lockedMemberProfile == null) {
-            createUser(lockedMemberParams);
-        } else {
-            clearRegistry(lockedMemberProfile, lockedMemberParams);
-        }
+        }        
 
         // Create public client
         Map<String, String> publicClientParams = getParams(publicClientId);
@@ -371,14 +336,7 @@ public class SetUpClientsAndUsers {
         ClientDetailsEntity client2 = clientDetailsManager.findByClientId(client2ClientId);
         if (client2 == null) {
             createClient(client2Params);
-        } 
-
-        // Create locked client
-        Map<String, String> lockedClientParams = getParams(lockedMemberClient1ClientId);
-        ClientDetailsEntity lockedClient = clientDetailsManager.findByClientId(lockedMemberClient1ClientId);
-        if (lockedClient == null) {
-            createClient(lockedClientParams);
-        } 
+        }        
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
@@ -420,14 +378,6 @@ public class SetUpClientsAndUsers {
             params.put(CREDIT_NAME, member1Name);
             params.put(ORCID_TYPE, OrcidType.GROUP.value());
             params.put(MEMBER_TYPE, member1Type);
-        } else if (userId.equals(lockedMemberOrcid)) {
-            params.put(EMAIL, lockedMemberEmail);
-            params.put(PASSWORD, lockedMemberPassword);
-            params.put(ORCID, lockedMemberOrcid);
-            params.put(CREDIT_NAME, lockedMemberName);
-            params.put(ORCID_TYPE, OrcidType.GROUP.value());
-            params.put(MEMBER_TYPE, lockedMemberType);
-            params.put(LOCKED, "true");
         } else if (userId.equals(publicClientId)) {
             params.put(MEMBER_ID, publicClientUserOwner);
             params.put(CLIENT_ID, publicClientId);
@@ -455,15 +405,6 @@ public class SetUpClientsAndUsers {
             params.put(REDIRECT_URI, client2RedirectUri);
             params.put(CLIENT_SECRET, client2ClientSecret);
             params.put(CLIENT_WEBSITE, client2Website);
-            params.put(CLIENT_TYPE, ClientType.PREMIUM_CREATOR.value());
-        } else if (userId.equals(lockedMemberClient1ClientId)) {
-            params.put(MEMBER_ID, lockedMemberOrcid);
-            params.put(CLIENT_ID, lockedMemberClient1ClientId);
-            params.put(CLIENT_NAME, lockedMemberClient1Name);
-            params.put(CLIENT_DESCRIPTION, lockedMemberClient1Description);
-            params.put(REDIRECT_URI, lockedMemberClient1RedirectUri);
-            params.put(CLIENT_SECRET, lockedMemberClient1ClientSecret);
-            params.put(CLIENT_WEBSITE, lockedMemberClient1Website);
             params.put(CLIENT_TYPE, ClientType.PREMIUM_CREATOR.value());
         } else {
             throw new ApplicationException("Unable to find params for orcid: " + userId);
@@ -793,16 +734,7 @@ public class SetUpClientsAndUsers {
         assertEquals(1, existingClient.getRegisteredRedirectUri().size());
         assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
         assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
-        assertEquals(client2RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
-                
-        existingClient = clientDetailsManager.findByClientId(lockedMemberClient1ClientId);
-        assertNotNull(existingClient);
-        assertEquals(lockedMemberOrcid, existingClient.getGroupProfileId());
-        assertNotNull(existingClient.getRegisteredRedirectUri());
-        assertEquals(1, existingClient.getRegisteredRedirectUri().size());
-        assertNotNull(existingClient.getRegisteredRedirectUri().iterator());
-        assertTrue(existingClient.getRegisteredRedirectUri().iterator().hasNext());
-        assertEquals(lockedMemberClient1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
+        assertEquals(client2RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());                        
     }
     
     //------------------------------------------------------------------------------           
