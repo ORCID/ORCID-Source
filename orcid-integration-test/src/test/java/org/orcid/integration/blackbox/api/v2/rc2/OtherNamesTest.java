@@ -41,7 +41,7 @@ import org.orcid.integration.blackbox.client.DashboardPage.OtherNameElement;
 import org.orcid.integration.blackbox.client.DashboardPage.OtherNamesSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.OtherName;

@@ -41,8 +41,8 @@ import org.orcid.core.oauth.OrcidOAuth2Authentication;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.oauth.OrcidProfileUserDetails;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.common_rc2.Filterable;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Filterable;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
@@ -420,14 +420,14 @@ public class OrcidSecurityManagerImpl implements OrcidSecurityManager {
 
     @Override
     public void checkIsPublic(Filterable filterable) {
-        if(filterable != null && !org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(filterable.getVisibility())) {
+        if(filterable != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(filterable.getVisibility())) {
             throw new OrcidUnauthorizedException("The activity is not public");
         }
     }
     
     @Override
     public void checkIsPublic(Biography biography) {
-        if(biography != null && !org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(biography.getVisibility())) {
+        if(biography != null && !org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(biography.getVisibility())) {
             throw new OrcidUnauthorizedException("The biography is not public");
         }
     }

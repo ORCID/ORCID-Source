@@ -61,8 +61,8 @@ import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
@@ -330,7 +330,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 recordName.setCreditName(null);
                 recordName.setGivenNames("Given Names Deactivated");
                 recordName.setFamilyName("Family Name Deactivated");
-                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
                 recordName.setProfile(new ProfileEntity(deprecatedOrcid));
                 recordNameManager.updateRecordName(recordName);                
             } 
@@ -503,7 +503,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {
@@ -540,7 +540,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Fundings result = new Fundings();
         for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {
@@ -580,7 +580,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         PeerReviews result = new PeerReviews();
         for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {
@@ -884,7 +884,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 
         //Update the visibility for every bio element to the visibility selected by the user
         //Update the bio
-        org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        org.orcid.jaxb.model.common_rc3.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
         if(profile.getBiographyEntity() != null) {
             profile.getBiographyEntity().setVisibility(defaultVisibility);
         }
@@ -987,7 +987,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             recordName.setCreditName(null);
             recordName.setGivenNames("Given Names Deactivated");
             recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);                                      
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);                                      
         }
         
         Set<EmailEntity> emails = toClear.getEmails();

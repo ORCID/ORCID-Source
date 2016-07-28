@@ -29,8 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc2.Title;
-import org.orcid.jaxb.model.common_rc2.TranslatedTitle;
+import org.orcid.jaxb.model.common_rc3.Title;
+import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
 
 import java.io.Serializable;
 

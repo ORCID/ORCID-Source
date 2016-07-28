@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.ActivityIdentifierValidationException;
-import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.notification.permission_rc2.Item;
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
 import org.orcid.jaxb.model.record_rc2.ExternalID;

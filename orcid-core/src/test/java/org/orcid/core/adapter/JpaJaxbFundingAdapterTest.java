@@ -29,8 +29,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.FundingType;
@@ -122,7 +122,7 @@ public class JpaJaxbFundingAdapterTest {
         assertEquals("orcid.org", funding.getContributors().getContributor().get(0).getContributorOrcid().getHost());
         assertEquals("http://orcid.org/8888-8888-8888-8880", funding.getContributors().getContributor().get(0).getContributorOrcid().getUri());
         assertEquals("funding:creditName", funding.getContributors().getContributor().get(0).getCreditName().getContent());
-        assertEquals(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
+        assertEquals(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE, funding.getContributors().getContributor().get(0).getCreditName().getVisibility());
         assertEquals("funding:description", funding.getDescription());
         assertNotNull(funding.getStartDate());
         assertEquals("01", funding.getStartDate().getDay().getValue());

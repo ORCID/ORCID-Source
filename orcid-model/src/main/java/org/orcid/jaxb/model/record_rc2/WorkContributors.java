@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc2.Contributor;
+import org.orcid.jaxb.model.common_rc3.Contributor;
 
 /**
  * <p>Java class for anonymous complex type.

@@ -21,9 +21,9 @@ import javax.annotation.Resource;
 import org.orcid.core.manager.BiographyManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.jaxb.model.common_rc2.CreatedDate;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.CreatedDate;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.persistence.dao.BiographyDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -72,7 +72,7 @@ public class BiographyManagerImpl implements BiographyManager {
     @Override
     public Biography getPublicBiography(String orcid) {
         Biography bio = getBiography(orcid);
-        if(bio != null && org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(bio.getVisibility())) {
+        if(bio != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(bio.getVisibility())) {
             return bio;
         }
         return null;

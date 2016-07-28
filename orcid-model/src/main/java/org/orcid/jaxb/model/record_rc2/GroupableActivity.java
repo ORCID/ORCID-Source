@@ -16,8 +16,8 @@
  */
 package org.orcid.jaxb.model.record_rc2;
 
-import org.orcid.jaxb.model.common_rc2.Filterable;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Filterable;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 
 public interface GroupableActivity extends Filterable {
 

@@ -21,8 +21,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SourceNameCacheManager;
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.SourceName;
+import org.orcid.jaxb.model.common_rc3.Source;
+import org.orcid.jaxb.model.common_rc3.SourceName;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Educations;

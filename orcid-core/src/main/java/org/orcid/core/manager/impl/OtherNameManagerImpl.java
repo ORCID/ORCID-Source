@@ -35,7 +35,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.core.version.impl.LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.persistence.dao.OtherNameDao;
@@ -274,12 +274,12 @@ public class OtherNameManagerImpl implements OtherNameManager {
 
     
     private void setIncomingPrivacy(OtherNameEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc2.Visibility incomingOtherNameVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc3.Visibility incomingOtherNameVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc3.Visibility defaultOtherNamesVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed()) {            
             entity.setVisibility(defaultOtherNamesVisibility);            
         } else if (incomingOtherNameVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
         }
     }
 }

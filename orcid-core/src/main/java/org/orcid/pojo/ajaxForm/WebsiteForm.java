@@ -20,8 +20,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc3.Source;
+import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 
 public class WebsiteForm implements ErrorsInterface, Serializable {
@@ -103,7 +103,7 @@ public class WebsiteForm implements ErrorsInterface, Serializable {
         }
 
         if (this.visibility != null && this.visibility.getVisibility() != null) {
-            researcherUrl.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.fromValue(this.getVisibility().getVisibility().value()));
+            researcherUrl.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.fromValue(this.getVisibility().getVisibility().value()));
         }
 
         if (!PojoUtil.isEmpty(this.getPutCode())) {

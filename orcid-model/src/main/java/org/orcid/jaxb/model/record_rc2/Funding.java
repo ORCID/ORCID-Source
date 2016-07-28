@@ -30,17 +30,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc2.Amount;
-import org.orcid.jaxb.model.common_rc2.CreatedDate;
-import org.orcid.jaxb.model.common_rc2.FuzzyDate;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Organization;
-import org.orcid.jaxb.model.common_rc2.OrganizationDefinedFundingSubType;
-import org.orcid.jaxb.model.common_rc2.OrganizationHolder;
-import org.orcid.jaxb.model.common_rc2.Source;
-import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.common_rc2.VisibilityType;
+import org.orcid.jaxb.model.common_rc3.Amount;
+import org.orcid.jaxb.model.common_rc3.CreatedDate;
+import org.orcid.jaxb.model.common_rc3.FuzzyDate;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Organization;
+import org.orcid.jaxb.model.common_rc3.OrganizationDefinedFundingSubType;
+import org.orcid.jaxb.model.common_rc3.OrganizationHolder;
+import org.orcid.jaxb.model.common_rc3.Source;
+import org.orcid.jaxb.model.common_rc3.Url;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc3.VisibilityType;
 
 import io.swagger.annotations.ApiModelProperty;
 

@@ -117,7 +117,7 @@ public class WorkExternalIdentifier implements Serializable, JSONIdentifierAdapt
         if (this.getWorkExternalIdentifierId() != null)
             id.setValue(this.getWorkExternalIdentifierId().content);
         if (this.url != null)
-            id.setUrl(new org.orcid.jaxb.model.common_rc2.Url(this.getUrl().value));
+            id.setUrl(new org.orcid.jaxb.model.common_rc3.Url(this.getUrl().value));
         if (this.getRelationship() != null)
             id.setRelationship(Relationship.fromValue(conv.convertFrom(this.getRelationship(), null)));
         return id;

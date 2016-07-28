@@ -28,8 +28,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -108,7 +108,7 @@ public class JpaJaxbEmploymentAdapterTest extends MockSourceNameCache {
         assertNotNull(employment.getOrganization().getAddress());
         assertEquals("org:city", employment.getOrganization().getAddress().getCity());
         assertEquals("org:region", employment.getOrganization().getAddress().getRegion());
-        assertEquals(org.orcid.jaxb.model.common_rc2.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
+        assertEquals(org.orcid.jaxb.model.common_rc3.Iso3166Country.US, employment.getOrganization().getAddress().getCountry());
         assertNotNull(employment.getSource());        
         assertNotNull(employment.getSource().retrieveSourcePath());
         assertEquals("APP-000000001", employment.getSource().retrieveSourcePath());

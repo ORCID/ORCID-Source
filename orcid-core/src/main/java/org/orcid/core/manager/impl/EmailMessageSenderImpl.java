@@ -37,7 +37,7 @@ import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.TemplateManager;
-import org.orcid.jaxb.model.common_rc2.SourceClientId;
+import org.orcid.jaxb.model.common_rc3.SourceClientId;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;

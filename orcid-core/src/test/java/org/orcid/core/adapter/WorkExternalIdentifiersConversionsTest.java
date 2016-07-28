@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.orcid.core.adapter.impl.jsonidentifiers.PeerReviewWorkExternalIDConverter;
 import org.orcid.core.adapter.impl.jsonidentifiers.WorkExternalIDsConverter;
-import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Relationship;
