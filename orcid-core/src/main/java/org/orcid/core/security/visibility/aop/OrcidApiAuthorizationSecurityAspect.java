@@ -44,7 +44,7 @@ import org.orcid.jaxb.model.message.ResearcherUrls;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.message.VisibilityType;
-import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.record_rc2.Activity;
 import org.orcid.persistence.dao.OrcidOauth2TokenDetailDao;
 import org.orcid.pojo.ajaxForm.PojoUtil;

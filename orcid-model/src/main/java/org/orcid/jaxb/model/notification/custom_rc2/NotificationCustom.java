@@ -32,8 +32,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.notification_rc2.Notification;
-import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.jaxb.model.notification_rc3.Notification;
+import org.orcid.jaxb.model.notification_rc3.NotificationType;
 
 /**
  * <p>

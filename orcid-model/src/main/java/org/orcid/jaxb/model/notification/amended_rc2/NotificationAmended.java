@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.orcid.jaxb.model.notification.permission_rc2.Items;
-import org.orcid.jaxb.model.notification_rc2.Notification;
-import org.orcid.jaxb.model.notification_rc2.NotificationType;
+import org.orcid.jaxb.model.notification_rc3.Notification;
+import org.orcid.jaxb.model.notification_rc3.NotificationType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = { "putCode", "notificationType", "amendedSection", "createdDate", "sentDate", "readDate", "archivedDate", "source" })

@@ -44,7 +44,7 @@ import org.orcid.core.manager.SourceManager;
 import org.orcid.core.security.visibility.aop.AccessControl;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
-import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.utils.DateUtils;

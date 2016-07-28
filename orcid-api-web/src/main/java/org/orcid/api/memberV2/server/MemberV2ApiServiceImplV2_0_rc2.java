@@ -80,7 +80,7 @@ import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopeConstants;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
-import org.orcid.jaxb.model.notification_rc2.Notification;
+import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
