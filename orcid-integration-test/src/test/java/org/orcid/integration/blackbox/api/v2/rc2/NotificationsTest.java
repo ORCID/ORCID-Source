@@ -39,8 +39,8 @@ import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.notifications.NotificationsApiClientImpl;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc3.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -67,7 +67,7 @@ public class NotificationsTest {
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
     @Resource(name = "notificationsClient_rc2")
-    private NotificationsApiClientImpl<org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission> notificationsClient;
+    private NotificationsApiClientImpl<org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission> notificationsClient;
 
     @Resource
     private OauthHelper oauthHelper;

@@ -206,7 +206,7 @@ public class VersionConverterImplV2_0_rc1ToV2_0rc2 implements V2VersionConverter
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary.class).byDefault().register();                
         
         //NOTIFICATIONS
-        mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission.class).byDefault().register();;
+        mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission.class).byDefault().register();;
         
         mapper = mapperFactory.getMapperFacade();
     }

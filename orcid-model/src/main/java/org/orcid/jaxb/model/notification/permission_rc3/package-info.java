@@ -25,5 +25,5 @@
         @javax.xml.bind.annotation.XmlNs(prefix = "notification", namespaceURI = "http://www.orcid.org/ns/notification"),
         @javax.xml.bind.annotation.XmlNs(prefix = "common", namespaceURI = "http://www.orcid.org/ns/common"),
         @javax.xml.bind.annotation.XmlNs(prefix = "activities", namespaceURI = "http://www.orcid.org/ns/activities"), })
-package org.orcid.jaxb.model.notification.permission_rc2;
+package org.orcid.jaxb.model.notification.permission_rc3;
 

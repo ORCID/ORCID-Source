@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
+import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.NotificationType;
 import org.xml.sax.SAXException;
 
@@ -58,7 +58,7 @@ public class MarshallingTest {
         String expected = IOUtils.toString(getClass().getResourceAsStream(SAMPLE_PATH), "UTF-8");
         Pattern pattern = Pattern.compile("<!--.*?-->\\s*", Pattern.DOTALL);
         expected = pattern.matcher(expected).replaceAll("");
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc2");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc3");
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.orcid.org/ns/notification ../notification-permission-2.0_rc2.xsd");
@@ -70,7 +70,7 @@ public class MarshallingTest {
     }
 
     private NotificationPermission getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc2");
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.permission_rc3");
         Unmarshaller unmarshaller = context.createUnmarshaller();
         InputStream inputStream = MarshallingTest.class.getResourceAsStream(SAMPLE_PATH);
         return (NotificationPermission) unmarshaller.unmarshal(inputStream);
