@@ -18,6 +18,7 @@ package org.orcid.integration.blackbox.api.security;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
@@ -27,7 +28,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.jaxb.model.common_rc2.Visibility;
@@ -47,7 +47,6 @@ import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Biography;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
@@ -66,6 +65,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * 
@@ -168,7 +168,6 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
 
         work.setPutCode(putCode);
         evaluateResponse(memberV2ApiClient.updateWork(orcid, work, accessToken));
-
         
         ClientResponse r = memberV2ApiClient.getResearcherUrls(orcid, accessToken);
         ResearcherUrls rUrls = r.getEntity(ResearcherUrls.class);
@@ -209,18 +208,20 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
                 assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
             }
         }
-        
-        try {
-            r = memberV2ApiClient.viewBiography(orcid, accessToken);
+                
+        r = memberV2ApiClient.viewBiography(orcid, accessToken);
+        if(Status.OK.getStatusCode() == r.getStatus()) {
             Biography bio = r.getEntity(Biography.class);
             if(bio != null) {
                 assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
             }
-        } catch(OrcidUnauthorizedException o) {
-            assertEquals("The biography is not public", o.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+        } else if(Status.UNAUTHORIZED.getStatusCode() == r.getStatus()) {
+            OrcidError error = r.getEntity(OrcidError.class);
+            assertEquals(Integer.valueOf(9017), error.getErrorCode());
+            assertTrue(error.getDeveloperMessage().contains("The biography is not public"));
+        } else {
+            fail("Expecting OK or UNAUTHORIZED, but got " + r.getStatus());
+        }                
         
         r = memberV2ApiClient.viewPersonalDetailsXML(orcid, accessToken);
         PersonalDetails personalDetails = r.getEntity(PersonalDetails.class);
@@ -238,9 +239,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
                     assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
                 }
             }
-        }
-        
-        
+        }                
         
         r = memberV2ApiClient.viewActivities(orcid, accessToken);
         ActivitiesSummary summary = r.getEntity(ActivitiesSummary.class);
