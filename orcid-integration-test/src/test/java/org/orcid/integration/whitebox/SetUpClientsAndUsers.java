@@ -46,7 +46,6 @@ import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.clientgroup.RedirectUri;
 import org.orcid.jaxb.model.clientgroup.RedirectUriType;
 import org.orcid.jaxb.model.common_rc2.CreditName;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.message.ActivitiesVisibilityDefault;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
@@ -92,7 +91,6 @@ import org.orcid.persistence.jpa.entities.OrcidOauth2TokenDetail;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.ProfileKeywordEntity;
 import org.orcid.persistence.jpa.entities.ProfileSummaryEntity;
@@ -381,12 +379,6 @@ public class SetUpClientsAndUsers {
         if (lockedClient == null) {
             createClient(lockedClientParams);
         } 
-        
-        //Set up data for user 1
-        setUpAddresses(user1OrcidId);
-        setUpKeywords(user1OrcidId);
-        setUpOtherNames(user1OrcidId);
-        setUpEmails(user1OrcidId);        
         
         setUpDelegates(user1OrcidId, user2OrcidId);
     }
@@ -813,99 +805,7 @@ public class SetUpClientsAndUsers {
         assertEquals(lockedMemberClient1RedirectUri, existingClient.getRegisteredRedirectUri().iterator().next());
     }
     
-    //------------------------------------------------------------------------------
-    
-    /**
-     * Set up default addresses 
-     * Please see tests:
-     *  AddressTest.testGetAddressWithMembersAPI
-     * */
-    public void setUpAddresses(String orcid) {
-        AddressEntity a1 = new AddressEntity();
-        a1.setDateCreated(new Date());
-        a1.setDisplayIndex(0L);
-        a1.setIso2Country(Iso3166Country.US);        
-        a1.setLastModified(new Date());
-        a1.setUser(new ProfileEntity(orcid));
-        a1.setClientSourceId(client1ClientId);
-        a1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        addressDao.persist(a1);        
-    }
-    
-    /**
-     * Set up default other names
-     * Please see tests: 
-     *  OtherNamesTest.testGetOtherNamesWihtMembersAPI
-     * */
-    public void setUpOtherNames(String orcid) {
-        OtherNameEntity o1 = new OtherNameEntity();
-        o1.setDateCreated(new Date());
-        o1.setDisplayIndex(0L);
-        o1.setDisplayName("other-name-1");
-        o1.setLastModified(new Date());
-        o1.setProfile(new ProfileEntity(orcid));
-        o1.setClientSourceId(client1ClientId);
-        o1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        otherNameDao.persist(o1);
-        
-        OtherNameEntity o2 = new OtherNameEntity();
-        o2.setDateCreated(new Date());
-        o2.setDisplayIndex(0L);
-        o2.setDisplayName("other-name-2");
-        o2.setLastModified(new Date());
-        o2.setProfile(new ProfileEntity(orcid));
-        o2.setClientSourceId(client1ClientId);
-        o2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        otherNameDao.persist(o2);
-        
-    }
-    
-    /**
-     * Set up default keywords
-     * Please see tests:
-     *  KeywordsTest.testGetKeywordsWihtMembersAPI
-     * */
-    public void setUpKeywords(String orcid) {
-        ProfileKeywordEntity k1 = new ProfileKeywordEntity();
-        k1.setDateCreated(new Date());
-        k1.setDisplayIndex(0L);
-        k1.setKeywordName("keyword-1");
-        k1.setLastModified(new Date());
-        k1.setProfile(new ProfileEntity(orcid));
-        k1.setClientSourceId(client1ClientId);
-        k1.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        profileKeywordDao.persist(k1);
-        
-        ProfileKeywordEntity k2 = new ProfileKeywordEntity();
-        k2.setDateCreated(new Date());
-        k2.setDisplayIndex(0L);
-        k2.setKeywordName("keyword-2");
-        k2.setLastModified(new Date());
-        k2.setProfile(new ProfileEntity(orcid));
-        k2.setClientSourceId(client1ClientId);
-        k2.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);
-        profileKeywordDao.persist(k2);
-    }
-    
-    /**
-     * Set up defaut email info
-     * Please see tests: 
-     *  EmailTest.testGetWithMembersAPI
-     * */
-    public void setUpEmails(String orcid) {
-        EmailEntity email = new EmailEntity();
-        email.setDateCreated(new Date());
-        email.setLastModified(new Date());
-        email.setProfile(new ProfileEntity(orcid));
-        email.setClientSourceId(client1ClientId);
-        email.setVisibility(Visibility.LIMITED);
-        email.setVerified(true);
-        email.setCurrent(false);
-        email.setPrimary(false);
-        email.setId("limited@test.orcid.org");
-        emailDao.persist(email);
-    }
-        
+    //------------------------------------------------------------------------------           
     /**
      * Set up delegates
      * Please see tests: 
