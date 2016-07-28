@@ -134,47 +134,50 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
      * @return
      */
     @Override
-    public List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long,Date> workIdsWithLastModified) {
+    public List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long, Date> workIdsWithLastModified) {
         MinimizedWorkEntity[] returnArray = new MinimizedWorkEntity[workIdsWithLastModified.size()];
         List<Long> fetchList = new ArrayList<Long>();
-        Map<Long, Integer> fetchListIndexOrder = new LinkedHashMap<Long, Integer>();        
+        Map<Long, Integer> fetchListIndexOrder = new LinkedHashMap<Long, Integer>();
         int index = 0;
-        
-        for (Long workId : workIdsWithLastModified.keySet()){
-            //get works from the cache if we can
+
+        for (Long workId : workIdsWithLastModified.keySet()) {
+            // get works from the cache if we can
             Object key = new WorkCacheKey(workId, releaseName);
             MinimizedWorkEntity cachedWork = toMinimizedWork(minimizedWorkEntityCache.get(key));
             if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(workId).getTime()) {
                 fetchListIndexOrder.put(workId, index);
                 fetchList.add(workId);
-            }else{
+            } else {
                 returnArray[index] = cachedWork;
             }
             index++;
         }
-            
-        //now fetch all the others that are *not* in the cache
-        if (fetchList.size()>0){            
+
+        // now fetch all the others that are *not* in the cache
+        if (fetchList.size() > 0) {
             List<MinimizedWorkEntity> refreshedWorks = workDao.getMinimizedWorkEntities(fetchList);
-            for (MinimizedWorkEntity mWorkRefreshedFromDB : refreshedWorks){
+            for (MinimizedWorkEntity mWorkRefreshedFromDB : refreshedWorks) {
                 Object key = new WorkCacheKey(mWorkRefreshedFromDB.getId(), releaseName);
                 try {
                     synchronized (lockerMinimizedWork.obtainLock(Long.toString(mWorkRefreshedFromDB.getId()))) {
-                        //check cache again here to prevent race condition since something could have updated while we were fetching from DB 
-                        //(or can we skip because new last modified is always going to be after profile last modified as provided)
+                        // check cache again here to prevent race condition
+                        // since something could have updated while we were
+                        // fetching from DB
+                        // (or can we skip because new last modified is always
+                        // going to be after profile last modified as provided)
                         MinimizedWorkEntity cachedWork = toMinimizedWork(minimizedWorkEntityCache.get(key));
                         int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
                         if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
-                            workDao.detach(mWorkRefreshedFromDB);                        
+                            workDao.detach(mWorkRefreshedFromDB);
                             minimizedWorkEntityCache.put(new Element(key, mWorkRefreshedFromDB));
                             returnArray[returnListIndex] = mWorkRefreshedFromDB;
-                        }else{
+                        } else {
                             returnArray[returnListIndex] = cachedWork;
                         }
-                        
+
                     }
                 } finally {
-                    publicWorkLastModifiedListLockers.releaseLock(Long.toString(mWorkRefreshedFromDB.getId()));
+                    lockerMinimizedWork.releaseLock(Long.toString(mWorkRefreshedFromDB.getId()));
                 }
             }
         }
