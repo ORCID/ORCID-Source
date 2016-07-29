@@ -524,10 +524,21 @@
 </script>
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
-    <div style="padding: 20px;">
-       <h3><@orcid.msg 'manage.application_access.revoke.confirm_revoke' /> {{appName}}</h3>
-       <button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.confirm' /></button>
-       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+    <div class="lightbox-container confirm-revoke-access-modal">
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">		
+				<h2><@orcid.msg 'manage.application_access.revoke.confirm_title' /></h2>		 
+				<p><@orcid.msg 'manage.application_access.revoke.copy_1' /></p>
+				<p><@orcid.msg 'manage.application_access.revoke.copy_2' /> {{appName}} (<@orcid.msg 'manage.application_access.revoke.access' /> <span ng-repeat="org in trustedOrganizations"><span ng-repeat="(key, value) in org.scopePaths">{{key}}</span></span>)</p>
+			</div>			
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="pull-right">
+	      			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.application_access.close' /></a>&nbsp;&nbsp<button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"></button>
+				</div>
+			</div>
+		</div>
     </div>
 </script>
 

@@ -6675,6 +6675,10 @@ a:hover .mozilla-badge{
 	margin: 0 -30px 0 0;
 }
 
+.confirm-revoke-access-modal{
+	max-width: 600px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
