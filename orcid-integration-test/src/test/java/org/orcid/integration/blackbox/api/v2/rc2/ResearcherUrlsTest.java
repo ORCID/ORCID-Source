@@ -22,7 +22,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -267,9 +269,11 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         //Create some researcher urls
         ResearcherUrl rUrlToCreate = new ResearcherUrl();        
         Long now = System.currentTimeMillis();
+        List<String> rUrlsToFind = new ArrayList<String>();
         for (int i = 0; i < 5; i++) {
             // Change the name
-            rUrlToCreate.setUrlName("url-name-" + now + "-" + i);
+            String urlName = "url-name-" + now + "-" + i;            
+            rUrlToCreate.setUrlName(urlName);
             rUrlToCreate.setUrl(new Url("http://newurl.com/" + now + "/" + i));
             if(i == 3) {
                 changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
@@ -286,6 +290,8 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
                 assertNotNull(postResponse);
                 assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             } else {
+                //Add public rUrls to the list of elements to find
+                rUrlsToFind.add(urlName);
                 changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
                 rUrlToCreate.setVisibility(Visibility.PUBLIC);
                 // Create it
@@ -302,8 +308,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertNotNull(getAllResponse);
         ResearcherUrls researcherUrls = getAllResponse.getEntity(ResearcherUrls.class);
         assertNotNull(researcherUrls);
-        assertNotNull(researcherUrls.getResearcherUrls());
-        assertEquals(3, researcherUrls.getResearcherUrls().size());
+        assertNotNull(researcherUrls.getResearcherUrls());        
         for(ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
             assertNotNull(rUrl);
             assertEquals(Visibility.PUBLIC, rUrl.getVisibility());
@@ -317,7 +322,13 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
             assertEquals(researcherUrl.getUrl(), rUrl.getUrl());
             assertEquals(researcherUrl.getUrlName(), rUrl.getUrlName());
             assertEquals(researcherUrl.getVisibility(), rUrl.getVisibility());
+            if(rUrlsToFind.contains(researcherUrl.getUrlName())) {
+                //If the rurl is found, remove it from the list of elements to find
+                rUrlsToFind.remove(researcherUrl.getUrlName());
+            }
         }
+        
+        assertTrue("Items not found: " + rUrlsToFind.size(), rUrlsToFind.isEmpty());
     }
 
     @Test
