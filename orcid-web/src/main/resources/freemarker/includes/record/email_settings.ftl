@@ -26,6 +26,23 @@
 	        	<span ng-repeat='error in emailSrvc.emails.errors' ng-bind-html="error"></span>
 	        </div>
 
+			<#if RequestParameters['bulkEdit']??>
+				<div class="row bulk-edit-modal">
+					<div class="pull-right">							
+						<span class="custom-control-title"><@orcid.msg "groups.common.bulk_edit" /></span>
+						<div style="position: static">
+						<@orcid.privacyToggle3 angularModel="bioModel"
+					    	questionClick="toggleClickPrivacyHelp($index)"
+					        clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+					        publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
+				            limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
+				            privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
+				            elementId="$index" />
+						</div>
+					</div>
+				</div>
+			</#if>
+
 	        <!-- Start -->
 	        <div class="row">
 	            <strong class="green">${springMacroRequestContext.getMessage("manage.email.my_email_addresses")}</strong>
@@ -35,8 +52,7 @@
 	            <table class="table" style="position: static">
 	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" name="email">
 	                    <!-- Primary Email -->
-	                    <td ng-class="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" ng-cloak>
-							<input type="checkbox" class="bio-item" ng-model="bulkEditMap[_.putCode]" ng-if="bulkEditShow"/>							
+	                    <td ng-class="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" ng-cloak>														
 							<span>{{email.value}}</span>
 	                    </td>
 	                    <!-- Set Primary options -->
@@ -84,7 +100,7 @@
 	                </tr>
 	            </table>
 				<!-- Delete Email Box -->
-				<div ng-show="emailSrvc.popUp && showDeleteBox" class="delete-email-box grey-box">					
+				<div ng-if="emailSrvc.popUp && showDeleteBox" class="delete-email-box grey-box">					
 					<div style="margin-bottom: 10px;">
 						<@orcid.msg 'manage.email.pleaseConfirmDeletion' /> {{emailSrvc.delEmail.value}}
 					</div>
@@ -173,7 +189,7 @@
 	          		<p style="line-height: 12px;"><small class="italic">${springMacroRequestContext.getMessage("manage.service_announcements.note")}</small>
             		</p>
     			</div>
-			</div>			
+			</div>
 	    </div>
 	</td>
 </script>
