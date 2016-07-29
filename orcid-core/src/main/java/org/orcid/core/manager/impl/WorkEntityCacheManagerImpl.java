@@ -32,6 +32,7 @@ import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.orcid.utils.ReleaseNameUtils;
 
@@ -59,6 +60,9 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
     @Resource(name = "minimizedWorkEntityCache")
     private Cache minimizedWorkEntityCache;
+    
+    @Resource(name = "fullWorkEntityCache")
+    private Cache fullWorkEntityCache;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
 
@@ -67,6 +71,8 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
     private LockerObjectsManager publicWorkLastModifiedListLockers = new LockerObjectsManager();
 
     private LockerObjectsManager lockerMinimizedWork = new LockerObjectsManager();
+    
+    private LockerObjectsManager lockerFullWork = new LockerObjectsManager();
 
     @Override
     public List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified) {
@@ -173,7 +179,6 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                         WorkBaseEntity cachedWork = toWorkBaseEntity(workCache.get(key));
                         int returnListIndex = fetchListIndexOrder.get(mWorkRefreshedFromDB.getId());
                         if (cachedWork == null || cachedWork.getLastModified().getTime() < workIdsWithLastModified.get(mWorkRefreshedFromDB.getId()).getTime()) {
-                            workDao.detach(mWorkRefreshedFromDB);
                             workCache.put(new Element(key, mWorkRefreshedFromDB));
                             returnArray[returnListIndex] = mWorkRefreshedFromDB;
                         } else {
@@ -192,14 +197,7 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
 
     @Override
     public List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified) {
-        List<WorkLastModifiedEntity> workLastModifiedList = retrieveWorkLastModifiedList(orcid, profileLastModified);        
-        Map<Long, Date> workIdsWithLastModified = workLastModifiedList.stream().collect(Collectors.toMap(
-                WorkLastModifiedEntity::getId, 
-                WorkLastModifiedEntity::getLastModified, 
-                (u, v) -> {
-                        throw new IllegalStateException(String.format("Duplicate key %s", u));
-                }, 
-                LinkedHashMap::new));
+        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
         return retrieveWorkList(workIdsWithLastModified, minimizedWorkEntityCache, lockerMinimizedWork, idList -> workDao.getMinimizedWorkEntities(idList));
     }
 
@@ -214,6 +212,26 @@ public class WorkEntityCacheManagerImpl implements WorkEntityCacheManager {
                 }, 
                 LinkedHashMap::new));
         return this.retrieveWorkList(workIdsWithLastModified, minimizedWorkEntityCache, lockerMinimizedWork, idList -> workDao.getMinimizedWorkEntities(idList));
+    }
+    
+    @Override
+    public List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified) {
+        Map<Long, Date> workIdsWithLastModified = retrieveWorkLastModifiedMap(orcid, profileLastModified);
+        return retrieveWorkList(workIdsWithLastModified, fullWorkEntityCache, lockerFullWork, idList -> workDao.getWorkEntities(idList));
+    }
+
+    private Map<Long, Date> retrieveWorkLastModifiedMap(String orcid, long profileLastModified) {
+        List<WorkLastModifiedEntity> workLastModifiedList = retrieveWorkLastModifiedList(orcid, profileLastModified);
+        // @formatter:off
+        Map<Long, Date> workIdsWithLastModified = workLastModifiedList.stream().collect(Collectors.toMap(
+            WorkLastModifiedEntity::getId, 
+            WorkLastModifiedEntity::getLastModified, 
+            (u, v) -> {
+                    throw new IllegalStateException(String.format("Duplicate key %s", u));
+            }, 
+            LinkedHashMap::new));
+        // @formatter:off
+        return workIdsWithLastModified;
     }
 
     private MinimizedWorkEntity toMinimizedWork(Element element) {

@@ -24,6 +24,7 @@ import java.util.function.Function;
 import org.orcid.core.manager.impl.LockerObjectsManager;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.WorkBaseEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 
 import net.sf.ehcache.Cache;
@@ -36,7 +37,7 @@ import net.sf.ehcache.Cache;
 public interface WorkEntityCacheManager {
 
     List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified);
-    
+
     List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified);
 
     MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified);
@@ -48,5 +49,6 @@ public interface WorkEntityCacheManager {
 
     List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
 
+    List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
 
 }

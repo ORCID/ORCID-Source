@@ -820,8 +820,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
         assertEquals(3, works.size());
 
-        assertEquals("Another Title", works.get(2).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(2).getWorkTitle().getSubtitle().getContent());
+        assertEquals("Another Title", works.get(1).getWorkTitle().getTitle().getContent());
+        assertEquals("Journal of Cloud Spotting", works.get(1).getWorkTitle().getSubtitle().getContent());
         for (OrcidWork work : works) {
             assertEquals(Visibility.PRIVATE, work.getVisibility());
         }
@@ -875,8 +875,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
         assertEquals(4, works.size());
 
-        assertEquals("Another Title", works.get(3).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(3).getWorkTitle().getSubtitle().getContent());
+        assertEquals("Another Title", works.get(1).getWorkTitle().getTitle().getContent());
+        assertEquals("Journal of Cloud Spotting", works.get(1).getWorkTitle().getSubtitle().getContent());
         for (OrcidWork work : works) {
             if ("Test Title".equals(work.getWorkTitle().getTitle().getContent()))
                 assertEquals(Visibility.PRIVATE, work.getVisibility());
@@ -932,8 +932,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
         assertEquals(4, works.size());
 
-        assertEquals("Another Title", works.get(3).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(3).getWorkTitle().getSubtitle().getContent());
+        assertEquals("Another Title", works.get(1).getWorkTitle().getTitle().getContent());
+        assertEquals("Journal of Cloud Spotting", works.get(1).getWorkTitle().getSubtitle().getContent());
         for (OrcidWork work : works) {
             if ("Test Title".equals(work.getWorkTitle().getTitle().getContent()))
                 assertEquals(Visibility.PRIVATE, work.getVisibility());
@@ -988,8 +988,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
         assertEquals(4, works.size());
 
-        assertEquals("Another Title", works.get(3).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(3).getWorkTitle().getSubtitle().getContent());
+        assertEquals("Another Title", works.get(1).getWorkTitle().getTitle().getContent());
+        assertEquals("Journal of Cloud Spotting", works.get(1).getWorkTitle().getSubtitle().getContent());
         for (OrcidWork work : works) {
             if ("Test Title".equals(work.getWorkTitle().getTitle().getContent()))
                 assertEquals(Visibility.PRIVATE, work.getVisibility());
@@ -1041,8 +1041,8 @@ public class OrcidProfileManagerImplTest extends OrcidProfileManagerBaseTest {
         List<OrcidWork> works = resultProfile.retrieveOrcidWorks().getOrcidWork();
         assertEquals(4, works.size());
 
-        assertEquals("Another Title", works.get(3).getWorkTitle().getTitle().getContent());
-        assertEquals("Journal of Cloud Spotting", works.get(3).getWorkTitle().getSubtitle().getContent());
+        assertEquals("Another Title", works.get(1).getWorkTitle().getTitle().getContent());
+        assertEquals("Journal of Cloud Spotting", works.get(1).getWorkTitle().getSubtitle().getContent());
         for (OrcidWork work : works) {
             if ("Further Title".equals(work.getWorkTitle().getTitle().getContent()))
                 assertEquals(Visibility.LIMITED, work.getVisibility());
