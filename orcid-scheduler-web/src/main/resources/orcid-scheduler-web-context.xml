@@ -29,7 +29,7 @@
     <task:scheduled-tasks scheduler="scheduler">   
 	    <!-- new message driven indexing tasks -->
      	<task:scheduled ref="orcidProfileManager" method="processProfilesWithReindexFlagAndAddToMessageQueue" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
-        <task:scheduled ref="orcidProfileManager" method="processProfilesWithFailedFlagAndAddToMessageQueue" fixed-delay="150000"/><!-- cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/> -->
+        <task:scheduled ref="orcidProfileManager" method="processProfilesWithFailedFlagAndAddToMessageQueue" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>
      	<!-- 
 	        <task:scheduled ref="orcidProfileManager" method="processProfilesPendingIndexing" fixed-delay="${org.orcid.scheduler.web.processProfilesPendingIndexingDelaySeconds:60}000"/>
 	        <task:scheduled ref="orcidProfileManager" method="processProfilesThatMissedIndexing" cron="${org.orcid.scheduler.web.processProfilesThatMissedIndexing:20 20 0-2 * * *}000"/>
