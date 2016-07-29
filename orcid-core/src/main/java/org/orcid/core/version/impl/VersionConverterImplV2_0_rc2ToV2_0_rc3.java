@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -39,12 +38,22 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc2.Works;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
 import org.orcid.utils.DateUtils;
 
@@ -86,7 +95,7 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
                         latestDates.add(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(actSummaryRc3.getPeerReviews()));
                         latestDates.add(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(actSummaryRc3.getWorks()));
 
-                        actSummaryRc3.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestDates.last())));
+                        actSummaryRc3.setLastModifiedDate(new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestDates.last())));
                     }
                 })
                 .register();
@@ -95,9 +104,9 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
         mapperFactory.classMap(Educations.class, org.orcid.jaxb.model.record.summary_rc3.Educations.class).field("summaries", "summaries")
                 .customize(new CustomMapper<Educations, org.orcid.jaxb.model.record.summary_rc3.Educations>() {
                     @Override
-                    public void mapAtoB(Educations educationsRc1, org.orcid.jaxb.model.record.summary_rc3.Educations educationsRc2, MappingContext context) {
-                        educationsRc2.setLastModifiedDate(
-                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educationsRc2))));
+                    public void mapAtoB(Educations educationsRc2, org.orcid.jaxb.model.record.summary_rc3.Educations educationsRc3, MappingContext context) {
+                        educationsRc3.setLastModifiedDate(
+                                new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educationsRc3))));
                     }
                 }).register();
 
@@ -105,9 +114,9 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
         mapperFactory.classMap(Employments.class, org.orcid.jaxb.model.record.summary_rc3.Employments.class).field("summaries", "summaries")
                 .customize(new CustomMapper<Employments, org.orcid.jaxb.model.record.summary_rc3.Employments>() {
                     @Override
-                    public void mapAtoB(Employments employmentsRc1, org.orcid.jaxb.model.record.summary_rc3.Employments employmentsRc2, MappingContext context) {
-                        employmentsRc2.setLastModifiedDate(
-                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employmentsRc2))));
+                    public void mapAtoB(Employments employmentsRc2, org.orcid.jaxb.model.record.summary_rc3.Employments employmentsRc3, MappingContext context) {
+                        employmentsRc3.setLastModifiedDate(
+                                new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employmentsRc3))));
                     }
                 }).register();
 
@@ -117,9 +126,9 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
                 .field("fundingGroup{fundingSummary}", "fundingGroup{fundingSummary}")
                 .customize(new CustomMapper<Fundings, org.orcid.jaxb.model.record.summary_rc3.Fundings>() {
                     @Override
-                    public void mapAtoB(Fundings fundingsRc1, org.orcid.jaxb.model.record.summary_rc3.Fundings fundingsRc2, MappingContext context) {
-                        fundingsRc2.setLastModifiedDate(
-                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundingsRc2))));
+                    public void mapAtoB(Fundings fundingsRc2, org.orcid.jaxb.model.record.summary_rc3.Fundings fundingsRc3, MappingContext context) {
+                        fundingsRc3.setLastModifiedDate(
+                                new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundingsRc3))));
                     }
                 }).register();
         
@@ -129,9 +138,9 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
                 .field("peerReviewGroup{peerReviewSummary}", "peerReviewGroup{peerReviewSummary}")
                 .customize(new CustomMapper<PeerReviews, org.orcid.jaxb.model.record.summary_rc3.PeerReviews>() {
                     @Override
-                    public void mapAtoB(PeerReviews peerReviewsRc1, org.orcid.jaxb.model.record.summary_rc3.PeerReviews peerReviewsRc2, MappingContext context) {
-                        peerReviewsRc2.setLastModifiedDate(
-                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviewsRc2))));
+                    public void mapAtoB(PeerReviews peerReviewsRc2, org.orcid.jaxb.model.record.summary_rc3.PeerReviews peerReviewsRc3, MappingContext context) {
+                        peerReviewsRc3.setLastModifiedDate(
+                                new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviewsRc3))));
                     }
                 }).register();
 
@@ -141,9 +150,9 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
                 .field("workGroup{workSummary}", "workGroup{workSummary}")
                 .customize(new CustomMapper<Works, org.orcid.jaxb.model.record.summary_rc3.Works>() {
                     @Override
-                    public void mapAtoB(Works worksRc1, org.orcid.jaxb.model.record.summary_rc3.Works worksRc2, MappingContext context) {
-                        worksRc2.setLastModifiedDate(
-                                new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(worksRc2))));
+                    public void mapAtoB(Works worksRc2, org.orcid.jaxb.model.record.summary_rc3.Works worksRc3, MappingContext context) {
+                        worksRc3.setLastModifiedDate(
+                                new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(worksRc3))));
                     }
                 })
                 .register();
@@ -152,19 +161,40 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
         mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords.class)
         .field("groupIdRecord", "groupIdRecord").customize(new CustomMapper<GroupIdRecords, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords>() {
             @Override
-            public void mapAtoB(GroupIdRecords groupsRc1, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords groupsRc2, MappingContext context) {
-            	groupsRc2.setLastModifiedDate(
-                        new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(groupsRc2))));
+            public void mapAtoB(GroupIdRecords groupsRc2, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords groupsRc3, MappingContext context) {
+            	groupsRc3.setLastModifiedDate(
+                        new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(groupsRc3))));
             }
         }).register();
         
         
-        //Identifiers to ExternalIDs
-        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.record_rc2.ExternalIDs.class)
+        //ExternalIDs
+        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.record_rc3.ExternalIDs.class)
         .register();
         
-        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc2.ExternalID.class)        
+        //ExternalID
+        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc3.ExternalID.class)        
         .register();
+        
+        //Other names
+        mapperFactory.classMap(OtherNames.class, org.orcid.jaxb.model.record_rc3.OtherNames.class).register();;
+        mapperFactory.classMap(OtherName.class, org.orcid.jaxb.model.record_rc3.OtherName.class).register();
+                
+        //Keywords
+        mapperFactory.classMap(Keywords.class, org.orcid.jaxb.model.record_rc3.Keywords.class).register();;
+        mapperFactory.classMap(Keyword.class, org.orcid.jaxb.model.record_rc3.Keyword.class).register();
+        
+        //Address
+        mapperFactory.classMap(Addresses.class, org.orcid.jaxb.model.record_rc3.Addresses.class).register();;
+        mapperFactory.classMap(Address.class, org.orcid.jaxb.model.record_rc3.Address.class).register();
+        
+        //ResearcherUrl
+        mapperFactory.classMap(ResearcherUrls.class, org.orcid.jaxb.model.record_rc3.ResearcherUrls.class).register();;
+        mapperFactory.classMap(ResearcherUrl.class, org.orcid.jaxb.model.record_rc3.ResearcherUrl.class).register();
+        
+        //Person External ID
+        mapperFactory.classMap(PersonExternalIdentifiers.class, org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers.class).register();;
+        mapperFactory.classMap(PersonExternalIdentifier.class, org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier.class).register();
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc3.Work.class).byDefault().register();
