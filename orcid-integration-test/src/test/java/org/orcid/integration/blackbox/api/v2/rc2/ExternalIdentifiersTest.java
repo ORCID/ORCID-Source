@@ -33,12 +33,12 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.jaxb.model.common_rc3.Url;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -58,7 +58,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    Visibility currentUserVisibility = null;
+    org.orcid.jaxb.model.common_rc3.Visibility currentUserVisibility = null;
     
     ArrayList<Long> createdPutCodes = new ArrayList<Long>();
     
@@ -81,8 +81,8 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         String extId1Value = "A-0001" + System.currentTimeMillis();
         String extId2Value = "A-0002" + System.currentTimeMillis();
         
-        Long putCode1 = createExternalIdentifier(extId1Value, Visibility.PUBLIC);
-        Long putCode2 = createExternalIdentifier(extId2Value, Visibility.LIMITED);
+        Long putCode1 = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        Long putCode2 = createExternalIdentifier(extId2Value, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         //Check you can view them
         ClientResponse getResponse = memberV2ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);
@@ -119,7 +119,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(accessToken);                
 
         String extId1Value = "A-0003" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, Visibility.LIMITED);               
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);               
 
         //Get and verify
         ClientResponse response = memberV2ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);        
@@ -207,7 +207,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(accessToken);
         
         String extId1Value = "A-0001" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, Visibility.PUBLIC);
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
                 
         ClientResponse response = publicV2ApiClient.viewExternalIdentifiersXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -249,7 +249,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     }
     
     @SuppressWarnings({ "rawtypes", "deprecation" })
-    private Long createExternalIdentifier(String name, Visibility defaultUserVisibility) throws InterruptedException, JSONException {
+    private Long createExternalIdentifier(String name, org.orcid.jaxb.model.common_rc3.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
         //Change user visibility if needed
         if(!defaultUserVisibility.equals(currentUserVisibility)) {
             changeDefaultUserVisibility(webDriver, defaultUserVisibility);

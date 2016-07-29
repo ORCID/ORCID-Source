@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
+import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -47,7 +47,6 @@ import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
 import org.orcid.jaxb.model.record_rc3.Employment;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.Keyword;
@@ -74,7 +73,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
+public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
 
     @BeforeClass
     public static void beforeClass() {

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc2;
+package org.orcid.integration.blackbox.api.v2.rc3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -35,19 +35,19 @@ import javax.xml.bind.Unmarshaller;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.record_rc3.Education;
+import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.Keyword;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.Work;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -56,10 +56,10 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author Angel Montenegro
  * 
  */
-public class BlackBoxBaseRC2 extends BlackBoxBase {
+public class BlackBoxBaseRC3 extends BlackBoxBase {
     @Resource(name = "t2OAuthClient")
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
-    @Resource(name = "memberV2ApiClient_rc2")
+    @Resource(name = "memberV2ApiClient_rc3")
     protected MemberV2ApiClientImpl memberV2ApiClient;    
     
     protected List<Long> newOtherNames = new ArrayList<Long>();
@@ -117,7 +117,7 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         g1.setType("publisher");
         
         ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, clientCredentialsToken);         
-        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
+        String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc3/group-id-record/", "");
         g1.setPutCode(Long.valueOf(r1LocationPutCode));        
         
         return g1;

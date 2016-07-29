@@ -28,19 +28,16 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.web.account.PublicProfileVisibilityTest;
-import org.orcid.jaxb.model.common_rc3.Country;
-import org.orcid.jaxb.model.common_rc3.Iso3166Country;
-import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.error_rc1.OrcidError;
+import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.error_rc2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.Address;
-import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -89,7 +86,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
 

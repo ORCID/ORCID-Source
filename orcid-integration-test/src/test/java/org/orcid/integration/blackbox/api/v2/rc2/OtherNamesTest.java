@@ -41,11 +41,11 @@ import org.orcid.integration.blackbox.client.DashboardPage.OtherNameElement;
 import org.orcid.integration.blackbox.client.DashboardPage.OtherNamesSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -96,7 +96,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         } else {
             // Check if we should change the visibility
             OtherNameElement publicOtherName = publicOtherNameOptional.get();
-            Visibility v = publicOtherName.getVisibility();
+            org.orcid.jaxb.model.common_rc3.Visibility v = publicOtherName.getVisibility();
             if (Visibility.PUBLIC.equals(v)) {
                 updateVisibilityOnPublic = false;
             }
@@ -108,7 +108,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
         } else {
             // Check if we should change the visibility
             OtherNameElement limitedOtherName = limitedOtherNameOptional.get();
-            Visibility v = limitedOtherName.getVisibility();
+            org.orcid.jaxb.model.common_rc3.Visibility v = limitedOtherName.getVisibility();
             if (Visibility.LIMITED.equals(v)) {
                 updateVisibilityOnLimited = false;
             }
@@ -120,12 +120,12 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
             otherNameElements = otherNameSection.getOtherNames();
             if (updateVisibilityOnPublic) {
                 OtherNameElement publicOtherName = otherNameElements.stream().filter(e -> e.getValue().equals(publicOtherNameValue)).findFirst().get();
-                publicOtherName.changeVisibility(Visibility.PUBLIC);
+                publicOtherName.changeVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
             }
 
             if (updateVisibilityOnLimited) {
                 OtherNameElement limitedOtherName = otherNameElements.stream().filter(e -> e.getValue().equals(limitedOtherNameValue)).findFirst().get();
-                limitedOtherName.changeVisibility(Visibility.LIMITED);
+                limitedOtherName.changeVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
             }
             otherNameSection.saveChanges();
         }
@@ -169,7 +169,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteOtherName() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(accessToken);
         OtherName newOtherName = getOtherName();
@@ -260,7 +260,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
 
         // Check it was actually deleted
         testGetOtherNamesWihtMembersAPI();
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
     }
 
     /**

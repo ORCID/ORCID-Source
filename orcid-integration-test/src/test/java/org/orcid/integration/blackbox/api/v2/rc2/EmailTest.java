@@ -42,10 +42,10 @@ import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.Email;
-import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -101,18 +101,18 @@ public class EmailTest extends BlackBoxBaseRC2 {
         org.orcid.integration.blackbox.client.AccountSettingsPage.Email primary = emails.stream().filter(e -> e.isPrimary()).findFirst().get();
         assertNotNull(primary);
         assertEquals(getUser1UserName(), primary.getEmail());
-        Visibility primaryVisibility = primary.getVisibility();
-        if(!Visibility.PUBLIC.equals(primaryVisibility)) {
-            primary.changeVisibility(Visibility.PUBLIC);
+        org.orcid.jaxb.model.common_rc3.Visibility primaryVisibility = primary.getVisibility();
+        if(!org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(primaryVisibility)) {
+            primary.changeVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         }
         
         // Get limited email and verify it is limited or created it
         Optional<org.orcid.integration.blackbox.client.AccountSettingsPage.Email> limited = emails.stream().filter(e -> e.getEmail().equals(limitedEmailValue)).findFirst();
         if(limited.isPresent()) {
             org.orcid.integration.blackbox.client.AccountSettingsPage.Email limitedEmail = limited.get();
-            Visibility visibility = limitedEmail.getVisibility();
-            if(!Visibility.LIMITED.equals(visibility)) {
-                limitedEmail.changeVisibility(Visibility.LIMITED);
+            org.orcid.jaxb.model.common_rc3.Visibility visibility = limitedEmail.getVisibility();
+            if(!org.orcid.jaxb.model.common_rc3.Visibility.LIMITED.equals(visibility)) {
+                limitedEmail.changeVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
             }
         } else {
             emailsSection.addEmail(limitedEmailValue);
@@ -120,9 +120,9 @@ public class EmailTest extends BlackBoxBaseRC2 {
             BBBUtil.noSpinners(webDriver);        
             emails = emailsSection.getEmails();
             org.orcid.integration.blackbox.client.AccountSettingsPage.Email limitedEmail = emails.stream().filter(e -> e.getEmail().equals(limitedEmailValue)).findFirst().get();
-            Visibility visibility = limitedEmail.getVisibility();
-            if(!Visibility.LIMITED.equals(visibility)) {
-                limitedEmail.changeVisibility(Visibility.LIMITED);
+            org.orcid.jaxb.model.common_rc3.Visibility visibility = limitedEmail.getVisibility();
+            if(!org.orcid.jaxb.model.common_rc3.Visibility.LIMITED.equals(visibility)) {
+                limitedEmail.changeVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
             }            
         }
     }        

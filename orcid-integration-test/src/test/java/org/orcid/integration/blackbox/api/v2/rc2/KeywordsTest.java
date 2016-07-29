@@ -34,11 +34,11 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.Keyword;
-import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.jaxb.model.record_rc2.Keyword;
+import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 

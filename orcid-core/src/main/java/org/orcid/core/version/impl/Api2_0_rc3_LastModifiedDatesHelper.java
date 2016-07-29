@@ -67,24 +67,24 @@ public class Api2_0_rc3_LastModifiedDatesHelper {
         return latestAct;
     }        
 
-    public static Date calculateLatest(GroupsContainer groupsContainerRc2) {
+    public static Date calculateLatest(GroupsContainer groupsContainerRc3) {
         Date latestGrp = null;
-        if (groupsContainerRc2.retrieveGroups() != null && !groupsContainerRc2.retrieveGroups().isEmpty()) {
-            List<? extends Group> groupsRc1 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
-            List<org.orcid.jaxb.model.record_rc3.Group> groupsRc2 = new ArrayList<>(groupsContainerRc2.retrieveGroups());
+        if (groupsContainerRc3.retrieveGroups() != null && !groupsContainerRc3.retrieveGroups().isEmpty()) {
+            List<? extends Group> groupsRc1 = new ArrayList<>(groupsContainerRc3.retrieveGroups());
+            List<org.orcid.jaxb.model.record_rc3.Group> groupsRc3 = new ArrayList<>(groupsContainerRc3.retrieveGroups());
             if (groupsRc1.get(0).getActivities() != null && !groupsRc1.get(0).getActivities().isEmpty()) {
-                for (int index = 0; index < groupsRc2.size(); index++) {
-                    latestGrp = calculateLatest(groupsRc2.get(index));
+                for (int index = 0; index < groupsRc3.size(); index++) {
+                    latestGrp = calculateLatest(groupsRc3.get(index));
                 }
-                groupsContainerRc2.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestGrp)));
+                groupsContainerRc3.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(latestGrp)));
             }
         }
         return latestGrp;
     }
 
-    public static Date calculateLatest(Group groupRc2) {
+    public static Date calculateLatest(Group group) {
         Date latestAct = null;
-        Collection<? extends GroupableActivity> activities = groupRc2.getActivities();
+        Collection<? extends GroupableActivity> activities = group.getActivities();
         if (activities != null && !activities.isEmpty()) {
             Iterator<? extends GroupableActivity> activitiesIterator = activities.iterator();
             XMLGregorianCalendar latest = activitiesIterator.next().getLastModifiedDate().getValue();
@@ -95,7 +95,7 @@ public class Api2_0_rc3_LastModifiedDatesHelper {
                 }
             }
             latestAct = latest.toGregorianCalendar().getTime();
-            groupRc2.setLastModifiedDate(new LastModifiedDate(latest));
+            group.setLastModifiedDate(new LastModifiedDate(latest));
         }
         return latestAct;
     }

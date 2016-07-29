@@ -35,10 +35,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc3.OtherName;
-import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.OtherName;
+import org.orcid.jaxb.model.record_rc2.PersonalDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -67,13 +67,13 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(accessToken);
         if(!allSet) {
             //Create public other name
-            changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+            changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
             Long putCode1 = createOtherName("other-name-" + System.currentTimeMillis(), getUser1OrcidId(), accessToken);
             publicOtherNameId = putCode1;
             newOtherNames.add(putCode1);
             
             //Create limited other name
-            changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
+            changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
             Long putCode2 = createOtherName("other-name-" + System.currentTimeMillis(), getUser1OrcidId(), accessToken);
             limitedOtherNameId = putCode2;
             newOtherNames.add(putCode2);
@@ -82,10 +82,10 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         webDriver.get(getWebBaseUrl() + "/my-orcid");
         
         //Set biography to public
-        changeBiography(null, Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         
         //Set names to public
-        changeNamesVisibility(Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
     }
     
     @After
@@ -144,7 +144,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
         SigninTest.dismissVerifyEmailModal(webDriver);    
         //Change names to limited
-        changeNamesVisibility(Visibility.LIMITED);
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
@@ -169,7 +169,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertTrue(found);
         
         //Change other names to limited
-        changeOtherNamesVisibility(Visibility.LIMITED);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
@@ -181,7 +181,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNull(personalDetails.getOtherNames());        
         
         //Change bio to limited
-        changeBiography(null, Visibility.LIMITED);
+        changeBiography(null, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
@@ -194,9 +194,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         ////////////////////////////
         //Rollback to public again//
         ////////////////////////////                
-        changeNamesVisibility(Visibility.PUBLIC);
-        changeOtherNamesVisibility(Visibility.PUBLIC);
-        changeBiography(null, Visibility.PUBLIC);
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         
         //Test that the testGetWithPublicAPI test pass
         testGetWithPublicAPI();
@@ -257,9 +257,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         
         //Change all to LIMITED
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        changeNamesVisibility(Visibility.LIMITED);
-        changeOtherNamesVisibility(Visibility.LIMITED);
-        changeBiography(null, Visibility.LIMITED);
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        changeBiography(null, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         //Verify they are still visible
         getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
@@ -309,9 +309,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.LIMITED, personalDetails.getName().getVisibility());
         
         //Change all to PRIVATE
-        changeNamesVisibility(Visibility.PRIVATE);
-        changeOtherNamesVisibility(Visibility.PRIVATE);
-        changeBiography(null, Visibility.PRIVATE);
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
+        changeBiography(null, org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
         
         //Check nothing is visible
         getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
@@ -323,9 +323,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNull(personalDetails.getOtherNames());
         
         //Change all to PUBLIC
-        changeNamesVisibility(Visibility.PUBLIC);
-        changeOtherNamesVisibility(Visibility.PUBLIC);
-        changeBiography(null, Visibility.PUBLIC);  
+        changeNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        changeBiography(null, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);  
     }
                               
     public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {

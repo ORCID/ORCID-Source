@@ -40,12 +40,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
+import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
 import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
@@ -63,7 +62,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
+public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
     private OrcidUi orcidUi;
 
     @Before
