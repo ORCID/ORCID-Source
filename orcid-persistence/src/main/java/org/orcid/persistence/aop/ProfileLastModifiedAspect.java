@@ -24,6 +24,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.ProfileAware;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.messaging.JmsMessageSender;
@@ -124,14 +125,15 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
      * @param orcid
      */
     public void updateLastModifiedDateAndIndexingStatus(String orcid) {
-        profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+        profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.PENDING);
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (sra != null)
             sra.setAttribute(sraKey(orcid), null, ServletRequestAttributes.SCOPE_REQUEST);
         //messaging
         Date last = retrieveLastModifiedDate(orcid);
         LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-        messaging.send(mess,JmsDestination.UPDATED_ORCIDS);
+        if (!messaging.send(mess,JmsDestination.UPDATED_ORCIDS))
+            profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.FAILED);
     }
 
     /** Fetches the last modified from the request-scope last modified cache

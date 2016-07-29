@@ -392,12 +392,18 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.executeUpdate();
     }
 
+    /** This method is used to update the last modified and indexing status without triggering last update events 
+     * 
+     * @param orcid
+     * @param indexingStatus
+     */
     @Override
     @Transactional
     @ExcludeFromProfileLastModifiedUpdate
-    public void updateLastModifiedDateAndIndexingStatus(String orcid) {
-        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = 'PENDING' where orcid = :orcid");
+    public void updateLastModifiedDateAndIndexingStatus(String orcid, IndexingStatus indexingStatus) {
+        Query updateQuery = entityManager.createQuery("update ProfileEntity set lastModified = now(), indexingStatus = :indexingStatus where orcid = :orcid");
         updateQuery.setParameter("orcid", orcid);
+        updateQuery.setParameter("indexingStatus", indexingStatus);
         updateQuery.executeUpdate();
     }
 

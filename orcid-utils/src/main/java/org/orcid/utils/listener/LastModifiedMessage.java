@@ -35,6 +35,11 @@ public class LastModifiedMessage {
      */
     public final Map<String,String> map;
 
+    /** Create a map from the component parts
+     * 
+     * @param orcid
+     * @param date
+     */
     public LastModifiedMessage(String orcid, Date date){
         String lastStr = "";
         if (date != null)
@@ -46,6 +51,10 @@ public class LastModifiedMessage {
                 MessageConstants.DATE.value, ""+lastStr);
     }
     
+    /** Convert a map that was sent back into an object
+     * 
+     * @param m
+     */
     public LastModifiedMessage(Map<String,String> m){
         if (!m.containsKey(MessageConstants.TYPE.value) || !MessageConstants.TYPE_LAST_UPDATED.value.equals(m.get(MessageConstants.TYPE.value)))
                 throw new IllegalArgumentException("Wrong map type");
@@ -64,6 +73,10 @@ public class LastModifiedMessage {
         return new Date(Long.valueOf(time));
     }
     
+    /** The map that is sent over the wire
+     * 
+     * @return
+     */
     public Map<String,String> getMap(){
         return map;
     }

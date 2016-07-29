@@ -1855,23 +1855,38 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      * Then sets indexing flag to DONE (although there is no guarantee it will be done!)
      * 
      */
-    @Override
-    public void processProfilesWithReindexFlagAndAddToMessageQueue(){
-        LOG.info("processing profiles with reindex flag");
+    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination){
+        LOG.info("processing profiles with "+status.name()+" flag. sending to "+destination.name());
         List<String> orcidsForIndexing = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
-        indexingStatuses.add(IndexingStatus.REINDEX);
+        indexingStatuses.add(status);
+        boolean connectionIssue = false;
         do{
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
             LOG.info("processing batch of "+orcidsForIndexing.size());
             for (String orcid : orcidsForIndexing){
                 Date last = profileDao.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-                messaging.send(mess,JmsDestination.REINDEX);
-                profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                if (messaging.send(mess,destination))
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                else
+                    connectionIssue = true;
             }
-        }while (!orcidsForIndexing.isEmpty());
+        }while (!connectionIssue && !orcidsForIndexing.isEmpty());
+        if (connectionIssue)
+            LOG.warn("ABORTED processing profiles with "+status.name()+" flag. sending to "+destination.name());
     }
+    
+    @Override
+    public void processProfilesWithReindexFlagAndAddToMessageQueue(){
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
+    }
+    
+    @Override
+    public void processProfilesWithFailedFlagAndAddToMessageQueue(){
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
+    }
+    
     
     @Override
     @Deprecated

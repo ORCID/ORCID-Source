@@ -255,5 +255,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     
     public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
 
-    void processProfilesWithReindexFlagAndAddToMessageQueue();    
+    void processProfilesWithReindexFlagAndAddToMessageQueue();
+
+    void processProfilesWithFailedFlagAndAddToMessageQueue();    
 }
