@@ -2350,7 +2350,8 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
     };
 }]);
 
-orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,function EmailEditCtrl($scope, $compile, emailSrvc) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout',function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout) {
+	bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
     $scope.verifyEmailObject;
@@ -2360,7 +2361,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.showDeleteBox = false;
     $scope.showConfirmationBox = false;
     $scope.showEmailVerifBox = false;
-    $scope.scrollTop = 0;
+    $scope.scrollTop = 0;    
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
@@ -2429,13 +2430,11 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.closeDeleteBox = function(){
         $scope.showDeleteBox = false;
-    }; 
-    
+    };
     
     $scope.closeVerificationBox = function(){
         $scope.showEmailVerifBox = false;
-    }
-
+    };
 
     $scope.submitModal = function (obj, $event) {
         emailSrvc.inputEmail.password = $scope.password;
@@ -2456,7 +2455,16 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     $scope.confirmDeleteEmailInline = function(email, $event) {
         $event.preventDefault();
         $scope.showDeleteBox = true;
-        emailSrvc.delEmail = email;        
+        emailSrvc.delEmail = email;
+        
+        $scope.$watch(
+			function () {
+			   	return document.getElementsByClassName('delete-email-box').length; 
+			},
+			function (newValue, oldValue) {				
+				$.colorbox.resize();
+		    }
+		);
     };
 
     $scope.deleteEmail = function () {
@@ -2501,7 +2509,14 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' ,fu
     
     $scope.hideTooltip = function(el){
     	$scope.showElement[el] = false;
-    };    
+    };
+    
+    $scope.setBulkGroupPrivacy = function(priv) {
+        for (var idx in emailSrvc.emails.emails)            
+            emailSrvc.emails.emails[idx].visibility = priv;
+        emailSrvc.saveEmail();
+    };
+    
     
 }]);
 
@@ -2614,23 +2629,8 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
         }
     };
 
-    $scope.setWebsitesForm = function(v2){        
-        if(v2) {
-        	$scope.websitesForm.visibility = null;
-        }  else {
-        	//Set the default visibility to each of the elements
-        	console.log($scope.defaultVisibility)
-        	if($scope.defaultVisibility != null) {
-        		if($scope.websitesForm != null && $scope.websitesForm.websites != null) {
-        			for(var i = 0; i < $scope.websitesForm.websites.length; i ++) {
-        				if($scope.websitesForm.websites[i].visibility == null) {
-        					$scope.websitesForm.websites[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-        				}
-        				$scope.websitesForm.websites[i].visibility.visibility = $scope.defaultVisibility; 
-        			}
-        		}
-        	}
-        }  
+    $scope.setWebsitesForm = function(){
+        $scope.websitesForm.visibility = null;
     	        
         var websites = $scope.websitesForm.websites;
         var len = websites.length;
@@ -2794,7 +2794,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
             	websites.splice(len,1);
         
         $scope.websitesForm.websites = websites;
-    }
+    };
 
     $scope.getWebsitesForm();
 }]);
@@ -2899,23 +2899,8 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', 'bioBulkSrvc',  
         }
     };
 
-    $scope.setKeywordsForm = function(v2){
-        if (v2) {
-        	$scope.keywordsForm.visibility = null;
-        } else {
-        	//Set the default visibility to each of the elements
-        	if($scope.defaultVisibility != null) {
-        		if($scope.keywordsForm != null && $scope.keywordsForm.keywords != null) {
-        			for(var i = 0; i < $scope.keywordsForm.keywords.length; i ++) {
-        				if($scope.keywordsForm.keywords[i].visibility == null) {
-        					$scope.keywordsForm.keywords[i].visibility = {"errors":[],"required":true,"getRequiredMessage":null,"visibility":"PUBLIC"};
-        				}
-        				$scope.keywordsForm.keywords[i].visibility.visibility = $scope.defaultVisibility; 
-        			}
-        		}
-        	}
-        } 
-        
+    $scope.setKeywordsForm = function(){        
+        $scope.keywordsForm.visibility = null;        
         $.ajax({
             url: getBaseUri() + '/my-orcid/keywordsForms.json',
             type: 'POST',
@@ -3231,8 +3216,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }        
     };
 
-    $scope.setOtherNamesForm = function(bulk){
-        $scope.otherNamesForm.visibility = null; //Old
+    $scope.setOtherNamesForm = function(){
+        $scope.otherNamesForm.visibility = null;
         $.ajax({
             url: getBaseUri() + '/my-orcid/otherNamesForms.json',
             type: 'POST',
@@ -3242,10 +3227,8 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
             success: function(data) {                
                 $scope.otherNamesForm = data;
                 if(data.errors.length == 0)
-                    $scope.close();
-                	if (!bulk){
-                		$.colorbox.close();	
-                	}                    
+                    $scope.close();                	
+                	$.colorbox.close(); 
                 $scope.$apply();                
             }
         }).fail(function() {
@@ -3558,7 +3541,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
             $scope.privacyHelp=!$scope.privacyHelp;
     };
 
-    $scope.setCountryForm = function(v2){
+    $scope.setCountryForm = function(){
         $scope.countryForm.visibility = null;
         $.ajax({
             url: getBaseUri() + '/account/countryForm.json',
@@ -10731,7 +10714,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 		
 	    var HTML = '<div class="lightbox-container">\
 	    				<div class="edit-record edit-record-emails" style="position: relative">\
-	    					<div class="row bottomBuffer">\
+	    					<div class="row">\
 	    						<div class="col-md-12 col-sm-12 col-xs-12">\
 	    								<h1 class="lightbox-title pull-left"> Edit Emails </h1>\
 	    						</div>\
