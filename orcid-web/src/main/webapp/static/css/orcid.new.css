@@ -6627,52 +6627,12 @@ a:hover .mozilla-badge{
 
 /* Bulk edit bio*/
 
-.bulk-edit-area{
-	border-bottom: 1px solid rgb(166, 206, 57);
-	padding: 5px;
-}
-
-.bulk-edit-modal{
-	min-height: auto;
-	width: auto;
-	border: none;
-	padding: 0;
-	margin-right: 27px;
-}
-
-.bulk-edit-modal .bulk-trash{
-	margin-right: 15px;
-	padding-top: 24px;
-	color: #C9C9CA;
-	font-size: 18px;
-	cursor: pointer;
-}
-
-.bulk-edit-modal .custom-control-title{	
-	display: block;
+.bulk-edit-modal .custom-control-title{
+	text-transform: uppercase;
 	width: 100%;
-	margin-left: 7px;
-	text-transform: uppercase;	
-}
-
-.bulk-edit-area ol.bulk-modal-list > li{
-	font-size: 13px;
-}
-
-.bulk-edit-modal #custom-control-x{
-	margin-right: 60px;
-}
-
-.bulk-modal-list{
-	padding-left: 15px;
-}
-
-.edit-record input[type=checkbox]{
-	margin: 0 5px 0 0;
-}
-
-.bulk-edit-email{
-	margin: 0 -30px 0 0;
+	text-align: center;
+	display: block;
+	font-size: 12px;	
 }
 
 
