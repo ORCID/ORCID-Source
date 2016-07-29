@@ -6282,7 +6282,7 @@ a:hover .mozilla-badge{
 
 .edit-record{	
 	width: 600px;
-	min-height: 450px;
+	min-height: 480px;
 	height: auto;
 	padding: 15px 0 15px 15px;
 	overflow: visible;	 
@@ -6626,6 +6626,10 @@ a:hover .mozilla-badge{
 }
 
 /* Bulk edit bio*/
+
+.bio-edit-modal{
+	margin-right: 47px;
+}
 
 .bulk-edit-modal .custom-control-title{
 	text-transform: uppercase;
