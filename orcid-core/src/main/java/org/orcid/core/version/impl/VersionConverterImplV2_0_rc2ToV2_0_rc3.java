@@ -41,6 +41,8 @@ import org.orcid.jaxb.model.record.summary_rc2.Works;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
 import org.orcid.jaxb.model.record_rc2.Education;
+import org.orcid.jaxb.model.record_rc2.Email;
+import org.orcid.jaxb.model.record_rc2.Emails;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
 import org.orcid.jaxb.model.record_rc2.ExternalIDs;
@@ -50,8 +52,10 @@ import org.orcid.jaxb.model.record_rc2.Keywords;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.OtherNames;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.Person;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc2.Record;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc2.Work;
@@ -166,35 +170,34 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
                         new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(groupsRc3))));
             }
         }).register();
-        
-        
+                
         //ExternalIDs
-        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.record_rc3.ExternalIDs.class)
-        .register();
-        
-        //ExternalID
-        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc3.ExternalID.class)        
-        .register();
+        mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.record_rc3.ExternalIDs.class).byDefault().register();
+        mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc3.ExternalID.class).byDefault().register();
         
         //Other names
-        mapperFactory.classMap(OtherNames.class, org.orcid.jaxb.model.record_rc3.OtherNames.class).register();;
-        mapperFactory.classMap(OtherName.class, org.orcid.jaxb.model.record_rc3.OtherName.class).register();
+        mapperFactory.classMap(OtherNames.class, org.orcid.jaxb.model.record_rc3.OtherNames.class).byDefault().register();
+        mapperFactory.classMap(OtherName.class, org.orcid.jaxb.model.record_rc3.OtherName.class).byDefault().register();
                 
         //Keywords
-        mapperFactory.classMap(Keywords.class, org.orcid.jaxb.model.record_rc3.Keywords.class).register();;
-        mapperFactory.classMap(Keyword.class, org.orcid.jaxb.model.record_rc3.Keyword.class).register();
+        mapperFactory.classMap(Keywords.class, org.orcid.jaxb.model.record_rc3.Keywords.class).byDefault().register();
+        mapperFactory.classMap(Keyword.class, org.orcid.jaxb.model.record_rc3.Keyword.class).byDefault().register();
         
         //Address
-        mapperFactory.classMap(Addresses.class, org.orcid.jaxb.model.record_rc3.Addresses.class).register();;
-        mapperFactory.classMap(Address.class, org.orcid.jaxb.model.record_rc3.Address.class).register();
+        mapperFactory.classMap(Addresses.class, org.orcid.jaxb.model.record_rc3.Addresses.class).byDefault().register();
+        mapperFactory.classMap(Address.class, org.orcid.jaxb.model.record_rc3.Address.class).byDefault().register();
         
         //ResearcherUrl
-        mapperFactory.classMap(ResearcherUrls.class, org.orcid.jaxb.model.record_rc3.ResearcherUrls.class).register();;
-        mapperFactory.classMap(ResearcherUrl.class, org.orcid.jaxb.model.record_rc3.ResearcherUrl.class).register();
+        mapperFactory.classMap(ResearcherUrls.class, org.orcid.jaxb.model.record_rc3.ResearcherUrls.class).byDefault().register();
+        mapperFactory.classMap(ResearcherUrl.class, org.orcid.jaxb.model.record_rc3.ResearcherUrl.class).byDefault().register();
         
         //Person External ID
-        mapperFactory.classMap(PersonExternalIdentifiers.class, org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers.class).register();;
-        mapperFactory.classMap(PersonExternalIdentifier.class, org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier.class).register();
+        mapperFactory.classMap(PersonExternalIdentifiers.class, org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers.class).byDefault().register();
+        mapperFactory.classMap(PersonExternalIdentifier.class, org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier.class).byDefault().register();
+        
+        //Emails
+        mapperFactory.classMap(Emails.class, org.orcid.jaxb.model.record_rc3.Emails.class).byDefault().register();
+        mapperFactory.classMap(Email.class, org.orcid.jaxb.model.record_rc3.Email.class).byDefault().register();
         
         // WORK 
         mapperFactory.classMap(Work.class, org.orcid.jaxb.model.record_rc3.Work.class).byDefault().register();
@@ -217,7 +220,13 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
         mapperFactory.classMap(PeerReviewSummary.class, org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary.class).byDefault().register();                
         
         //NOTIFICATIONS
-        mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission.class).byDefault().register();;
+        mapperFactory.classMap(NotificationPermission.class, org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission.class).byDefault().register();
+        
+        //Person
+        mapperFactory.classMap(Person.class, org.orcid.jaxb.model.record_rc3.Person.class).byDefault().register();
+        
+        //Record
+        mapperFactory.classMap(Record.class, org.orcid.jaxb.model.record_rc3.Record.class).byDefault().register();
         
         mapper = mapperFactory.getMapperFacade();
     }

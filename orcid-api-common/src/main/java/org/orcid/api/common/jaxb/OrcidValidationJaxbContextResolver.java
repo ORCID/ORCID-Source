@@ -101,26 +101,26 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     
     private static final Map<Class<?>, String> SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3 = new HashMap<>();
     static {
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.groupid_rc3.GroupIdRecord.class, "group-id-2.0_rc3/group-id-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission.class, "notification_2.0_rc3/notification-permission-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(OrcidMessage.class, "orcid-message-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Address.class, "record_2.0_rc3/address-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Addresses.class, "record_2.0_rc3/address-");        
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Education.class, "record_2.0_rc3/education-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Email.class, "record_2.0_rc3/email-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Employment.class, "record_2.0_rc3/employment-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier.class, "record_2.0_rc3/person-external-identifier-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers.class, "record_2.0_rc3/person-external-identifier-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Funding.class, "record_2.0_rc3/funding-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Keyword.class, "record_2.0_rc3/keyword-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Keywords.class, "record_2.0_rc3/keyword-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Name.class, "record_2.0_rc3/personal-details-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.OtherName.class, "record_2.0_rc3/other-name-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.OtherNames.class, "record_2.0_rc3/other-name-");        
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.PeerReview.class, "record_2.0_rc3/peer-review-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.ResearcherUrl.class, "record_2.0_rc3/researcher-url-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.ResearcherUrls.class, "record_2.0_rc3/researcher-url-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC2.put(org.orcid.jaxb.model.record_rc3.Work.class, "record_2.0_rc3/work-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.groupid_rc3.GroupIdRecord.class, "group-id-2.0_rc3/group-id-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission.class, "notification_2.0_rc3/notification-permission-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(OrcidMessage.class, "orcid-message-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Address.class, "record_2.0_rc3/address-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Addresses.class, "record_2.0_rc3/address-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Education.class, "record_2.0_rc3/education-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Email.class, "record_2.0_rc3/email-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Employment.class, "record_2.0_rc3/employment-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier.class, "record_2.0_rc3/person-external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers.class, "record_2.0_rc3/person-external-identifier-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Funding.class, "record_2.0_rc3/funding-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Keyword.class, "record_2.0_rc3/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Keywords.class, "record_2.0_rc3/keyword-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Name.class, "record_2.0_rc3/personal-details-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.OtherName.class, "record_2.0_rc3/other-name-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.OtherNames.class, "record_2.0_rc3/other-name-");        
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.PeerReview.class, "record_2.0_rc3/peer-review-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrl.class, "record_2.0_rc3/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrls.class, "record_2.0_rc3/researcher-url-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Work.class, "record_2.0_rc3/work-");
 
     }
     private JAXBContext jaxbContext_2_0_rc1;

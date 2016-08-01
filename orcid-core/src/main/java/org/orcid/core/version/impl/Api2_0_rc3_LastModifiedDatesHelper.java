@@ -161,9 +161,9 @@ public class Api2_0_rc3_LastModifiedDatesHelper {
 
     public static Date calculateLatest(PersonExternalIdentifiers extIds) {
         Date latestAct = null;
-        if (extIds != null && extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
-            XMLGregorianCalendar latest = extIds.getExternalIdentifier().get(0).getLastModifiedDate().getValue();
-            for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+        if (extIds != null && extIds.getExternalIdentifiers() != null && !extIds.getExternalIdentifiers().isEmpty()) {
+            XMLGregorianCalendar latest = extIds.getExternalIdentifiers().get(0).getLastModifiedDate().getValue();
+            for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
                 if (latest.compare(extId.getLastModifiedDate().getValue()) == -1) {
                     latest = extId.getLastModifiedDate().getValue();
                 }

@@ -226,8 +226,8 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         // Delete the deleted ones
         for (ExternalIdentifierEntity existing : existingExternalIdentifiersList) {
             boolean deleteMe = true;
-            if(externalIdentifiers.getExternalIdentifier() != null) {
-                for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+            if(externalIdentifiers.getExternalIdentifiers() != null) {
+                for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifiers()) {
                     if (existing.getId().equals(updatedOrNew.getPutCode())) {
                         deleteMe = false;
                         break;
@@ -244,8 +244,8 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             }
         }
 
-        if (externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
-            for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+        if (externalIdentifiers != null && externalIdentifiers.getExternalIdentifiers() != null) {
+            for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifiers()) {
                 if (updatedOrNew.getPutCode() != null) {
                     // Update the existing ones
                     for (ExternalIdentifierEntity existingExtId : existingExternalIdentifiersList) {

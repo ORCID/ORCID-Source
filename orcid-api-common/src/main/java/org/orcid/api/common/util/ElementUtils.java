@@ -63,8 +63,8 @@ public class ElementUtils {
     public static void setPathToExternalIdentifiers(PersonExternalIdentifiers extIds, String orcid) {
         if (extIds != null) {
             extIds.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid));
-            if (extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
-                for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+            if (extIds.getExternalIdentifiers() != null && !extIds.getExternalIdentifiers().isEmpty()) {
+                for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
                     setPathToExternalIdentifier(extId, orcid);
                 }
             }

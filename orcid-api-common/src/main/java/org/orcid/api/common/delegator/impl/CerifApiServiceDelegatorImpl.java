@@ -92,7 +92,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
 
-        List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifier();
+        List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifiers();
         @SuppressWarnings("unchecked")
         List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
 

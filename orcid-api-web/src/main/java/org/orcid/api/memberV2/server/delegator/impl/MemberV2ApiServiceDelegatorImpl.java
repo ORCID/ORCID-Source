@@ -696,7 +696,7 @@ public class MemberV2ApiServiceDelegatorImpl
         try {
             orcidSecurityManager.checkPermissions(ScopePathType.ORCID_BIO_READ_LIMITED, orcid);        
             extIds = externalIdentifierManager.getExternalIdentifiers(orcid, lastModified);
-            List<PersonExternalIdentifier> allExtIds = extIds.getExternalIdentifier();
+            List<PersonExternalIdentifier> allExtIds = extIds.getExternalIdentifiers();
             List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
             extIds.setExternalIdentifiers(filteredExtIds);            
         } catch(AccessControlException | OrcidUnauthorizedException e) {

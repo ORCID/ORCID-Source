@@ -2068,7 +2068,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
+        List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
         assertNotNull(extIdsList);
         assertEquals(3, extIdsList.size());
 
@@ -2174,13 +2174,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(1), extIds.getExternalIdentifier().get(0).getPutCode());
-        assertNotNull(extIds.getExternalIdentifier().get(0).getUrl());
-        assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifier().get(0).getUrl().getValue());
-        assertEquals("d3clan", extIds.getExternalIdentifier().get(0).getValue());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(1), extIds.getExternalIdentifiers().get(0).getPutCode());
+        assertNotNull(extIds.getExternalIdentifiers().get(0).getUrl());
+        assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifiers().get(0).getUrl().getValue());
+        assertEquals("d3clan", extIds.getExternalIdentifiers().get(0).getValue());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
        
         response = serviceDelegator.createExternalIdentifier("4444-4444-4444-4443", getPersonExternalIdentifier());
         assertNotNull(response);
@@ -2196,10 +2196,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(2, extIds.getExternalIdentifier().size());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertEquals(2, extIds.getExternalIdentifiers().size());
 
-        for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+        for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
             assertNotNull(extId.getUrl());
             if (extId.getPutCode() != 1L) {
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
@@ -2309,9 +2309,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(6), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(6), extIds.getExternalIdentifiers().get(0).getPutCode());
 
         response = serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4444", 6L);
         assertNotNull(response);
@@ -2321,8 +2321,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertTrue(extIds.getExternalIdentifier().isEmpty());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertTrue(extIds.getExternalIdentifiers().isEmpty());
     }
 
     @Test(expected = WrongSourceException.class)
@@ -2807,12 +2807,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getEmails().getEmails().get(0).getCreatedDate());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
 
         boolean found2 = false, found3 = false, found5 = false;
 
-        List<PersonExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifier();
+        List<PersonExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifiers();
         for (PersonExternalIdentifier extId : extIds) {
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertNotNull(extId.getCreatedDate());
@@ -3054,8 +3054,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         r = serviceDelegator.viewExternalIdentifiers(orcid);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(extIds);
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifiers().get(0).getPutCode());
         
         //Public works
         serviceDelegator.viewExternalIdentifier(orcid, 13L);
@@ -3694,8 +3694,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifier().size());
-        for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifier()) {
+        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifiers()) {
             assertNotNull(extId.getLastModifiedDate());
             if(extId.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals(Long.valueOf(0), extId.getDisplayIndex());
@@ -4348,8 +4348,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(p);
         assertNotNull(p.getLastModifiedDate());
-        assertEquals(1, p.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13), p.getExternalIdentifier().get(0).getPutCode());
+        assertEquals(1, p.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13), p.getExternalIdentifiers().get(0).getPutCode());
         
         r = serviceDelegator.viewExternalIdentifier(orcid, 13L);
         assertNotNull(r);
@@ -4516,8 +4516,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         assertNotNull(extIds.getLastModifiedDate());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
                 
         //Keywords
         assertNotNull(p.getKeywords());

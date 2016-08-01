@@ -187,8 +187,8 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
         
         r = memberV2ApiClient.viewExternalIdentifiers(orcid, accessToken);
         PersonExternalIdentifiers extIds = r.getEntity(PersonExternalIdentifiers.class);
-        if(extIds != null && extIds.getExternalIdentifier() != null) {
-            for(PersonExternalIdentifier obj : extIds.getExternalIdentifier()) {
+        if(extIds != null && extIds.getExternalIdentifiers() != null) {
+            for(PersonExternalIdentifier obj : extIds.getExternalIdentifiers()) {
                 assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
             }
         }
@@ -303,8 +303,8 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
                     assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
                 }
             }
-            if(person.getExternalIdentifiers() != null && person.getExternalIdentifiers().getExternalIdentifier() != null) {
-                for(PersonExternalIdentifier obj : person.getExternalIdentifiers().getExternalIdentifier()) {
+            if(person.getExternalIdentifiers() != null && person.getExternalIdentifiers().getExternalIdentifiers() != null) {
+                for(PersonExternalIdentifier obj : person.getExternalIdentifiers().getExternalIdentifiers()) {
                     assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
                 }
             }

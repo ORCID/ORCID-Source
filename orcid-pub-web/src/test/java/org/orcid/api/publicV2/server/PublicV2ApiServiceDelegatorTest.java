@@ -607,8 +607,8 @@ public class PublicV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Visibility.PUBLIC.value(), email.getVisibility().value());        
         assertNotNull(person.getExternalIdentifiers());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertNotNull(extId);
         assertEquals(Long.valueOf(13), extId.getPutCode());
         assertEquals("public_type", extId.getType());

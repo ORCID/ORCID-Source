@@ -105,13 +105,13 @@ public class PersonTest extends BlackBoxBaseRC2 {
         EmailTest.assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifiers().size());
 
         boolean foundPublic = false;
         boolean foundLimited = false;
 
-        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifier()) {
+        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
             if ("A-0001".equals(e.getType())) {
                 assertEquals("A-0001", e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -171,11 +171,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
         EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
 
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getKeywords());

@@ -523,11 +523,11 @@ public class PublicProfileController extends BaseWorkspaceController {
     }
     
     private LinkedHashMap<String, List<PersonExternalIdentifier>> groupExternalIdentifiers(PersonExternalIdentifiers personExternalIdentifiers) {
-    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifier() == null){
+    	if (personExternalIdentifiers == null || personExternalIdentifiers.getExternalIdentifiers() == null){
     		return null;
     	}    	
     	LinkedHashMap<String, List<PersonExternalIdentifier>> groups = new LinkedHashMap<String, List<PersonExternalIdentifier>>();    	
-    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifier()) {
+    	for (PersonExternalIdentifier ei : personExternalIdentifiers.getExternalIdentifiers()) {
     		String pairKey = ei.getType() + ":" + ei.getValue();    		
     		if (groups.containsKey(pairKey)) {
     			groups.get(pairKey).add(ei);

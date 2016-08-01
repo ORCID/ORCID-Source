@@ -188,7 +188,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
             filter(person.getEmails().getEmails(), orcid);
         }
         if(person.getExternalIdentifiers() != null) {
-            filter(person.getExternalIdentifiers().getExternalIdentifier(), orcid);
+            filter(person.getExternalIdentifiers().getExternalIdentifiers(), orcid);
         }
         if(person.getKeywords() != null) {
             filter(person.getKeywords().getKeywords(), orcid);

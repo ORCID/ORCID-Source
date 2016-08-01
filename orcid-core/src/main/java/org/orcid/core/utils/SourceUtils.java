@@ -207,7 +207,7 @@ public class SourceUtils {
     }
     
     public void setSourceName(PersonExternalIdentifiers extIds) {
-        List<PersonExternalIdentifier> list = extIds.getExternalIdentifier();
+        List<PersonExternalIdentifier> list = extIds.getExternalIdentifiers();
         if(list != null) {
             for(SourceAware element : list) {
                 setSourceName(element);

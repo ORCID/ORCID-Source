@@ -216,9 +216,9 @@ public class ValidateV2RC3SamplesTest {
         PersonExternalIdentifiers externalIdentifiers = (PersonExternalIdentifiers) unmarshallFromPath("/record_2.0_rc3/samples/external-identifiers-2.0_rc3.xml",
                 PersonExternalIdentifiers.class, "/record_2.0_rc3/person-external-identifier-2.0_rc3.xsd");
         assertNotNull(externalIdentifiers);
-        assertNotNull(externalIdentifiers.getExternalIdentifier());
-        assertEquals(2, externalIdentifiers.getExternalIdentifier().size());
-        for (PersonExternalIdentifier extId : externalIdentifiers.getExternalIdentifier()) {
+        assertNotNull(externalIdentifiers.getExternalIdentifiers());
+        assertEquals(2, externalIdentifiers.getExternalIdentifiers().size());
+        for (PersonExternalIdentifier extId : externalIdentifiers.getExternalIdentifiers()) {
             assertThat(extId.getPutCode(), anyOf(is(1L), is(2L)));
             assertThat(extId.getType(), anyOf(is("common-name-1"), is("common-name-2")));
             assertThat(extId.getValue(), anyOf(is("id-reference-1"), is("id-reference-2")));
@@ -480,9 +480,9 @@ public class ValidateV2RC3SamplesTest {
         assertNotNull(keyword.getSource());
         assertEquals("8888-8888-8888-8880", keyword.getSource().retrieveSourcePath());
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertEquals(Visibility.PUBLIC, extId.getVisibility());
         assertEquals(Long.valueOf(1), extId.getPutCode());
         assertEquals("type-1", extId.getType());
@@ -972,9 +972,9 @@ public class ValidateV2RC3SamplesTest {
         assertNotNull(person.getExternalIdentifiers());
         assertTrue(StringUtils.isNotBlank(person.getExternalIdentifiers().getPath()));
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate().getValue());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        PersonExternalIdentifier extId = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertNotNull(extId.getCreatedDate().getValue());
         assertNotNull(extId.getLastModifiedDate());
         assertEquals(Long.valueOf(0), extId.getDisplayIndex());

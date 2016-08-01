@@ -231,7 +231,7 @@ public class RecordTest extends BlackBoxBaseRC2 {
             //External identifiers
             if(record.getPerson().getExternalIdentifiers() != null) {
                 PersonExternalIdentifiers extIds = record.getPerson().getExternalIdentifiers();
-                List<PersonExternalIdentifier> list = extIds.getExternalIdentifier();
+                List<PersonExternalIdentifier> list = extIds.getExternalIdentifiers();
                 if(list != null) {
                     for(PersonExternalIdentifier e : list) {
                         assertNotNull(e.getVisibility());
@@ -408,7 +408,7 @@ public class RecordTest extends BlackBoxBaseRC2 {
             //External identifiers
             if(record.getPerson().getExternalIdentifiers() != null) {
                 PersonExternalIdentifiers extIds = record.getPerson().getExternalIdentifiers();
-                List<PersonExternalIdentifier> list = extIds.getExternalIdentifier();
+                List<PersonExternalIdentifier> list = extIds.getExternalIdentifiers();
                 if(list != null) {
                     for(PersonExternalIdentifier e : list) {
                         assertEquals(Visibility.PUBLIC, e.getVisibility());

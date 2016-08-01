@@ -117,8 +117,8 @@ public class ValidateV2rc3Identifiers {
     public void testPerson() throws SAXException, IOException, JAXBException, ParserConfigurationException{
         Person person = unmarshallFromPath("/record_2.0_rc2/samples/person-2.0_rc2.xml", Person.class);        
         assertEquals("credit-name",person.getName().getCreditName().getContent());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        PersonExternalIdentifier id = person.getExternalIdentifiers().getExternalIdentifier().get(0);
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        PersonExternalIdentifier id = person.getExternalIdentifiers().getExternalIdentifiers().get(0);
         assertEquals("type-1",id.getType());
         assertEquals("value-1",id.getValue());
         assertEquals(new Url("http://url.com/1"),id.getUrl());

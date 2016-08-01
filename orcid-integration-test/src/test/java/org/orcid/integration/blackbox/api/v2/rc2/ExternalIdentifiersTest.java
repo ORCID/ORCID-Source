@@ -89,12 +89,12 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PersonExternalIdentifiers externalIdentifiers = getResponse.getEntity(PersonExternalIdentifiers.class);
         assertNotNull(externalIdentifiers);
-        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertNotNull(externalIdentifiers.getExternalIdentifiers());
         
         boolean found1 = false;
         boolean found2 = false;
         
-        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {
                 assertEquals(extId1Value, e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -126,11 +126,11 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         PersonExternalIdentifiers ExternalIdentifiers = response.getEntity(PersonExternalIdentifiers.class);
         assertNotNull(ExternalIdentifiers);
-        assertNotNull(ExternalIdentifiers.getExternalIdentifier());        
+        assertNotNull(ExternalIdentifiers.getExternalIdentifiers());        
         
         boolean haveNew = false;
         
-        for(PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {                
                 assertEquals(extId1Value, e.getType());
                 assertEquals(extId1Value, e.getValue());
@@ -215,7 +215,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         
         boolean found1 = false;
         
-        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {
                 assertEquals(extId1Value, e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());

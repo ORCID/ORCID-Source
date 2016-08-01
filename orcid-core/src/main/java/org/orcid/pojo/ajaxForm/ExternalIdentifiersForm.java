@@ -34,7 +34,7 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
             return null;
         }
         ExternalIdentifiersForm form = new ExternalIdentifiersForm();
-        for(PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+        for(PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
             form.getExternalIdentifiers().add(ExternalIdentifierForm.valueOf(extId));
         }
             
@@ -49,7 +49,7 @@ public class ExternalIdentifiersForm implements ErrorsInterface, Serializable {
         PersonExternalIdentifiers result = new PersonExternalIdentifiers();
         result.setExternalIdentifiers(new ArrayList<PersonExternalIdentifier>());
         for(ExternalIdentifierForm form: externalIdentifiers) {
-            result.getExternalIdentifier().add(form.toPersonExternalIdentifier());
+            result.getExternalIdentifiers().add(form.toPersonExternalIdentifier());
         }
         
         return result;
