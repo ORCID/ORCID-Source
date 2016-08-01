@@ -2751,51 +2751,11 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
         }
     };
     
-    /* Bulk edit*/
-    $scope.bulkChangeAll = function(bool) {
-        $scope.bulkChecked = bool;
-        $scope.bulkDisplayToggle = false;
-        for (var idx in $scope.websitesForm.websites)
-            $scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode] = bool;
-    };
-    
-    $scope.swapbulkChangeAll = function() {
-        $scope.bulkChecked = !$scope.bulkChecked;
-        for (var idx in $scope.websitesForm.websites)
-            $scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode] = $scope.bulkChecked;
-        $scope.bulkDisplayToggle = false;
-    };
-    
-    $scope.toggleBulkEdit = function() {                
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in $scope.websitesForm.websites)
-                $scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode] = false;
-            $.colorbox.resize({height: '700px'});
-        }else{          
-            $.colorbox.resize({height: '490px'});   
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-          
-    };
-    
     $scope.setBulkGroupPrivacy = function(priv) {
         for (var idx in $scope.websitesForm.websites)
-            if ($scope.bulkEditMap[$scope.websitesForm.websites[idx].putCode])
-                $scope.websitesForm.websites[idx].visibility.visibility = priv;        
+        	$scope.websitesForm.websites[idx].visibility.visibility = priv;        
     };
     
-    $scope.bulkDelete = function(){     
-        var websites = $scope.websitesForm.websites;
-        var len = websites.length;
-        while (len--)            
-            if ($scope.bulkEditMap[$scope.websitesForm.websites[len].putCode])                
-            	websites.splice(len,1);
-        
-        $scope.websitesForm.websites = websites;
-    };
-
     $scope.getWebsitesForm();
 }]);
 
@@ -3013,50 +2973,10 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', 'bioBulkSrvc',  
         }
     };
     
-    /* Bulk edit */
-    $scope.bulkChangeAll = function(bool) {
-        $scope.bulkChecked = bool;
-        $scope.bulkDisplayToggle = false;
-        for (var idx in $scope.keywordsForm.keywords)
-            $scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode] = bool;
-    };
-    
-    $scope.swapbulkChangeAll = function() {
-        $scope.bulkChecked = !$scope.bulkChecked;
-        for (var idx in $scope.keywordsForm.keywords)
-            $scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode] = $scope.bulkChecked;
-        $scope.bulkDisplayToggle = false;
-    };
-    
-    $scope.toggleBulkEdit = function() {                
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in $scope.keywordsForm.keywords)
-                $scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode] = false;
-            $.colorbox.resize({height: '700px'});
-        }else{          
-            $.colorbox.resize({height: '490px'});   
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-          
-    };
-    
     $scope.setBulkGroupPrivacy = function(priv) {
-        for (var idx in $scope.keywordsForm.keywords)
-            if ($scope.bulkEditMap[$scope.keywordsForm.keywords[idx].putCode])
-                $scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
+        for (var idx in $scope.keywordsForm.keywords)      
+        	$scope.keywordsForm.keywords[idx].visibility.visibility = priv;        
     };
-    
-    $scope.bulkDelete = function(){     
-        var keywords = $scope.keywordsForm.keywords;
-        var len = keywords.length;
-        while (len--)            
-            if ($scope.bulkEditMap[$scope.keywordsForm.keywords[len].putCode])                
-            	keywords.splice(len,1);
-        
-        $scope.keywordsForm.keywords = otherNames;
-    }
     
     $scope.getKeywordsForm();
 }]);
@@ -3323,51 +3243,12 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
             $scope.otherNamesForm.otherNames[index]['displayIndex'] = tempDisplayIndex;
             $scope.otherNamesForm.otherNames[index + 1] = temp;
         }
-    };    
-    
-    $scope.bulkChangeAll = function(bool) {
-        $scope.bulkChecked = bool;
-        $scope.bulkDisplayToggle = false;
-        for (var idx in $scope.otherNamesForm.otherNames)
-            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = bool;
-    };
-    
-    $scope.swapbulkChangeAll = function() {
-        $scope.bulkChecked = !$scope.bulkChecked;
-        for (var idx in $scope.otherNamesForm.otherNames)
-            $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = $scope.bulkChecked;
-        $scope.bulkDisplayToggle = false;
-    };
-    
-    $scope.toggleBulkEdit = function() {    	    	
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in $scope.otherNamesForm.otherNames)
-                $scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode] = false;
-            $.colorbox.resize({height: '700px'});
-        }else{        	
-    	    $.colorbox.resize({height: '490px'});	
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-	      
     };
     
     $scope.setBulkGroupPrivacy = function(priv) {
-    	for (var idx in $scope.otherNamesForm.otherNames)
-            if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[idx].putCode])
-            	$scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;        
+    	for (var idx in $scope.otherNamesForm.otherNames)            
+            $scope.otherNamesForm.otherNames[idx].visibility.visibility = priv;        
     };
-    
-    $scope.bulkDelete = function(){    	
-    	var otherNames = $scope.otherNamesForm.otherNames;
-        var len = otherNames.length;
-        while (len--)            
-        	if ($scope.bulkEditMap[$scope.otherNamesForm.otherNames[len].putCode])                
-                otherNames.splice(len,1);
-        
-        $scope.otherNamesForm.otherNames = otherNames;
-    }
            
     $scope.getOtherNamesForm();
 }]);
@@ -3688,50 +3569,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
         }
     };
     
-    /* Bulk edit */    
-    $scope.bulkChangeAll = function(bool) {
-        $scope.bulkChecked = bool;
-        $scope.bulkDisplayToggle = false;
-        for (var idx in $scope.countryForm.addresses)
-            $scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode] = bool;
-    };
-    
-    $scope.swapbulkChangeAll = function() {
-        $scope.bulkChecked = !$scope.bulkChecked;
-        for (var idx in $scope.countryForm.addresses)
-            $scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode] = $scope.bulkChecked;
-        $scope.bulkDisplayToggle = false;
-    };
-    
-    $scope.toggleBulkEdit = function() {    	    	
-        if (!$scope.bulkEditShow) {
-            $scope.bulkEditMap = {};
-            $scope.bulkChecked = false;
-            for (var idx in $scope.countryForm.addresses)
-                $scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode] = false;
-            $.colorbox.resize({height: '700px'});
-        }else{        	
-    	    $.colorbox.resize({height: '490px'});	
-        };
-        $scope.bulkEditShow = !$scope.bulkEditShow;
-	      
-    };
-    
     $scope.setBulkGroupPrivacy = function(priv) {
-    	for (var idx in $scope.countryForm.addresses)
-            if ($scope.bulkEditMap[$scope.countryForm.addresses[idx].putCode])
-            	$scope.countryForm.addresses[idx].visibility.visibility = priv;        
+    	for (var idx in $scope.countryForm.addresses)      
+            $scope.countryForm.addresses[idx].visibility.visibility = priv;        
     };
-    
-    $scope.bulkDelete = function(){    	
-    	var countries = $scope.countryForm.addresses;
-        var len = countries.length;
-        while (len--)            
-        	if ($scope.bulkEditMap[$scope.countryForm.addresses[len].putCode])                
-        		countries.splice(len,1);
-        
-        $scope.countryForm.addresses = countries;
-    }
      
     $scope.getCountryForm();
 }]);
@@ -3919,52 +3760,11 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
 	   $.colorbox.close();
    };
    
-   /* Bulk edit */
-   
-   $scope.bulkChangeAll = function(bool) {
-       $scope.bulkChecked = bool;
-       $scope.bulkDisplayToggle = false;
-       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
-           $scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode] = bool;
-   };
-   
-   $scope.swapbulkChangeAll = function() {
-       $scope.bulkChecked = !$scope.bulkChecked;
-       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
-           $scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode] = $scope.bulkChecked;
-       $scope.bulkDisplayToggle = false;
-   };
-   
-   $scope.toggleBulkEdit = function() {                
-       if (!$scope.bulkEditShow) {
-           $scope.bulkEditMap = {};
-           $scope.bulkChecked = false;
-           for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
-               $scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode] = false;
-           $.colorbox.resize({height: '700px'});
-       }else{          
-           $.colorbox.resize({height: '490px'});   
-       };
-       $scope.bulkEditShow = !$scope.bulkEditShow;
-         
-   };
-   
    $scope.setBulkGroupPrivacy = function(priv) {
-       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)
-           if ($scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[idx].putCode])
-               $scope.externalIdentifiersForm.externalIdentifiers[idx].visibility.visibility = priv;        
+       for (var idx in $scope.externalIdentifiersForm.externalIdentifiers)     
+    	   $scope.externalIdentifiersForm.externalIdentifiers[idx].visibility.visibility = priv;        
    };
-   
-   $scope.bulkDelete = function(){     
-       var externalIdenfifiers = $scope.externalIdentifiersForm.externalIdentifiers;
-       var len = externalIdenfifiers.length;
-       while (len--)            
-           if ($scope.bulkEditMap[$scope.externalIdentifiersForm.externalIdentifiers[len].putCode])                
-        	   externalIdenfifiers.splice(len,1);
-       
-       $scope.externalIdentifiersForm.externalIdentifiers = externalIdenfifiers;
-   };
-    
+
    //init
    $scope.getExternalIdentifiersForm();  
 }]);
