@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverter;
 import org.orcid.core.version.V2VersionObjectFactory;
+import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
 import org.orcid.jaxb.model.notification.permission_rc2.NotificationPermission;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -162,15 +163,9 @@ public class VersionConverterImplV2_0_rc2ToV2_0_rc3 implements V2VersionConverte
                 .register();
         
         //GROUP ID
-        mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords.class)
-        .field("groupIdRecord", "groupIdRecord").customize(new CustomMapper<GroupIdRecords, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords>() {
-            @Override
-            public void mapAtoB(GroupIdRecords groupsRc2, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords groupsRc3, MappingContext context) {
-            	groupsRc3.setLastModifiedDate(
-                        new org.orcid.jaxb.model.common_rc3.LastModifiedDate(DateUtils.convertToXMLGregorianCalendarNoTimeZoneNoMillis(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(groupsRc3))));
-            }
-        }).register();
-                
+        mapperFactory.classMap(GroupIdRecords.class, org.orcid.jaxb.model.groupid_rc3.GroupIdRecords.class).byDefault().register();
+        mapperFactory.classMap(GroupIdRecord.class, org.orcid.jaxb.model.groupid_rc3.GroupIdRecord.class).byDefault().register();
+        
         //ExternalIDs
         mapperFactory.classMap(ExternalIDs.class, org.orcid.jaxb.model.record_rc3.ExternalIDs.class).byDefault().register();
         mapperFactory.classMap(ExternalID.class, org.orcid.jaxb.model.record_rc3.ExternalID.class).byDefault().register();
