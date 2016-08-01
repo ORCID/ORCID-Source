@@ -6637,7 +6637,10 @@ a:hover .mozilla-badge{
 
 .confirm-revoke-access-modal{
 	max-width: 600px;
+	padding-top: 15px;
 }
+
+
 
 
 /* Media Queries */
