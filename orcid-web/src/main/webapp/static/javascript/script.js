@@ -3914,6 +3914,9 @@ this.w3cLatexCharMap = {
    };
 
    typeMap['pmc'] = function (id) {
+	  
+	  console.log(id);
+	   
       if (id.toLowerCase().startsWith('pmc')) return 'http://europepmc.org/articles/' + id;
       if (id.toLowerCase().startsWith('www.ncbi.nlm.nih.gov')) return 'http://' + id;
       return 'http://www.ncbi.nlm.nih.gov/pubmed/' + id;

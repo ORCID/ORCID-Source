@@ -7774,7 +7774,10 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
 }]);
 
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
-    $scope.confirmRevoke = function(applicationSummary){
+    
+	$scope.trustedOrganizations = null;
+	
+	$scope.confirmRevoke = function(applicationSummary){
         $scope.appName = applicationSummary.name;
         $scope.tokenId = applicationSummary.tokenId;
         $.colorbox({
@@ -7813,6 +7816,11 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 	        type: 'GET',
 	        dataType: 'json',
 	        success: function(data){
+	        	
+	        	$scope.trustedOrganizations = data;
+	        	
+	        	console.log(data);
+	        	
 	        	$scope.$apply(function(){
 	        		for(var index1 = 0; index1 < data.length; index1 ++) {
 	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);	        			
