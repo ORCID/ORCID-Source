@@ -76,12 +76,12 @@ public class SolrIndexUpdater {
 
     @Value("${org.orcid.core.indexPublicProfile}")
     private boolean indexPublicProfile;
-    
+
     @Resource(name = "solrServer")
     private SolrServer solrServer;
 
-    public void updateSolrIndex(OrcidProfile profile){
-        LOG.info("Updating "+profile.getOrcidIdentifier().getPath()+" in SOLR index. indexPublicProfile = "+indexPublicProfile);
+    public void updateSolrIndex(OrcidProfile profile) {
+        LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + " in SOLR index. indexPublicProfile = " + indexPublicProfile);
         // Check if the profile is locked
         if (profile.isLocked()) {
             profile.downgradeToOrcidIdentifierOnly();
@@ -154,7 +154,7 @@ public class SolrIndexUpdater {
             }
 
             OrcidActivities orcidActivities = profile.getOrcidActivities();
-            if (orcidActivities != null) {                
+            if (orcidActivities != null) {
                 if (orcidBio != null && orcidBio.getKeywords() != null) {
                     List<Keyword> keyWords = orcidBio.getKeywords().getKeyword();
                     if (keyWords != null && keyWords.size() > 0) {
@@ -164,9 +164,9 @@ public class SolrIndexUpdater {
                         }
                         profileIndexDocument.setKeywords(keywordValues);
                     }
-                }                
+                }
             }
-            
+
             List<OrcidWork> orcidWorks = profile.retrieveOrcidWorks() != null ? profile.retrieveOrcidWorks().getOrcidWork() : null;
             if (orcidWorks != null) {
                 List<String> workTitles = new ArrayList<String>();
@@ -180,9 +180,10 @@ public class SolrIndexUpdater {
                             /**
                              * Creates a map that contains all different
                              * external identifiers for the current work
-                             * */
-                            boolean nullSafeCheckForWorkExternalIdentifier = workExternalIdentifier.getWorkExternalIdentifierId() != null && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
-                            
+                             */
+                            boolean nullSafeCheckForWorkExternalIdentifier = workExternalIdentifier.getWorkExternalIdentifierId() != null
+                                    && !StringUtils.isBlank(workExternalIdentifier.getWorkExternalIdentifierId().getContent());
+
                             if (nullSafeCheckForWorkExternalIdentifier) {
                                 WorkExternalIdentifierType type = workExternalIdentifier.getWorkExternalIdentifierType();
                                 if (!allExternalIdentifiers.containsKey(type)) {
@@ -262,7 +263,7 @@ public class SolrIndexUpdater {
         }
         this.persist(profileIndexDocument);
     }
-    
+
     /**
      * Fill all the different external identifiers in the profile index
      * document.
@@ -271,7 +272,7 @@ public class SolrIndexUpdater {
      *            The document that will be indexed by solr
      * @param externalIdentifiers
      *            The list of external identifiers
-     * */
+     */
     private void addExternalIdentifiersToIndexDocument(OrcidSolrDocument profileIndexDocument, Map<WorkExternalIdentifierType, List<String>> externalIdentifiers) {
         if (profileIndexDocument.getArxiv() == null)
             profileIndexDocument.setArxiv(new ArrayList<String>());
@@ -315,7 +316,7 @@ public class SolrIndexUpdater {
             profileIndexDocument.setSsrn(new ArrayList<String>());
         if (profileIndexDocument.getZbl() == null)
             profileIndexDocument.setZbl(new ArrayList<String>());
-        
+
         Iterator<Entry<WorkExternalIdentifierType, List<String>>> it = externalIdentifiers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it.next();
@@ -423,8 +424,8 @@ public class SolrIndexUpdater {
             }
         }
     }
-    
-    //TODO: how does solr dao handle transactions/concurrency?
+
+    // TODO: how does solr dao handle transactions/concurrency?
     public void persist(OrcidSolrDocument orcidSolrDocument) {
         try {
             solrServer.addBean(orcidSolrDocument);
@@ -436,8 +437,8 @@ public class SolrIndexUpdater {
         }
 
     }
-    
-    //TODO: make this cache?
+
+    // TODO: make this cache?
     public Date retrieveLastModified(String orcid) {
         SolrQuery query = new SolrQuery();
         query.setQuery(ORCID + ":\"" + orcid + "\"");
@@ -455,5 +456,5 @@ public class SolrIndexUpdater {
             throw new NonTransientDataAccessResourceException("Error retrieving last modified date from SOLR Server", e);
         }
     }
-    
+
 }

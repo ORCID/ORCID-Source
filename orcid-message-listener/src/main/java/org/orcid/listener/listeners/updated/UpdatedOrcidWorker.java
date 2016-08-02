@@ -33,7 +33,7 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
 @Component
-public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedMessage>{
+public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedMessage> {
 
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidWorker.class);
 
@@ -44,25 +44,24 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     @Resource
     private S3Updater s3Updater;
 
-    /** Fetches ORCID profile,
-     * compares last modified with SOLR
-     * if after SOLR last modified, updates SOLR index
-     * TODO: update S3
+    /**
+     * Fetches ORCID profile, compares last modified with SOLR if after SOLR
+     * last modified, updates SOLR index TODO: update S3
      * 
      */
     public void onRemoval(RemovalNotification<String, LastModifiedMessage> removal) {
-        if (removal.wasEvicted()){
+        if (removal.wasEvicted()) {
             LastModifiedMessage m = removal.getValue();
-            LOG.info("Removing "+ removal.getKey() + " from UpdatedOrcidCacheQueue");
-            LOG.info("Processing " +m.getLastUpdated());
+            LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue");
+            LOG.info("Processing " + m.getLastUpdated());
             OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(m.getOrcid());
             Date lastModifiedFromprofile = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
             Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());
-            //note this is slightly different from existing behaviour
-            if (lastModifiedFromprofile.after(lastModifiedFromSolr)) 
+            // note this is slightly different from existing behaviour
+            if (lastModifiedFromprofile.after(lastModifiedFromSolr))
                 solrIndexUpdater.updateSolrIndex(profile);
-            //now do the same for S3...
-            s3Updater.updateS3(profile); 
+            // now do the same for S3...
+            s3Updater.updateS3(profile);
         }
     }
 }

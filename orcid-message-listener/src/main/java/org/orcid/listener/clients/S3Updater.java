@@ -41,14 +41,16 @@ public class S3Updater {
 
     Logger LOG = LoggerFactory.getLogger(S3Updater.class);
 
-    /** Writes a profile to S3
-     * TODO: implement S3 writer.
+    /**
+     * Writes a profile to S3 TODO: implement S3 writer.
      * 
-     * @param writeToFileNotS3 if true, write to local file system temp directory instead of S3
+     * @param writeToFileNotS3
+     *            if true, write to local file system temp directory instead of
+     *            S3
      */
     @Autowired
     public S3Updater(@Value("${org.orcid.message-lisener.writeToFileNotS3}") boolean writeToFileNotS3) {
-        LOG.info("Creating S3Updater with writeToFileNotS3 = "+ writeToFileNotS3);
+        LOG.info("Creating S3Updater with writeToFileNotS3 = " + writeToFileNotS3);
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
@@ -78,9 +80,9 @@ public class S3Updater {
         // write xml
         Path path;
         try {
-            path = Files.createTempFile(profile.getOrcidIdentifier().getPath()+".", ".xml");
+            path = Files.createTempFile(profile.getOrcidIdentifier().getPath() + ".", ".xml");
             Files.write(path, profile.toString().getBytes(StandardCharsets.UTF_8)).toFile().deleteOnExit();
-            LOG.info("wrote xml to "+path.toAbsolutePath().toString());
+            LOG.info("wrote xml to " + path.toAbsolutePath().toString());
         } catch (IOException e) {
             LOG.error("cannot create xml", e);
         }
@@ -89,9 +91,9 @@ public class S3Updater {
         try {
             StringWriter json = new StringWriter();
             mapper.writeValue(json, profile);
-            path = Files.createTempFile(profile.getOrcidIdentifier().getPath()+".", ".json");
+            path = Files.createTempFile(profile.getOrcidIdentifier().getPath() + ".", ".json");
             Files.write(path, json.toString().getBytes(StandardCharsets.UTF_8)).toFile().deleteOnExit();
-            LOG.info("wrote json to "+path.toAbsolutePath().toString());
+            LOG.info("wrote json to " + path.toAbsolutePath().toString());
         } catch (IOException e) {
             LOG.error("cannot create json", e);
         }

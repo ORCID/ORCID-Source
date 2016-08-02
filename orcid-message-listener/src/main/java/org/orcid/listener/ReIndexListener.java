@@ -35,24 +35,25 @@ import org.springframework.stereotype.Component;
 public class ReIndexListener {
 
     Logger LOG = LoggerFactory.getLogger(ReIndexListener.class);
-        
+
     @Resource
     private Orcid12APIClient orcid12ApiClient;
     @Resource
     private SolrIndexUpdater solrIndexUpdater;
     @Resource
     private S3Updater s3Updater;
-    
-    /** Processes messages on receipt.
+
+    /**
+     * Processes messages on receipt.
      * 
      * @param map
      */
-    @JmsListener(destination=MessageConstants.Queues.REINDEX)
-    public void processMessage(final Map<String,String> map) {
+    @JmsListener(destination = MessageConstants.Queues.REINDEX)
+    public void processMessage(final Map<String, String> map) {
         LastModifiedMessage message = new LastModifiedMessage(map);
-        LOG.info("Recieved "+MessageConstants.Queues.REINDEX+" message for orcid "+message.getOrcid() + " "+message.getLastUpdated()); 
+        LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
         OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
         solrIndexUpdater.updateSolrIndex(profile);
-        s3Updater.updateS3(profile);        
+        s3Updater.updateS3(profile);
     }
 }

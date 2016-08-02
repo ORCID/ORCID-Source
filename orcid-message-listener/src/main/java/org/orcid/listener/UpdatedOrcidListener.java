@@ -28,40 +28,42 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-/** This class forms the basis of the message drive data dump and SOLR index updater.
- * It is intended to be a stand alone application but can sit alongside other modules in dev, QA and sandbox.
+/**
+ * This class forms the basis of the message drive data dump and SOLR index
+ * updater. It is intended to be a stand alone application but can sit alongside
+ * other modules in dev, QA and sandbox.
  * 
  * Example use of a message:
  * 
  * LOG.debug("Recieved last updated message");
- * map.forEach((k,v)->LOG.debug(k+"->"+v));   
- *       
- * //alternative
- * LastModifiedMessage m = new LastModifiedMessage(map);
- * LOG.debug(m.getOrcid());      
+ * map.forEach((k,v)->LOG.debug(k+"->"+v));
+ * 
+ * //alternative LastModifiedMessage m = new LastModifiedMessage(map);
+ * LOG.debug(m.getOrcid());
  * 
  * @author tom
  *
  */
 @Component
 public class UpdatedOrcidListener {
-    
+
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidListener.class);
-    
+
     @Resource
     public UpdatedOrcidExpringQueue cacheQueue;
-    
-    /** Queues incoming messages for processing
+
+    /**
+     * Queues incoming messages for processing
      * 
      * @param map
      */
-    @JmsListener(destination=MessageConstants.Queues.UPDATED_ORCIDS)
-    public void processMessage(final Map<String,String> map) {
+    @JmsListener(destination = MessageConstants.Queues.UPDATED_ORCIDS)
+    public void processMessage(final Map<String, String> map) {
         LastModifiedMessage message = new LastModifiedMessage(map);
-        LOG.info("Recieved "+MessageConstants.Queues.UPDATED_ORCIDS+" message for orcid "+message.getOrcid() + " "+message.getLastUpdated()); 
+        LOG.info("Recieved " + MessageConstants.Queues.UPDATED_ORCIDS + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
         LastModifiedMessage existingMessage = cacheQueue.getCache().getIfPresent(message.getOrcid());
         if (existingMessage == null || message.getLastUpdated().after(existingMessage.getLastUpdated()))
-            cacheQueue.getCache().put(message.getOrcid(), message); 
+            cacheQueue.getCache().put(message.getOrcid(), message);
     }
-    
+
 }

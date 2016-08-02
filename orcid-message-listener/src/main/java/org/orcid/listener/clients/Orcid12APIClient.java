@@ -40,26 +40,27 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 public class Orcid12APIClient {
 
     Logger LOG = LoggerFactory.getLogger(Orcid12APIClient.class);
-    protected final Client jerseyClient;    
+    protected final Client jerseyClient;
     protected final URI baseUri;
-    
+
     @Autowired
-    public Orcid12APIClient(@Value("${org.orcid.message-lisener.api12BaseURI}") String baseUri) throws URISyntaxException{
-        LOG.info("Creating Orcid12APIClient with baseUri = "+ baseUri);
+    public Orcid12APIClient(@Value("${org.orcid.message-lisener.api12BaseURI}") String baseUri) throws URISyntaxException {
+        LOG.info("Creating Orcid12APIClient with baseUri = " + baseUri);
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJaxbJsonProvider.class);
         jerseyClient = Client.create(config);
         this.baseUri = new URI(baseUri);
     }
-    
-    /** Fetches the profile from the ORCID public API v1.2
+
+    /**
+     * Fetches the profile from the ORCID public API v1.2
      * 
      * @param orcid
      * @return
      */
-    public OrcidProfile fetchPublicProfile(String orcid){
+    public OrcidProfile fetchPublicProfile(String orcid) {
         WebResource webResource = jerseyClient.resource(baseUri);
-        ClientResponse response = webResource.path(orcid+"/orcid-profile").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+        ClientResponse response = webResource.path(orcid + "/orcid-profile").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
         if (response.getStatus() != 200) {
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
