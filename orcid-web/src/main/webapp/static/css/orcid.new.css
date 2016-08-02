@@ -6639,6 +6639,10 @@ a:hover .mozilla-badge{
 	font-size: 12px;	
 }
 
+.account-settings .pull-right{
+	margin-right: 16px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

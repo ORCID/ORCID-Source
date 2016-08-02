@@ -47,7 +47,7 @@
     	<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <#assign open = "" />
 
-        <table class="table table-bordered settings-table"
+        <table class="table table-bordered settings-table account-settings"
             ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
             <tbody>
                 <tr>
