@@ -6644,7 +6644,9 @@ a:hover .mozilla-badge{
 	padding-top: 15px;
 }
 
-
+.account-settings .pull-right{
+	margin-right: 16px;
+}
 
 
 /* Media Queries */
