@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -45,7 +46,6 @@ import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
@@ -709,8 +709,10 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
         // Create peer review group
-        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value(),
-                this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+        List<String> scopes = new ArrayList<String>();
+        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
+        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
+        String accessToken = getAccessToken(scopes);
         GroupIdRecord g1 = super.createGroupIdRecord();
 
         // Create peer review

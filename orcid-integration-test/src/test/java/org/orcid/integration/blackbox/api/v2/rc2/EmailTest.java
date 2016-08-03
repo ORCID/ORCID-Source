@@ -22,9 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.Resource;
@@ -59,7 +58,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class EmailTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
     @Resource(name = "t2OAuthClient")
     private T2OAuthAPIService<ClientResponse> t2OAuthClient;
 
@@ -71,8 +69,6 @@ public class EmailTest extends BlackBoxBaseRC2 {
 
     @Resource
     private OauthHelper oauthHelper;
-
-    static String accessToken = null;
     
     private String limitedEmailValue = "limited@test.orcid.org";
     
@@ -148,7 +144,7 @@ public class EmailTest extends BlackBoxBaseRC2 {
      * */
     @Test
     public void testGetWithMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
@@ -165,18 +161,13 @@ public class EmailTest extends BlackBoxBaseRC2 {
                 assertEquals(visibility, email.getVisibility());
                 return;
             }
-        }
-        
+        }        
         fail();
     }
     
-    public String getAccessToken(String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.READ_LIMITED.value(), clientId, clientSecret, clientRedirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        List<String> scopes = new ArrayList<String>();
+        scopes.add(ScopePathType.READ_LIMITED.value());
+        return getAccessToken(scopes);
     }
 }

@@ -21,8 +21,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -62,9 +62,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
-
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
     @BeforeClass
     public static void beforeClass() {
         BBBUtil.revokeApplicationsAccess(webDriver);
@@ -81,8 +78,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
     }
 
     @Test
-    public void createManyWorks() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();
+    public void createManyWorks() throws JSONException, InterruptedException, URISyntaxException {        
         int numWorks = 1000;
         // Amount of linear increase allowed
         float scalingFactor = 1.5f;
@@ -102,7 +98,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
             wExtId.setType(WorkExternalIdentifierType.AGR.value());
             wExtId.setRelationship(Relationship.SELF);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-            String accessToken = getAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+            String accessToken = getAccessToken();
 
             ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
             stopWatch.split();
@@ -128,7 +124,8 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
         }
     }
 
-    private void cleanActivities(String token) throws JSONException, InterruptedException, URISyntaxException {
+    private void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
+        String token = getAccessToken();
         // Remove all activities
         ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token);
         assertNotNull(activitiesResponse);
@@ -171,20 +168,10 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
         }
     }
 
-    private String getAccessToken(String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value(), clientId, clientSecret,
-                clientRedirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
-    }
-
-    private void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
-        for (String token : accessTokens.values()) {
-            cleanActivities(token);
-        }
-    }
+    private String getAccessToken() throws InterruptedException, JSONException {
+        List<String> scopes = new ArrayList<String>();
+        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
+        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
+        return getAccessToken(scopes);
+    }    
 }

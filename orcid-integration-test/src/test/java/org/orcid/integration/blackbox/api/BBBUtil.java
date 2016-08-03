@@ -22,6 +22,7 @@ import java.util.Properties;
 
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
@@ -31,6 +32,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.helper.SystemPropertiesHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -203,4 +205,27 @@ public class BBBUtil {
     public static final int TIMEOUT_SECONDS = 10;
     public static final int SLEEP_MILLISECONDS = 100;
 
+    /**
+     * Assumes the user is already logged in and in the /my-orcid page 
+     * */
+    public static void changeDefaultUserVisibility(WebDriver webDriver, Visibility visibility) {
+        BBBUtil.noSpinners(webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        
+        By privacyPreferenceToggle = By.id("privacyPreferencesToggle");
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(privacyPreferenceToggle), webDriver);
+        WebElement toggle = webDriver.findElement(privacyPreferenceToggle);
+        BBBUtil.ngAwareClick(toggle, webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        
+        String clickXPathStr = "//div[@id='privacy-settings' and contains(text(),'By default, who should')]//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
+        String clickWorkedStr =  "//div[@id='privacy-settings' and contains(text(),'By default, who should ')]//li[@class='" +visibility.value().toLowerCase() + "Active']//a[contains(@ng-click,'" + visibility.value().toUpperCase() + "')]";
+
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickXPathStr)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(ByXPath.xpath(clickXPathStr)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ByXPath.xpath(clickWorkedStr)), webDriver);
+        // this is really evil, suggest JPA isn't flushing/persisting as quick as we would like
+        try {Thread.sleep(500);} catch(Exception e) {};
+    }
 }

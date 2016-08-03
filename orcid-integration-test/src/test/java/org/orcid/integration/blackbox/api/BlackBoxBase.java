@@ -16,10 +16,14 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -31,9 +35,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -149,22 +155,11 @@ public class BlackBoxBase {
     @Resource
     protected OauthHelper oauthHelper;
     
+    private static Map<String, String> accessTokens = new HashMap<String, String>();
+    private static Map<String, String> clientCredentialsAccessTokens = new HashMap<String, String>();
+    
     // TODO: make this not static.
     protected static WebDriver webDriver = (new BlackBoxWebDriver()).getWebDriver();
-    
-    public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
-        oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, getUser1UserName(), getUser1Password(), clientRedirectUri);
-        return accessToken;
-    }
-    
-    public String getAccessToken(String userName, String userPassword, String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
-        oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret, scopes, userName, userPassword, clientRedirectUri);
-        return accessToken;
-    }
     
     public void adminSignIn(String adminUserName, String adminPassword) {
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
@@ -423,6 +418,39 @@ public class BlackBoxBase {
         }
     }
     
+    public String getAccessToken(List<String> scopes) throws InterruptedException, JSONException{
+        return getAccessToken(getUser1OrcidId(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+    }
+    
+    public String getAccessToken(String userName, String userPassword, List<String> scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {                
+        Collections.sort(scopes);
+        String scopesString = StringUtils.join(scopes, " ");
+        String accessTokenKey = clientId + ":" + userName + ":" + scopesString;
+        if(accessTokens.containsKey(accessTokenKey)) {
+            return accessTokens.get(accessTokenKey);
+        }
+        
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);                        
+        String token = oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri);
+        accessTokens.put(accessTokenKey, token);
+        return token;
+    }
+    
+    public String getClientCredentialsAccessToken(List<String> scopes, String clientId, String clientSecret, APIRequestType requestType) throws JSONException {
+        Collections.sort(scopes);
+        String scopesString = StringUtils.join(scopes, " ");
+        String accessTokenKey = clientId + ":" + scopesString;
+        
+        if(clientCredentialsAccessTokens.containsKey(accessTokenKey)) {
+            return clientCredentialsAccessTokens.get(accessTokenKey);
+        }
+        
+        String token = oauthHelper.getClientCredentialsAccessToken(clientId, clientSecret, ScopePathType.READ_PUBLIC, requestType);
+        clientCredentialsAccessTokens.put(accessTokenKey, token);
+        return token;
+    }
+    
     public String getAdminUserName() {
         return adminUserName;
     }
@@ -614,5 +642,4 @@ public class BlackBoxBase {
     public WebDriver getWebDriver() {
         return webDriver;
     }
-
 }
