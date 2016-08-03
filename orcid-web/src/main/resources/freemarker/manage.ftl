@@ -524,12 +524,12 @@
 </script>
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
-    <div class="lightbox-container confirm-revoke-access-modal">
+    <div class="lightbox-container confirm-revoke-access-modal">		
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">		
 				<h2><@orcid.msg 'manage.application_access.revoke.confirm_title' /></h2>		 
-				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_1' /></p>
-				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_2' /> {{appName}} (<@orcid.msg 'manage.application_access.revoke.access' /><span ng-repeat="org in trustedOrganizations"><span ng-repeat="(key, value) in org.scopePaths">{{$last?value:value + ', '}}</span></span>)</p>
+				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_1' /></p>				
+				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_2' /> {{applicationSummary.name}} (<@orcid.msg 'manage.application_access.revoke.access' /><span ng-repeat="(key, value) in applicationSummary.scopePaths">{{$last?value:value + ', '}}</span>)</p>
 			</div>			
 		</div>
 		<div class="row">
