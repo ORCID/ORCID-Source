@@ -16,6 +16,7 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +28,10 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -418,6 +419,14 @@ public class BlackBoxBase {
         }
     }
     
+    protected List<String> getScopes(ScopePathType ... params) {
+        List<String> scopes = new ArrayList<String>();
+        for(ScopePathType scope : params) {
+            scopes.add(scope.value());
+        }
+        return scopes;
+    }
+    
     public String getAccessToken(List<String> scopes) throws InterruptedException, JSONException{
         return getAccessToken(getUser1OrcidId(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
     }
@@ -434,6 +443,14 @@ public class BlackBoxBase {
         oauthHelper.setWebDriverHelper(webDriverHelper);                        
         String token = oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri);
         accessTokens.put(accessTokenKey, token);
+        return token;
+    }
+    
+    public String getNonCachedAccessTokens(String userName, String userPassword, List<String> scopes, String clientId, String clientSecret, String clientRedirectUri) throws JSONException, InterruptedException {
+        String scopesString = StringUtils.join(scopes, " ");
+        WebDriverHelper webDriverHelper = new WebDriverHelper(getWebDriver(), getWebBaseUrl(), clientRedirectUri);
+        oauthHelper.setWebDriverHelper(webDriverHelper);                        
+        String token = oauthHelper.obtainAccessToken(clientId, clientSecret, scopesString, userName, userPassword, clientRedirectUri);        
         return token;
     }
     

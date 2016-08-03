@@ -929,8 +929,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     @Test
     public void testTokenWorksOnlyForTheScopeItWasIssued() throws JSONException, InterruptedException, URISyntaxException {
         long time = System.currentTimeMillis();
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.FUNDING_CREATE.value());
+        List<String> scopes = getScopes(ScopePathType.FUNDING_CREATE);        
         String accessToken =  getAccessToken(scopes);
         Work work1 = (Work) unmarshallFromPath("/record_2.0_rc1/samples/work-2.0_rc1.xml", Work.class);
         work1.setPutCode(null);
@@ -1055,8 +1054,7 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
             return groupRecords;
         
         List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.GROUP_ID_RECORD_UPDATE.value());
+        List<String> scopes = getScopes(ScopePathType.GROUP_ID_RECORD_UPDATE);
         String token = getClientCredentialsAccessToken(scopes, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
@@ -1090,9 +1088,6 @@ public class MemberV2Test extends BlackBoxBaseRC1 {
     }    
     
     private List<String> getScopes() {
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
-        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
-        return scopes;
+        return getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED);        
     }
 }

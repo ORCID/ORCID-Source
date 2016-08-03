@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -708,11 +707,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
-        // Create peer review group
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
-        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
-        String accessToken = getAccessToken(scopes);
+        // Create peer review group               
+        String accessToken = getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
         GroupIdRecord g1 = super.createGroupIdRecord();
 
         // Create peer review

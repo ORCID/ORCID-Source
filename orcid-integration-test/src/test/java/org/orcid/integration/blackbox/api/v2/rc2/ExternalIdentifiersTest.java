@@ -275,11 +275,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     }
     
     public String getAccessToken() throws InterruptedException, JSONException {
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.PERSON_UPDATE.value());
-        scopes.add(ScopePathType.READ_LIMITED.value());
-
-        return getAccessToken(scopes);
+        return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
     }
     
     private PersonExternalIdentifier getExternalIdentifier(String value) {

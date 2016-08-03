@@ -222,9 +222,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
     }
 
     public String getAccessToken() throws InterruptedException, JSONException {
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.PERSON_UPDATE.value());
-        scopes.add(ScopePathType.READ_LIMITED.value());
+        List<String> scopes = getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED);        
         return getAccessToken(getUser1OrcidId(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
     }
 }

@@ -21,8 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -169,9 +167,6 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
     }
 
     private String getAccessToken() throws InterruptedException, JSONException {
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
-        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
-        return getAccessToken(scopes);
+        return getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
     }    
 }

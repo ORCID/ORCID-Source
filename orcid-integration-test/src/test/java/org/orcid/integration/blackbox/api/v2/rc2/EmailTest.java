@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -166,8 +165,7 @@ public class EmailTest extends BlackBoxBaseRC2 {
     }
     
     public String getAccessToken() throws InterruptedException, JSONException {
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.READ_LIMITED.value());
+        List<String> scopes = getScopes(ScopePathType.READ_LIMITED);
         return getAccessToken(scopes);
     }
 }

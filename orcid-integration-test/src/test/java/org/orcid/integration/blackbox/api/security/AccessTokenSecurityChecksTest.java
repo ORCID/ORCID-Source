@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
@@ -332,26 +331,11 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
     }
 
     private List<String> getScopes() {
-        List<String> scopes = new ArrayList<String>();
-        scopes.add(ScopePathType.ACTIVITIES_READ_LIMITED.value());
-        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
-        scopes.add(ScopePathType.AFFILIATIONS_CREATE.value());
-        scopes.add(ScopePathType.AFFILIATIONS_READ_LIMITED.value());
-        scopes.add(ScopePathType.AFFILIATIONS_UPDATE.value());
-        scopes.add(ScopePathType.AUTHENTICATE.value());
-        scopes.add(ScopePathType.FUNDING_CREATE.value());
-        scopes.add(ScopePathType.FUNDING_READ_LIMITED.value());
-        scopes.add(ScopePathType.FUNDING_UPDATE.value());
-        scopes.add(ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value());
-        scopes.add(ScopePathType.ORCID_BIO_READ_LIMITED.value());
-        scopes.add(ScopePathType.ORCID_BIO_UPDATE.value());
-        scopes.add(ScopePathType.ORCID_PROFILE_READ_LIMITED.value());
-        scopes.add(ScopePathType.ORCID_WORKS_CREATE.value());
-        scopes.add(ScopePathType.ORCID_WORKS_READ_LIMITED.value());
-        scopes.add(ScopePathType.ORCID_WORKS_UPDATE.value());
-        scopes.add(ScopePathType.PEER_REVIEW_CREATE.value());
-        scopes.add(ScopePathType.PEER_REVIEW_READ_LIMITED.value());
-        return scopes;        
+        return getScopes(ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.AFFILIATIONS_CREATE,
+                ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE,
+                ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
+                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED);
     }
 
     private void evaluateResponse(ClientResponse response) {
