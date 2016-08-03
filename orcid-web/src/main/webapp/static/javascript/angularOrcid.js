@@ -7775,11 +7775,11 @@ orcidNgModule.controller('profileDeprecationCtrl',['$scope','$compile', function
 
 orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', function ($scope,$compile){
     
-	$scope.trustedOrganizations = null;
+	$scope.applicationSummary = null;
+	$scope.applicationSummaryList = null;
 	
 	$scope.confirmRevoke = function(applicationSummary){
-        $scope.appName = applicationSummary.name;
-        $scope.tokenId = applicationSummary.tokenId;
+		$scope.applicationSummary = applicationSummary;
         $.colorbox({
             html : $compile($('#confirm-revoke-access-modal').html())($scope),
             transition: 'fade',
@@ -7794,7 +7794,7 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 
     $scope.revokeAccess = function(){
         $.ajax({
-            url: getBaseUri() + '/account/revoke-application.json?tokenId='+$scope.tokenId,
+            url: getBaseUri() + '/account/revoke-application.json?tokenId='+ $scope.applicationSummary.tokenId,
             type: 'POST',
             success: function(data) {
                 $scope.getApplications();
@@ -7815,17 +7815,13 @@ orcidNgModule.controller('revokeApplicationFormCtrl',['$scope', '$compile', func
 	        url: getBaseUri()+'/account/get-trusted-orgs.json',
 	        type: 'GET',
 	        dataType: 'json',
-	        success: function(data){
-	        	
-	        	$scope.trustedOrganizations = data;
-	        	
-	        	console.log(data);
-	        	
+	        success: function(data){	        	
 	        	$scope.$apply(function(){
 	        		for(var index1 = 0; index1 < data.length; index1 ++) {
 	        			data[index1].approvalDate = formatDate(data[index1].approvalDate);	        			
 	            	}
-	        		$scope.applicationSummaryList = data;
+	        		$scope.applicationSummaryList = data;	        		
+	        		
 	        	});
 	        }
 	    }).fail(function(error) {
