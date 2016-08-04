@@ -150,7 +150,7 @@ public class BlackBoxBase {
     protected OauthHelper oauthHelper;
     
     // TODO: make this not static.
-    protected static WebDriver webDriver = (new BlackBoxWebDriver()).getWebDriver();
+    protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
     public String getAccessToken(String scopes, String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
         WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, this.getWebBaseUrl(), clientRedirectUri);
