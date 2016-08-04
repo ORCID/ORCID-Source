@@ -76,7 +76,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers() throws JSONException, InterruptedException, URISyntaxException {
-        String accessToken = super.getAccessToken(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         String orcid = getUser1OrcidId();
         Long putCode = 1L;
 
