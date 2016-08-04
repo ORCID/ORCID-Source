@@ -23,21 +23,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc2.Url;
@@ -59,27 +53,14 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-
-    protected static WebDriver webDriver;
-    
-    @BeforeClass
-    public static void beforeClass() {
-        webDriver = new FirefoxDriver();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        webDriver.quit();
-    }
     
     @After
     public void after() throws InterruptedException, JSONException {
-        String client1accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
+        String client1accessToken = getAccessToken();        
         //Get all researcher urls created by client # 1
         ClientResponse getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), client1accessToken);
         assertNotNull(getAllResponse);
@@ -98,7 +79,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
             }
         }
         
-        String client2accessToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String client2accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         //Get all researcher urls created by client # 2
         getAllResponse = memberV2ApiClient.getResearcherUrls(getUser1OrcidId(), client2accessToken);
         assertNotNull(getAllResponse);
@@ -120,7 +101,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testResearcherUrl() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ResearcherUrl rUrlToCreate = (ResearcherUrl) unmarshallFromPath("/record_2.0_rc2/samples/researcher-url-2.0_rc2.xml", ResearcherUrl.class);
         assertNotNull(rUrlToCreate);
@@ -197,7 +178,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testCantAddDuplicatedResearcherUrl() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         Long now = System.currentTimeMillis();
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
@@ -216,7 +197,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertEquals(Response.Status.CONFLICT.getStatusCode(), postResponse.getStatus());
 
         // Check it can be created by other client
-        String otherClientToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String otherClientToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         postResponse = memberV2ApiClient.createResearcherUrls(getUser1OrcidId(), rUrlToCreate, otherClientToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
@@ -224,7 +205,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testAddMultipleResearcherUrlAndGetThem() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         Long now = System.currentTimeMillis();
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
@@ -265,7 +246,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetWithPublicAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());        
+        String accessToken = getAccessToken();        
         //Create some researcher urls
         ResearcherUrl rUrlToCreate = new ResearcherUrl();        
         Long now = System.currentTimeMillis();
@@ -333,7 +314,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testTryingToAddInvalidResearcherUrls() throws InterruptedException, JSONException, URISyntaxException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
         rUrlToCreate.setUrl(new Url(""));
@@ -374,7 +355,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         
         ResearcherUrl rUrlToCreate = new ResearcherUrl();
@@ -388,13 +369,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }       
     
-    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value(), clientId, clientSecret, redirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE));
     }
 }

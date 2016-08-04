@@ -24,9 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -82,13 +80,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     @Resource(name = "publicV2ApiClient_rc1")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
-    static String accessToken = null;
-    
-    static String publicAccessToken = null;
-
     static List<GroupIdRecord> groupRecords = null;
-    
-    static Map<String, String> publicAccessTokens = new HashMap<String, String>();    
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
@@ -749,15 +741,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
         response = publicV2ApiClient.viewActivities("0000-0000-0000-0000", getReadPublicAccessToken(getClient2ClientId(), getClient2ClientSecret()));     
         assertNotNull(response);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());        
-    }
-    
-    private String getAccessToken() throws InterruptedException, JSONException {
-        if (accessToken == null) {
-            String scopes = ScopePathType.ACTIVITIES_UPDATE.value() + ' ' + ScopePathType.ACTIVITIES_READ_LIMITED.value();
-            accessToken = super.getAccessToken(scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());            
-        }
-        return accessToken;
-    }
+    }        
    
     private void createActivities() throws JSONException, InterruptedException, URISyntaxException {
         String accessToken = getAccessToken();
@@ -914,11 +898,11 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     private String getReadPublicAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
-        if(!publicAccessTokens.containsKey(clientId)) {
-            String token = oauthHelper.getClientCredentialsAccessToken(clientId, clientSecret, ScopePathType.READ_PUBLIC);
-            publicAccessTokens.put(clientId, token);
-        }
-        return publicAccessTokens.get(clientId);
+        return getClientCredentialsAccessToken(getScopes(ScopePathType.READ_PUBLIC), clientId, clientSecret, APIRequestType.PUBLIC);
+    }
+    
+    private String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));        
     }
     
     public List<GroupIdRecord> createGroupIds() throws JSONException {

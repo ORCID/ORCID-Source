@@ -22,9 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -34,7 +32,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.api.common.WebDriverHelper;
+import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.common_rc1.Visibility;
@@ -64,10 +62,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
-    private static final String SCOPES = ScopePathType.ACTIVITIES_UPDATE.value();
-    
+public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {    
     @Resource(name = "memberV2ApiClient_rc1")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
@@ -97,7 +92,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.PART_OF);
         workToCreate.getExternalIdentifiers().getWorkExternalIdentifier().add(wExtId);
-        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
+        String user1AccessToken = getAccessToken();
         // Create a work
         ClientResponse postResponse = memberV2ApiClient.createWorkXml(getUser1OrcidId(), workToCreate, user1AccessToken);
         assertNotNull(postResponse);
@@ -109,7 +104,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         Work gotWork = getResponse.getEntity(Work.class);
         assertEquals("Current treatment of left main coronary artery disease", gotWork.getWorkTitle().getTitle().getContent());
-        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        String user2AccessToken = getAccessToken(getUser2OrcidId(), getUser2Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         // Try to fetch it with other user orcid
         // Using the members API        
         ClientResponse user2GetResponse = memberV2ApiClient.viewWorkXml(getUser2OrcidId(), gotWork.getPutCode(), user2AccessToken);
@@ -136,7 +131,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         Education education = (Education) unmarshallFromPath("/record_2.0_rc1/samples/education-2.0_rc1.xml", Education.class);
         education.setPutCode(null);
         education.setVisibility(Visibility.PUBLIC);
-        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
+        String user1AccessToken = getAccessToken();
         // Create an education
         ClientResponse postResponse = memberV2ApiClient.createEducationXml(getUser1OrcidId(), education, user1AccessToken);
         assertNotNull(postResponse);
@@ -149,7 +144,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         Education gotEducation = getResponse.getEntity(Education.class);
         assertEquals("education:department-name", gotEducation.getDepartmentName());
         assertEquals("education:role-title", gotEducation.getRoleTitle());                
-        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        String user2AccessToken = getAccessToken(getUser2OrcidId(), getUser2Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         // Try to fetch it with other user orcid
         // Using the members API        
         ClientResponse user2GetResponse = memberV2ApiClient.viewEducationXml(getUser2OrcidId(), gotEducation.getPutCode(), user2AccessToken);
@@ -176,7 +171,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         Employment employment = (Employment) unmarshallFromPath("/record_2.0_rc1/samples/employment-2.0_rc1.xml", Employment.class);
         employment.setPutCode(null);
         employment.setVisibility(Visibility.PUBLIC);
-        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
+        String user1AccessToken = getAccessToken();
         // Create an employment
         ClientResponse postResponse = memberV2ApiClient.createEmploymentXml(getUser1OrcidId(), employment, user1AccessToken);
         assertNotNull(postResponse);
@@ -191,7 +186,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         assertEquals("affiliation:role-title", gotEmployment.getRoleTitle());        
         // Try to fetch it with other user orcid
         // Using the members API
-        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        String user2AccessToken = getAccessToken(getUser2OrcidId(), getUser2Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         ClientResponse user2GetResponse = memberV2ApiClient.viewEmploymentXml(getUser2OrcidId(), gotEmployment.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
@@ -223,7 +218,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         fExtId.setValue("Funding Id " + time);
         fExtId.setRelationship(Relationship.SELF);
         funding.getExternalIdentifiers().getExternalIdentifier().add(fExtId);
-        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
+        String user1AccessToken = getAccessToken();
         // Create an funding
         ClientResponse postResponse = memberV2ApiClient.createFundingXml(getUser1OrcidId(), funding, user1AccessToken);
         assertNotNull(postResponse);
@@ -238,7 +233,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         assertEquals("common:translated-title", gotFunding.getTitle().getTranslatedTitle().getContent());
         // Try to fetch it with other user orcid
         // Using the members API
-        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        String user2AccessToken = getAccessToken(getUser2OrcidId(), getUser2Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         ClientResponse user2GetResponse = memberV2ApiClient.viewFundingXml(getUser2OrcidId(), gotFunding.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
@@ -270,7 +265,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         wExtId.setWorkExternalIdentifierType(WorkExternalIdentifierType.AGR);
         wExtId.setRelationship(Relationship.SELF);
         peerReviewToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-        String user1AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser1UserName(), getUser1Password());
+        String user1AccessToken = getAccessToken();
         // Create an peer review
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(getUser1OrcidId(), peerReviewToCreate, user1AccessToken);
         assertNotNull(postResponse);
@@ -285,7 +280,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         assertEquals("peer-review:subject-name", gotPeerReview.getSubjectName().getTitle().getContent());
          // Try to fetch it with other user orcid
         // Using the members API
-        String user2AccessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri(), getUser2UserName(), getUser2Password());
+        String user2AccessToken = getAccessToken(getUser2OrcidId(), getUser2Password(), getScopes(ScopePathType.ACTIVITIES_UPDATE), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         ClientResponse user2GetResponse = memberV2ApiClient.viewPeerReviewXml(getUser2OrcidId(), gotPeerReview.getPutCode(), user2AccessToken);
         assertNotNull(user2GetResponse);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), user2GetResponse.getStatus());
@@ -305,19 +300,9 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deletedResponse.getStatus());
     }
     
-    public String getAccessToken(String clientId, String clientSecret, String clientRedirectUri, String userName, String userPassword) throws InterruptedException,
+    public String getAccessToken() throws InterruptedException,
             JSONException {
-        if (accessTokens.containsKey(userName)) {
-            return accessTokens.get(userName);
-        }
-
-        WebDriverHelper webDriverHelper = new WebDriverHelper(webDriver, getWebBaseUrl(), clientRedirectUri);
-        oauthHelper.setWebDriverHelper(webDriverHelper);
-        String accessToken = oauthHelper.obtainAccessToken(clientId, clientSecret,
-                SCOPES, userName, userPassword, clientRedirectUri);
-
-        accessTokens.put(userName, accessToken);
-        return accessToken;
+        return getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE));
     }
     
     public List<GroupIdRecord> createGroupIds() throws JSONException {
@@ -326,7 +311,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
             return groupRecords;
         
         List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = oauthHelper.getClientCredentialsAccessToken(getClient1ClientId(), getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
+        String token = getClientCredentialsAccessToken(getScopes(ScopePathType.GROUP_ID_RECORD_UPDATE), getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());

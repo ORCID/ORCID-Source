@@ -21,9 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
@@ -52,7 +49,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonalDetailsTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
@@ -63,7 +59,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
 
     @Before
     public void setUpData() throws Exception {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         if(!allSet) {
             //Create public other name
@@ -90,7 +86,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     
     @After
     public void after() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);        
         if(!newOtherNames.isEmpty()) {
             for(Long putCodeToDelete : newOtherNames) {
@@ -204,7 +200,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetWithMemberAPI() throws Exception {
-        String accessToken = getAccessToken(getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
+        String accessToken = getAccessToken(getUser1OrcidId(), getUser1Password(), getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE), getClient2ClientId(), getClient2ClientSecret(), getClient2RedirectUri());
         assertNotNull(accessToken);
         ClientResponse getPersonalDetailsResponse = memberV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId(), accessToken);        
         assertNotNull(getPersonalDetailsResponse);
@@ -328,13 +324,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         changeBiography(null, Visibility.PUBLIC);  
     }
                               
-    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value() + " " + ScopePathType.PERSON_READ_LIMITED.value(), clientId, clientSecret, redirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
     }
 }
