@@ -16,6 +16,8 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.orcid.integration.blackbox.api.BlackBoxWebDriver.getWebDriver;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -135,6 +137,10 @@ public class BBBUtil {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
 
+    public static void noSpinners() {
+        noSpinners(getWebDriver());
+    }
+
     public static void noSpinners(WebDriver webDriver) {
         (new WebDriverWait(webDriver, 20, 100)).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
     }
@@ -152,6 +158,18 @@ public class BBBUtil {
             ((JavascriptExecutor) webDriver).executeScript("$(window).trigger('resize');");
             (new WebDriverWait(webDriver, wait, pollingInternval)).until(expectedCondition);
         }
+    }
+
+    public static void waitForAngular() {
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), getWebDriver());
+    }
+
+    public static void waitForElementVisibility(By elementLocatedBy) {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(elementLocatedBy), getWebDriver());
+    }
+
+    public static void waitForElementPresence(By elementLocatedBy) {
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(elementLocatedBy), getWebDriver());
     }
 
     public static ExpectedCondition<Boolean> documentReady() {
@@ -200,6 +218,30 @@ public class BBBUtil {
                 return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window.cbox_complete").toString());
             }
         };
+    }
+
+    public static WebElement findElement(By elementLocatedBy) {
+        return getWebDriver().findElement(elementLocatedBy);
+    }
+
+    public static WebElement findElementByXpath(String xpath) {
+        return findElement(By.xpath(xpath));
+    }
+
+    public static void getUrl(String url) {
+        getWebDriver().get(url);
+    }
+    
+    public static void getUrlAndWait(String url) {
+        getWebDriver().get(url);
+        documentReady();
+        waitForAngular();
+        noSpinners();
+    }
+
+    public static String executeJavaScript(String javaScript, WebElement webElement) {
+        JavascriptExecutor je = (JavascriptExecutor) getWebDriver();
+        return (String) je.executeScript(javaScript, webElement).toString();
     }
 
     public static final int TIMEOUT_SECONDS = 10;

@@ -160,7 +160,7 @@ public class BlackBoxBase {
     private static Map<String, String> clientCredentialsAccessTokens = new HashMap<String, String>();
     
     // TODO: make this not static.
-    protected static WebDriver webDriver = (new BlackBoxWebDriver()).getWebDriver();
+    protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
     public void adminSignIn(String adminUserName, String adminPassword) {
         webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
