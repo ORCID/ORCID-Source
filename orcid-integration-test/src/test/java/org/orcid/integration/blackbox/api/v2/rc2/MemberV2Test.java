@@ -26,21 +26,16 @@ import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.common_rc2.Day;
 import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.Month;
@@ -60,11 +55,11 @@ import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
+import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc1.FundingExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.Relationship;
@@ -82,20 +77,7 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MemberV2Test extends BlackBoxBaseRC2 {    
-
-    protected static Map<String,String> accessTokens = new HashMap<String, String>();
-    
-    static List<GroupIdRecord> groupRecords = null;   
-    
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
+    static List<GroupIdRecord> groupRecords = null;           
     
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
@@ -1068,8 +1050,7 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
             return groupRecords;
         
         List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        List<String> scopes = getScopes(ScopePathType.GROUP_ID_RECORD_UPDATE);
-        String token = getClientCredentialsAccessToken(scopes, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
+        String token = getClientCredentialsAccessToken(ScopePathType.GROUP_ID_RECORD_UPDATE, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());

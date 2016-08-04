@@ -27,11 +27,8 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc1.Work;
@@ -43,16 +40,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MultipleTokensPerUserAndScopeTest extends BlackBoxBaseRC1 {
-
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
     
     @Test
     public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException, URISyntaxException {

@@ -61,17 +61,16 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     private static final String STATE_PARAM = "MyStateParam";
-    private static final String SCOPES = "/activities/update /read-limited";
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
+    private static final String SCOPES = "/activities/update /read-limited";    
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.*)");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
 
     @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-
+    private T2OAuthAPIService<ClientResponse> t2OAuthClient;    
+    
     @Before
     public void before() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
+        BBBUtil.logUserOut(getWebBaseUrl(), webDriver);
     }
     
     @Test

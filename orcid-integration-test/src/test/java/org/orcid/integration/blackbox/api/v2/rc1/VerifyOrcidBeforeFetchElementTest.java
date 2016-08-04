@@ -28,13 +28,11 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.common_rc1.Visibility;
 import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.groupid_rc1.GroupIdRecord;
@@ -74,12 +72,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
     @Before
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         groupRecords = createGroupIds();
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
+    }        
 
     @Test
     public void testWork() throws InterruptedException, JSONException, URISyntaxException {                                
@@ -311,7 +304,7 @@ public class VerifyOrcidBeforeFetchElementTest extends BlackBoxBaseRC1 {
             return groupRecords;
         
         List<GroupIdRecord> groups = new ArrayList<GroupIdRecord>();
-        String token = getClientCredentialsAccessToken(getScopes(ScopePathType.GROUP_ID_RECORD_UPDATE), getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
+        String token = getClientCredentialsAccessToken(ScopePathType.GROUP_ID_RECORD_UPDATE, getClient1ClientId(), getClient1ClientSecret(), APIRequestType.MEMBER);
         GroupIdRecord g1 = new GroupIdRecord();
         g1.setDescription("Description");
         g1.setGroupId("orcid-generated:01" + System.currentTimeMillis());

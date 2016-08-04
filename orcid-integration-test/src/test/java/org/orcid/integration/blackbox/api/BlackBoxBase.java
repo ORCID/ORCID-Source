@@ -454,16 +454,14 @@ public class BlackBoxBase {
         return token;
     }
     
-    public String getClientCredentialsAccessToken(List<String> scopes, String clientId, String clientSecret, APIRequestType requestType) throws JSONException {
-        Collections.sort(scopes);
-        String scopesString = StringUtils.join(scopes, " ");
-        String accessTokenKey = clientId + ":" + scopesString;
+    public String getClientCredentialsAccessToken(ScopePathType scope, String clientId, String clientSecret, APIRequestType requestType) throws JSONException {
+        String accessTokenKey = clientId + ":" + scope.value();
         
         if(clientCredentialsAccessTokens.containsKey(accessTokenKey)) {
             return clientCredentialsAccessTokens.get(accessTokenKey);
         }
         
-        String token = oauthHelper.getClientCredentialsAccessToken(clientId, clientSecret, ScopePathType.READ_PUBLIC, requestType);
+        String token = oauthHelper.getClientCredentialsAccessToken(clientId, clientSecret, scope, requestType);
         clientCredentialsAccessTokens.put(accessTokenKey, token);
         return token;
     }

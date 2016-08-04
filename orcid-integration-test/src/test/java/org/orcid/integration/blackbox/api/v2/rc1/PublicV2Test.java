@@ -898,7 +898,7 @@ public class PublicV2Test extends BlackBoxBaseRC1 {
     }
     
     private String getReadPublicAccessToken(String clientId, String clientSecret) throws InterruptedException, JSONException {
-        return getClientCredentialsAccessToken(getScopes(ScopePathType.READ_PUBLIC), clientId, clientSecret, APIRequestType.PUBLIC);
+        return getClientCredentialsAccessToken(ScopePathType.READ_PUBLIC, clientId, clientSecret, APIRequestType.PUBLIC);
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {

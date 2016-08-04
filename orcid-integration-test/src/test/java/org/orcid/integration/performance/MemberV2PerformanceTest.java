@@ -27,11 +27,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.time.StopWatch;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
@@ -59,17 +56,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
+public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {    
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();

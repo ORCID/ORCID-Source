@@ -25,11 +25,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.error_rc2.OrcidError;
@@ -75,17 +72,7 @@ import com.sun.jersey.api.client.ClientResponse.Status;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
-
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
+public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {    
 
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers() throws JSONException, InterruptedException, URISyntaxException {
