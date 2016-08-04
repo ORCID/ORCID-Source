@@ -19,11 +19,9 @@ package org.orcid.integration.blackbox.api.v2.rc2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -32,13 +30,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.client.AccountSettingsPage;
-import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
-import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -57,23 +50,16 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class EmailTest extends BlackBoxBaseRC2 {
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
-    @Resource
-    private OauthHelper oauthHelper;
-    
     private String limitedEmailValue = "limited@test.orcid.org";
     
     @Before
     public void setUpData() {
-        OrcidUi orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);        
         logUserOut();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
@@ -81,44 +67,17 @@ public class EmailTest extends BlackBoxBaseRC2 {
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
-        AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
-        accountSettingsPage.visit();
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);        
-        EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
-        emailsSection.toggleEdit();
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);        
-        assertTrue("Should be able to add email", emailsSection.canAddEmail());
+        BBBUtil.noSpinners(webDriver);
         
-        // Get primary email and verify it is public
-        List<org.orcid.integration.blackbox.client.AccountSettingsPage.Email> emails = emailsSection.getEmails();
-        org.orcid.integration.blackbox.client.AccountSettingsPage.Email primary = emails.stream().filter(e -> e.isPrimary()).findFirst().get();
-        assertNotNull(primary);
-        assertEquals(getUser1UserName(), primary.getEmail());
-        Visibility primaryVisibility = primary.getVisibility();
-        if(!Visibility.PUBLIC.equals(primaryVisibility)) {
-            primary.changeVisibility(Visibility.PUBLIC);
-        }
-        
-        // Get limited email and verify it is limited or created it
-        Optional<org.orcid.integration.blackbox.client.AccountSettingsPage.Email> limited = emails.stream().filter(e -> e.getEmail().equals(limitedEmailValue)).findFirst();
-        if(limited.isPresent()) {
-            org.orcid.integration.blackbox.client.AccountSettingsPage.Email limitedEmail = limited.get();
-            Visibility visibility = limitedEmail.getVisibility();
-            if(!Visibility.LIMITED.equals(visibility)) {
-                limitedEmail.changeVisibility(Visibility.LIMITED);
-            }
-        } else {
-            emailsSection.addEmail(limitedEmailValue);
-            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-            BBBUtil.noSpinners(webDriver);        
-            emails = emailsSection.getEmails();
-            org.orcid.integration.blackbox.client.AccountSettingsPage.Email limitedEmail = emails.stream().filter(e -> e.getEmail().equals(limitedEmailValue)).findFirst().get();
-            Visibility visibility = limitedEmail.getVisibility();
-            if(!Visibility.LIMITED.equals(visibility)) {
-                limitedEmail.changeVisibility(Visibility.LIMITED);
-            }            
+        showAccountSettingsPage();
+        openEditEmailsSectionOnAccountSettingsPage();
+        updatePrimaryEmailVisibility(Visibility.PUBLIC);  
+        removePopOver();
+        try {
+            updateEmailVisibility(limitedEmailValue, Visibility.LIMITED);
+        } catch(Exception e) {
+            addEmail(limitedEmailValue, Visibility.LIMITED);
         }
     }        
     

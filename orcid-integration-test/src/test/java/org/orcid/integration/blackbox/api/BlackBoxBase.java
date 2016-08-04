@@ -32,6 +32,7 @@ import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -464,6 +465,59 @@ public class BlackBoxBase {
         String token = oauthHelper.getClientCredentialsAccessToken(clientId, clientSecret, scope, requestType);
         clientCredentialsAccessTokens.put(accessTokenKey, token);
         return token;
+    }
+    
+    public void showAccountSettingsPage() {
+        webDriver.get(getWebBaseUrl() + "/account");
+        BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+    }
+    
+    public void openEditEmailsSectionOnAccountSettingsPage() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("account-settings-toggle-email-edit")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("account-settings-toggle-email-edit")), webDriver);
+    }
+    
+    public boolean emailExists(String emailValue) {
+        String emailXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::span[text() = '" + emailValue + "']]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailXpath)), webDriver);
+        return true;
+    }
+    
+    public void updatePrimaryEmailVisibility(Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String primaryEmailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::td[contains(@class, 'primaryEmail')]]/td[6]/descendant::ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(primaryEmailVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(primaryEmailVisibilityXpath)), webDriver);
+    }
+    
+    public void updateEmailVisibility(String emailValue, Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String emailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[6]/descendant::ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(emailVisibilityXpath)), webDriver);
+    }
+    
+    public void addEmail(String emailValue, Visibility visibility) {
+        String emailFormXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::input[@type='email']";
+        String saveButtonXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::input[@type='email']/following-sibling::span[1]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(emailFormXpath)), webDriver);
+        WebElement emailInputElement = webDriver.findElement(By.xpath(emailFormXpath));
+        emailInputElement.sendKeys(emailValue);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(saveButtonXpath)), webDriver);
+        updateEmailVisibility(emailValue, visibility);
+    }
+    
+    public void removeEmail(String emailValue) {
+        String deleteEmailXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(deleteEmailXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(deleteEmailXpath)), webDriver);        
+    }  
+    
+    public void removePopOver() {
+        Actions a = new Actions(webDriver);
+        a.moveByOffset(500, 500).perform();        
     }
     
     public String getAdminUserName() {
