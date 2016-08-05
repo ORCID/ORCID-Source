@@ -20,6 +20,7 @@ import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementById;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementByXpath;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElements;
+import static org.orcid.integration.blackbox.api.BBBUtil.findElementsByXpath;
 import static org.orcid.integration.blackbox.api.BBBUtil.ngAwareClick;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
 import static org.orcid.integration.blackbox.api.BBBUtil.waitForCboxComplete;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -454,6 +456,27 @@ public class BlackBoxBase {
 
     public void markAllPrivateInKeywordModal() {
         ngAwareClick(findElementByXpath("//div[@ng-repeat='keyword in keywordsForm.keywords']//a[@name='privacy-toggle-3-private']"));
+    }
+    
+    public void removeAllWorks() {
+        List<WebElement> trashCans = findWorksTrashCans();
+        while (!trashCans.isEmpty()) {
+            for (WebElement trashCan : trashCans) {
+                ngAwareClick(trashCan);
+                waitForAngular();
+                By deleteButton = By.xpath("//div[@id='colorbox']//div[@class='btn btn-danger']");
+                waitForElementVisibility(deleteButton);
+                ngAwareClick(findElement(deleteButton));
+                waitForNoCboxOverlay();
+            }
+            trashCans = findWorksTrashCans();
+        }
+    }
+
+    public List<WebElement> findWorksTrashCans() {
+        String trashCansXpath = "//div[@id='workspace-publications']//span[@class='glyphicon glyphicon-trash']";
+        List<WebElement> trashCans = findElementsByXpath(trashCansXpath).stream().filter(t -> t.isDisplayed()).collect(Collectors.toList());
+        return trashCans;
     }
     
     protected int getPrivacyIndex(Visibility visibility) {
