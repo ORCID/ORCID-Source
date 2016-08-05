@@ -45,7 +45,6 @@ import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
@@ -708,9 +707,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
-        // Create peer review group
-        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value(),
-                this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+        // Create peer review group               
+        String accessToken = getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
         GroupIdRecord g1 = super.createGroupIdRecord();
 
         // Create peer review

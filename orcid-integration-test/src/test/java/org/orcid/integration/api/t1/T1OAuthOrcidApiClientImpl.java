@@ -357,7 +357,6 @@ public class T1OAuthOrcidApiClientImpl implements T1OAuthAPIService<ClientRespon
     }
 
     private WebResource.Builder setupRequestCommonParams(URI restpath, String accept, String oauthToken) {
-
         WebResource rootResource = orcidClientHelper.createRootResource(restpath);
         WebResource.Builder built = addOauthHeader(rootResource, oauthToken).accept(accept).type(accept);
         return built;

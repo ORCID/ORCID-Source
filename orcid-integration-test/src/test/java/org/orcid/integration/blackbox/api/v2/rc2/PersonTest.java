@@ -23,9 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
@@ -51,7 +48,6 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
@@ -69,7 +65,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testGetBioFromMemberAPI() throws Exception {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewBiography(getUser1OrcidId(), accessToken);
         assertNotNull(response);
@@ -81,7 +77,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testViewPersonFromMemberAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), accessToken);
         assertNotNull(response);        
@@ -201,14 +197,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 
-    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_READ_LIMITED.value() + " " + ScopePathType.PERSON_UPDATE.value(), clientId, clientSecret,
-                redirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
     }
 }

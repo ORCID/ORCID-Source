@@ -16,11 +16,10 @@
  */
 package org.orcid.integration.blackbox.web.account;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.After;
@@ -34,12 +33,11 @@ import org.orcid.integration.blackbox.client.AccountSettingsPage;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.Delegate;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.DelegateSearchResult;
 import org.orcid.integration.blackbox.client.AccountSettingsPage.DelegatesSection;
-import org.orcid.integration.blackbox.client.AccountSettingsPage.Email;
-import org.orcid.integration.blackbox.client.AccountSettingsPage.EmailsSection;
 import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.integration.blackbox.client.OrcidUi.AccountSwitcherSection;
 import org.orcid.integration.blackbox.client.OrcidUi.AccountToSwitchTo;
 import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -64,32 +62,37 @@ public class AccountSettingsTest extends BlackBoxBase {
 
     @Test
     public void emailsTest() {
-        logUserOut();
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
-        AccountSettingsPage accountSettingsPage = orcidUi.getAccountSettingsPage();
-        accountSettingsPage.visit();
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);        
-        EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
-        emailsSection.toggleEdit();
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);        
-        assertTrue("Should be able to add email", emailsSection.canAddEmail());
+        BBBUtil.noSpinners(webDriver);
+        
+        showAccountSettingsPage();
+        openEditEmailsSectionOnAccountSettingsPage();
+        //Add an email
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
-        emailsSection.addEmail(emailValue);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);        
-        List<Email> emails = emailsSection.getEmails();
-        Email addedEmail = emails.stream().filter(e -> e.getEmail().equals(emailValue)).findFirst().get();
-        assertNotNull("The added email should be there: " + emailValue, addedEmail);
-        addedEmail.delete();
-        emails = emailsSection.getEmails();
-        assertFalse("The added email should NOT be there: " + emailValue, emails.stream().anyMatch(e -> e.getEmail().equals(emailValue)));
+        addEmail(emailValue, Visibility.PRIVATE);
+        //Reload the account settings to confirm it was actually added
+        showAccountSettingsPage();
+        try {
+          assertTrue(emailExists(emailValue));  
+        } catch(Exception e) {
+            fail("Unable to find email " + emailValue);
+        }
+        
+        //Remove it
+        removeEmail(emailValue);
+        //Reload the account settings to confirm it was actually removed
+        showAccountSettingsPage();
+        try {
+            //Look if it is still present
+            emailExists(emailValue);
+            fail("Email " + emailValue + " should not be there");
+        } catch (Exception e) {
+
+        }
     }
 
     @Test
@@ -136,9 +139,12 @@ public class AccountSettingsTest extends BlackBoxBase {
         accountSettingsPage = orcidUi.getAccountSettingsPage();
         accountSettingsPage.visit();
         // Check that add email section is not there
-        EmailsSection emailsSection = accountSettingsPage.getEmailsSection();
-        emailsSection.toggleEdit();
-        assertFalse("Should NOT be able to add email", emailsSection.canAddEmail());
+        try {
+            openEditEmailsSectionOnAccountSettingsPage();
+            fail("Should not show the edit email as a delegate");
+        } catch(Exception e) {
+            
+        }
     }
 
 }

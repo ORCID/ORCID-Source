@@ -21,6 +21,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
@@ -49,7 +51,8 @@ public class LockedClientsTest extends BlackBoxBaseRC2 {
     @Test
     public void testMember() throws InterruptedException, JSONException {
         // The member must be unlocked to begin the test
-        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        List<String> scopes = getScopes(ScopePathType.READ_LIMITED);
+        String accessToken = getAccessToken(scopes);
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), getAllResponse.getStatus());
