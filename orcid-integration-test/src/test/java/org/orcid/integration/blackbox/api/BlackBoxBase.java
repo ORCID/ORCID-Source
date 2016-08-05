@@ -47,7 +47,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
-    private static String SAVE_BUTTON_XPATH = "//div[@id='colorbox']/descendant::button[contains('Save changes',text())]";
+    private static String SAVE_BUTTON_XPATH = "//div[@id='colorbox']//button[contains('Save changes',text())]";
     
     // Admin user
     @Value("${org.orcid.web.adminUser.username}")
@@ -382,7 +382,7 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
-    public void saveEditOtherNamesModal() {
+    public void saveOtherNamesModal() {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
@@ -391,16 +391,44 @@ public class BlackBoxBase {
     
     public void changeOtherNamesVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
-        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']/descendant::ul[@class='privacyToggle']/li[" + index +"]";
+        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
         
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }
-        
-        saveEditOtherNamesModal();
+        }       
+        saveOtherNamesModal();
     }        
+    
+    /**
+     *  KEYWORDS
+     * */
+    public void openEditKeywordsModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-keywords")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }
+    
+    public void saveKeywordsModal() {
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
+        BBBUtil.noCboxOverlay(webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
+    }
+    
+    public void changeKeywordsVisibility(Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String otherNamesVisibilityXpath = "//div[@ng-repeat='keyword in keywordsForm.keywords']//ul[@class='privacyToggle']/li[" + index +"]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
+        
+        List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
+        for (WebElement webElement : visibilityElements) {
+            BBBUtil.ngAwareClick(webElement, webDriver);
+        }       
+        saveKeywordsModal();
+    }
     
     /**
      * COUNTRY
@@ -414,9 +442,9 @@ public class BlackBoxBase {
 
     public void saveEditCountryModal() {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='colorbox']//button[contains('Save changes',text())]")), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);        
     }
     
     public void deleteAllCountriesInCountryModal() {
@@ -428,21 +456,20 @@ public class BlackBoxBase {
             BBBUtil.ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteCountry(country)']")), webDriver);
             BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         }
-    }
+    }    
 
-    public void setCountryInCountryModal(String countryString) {
-        By selectLocator = By.xpath("//div[@ng-repeat='country in countryForm.addresses']//select[@name='country']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(selectLocator), webDriver);
-        Select selectBox = new Select(webDriver.findElement(selectLocator));
-        selectBox.selectByValue(countryString);
-    }
-
-    public void markAllPublicInCountryModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-public']")), webDriver);
-    }
-
-    public void markAllPrivateInCountryModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-private']")), webDriver);
+    public void changeAddressVisibility(Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        
+        String countriesVisibilityXpath = "//div[@ng-repeat='country in countryForm.addresses']//descendant::div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(countriesVisibilityXpath)), webDriver);
+        
+        List<WebElement> visibilityElements = webDriver.findElements(By.xpath(countriesVisibilityXpath));
+        for (WebElement webElement : visibilityElements) {
+            BBBUtil.ngAwareClick(webElement, webDriver);
+        }
+        
+        saveEditCountryModal();
     }                
     
     /**
@@ -464,29 +491,29 @@ public class BlackBoxBase {
     }
     
     public boolean emailExists(String emailValue) {
-        String emailXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::span[text() = '" + emailValue + "']]";
+        String emailXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailXpath)), webDriver);
         return true;
     }
     
     public void updatePrimaryEmailVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
-        String primaryEmailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::td[contains(@class, 'primaryEmail')]]/td[6]/descendant::ul/li[" + index + "]/a";
+        String primaryEmailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::td[contains(@class, 'primaryEmail')]]/td[6]//ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(primaryEmailVisibilityXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(primaryEmailVisibilityXpath)), webDriver);
     }
     
     public void updateEmailVisibility(String emailValue, Visibility visibility) {
         int index = getPrivacyIndex(visibility);
-        String emailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[6]/descendant::ul/li[" + index + "]/a";
+        String emailVisibilityXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[6]//ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailVisibilityXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(emailVisibilityXpath)), webDriver);        
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
     public void addEmail(String emailValue, Visibility visibility) {
-        String emailFormXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::input[@type='email']";
-        String saveButtonXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::input[@type='email']/following-sibling::span[1]";
+        String emailFormXpath = "//div[@ng-controller='EmailEditCtrl']//input[@type='email']";
+        String saveButtonXpath = "//div[@ng-controller='EmailEditCtrl']//input[@type='email']/following-sibling::span[1]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(emailFormXpath)), webDriver);
         WebElement emailInputElement = webDriver.findElement(By.xpath(emailFormXpath));
         emailInputElement.sendKeys(emailValue);
@@ -495,7 +522,7 @@ public class BlackBoxBase {
     }
     
     public void removeEmail(String emailValue) {
-        String deleteEmailXpath = "//div[@ng-controller='EmailEditCtrl']/descendant::tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
+        String deleteEmailXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
         String confirmDeleteButtonXpath = "//button[@id='confirm-delete-email_" + emailValue + "']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(deleteEmailXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(deleteEmailXpath)), webDriver);
@@ -523,6 +550,18 @@ public class BlackBoxBase {
     
     public boolean otherNamesAppearsInPublicPage(String otherNameValue) {
         String publicOtherNamesXpath = "//div[@id='public-other-names-div']/span[@name='other-name' and text()='" + otherNameValue + "']";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicOtherNamesXpath)), webDriver);
+        return true;
+    }
+    
+    public boolean keywordsAppearsInPublicPage(String keywordValue) {
+        String publicOtherNamesXpath = "//div[@id='public-keywords-div']/span[@name='keyword' and text()='" + keywordValue + "']";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicOtherNamesXpath)), webDriver);
+        return true;
+    }
+    
+    public boolean addressAppearsInPublicPage(String countryName) {
+        String publicOtherNamesXpath = "//div[@id='public-country-div']/span[@name='country' and text()='" + countryName + "']";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicOtherNamesXpath)), webDriver);
         return true;
     }

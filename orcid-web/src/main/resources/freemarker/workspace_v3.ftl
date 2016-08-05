@@ -97,7 +97,7 @@
 	        	<div class="workspace-section-header">
         	   		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
 	        	   	<span>
-	        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
+	        	   	  	<span id="open-edit-keywords" class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
 	        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 	        	         	{{ $last?keyword.content:keyword.content+ ", "}}
 	        	      	</span>

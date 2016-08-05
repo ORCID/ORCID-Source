@@ -35,6 +35,7 @@ import javax.xml.bind.Unmarshaller;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -122,25 +123,59 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         
         return g1;
     }
-    
-    @SuppressWarnings({ "deprecation", "rawtypes" })
+        
     public Long createOtherName(String value, String userOrcid, String accessToken) {
         OtherName otherName = new OtherName();
         otherName.setContent(value);
         ClientResponse response = memberV2ApiClient.createOtherName(userOrcid, otherName, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
-        String location = resultWithPutCode.get(0).toString();
-        return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));                       
+        return getPutCodeFromResponse(response);                       
     }  
     
     public void deleteOtherName(String userOrcid, Long putCode, String accessToken) {
         ClientResponse response = memberV2ApiClient.deleteOtherName(userOrcid, putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    public Long createKeyword(String value, String userOrcid, String accessToken) {
+        Keyword k = new Keyword();
+        k.setContent(value);
+        ClientResponse response = memberV2ApiClient.createKeyword(userOrcid, k, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);                       
+    }  
+    
+    public void deleteKeyword(String userOrcid, Long putCode, String accessToken) {
+        ClientResponse response = memberV2ApiClient.deleteKeyword(userOrcid, putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    public Long createAddress(Country country, String userOrcid, String accessToken) {
+        Address a = new Address();
+        a.setCountry(country);
+        ClientResponse response = memberV2ApiClient.createAddress(userOrcid, a, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);
+    }
+    
+    public void deleteAddress(String userOrcid, Long putCode, String accessToken) {
+        ClientResponse response = memberV2ApiClient.deleteAddress(userOrcid, putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    public Long getPutCodeFromResponse(ClientResponse response) {
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
     }
 }
