@@ -250,6 +250,10 @@ public class BBBUtil {
     public static List<WebElement> findElements(By elementsLocatedBy) {
         return getWebDriver().findElements(elementsLocatedBy);
     }
+    
+    public static List<WebElement> findElementsByXpath(String xpath) {
+        return getWebDriver().findElements(By.xpath(xpath));
+    }
 
     public static void getUrl(String url) {
         getWebDriver().get(url);
