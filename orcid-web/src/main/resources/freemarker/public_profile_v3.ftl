@@ -63,7 +63,7 @@
 		                	</div>
 		                	<div id="public-other-names-div" class="public-content">
 				                <#list publicGroupedOtherNames?keys as otherName>
-				                	${otherName}<#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
+				                	<span name="other-name">${otherName}</span><#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
 				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 				                			<#list publicGroupedOtherNames[otherName] as otherNameSource>

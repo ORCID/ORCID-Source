@@ -57,7 +57,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
 
     @Test
     public void pubTokenTest() throws Exception {
-        logUserOut();
+        signout();
         String code = getAuthorizationCode();
         ClientResponse tokenResponse = clientPub.obtainOauth2TokenPost("client_credentials", getParamMap(code));
 
@@ -69,7 +69,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
 
     @Test
     public void apiTokenTest() throws Exception {
-        logUserOut();
+        signout();
         String code = getAuthorizationCode();
         ClientResponse tokenResponse = clientApi.obtainOauth2TokenPost("client_credentials", getParamMap(code));
 
@@ -81,7 +81,7 @@ public class OauthExchangeCodeTest extends BlackBoxBaseRC1 {
 
     @Test
     public void rootTokenTest() throws Exception {
-        logUserOut();
+        signout();
         String code = getAuthorizationCode();
         ClientResponse tokenResponse = clientRoot.obtainOauth2TokenPost("client_credentials", getParamMap(code));
 

@@ -46,7 +46,7 @@ public class LockUnlockRecordTest extends BlackBoxBaseRC1 {
 
     @Test
     public void lockUnlockTest() throws InterruptedException {
-        logUserOut();
+        signout();
         adminUnlockAccount(getAdminUserName(), getAdminPassword(), getUser1OrcidId());
         // Init.. Should be unlocked.
         assertFalse(checkIfLockedUI());

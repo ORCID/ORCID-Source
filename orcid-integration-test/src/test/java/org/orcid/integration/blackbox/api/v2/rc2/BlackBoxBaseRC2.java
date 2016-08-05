@@ -135,7 +135,12 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertTrue(map.containsKey("Location"));
         List resultWithPutCode = (List) map.get("Location");
         String location = resultWithPutCode.get(0).toString();
-        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));               
-        return putCode;
-    }        
+        return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));                       
+    }  
+    
+    public void deleteOtherName(String userOrcid, Long putCode, String accessToken) {
+        ClientResponse response = memberV2ApiClient.deleteOtherName(userOrcid, putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
 }
