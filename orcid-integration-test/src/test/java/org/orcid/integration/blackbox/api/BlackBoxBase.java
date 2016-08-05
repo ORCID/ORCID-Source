@@ -34,7 +34,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
@@ -386,7 +385,7 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
     }
     
     public void changeOtherNamesVisibility(Visibility visibility) {
@@ -415,15 +414,15 @@ public class BlackBoxBase {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-keywords")), webDriver);
     }
     
     public void changeKeywordsVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
-        String otherNamesVisibilityXpath = "//div[@ng-repeat='keyword in keywordsForm.keywords']//ul[@class='privacyToggle']/li[" + index +"]";
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
+        String keywordsVisibilityXpath = "//div[@ng-repeat='keyword in keywordsForm.keywords']//ul[@class='privacyToggle']/li[" + index +"]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(keywordsVisibilityXpath)), webDriver);
         
-        List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
+        List<WebElement> visibilityElements = webDriver.findElements(By.xpath(keywordsVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
         }       
@@ -472,6 +471,64 @@ public class BlackBoxBase {
         saveEditCountryModal();
     }                
     
+    /**
+     * RESEARCHER URLS
+     * */
+    public void openEditResearcherUrlsModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-websites")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }
+    
+    public void saveResearcherUrlsModal() {
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
+        BBBUtil.noCboxOverlay(webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
+    }
+    
+    public void changeResearcherUrlsVisibility(Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String researcherUrlsVisibilityXpath = "//div[@ng-repeat='website in websitesForm.websites']//ul[@class='privacyToggle']/li[" + index +"]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(researcherUrlsVisibilityXpath)), webDriver);
+        
+        List<WebElement> visibilityElements = webDriver.findElements(By.xpath(researcherUrlsVisibilityXpath));
+        for (WebElement webElement : visibilityElements) {
+            BBBUtil.ngAwareClick(webElement, webDriver);
+        }       
+        saveKeywordsModal();
+    }
+    
+    /**
+     * EXTERNAL IDENTIFIERS
+     * */
+    public void openEditExternalIdentifiersModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-external-identifiers")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }
+    
+    public void saveExternalIdentifiersModal() {
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
+        BBBUtil.noCboxOverlay(webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
+    }
+    
+    public void changeExternalIdentifiersVisibility(Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String extIdsVisibilityXpath = "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']//ul[@class='privacyToggle']/li[" + index +"]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(extIdsVisibilityXpath)), webDriver);
+        
+        List<WebElement> visibilityElements = webDriver.findElements(By.xpath(extIdsVisibilityXpath));
+        for (WebElement webElement : visibilityElements) {
+            BBBUtil.ngAwareClick(webElement, webDriver);
+        }       
+        saveKeywordsModal();
+    }
+                  
     /**
      * ACCOUNT SETTINGS PAGE
      * */
@@ -566,6 +623,18 @@ public class BlackBoxBase {
         return true;
     }
     
+    public boolean researcherUrlAppearsInPublicPage(String rUrlValue) {
+        String publicResearcherUrlXpath = "//div[@id='public-researcher-urls-div']/a[text()='" + rUrlValue + "']";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicResearcherUrlXpath)), webDriver);
+        return true;
+    }
+        
+    public boolean externalIdentifiersAppearsInPublicPage(String extIdValue) {                                                
+        String publicExtenalIdentifiersXpath = "//div[@id='public-external-identifiers-div']/a[text()='test: " + extIdValue + "']";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicExtenalIdentifiersXpath)), webDriver);
+        return true;
+    }
+            
     /**
      * GENERAL FUNCTIONS
      * */

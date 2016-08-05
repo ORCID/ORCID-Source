@@ -36,6 +36,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -150,6 +151,38 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
     
     public void deleteKeyword(String userOrcid, Long putCode, String accessToken) {
         ClientResponse response = memberV2ApiClient.deleteKeyword(userOrcid, putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    public Long createResearcherUrl(String value, String userOrcid, String accessToken) {
+        ResearcherUrl r = new ResearcherUrl();
+        r.setUrl(new Url(value));
+        ClientResponse response = memberV2ApiClient.createResearcherUrls(userOrcid, r, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);                       
+    }  
+    
+    public void deleteResearcherUrl(String userOrcid, Long putCode, String accessToken) {
+        ClientResponse response = memberV2ApiClient.deleteResearcherUrl(userOrcid, putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
+        PersonExternalIdentifier e = new PersonExternalIdentifier();
+        e.setValue(value);
+        e.setType("test");
+        e.setUrl(new Url("http://test.orcid.org"));
+        ClientResponse response = memberV2ApiClient.createExternalIdentifier(userOrcid, e, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);                       
+    }  
+    
+    public void deleteExternalIdentifier(String userOrcid, Long putCode, String accessToken) {
+        ClientResponse response = memberV2ApiClient.deleteExternalIdentifier(userOrcid, putCode, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
