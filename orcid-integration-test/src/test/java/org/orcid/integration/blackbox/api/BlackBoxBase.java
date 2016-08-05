@@ -16,6 +16,16 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
+import static org.orcid.integration.blackbox.api.BBBUtil.findElementById;
+import static org.orcid.integration.blackbox.api.BBBUtil.findElementByXpath;
+import static org.orcid.integration.blackbox.api.BBBUtil.findElements;
+import static org.orcid.integration.blackbox.api.BBBUtil.ngAwareClick;
+import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
+import static org.orcid.integration.blackbox.api.BBBUtil.waitForCboxComplete;
+import static org.orcid.integration.blackbox.api.BBBUtil.waitForElementVisibility;
+import static org.orcid.integration.blackbox.api.BBBUtil.waitForNoCboxOverlay;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -160,7 +170,6 @@ public class BlackBoxBase {
     private static Map<String, String> accessTokens = new HashMap<String, String>();
     private static Map<String, String> clientCredentialsAccessTokens = new HashMap<String, String>();
     
-    // TODO: make this not static.
     protected static WebDriver webDriver = BlackBoxWebDriver.getWebDriver();
     
     public void adminSignIn(String adminUserName, String adminPassword) {
@@ -368,43 +377,83 @@ public class BlackBoxBase {
     }
     
     public void openEditCountryModal() {
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForElementVisibility(By.id("country-open-edit-modal"));
+        ngAwareClick(findElementById("country-open-edit-modal"));
+        waitForCboxComplete();
     }
 
     public void saveEditCountryModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='colorbox']//button[contains('Save changes',text())]")), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("country-open-edit-modal")), webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        ngAwareClick(findElementByXpath("//div[@id='colorbox']//button[contains('Save changes',text())]"));        
+        waitForElementVisibility(By.id("country-open-edit-modal"));
+        waitForNoCboxOverlay();
     }
     
     public void deleteAllCountriesInCountryModal() {
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForAngular();
         By rowBy = By.xpath("//div[@ng-repeat='country in countryForm.addresses']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(rowBy), webDriver);
-        List<WebElement> webElements = webDriver.findElements(rowBy);
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
-            BBBUtil.ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteCountry(country)']")), webDriver);
-            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteCountry(country)']")));
+            waitForAngular();
         }
     }
 
     public void setCountryInCountryModal(String countryString) {
         By selectLocator = By.xpath("//div[@ng-repeat='country in countryForm.addresses']//select[@name='country']");
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(selectLocator), webDriver);
-        Select selectBox = new Select(webDriver.findElement(selectLocator));
+        waitForElementVisibility(selectLocator);
+        Select selectBox = new Select(findElement(selectLocator));
         selectBox.selectByValue(countryString);
     }
 
     public void markAllPublicInCountryModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-public']")), webDriver);
+        ngAwareClick(findElementByXpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-public']"));
     }
 
     public void markAllPrivateInCountryModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-private']")), webDriver);
+        ngAwareClick(findElementByXpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-private']"));
+    }
+    
+    public void openEditKeywordModal() {
+        waitForElementVisibility(By.id("keyword-open-edit-modal"));
+        ngAwareClick(findElementById("keyword-open-edit-modal"));
+        waitForCboxComplete();
+    }
+
+    public void saveEditKeywordModal() {
+        ngAwareClick(findElementByXpath("//div[@id='colorbox']//button[contains('Save changes',text())]"));        
+        waitForElementVisibility(By.id("keyword-open-edit-modal"));
+        waitForNoCboxOverlay();
+    }
+    
+    public void deleteAllKeywordsInKeywordModal() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='keyword in keywordsForm.keywords']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
+        for (WebElement webElement: webElements) {
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteKeyword(keyword)']")));
+            waitForAngular();
+        }
+    }
+
+    public void addKeywordInKeywordModal(String keywordString) {
+        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        waitForElementVisibility(addNew);
+        waitForAngular();
+        ngAwareClick(findElement(addNew));
+        By emptyInput = By.xpath("(//input[@ng-model='keyword.content'])[last()]");
+        waitForElementVisibility(emptyInput);
+        WebElement input = findElement(emptyInput);
+        input.sendKeys(keywordString);
+    }
+
+    public void markAllPublicInKeywordModal() {
+        ngAwareClick(findElementByXpath("//div[@ng-repeat='keyword in keywordsForm.keywords']//a[@name='privacy-toggle-3-public']"));
+    }
+
+    public void markAllPrivateInKeywordModal() {
+        ngAwareClick(findElementByXpath("//div[@ng-repeat='keyword in keywordsForm.keywords']//a[@name='privacy-toggle-3-private']"));
     }
     
     protected int getPrivacyIndex(Visibility visibility) {
