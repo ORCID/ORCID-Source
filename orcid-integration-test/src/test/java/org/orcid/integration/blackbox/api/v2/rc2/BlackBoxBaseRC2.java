@@ -157,7 +157,8 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
     
     public Long createResearcherUrl(String value, String userOrcid, String accessToken) {
         ResearcherUrl r = new ResearcherUrl();
-        r.setUrl(new Url(value));
+        r.setUrl(new Url("http://test.orcid.org/" + value));
+        r.setUrlName(value);
         ClientResponse response = memberV2ApiClient.createResearcherUrls(userOrcid, r, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
