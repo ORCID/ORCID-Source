@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -39,7 +40,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
- 
+
 /**
  * 
  * @author Angel Montenegro
@@ -52,6 +53,27 @@ public class PersonTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
+
+    private String limitedEmail = "limited@test.orcid.org";
+
+    @Before
+    public void setUpUserInUi() {
+        signin();
+        openEditCountryModal();
+        deleteAllCountriesInCountryModal();
+        setCountryInCountryModal("US");
+        saveEditCountryModal();
+
+        showAccountSettingsPage();
+        openEditEmailsSectionOnAccountSettingsPage();
+        updatePrimaryEmailVisibility(Visibility.PUBLIC);
+        removePopOver();
+        if (emailExists(limitedEmail)) {
+            updateEmailVisibility(limitedEmail, Visibility.LIMITED);
+        } else {
+            addEmail(limitedEmail, Visibility.LIMITED);
+        }
+    }
 
     @Test
     public void testGetBioFromPublicAPI() {
@@ -80,8 +102,8 @@ public class PersonTest extends BlackBoxBaseRC2 {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), accessToken);
-        assertNotNull(response);        
-        assertEquals("invalid "+response,200,response.getStatus());
+        assertNotNull(response);
+        assertEquals("invalid " + response, 200, response.getStatus());
         Thread.sleep(100);
         Person person = response.getEntity(Person.class);
         assertNotNull(person);
@@ -98,7 +120,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
         assertNotNull(person.getEmails());
         EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
-        EmailTest.assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, person.getEmails());
+        EmailTest.assertListContainsEmail(limitedEmail, Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
