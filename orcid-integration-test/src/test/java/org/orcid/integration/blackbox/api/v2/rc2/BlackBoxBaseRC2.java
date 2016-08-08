@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import javax.xml.bind.Unmarshaller;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
-import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.common_rc2.Title;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
@@ -69,8 +67,6 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource(name = "memberV2ApiClient_rc2")
     protected MemberV2ApiClientImpl memberV2ApiClient;    
-    
-    protected List<Long> newOtherNames = new ArrayList<Long>();
     
     public Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
@@ -131,21 +127,6 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         return g1;
     }
         
-    public Long createOtherName(String value, String userOrcid, String accessToken) {
-        OtherName otherName = new OtherName();
-        otherName.setContent(value);
-        ClientResponse response = memberV2ApiClient.createOtherName(userOrcid, otherName, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }  
-    
-    public void deleteOtherName(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteOtherName(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-    
     public Long createKeyword(String value, String userOrcid, String accessToken) {
         Keyword k = new Keyword();
         k.setContent(value);
@@ -193,30 +174,6 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
-    
-    public Long createAddress(Country country, String userOrcid, String accessToken) {
-        Address a = new Address();
-        a.setCountry(country);
-        ClientResponse response = memberV2ApiClient.createAddress(userOrcid, a, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);
-    }
-    
-    public void deleteAddress(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteAddress(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     public Long createWork(String title, String userOrcid, String accessToken) {
         Work work = new Work();

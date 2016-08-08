@@ -24,14 +24,10 @@ import static org.junit.Assert.assertTrue;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.OtherName;
@@ -54,48 +50,34 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     boolean allSet = false;
-    Long publicOtherNameId = null;
-    Long limitedOtherNameId = null;
-
+    String otherName1 = null;
+    String otherName2 = null;
+    
     @Before
     public void setUpData() throws Exception {
-        String accessToken = getAccessToken();
-        assertNotNull(accessToken);
         if(!allSet) {
-            //Create public other name
-            changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
-            Long putCode1 = createOtherName("other-name-" + System.currentTimeMillis(), getUser1OrcidId(), accessToken);
-            publicOtherNameId = putCode1;
-            newOtherNames.add(putCode1);
+            //Show the workspace
+            signin();
             
-            //Create limited other name
-            changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
-            Long putCode2 = createOtherName("other-name-" + System.currentTimeMillis(), getUser1OrcidId(), accessToken);
-            limitedOtherNameId = putCode2;
-            newOtherNames.add(putCode2);
-        }
-        //Show the workspace 
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
-        
-        //Set biography to public
-        changeBiography(null, Visibility.PUBLIC);
-        
-        //Set names to public
-        changeNamesVisibility(Visibility.PUBLIC);
-    }
-    
-    @After
-    public void after() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken();
-        assertNotNull(accessToken);        
-        if(!newOtherNames.isEmpty()) {
-            for(Long putCodeToDelete : newOtherNames) {
-                ClientResponse response = memberV2ApiClient.deleteOtherName(getUser1OrcidId(), putCodeToDelete, accessToken);
-                assertNotNull(response);
-                assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-            }
-        }
-    }
+            //Set biography to public
+            changeBiography(null, Visibility.PUBLIC);
+            
+            //Set names to public
+            changeNamesVisibility(Visibility.PUBLIC);
+            //Create public other name
+            String otherName1 = "other-name-1-" + System.currentTimeMillis(); 
+            createOtherName(otherName1);
+            this.otherName1 = otherName1;
+            
+            String otherName2 = "other-name-2-" + System.currentTimeMillis(); 
+            createOtherName(otherName1);
+            this.otherName2 = otherName2;
+            
+            openEditOtherNamesModal();
+            changeOtherNamesVisibility(Visibility.PUBLIC);
+            saveOtherNamesModal();
+        }        
+    }    
     
     @Test
     public void testGetWithPublicAPI() {
@@ -122,23 +104,22 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
         //There should be at least one, but all should be public
-        boolean found = false;
+        
+        boolean found1 = false, found2 = false;
+        
         for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
             assertEquals(Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getPutCode().equals(publicOtherNameId)) {
-                found = true;
-                break;
+            if(otherName.getContent().equals(otherName1)) {
+                found1 = true;                
+            } else if(otherName.getContent().equals(otherName2)) {
+                found2 = true;
             }
         }
-        assertTrue(found);
+        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
     }
     
     @Test
     public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        webDriver.get(getWebBaseUrl() + "/signin");
-        SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
-        SigninTest.dismissVerifyEmailModal(webDriver);    
         //Change names to limited
         changeNamesVisibility(Visibility.LIMITED);
         
@@ -153,19 +134,22 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        //There should be at least one, but all should be public
-        boolean found = false;
+        //all should be public
+        boolean found1 = false, found2 = false;
         for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {            
             assertEquals(Visibility.PUBLIC, otherName.getVisibility());
-            if(otherName.getPutCode().equals(publicOtherNameId)) {
-                found = true;
-                break;
+            if(otherName.getContent().equals(otherName1)) {
+                found1 = true;                
+            } else if(otherName.getContent().equals(otherName2)) {
+                found2 = true;
             }
         }
-        assertTrue(found);
+        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
         
         //Change other names to limited
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.LIMITED);
+        saveOtherNamesModal();
         
         getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
         assertNotNull(getPersonalDetailsResponse);
@@ -191,11 +175,10 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Rollback to public again//
         ////////////////////////////                
         changeNamesVisibility(Visibility.PUBLIC);
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.PUBLIC);
-        changeBiography(null, Visibility.PUBLIC);
-        
-        //Test that the testGetWithPublicAPI test pass
-        testGetWithPublicAPI();
+        saveOtherNamesModal();
+        changeBiography(null, Visibility.PUBLIC);        
     }
     
     @Test
@@ -213,27 +196,21 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         
         //Check other names
         assertNotNull(personalDetails.getOtherNames());
-        assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        boolean foundPublic = false;
-        boolean foundLimited = false;
-        
+        assertNotNull(personalDetails.getOtherNames().getOtherNames());        
+        boolean found1 = false, found2 = false;
         for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             //Assert that PRIVATE ones belongs to himself
             if(Visibility.PRIVATE.equals(otherName.getVisibility())) {
                 assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
             }
             
-            if(otherName.getPutCode().equals(publicOtherNameId)) {
-                foundPublic = true;
-            }
-            
-            if(otherName.getPutCode().equals(limitedOtherNameId)) {
-                foundLimited = true;
+            if(otherName.getContent().equals(otherName1)) {
+                found1 = true;                
+            } else if(otherName.getContent().equals(otherName2)) {
+                found2 = true;
             }
         }
-        
-        assertTrue(foundPublic);
-        assertTrue(foundLimited);
+        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
         
         //Check names
         assertNotNull(personalDetails.getName());
@@ -245,16 +222,11 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(getUser1CreditName(), personalDetails.getName().getCreditName().getContent());
         assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        webDriver.get(getWebBaseUrl() + "/signin");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        SigninTest.signIn(webDriver, getUser1OrcidId(), getUser1Password());
-        SigninTest.dismissVerifyEmailModal(webDriver);
-        
         //Change all to LIMITED
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         changeNamesVisibility(Visibility.LIMITED);
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.LIMITED);
+        saveOtherNamesModal();
         changeBiography(null, Visibility.LIMITED);
         
         //Verify they are still visible
@@ -273,8 +245,8 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         //Check other names
         assertNotNull(personalDetails.getOtherNames());
         assertNotNull(personalDetails.getOtherNames().getOtherNames());
-        foundPublic = false;
-        foundLimited = false;
+        found1 = false; 
+        found2 = false;
         
         for(OtherName otherName : personalDetails.getOtherNames().getOtherNames()) {
             //Assert that PRIVATE ones belongs to himself
@@ -282,17 +254,15 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
                 assertEquals(getClient2ClientId(), otherName.getSource().retrieveSourcePath());                
             }
             
-            if(otherName.getPutCode().equals(publicOtherNameId)) {
-                foundPublic = true;
-            }
-            
-            if(otherName.getPutCode().equals(limitedOtherNameId)) {
-                foundLimited = true;
+            if(otherName.getContent().equals(otherName1)) {
+                assertEquals(Visibility.LIMITED, otherName.getVisibility());
+                found1 = true;                
+            } else if(otherName.getContent().equals(otherName2)) {
+                assertEquals(Visibility.LIMITED, otherName.getVisibility());
+                found2 = true;
             }
         }
-        
-        assertTrue(foundPublic);
-        assertTrue(foundLimited);
+        assertTrue("found1: " + found1 + " found2: " + found2 , found1 && found2);
         
         //Check names
         assertNotNull(personalDetails.getName());
@@ -306,7 +276,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         
         //Change all to PRIVATE
         changeNamesVisibility(Visibility.PRIVATE);
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.PRIVATE);
+        saveOtherNamesModal();
         changeBiography(null, Visibility.PRIVATE);
         
         //Check nothing is visible
@@ -320,7 +292,9 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         
         //Change all to PUBLIC
         changeNamesVisibility(Visibility.PUBLIC);
+        openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.PUBLIC);
+        saveOtherNamesModal();
         changeBiography(null, Visibility.PUBLIC);  
     }
                               

@@ -114,12 +114,13 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void otherNamesPrivacyTest() throws InterruptedException, JSONException {
         String otherNameValue = "added-other-name-" + System.currentTimeMillis();
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
-        //Create a new other name and set it to public
-        Long otherNamePutcode = createOtherName(otherNameValue, getUser1OrcidId(), accessToken);
+                        
+        //Create a new other name and set it to public        
         showMyOrcidPage();
         openEditOtherNamesModal();
+        createOtherName(otherNameValue);
         changeOtherNamesVisibility(Visibility.PRIVATE);
+        saveOtherNamesModal();
         
         //Verify it doesn't appear in the public page
         try {
@@ -134,6 +135,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditOtherNamesModal();        
         changeOtherNamesVisibility(Visibility.LIMITED);
+        saveOtherNamesModal();
         
         //Verify it doesn't appear in the public page
         try {
@@ -148,26 +150,27 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditOtherNamesModal();        
         changeOtherNamesVisibility(Visibility.PUBLIC);
+        saveOtherNamesModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         otherNamesAppearsInPublicPage(otherNameValue);
         
         //Delete it
-        deleteOtherName(getUser1OrcidId(), otherNamePutcode, accessToken);
+        showMyOrcidPage();
+        openEditOtherNamesModal();
+        deleteOtherNames(otherNameValue);
+        saveOtherNamesModal();
     }    
-    
-    
+        
     @Test
     public void countryPrivacyTest() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
-        Country country = new Country();
-        country.setValue(Iso3166Country.ZW);
-        Long putCode = createAddress(country, getUser1OrcidId(), accessToken);
-        
         showMyOrcidPage();
-        openEditCountryModal();
-        changeAddressVisibility(Visibility.PRIVATE);                
+        openEditAddressModal();
+        deleteAddresses();
+        createAddress(Iso3166Country.ZW.name());
+        changeAddressVisibility(Visibility.PRIVATE);  
+        saveEditAddressModal();
       
         //Verify it doesn't appears again in the public page
         try {
@@ -180,8 +183,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
                 
         //Change visibility to limited
         showMyOrcidPage();
-        openEditCountryModal();
+        openEditAddressModal();
         changeAddressVisibility(Visibility.LIMITED);
+        saveEditAddressModal();
         
         //Verify it doesn't appears again in the public page
         try {
@@ -194,14 +198,18 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
                 
         //Change visibility to public again
         showMyOrcidPage();
-        openEditCountryModal();
+        openEditAddressModal();
         changeAddressVisibility(Visibility.PUBLIC);
+        saveEditAddressModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         addressAppearsInPublicPage("Zimbabwe");
         
-        deleteAddress(getUser1OrcidId(), putCode, accessToken);
+        showMyOrcidPage();
+        openEditAddressModal();
+        deleteAddresses();
+        saveEditAddressModal();
     }
     
     @Test

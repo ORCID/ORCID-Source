@@ -58,17 +58,15 @@ public class AddressTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetAddressWithMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken();
-        assertNotNull(accessToken);
-        Country country = new Country();
-        country.setValue(Iso3166Country.US);
-        Long putCode = createAddress(country, getUser1OrcidId(), accessToken);
-        
         signin();
         showMyOrcidPage();
-        openEditCountryModal();
+        openEditAddressModal();
+        deleteAddresses();
+        createAddress(Iso3166Country.US.name());
         changeAddressVisibility(Visibility.LIMITED);
+        saveEditAddressModal();
         
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -84,10 +82,9 @@ public class AddressTest extends BlackBoxBaseRC2 {
                 assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
             }
             
-            if(putCode.equals(address.getPutCode())) {
+            if(Iso3166Country.US.equals(address.getCountry().getValue())) {
                 assertEquals(Visibility.LIMITED, address.getVisibility());
                 assertEquals(Iso3166Country.US, address.getCountry().getValue());
-                assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
                 found = true;
                 break;
             }            
@@ -95,10 +92,12 @@ public class AddressTest extends BlackBoxBaseRC2 {
         
         assertTrue(found);
         //Delete it
-        deleteAddress(getUser1OrcidId(), putCode, accessToken);        
+        openEditAddressModal();
+        deleteAddresses();
+        saveEditAddressModal();
     }
-
-    @SuppressWarnings({ "deprecation", "rawtypes" })
+    
+    @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {        
         String accessToken = getAccessToken();
@@ -185,27 +184,31 @@ public class AddressTest extends BlackBoxBaseRC2 {
         //Delete
         response = memberV2ApiClient.deleteAddress(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
-        //Check it was deleted
-        testGetAddressWithMembersAPI();
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());        
     }
 
+    @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testGetAddressWithPublicAPI() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        Country country = new Country();
-        country.setValue(Iso3166Country.CR);
-        Long putCode = createAddress(country, getUser1OrcidId(), accessToken);
+
+        Address address = new Address();       
+        address.setCountry(new Country(Iso3166Country.CR));
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
         
-        signin();
-        showMyOrcidPage();
-        openEditCountryModal();
-        changeAddressVisibility(Visibility.PUBLIC);
-        
+        //Create
+        ClientResponse response = memberV2ApiClient.createAddress(getUser1OrcidId(), address, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
         // test read public works
-        ClientResponse response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
+        response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
@@ -213,20 +216,22 @@ public class AddressTest extends BlackBoxBaseRC2 {
         
         boolean found = false;
         
-        for(Address address : addresses.getAddress()) {
+        for(Address add : addresses.getAddress()) {
             assertEquals(Visibility.PUBLIC, address.getVisibility());
             if(putCode.equals(address.getPutCode())) {
-                assertEquals(Iso3166Country.CR, address.getCountry().getValue());
-                assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
+                assertEquals(Iso3166Country.CR, add.getCountry().getValue());
+                assertEquals(getClient1ClientId(), add.getSource().retrieveSourcePath());
                 found = true;
                 break;
             }
         }             
         
         assertTrue(found);
+        signin();
         showMyOrcidPage();
-        openEditCountryModal();
+        openEditAddressModal();
         changeAddressVisibility(Visibility.LIMITED);
+        saveEditAddressModal();
         
         response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -234,7 +239,9 @@ public class AddressTest extends BlackBoxBaseRC2 {
         assertNotNull(addresses);
         assertNull(addresses.getAddress());  
         
-        deleteAddress(getUser1OrcidId(), putCode, accessToken);
+        response = memberV2ApiClient.deleteAddress(getUser1OrcidId(), putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());  
     }
     
     @Test

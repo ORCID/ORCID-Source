@@ -121,16 +121,20 @@ public class BBBUtil {
         }
     }
 
+    public static void ngAwareClick(WebElement webElement){
+        ngAwareClick(webElement, getWebDriver());
+    }
+    
     public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForAngular();
         Actions actions = new Actions(webDriver);
         actions.moveToElement(webElement).perform();
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForAngular();
         actions.click(webElement).perform();
     }
 
     public static void ngAwareSendKeys(String keys, String id, WebDriver webDriver) {
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForAngular();
         ((JavascriptExecutor) webDriver).executeScript(
                 "" + "angular.element('#" + id + "').triggerHandler('focus');" + "angular.element('#" + id + "').val('" + keys + "');" + "angular.element('#" + id
                         + "').triggerHandler('change');" + "angular.element('#" + id + "').triggerHandler('blur');" + "angular.element('#" + id + "').scope().$apply();");
@@ -144,9 +148,20 @@ public class BBBUtil {
     public static void noSpinners(WebDriver webDriver) {
         (new WebDriverWait(webDriver, 20, 100)).until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("i.glyphicon-refresh")));
     }
+    
+    public static void waitForNoCboxOverlay() {
+        noCboxOverlay(getWebDriver());
+        waitForAngular();
+    }
+    
 
     public static void noCboxOverlay(WebDriver webDriver) {
         (new WebDriverWait(webDriver, 20, 100)).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[@id='cboxOverlay']")));
+    }
+    
+    public static void waitForCboxComplete(){
+        extremeWaitFor(cboxComplete(), getWebDriver());
+        waitForAngular();
     }
 
     public static void shortWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
@@ -237,9 +252,21 @@ public class BBBUtil {
     public static WebElement findElement(By elementLocatedBy) {
         return getWebDriver().findElement(elementLocatedBy);
     }
+    
+    public static WebElement findElementById(String id) {
+        return findElement(By.id(id));
+    }
 
     public static WebElement findElementByXpath(String xpath) {
         return findElement(By.xpath(xpath));
+    }
+    
+    public static List<WebElement> findElements(By elementsLocatedBy) {
+        return getWebDriver().findElements(elementsLocatedBy);
+    }
+    
+    public static List<WebElement> findElementsByXpath(String xpath) {
+        return getWebDriver().findElements(By.xpath(xpath));
     }
 
     public static void getUrl(String url) {
