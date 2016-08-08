@@ -29,22 +29,24 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.By.ById;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
+import org.orcid.jaxb.model.common_rc2.Day;
+import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Month;
+import org.orcid.jaxb.model.common_rc2.Organization;
+import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.Year;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc2.Role;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -114,7 +116,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     public void otherNamesPrivacyTest() throws InterruptedException, JSONException {
         String otherNameValue = "added-other-name-" + System.currentTimeMillis();
                         
-        //Create a new other name and set it to public        
+        //Create a new other name and set it to public  
         showMyOrcidPage();
         openEditOtherNamesModal();
         createOtherName(otherNameValue);
@@ -164,7 +166,6 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         
     @Test
     public void addressPrivacyTest() throws InterruptedException, JSONException {
-        showMyOrcidPage();
         openEditAddressModal();
         deleteAddresses();
         createAddress(Iso3166Country.ZW.name());
@@ -306,6 +307,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showPublicProfilePage(getUser1OrcidId());
         researcherUrlAppearsInPublicPage(rUrl);
         
+        showMyOrcidPage();
+        openEditResearcherUrlsModal();
         deleteResearcherUrls();
     }
     
@@ -350,6 +353,8 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showPublicProfilePage(getUser1OrcidId());
         externalIdentifiersAppearsInPublicPage(extId);
         
+        showMyOrcidPage();
+        openEditExternalIdentifiersModal();
         deleteExternalIdentifiers();
     }
 
@@ -474,104 +479,112 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         deleteEmployment(institutionName);
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
+        String fundingTitle = "added-funding-" + System.currentTimeMillis();
+        showMyOrcidPage();
+        openAddFundingModal();
+        createFunding(fundingTitle);
+        changeFundingVisibility(fundingTitle, Visibility.PRIVATE);       
         
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            fundingAppearsInPublicPage(fundingTitle);
+            fail();
+        } catch(Exception e) {
+            
+        }
+        
+        showMyOrcidPage();
+        changeFundingVisibility(fundingTitle, Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            fundingAppearsInPublicPage(fundingTitle);
+            fail();
+        } catch(Exception e) {
+            
+        } 
+        
+        showMyOrcidPage();
+        changeFundingVisibility(fundingTitle, Visibility.PUBLIC);
+        
+        //Verify it appears in the public page
+        showPublicProfilePage(getUser1OrcidId());
+        fundingAppearsInPublicPage(fundingTitle);
+        
+        showMyOrcidPage();
+        deleteFunding(fundingTitle);
     }
-
-    
-    
-
-    
-    
-    
-    
-    
-    
     
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
-        //TODO: refactor to match pattern used in bio sections
         // Create peer review group               
         String accessToken = getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
         GroupIdRecord g1 = super.createGroupIdRecord();
 
         // Create peer review
         long time = System.currentTimeMillis();
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
-        peerReview.setPutCode(null);
+        PeerReview peerReview = new PeerReview();        
         peerReview.setGroupId(g1.getGroupId());
+        ExternalIDs extIds = new ExternalIDs();
+        peerReview.setExternalIdentifiers(extIds);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID wExtId = new ExternalID();
         wExtId.setValue("Work Id " + time);
         wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-
+        Organization organization = new Organization();
+        organization.setName("My org name " + System.currentTimeMillis());
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("Imagination city");
+        address.setCountry(Iso3166Country.US);
+        organization.setAddress(address);
+        peerReview.setOrganization(organization);
+        peerReview.setRole(Role.CHAIR);
+        peerReview.setType(PeerReviewType.EVALUATION);
+        peerReview.setCompletionDate(new FuzzyDate(new Year(2016), new Month(1), new Day(1)));
+        
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(this.getUser1OrcidId(), peerReview, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         peerReview = getResponse.getEntity(PeerReview.class);
-
-        // Set it private
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-        WebElement peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
-        BBBUtil.ngAwareClick(peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-
-        // Check the public page
-        showPublicProfilePage(getUser1OrcidId());
+        changePeerReviewVisibility(g1.getName(), Visibility.PRIVATE);
+        
         try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            peerReviewAppearsInPublicPage(g1.getName());
             fail();
-        } catch (Exception e) {
-
-        }
-
-        // Set it public
+        } catch(Exception e) {
+            
+        } 
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-        peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
-        BBBUtil.ngAwareClick(peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-
-        // Check the public page
+        changePeerReviewVisibility(g1.getName(), Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            peerReviewAppearsInPublicPage(g1.getName());
+            fail();
+        } catch(Exception e) {
+            
+        }
+        
+        showMyOrcidPage();
+        changePeerReviewVisibility(g1.getName(), Visibility.PUBLIC);
+        
         showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-
+        peerReviewAppearsInPublicPage(g1.getName());
+        
         // Rollback
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), peerReview.getPutCode(), accessToken);
         assertNotNull(deleteResponse);

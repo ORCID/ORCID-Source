@@ -564,8 +564,7 @@ public class BlackBoxBase {
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(researcherUrlsVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }       
-        saveKeywordsModal();
+        }               
     }
     
     public static void createResearcherUrl(String url) {
@@ -582,7 +581,7 @@ public class BlackBoxBase {
     
     public static void deleteResearcherUrls() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='website in websitesForm.websites']");
+        By rowBy = By.xpath("//div[@id='colorbox']//div[@ng-repeat='website in websitesForm.websites']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
@@ -622,7 +621,7 @@ public class BlackBoxBase {
      
     public static void deleteExternalIdentifiers() {
         waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
+        By rowBy = By.xpath("//div[@id='colorbox']//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
         waitForElementVisibility(rowBy);
         List<WebElement> webElements = findElements(rowBy);
         for (WebElement webElement: webElements) {
@@ -736,7 +735,7 @@ public class BlackBoxBase {
         input.selectByValue(Iso3166Country.US.value());
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -794,7 +793,7 @@ public class BlackBoxBase {
         input.selectByValue(Iso3166Country.US.value());
         
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-affiliation']")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
     }
     
@@ -813,6 +812,90 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byInstitutionName)), webDriver);
         assertTrue(0 == webDriver.findElements(byInstitutionName).size());
     }
+    
+    /**
+     * FUNDINGS
+     * */
+    public static void openAddFundingModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-funding-container")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-funding-container")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-funding")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-funding")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+    }
+    
+    public static void changeFundingVisibility(String title, Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String fundingVisibilityXpath = "//li[@funding-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(fundingVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(fundingVisibilityXpath)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }    
+    
+    public static void createFunding(String fundingTitle) {
+        //Funding type
+        String typeXpath = "//select[@ng-model='editFunding.fundingType.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(typeXpath)), webDriver);
+        WebElement typeInput = findElement(By.xpath(typeXpath));
+        Select input = new Select(typeInput);
+        input.selectByValue("award");
+        
+        //Funding title
+        String fundingTitleXpath = "//input[@ng-model='editFunding.fundingTitle.title.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(fundingTitleXpath)), webDriver);
+        WebElement fundingTitleInput = findElement(By.xpath(fundingTitleXpath));
+        fundingTitleInput.sendKeys(fundingTitle);
+        
+        //Institution name
+        String institutionNameXpath = "//input[@ng-model='editFunding.fundingName.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
+        WebElement fundingInstitutionNameInput = findElement(By.xpath(institutionNameXpath));
+        fundingInstitutionNameInput.sendKeys(fundingTitle);
+        
+        //City
+        String cityXpath = "//input[@ng-model='editFunding.city.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
+        WebElement cityInput = findElement(By.xpath(cityXpath));
+        cityInput.sendKeys("Test land");
+        
+        //Country
+        String countryXpath = "//select[@ng-model='editFunding.country.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
+        WebElement countryInput = findElement(By.xpath(countryXpath));
+        input = new Select(countryInput);
+        input.selectByValue(Iso3166Country.US.value());
+        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-funding']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+    }
+    
+    public static void deleteFunding(String fundingTitle) {
+        By byFundingTitle = By.xpath("//span[@ng-bind='group.getActive().fundingTitle.title.value' and text()='" + fundingTitle + "']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
+        if (wList.size() > 0)
+            for (WebElement we : wList) {
+                String putCode = we.getAttribute("funding-put-code");
+                putCode = "" + putCode;
+                String deleteJsStr = "angular.element('*[ng-app]').injector().get('fundingSrvc').deleteFunding('" + putCode + "');";
+                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+            }
+        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byFundingTitle)), webDriver);
+        assertTrue(0 == webDriver.findElements(byFundingTitle).size());
+    }
+    
+    /**
+     * PEER REVIEW
+     * */
+    public static void changePeerReviewVisibility(String groupName, Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String peerReviewVisibilityXpath = "//li[@orcid-put-code and descendant::span[text()='" + groupName + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(peerReviewVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(peerReviewVisibilityXpath)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }  
     
     /**
      * ACCOUNT SETTINGS PAGE
@@ -935,6 +1018,18 @@ public class BlackBoxBase {
     public boolean employmentAppearsInPublicPage(String institutionName) {                                                
         String publicEmploymentXpath = "//li[@employment-put-code and descendant::span[text()='" + institutionName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicEmploymentXpath)), webDriver);
+        return true;
+    }
+    
+    public boolean fundingAppearsInPublicPage(String fundingTitle) {                                                
+        String publicFundingXpath = "//li[@funding-put-code and descendant::span[text()='" + fundingTitle + "']]";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicFundingXpath)), webDriver);
+        return true;
+    }
+    
+    public boolean peerReviewAppearsInPublicPage(String groupName) {                                                
+        String publicPeerReviewXpath = "//li[@orcid-put-code and descendant::span[text()='" + groupName + "']]";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicPeerReviewXpath)), webDriver);
         return true;
     }
     
