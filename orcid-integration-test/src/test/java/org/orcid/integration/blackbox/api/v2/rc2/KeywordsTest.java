@@ -16,11 +16,8 @@
  */
 package org.orcid.integration.blackbox.api.v2.rc2;
 
-import static org.hamcrest.core.AnyOf.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -30,7 +27,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -57,25 +55,42 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    @Before
-    public void createKeywordsInUi(){
-        signin();
-        openEditKeywordsModal();
-        deleteAllKeywordsInKeywordModal();
-        addKeywordInKeywordModal("keyword-1");
-        addKeywordInKeywordModal("keyword-2");
+    private static String keyword1 = "keyword-1-" + System.currentTimeMillis();
+    private static String keyword2 = "keyword-2-" + System.currentTimeMillis();
+    
+    @BeforeClass
+    public static void setup(){
+        signin();        
+        openEditKeywordsModal();        
+        createKeyword(keyword1);
+        createKeyword(keyword2);
+        changeKeywordsVisibility(Visibility.PUBLIC);
+        saveKeywordsModal();                
+    }
+    
+    @AfterClass
+    public static void after() { 
+        showMyOrcidPage();
+        openEditKeywordsModal(); 
+        deleteKeywords();
         saveKeywordsModal();
+        signout();
     }
 
     /**
-     * PRECONDITIONS: The user should have two public keywords "keyword-1"
-     * and "keyword-2"
+     * PRECONDITIONS: The user should have two public keywords keyword1
+     * and keyword2
      * 
      * @throws JSONException
      * @throws InterruptedException
      */    
     @Test
     public void testGetKeywordsWihtMembersAPI() throws InterruptedException, JSONException {
+        showMyOrcidPage();
+        openEditKeywordsModal();       
+        changeKeywordsVisibility(Visibility.LIMITED);
+        saveKeywordsModal();
+        
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewKeywords(getUser1OrcidId(), accessToken);
@@ -83,16 +98,34 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
         assertNotNull(keywords.getKeywords());
-        assertEquals(2, keywords.getKeywords().size());
-        assertThat(keywords.getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertThat(keywords.getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(1).getVisibility());
+        // There should be at least two, one public and one limited
+        boolean found1 = false;
+        boolean found2 = false;
+
+        for (Keyword keyword : keywords.getKeywords()) {
+            assertEquals(Visibility.LIMITED, keyword.getVisibility());
+            if (keyword.getContent().equals(keyword1)) {
+                found1 = true;
+                
+            } else if (keyword.getContent().equals(keyword2)) {
+                found2 = true;                
+            }
+        }
+
+        assertTrue(found1);        
+        assertTrue(found2);
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
     public void testCreateGetUpdateAndDeleteKeyword() throws InterruptedException, JSONException {
+        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
+        
+        showMyOrcidPage();
+        openEditKeywordsModal();       
+        changeKeywordsVisibility(Visibility.PUBLIC);
+        saveKeywordsModal();
+        
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
         Keyword keyword = new Keyword();
@@ -119,24 +152,26 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         
         boolean found1 = false;
         boolean found2 = false;
-        boolean found3 = false;
+        boolean foundNew = false;
         
-        for(Keyword existingKeyword : keywords.getKeywords()) {
-            assertEquals(Visibility.PUBLIC, existingKeyword.getVisibility());
-            if(existingKeyword.getContent().equals("keyword-1")) {
+        for(Keyword existingKeyword : keywords.getKeywords()) {            
+            if(existingKeyword.getContent().equals(keyword1)) {
+                assertEquals(Visibility.PUBLIC, existingKeyword.getVisibility());
                 found1 = true;
-            } else if(existingKeyword.getContent().equals("keyword-2")) {
+            } else if(existingKeyword.getContent().equals(keyword2)) {
+                assertEquals(Visibility.PUBLIC, existingKeyword.getVisibility());
                 found2 = true;
             } else {
+                assertEquals(Visibility.LIMITED, existingKeyword.getVisibility());
                 assertEquals("keyword-3", existingKeyword.getContent());
                 assertEquals(getClient1ClientId(), existingKeyword.getSource().retrieveSourcePath());
-                found3 = true;
+                foundNew = true;
             }
         }
         
         assertTrue(found1);
         assertTrue(found2);
-        assertTrue(found3);
+        assertTrue(foundNew);
                
         //Get it
         response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
@@ -146,13 +181,13 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         assertNotNull(keyword.getSource());
         assertEquals(getClient1ClientId(), keyword.getSource().retrieveSourcePath());
         assertEquals("keyword-3", keyword.getContent());
-        assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+        assertEquals(Visibility.LIMITED, keyword.getVisibility());
         assertNotNull(keyword.getDisplayIndex());
         Long originalDisplayIndex = keyword.getDisplayIndex(); 
         
         //Save the original visibility
         Visibility originalVisibility = keyword.getVisibility();
-        Visibility updatedVisibility = Visibility.PRIVATE.equals(originalVisibility) ? Visibility.LIMITED : Visibility.PRIVATE;
+        Visibility updatedVisibility = Visibility.PRIVATE;
         
         //Verify you cant update the visibility
         keyword.setVisibility(updatedVisibility);              
@@ -181,31 +216,44 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
         //Delete
         response = memberV2ApiClient.deleteKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-        
-        //Check it was deleted
-        testGetKeywordsWihtMembersAPI();
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());                
     }
 
     /**
-     * PRECONDITIONS: The user should have two public keywords "keyword-1"
-     * and "keyword-2"
+     * PRECONDITIONS: The user should have two public keywords keyword1
+     * and keyword2
      * 
      * @throws JSONException
      * @throws InterruptedException
      */
     @Test
     public void testGetKeywordWithPublicAPI() throws InterruptedException, JSONException {
+        openEditKeywordsModal();       
+        changeKeywordsVisibility(Visibility.PUBLIC);
+        saveKeywordsModal();
+        
         ClientResponse response = publicV2ApiClient.viewKeywordsXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
         assertNotNull(keywords.getKeywords());
-        assertEquals(2, keywords.getKeywords().size());
-        assertThat(keywords.getKeywords().get(0).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertThat(keywords.getKeywords().get(1).getContent(), anyOf(is("keyword-1"), is("keyword-2")));
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(0).getVisibility());
-        assertEquals(Visibility.PUBLIC, keywords.getKeywords().get(1).getVisibility());
+        
+        // There should be at least two, one public and one limited
+        boolean found1 = false;
+        boolean found2 = false;
+
+        for (Keyword keyword : keywords.getKeywords()) {
+            assertEquals(Visibility.PUBLIC, keyword.getVisibility());
+            if (keyword.getContent().equals(keyword1)) {
+                found1 = true;
+                
+            } else if (keyword.getContent().equals(keyword2)) {
+                found2 = true;                
+            }
+        }
+
+        assertTrue(found1);        
+        assertTrue(found2);
     }
 
     @Test

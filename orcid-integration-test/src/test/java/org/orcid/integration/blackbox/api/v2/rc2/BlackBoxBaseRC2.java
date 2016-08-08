@@ -125,39 +125,14 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         g1.setPutCode(Long.valueOf(r1LocationPutCode));        
         
         return g1;
-    }
-        
-    public Long createKeyword(String value, String userOrcid, String accessToken) {
-        Keyword k = new Keyword();
-        k.setContent(value);
-        ClientResponse response = memberV2ApiClient.createKeyword(userOrcid, k, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }  
+    }            
     
-    public void deleteKeyword(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteKeyword(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
     
-    public Long createResearcherUrl(String value, String userOrcid, String accessToken) {
-        ResearcherUrl r = new ResearcherUrl();
-        r.setUrl(new Url("http://test.orcid.org/" + value));
-        r.setUrlName(value);
-        ClientResponse response = memberV2ApiClient.createResearcherUrls(userOrcid, r, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }  
-    
-    public void deleteResearcherUrl(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteResearcherUrl(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-    
+    /**
+     * EXTERNAL IDENTIFIERS
+     * 
+     * External identifiers can't be added through the UI
+     * */
     public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
         PersonExternalIdentifier e = new PersonExternalIdentifier();
         e.setValue(value);
@@ -167,40 +142,10 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         return getPutCodeFromResponse(response);                       
-    }  
+    }          
     
-    public void deleteExternalIdentifier(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteExternalIdentifier(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
     
-    public Long createWork(String title, String userOrcid, String accessToken) {
-        Work work = new Work();
-        WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title(title));
-        work.setWorkTitle(workTitle);
-        ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("OTHER");
-        extId.setUrl(new Url("http://test.orcid.org/" + title));
-        extId.setValue(title);
-        extIds.getExternalIdentifier().add(extId);        
-        work.setWorkExternalIdentifiers(extIds);
-        work.setWorkType(WorkType.TEST);
-        
-        ClientResponse response = memberV2ApiClient.createWorkXml(userOrcid, work, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);
-    }
     
-    public void deleteWork(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteWorkXml(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
     
     
     

@@ -16,8 +16,7 @@
  */
 package org.orcid.integration.blackbox.api;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementById;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementByXpath;
@@ -42,6 +41,7 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -54,14 +54,11 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc1.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Address;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
@@ -330,21 +327,26 @@ public class BlackBoxBase {
         }
     }
     
-    public void showMyOrcidPage() {
-        webDriver.get(getWebBaseUrl() + "/my-orcid");
+    public static void showMyOrcidPage() {
+        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        webDriver.get(baseUrl + "/my-orcid");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         BBBUtil.noSpinners(webDriver);
     }
 
-    public void signin() {
-        webDriver.get(getWebBaseUrl() + "/signin");
+    public static void signin() {
+        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        String userOrcid = BBBUtil.getProperty("org.orcid.web.testUser1.username");
+        String userPassword = BBBUtil.getProperty("org.orcid.web.testUser1.password");
+        webDriver.get(baseUrl + "/signin");
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
+        SigninTest.signIn(webDriver, userOrcid, userPassword);
     }
 
-    public void signout() {
-        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+    public static void signout() {
+        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
+        webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
     }
     
     /**
@@ -392,14 +394,14 @@ public class BlackBoxBase {
     /**
      *  OTHER NAMES
      * */
-    public void openEditOtherNamesModal() {
+    public static void openEditOtherNamesModal() {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
-    public void createOtherName(String value) {
+    public static void createOtherName(String value) {
         By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
@@ -410,14 +412,14 @@ public class BlackBoxBase {
         input.sendKeys(value);        
     }          
     
-    public void saveOtherNamesModal() {
+    public static void saveOtherNamesModal() {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
     }
     
-    public void deleteOtherNames(String value) {
+    public static void deleteOtherNames() {
         waitForAngular();
         By rowBy = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']");
         waitForElementVisibility(rowBy);
@@ -428,7 +430,7 @@ public class BlackBoxBase {
         }
     }
     
-    public void changeOtherNamesVisibility(Visibility visibility) {
+    public static void changeOtherNamesVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
@@ -442,41 +444,19 @@ public class BlackBoxBase {
     /**
      *  KEYWORDS
      * */
-    public void openEditKeywordsModal() {
+    public static void openEditKeywordsModal() {
         waitForElementVisibility(By.id("open-edit-keywords"));
         ngAwareClick(findElementById("open-edit-keywords"));
         waitForCboxComplete();
     }
 
-    public void saveKeywordsModal() {
+    public static void saveKeywordsModal() {
         ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));        
         waitForElementVisibility(By.id("open-edit-keywords"));
         waitForNoCboxOverlay();
-    }
-    
-    public void deleteAllKeywordsInKeywordModal() {
-        waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='keyword in keywordsForm.keywords']");
-        waitForElementVisibility(rowBy);
-        List<WebElement> webElements = findElements(rowBy);
-        for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteKeyword(keyword)']")));
-            waitForAngular();
-        }
-    }
+    }        
 
-    public void addKeywordInKeywordModal(String keywordString) {
-        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
-        waitForElementVisibility(addNew);
-        waitForAngular();
-        ngAwareClick(findElement(addNew));
-        By emptyInput = By.xpath("(//input[@ng-model='keyword.content'])[last()]");
-        waitForElementVisibility(emptyInput);
-        WebElement input = findElement(emptyInput);
-        input.sendKeys(keywordString);
-    }
-
-    public void changeKeywordsVisibility(Visibility visibility) {
+    public static void changeKeywordsVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String keywordsVisibilityXpath = "//div[@ng-repeat='keyword in keywordsForm.keywords']//ul[@class='privacyToggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(keywordsVisibilityXpath)), webDriver);
@@ -487,22 +467,44 @@ public class BlackBoxBase {
         }        
     }
     
+    public static void createKeyword(String value) {
+        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        waitForElementVisibility(addNew);
+        waitForAngular();
+        ngAwareClick(findElement(addNew));
+        By emptyInput = By.xpath("(//input[@ng-model='keyword.content'])[last()]");
+        waitForElementVisibility(emptyInput);
+        WebElement input = findElement(emptyInput);
+        input.sendKeys(value);
+    }  
+    
+    public static void deleteKeywords() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='keyword in keywordsForm.keywords']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
+        for (WebElement webElement: webElements) {
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteKeyword(keyword)']")));
+            waitForAngular();
+        }
+    }
+    
     /**
-     * COUNTRY
+     * Address
      * */
-    public void openEditAddressModal() {
+    public static void openEditAddressModal() {
         waitForElementVisibility(By.id("country-open-edit-modal"));
         ngAwareClick(findElementById("country-open-edit-modal"));
         waitForCboxComplete();
     }
 
-    public void saveEditAddressModal() {
+    public static void saveEditAddressModal() {
         ngAwareClick(findElementByXpath("//div[@id='colorbox']//button[contains('Save changes',text())]"));        
         waitForElementVisibility(By.id("country-open-edit-modal"));
         waitForNoCboxOverlay();
     }    
 
-    public void changeAddressVisibility(Visibility visibility) {
+    public static void changeAddressVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         
         String countriesVisibilityXpath = "//div[@ng-repeat='country in countryForm.addresses']//descendant::div[@id='privacy-bar']/ul/li[" + index + "]/a";
@@ -514,7 +516,7 @@ public class BlackBoxBase {
         }                
     }                
     
-    public void createAddress(String countryCode) {
+    public static void createAddress(String countryCode) {
         By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
@@ -526,7 +528,7 @@ public class BlackBoxBase {
         input.selectByValue(countryCode);
     }
     
-    public void deleteAddresses() {
+    public static void deleteAddresses() {
         waitForAngular();
         By rowBy = By.xpath("//div[@ng-repeat='country in countryForm.addresses']");
         waitForElementVisibility(rowBy);
@@ -540,21 +542,21 @@ public class BlackBoxBase {
     /**
      * RESEARCHER URLS
      * */
-    public void openEditResearcherUrlsModal() {
+    public static void openEditResearcherUrlsModal() {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-websites")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
-    public void saveResearcherUrlsModal() {
+    public static void saveResearcherUrlsModal() {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-websites")), webDriver);
     }
     
-    public void changeResearcherUrlsVisibility(Visibility visibility) {
+    public static void changeResearcherUrlsVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String researcherUrlsVisibilityXpath = "//div[@ng-repeat='website in websitesForm.websites']//ul[@class='privacyToggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(researcherUrlsVisibilityXpath)), webDriver);
@@ -566,24 +568,47 @@ public class BlackBoxBase {
         saveKeywordsModal();
     }
     
+    public static void createResearcherUrl(String url) {
+        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        waitForElementVisibility(addNew);
+        waitForAngular();
+        ngAwareClick(findElement(addNew));
+        waitForAngular();
+        By urlXpath = By.xpath("(//input[@ng-model='website.url'])[last()]");
+        waitForElementVisibility(urlXpath);
+        WebElement urlInput = findElement(urlXpath);
+        urlInput.sendKeys(url);
+    }  
+    
+    public static void deleteResearcherUrls() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='website in websitesForm.websites']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
+        for (WebElement webElement: webElements) {
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteWebsite(website)']")));
+            waitForAngular();
+        }
+    }
+    
     /**
      * EXTERNAL IDENTIFIERS
      * */
-    public void openEditExternalIdentifiersModal() {
+    public static void openEditExternalIdentifiersModal() {
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-external-identifiers")), webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
     
-    public void saveExternalIdentifiersModal() {
+    public static void saveExternalIdentifiersModal() {
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
         BBBUtil.noCboxOverlay(webDriver);
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
     }
     
-    public void changeExternalIdentifiersVisibility(Visibility visibility) {
+    public static void changeExternalIdentifiersVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String extIdsVisibilityXpath = "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']//ul[@class='privacyToggle']/li[" + index +"]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(extIdsVisibilityXpath)), webDriver);
@@ -595,10 +620,28 @@ public class BlackBoxBase {
         saveKeywordsModal();
     }
      
+    public static void deleteExternalIdentifiers() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
+        for (WebElement webElement: webElements) {
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteExternalIdentifier(externalIdentifier)']")));
+        }          
+    }
+    
     /**
      * WORKS
      * */
-    public void changeWorksVisibility(String title, Visibility visibility) {
+    public static void openAddWorkModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-work-container")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work-container")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-work")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+    }
+    
+    public static void changeWorksVisibility(String title, Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         String workVisibilityXpath = "//li[@orcid-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(workVisibilityXpath)), webDriver);
@@ -606,9 +649,35 @@ public class BlackBoxBase {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }    
     
-    /**
-     * WORKS
-     * */
+    public static void createWork(String workTitle) {
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//select[@ng-model='editWork.workCategory.value']")), webDriver);
+        BBBUtil.ngAwareSendKeys("conference","workCategory", webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//option[text()='Conference paper']")), webDriver);
+        BBBUtil.ngAwareSendKeys("string:conference-abstract","workType", webDriver);
+        BBBUtil.ngAwareSendKeys("doi","worksIdType0", webDriver);
+        BBBUtil.ngAwareSendKeys("10.10/"+System.currentTimeMillis(),"worksIdValue0", webDriver);
+        BBBUtil.ngAwareSendKeys(workTitle, "work-title", webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-new-work']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+    }
+    
+    public static void deleteWork(String workTitle) {
+        By byWorkTitle = By.xpath("//span[@ng-bind='work.title.value' and text()='" + workTitle + "']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
+        if (wList.size() > 0)
+            for (WebElement we : wList) {
+                String putCode = we.getAttribute("orcid-put-code");
+                putCode = "" + putCode;
+                String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
+                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+            }
+        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byWorkTitle)), webDriver);
+        assertTrue(0 == webDriver.findElements(byWorkTitle).size());
+    }
+        
     public void removeAllWorks() {
         List<WebElement> trashCans = findWorksTrashCans();
         while (!trashCans.isEmpty()) {
@@ -629,7 +698,69 @@ public class BlackBoxBase {
         List<WebElement> trashCans = findElementsByXpath(trashCansXpath).stream().filter(t -> t.isDisplayed()).collect(Collectors.toList());
         return trashCans;
     }
-                  
+             
+    /**
+     * EDUCATIONS
+     * */
+    public static void openAddEducationModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-education-container")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-education-container")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-education")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-education")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+    }
+    
+    public static void changeEducationVisibility(String title, Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String educationVisibilityXpath = "//li[@education-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(educationVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(educationVisibilityXpath)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }    
+    
+    public static void createEducation(String institutionName) {
+        String institutionNameXpath = "//input[@ng-model='editAffiliation.affiliationName.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
+        WebElement affiliationNameInput = findElement(By.xpath(institutionNameXpath));
+        affiliationNameInput.sendKeys(institutionName);
+        
+        String cityXpath = "//input[@ng-model='editAffiliation.city.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
+        WebElement cityInput = findElement(By.xpath(cityXpath));
+        cityInput.sendKeys("Test land");
+        
+        String countryXpath = "//select[@ng-model='editAffiliation.country.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
+        WebElement countryInput = findElement(By.xpath(countryXpath));
+        Select input = new Select(countryInput);
+        input.selectByValue(Iso3166Country.US.value());
+        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+    }
+    
+    public static void deleteEducation(String institutionName) {
+        By byInstitutionName = By.xpath("//span[@ng-bind-html='group.getActive().affiliationName.value' and text()='" + institutionName + "']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@education-put-code and descendant::span[text() = '" + institutionName + "']]"));
+        if (wList.size() > 0)
+            for (WebElement we : wList) {
+                String putCode = we.getAttribute("education-put-code");
+                putCode = "" + putCode;
+                String deleteJsStr = "angular.element('*[ng-app]').injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'education'}});";
+                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+            }
+        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byInstitutionName)), webDriver);
+        assertTrue(0 == webDriver.findElements(byInstitutionName).size());
+    }
+    
+    
+    /**
+     * EMPLOYMENTS
+     * */
+    
     /**
      * ACCOUNT SETTINGS PAGE
      * */
@@ -742,10 +873,16 @@ public class BlackBoxBase {
         return true;
     }
     
+    public boolean educationAppearsInPublicPage(String institutionName) {                                                
+        String publicEducationXpath = "//li[@education-put-code and descendant::span[text()='" + institutionName + "']]";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicEducationXpath)), webDriver);
+        return true;
+    }
+    
     /**
      * GENERAL FUNCTIONS
      * */
-    protected int getPrivacyIndex(Visibility visibility) {
+    protected static int getPrivacyIndex(Visibility visibility) {
         switch(visibility) {
         case PUBLIC:
             return 1;

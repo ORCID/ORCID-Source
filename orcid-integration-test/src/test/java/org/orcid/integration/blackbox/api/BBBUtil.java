@@ -41,6 +41,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BBBUtil {
 
+    public static String getProperty(String key) {
+        Properties prop = SystemPropertiesHelper.getProperties();
+        return prop.getProperty(key);
+    }
+    
     public static void logUserOut(String baseUrl, WebDriver webDriver) {
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
