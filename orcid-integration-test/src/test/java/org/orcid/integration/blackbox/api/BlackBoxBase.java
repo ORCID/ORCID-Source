@@ -543,19 +543,41 @@ public class BlackBoxBase {
     
     /**
      * EXTERNAL IDENTIFIERS
-     * */
+     */
+    public boolean hasExternalIdentifiers() {
+        WebElement openEditElement = findElementById("open-edit-external-identifiers");
+        return openEditElement.isDisplayed();
+    }
+
     public void openEditExternalIdentifiersModal() {
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-external-identifiers")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForElementVisibility(By.id("open-edit-external-identifiers"));
+        ngAwareClick(findElementById("open-edit-external-identifiers"));
+        waitForCboxComplete();
     }
     
     public void saveExternalIdentifiersModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
+        ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)));        
+        waitForNoCboxOverlay();
+    }
+    
+    public void deleteAllExternalIdentifiersInModal() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElement(rowBy).findElements(By.xpath("//span[@ng-click='deleteExternalIdentifier(externalIdentifier)']"));
+        for (WebElement webElement : webElements) {
+            ngAwareClick(webElement);
+            waitForAngular();
+        }
+    }
+    
+    public void updateExternalIdentifierVisibility(String extId, Visibility visibility) {
+        By elementLocation = By.xpath(String.format(
+                "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'][.//a[text()='%s %s']]//div[@id='privacy-bar']/ul/li[%s]/a", extId,
+                extId, getPrivacyIndex(visibility)));
+        waitForElementVisibility(elementLocation);
+        WebElement privacyOption = findElement(elementLocation);
+        ngAwareClick(privacyOption);
     }
     
     public void changeExternalIdentifiersVisibility(Visibility visibility) {

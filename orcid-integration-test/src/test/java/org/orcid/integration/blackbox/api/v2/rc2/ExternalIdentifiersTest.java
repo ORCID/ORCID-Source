@@ -21,8 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -114,7 +112,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     public void testCreateGetUpdateAndDeleteExternalIdentifier() throws InterruptedException, JSONException {        
         //Get access token
         String accessToken = getAccessToken();
-        assertNotNull(accessToken);                
+        assertNotNull(accessToken);
 
         String extId1Value = "A-0003" + System.currentTimeMillis();
         Long putCode = createExternalIdentifier(extId1Value, Visibility.LIMITED);               
@@ -246,50 +244,19 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
     
-    @SuppressWarnings({ "rawtypes", "deprecation" })
-    private Long createExternalIdentifier(String name, Visibility defaultUserVisibility) throws InterruptedException, JSONException {
-        //Change user visibility if needed
-        if(!defaultUserVisibility.equals(currentUserVisibility)) {
+    protected Long createExternalIdentifier(String name, Visibility defaultUserVisibility) throws InterruptedException, JSONException {
+        // Change user visibility if needed
+        if (!defaultUserVisibility.equals(currentUserVisibility)) {
             changeDefaultUserVisibility(webDriver, defaultUserVisibility);
             currentUserVisibility = defaultUserVisibility;
         }
-        
-        //Get the access token
-        String accessToken = getAccessToken();
-        assertNotNull(accessToken);
-        
-        //Create the external identifier
-        PersonExternalIdentifier extId = getExternalIdentifier(name);                
-        ClientResponse response = memberV2ApiClient.createExternalIdentifier(getUser1OrcidId(), extId, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        
-        Map map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
-        String location = resultWithPutCode.get(0).toString();
-        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+        Long putCode = super.createExternalIdentifier(name, defaultUserVisibility);
         createdPutCodes.add(putCode);
         return putCode;
     }
     
     public String getAccessToken() throws InterruptedException, JSONException {
         return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
-    }
-    
-    private PersonExternalIdentifier getExternalIdentifier(String value) {
-        PersonExternalIdentifier externalIdentifier = new PersonExternalIdentifier();
-        externalIdentifier.setType(value);
-        externalIdentifier.setValue(value);
-        externalIdentifier.setUrl(new Url("http://ext-id/" + value));        
-        externalIdentifier.setVisibility(Visibility.PUBLIC);
-        externalIdentifier.setSource(null);        
-        externalIdentifier.setPath(null);
-        externalIdentifier.setLastModifiedDate(null);
-        externalIdentifier.setCreatedDate(null);
-        externalIdentifier.setPutCode(null);
-        return externalIdentifier;
     }
     
 }
