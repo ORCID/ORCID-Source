@@ -69,6 +69,12 @@ public class PersonTest extends BlackBoxBaseRC2 {
         deleteAllCountriesInCountryModal();
         setCountryInCountryModal("US");
         saveEditCountryModal();
+        
+        openEditOtherNamesModal();
+        deleteAllOtherNamesInModal();
+        addOtherNamesInModal("other-name-1");
+        addOtherNamesInModal("other-name-2");
+        saveOtherNamesModal();
 
         if (hasExternalIdentifiers()) {
             openEditExternalIdentifiersModal();

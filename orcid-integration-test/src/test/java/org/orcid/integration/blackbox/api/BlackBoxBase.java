@@ -387,30 +387,50 @@ public class BlackBoxBase {
      *  OTHER NAMES
      * */
     public void openEditOtherNamesModal() {
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForElementVisibility(By.id("open-edit-other-names"));
+        ngAwareClick(findElementById("open-edit-other-names"));
+        waitForCboxComplete();
     }
-    
+
+    public void deleteAllOtherNamesInModal() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
+        for (WebElement webElement : webElements) {
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteOtherName(otherName)']")));
+            waitForAngular();
+        }
+    }
+
+    public void addOtherNamesInModal(String otherName) {
+        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        waitForElementVisibility(addNew);
+        waitForAngular();
+        ngAwareClick(findElement(addNew));
+        By emptyInput = By.xpath("(//input[@ng-model='otherName.content'])[last()]");
+        waitForElementVisibility(emptyInput);
+        WebElement input = findElement(emptyInput);
+        input.sendKeys(otherName);
+    }
+
     public void saveOtherNamesModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
+        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
+        BBBUtil.waitForNoCboxOverlay();
+        BBBUtil.waitForElementVisibility(By.id("open-edit-other-names"));
     }
-    
+
     public void changeOtherNamesVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
-        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index +"]";
+        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
-        
+
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }       
+        }
         saveOtherNamesModal();
-    }        
+    }
     
     /**
      *  KEYWORDS
