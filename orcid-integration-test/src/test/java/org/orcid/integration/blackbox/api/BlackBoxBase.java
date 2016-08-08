@@ -402,7 +402,11 @@ public class BlackBoxBase {
     }
 
     public void setCountryInCountryModal(String countryString) {
-        By selectLocator = By.xpath("//div[@ng-repeat='country in countryForm.addresses']//select[@name='country']");
+        By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
+        waitForElementVisibility(addNew);
+        waitForAngular();
+        ngAwareClick(findElement(addNew));
+        By selectLocator = By.xpath("//div[@ng-repeat='country in countryForm.addresses']//select[@name='country'][last()]");
         waitForElementVisibility(selectLocator);
         Select selectBox = new Select(findElement(selectLocator));
         selectBox.selectByValue(countryString);
