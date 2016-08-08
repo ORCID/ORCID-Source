@@ -28,6 +28,7 @@ import org.openqa.selenium.By.ByXPath;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -247,6 +248,15 @@ public class BBBUtil {
                 return Boolean.valueOf(((JavascriptExecutor) driver).executeScript("" + "return window.cbox_complete").toString());
             }
         };
+    }
+    
+    public static boolean elementExists(By elementLocatedBy) {
+        try {
+            WebElement element = findElement(elementLocatedBy);
+            return element != null;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     public static WebElement findElement(By elementLocatedBy) {
