@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.By.ById;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -338,6 +337,48 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         
         deleteExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
     }
+
+    @Test
+    public void workPrivacyTest() throws InterruptedException, JSONException {
+        String workTitle = "added-work-" + System.currentTimeMillis();
+        String accessToken = getAccessToken(getScopes(ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE));
+        
+        Long putCode = createWork(workTitle, getUser1OrcidId(), accessToken);
+    
+        showMyOrcidPage();
+        changeWorksVisibility(workTitle, Visibility.PRIVATE);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            workAppearsInPublicPage(workTitle);
+            fail();
+        } catch(Exception e) {
+            
+        }    
+    
+        //Change visibility to limited
+        showMyOrcidPage();
+        changeWorksVisibility(workTitle, Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            workAppearsInPublicPage(workTitle);
+            fail();
+        } catch(Exception e) {
+            
+        }
+        
+        showMyOrcidPage();
+        changeWorksVisibility(workTitle, Visibility.PUBLIC);
+        
+        //Verify it appear in the public page
+        showPublicProfilePage(getUser1OrcidId());
+        workAppearsInPublicPage(workTitle);
+        
+        deleteWork(getUser1OrcidId(), putCode, accessToken);        
+    }
     
     @Test
     public void educationPrivacyTest() {
@@ -570,75 +611,16 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
 
     }
 
-    @Test
-    public void workPrivacyTest() throws InterruptedException {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.extremeWaitFor(BBBUtil.documentReady(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-work-container")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-work")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareSendKeys("publication","workCategory", webDriver);
-        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        String workTitle = "Work " + System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys(workTitle,"work-title", webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        //wait for angular to register that values have been typed.
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-new-work")), webDriver);
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+    
+    
 
-        // Set private
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        WebElement workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        BBBUtil.ngAwareClick(workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        // Check public page
-        showPublicProfilePage(getUser1OrcidId());
-        try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
-            fail();
-        } catch (Exception e) {
-
-        }
-
-        // Set public
-        showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-        workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        BBBUtil.ngAwareClick(workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        // Check public page
-        showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        // Rollback
-        showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-        workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        String putCode = workElement.getAttribute("orcid-put-code");
-        String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
-        ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
-    }
-
+    
+    
+    
+    
+    
+    
+    
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
         //TODO: refactor to match pattern used in bio sections

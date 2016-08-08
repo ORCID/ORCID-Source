@@ -36,20 +36,26 @@ import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.Title;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.WorkTitle;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -202,6 +208,66 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    public Long createWork(String title, String userOrcid, String accessToken) {
+        Work work = new Work();
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title(title));
+        work.setWorkTitle(workTitle);
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("OTHER");
+        extId.setUrl(new Url("http://test.orcid.org/" + title));
+        extId.setValue(title);
+        extIds.getExternalIdentifier().add(extId);        
+        work.setWorkExternalIdentifiers(extIds);
+        work.setWorkType(WorkType.TEST);
+        
+        ClientResponse response = memberV2ApiClient.createWorkXml(userOrcid, work, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);
+    }
+    
+    public void deleteWork(String userOrcid, Long putCode, String accessToken) {
+        ClientResponse response = memberV2ApiClient.deleteWorkXml(userOrcid, putCode, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @SuppressWarnings({ "deprecation", "rawtypes" })
     public Long getPutCodeFromResponse(ClientResponse response) {

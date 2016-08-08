@@ -528,7 +528,18 @@ public class BlackBoxBase {
         }       
         saveKeywordsModal();
     }
-                  
+     
+    /**
+     * WORKS
+     * */
+    public void changeWorksVisibility(String title, Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String workVisibilityXpath = "//li[@orcid-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(workVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(workVisibilityXpath)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }    
+    
     /**
      * ACCOUNT SETTINGS PAGE
      * */
@@ -634,7 +645,13 @@ public class BlackBoxBase {
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicExtenalIdentifiersXpath)), webDriver);
         return true;
     }
-            
+    
+    public boolean workAppearsInPublicPage(String workTitle) {                                                
+        String publicWorkXpath = "//li[@orcid-put-code and descendant::span[text()='" + workTitle + "']]";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicWorkXpath)), webDriver);
+        return true;
+    }
+    
     /**
      * GENERAL FUNCTIONS
      * */
