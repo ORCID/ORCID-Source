@@ -18,6 +18,7 @@ package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -57,40 +58,56 @@ public class AddressTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetAddressWithMembersAPI() throws InterruptedException, JSONException {
-        //set up
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        Country country = new Country();
+        country.setValue(Iso3166Country.US);
+        Long putCode = createAddress(country, getUser1OrcidId(), accessToken);
+        
         signin();
         showMyOrcidPage();
         openEditCountryModal();
-        deleteAllCountriesInCountryModal();
-        saveEditCountryModal();
-        openEditCountryModal();
-        setCountryInCountryModal("US");
-        markAllPublicInCountryModal();
-        saveEditCountryModal();
+        changeAddressVisibility(Visibility.LIMITED);
         
-        //test
-        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewAddresses(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
-        assertEquals(1, addresses.getAddress().size());
-        assertEquals(Visibility.PUBLIC, addresses.getAddress().get(0).getVisibility());
-        assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());
+        
+        boolean found = false;
+        
+        for(Address address : addresses.getAddress()) {
+            if(Visibility.PRIVATE.equals(address.getVisibility())) {
+                //If an address is private, check the source is this client
+                assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
+            }
+            
+            if(putCode.equals(address.getPutCode())) {
+                assertEquals(Visibility.LIMITED, address.getVisibility());
+                assertEquals(Iso3166Country.US, address.getCountry().getValue());
+                assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
+                found = true;
+                break;
+            }            
+        }
+        
+        assertTrue(found);
+        //Delete it
+        deleteAddress(getUser1OrcidId(), putCode, accessToken);        
     }
 
     @SuppressWarnings({ "deprecation", "rawtypes" })
     @Test
-    public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+    public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {        
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
 
         Address address = new Address();       
         address.setCountry(new Country(Iso3166Country.CR));
-        address.setVisibility(Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+        
         //Create
         ClientResponse response = memberV2ApiClient.createAddress(getUser1OrcidId(), address, accessToken);
         assertNotNull(response);
@@ -107,24 +124,19 @@ public class AddressTest extends BlackBoxBaseRC2 {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
-        assertNotNull(addresses.getAddress());
-        assertEquals(2, addresses.getAddress().size());
-                
-        boolean foundUS = false;
+        assertNotNull(addresses.getAddress());        
+                        
         boolean foundCR = false;
         
         for(Address add : addresses.getAddress()) {
             assertEquals(Visibility.PUBLIC, add.getVisibility());
             assertNotNull(add.getCountry());
             assertNotNull(add.getCountry().getValue());
-            if(add.getCountry().getValue().equals(Iso3166Country.US)) {
-                foundUS = true;
-            } else if(add.getCountry().getValue().equals(Iso3166Country.CR)) {
+            if(add.getCountry().getValue().equals(Iso3166Country.CR)) {
                 foundCR = true;
             }
         }
         
-        assertTrue(foundUS);
         assertTrue(foundCR);
                
         //Get it
@@ -145,7 +157,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
         Visibility originalVisibility = address.getVisibility();
         Visibility updatedVisibility = Visibility.LIMITED;
         
-        //Verify you cant update the visibility
+        //Verify you can't update the visibility
         address.setVisibility(updatedVisibility);              
         ClientResponse putResponse = memberV2ApiClient.updateAddress(getUser1OrcidId(), address, accessToken);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
@@ -181,16 +193,16 @@ public class AddressTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testGetAddressWithPublicAPI() throws InterruptedException, JSONException {
-        //set up
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
+        Country country = new Country();
+        country.setValue(Iso3166Country.CR);
+        Long putCode = createAddress(country, getUser1OrcidId(), accessToken);
+        
         signin();
         showMyOrcidPage();
         openEditCountryModal();
-        deleteAllCountriesInCountryModal();
-        saveEditCountryModal();
-        openEditCountryModal();
-        setCountryInCountryModal("US");
-        markAllPublicInCountryModal();
-        saveEditCountryModal();
+        changeAddressVisibility(Visibility.PUBLIC);
         
         // test read public works
         ClientResponse response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
@@ -198,9 +210,31 @@ public class AddressTest extends BlackBoxBaseRC2 {
         Addresses addresses = response.getEntity(Addresses.class);
         assertNotNull(addresses);
         assertNotNull(addresses.getAddress());
-        assertEquals(1, addresses.getAddress().size());
-        assertEquals(Visibility.PUBLIC, addresses.getAddress().get(0).getVisibility());
-        assertEquals(Iso3166Country.US, addresses.getAddress().get(0).getCountry().getValue());      
+        
+        boolean found = false;
+        
+        for(Address address : addresses.getAddress()) {
+            assertEquals(Visibility.PUBLIC, address.getVisibility());
+            if(putCode.equals(address.getPutCode())) {
+                assertEquals(Iso3166Country.CR, address.getCountry().getValue());
+                assertEquals(getClient1ClientId(), address.getSource().retrieveSourcePath());
+                found = true;
+                break;
+            }
+        }             
+        
+        assertTrue(found);
+        showMyOrcidPage();
+        openEditCountryModal();
+        changeAddressVisibility(Visibility.LIMITED);
+        
+        response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        addresses = response.getEntity(Addresses.class);
+        assertNotNull(addresses);
+        assertNull(addresses.getAddress());  
+        
+        deleteAddress(getUser1OrcidId(), putCode, accessToken);
     }
     
     @Test

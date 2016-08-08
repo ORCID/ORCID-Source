@@ -97,7 +97,7 @@
 	        	<div class="workspace-section-header">
         	   		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
 	        	   	<span>
-	        	   	  	<span class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
+	        	   	  	<span id="open-edit-keywords" class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
 	        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
 	        	         	{{ $last?keyword.content:keyword.content+ ", "}}
 	        	      	</span>
@@ -110,7 +110,7 @@
 	        	<div class="workspace-section-header">
 	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
 	        	   <span>
-	        	      <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()" title=""></span><br />
+	        	      <span id="open-edit-websites" class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()" title=""></span><br />
                          <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
 	        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
 	        	      </div>
@@ -133,7 +133,7 @@
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
        			<div class="workspace-section-header">
        				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
-       				<span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
+       				<span id="open-edit-external-identifiers" class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
        			</div>
        			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
 		        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>

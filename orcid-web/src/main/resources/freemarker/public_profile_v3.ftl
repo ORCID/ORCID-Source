@@ -63,7 +63,7 @@
 		                	</div>
 		                	<div id="public-other-names-div" class="public-content">
 				                <#list publicGroupedOtherNames?keys as otherName>
-				                	${otherName}<#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
+				                	<span name="other-name">${otherName}</span><#if otherName_has_next><span ng-if="showSources['other-names'] == false || showSources['other-names'] == null">,</span></#if>				                	
 				                	<div ng-if="showSources['other-names']" class="source-line separator" ng-cloak>
 				                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 				                			<#list publicGroupedOtherNames[otherName] as otherNameSource>
@@ -139,7 +139,7 @@
 								</ul>								
 		                		<div id="public-country-div" class="public-content">		                					                						                			
 	                				<#list publicGroupedAddresses?keys as address>
-					                	${countryNames[address]}<#if address_has_next><span ng-if="showSources['countries'] == false || showSources['countries'] == null">,</span></#if>				                	
+					                	<span name="country">${countryNames[address]}</span><#if address_has_next><span ng-if="showSources['countries'] == false || showSources['countries'] == null">,</span></#if>				                	
 					                	<div ng-if="showSources['countries']" class="source-line separator" ng-cloak>
 					                		<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 					                			<#list publicGroupedAddresses[address] as addressSource>
@@ -174,7 +174,7 @@
 								</ul>	
 		                		<div id="public-keywords-div" class="public-content">	                    			
 	                    			<#list publicGroupedKeywords?keys as keyword>                    							               
-										${keyword}<#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>
+										<span name="keyword">${keyword}</span><#if keyword_has_next><span ng-if="showSources['keywords'] == false || showSources['keywords'] == null">,</span></#if>
 										<div ng-if="showSources['keywords']" class="source-line separator" ng-cloak>
 											<p>${springMacroRequestContext.getMessage("public_record.sources")}:<br />
 												<#list publicGroupedKeywords[keyword] as keywordSource>																									

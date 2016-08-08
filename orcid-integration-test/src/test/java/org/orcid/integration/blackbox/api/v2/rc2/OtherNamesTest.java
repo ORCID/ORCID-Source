@@ -73,7 +73,7 @@ public class OtherNamesTest extends BlackBoxBaseRC2 {
             return;
         }
         OrcidUi orcidUi = new OrcidUi(getWebBaseUrl(), webDriver);
-        logUserOut();
+        signout();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
