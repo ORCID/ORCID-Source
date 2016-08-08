@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -55,6 +56,16 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
+    
+    @Before
+    public void createKeywordsInUi(){
+        signin();
+        openEditKeywordsModal();
+        deleteAllKeywordsInKeywordModal();
+        addKeywordInKeywordModal("keyword-1");
+        addKeywordInKeywordModal("keyword-2");
+        saveKeywordsModal();
+    }
 
     /**
      * PRECONDITIONS: The user should have two public keywords "keyword-1"

@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.orcid.integration.blackbox.api.BBBUtil.noSpinners;
+import static org.orcid.integration.blackbox.api.BBBUtil.waitForAngular;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -83,6 +85,13 @@ public class MemberV2Test extends BlackBoxBaseRC2 {
     public void before() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();  
         groupRecords = createGroupIds();
+        
+        // Remove remaining works using UI, because clients aren't allowed to
+        // delete works that they are not the source of.
+        signin();
+        noSpinners();
+        waitForAngular();
+        removeAllWorks();
     }
 
     @After
