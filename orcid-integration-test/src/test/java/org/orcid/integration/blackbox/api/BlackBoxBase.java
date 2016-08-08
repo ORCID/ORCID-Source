@@ -498,14 +498,6 @@ public class BlackBoxBase {
         selectBox.selectByValue(countryString);
     }
 
-    public void markAllPublicInCountryModal() {
-        ngAwareClick(findElementByXpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-public']"));
-    }
-
-    public void markAllPrivateInCountryModal() {
-        ngAwareClick(findElementByXpath("//div[@ng-repeat='country in countryForm.addresses']//a[@name='privacy-toggle-3-private']"));
-    }
-
     public void changeAddressVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
         
