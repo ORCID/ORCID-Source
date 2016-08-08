@@ -60,13 +60,12 @@ public class KeywordsTest extends BlackBoxBaseRC2 {
     @Before
     public void createKeywordsInUi(){
         signin();
-        openEditKeywordModal();
+        openEditKeywordsModal();
         deleteAllKeywordsInKeywordModal();
         addKeywordInKeywordModal("keyword-1");
         addKeywordInKeywordModal("keyword-2");
-        saveEditKeywordModal();
+        saveKeywordsModal();
     }
-    
 
     /**
      * PRECONDITIONS: The user should have two public keywords "keyword-1"

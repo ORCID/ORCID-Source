@@ -97,7 +97,7 @@ public class AccountSettingsTest extends BlackBoxBase {
 
     @Test
     public void emailsTestAsDelegate() {
-        logUserOut();
+        signout();
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());

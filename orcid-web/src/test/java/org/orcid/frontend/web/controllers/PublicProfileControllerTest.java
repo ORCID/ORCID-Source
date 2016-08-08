@@ -103,7 +103,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     public void testViewValidUser() {
         ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, userOrcid);
         assertEquals("public_profile_v3", mav.getViewName());
@@ -158,8 +158,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(1, publicKeywords.size());       
         assertEquals(Long.valueOf(9), publicKeywords.get(0).getPutCode());
         assertEquals("PUBLIC", publicKeywords.get(0).getContent());
-        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());  
-        
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());          
         
         assertTrue(model.containsKey("publicGroupedResearcherUrls"));
         Map<String, List<ResearcherUrl>> rUrls = (Map<String, List<ResearcherUrl>>) model.get("publicGroupedResearcherUrls");        
@@ -267,8 +266,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(Long.valueOf(18), publicOtherNames.get(0).getPutCode());
         assertEquals("PUBLIC", publicOtherNames.get(0).getContent());
         assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());        
-        
-        
+                
         assertTrue(model.containsKey("publicGroupedAddresses"));
         Map<String, List<Address>> groupedAddresses = (Map<String, List<Address>>) model.get("publicGroupedAddresses");        
         assertNotNull(groupedAddresses);
@@ -287,8 +285,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         List<Keyword> publicKeywords = groupedKeywords.get("PUBLIC");
         assertEquals(Long.valueOf(14), publicKeywords.get(0).getPutCode());
         assertEquals("PUBLIC", publicKeywords.get(0).getContent());
-        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());
-        
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());        
         
         assertTrue(model.containsKey("publicGroupedResearcherUrls"));
         Map<String, List<ResearcherUrl>> rUrls = ( Map<String, List<ResearcherUrl>>) model.get("publicGroupedResearcherUrls");

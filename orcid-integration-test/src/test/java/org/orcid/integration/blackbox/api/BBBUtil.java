@@ -164,14 +164,28 @@ public class BBBUtil {
         waitForAngular();
     }
 
+    public static void shortWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
+        int wait = 5;
+        int pollingInterval = 250;
+        waitFor(wait, pollingInterval, expectedCondition, webDriver, false);
+    }
+    
     public static void extremeWaitFor(ExpectedCondition<?> expectedCondition, WebDriver webDriver) {
         int wait = 20;
-        int pollingInternval = 250;
+        int pollingInterval = 250;
+        waitFor(wait, pollingInterval, expectedCondition, webDriver, true);
+    }
+    
+    private static void waitFor(int wait, int pollingInterval, ExpectedCondition<?> expectedCondition, WebDriver webDriver, boolean retry) {
         try {
-            (new WebDriverWait(webDriver, wait, pollingInternval)).until(expectedCondition);
+            (new WebDriverWait(webDriver, wait, pollingInterval)).until(expectedCondition);
         } catch (Exception e) {
-            ((JavascriptExecutor) webDriver).executeScript("$(window).trigger('resize');");
-            (new WebDriverWait(webDriver, wait, pollingInternval)).until(expectedCondition);
+            if(retry) {
+                ((JavascriptExecutor) webDriver).executeScript("$(window).trigger('resize');");
+                (new WebDriverWait(webDriver, wait, pollingInterval)).until(expectedCondition);
+            } else {
+                throw e;
+            }
         }
     }
 

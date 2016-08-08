@@ -60,7 +60,7 @@ public class EmailTest extends BlackBoxBaseRC2 {
     
     @Before
     public void setUpData() {
-        logUserOut();
+        signout();
         webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         webDriver.get(getWebBaseUrl() + "/my-orcid");

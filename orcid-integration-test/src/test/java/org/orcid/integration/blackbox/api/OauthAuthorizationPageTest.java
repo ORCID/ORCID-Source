@@ -176,7 +176,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
-        logUserOut();
+        signout();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), false, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
@@ -212,7 +212,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void skipAuthorizationScreenIfTokenLongLifeAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
-        logUserOut();
+        signout();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
@@ -268,7 +268,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
         // First get the authorization code
-        logUserOut();
+        signout();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.FUNDING_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
@@ -285,7 +285,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         assertFalse(PojoUtil.isEmpty(accessToken));
         
         
-        logUserOut();
+        signout();
         // Then, ask again for permissions over other scopes. 
         currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.AFFILIATIONS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
@@ -303,7 +303,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
         assertFalse(otherAccessToken.equals(accessToken));
 
-        logUserOut();
+        signout();
         currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_WORKS_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
