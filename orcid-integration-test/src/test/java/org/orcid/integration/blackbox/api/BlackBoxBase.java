@@ -760,6 +760,59 @@ public class BlackBoxBase {
     /**
      * EMPLOYMENTS
      * */
+    public static void openAddEmploymentModal() {
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-employment-container")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment-container")), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.id("add-employment")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
+    }
+    
+    public static void changeEmploymentVisibility(String title, Visibility visibility) {
+        int index = getPrivacyIndex(visibility);
+        String employmentVisibilityXpath = "//li[@employment-put-code and descendant::span[text()='" + title + "']]//div[@id='privacy-bar']/ul/li[" + index + "]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(employmentVisibilityXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(employmentVisibilityXpath)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+    }    
+    
+    public static void createEmployment(String institutionName) {
+        String institutionNameXpath = "//input[@ng-model='editAffiliation.affiliationName.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(institutionNameXpath)), webDriver);
+        WebElement affiliationNameInput = findElement(By.xpath(institutionNameXpath));
+        affiliationNameInput.sendKeys(institutionName);
+        
+        String cityXpath = "//input[@ng-model='editAffiliation.city.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(cityXpath)), webDriver);
+        WebElement cityInput = findElement(By.xpath(cityXpath));
+        cityInput.sendKeys("Test land");
+        
+        String countryXpath = "//select[@ng-model='editAffiliation.country.value']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(countryXpath)), webDriver);
+        WebElement countryInput = findElement(By.xpath(countryXpath));
+        Select input = new Select(countryInput);
+        input.selectByValue(Iso3166Country.US.value());
+        
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+    }
+    
+    public static void deleteEmployment(String institutionName) {
+        By byInstitutionName = By.xpath("//span[@ng-bind-html='group.getActive().affiliationName.value' and text()='" + institutionName + "']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+        List<WebElement> wList = webDriver.findElements(By.xpath("//*[@employment-put-code and descendant::span[text() = '" + institutionName + "']]"));
+        if (wList.size() > 0)
+            for (WebElement we : wList) {
+                String putCode = we.getAttribute("employment-put-code");
+                putCode = "" + putCode;
+                String deleteJsStr = "angular.element('*[ng-app]').injector().get('affiliationsSrvc').deleteAffiliation({'putCode': {'value': '" + putCode + "'},'affiliationType': {'value': 'employment'}});";
+                ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+                BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath("//div[@id='workspace-publications' and @orcid-loaded='true']")), webDriver);
+            }
+        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.presenceOfAllElementsLocatedBy(byInstitutionName)), webDriver);
+        assertTrue(0 == webDriver.findElements(byInstitutionName).size());
+    }
     
     /**
      * ACCOUNT SETTINGS PAGE
@@ -876,6 +929,12 @@ public class BlackBoxBase {
     public boolean educationAppearsInPublicPage(String institutionName) {                                                
         String publicEducationXpath = "//li[@education-put-code and descendant::span[text()='" + institutionName + "']]";
         BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicEducationXpath)), webDriver);
+        return true;
+    }
+    
+    public boolean employmentAppearsInPublicPage(String institutionName) {                                                
+        String publicEmploymentXpath = "//li[@employment-put-code and descendant::span[text()='" + institutionName + "']]";
+        BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(publicEmploymentXpath)), webDriver);
         return true;
     }
     

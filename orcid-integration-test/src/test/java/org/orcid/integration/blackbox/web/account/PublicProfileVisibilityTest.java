@@ -433,160 +433,79 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         deleteEducation(institutionName);
     }
-
+    
     @Test
     public void employmentPrivacyTest() {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment-container")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        BBBUtil.noSpinners(webDriver);
+        String institutionName = "added-employment-" + System.currentTimeMillis();
+        showMyOrcidPage();
+        openAddEmploymentModal();
+        createEmployment(institutionName);
+        changeEmploymentVisibility(institutionName, Visibility.PRIVATE);        
         
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        String employmentName = "Employment" + System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys(employmentName,"affiliationName", webDriver);        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareSendKeys("New Delhi","city", webDriver);        
-
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        
-        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
-        selectBox.selectByVisibleText("India");
-        //wait for angular to register that values have been typed.
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        
-        // Set Private Visibility
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-
-        // Verify
-        showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.noSpinners(webDriver);
-        try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            employmentAppearsInPublicPage(institutionName);
             fail();
-        } catch (Exception e) {
-
+        } catch(Exception e) {
+            
         }
-
-        // Set Public Visibility
-        showMyOrcidPage();
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-        WebElement educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
-        BBBUtil.ngAwareClick(educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-
         
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-
-        // Verify
+        showMyOrcidPage();
+        changeEmploymentVisibility(institutionName, Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            employmentAppearsInPublicPage(institutionName);
+            fail();
+        } catch(Exception e) {
+            
+        } 
+        
+        showMyOrcidPage();
+        changeEmploymentVisibility(institutionName, Visibility.PUBLIC);
+        
+        //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")), webDriver);
-
-        // Rollback changes
-        showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-        educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
-        String putCode = educationElement.getAttribute("employment-put-code");
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("delete-affiliation_" + putCode)), webDriver);
-        BBBUtil.noSpinners(webDriver);
+        employmentAppearsInPublicPage(institutionName);
         
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(ById.id("confirm_delete_affiliation")), webDriver);
-
+        showMyOrcidPage();
+        deleteEmployment(institutionName);
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding-container")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-funding-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-funding")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        long time = System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys("award","fundingType", webDriver);
-        String fundingTitle = "Funding Title " + time;
-        BBBUtil.ngAwareSendKeys(fundingTitle,"fundingTitle", webDriver);
-        BBBUtil.ngAwareSendKeys("Name " + time,"fundingName", webDriver);
-        BBBUtil.ngAwareSendKeys("San Jose","city", webDriver);
-        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
-        selectBox.selectByVisibleText("United States");
-        //wait for angular to register that values have been typed.
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-funding")), webDriver);
-        BBBUtil.noSpinners(webDriver);
         
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-
-        // Change to private
-        WebElement fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
-        BBBUtil.ngAwareClick(fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-
-        // Check public page
-        showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.noSpinners(webDriver);
-        try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
-            fail();
-        } catch (Exception e) {
-
-        }
-
-        // Change to public
-        showMyOrcidPage();
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-        fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
-        BBBUtil.ngAwareClick(fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-
-        // Check public page
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")), webDriver);
-
-        // Rollback changes
-        showMyOrcidPage();
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-        fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
-        String putCode = fundingElement.getAttribute("funding-put-code");
-        BBBUtil.ngAwareClick(fundingElement.findElement(By.id("delete-funding_" + putCode)), webDriver);
-        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(ById.id("confirm-delete-funding")), webDriver);
-
     }
 
     
