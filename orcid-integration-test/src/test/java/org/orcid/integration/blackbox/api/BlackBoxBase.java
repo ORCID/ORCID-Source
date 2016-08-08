@@ -384,6 +384,28 @@ public class BlackBoxBase {
     }
     
     /**
+     * PERSONAL NAMES
+     */
+    public void openEditPersonalNamesSection() {
+        waitForElementVisibility(By.id("open-edit-names"));
+        ngAwareClick(findElementById("open-edit-names"));
+        waitForAngular();
+    }
+
+    public void updatePersonalNamesVisibility(Visibility visibility) {
+        By elementLocation = By.xpath(String.format("//div[@id='names-section']//div[@id='privacy-bar']/ul/li[%s]/a", getPrivacyIndex(visibility)));
+        waitForElementVisibility(elementLocation);
+        WebElement privacyOption = findElement(elementLocation);
+        ngAwareClick(privacyOption);
+    }
+    
+    public void saveOtherNamesSection() {
+        ngAwareClick(findElementByXpath("//div[@id='names-section']//button[contains('Save changes',text())]"));
+        waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("open-edit-names"));
+    }
+    
+    /**
      *  OTHER NAMES
      * */
     public void openEditOtherNamesModal() {
@@ -416,8 +438,8 @@ public class BlackBoxBase {
 
     public void saveOtherNamesModal() {
         ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
-        BBBUtil.waitForNoCboxOverlay();
-        BBBUtil.waitForElementVisibility(By.id("open-edit-other-names"));
+        waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("open-edit-other-names"));
     }
 
     public void changeOtherNamesVisibility(Visibility visibility) {

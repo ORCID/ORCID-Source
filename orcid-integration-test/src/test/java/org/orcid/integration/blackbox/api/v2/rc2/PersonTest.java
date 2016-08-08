@@ -65,6 +65,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     public void setUpUserInUi() {
         signin();
+
+        openEditPersonalNamesSection();
+        updatePersonalNamesVisibility(Visibility.PUBLIC);
+        saveOtherNamesSection();
+
         openEditCountryModal();
         deleteAllCountriesInCountryModal();
         setCountryInCountryModal("US");
