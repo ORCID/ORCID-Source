@@ -138,33 +138,6 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         return getPutCodeFromResponse(response);                       
     }          
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     @SuppressWarnings({ "deprecation", "rawtypes" })
     public Long getPutCodeFromResponse(ClientResponse response) {
         Map map = response.getMetadata();
