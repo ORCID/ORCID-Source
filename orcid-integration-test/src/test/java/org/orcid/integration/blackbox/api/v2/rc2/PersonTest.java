@@ -59,10 +59,10 @@ public class PersonTest extends BlackBoxBaseRC2 {
     @Before
     public void setUpUserInUi() {
         signin();
-        openEditCountryModal();
-        deleteAllCountriesInCountryModal();
-        setCountryInCountryModal("US");
-        saveEditCountryModal();
+        openEditAddressModal();
+        deleteAddresses();
+        createAddress(Iso3166Country.US.name());
+        saveEditAddressModal();
 
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();

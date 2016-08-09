@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +34,26 @@ import javax.xml.bind.Unmarshaller;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
-import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.Title;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Education;
 import org.orcid.jaxb.model.record_rc2.Employment;
+import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.Funding;
 import org.orcid.jaxb.model.record_rc2.Keyword;
 import org.orcid.jaxb.model.record_rc2.OtherName;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
 import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc2.WorkTitle;
+import org.orcid.jaxb.model.record_rc2.WorkType;
 
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -63,8 +67,6 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource(name = "memberV2ApiClient_rc2")
     protected MemberV2ApiClientImpl memberV2ApiClient;    
-    
-    protected List<Long> newOtherNames = new ArrayList<Long>();
     
     public Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
@@ -123,54 +125,14 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         g1.setPutCode(Long.valueOf(r1LocationPutCode));        
         
         return g1;
-    }
-        
-    public Long createOtherName(String value, String userOrcid, String accessToken) {
-        OtherName otherName = new OtherName();
-        otherName.setContent(value);
-        ClientResponse response = memberV2ApiClient.createOtherName(userOrcid, otherName, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }  
+    }            
     
-    public void deleteOtherName(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteOtherName(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
     
-    public Long createKeyword(String value, String userOrcid, String accessToken) {
-        Keyword k = new Keyword();
-        k.setContent(value);
-        ClientResponse response = memberV2ApiClient.createKeyword(userOrcid, k, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }  
-    
-    public void deleteKeyword(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteKeyword(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-    
-    public Long createResearcherUrl(String value, String userOrcid, String accessToken) {
-        ResearcherUrl r = new ResearcherUrl();
-        r.setUrl(new Url("http://test.orcid.org/" + value));
-        r.setUrlName(value);
-        ClientResponse response = memberV2ApiClient.createResearcherUrls(userOrcid, r, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);                       
-    }  
-    
-    public void deleteResearcherUrl(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteResearcherUrl(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-    
+    /**
+     * EXTERNAL IDENTIFIERS
+     * 
+     * External identifiers can't be added through the UI
+     * */
     public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
         PersonExternalIdentifier e = new PersonExternalIdentifier();
         e.setValue(value);
@@ -180,28 +142,34 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         return getPutCodeFromResponse(response);                       
-    }  
+    }          
     
-    public void deleteExternalIdentifier(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteExternalIdentifier(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
     
-    public Long createAddress(Country country, String userOrcid, String accessToken) {
-        Address a = new Address();
-        a.setCountry(country);
-        ClientResponse response = memberV2ApiClient.createAddress(userOrcid, a, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        return getPutCodeFromResponse(response);
-    }
     
-    public void deleteAddress(String userOrcid, Long putCode, String accessToken) {
-        ClientResponse response = memberV2ApiClient.deleteAddress(userOrcid, putCode, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     @SuppressWarnings({ "deprecation", "rawtypes" })
     public Long getPutCodeFromResponse(ClientResponse response) {

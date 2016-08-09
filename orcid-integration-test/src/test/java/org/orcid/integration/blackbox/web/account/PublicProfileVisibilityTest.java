@@ -25,28 +25,28 @@ import java.net.URISyntaxException;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.By.ById;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
-import org.orcid.jaxb.model.common_rc2.Country;
+import org.orcid.jaxb.model.common_rc2.Day;
+import org.orcid.jaxb.model.common_rc2.FuzzyDate;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
+import org.orcid.jaxb.model.common_rc2.Month;
+import org.orcid.jaxb.model.common_rc2.Organization;
+import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
 import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc2.Year;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
 import org.orcid.jaxb.model.record_rc2.ExternalID;
+import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 import org.orcid.jaxb.model.record_rc2.PeerReview;
+import org.orcid.jaxb.model.record_rc2.PeerReviewType;
 import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.record_rc2.Role;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -58,13 +58,13 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void before() {
         signin();
     }
 
-    @After
-    public void after() {
+    @AfterClass
+    public static void after() {
         signout();
     }
 
@@ -115,12 +115,13 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
     @Test
     public void otherNamesPrivacyTest() throws InterruptedException, JSONException {
         String otherNameValue = "added-other-name-" + System.currentTimeMillis();
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
-        //Create a new other name and set it to public
-        Long otherNamePutcode = createOtherName(otherNameValue, getUser1OrcidId(), accessToken);
+                        
+        //Create a new other name and set it to public  
         showMyOrcidPage();
         openEditOtherNamesModal();
+        createOtherName(otherNameValue);
         changeOtherNamesVisibility(Visibility.PRIVATE);
+        saveOtherNamesModal();
         
         //Verify it doesn't appear in the public page
         try {
@@ -135,6 +136,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditOtherNamesModal();        
         changeOtherNamesVisibility(Visibility.LIMITED);
+        saveOtherNamesModal();
         
         //Verify it doesn't appear in the public page
         try {
@@ -149,26 +151,26 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditOtherNamesModal();        
         changeOtherNamesVisibility(Visibility.PUBLIC);
+        saveOtherNamesModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         otherNamesAppearsInPublicPage(otherNameValue);
         
         //Delete it
-        deleteOtherName(getUser1OrcidId(), otherNamePutcode, accessToken);
-    }    
-    
-    
-    @Test
-    public void countryPrivacyTest() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
-        Country country = new Country();
-        country.setValue(Iso3166Country.ZW);
-        Long putCode = createAddress(country, getUser1OrcidId(), accessToken);
-        
         showMyOrcidPage();
-        openEditCountryModal();
-        changeAddressVisibility(Visibility.PRIVATE);                
+        openEditOtherNamesModal();
+        deleteOtherNames();
+        saveOtherNamesModal();
+    }    
+        
+    @Test
+    public void addressPrivacyTest() throws InterruptedException, JSONException {
+        openEditAddressModal();
+        deleteAddresses();
+        createAddress(Iso3166Country.ZW.name());
+        changeAddressVisibility(Visibility.PRIVATE);  
+        saveEditAddressModal();
       
         //Verify it doesn't appears again in the public page
         try {
@@ -181,8 +183,9 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
                 
         //Change visibility to limited
         showMyOrcidPage();
-        openEditCountryModal();
+        openEditAddressModal();
         changeAddressVisibility(Visibility.LIMITED);
+        saveEditAddressModal();
         
         //Verify it doesn't appears again in the public page
         try {
@@ -195,25 +198,29 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
                 
         //Change visibility to public again
         showMyOrcidPage();
-        openEditCountryModal();
+        openEditAddressModal();
         changeAddressVisibility(Visibility.PUBLIC);
+        saveEditAddressModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         addressAppearsInPublicPage("Zimbabwe");
         
-        deleteAddress(getUser1OrcidId(), putCode, accessToken);
+        showMyOrcidPage();
+        openEditAddressModal();
+        deleteAddresses();
+        saveEditAddressModal();
     }
     
     @Test
     public void keywordPrivacyTest() throws InterruptedException, JSONException {
         String keywordValue = "added-keyword-" + System.currentTimeMillis();
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
         //Create a new other name and set it to public
-        Long otherNamePutcode = createKeyword(keywordValue, getUser1OrcidId(), accessToken);
         showMyOrcidPage();
         openEditKeywordsModal();
+        createKeyword(keywordValue);
         changeKeywordsVisibility(Visibility.PRIVATE);
+        saveKeywordsModal();
         
         //Verify it doesn't appear in the public page
         try {
@@ -228,6 +235,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditKeywordsModal();        
         changeKeywordsVisibility(Visibility.LIMITED);
+        saveKeywordsModal();
         
         //Verify it doesn't appear in the public page
         try {
@@ -242,24 +250,29 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditKeywordsModal();
         changeKeywordsVisibility(Visibility.PUBLIC);
+        saveKeywordsModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         keywordsAppearsInPublicPage(keywordValue);
         
         //Delete it
-        deleteKeyword(getUser1OrcidId(), otherNamePutcode, accessToken);
+        showMyOrcidPage();
+        openEditKeywordsModal();        
+        deleteKeywords();
+        saveKeywordsModal();
     }
 
     @Test
     public void websitesPrivacyTest() throws InterruptedException, JSONException {
-        String rUrl = "http://test.orcid.org/" + System.currentTimeMillis();
-        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
+        String rUrl = "http://test.orcid.org/" + System.currentTimeMillis();        
         //Create a new other name and set it to public
-        Long putCode = createResearcherUrl(rUrl, getUser1OrcidId(), accessToken);
         showMyOrcidPage();
         openEditResearcherUrlsModal();
+        createResearcherUrl(rUrl);
         changeResearcherUrlsVisibility(Visibility.PRIVATE);
+        saveResearcherUrlsModal();
+        
         try {
             //Verify it doesn't appear in the public page
             showPublicProfilePage(getUser1OrcidId());
@@ -273,6 +286,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditResearcherUrlsModal();
         changeResearcherUrlsVisibility(Visibility.LIMITED);
+        saveResearcherUrlsModal();
         
         try {
             //Verify it doesn't appear in the public page
@@ -287,12 +301,15 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showMyOrcidPage();
         openEditResearcherUrlsModal();
         changeResearcherUrlsVisibility(Visibility.PUBLIC);
+        saveResearcherUrlsModal();
         
         //Verify it appears again in the public page
         showPublicProfilePage(getUser1OrcidId());
         researcherUrlAppearsInPublicPage(rUrl);
         
-        deleteResearcherUrl(getUser1OrcidId(), putCode, accessToken);
+        showMyOrcidPage();
+        openEditResearcherUrlsModal();
+        deleteResearcherUrls();
     }
     
     @Test
@@ -300,7 +317,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         String extId = "added-ext-id-" + System.currentTimeMillis();
         String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
         //Create a new external identifier and set it to public
-        Long putCode = createExternalIdentifier(extId, getUser1OrcidId(), accessToken);
+        createExternalIdentifier(extId, getUser1OrcidId(), accessToken);
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
         changeExternalIdentifiersVisibility(Visibility.PRIVATE);
@@ -336,363 +353,238 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC2 {
         showPublicProfilePage(getUser1OrcidId());
         externalIdentifiersAppearsInPublicPage(extId);
         
-        deleteExternalIdentifier(getUser1OrcidId(), putCode, accessToken);
+        showMyOrcidPage();
+        openEditExternalIdentifiersModal();
+        deleteExternalIdentifiers();
+    }
+
+    @Test
+    public void workPrivacyTest() throws InterruptedException, JSONException {
+        String workTitle = "added-work-" + System.currentTimeMillis();
+        showMyOrcidPage();
+        openAddWorkModal();
+        createWork(workTitle);
+        changeWorksVisibility(workTitle, Visibility.PRIVATE);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            workAppearsInPublicPage(workTitle);
+            fail();
+        } catch(Exception e) {
+            
+        }    
+    
+        //Change visibility to limited
+        showMyOrcidPage();
+        changeWorksVisibility(workTitle, Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            workAppearsInPublicPage(workTitle);
+            fail();
+        } catch(Exception e) {
+            
+        }
+        
+        showMyOrcidPage();
+        changeWorksVisibility(workTitle, Visibility.PUBLIC);
+        
+        //Verify it appear in the public page
+        showPublicProfilePage(getUser1OrcidId());
+        workAppearsInPublicPage(workTitle);
+        
+        showMyOrcidPage();
+        deleteWork(workTitle);
     }
     
     @Test
     public void educationPrivacyTest() {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(ById.id("add-education")), webDriver);
-        WebElement container = webDriver.findElement(By.id("add-education-container"));
-        BBBUtil.ngAwareClick(container, webDriver);
-        BBBUtil.ngAwareClick(container.findElement(By.id("add-education")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
-        String educationName = "Education" + System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys(educationName,"affiliationName", webDriver);
-        BBBUtil.ngAwareSendKeys("New Delhi","city", webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
-        selectBox.selectByVisibleText("India");
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        //wait for angular to register that values have been typed.
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        String institutionName = "added-education-" + System.currentTimeMillis();
+        showMyOrcidPage();
+        openAddEducationModal();
+        createEducation(institutionName);
+        changeEducationVisibility(institutionName, Visibility.PRIVATE);        
         
-
-        // Set Private Visibility
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
-        WebElement educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
-
-        // Verify
-        showPublicProfilePage(getUser1OrcidId());
         try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            educationAppearsInPublicPage(institutionName);
             fail();
-        } catch (Exception e) {
-
-        }
-
-        // Set Public Visibility
+        } catch(Exception e) {
+            
+        }   
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
-        educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
-        BBBUtil.ngAwareClick(educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
-
-        // Verify
+        changeEducationVisibility(institutionName, Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            educationAppearsInPublicPage(institutionName);
+            fail();
+        } catch(Exception e) {
+            
+        } 
+        
+        showMyOrcidPage();
+        changeEducationVisibility(institutionName, Visibility.PUBLIC);
+        
+        //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + educationName + "')]")), webDriver);
-
-        // Rollback changes
+        educationAppearsInPublicPage(institutionName);
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]")), webDriver);
-        educationElement = webDriver.findElement(By.xpath("//li[@education-put-code and descendant::span[text() = '" + educationName + "']]"));
-        String putCode = educationElement.getAttribute("education-put-code");
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("delete-affiliation_" + putCode)), webDriver);
-
-
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(ById.id("confirm_delete_affiliation")), webDriver);
-
+        deleteEducation(institutionName);
     }
-
+    
     @Test
     public void employmentPrivacyTest() {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment-container")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-employment")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-employment")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        BBBUtil.noSpinners(webDriver);
+        String institutionName = "added-employment-" + System.currentTimeMillis();
+        showMyOrcidPage();
+        openAddEmploymentModal();
+        createEmployment(institutionName);
+        changeEmploymentVisibility(institutionName, Visibility.PRIVATE);        
         
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("affiliationName")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        String employmentName = "Employment" + System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys(employmentName,"affiliationName", webDriver);        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareSendKeys("New Delhi","city", webDriver);        
-
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        
-        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editAffiliation.country.value']")));
-        selectBox.selectByVisibleText("India");
-        //wait for angular to register that values have been typed.
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//button[@id='save-education']")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        
-        // Set Private Visibility
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]/descendant::div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-
-        // Verify
-        showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.noSpinners(webDriver);
-        try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            employmentAppearsInPublicPage(institutionName);
             fail();
-        } catch (Exception e) {
-
+        } catch(Exception e) {
+            
         }
-
-        // Set Public Visibility
-        showMyOrcidPage();
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-        WebElement educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
-        BBBUtil.ngAwareClick(educationElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-
         
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-
-        // Verify
+        showMyOrcidPage();
+        changeEmploymentVisibility(institutionName, Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            employmentAppearsInPublicPage(institutionName);
+            fail();
+        } catch(Exception e) {
+            
+        } 
+        
+        showMyOrcidPage();
+        changeEmploymentVisibility(institutionName, Visibility.PUBLIC);
+        
+        //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + employmentName + "')]")), webDriver);
-
-        // Rollback changes
-        showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]")), webDriver);
-        educationElement = webDriver.findElement(By.xpath("//li[@employment-put-code and descendant::span[text() = '" + employmentName + "']]"));
-        String putCode = educationElement.getAttribute("employment-put-code");
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("delete-affiliation_" + putCode)), webDriver);
-        BBBUtil.noSpinners(webDriver);
+        employmentAppearsInPublicPage(institutionName);
         
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm_delete_affiliation")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(ById.id("confirm_delete_affiliation")), webDriver);
-
+        showMyOrcidPage();
+        deleteEmployment(institutionName);
     }
 
     @Test
     public void fundingPrivacyTest() throws InterruptedException {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding-container")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-funding-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-funding")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-funding")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("fundingType")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        long time = System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys("award","fundingType", webDriver);
-        String fundingTitle = "Funding Title " + time;
-        BBBUtil.ngAwareSendKeys(fundingTitle,"fundingTitle", webDriver);
-        BBBUtil.ngAwareSendKeys("Name " + time,"fundingName", webDriver);
-        BBBUtil.ngAwareSendKeys("San Jose","city", webDriver);
-        Select selectBox = new Select(webDriver.findElement(By.xpath("//select[@ng-model='editFunding.country.value']")));
-        selectBox.selectByVisibleText("United States");
-        //wait for angular to register that values have been typed.
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-funding")), webDriver);
-        BBBUtil.noSpinners(webDriver);
+        String fundingTitle = "added-funding-" + System.currentTimeMillis();
+        showMyOrcidPage();
+        openAddFundingModal();
+        createFunding(fundingTitle);
+        changeFundingVisibility(fundingTitle, Visibility.PRIVATE);       
         
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-
-        // Change to private
-        WebElement fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
-        BBBUtil.ngAwareClick(fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-
-        // Check public page
-        showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.noSpinners(webDriver);
         try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            fundingAppearsInPublicPage(fundingTitle);
             fail();
-        } catch (Exception e) {
-
+        } catch(Exception e) {
+            
         }
-
-        // Change to public
+        
         showMyOrcidPage();
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-        fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
-        BBBUtil.ngAwareClick(fundingElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-
-        // Check public page
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'" + fundingTitle + "')]")), webDriver);
-
-        // Rollback changes
-        showMyOrcidPage();
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]")), webDriver);
-        fundingElement = webDriver.findElement(By.xpath("//li[@funding-put-code and descendant::span[text() = '" + fundingTitle + "']]"));
-        String putCode = fundingElement.getAttribute("funding-put-code");
-        BBBUtil.ngAwareClick(fundingElement.findElement(By.id("delete-funding_" + putCode)), webDriver);
+        changeFundingVisibility(fundingTitle, Visibility.LIMITED);
         
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("confirm-delete-funding")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(ById.id("confirm-delete-funding")), webDriver);
-
-    }
-
-    @Test
-    public void workPrivacyTest() throws InterruptedException {
-        //TODO: refactor to match pattern used in bio sections
-        BBBUtil.extremeWaitFor(BBBUtil.documentReady(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(),webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-work-container")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work-container")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("add-work")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("add-work")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
-        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(ById.id("workCategory")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        BBBUtil.ngAwareSendKeys("publication","workCategory", webDriver);
-        
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        String workTitle = "Work " + System.currentTimeMillis();
-        BBBUtil.ngAwareSendKeys(workTitle,"work-title", webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        //wait for angular to register that values have been typed.
         try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("save-new-work")), webDriver);
-        BBBUtil.noSpinners(webDriver);
-        BBBUtil.noCboxOverlay(webDriver);
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-
-        // Set private
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        WebElement workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        BBBUtil.ngAwareClick(workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        // Check public page
-        showPublicProfilePage(getUser1OrcidId());
-        try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-                    .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            fundingAppearsInPublicPage(fundingTitle);
             fail();
-        } catch (Exception e) {
-
-        }
-
-        // Set public
+        } catch(Exception e) {
+            
+        } 
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-        workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        BBBUtil.ngAwareClick(workElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        // Check public page
+        changeFundingVisibility(fundingTitle, Visibility.PUBLIC);
+        
+        //Verify it appears in the public page
         showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-
-        // Rollback
+        fundingAppearsInPublicPage(fundingTitle);
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]")), webDriver);
-        workElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + workTitle + "']]"));
-        String putCode = workElement.getAttribute("orcid-put-code");
-        String deleteJsStr = "angular.element('*[ng-app]').injector().get('worksSrvc').deleteWork('" + putCode + "');";
-        ((JavascriptExecutor) webDriver).executeScript(deleteJsStr);
+        deleteFunding(fundingTitle);
     }
-
+    
     @Test
     public void peerReviewPrivacyTest() throws InterruptedException, JSONException, URISyntaxException {
-        //TODO: refactor to match pattern used in bio sections
         // Create peer review group               
         String accessToken = getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
         GroupIdRecord g1 = super.createGroupIdRecord();
 
         // Create peer review
         long time = System.currentTimeMillis();
-        PeerReview peerReview = (PeerReview) unmarshallFromPath("/record_2.0_rc2/samples/peer-review-2.0_rc2.xml", PeerReview.class);
-        peerReview.setPutCode(null);
+        PeerReview peerReview = new PeerReview();        
         peerReview.setGroupId(g1.getGroupId());
+        ExternalIDs extIds = new ExternalIDs();
+        peerReview.setExternalIdentifiers(extIds);
         peerReview.getExternalIdentifiers().getExternalIdentifier().clear();
         ExternalID wExtId = new ExternalID();
         wExtId.setValue("Work Id " + time);
         wExtId.setType(WorkExternalIdentifierType.AGR.value());
         wExtId.setRelationship(Relationship.SELF);
         peerReview.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-
+        Organization organization = new Organization();
+        organization.setName("My org name " + System.currentTimeMillis());
+        OrganizationAddress address = new OrganizationAddress();
+        address.setCity("Imagination city");
+        address.setCountry(Iso3166Country.US);
+        organization.setAddress(address);
+        peerReview.setOrganization(organization);
+        peerReview.setRole(Role.CHAIR);
+        peerReview.setType(PeerReviewType.EVALUATION);
+        peerReview.setCompletionDate(new FuzzyDate(new Year(2016), new Month(1), new Day(1)));
+        
         ClientResponse postResponse = memberV2ApiClient.createPeerReviewXml(this.getUser1OrcidId(), peerReview, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
         ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         peerReview = getResponse.getEntity(PeerReview.class);
-
-        // Set it private
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-        WebElement peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
-        BBBUtil.ngAwareClick(peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[3]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-
-        // Check the public page
-        showPublicProfilePage(getUser1OrcidId());
+        changePeerReviewVisibility(g1.getName(), Visibility.PRIVATE);
+        
         try {
-            (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS))
-            .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")));
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            peerReviewAppearsInPublicPage(g1.getName());
             fail();
-        } catch (Exception e) {
-
-        }
-
-        // Set it public
+        } catch(Exception e) {
+            
+        } 
+        
         showMyOrcidPage();
-        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-        peerReviewElement = webDriver.findElement(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]"));
-        BBBUtil.ngAwareClick(peerReviewElement.findElement(By.xpath(".//div[@id='privacy-bar']/ul/li[1]/a")), webDriver);
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-
-        // Check the public page
+        changePeerReviewVisibility(g1.getName(), Visibility.LIMITED);
+        
+        try {
+            //Verify it doesn't appear in the public page
+            showPublicProfilePage(getUser1OrcidId());
+            peerReviewAppearsInPublicPage(g1.getName());
+            fail();
+        } catch(Exception e) {
+            
+        }
+        
+        showMyOrcidPage();
+        changePeerReviewVisibility(g1.getName(), Visibility.PUBLIC);
+        
         showPublicProfilePage(getUser1OrcidId());
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[@orcid-put-code and descendant::span[text() = '" + g1.getName() + "']]")), webDriver);
-
+        peerReviewAppearsInPublicPage(g1.getName());
+        
         // Rollback
         ClientResponse deleteResponse = memberV2ApiClient.deletePeerReviewXml(this.getUser1OrcidId(), peerReview.getPutCode(), accessToken);
         assertNotNull(deleteResponse);

@@ -41,7 +41,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
+import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -59,7 +59,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
+public class OauthAuthorizationPageTest extends BlackBoxBaseRC2 {
     private static final String STATE_PARAM = "MyStateParam";
     private static final String SCOPES = "/activities/update /read-limited";    
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.*)");
@@ -85,13 +85,9 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
     @Test
     public void stateParamIsPersistentAndReurnedWhenAlreadyLoggedInTest() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
-        webDriver.get(this.getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
-        String currentUrl = OauthAuthorizationPageHelper.authorizeOnAlreadyLoggedInUser(webDriver, this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), SCOPES, STATE_PARAM);
+        signout();
+        signin();
+        String currentUrl = OauthAuthorizationPageHelper.authorizeOnAlreadyLoggedInUser(webDriver, this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), "/read-limited /funding/update /orcid-works/update /orcid-bio/external-identifiers/create", STATE_PARAM);
         Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String stateParam = matcher.group(1);

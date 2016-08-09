@@ -19,26 +19,23 @@ package org.orcid.integration.blackbox.web;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.blackbox.api.BBBUtil;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-web-context.xml" })
-public class SigninTest {
-
-    private WebDriver webDriver;
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+public class SigninTest extends BlackBoxBase {    
 
     @Value("${org.orcid.web.baseUri}")
     public String baseUri;
@@ -49,15 +46,9 @@ public class SigninTest {
     @Value("${org.orcid.web.testUser1.orcidId}")
     public String user1OrcidId;
 
-    @Before
-    public void before() {
-        webDriver = new FirefoxDriver();
-        webDriver.get(baseUri + "/userStatus.json?logUserOut=true");
-    }
-
     @After
     public void after() {
-        webDriver.quit();
+        signout();
     }
 
     @Test
