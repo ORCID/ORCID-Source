@@ -131,10 +131,10 @@ public class BBBUtil {
     }
     
     public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
-        waitForAngular();
+        waitForAngular(webDriver);
         Actions actions = new Actions(webDriver);
         actions.moveToElement(webElement).perform();
-        waitForAngular();
+        waitForAngular(webDriver);
         actions.click(webElement).perform();
     }
 
@@ -196,6 +196,10 @@ public class BBBUtil {
 
     public static void waitForAngular() {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), getWebDriver());
+    }
+    
+    public static void waitForAngular(WebDriver webDriver) {
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
 
     public static void waitForElementVisibility(By elementLocatedBy) {
