@@ -336,12 +336,16 @@ public class BlackBoxBase {
     }
 
     public static void signin() {
-        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");
         String userOrcid = BBBUtil.getProperty("org.orcid.web.testUser1.username");
         String userPassword = BBBUtil.getProperty("org.orcid.web.testUser1.password");
+        signin(userOrcid, userPassword);
+    }
+    
+    public static void signin(String userName, String password) {
+        String baseUrl = BBBUtil.getProperty("org.orcid.web.baseUri");        
         webDriver.get(baseUrl + "/signin");
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
-        SigninTest.signIn(webDriver, userOrcid, userPassword);
+        SigninTest.signIn(webDriver, userName, password);
     }
 
     public static void signout() {
@@ -907,6 +911,52 @@ public class BlackBoxBase {
         BBBUtil.noSpinners(webDriver);
     }
     
+    public boolean haveDelegate(String delegateOrcid) {
+        String delegateXpath = "//div[@id='DelegatesCtrl']/table[@ng-show='delegation.givenPermissionTo.delegationDetails']/tbody/tr//a[text()='" + delegateOrcid + "']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(delegateXpath)), webDriver);
+        return true;
+    }
+    
+    public void removeDelegate(String delegateOrcid) {
+        String delegateXpath = "//div[@id='DelegatesCtrl']/table[@ng-show='delegation.givenPermissionTo.delegationDetails']/tbody/tr[descendant::a[text()='" + delegateOrcid + "']]/td[4]/a";
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(delegateXpath)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(delegateXpath)));
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath("//form[@ng-submit='revoke()']/button")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//form[@ng-submit='revoke()']/button")));
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);        
+    }
+    
+    public void addDelegate(String delegateOrcid) {
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='DelegatesCtrl']//input[@type='text']")), webDriver);
+        WebElement input = webDriver.findElement(By.xpath("//div[@id='DelegatesCtrl']//input[@type='text']"));
+        input.sendKeys(delegateOrcid);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id='DelegatesCtrl']//input[@type='submit']")), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath("//div[@id='DelegatesCtrl']//input[@type='submit']")));
+        
+        By ajaxLoader = By.xpath("//div[@id='DelegatesCtrl']//span[@id='ajax-loader']");
+        BBBUtil.extremeWaitFor(ExpectedConditions.not(ExpectedConditions.visibilityOfElementLocated(ajaxLoader)), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners();
+        
+        String addButton = "//tr[@ng-repeat='result in results' and descendant::a[text() = '" + delegateOrcid + "']]//span";
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(addButton)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(addButton)));
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(), webDriver);
+        
+        String confirmAddButton = "//form[@ng-submit='addDelegate()']//button[text()='Add']";
+        BBBUtil.extremeWaitFor(ExpectedConditions.elementToBeClickable(By.xpath(confirmAddButton)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(confirmAddButton)));
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+    }
+    
     /**
      * EMAIL ON ACCOUNT SETTINGS PAGE
      * */
@@ -947,7 +997,7 @@ public class BlackBoxBase {
     }
     
     public void removeEmail(String emailValue) {
-        String deleteEmailXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
+        String deleteEmailXpath = "//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
         String confirmDeleteButtonXpath = "//button[@id='confirm-delete-email_" + emailValue + "']";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.xpath(deleteEmailXpath)), webDriver);
         BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(deleteEmailXpath)), webDriver);
