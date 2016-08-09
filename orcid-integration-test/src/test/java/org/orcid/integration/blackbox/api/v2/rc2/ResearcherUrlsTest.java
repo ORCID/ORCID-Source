@@ -110,7 +110,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         assertNotNull(gotResearcherUrl.getLastModifiedDate());
         assertEquals(getClient1ClientId(), gotResearcherUrl.getSource().retrieveSourcePath());
         assertEquals("http://test.orcid.org/test/" + time, gotResearcherUrl.getUrl().getValue());
-        assertEquals(String.valueOf(time), gotResearcherUrl.getUrlName());
+        assertEquals("http://test.orcid.org/test/" + time, gotResearcherUrl.getUrlName());
         assertEquals("public", gotResearcherUrl.getVisibility().value());
         assertNotNull(gotResearcherUrl.getDisplayIndex());
         Long originalDisplayIndex = gotResearcherUrl.getDisplayIndex();
@@ -141,7 +141,7 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         ResearcherUrl updatedResearcherUrl = updatedResearcherUrlResponse.getEntity(ResearcherUrl.class);
         assertNotNull(updatedResearcherUrl);
         assertEquals("http://test.orcid.org/test/" + time + currentTime, updatedResearcherUrl.getUrl().getValue());
-        assertEquals(String.valueOf(time) + " - " + currentTime, updatedResearcherUrl.getUrlName());
+        assertEquals("http://test.orcid.org/test/" + time + " - " + currentTime, updatedResearcherUrl.getUrlName());
         assertEquals(originalDisplayIndex, updatedResearcherUrl.getDisplayIndex());
         
         // Keep it public, since it is more restrictive than the user visibility
@@ -210,12 +210,14 @@ public class ResearcherUrlsTest extends BlackBoxBaseRC2 {
         boolean found1 = false, found2 = false, found3 = false;
 
         for (ResearcherUrl rUrl : researcherUrls.getResearcherUrls()) {
-            if (rUrl.getUrlName().equals("url-name-" + now + "-0")) {
-                found1 = true;
-            } else if (rUrl.getUrlName().equals("url-name-" + now + "-1")) {
-                found2 = true;
-            } else if (rUrl.getUrlName().equals("url-name-" + now + "-2")) {
-                found3 = true;
+            if(rUrl.getUrlName() != null) {
+                if (rUrl.getUrlName().equals("url-name-" + now + "-0")) {
+                    found1 = true;
+                } else if (rUrl.getUrlName().equals("url-name-" + now + "-1")) {
+                    found2 = true;
+                } else if (rUrl.getUrlName().equals("url-name-" + now + "-2")) {
+                    found3 = true;
+                }
             }
         }
 

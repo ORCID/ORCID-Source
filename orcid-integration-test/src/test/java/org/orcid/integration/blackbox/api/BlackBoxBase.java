@@ -265,7 +265,7 @@ public class BlackBoxBase {
         try {Thread.sleep(500);} catch(Exception e) {};
     }
     
-    public void changeBiography(String bioValue, Visibility changeTo) throws Exception {
+    public static void changeBiography(String bioValue, Visibility changeTo) throws Exception {
         int privacyIndex = getPrivacyIndex(changeTo);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         
@@ -301,7 +301,7 @@ public class BlackBoxBase {
         }
     }
     
-    public void changeNamesVisibility(Visibility changeTo) throws Exception {
+    public static void changeNamesVisibility(Visibility changeTo) throws Exception {
         int privacyIndex = getPrivacyIndex(changeTo);
         
         try {                                    

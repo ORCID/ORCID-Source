@@ -24,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -49,35 +50,43 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
-    boolean allSet = false;
-    String otherName1 = null;
-    String otherName2 = null;
     
-    @Before
-    public void setUpData() throws Exception {
-        if(!allSet) {
-            //Show the workspace
-            signin();
-            
-            //Set biography to public
-            changeBiography(null, Visibility.PUBLIC);
-            
-            //Set names to public
-            changeNamesVisibility(Visibility.PUBLIC);
-            //Create public other name
-            String otherName1 = "other-name-1-" + System.currentTimeMillis(); 
-            createOtherName(otherName1);
-            this.otherName1 = otherName1;
-            
-            String otherName2 = "other-name-2-" + System.currentTimeMillis(); 
-            createOtherName(otherName1);
-            this.otherName2 = otherName2;
-            
-            openEditOtherNamesModal();
-            changeOtherNamesVisibility(Visibility.PUBLIC);
-            saveOtherNamesModal();
-        }        
-    }    
+    private static String otherName1 = null;
+    private static String otherName2 = null;
+    
+    @BeforeClass
+    public static void before() throws Exception {
+        //Show the workspace
+        signin();
+        
+        //Create public other name
+        openEditOtherNamesModal();
+        String otherName1 = "other-name-1-" + System.currentTimeMillis(); 
+        createOtherName(otherName1);
+        PersonalDetailsTest.otherName1 = otherName1;
+        
+        String otherName2 = "other-name-2-" + System.currentTimeMillis(); 
+        createOtherName(otherName2);
+        PersonalDetailsTest.otherName2 = otherName2;
+        
+        changeOtherNamesVisibility(Visibility.PUBLIC);
+        saveOtherNamesModal();
+        
+        //Set biography to public
+        changeBiography(null, Visibility.PUBLIC);
+        
+        //Set names to public
+        changeNamesVisibility(Visibility.PUBLIC);                           
+    }
+    
+    @AfterClass
+    public static void after() {
+        showMyOrcidPage();
+        openEditOtherNamesModal();
+        deleteOtherNames();
+        saveOtherNamesModal();
+        signout();
+    }
     
     @Test
     public void testGetWithPublicAPI() {
@@ -121,6 +130,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
     @Test
     public void changeToLimitedAndCheckWithPublicAPI() throws Exception {
         //Change names to limited
+        showMyOrcidPage();
         changeNamesVisibility(Visibility.LIMITED);
         
         ClientResponse getPersonalDetailsResponse = publicV2ApiClient.viewPersonalDetailsXML(getUser1OrcidId());
@@ -223,6 +233,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, personalDetails.getName().getVisibility());
         
         //Change all to LIMITED
+        showMyOrcidPage();
         changeNamesVisibility(Visibility.LIMITED);
         openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.LIMITED);
@@ -275,6 +286,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.LIMITED, personalDetails.getName().getVisibility());
         
         //Change all to PRIVATE
+        showMyOrcidPage();
         changeNamesVisibility(Visibility.PRIVATE);
         openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.PRIVATE);
@@ -291,6 +303,7 @@ public class PersonalDetailsTest extends BlackBoxBaseRC2 {
         assertNull(personalDetails.getOtherNames());
         
         //Change all to PUBLIC
+        showMyOrcidPage();
         changeNamesVisibility(Visibility.PUBLIC);
         openEditOtherNamesModal();
         changeOtherNamesVisibility(Visibility.PUBLIC);
