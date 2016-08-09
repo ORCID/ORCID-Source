@@ -957,6 +957,19 @@ public class BlackBoxBase {
         BBBUtil.noSpinners(webDriver);
     }
     
+    public void switchUser(String userOrcid) {
+        String openSwitchUserMenu = "//div[@ng-controller='SwitchUserCtrl']//a[@ng-click='openMenu($event)']";
+        String switchUserLink = "//div[@ng-controller='SwitchUserCtrl' and descendant::a[@ng-click='openMenu($event)']]//a[descendant::li[contains(text(),'" + userOrcid + "')]]";
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(openSwitchUserMenu)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(openSwitchUserMenu)));
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        
+        BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(switchUserLink)), webDriver);
+        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(switchUserLink)));
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+    }
+    
     /**
      * EMAIL ON ACCOUNT SETTINGS PAGE
      * */
@@ -968,6 +981,19 @@ public class BlackBoxBase {
     public boolean emailExists(String emailValue) {
         String emailXpath = "//div[@ng-controller='EmailEditCtrl']//tr[@name='email' and descendant::span[text() = '" + emailValue + "']]";
         BBBUtil.extremeWaitFor(ExpectedConditions.presenceOfElementLocated(By.xpath(emailXpath)), webDriver);
+        return true;
+    }
+    
+    public boolean allowedToAddEmails() {
+        String addEmailNotAllowedXpath = "//div[@ng-controller='EmailEditCtrl']//div[@id='addEmailNotAllowed']";
+        try {
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+            BBBUtil.shortWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(addEmailNotAllowedXpath)), webDriver);
+            BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+            return false;
+        } catch(Exception e) {
+            
+        }
         return true;
     }
     

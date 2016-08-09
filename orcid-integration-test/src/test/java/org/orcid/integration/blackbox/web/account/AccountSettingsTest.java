@@ -16,6 +16,7 @@
  */
 package org.orcid.integration.blackbox.web.account;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -79,6 +80,11 @@ public class AccountSettingsTest extends BlackBoxBase {
     @Test
     public void emailsTestAsDelegate() {
         showAccountSettingsPage();
+        
+        //Verify user can add emails
+        openEditEmailsSectionOnAccountSettingsPage();
+        assertTrue(allowedToAddEmails());
+        
         boolean haveDelegate = false;
         try {
             haveDelegate(getUser2OrcidId());
@@ -97,17 +103,12 @@ public class AccountSettingsTest extends BlackBoxBase {
         signout();
         signin(getUser2UserName(), getUser2Password());
         
-        //TODO: switch user
-        //TODO: go to account settings
+        switchUser(getUser1OrcidId());
         
         showAccountSettingsPage();
         // Check that add email section is not there
-        try {
-            openEditEmailsSectionOnAccountSettingsPage();
-            fail("Should not show the edit email as a delegate");
-        } catch(Exception e) {
-            
-        }
+        openEditEmailsSectionOnAccountSettingsPage();
+        assertFalse(allowedToAddEmails());        
     }
 
 }
