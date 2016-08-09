@@ -24,7 +24,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
-import org.orcid.integration.blackbox.client.OrcidUi;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -97,6 +96,10 @@ public class AccountSettingsTest extends BlackBoxBase {
         // Now sign in as user 2
         signout();
         signin(getUser2UserName(), getUser2Password());
+        
+        //TODO: switch user
+        //TODO: go to account settings
+        
         showAccountSettingsPage();
         // Check that add email section is not there
         try {
