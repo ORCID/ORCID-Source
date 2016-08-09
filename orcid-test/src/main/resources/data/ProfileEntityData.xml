@@ -1548,7 +1548,17 @@
         visibility="LIMITED"
         source_id="4444-4444-4444-4442"
         last_modified="2011-07-02 15:31:00.00"
-		date_created="2011-06-29 15:31:00.00"
+            date_created="2011-06-29 15:31:00.00"
+    />
+
+    <email
+        orcid="4444-4444-4444-4442"
+        email="MiXeD@cASe.com"
+        is_primary="false"
+        is_current="true"
+        is_verified="true"
+        visibility="PRIVATE"
+        source_id="4444-4444-4444-4442"
     />
     
     <email

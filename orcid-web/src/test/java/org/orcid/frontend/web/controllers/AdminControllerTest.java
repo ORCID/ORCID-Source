@@ -292,15 +292,17 @@ public class AdminControllerTest extends BaseControllerTest {
     
     @Test
     public void findIdsTest(){
-        Map<String, String> ids = adminController.findIdByEmailHelper("spike@milligan.com,michael@bentine.com,peter@sellers.com,invalid@email.com");
+        Map<String, String> ids = adminController.findIdByEmailHelper("spike@milligan.com,michael@bentine.com,peter@sellers.com,mixed@case.com,invalid@email.com");
         assertNotNull(ids);
-        assertEquals(3, ids.size());
+        assertEquals(4, ids.size());
         assertTrue(ids.containsKey("spike@milligan.com"));
         assertEquals("4444-4444-4444-4441", ids.get("spike@milligan.com"));
         assertTrue(ids.containsKey("michael@bentine.com"));
         assertEquals("4444-4444-4444-4442", ids.get("michael@bentine.com"));
         assertTrue(ids.containsKey("peter@sellers.com"));
         assertEquals("4444-4444-4444-4443", ids.get("peter@sellers.com"));
+        assertTrue(ids.containsKey("mixed@case.com"));
+        assertEquals("4444-4444-4444-4442", ids.get("mixed@case.com"));
         assertFalse(ids.containsKey("invalid@email.com"));
     }
     
