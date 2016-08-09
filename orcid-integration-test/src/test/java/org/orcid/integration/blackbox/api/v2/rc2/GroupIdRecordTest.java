@@ -29,6 +29,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,25 +50,25 @@ import com.sun.jersey.api.client.ClientResponse;
 public class GroupIdRecordTest extends BlackBoxBaseRC2 {
 
     private static final List<String> VALID_GROUP_IDS = Arrays.asList( 
-            "orcid-generated:this.is.a.test.", 
-            "orcid-generated:this'is'a'test'", 
-            "orcid-generated:this_is_a_test_", 
-            "orcid-generated:this-is-a-test-",
-            "orcid-generated:(this)(is)(a)(test)",
-            "orcid-generated:this^is^a^test^",
-            "orcid-generated:this~is~a~test~",
-            "orcid-generated:this:is:a:test:",
-            "orcid-generated:this/is/a/test/",
-            "orcid-generated:this?is?a?test?",
-            "orcid-generated:this#is#a#test#",
-            "orcid-generated:this[is]a[test]",
-            "orcid-generated:this@is@a@test@",
-            "orcid-generated:this!is!a!test!",
-            "orcid-generated:this$is$a$test$",
-            "orcid-generated:this&is&a&test&",
-            "orcid-generated:this*is*a*test*",
-            "orcid-generated:this+is+a+test+",
-            "orcid-generated:this,is,a,test,");
+            "orcid-generated:bb_test:this.is.a.test.", 
+            "orcid-generated:bb_test:this'is'a'test'", 
+            "orcid-generated:bb_test:this_is_a_test_", 
+            "orcid-generated:bb_test:this-is-a-test-",
+            "orcid-generated:bb_test:(this)(is)(a)(test)",
+            "orcid-generated:bb_test:this^is^a^test^",
+            "orcid-generated:bb_test:this~is~a~test~",
+            "orcid-generated:bb_test:this:is:a:test:",
+            "orcid-generated:bb_test:this/is/a/test/",
+            "orcid-generated:bb_test:this?is?a?test?",
+            "orcid-generated:bb_test:this#is#a#test#",
+            "orcid-generated:bb_test:this[is]a[test]",
+            "orcid-generated:bb_test:this@is@a@test@",
+            "orcid-generated:bb_test:this!is!a!test!",
+            "orcid-generated:bb_test:this$is$a$test$",
+            "orcid-generated:bb_test:this&is&a&test&",
+            "orcid-generated:bb_test:this*is*a*test*",
+            "orcid-generated:bb_test:this+is+a+test+",
+            "orcid-generated:bb_test:this,is,a,test,");
     
     public static final List<String> INVALID_GROUP_IDS = Arrays.asList(
             "orcid-generated:this{is}a{test}",
@@ -76,6 +77,8 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             "orcid-generated:this<is>a<test>",
             "orcid-generated:this¢is¢a¢test¢");
 
+    ArrayList<Long> putsToDelete = new ArrayList<Long>();
+    
     @Before
     public void cleanUpOldTest() throws JSONException {
         String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
@@ -83,16 +86,27 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
         // clean up group IDs before test
         int page = 1;
         GroupIdRecords groupsContainer = memberV2ApiClient.getGroupIdRecords(100, page, token).getEntity(GroupIdRecords.class);
-        ArrayList<Long> putsToDelete = new ArrayList<Long>();
+        
         while (groupsContainer.getTotal() > 0) {
             for (GroupIdRecord groupIdRecord : groupsContainer.getGroupIdRecord())
-                if (groupIdRecord.getGroupId().startsWith("orcid-generated:"))
+                if (groupIdRecord.getGroupId().startsWith("orcid-generated:bb_test:"))
                     putsToDelete.add(groupIdRecord.getPutCode());
             page++;
             groupsContainer = memberV2ApiClient.getGroupIdRecords(100, page, token).getEntity(GroupIdRecords.class);
         }
-        for (Long putCode : putsToDelete)
+        for (Long putCode : putsToDelete) {
             memberV2ApiClient.deleteGroupIdRecord(putCode, token);
+        }
+        putsToDelete.clear();
+    }
+    
+    @After
+    public void cleanUpGroupIds() throws JSONException {
+        String token = oauthHelper.getClientCredentialsAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.GROUP_ID_RECORD_UPDATE);
+
+        for (Long putCode : putsToDelete) {
+            memberV2ApiClient.deleteGroupIdRecord(putCode, token);
+        }        
     }
 
     @Test
@@ -116,6 +130,8 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             GroupIdRecord groupFromWebPage = JsonUtils.readObjectFromJsonString(groupElementString, GroupIdRecord.class);
             assertNotNull(groupFromWebPage);
             assertEquals("Missing " + groupId, groupId, groupFromWebPage.getGroupId());
+            
+            putsToDelete.add(g1.getPutCode());
         }
         
         for(String invdalidGroupId : INVALID_GROUP_IDS) {            

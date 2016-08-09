@@ -20,8 +20,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
@@ -37,13 +37,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class AccountSettingsTest extends BlackBoxBase {
-    @BeforeClass
-    public static void before() {
+    @Before
+    public void before() {
         signin();
     }
 
-    @AfterClass
-    public static void after() {
+    @After
+    public void after() {
         signout();
     }
 
