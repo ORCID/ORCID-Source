@@ -18,6 +18,7 @@ package org.orcid.core.adapter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -94,13 +95,8 @@ public class JpaJaxbFundingAdapterTest {
         // Source
         assertEquals("8888-8888-8888-8880", pfe.getElementSourceId());
 
-        // Check org values
-        assertEquals("common:name", pfe.getOrg().getName());
-        assertEquals("common:city", pfe.getOrg().getCity());
-        assertEquals("common:region", pfe.getOrg().getRegion());
-        assertEquals(Iso3166Country.AF.value(), pfe.getOrg().getCountry().value());
-        assertEquals("common:disambiguated-organization-identifier", pfe.getOrg().getOrgDisambiguated().getSourceId());
-        assertEquals("common:disambiguation-source", pfe.getOrg().getOrgDisambiguated().getSourceType());
+        // Check org is null
+        assertNull(pfe.getOrg());        
     }
 
     @Test
