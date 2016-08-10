@@ -430,12 +430,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
         fundingClassMap.field("amount.content", "numericAmount");
         fundingClassMap.field("amount.currencyCode", "currencyCode");
         fundingClassMap.field("url.value", "url");
-        fundingClassMap.field("organization.name", "org.name");
-        fundingClassMap.field("organization.address.city", "org.city");
-        fundingClassMap.field("organization.address.region", "org.region");
-        fundingClassMap.field("organization.address.country", "org.country");
-        fundingClassMap.field("organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier", "org.orgDisambiguated.sourceId");
-        fundingClassMap.field("organization.disambiguatedOrganization.disambiguationSource", "org.orgDisambiguated.sourceType");
+        fundingClassMap.fieldBToA("org.name", "organization.name");
+        fundingClassMap.fieldBToA("org.city", "organization.address.city");
+        fundingClassMap.fieldBToA("org.region", "organization.address.region");
+        fundingClassMap.fieldBToA("org.country", "organization.address.country");
+        fundingClassMap.fieldBToA("org.orgDisambiguated.sourceId", "organization.disambiguatedOrganization.disambiguatedOrganizationIdentifier");
+        fundingClassMap.fieldBToA("org.orgDisambiguated.sourceType", "organization.disambiguatedOrganization.disambiguationSource");
         fundingClassMap.fieldMap("externalIdentifiers", "externalIdentifiersJson").converter("fundingExternalIdentifiersConverterId").add();
         fundingClassMap.fieldMap("contributors", "contributorsJson").converter("fundingContributorsConverterId").add();
         fundingClassMap.register();
