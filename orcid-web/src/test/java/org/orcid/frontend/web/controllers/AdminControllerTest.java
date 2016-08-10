@@ -199,7 +199,7 @@ public class AdminControllerTest extends BaseControllerTest {
 
         List<Email> emails2 = primary.getOrcidBio().getContactDetails().getEmail();
         assertNotNull(emails2);
-        assertEquals(1, emails2.size());
+        assertEquals(2, emails2.size());
 
         ProfileDeprecationRequest result = adminController.deprecateProfile("4444-4444-4444-4441", "4444-4444-4444-4442");
         
