@@ -272,7 +272,7 @@ When this it is done, restart the server.
 ##Automated Testing
 See [TESTAUTO.md](TESTAUTO.md)
 ##Manual Testing
-See [TESTMANUAL.md](TESTMANUAL.md)
+See [Manual Test](https://github.com/ORCID/ORCID-Source/tree/master/orcid-integration-test/src/test/manual-test)
 
 
 * Finally help out by improving these instructions!    

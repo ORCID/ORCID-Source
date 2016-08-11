@@ -42,6 +42,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BBBUtil {
 
+    public static String getProperty(String key) {
+        Properties prop = SystemPropertiesHelper.getProperties();
+        return prop.getProperty(key);
+    }
+    
     public static void logUserOut(String baseUrl, WebDriver webDriver) {
         webDriver.get(baseUrl + "/userStatus.json?logUserOut=true");
         BBBUtil.extremeWaitFor(BBBUtil.documentReady(), webDriver);
@@ -127,10 +132,10 @@ public class BBBUtil {
     }
     
     public static void ngAwareClick(WebElement webElement, WebDriver webDriver) {
-        waitForAngular();
+        waitForAngular(webDriver);
         Actions actions = new Actions(webDriver);
         actions.moveToElement(webElement).perform();
-        waitForAngular();
+        waitForAngular(webDriver);
         actions.click(webElement).perform();
     }
 
@@ -192,6 +197,10 @@ public class BBBUtil {
 
     public static void waitForAngular() {
         BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), getWebDriver());
+    }
+    
+    public static void waitForAngular(WebDriver webDriver) {
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
     }
 
     public static void waitForElementVisibility(By elementLocatedBy) {

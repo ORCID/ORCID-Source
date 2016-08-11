@@ -70,15 +70,15 @@ public class PersonTest extends BlackBoxBaseRC2 {
         updatePersonalNamesVisibility(Visibility.PUBLIC);
         saveOtherNamesSection();
 
-        openEditCountryModal();
-        deleteAllCountriesInCountryModal();
-        setCountryInCountryModal("US");
-        saveEditCountryModal();
+        openEditAddressModal();
+        deleteAddresses();
+        createAddress(Iso3166Country.US.name());
+        saveEditAddressModal();
         
         openEditOtherNamesModal();
-        deleteAllOtherNamesInModal();
-        addOtherNamesInModal("other-name-1");
-        addOtherNamesInModal("other-name-2");
+        deleteOtherNames();
+        createOtherName("other-name-1");
+        createOtherName("other-name-2");
         saveOtherNamesModal();
 
         if (hasExternalIdentifiers()) {
