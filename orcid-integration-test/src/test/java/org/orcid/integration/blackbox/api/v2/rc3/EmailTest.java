@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc2;
+package org.orcid.integration.blackbox.api.v2.rc3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,10 +33,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Emails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,11 +49,11 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class EmailTest extends BlackBoxBaseRC2 {
-    @Resource(name = "memberV2ApiClient_rc2")
+public class EmailTest extends BlackBoxBaseRC3 {
+    @Resource(name = "memberV2ApiClient_rc3")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
-    @Resource(name = "publicV2ApiClient_rc2")
+    @Resource(name = "publicV2ApiClient_rc3")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
     private String limitedEmailValue = "limited@test.orcid.org";

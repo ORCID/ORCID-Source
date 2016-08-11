@@ -14,12 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc2;
+package org.orcid.integration.blackbox.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -28,8 +30,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
+import org.orcid.integration.blackbox.api.v2.rc3.MemberV2ApiClientImpl;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Emails;
+import org.orcid.jaxb.model.record_rc3.Emails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -42,14 +46,15 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class LockedClientsTest extends BlackBoxBaseRC2 {    
-    @Resource(name = "memberV2ApiClient_rc2")
+public class LockedClientsTest extends BlackBoxBaseRC3 {    
+    @Resource(name = "memberV2ApiClient_rc3")
     private MemberV2ApiClientImpl memberV2ApiClient;    
     
     @Test
     public void testMember() throws InterruptedException, JSONException {
         // The member must be unlocked to begin the test
-        String accessToken = getAccessToken(ScopePathType.READ_LIMITED.value(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        List<String> scopes = getScopes(ScopePathType.READ_LIMITED);
+        String accessToken = getAccessToken(scopes);
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(this.getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), getAllResponse.getStatus());

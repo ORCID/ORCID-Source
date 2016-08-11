@@ -35,6 +35,7 @@ import javax.xml.bind.Unmarshaller;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc3.Address;
@@ -137,5 +138,21 @@ public class BlackBoxBaseRC3 extends BlackBoxBase {
         String location = resultWithPutCode.get(0).toString();
         Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));               
         return putCode;
-    }        
+    }   
+    
+    /**
+     * EXTERNAL IDENTIFIERS
+     * 
+     * External identifiers can't be added through the UI
+     * */
+    public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
+        PersonExternalIdentifier e = new PersonExternalIdentifier();
+        e.setValue(value);
+        e.setType("test");
+        e.setUrl(new Url("http://test.orcid.org"));
+        ClientResponse response = memberV2ApiClient.createExternalIdentifier(userOrcid, e, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        return getPutCodeFromResponse(response);                       
+    }   
 }

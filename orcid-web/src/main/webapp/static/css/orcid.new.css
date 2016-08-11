@@ -6639,6 +6639,15 @@ a:hover .mozilla-badge{
 	font-size: 12px;	
 }
 
+.confirm-revoke-access-modal{
+	max-width: 600px;
+	padding-top: 15px;
+}
+
+.account-settings .pull-right{
+	margin-right: 16px;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

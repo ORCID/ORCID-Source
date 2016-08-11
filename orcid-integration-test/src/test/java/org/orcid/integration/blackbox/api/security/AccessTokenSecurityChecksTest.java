@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
@@ -88,7 +89,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
 
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers() throws JSONException, InterruptedException, URISyntaxException {
-        String accessToken = super.getAccessToken(getUser2OrcidId(), getUser2Password(), getScopesString(), this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+        String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         String orcid = getUser1OrcidId();
         Long putCode = 1L;
 
@@ -329,14 +330,12 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
         }        
     }
 
-    private String getScopesString() {
-        return ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.AFFILIATIONS_CREATE.value() + " "
-                + ScopePathType.AFFILIATIONS_READ_LIMITED.value() + " " + ScopePathType.AFFILIATIONS_UPDATE.value() + " " + ScopePathType.AUTHENTICATE.value() + " "
-                + ScopePathType.FUNDING_CREATE.value() + " " + ScopePathType.FUNDING_READ_LIMITED.value() + " " + ScopePathType.FUNDING_UPDATE.value() + " "
-                + ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value() + " " + ScopePathType.ORCID_BIO_READ_LIMITED.value() + " "
-                + ScopePathType.ORCID_BIO_UPDATE.value() + " " + ScopePathType.ORCID_PROFILE_READ_LIMITED.value() + " " + ScopePathType.ORCID_WORKS_CREATE.value() + " "
-                + ScopePathType.ORCID_WORKS_READ_LIMITED.value() + " " + ScopePathType.ORCID_WORKS_UPDATE.value() + " " + ScopePathType.PEER_REVIEW_CREATE.value() + " "
-                + ScopePathType.PEER_REVIEW_READ_LIMITED.value();
+    private List<String> getScopes() {
+        return getScopes(ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.AFFILIATIONS_CREATE,
+                ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE,
+                ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
+                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED);
     }
 
     private void evaluateResponse(ClientResponse response) {

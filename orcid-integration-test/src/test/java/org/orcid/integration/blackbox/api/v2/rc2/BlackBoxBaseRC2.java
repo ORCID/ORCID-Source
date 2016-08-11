@@ -18,14 +18,10 @@ package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -35,6 +31,7 @@ import javax.xml.bind.Unmarshaller;
 import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
+import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -61,8 +58,6 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
     protected T2OAuthAPIService<ClientResponse> t2OAuthClient;
     @Resource(name = "memberV2ApiClient_rc2")
     protected MemberV2ApiClientImpl memberV2ApiClient;    
-    
-    protected List<Long> newOtherNames = new ArrayList<Long>();
     
     public Object unmarshallFromPath(String path, Class<?> type) {
         try (Reader reader = new InputStreamReader(getClass().getResourceAsStream(path))) {
@@ -121,21 +116,21 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         g1.setPutCode(Long.valueOf(r1LocationPutCode));        
         
         return g1;
-    }
+    }                
     
-    @SuppressWarnings({ "deprecation", "rawtypes" })
-    public Long createOtherName(String value, String userOrcid, String accessToken) {
-        OtherName otherName = new OtherName();
-        otherName.setContent(value);
-        ClientResponse response = memberV2ApiClient.createOtherName(userOrcid, otherName, accessToken);
+    /**
+     * EXTERNAL IDENTIFIERS
+     * 
+     * External identifiers can't be added through the UI
+     * */
+    public Long createExternalIdentifier(String value, String userOrcid, String accessToken) {
+        PersonExternalIdentifier e = new PersonExternalIdentifier();
+        e.setValue(value);
+        e.setType("test");
+        e.setUrl(new Url("http://test.orcid.org"));
+        ClientResponse response = memberV2ApiClient.createExternalIdentifier(userOrcid, e, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        Map map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
-        String location = resultWithPutCode.get(0).toString();
-        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));               
-        return putCode;
-    }        
+        return getPutCodeFromResponse(response);                       
+    }                  
 }

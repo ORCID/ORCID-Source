@@ -58,7 +58,7 @@ public class InternalAPITest {
     public String client1ClientSecret;
     @Value("${org.orcid.web.testUser1.orcidId}")
     protected String user1OrcidId;
-    @Value("${org.orcid.web.locked.member.id}")
+    @Value("${org.orcid.web.member.id}")
     public String memberId;
     
     @Resource

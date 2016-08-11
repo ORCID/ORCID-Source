@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.integration.blackbox.api.v2.rc2;
+package org.orcid.integration.blackbox.api.v2.rc3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,8 +36,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.orcid.core.utils.JsonUtils;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,7 +47,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class GroupIdRecordTest extends BlackBoxBaseRC2 {
+public class GroupIdRecordTest extends BlackBoxBaseRC3 {
 
     private static final List<String> VALID_GROUP_IDS = Arrays.asList( 
             "orcid-generated:bb_test:this.is.a.test.", 
@@ -120,7 +120,7 @@ public class GroupIdRecordTest extends BlackBoxBaseRC2 {
             g1.setName("Group # " + System.currentTimeMillis());
             g1.setType("publisher");
             ClientResponse r1 = memberV2ApiClient.createGroupIdRecord(g1, token);
-            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc2/group-id-record/", "");
+            String r1LocationPutCode = r1.getLocation().getPath().replace("/orcid-api-web/v2.0_rc3/group-id-record/", "");
             g1.setPutCode(Long.valueOf(r1LocationPutCode));
             
             webDriver.get(getWebBaseUrl() + "/public/group/" + g1.getPutCode());

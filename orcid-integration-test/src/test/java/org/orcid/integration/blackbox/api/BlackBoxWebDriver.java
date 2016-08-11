@@ -36,7 +36,7 @@ public class BlackBoxWebDriver {
     
     private static WebDriver webDriver = new FirefoxDriver();
 
-    public WebDriver getWebDriver() {
+    public static WebDriver getWebDriver() {
         return webDriver;
     }
    
