@@ -57,12 +57,42 @@ public class PersonTest extends BlackBoxBaseRC2 {
     private String limitedEmail = "limited@test.orcid.org";
 
     @Before
+    public void setUpUser() throws InterruptedException, JSONException {
+        setUpUserInUi();
+        setUpUserInApi();
+        fixPrivacy();
+    }
+
     public void setUpUserInUi() {
         signin();
+
+        openEditPersonalNamesSection();
+        updatePersonalNamesVisibility(Visibility.PUBLIC);
+        saveOtherNamesSection();
+
         openEditAddressModal();
         deleteAddresses();
         createAddress(Iso3166Country.US.name());
         saveEditAddressModal();
+        
+        openEditOtherNamesModal();
+        deleteOtherNames();
+        createOtherName("other-name-1");
+        createOtherName("other-name-2");
+        saveOtherNamesModal();
+        
+        openEditKeywordsModal();
+        deleteKeywords();
+        createKeyword("keyword-1");
+        createKeyword("keyword-2");
+        changeKeywordsVisibility(Visibility.PUBLIC);
+        saveKeywordsModal();       
+
+        if (hasExternalIdentifiers()) {
+            openEditExternalIdentifiersModal();
+            deleteAllExternalIdentifiersInModal();
+            saveExternalIdentifiersModal();
+        }
 
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
@@ -75,6 +105,20 @@ public class PersonTest extends BlackBoxBaseRC2 {
         }
     }
 
+    public void setUpUserInApi() throws InterruptedException, JSONException {
+        String extId1Value = "A-0001";
+        String extId2Value = "A-0002";
+        createExternalIdentifier(extId1Value, Visibility.PUBLIC);
+        createExternalIdentifier(extId2Value, Visibility.LIMITED);
+    }
+    
+    public void fixPrivacy() {
+        showMyOrcidPage();
+        openEditExternalIdentifiersModal();
+        updateExternalIdentifierVisibility("A-0002", Visibility.LIMITED);
+        saveExternalIdentifiersModal();
+    }
+    
     @Test
     public void testGetBioFromPublicAPI() {
         ClientResponse response = publicV2ApiClient.viewBiographyXML(getUser1OrcidId());

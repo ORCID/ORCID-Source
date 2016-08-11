@@ -396,16 +396,48 @@ public class BlackBoxBase {
     }
     
     /**
+     * PERSONAL NAMES
+     */
+    public void openEditPersonalNamesSection() {
+        waitForElementVisibility(By.id("open-edit-names"));
+        ngAwareClick(findElementById("open-edit-names"));
+        waitForAngular();
+    }
+
+    public void updatePersonalNamesVisibility(Visibility visibility) {
+        By elementLocation = By.xpath(String.format("//div[@id='names-section']//div[@id='privacy-bar']/ul/li[%s]/a", getPrivacyIndex(visibility)));
+        waitForElementVisibility(elementLocation);
+        WebElement privacyOption = findElement(elementLocation);
+        ngAwareClick(privacyOption);
+    }
+    
+    public void saveOtherNamesSection() {
+        ngAwareClick(findElementByXpath("//div[@id='names-section']//button[contains('Save changes',text())]"));
+        waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("open-edit-names"));
+    }
+    
+    /**
      *  OTHER NAMES
      * */
     public static void openEditOtherNamesModal() {
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-other-names")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        waitForElementVisibility(By.id("open-edit-other-names"));
+        ngAwareClick(findElementById("open-edit-other-names"));
+        waitForCboxComplete();
     }
-    
-    public static void createOtherName(String value) {
+
+    public static void deleteOtherNames() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElements(rowBy);
+        for (WebElement webElement : webElements) {
+            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteOtherName(otherName)']")));
+            waitForAngular();
+        }
+    }
+
+    public static void createOtherName(String otherName) {
         By addNew = By.xpath("//a[@ng-click='addNewModal()']/span");
         waitForElementVisibility(addNew);
         waitForAngular();
@@ -413,37 +445,26 @@ public class BlackBoxBase {
         By emptyInput = By.xpath("(//input[@ng-model='otherName.content'])[last()]");
         waitForElementVisibility(emptyInput);
         WebElement input = findElement(emptyInput);
-        input.sendKeys(value);        
-    }          
-    
+        input.sendKeys(otherName);
+    }
+
     public static void saveOtherNamesModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-other-names")), webDriver);
+        ngAwareClick(findElementByXpath(SAVE_BUTTON_XPATH));
+        waitForNoCboxOverlay();
+        waitForElementVisibility(By.id("open-edit-other-names"));
     }
-    
-    public static void deleteOtherNames() {
-        waitForAngular();
-        By rowBy = By.xpath("//div[@ng-repeat='otherName in otherNamesForm.otherNames']");
-        waitForElementVisibility(rowBy);
-        List<WebElement> webElements = findElements(rowBy);
-        for (WebElement webElement: webElements) {
-            ngAwareClick(webElement.findElement(By.xpath("//span[@ng-click='deleteOtherName(otherName)']")));
-            waitForAngular();
-        }
-    }
-    
+
     public static void changeOtherNamesVisibility(Visibility visibility) {
         int index = getPrivacyIndex(visibility);
-        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index +"]";
+        String otherNamesVisibilityXpath = "//div[@ng-repeat='otherName in otherNamesForm.otherNames']//ul[@class='privacyToggle']/li[" + index + "]";
         BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(otherNamesVisibilityXpath)), webDriver);
-        
+
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }        
-    }        
+        }
+        saveOtherNamesModal();
+    }
     
     /**
      *  KEYWORDS
@@ -596,19 +617,41 @@ public class BlackBoxBase {
     
     /**
      * EXTERNAL IDENTIFIERS
-     * */
-    public static void openEditExternalIdentifiersModal() {
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
-        BBBUtil.ngAwareClick(webDriver.findElement(By.id("open-edit-external-identifiers")), webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.cboxComplete(),webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+     */
+    public boolean hasExternalIdentifiers() {
+        WebElement openEditElement = findElementById("open-edit-external-identifiers");
+        return openEditElement.isDisplayed();
+    }
+
+    public void openEditExternalIdentifiersModal() {
+        waitForElementVisibility(By.id("open-edit-external-identifiers"));
+        ngAwareClick(findElementById("open-edit-external-identifiers"));
+        waitForCboxComplete();
     }
     
-    public static void saveExternalIdentifiersModal() {
-        BBBUtil.ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)), webDriver);        
-        BBBUtil.noCboxOverlay(webDriver);
-        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);        
-        BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("open-edit-external-identifiers")), webDriver);
+    public void saveExternalIdentifiersModal() {
+        ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)));        
+        waitForNoCboxOverlay();
+    }
+    
+    public void deleteAllExternalIdentifiersInModal() {
+        waitForAngular();
+        By rowBy = By.xpath("//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
+        waitForElementVisibility(rowBy);
+        List<WebElement> webElements = findElement(rowBy).findElements(By.xpath("//span[@ng-click='deleteExternalIdentifier(externalIdentifier)']"));
+        for (WebElement webElement : webElements) {
+            ngAwareClick(webElement);
+            waitForAngular();
+        }
+    }
+    
+    public void updateExternalIdentifierVisibility(String extId, Visibility visibility) {
+        By elementLocation = By.xpath(String.format(
+                "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'][.//a[text()='%s %s']]//div[@id='privacy-bar']/ul/li[%s]/a", extId,
+                extId, getPrivacyIndex(visibility)));
+        waitForElementVisibility(elementLocation);
+        WebElement privacyOption = findElement(elementLocation);
+        ngAwareClick(privacyOption);
     }
     
     public static void changeExternalIdentifiersVisibility(Visibility visibility) {
