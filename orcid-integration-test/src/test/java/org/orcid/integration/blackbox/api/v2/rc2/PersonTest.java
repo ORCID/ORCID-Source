@@ -80,6 +80,13 @@ public class PersonTest extends BlackBoxBaseRC2 {
         createOtherName("other-name-1");
         createOtherName("other-name-2");
         saveOtherNamesModal();
+        
+        openEditKeywordsModal();
+        deleteKeywords();
+        createKeyword("keyword-1");
+        createKeyword("keyword-2");
+        changeKeywordsVisibility(Visibility.PUBLIC);
+        saveKeywordsModal();       
 
         if (hasExternalIdentifiers()) {
             openEditExternalIdentifiersModal();
