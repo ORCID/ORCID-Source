@@ -465,8 +465,7 @@ public class BlackBoxBase {
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }
-        saveOtherNamesModal();
+        }        
     }
     
     /**
