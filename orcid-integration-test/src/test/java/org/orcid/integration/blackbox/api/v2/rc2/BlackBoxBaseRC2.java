@@ -18,10 +18,12 @@ package org.orcid.integration.blackbox.api.v2.rc2;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBContext;
@@ -32,6 +34,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.orcid.jaxb.model.common_rc2.Url;
+import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
@@ -133,4 +136,50 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         return getPutCodeFromResponse(response);                       
     }                  
+    
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    public Long getPutCodeFromResponse(ClientResponse response) {
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+    }
+
+    @SuppressWarnings({ "rawtypes", "deprecation" })
+    protected Long createExternalIdentifier(String name) throws InterruptedException, JSONException {
+        
+        //Get the access token
+        String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
+        assertNotNull(accessToken);
+        
+        //Create the external identifier
+        PersonExternalIdentifier extId = getExternalIdentifier(name);                
+        ClientResponse response = memberV2ApiClient.createExternalIdentifier(getUser1OrcidId(), extId, accessToken);
+        assertNotNull(response);
+        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
+        
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+        return putCode;
+    }
+
+    protected PersonExternalIdentifier getExternalIdentifier(String value) {
+        PersonExternalIdentifier externalIdentifier = new PersonExternalIdentifier();
+        externalIdentifier.setType(value);
+        externalIdentifier.setValue(value);
+        externalIdentifier.setUrl(new Url("http://ext-id/" + value));        
+        externalIdentifier.setVisibility(Visibility.PUBLIC);
+        externalIdentifier.setSource(null);        
+        externalIdentifier.setPath(null);
+        externalIdentifier.setLastModifiedDate(null);
+        externalIdentifier.setCreatedDate(null);
+        externalIdentifier.setPutCode(null);
+        return externalIdentifier;
+    }
 }

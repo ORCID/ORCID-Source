@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
  */
 public class OrcidStringUtils {
 
+        public static String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
+    
 	private static String LT = "&lt;";
 	private static String GT = "&gt;";
 	private static String AMP = "&amp;";
@@ -49,7 +51,7 @@ public class OrcidStringUtils {
 	private static String DECODED_QUOT = "\"";
 
 	private static final Pattern orcidPattern = Pattern
-			.compile("(\\d{4}-){3}\\d{3}[\\dX]");
+			.compile(ORCID_STRING);
 	private static final Pattern clientIdPattern = Pattern
 			.compile("APP-[\\dA-Z]{16}");
 

@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.record_2_0_rc2;
+package org.orcid.record_2_0;
 
 import static org.junit.Assert.assertEquals;
 

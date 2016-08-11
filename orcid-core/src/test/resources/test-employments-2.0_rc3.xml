@@ -17,15 +17,14 @@
     =============================================================================
 
 -->
-<activities:educations
+<activities:employments
 	xmlns:activities="http://www.orcid.org/ns/activities"
-	xmlns:common="http://www.orcid.org/ns/common"
-	xmlns:education="http://www.orcid.org/ns/education"
+	xmlns:affiliation="http://www.orcid.org/ns/employment" xmlns:common="http://www.orcid.org/ns/common"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc2.xsd ">
-	<common:last-modified-date>2002-10-24T12:00:00</common:last-modified-date>
-	<education:education-summary put-code="0"
-		visibility="private">
+	xsi:schemaLocation="http://www.orcid.org/ns/activities ../activities-2.0_rc3.xsd ">
+	<common:last-modified-date>2002-11-23T12:00:00</common:last-modified-date>
+	<affiliation:employment-summary
+		put-code="0" visibility="private">
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
 		<common:last-modified-date>2001-12-31T12:00:00</common:last-modified-date>
 		<common:source>
@@ -36,8 +35,8 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-		<education:department-name>education:department-name</education:department-name>
-		<education:role-title>education:role-title</education:role-title>
+		<affiliation:department-name>affiliation:department-name</affiliation:department-name>
+		<affiliation:role-title>affiliation:role-title</affiliation:role-title>
 		<common:start-date>
 			<common:year>2014</common:year>
 			<common:month>12</common:month>
@@ -48,7 +47,7 @@
 			<common:month>12</common:month>
 			<common:day>20</common:day>
 		</common:end-date>
-		<education:organization>
+		<affiliation:organization>
 			<common:name>common:name</common:name>
 			<common:address>
 				<common:city>common:city</common:city>
@@ -59,12 +58,12 @@
 				<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 				<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 			</common:disambiguated-organization>
-		</education:organization>
-	</education:education-summary>
-	<education:education-summary put-code="1"
-		visibility="private">
+		</affiliation:organization>
+	</affiliation:employment-summary>
+	<affiliation:employment-summary
+		put-code="1" visibility="private">
 		<common:created-date>2001-12-31T12:00:00</common:created-date>
-		<common:last-modified-date>2002-10-24T12:00:00</common:last-modified-date>
+		<common:last-modified-date>2002-11-23T12:00:00</common:last-modified-date>
 		<common:source>
 			<common:source-orcid>
 				<common:uri>http://orcid.org/8888-8888-8888-8880</common:uri>
@@ -73,8 +72,8 @@
 			</common:source-orcid>
 			<common:source-name />
 		</common:source>
-		<education:department-name>education:department-name</education:department-name>
-		<education:role-title>education:role-title</education:role-title>
+		<affiliation:department-name>affiliation:department-name</affiliation:department-name>
+		<affiliation:role-title>affiliation:role-title</affiliation:role-title>
 		<common:start-date>
 			<common:year>2014</common:year>
 			<common:month>12</common:month>
@@ -85,7 +84,7 @@
 			<common:month>12</common:month>
 			<common:day>20</common:day>
 		</common:end-date>
-		<education:organization>
+		<affiliation:organization>
 			<common:name>common:name</common:name>
 			<common:address>
 				<common:city>common:city</common:city>
@@ -96,6 +95,6 @@
 				<common:disambiguated-organization-identifier>common:disambiguated-organization-identifier</common:disambiguated-organization-identifier>
 				<common:disambiguation-source>common:disambiguation-source</common:disambiguation-source>
 			</common:disambiguated-organization>
-		</education:organization>
-	</education:education-summary>
-</activities:educations>
+		</affiliation:organization>
+	</affiliation:employment-summary>
+</activities:employments>

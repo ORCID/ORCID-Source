@@ -27,6 +27,7 @@ import org.orcid.core.exception.OrcidBadRequestException;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sun.jersey.api.core.InjectParam;
@@ -46,6 +47,8 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
 
     private static final Pattern VERSION_PATTERN = Pattern.compile("v(\\d.*?)/");
 
+    private static final String WEBHOOKS_PATH_PATTERN = OrcidStringUtils.ORCID_STRING + "/webhook/.+";
+    
     public ApiVersionCheckFilter() {
     }
     
@@ -68,7 +71,7 @@ public class ApiVersionCheckFilter implements ContainerRequestFilter {
             version = matcher.group(1);
         }
         
-        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path)) {
+        if(PojoUtil.isEmpty(version) && !PojoUtil.isEmpty(method) && !"oauth/token".equals(path) && !path.matches(WEBHOOKS_PATH_PATTERN)) {
             if(!RequestMethod.GET.name().equals(method)) {
                 Object params[] = {method};
                 throw new OrcidBadRequestException(localeManager.resolveMessage("apiError.badrequest_missing_version.exception", params));    
