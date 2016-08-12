@@ -280,22 +280,36 @@ public class WorkManagerImpl implements WorkManager {
                     }
                     
                     //Save the work
-                    //TODO
+                    WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+                    ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                    workEntity.setProfile(profile);
+                    workEntity.setAddedToProfileDate(new Date());
+                    
+                    // Set source id 
+                    if(sourceEntity.getSourceProfile() != null) {
+                        workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+                    }
+                    
+                    if(sourceEntity.getSourceClient() != null) {
+                        workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+                    } 
+                    
+                    setIncomingWorkPrivacy(workEntity, profile);        
+                    DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);        
+                    workDao.persist(workEntity);                    
                     
                     //Update the element in the bulk
-                    //TODO
+                    Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+                    
+                    bulk.set(i, updatedWork);
                     
                     //Add the work extIds to the list of existing external identifiers
-                    for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
-                        existingExternalIdentifiers.add(extId);
-                    }
+                    addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
                 }
             }
-        }
-        
             
-        
-        
+            workDao.flush();            
+        }
         
         return workBulk;
     }
