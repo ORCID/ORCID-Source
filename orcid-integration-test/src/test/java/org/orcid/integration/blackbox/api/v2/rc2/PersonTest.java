@@ -67,7 +67,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         signin();
 
         openEditPersonalNamesSection();
-        updatePersonalNamesVisibility(Visibility.PUBLIC);
+        updatePersonalNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         saveOtherNamesSection();
 
         openEditAddressModal();
@@ -85,7 +85,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         deleteKeywords();
         createKeyword("keyword-1");
         createKeyword("keyword-2");
-        changeKeywordsVisibility(Visibility.PUBLIC);
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         saveKeywordsModal();       
 
         if (hasExternalIdentifiers()) {
@@ -96,26 +96,26 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
-        updatePrimaryEmailVisibility(Visibility.PUBLIC);
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         removePopOver();
         if (emailExists(limitedEmail)) {
-            updateEmailVisibility(limitedEmail, Visibility.LIMITED);
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         } else {
-            addEmail(limitedEmail, Visibility.LIMITED);
+            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         }
     }
 
     public void setUpUserInApi() throws InterruptedException, JSONException {
         String extId1Value = "A-0001";
         String extId2Value = "A-0002";
-        createExternalIdentifier(extId1Value, Visibility.PUBLIC);
-        createExternalIdentifier(extId2Value, Visibility.LIMITED);
+        createExternalIdentifier(extId1Value);
+        createExternalIdentifier(extId2Value);
     }
     
     public void fixPrivacy() {
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0002", Visibility.LIMITED);
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         saveExternalIdentifiersModal();
     }
     
@@ -167,13 +167,13 @@ public class PersonTest extends BlackBoxBaseRC2 {
         EmailTest.assertListContainsEmail(limitedEmail, Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifiers().size());
 
         boolean foundPublic = false;
         boolean foundLimited = false;
 
-        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifier()) {
+        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
             if ("A-0001".equals(e.getType())) {
                 assertEquals("A-0001", e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -233,11 +233,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
         EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
 
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getKeywords());

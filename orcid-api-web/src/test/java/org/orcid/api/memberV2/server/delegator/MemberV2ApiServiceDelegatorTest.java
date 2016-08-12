@@ -50,66 +50,66 @@ import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
 import org.orcid.core.utils.SecurityContextTestUtils;
-import org.orcid.jaxb.model.common_rc2.Country;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.OrcidIdentifier;
-import org.orcid.jaxb.model.common_rc2.Organization;
-import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc2.Subtitle;
-import org.orcid.jaxb.model.common_rc2.Title;
-import org.orcid.jaxb.model.common_rc2.TranslatedTitle;
-import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
+import org.orcid.jaxb.model.common_rc3.Country;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.OrcidIdentifier;
+import org.orcid.jaxb.model.common_rc3.Organization;
+import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
+import org.orcid.jaxb.model.common_rc3.Subtitle;
+import org.orcid.jaxb.model.common_rc3.Title;
+import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
+import org.orcid.jaxb.model.common_rc3.Url;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc2.Works;
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Citation;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.FundingTitle;
-import org.orcid.jaxb.model.record_rc2.FundingType;
-import org.orcid.jaxb.model.record_rc2.History;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.PeerReviewType;
-import org.orcid.jaxb.model.record_rc2.Person;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.Record;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc2.Role;
-import org.orcid.jaxb.model.record_rc2.Work;
-import org.orcid.jaxb.model.record_rc2.WorkTitle;
-import org.orcid.jaxb.model.record_rc2.WorkType;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
+import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Citation;
+import org.orcid.jaxb.model.record_rc3.Education;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.FundingTitle;
+import org.orcid.jaxb.model.record_rc3.FundingType;
+import org.orcid.jaxb.model.record_rc3.History;
+import org.orcid.jaxb.model.record_rc3.Keyword;
+import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.PeerReviewType;
+import org.orcid.jaxb.model.record_rc3.Person;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc3.Role;
+import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkTitle;
+import org.orcid.jaxb.model.record_rc3.WorkType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -2068,7 +2068,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifier();
+        List<PersonExternalIdentifier> extIdsList = extIds.getExternalIdentifiers();
         assertNotNull(extIdsList);
         assertEquals(3, extIdsList.size());
 
@@ -2174,13 +2174,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(1), extIds.getExternalIdentifier().get(0).getPutCode());
-        assertNotNull(extIds.getExternalIdentifier().get(0).getUrl());
-        assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifier().get(0).getUrl().getValue());
-        assertEquals("d3clan", extIds.getExternalIdentifier().get(0).getValue());
-        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifier().get(0).getVisibility());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(1), extIds.getExternalIdentifiers().get(0).getPutCode());
+        assertNotNull(extIds.getExternalIdentifiers().get(0).getUrl());
+        assertEquals("http://www.facebook.com/d3clan", extIds.getExternalIdentifiers().get(0).getUrl().getValue());
+        assertEquals("d3clan", extIds.getExternalIdentifiers().get(0).getValue());
+        assertEquals(Visibility.PUBLIC, extIds.getExternalIdentifiers().get(0).getVisibility());
        
         response = serviceDelegator.createExternalIdentifier("4444-4444-4444-4443", getPersonExternalIdentifier());
         assertNotNull(response);
@@ -2196,10 +2196,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(2, extIds.getExternalIdentifier().size());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertEquals(2, extIds.getExternalIdentifiers().size());
 
-        for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+        for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
             assertNotNull(extId.getUrl());
             if (extId.getPutCode() != 1L) {
                 assertEquals(Visibility.PUBLIC, extId.getVisibility());
@@ -2309,9 +2309,9 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(6), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(6), extIds.getExternalIdentifiers().get(0).getPutCode());
 
         response = serviceDelegator.deleteExternalIdentifier("4444-4444-4444-4444", 6L);
         assertNotNull(response);
@@ -2321,8 +2321,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(response);
         extIds = (PersonExternalIdentifiers) response.getEntity();
         assertNotNull(extIds);
-        assertNotNull(extIds.getExternalIdentifier());
-        assertTrue(extIds.getExternalIdentifier().isEmpty());
+        assertNotNull(extIds.getExternalIdentifiers());
+        assertTrue(extIds.getExternalIdentifiers().isEmpty());
     }
 
     @Test(expected = WrongSourceException.class)
@@ -2807,12 +2807,12 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getEmails().getEmails().get(0).getCreatedDate());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(3, person.getExternalIdentifiers().getExternalIdentifiers().size());
 
         boolean found2 = false, found3 = false, found5 = false;
 
-        List<PersonExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifier();
+        List<PersonExternalIdentifier> extIds = person.getExternalIdentifiers().getExternalIdentifiers();
         for (PersonExternalIdentifier extId : extIds) {
             assertThat(extId.getPutCode(), anyOf(is(2L), is(3L), is(5L)));
             assertNotNull(extId.getCreatedDate());
@@ -3054,8 +3054,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         r = serviceDelegator.viewExternalIdentifiers(orcid);
         PersonExternalIdentifiers extIds = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(extIds);
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13L), extIds.getExternalIdentifiers().get(0).getPutCode());
         
         //Public works
         serviceDelegator.viewExternalIdentifier(orcid, 13L);
@@ -3694,8 +3694,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getLastModifiedDate());
         assertEquals("/0000-0000-0000-0003/external-identifiers", person.getExternalIdentifiers().getPath());
-        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifier().size());
-        for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifier()) {
+        assertEquals(4, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        for(PersonExternalIdentifier extId : person.getExternalIdentifiers().getExternalIdentifiers()) {
             assertNotNull(extId.getLastModifiedDate());
             if(extId.getPutCode().equals(Long.valueOf(13))) {
                 assertEquals(Long.valueOf(0), extId.getDisplayIndex());
@@ -4348,8 +4348,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PersonExternalIdentifiers p = (PersonExternalIdentifiers) r.getEntity();
         assertNotNull(p);
         assertNotNull(p.getLastModifiedDate());
-        assertEquals(1, p.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13), p.getExternalIdentifier().get(0).getPutCode());
+        assertEquals(1, p.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13), p.getExternalIdentifiers().get(0).getPutCode());
         
         r = serviceDelegator.viewExternalIdentifier(orcid, 13L);
         assertNotNull(r);
@@ -4516,8 +4516,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         PersonExternalIdentifiers extIds = p.getExternalIdentifiers();
         assertNotNull(extIds);
         assertNotNull(extIds.getLastModifiedDate());
-        assertEquals(1, extIds.getExternalIdentifier().size());
-        assertEquals(Long.valueOf(13), extIds.getExternalIdentifier().get(0).getPutCode());
+        assertEquals(1, extIds.getExternalIdentifiers().size());
+        assertEquals(Long.valueOf(13), extIds.getExternalIdentifiers().get(0).getPutCode());
                 
         //Keywords
         assertNotNull(p.getKeywords());

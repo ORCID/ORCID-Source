@@ -36,7 +36,7 @@ import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
 import org.orcid.jaxb.model.common_rc2.Country;
 import org.orcid.jaxb.model.common_rc2.Iso3166Country;
 import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.error_rc1.OrcidError;
+import org.orcid.jaxb.model.error_rc2.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Address;
 import org.orcid.jaxb.model.record_rc2.Addresses;
@@ -64,7 +64,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
         openEditAddressModal();  
         deleteAddresses();
         createAddress(Iso3166Country.US.name());
-        changeAddressVisibility(Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         saveEditAddressModal();                
     }
     
@@ -81,7 +81,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
     public void testGetAddressWithMembersAPI() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         saveEditAddressModal();
         
         String accessToken = getAccessToken();
@@ -108,11 +108,11 @@ public class AddressTest extends BlackBoxBaseRC2 {
     @SuppressWarnings({ "rawtypes", "deprecation" })
     @Test
     public void testCreateGetUpdateAndDeleteAddress() throws InterruptedException, JSONException {        
-        changeDefaultUserVisibility(webDriver, Visibility.LIMITED);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(Visibility.PUBLIC);
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         saveEditAddressModal();
         
         String accessToken = getAccessToken();
@@ -206,7 +206,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetAddressWithPublicAPI() throws InterruptedException, JSONException {
-        changeDefaultUserVisibility(webDriver, Visibility.PUBLIC);
+        changeDefaultUserVisibility(webDriver, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
                 
         ClientResponse response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -228,7 +228,7 @@ public class AddressTest extends BlackBoxBaseRC2 {
         signin();
         showMyOrcidPage();
         openEditAddressModal();
-        changeAddressVisibility(Visibility.LIMITED);
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         saveEditAddressModal();
         
         response = publicV2ApiClient.viewAddressesXML(getUser1OrcidId());

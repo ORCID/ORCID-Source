@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.orcid.jaxb.model.common_rc2.OrcidIdBase;
+
 import java.lang.Deprecated;
 
 @Deprecated 

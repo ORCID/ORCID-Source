@@ -25,7 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.blackbox.api.BlackBoxBase;
-import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -53,7 +52,7 @@ public class AccountSettingsTest extends BlackBoxBase {
         openEditEmailsSectionOnAccountSettingsPage();
         //Add an email
         String emailValue = "added.email." + System.currentTimeMillis() + "@test.com";
-        addEmail(emailValue, Visibility.PRIVATE);
+        addEmail(emailValue, org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
         //Reload the account settings to confirm it was actually added
         showAccountSettingsPage();
         try {

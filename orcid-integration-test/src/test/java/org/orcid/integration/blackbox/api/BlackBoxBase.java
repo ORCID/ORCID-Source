@@ -16,6 +16,7 @@
  */
 package org.orcid.integration.blackbox.api;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElement;
 import static org.orcid.integration.blackbox.api.BBBUtil.findElementById;
@@ -54,11 +55,13 @@ import org.orcid.api.common.WebDriverHelper;
 import org.orcid.integration.api.helper.APIRequestType;
 import org.orcid.integration.api.helper.OauthHelper;
 import org.orcid.integration.blackbox.web.SigninTest;
-import org.orcid.jaxb.model.common_rc1.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.sun.jersey.api.client.ClientResponse;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BlackBoxBase {
@@ -462,8 +465,7 @@ public class BlackBoxBase {
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(otherNamesVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }
-        saveOtherNamesModal();
+        }        
     }
     
     /**
@@ -1181,6 +1183,16 @@ public class BlackBoxBase {
     public void removePopOver() {
         Actions a = new Actions(webDriver);
         a.moveByOffset(500, 500).perform();        
+    }
+    
+    @SuppressWarnings({ "deprecation", "rawtypes" })
+    public Long getPutCodeFromResponse(ClientResponse response) {
+        Map map = response.getMetadata();
+        assertNotNull(map);
+        assertTrue(map.containsKey("Location"));
+        List resultWithPutCode = (List) map.get("Location");
+        String location = resultWithPutCode.get(0).toString();
+        return Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
     }
     
     public String getAdminUserName() {

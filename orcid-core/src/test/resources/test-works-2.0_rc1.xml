@@ -25,8 +25,8 @@
 	<activities:group>
 		<activities:identifiers>
 			<activities:identifier>
-				<activities:external-identifier-type>agr</activities:external-identifier-type>
-				<activities:external-identifier-id>activities:external-identifier-id</activities:external-identifier-id>
+				<activities:external-identifier-type>cit</activities:external-identifier-type>
+				<activities:external-identifier-id>cit</activities:external-identifier-id>				
 			</activities:identifier>
 		</activities:identifiers>
 		<work:work-summary put-code="0" visibility="private">

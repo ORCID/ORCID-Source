@@ -54,7 +54,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    Visibility currentUserVisibility = null;
+    org.orcid.jaxb.model.common_rc3.Visibility currentUserVisibility = null;
     
     ArrayList<Long> createdPutCodes = new ArrayList<Long>();
     
@@ -77,20 +77,20 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         String extId1Value = "A-0001" + System.currentTimeMillis();
         String extId2Value = "A-0002" + System.currentTimeMillis();
         
-        Long putCode1 = createExternalIdentifier(extId1Value, Visibility.PUBLIC);
-        Long putCode2 = createExternalIdentifier(extId2Value, Visibility.LIMITED);
+        Long putCode1 = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        Long putCode2 = createExternalIdentifier(extId2Value, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         //Check you can view them
         ClientResponse getResponse = memberV2ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PersonExternalIdentifiers externalIdentifiers = getResponse.getEntity(PersonExternalIdentifiers.class);
         assertNotNull(externalIdentifiers);
-        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertNotNull(externalIdentifiers.getExternalIdentifiers());
         
         boolean found1 = false;
         boolean found2 = false;
         
-        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {
                 assertEquals(extId1Value, e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -115,18 +115,18 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(accessToken);
 
         String extId1Value = "A-0003" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, Visibility.LIMITED);               
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);               
 
         //Get and verify
         ClientResponse response = memberV2ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);        
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         PersonExternalIdentifiers ExternalIdentifiers = response.getEntity(PersonExternalIdentifiers.class);
         assertNotNull(ExternalIdentifiers);
-        assertNotNull(ExternalIdentifiers.getExternalIdentifier());        
+        assertNotNull(ExternalIdentifiers.getExternalIdentifiers());        
         
         boolean haveNew = false;
         
-        for(PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {                
                 assertEquals(extId1Value, e.getType());
                 assertEquals(extId1Value, e.getValue());
@@ -203,7 +203,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(accessToken);
         
         String extId1Value = "A-0001" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, Visibility.PUBLIC);
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
                 
         ClientResponse response = publicV2ApiClient.viewExternalIdentifiersXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -211,7 +211,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         
         boolean found1 = false;
         
-        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {
                 assertEquals(extId1Value, e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -243,14 +243,14 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
-    
-    protected Long createExternalIdentifier(String name, Visibility defaultUserVisibility) throws InterruptedException, JSONException {
-        // Change user visibility if needed
-        if (!defaultUserVisibility.equals(currentUserVisibility)) {
+        
+    private Long createExternalIdentifier(String name, org.orcid.jaxb.model.common_rc3.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
+        //Change user visibility if needed
+        if(!defaultUserVisibility.equals(currentUserVisibility)) {
             changeDefaultUserVisibility(webDriver, defaultUserVisibility);
             currentUserVisibility = defaultUserVisibility;
         }
-        Long putCode = super.createExternalIdentifier(name, defaultUserVisibility);
+        Long putCode = super.createExternalIdentifier(name);
         createdPutCodes.add(putCode);
         return putCode;
     }

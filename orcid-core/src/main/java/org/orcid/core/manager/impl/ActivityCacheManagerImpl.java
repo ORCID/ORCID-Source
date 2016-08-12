@@ -29,8 +29,8 @@ import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.Funding;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.WorkForm;
@@ -61,7 +61,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
         if (peerReviews != null) {
             if (!peerReviews.isEmpty()) {                
                 for(PeerReview peerReview : peerReviews) {
-                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+                    if(peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                         peerReviewMap.put(peerReview.getPutCode(), peerReview);
                     }
                 }
@@ -119,7 +119,7 @@ public class ActivityCacheManagerImpl extends Object implements ActivityCacheMan
     public String getPublicCreditName(ProfileEntity profile) {
         String publicCreditName = null;
         if(profile != null) {
-            if(profile.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {            
+            if(profile.getRecordNameEntity() != null && org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC.equals(profile.getRecordNameEntity().getVisibility())) {            
                 if(!PojoUtil.isEmpty(profile.getRecordNameEntity().getCreditName())) {
                     publicCreditName = profile.getRecordNameEntity().getCreditName();
                 } else {

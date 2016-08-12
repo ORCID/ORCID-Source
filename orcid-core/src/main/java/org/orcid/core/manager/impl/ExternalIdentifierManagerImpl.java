@@ -34,10 +34,10 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.PersonValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.core.version.impl.LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
 import org.orcid.persistence.dao.ExternalIdentifierDao;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -96,7 +96,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         }
 
         PersonExternalIdentifiers extIds = jpaJaxbExternalIdentifierAdapter.toExternalIdentifierList(externalIdentifiers);
-        LastModifiedDatesHelper.calculateLatest(extIds);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(extIds);
         return extIds;
     }
 
@@ -194,12 +194,12 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     }
 
     private void setIncomingPrivacy(ExternalIdentifierEntity entity, ProfileEntity profile) {
-        org.orcid.jaxb.model.common_rc2.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
-        org.orcid.jaxb.model.common_rc2.Visibility defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc2.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
+        org.orcid.jaxb.model.common_rc3.Visibility incomingExternalIdentifierVisibility = entity.getVisibility();
+        org.orcid.jaxb.model.common_rc3.Visibility defaultExternalIdentifierVisibility = (profile.getActivitiesVisibilityDefault() == null) ? org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE : org.orcid.jaxb.model.common_rc3.Visibility.fromValue(profile.getActivitiesVisibilityDefault().value());
         if (profile.getClaimed() != null && profile.getClaimed()) {
             entity.setVisibility(defaultExternalIdentifierVisibility);            
         } else if (incomingExternalIdentifierVisibility == null) {
-            entity.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+            entity.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
         }
     }    
 
@@ -226,8 +226,8 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         // Delete the deleted ones
         for (ExternalIdentifierEntity existing : existingExternalIdentifiersList) {
             boolean deleteMe = true;
-            if(externalIdentifiers.getExternalIdentifier() != null) {
-                for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+            if(externalIdentifiers.getExternalIdentifiers() != null) {
+                for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifiers()) {
                     if (existing.getId().equals(updatedOrNew.getPutCode())) {
                         deleteMe = false;
                         break;
@@ -244,8 +244,8 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
             }
         }
 
-        if (externalIdentifiers != null && externalIdentifiers.getExternalIdentifier() != null) {
-            for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifier()) {
+        if (externalIdentifiers != null && externalIdentifiers.getExternalIdentifiers() != null) {
+            for (PersonExternalIdentifier updatedOrNew : externalIdentifiers.getExternalIdentifiers()) {
                 if (updatedOrNew.getPutCode() != null) {
                     // Update the existing ones
                     for (ExternalIdentifierEntity existingExtId : existingExternalIdentifiersList) {

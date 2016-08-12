@@ -16,8 +16,8 @@
  */
 package org.orcid.core.manager;
 
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecord;
-import org.orcid.jaxb.model.groupid_rc2.GroupIdRecords;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 
 public interface GroupIdRecordManager {
 

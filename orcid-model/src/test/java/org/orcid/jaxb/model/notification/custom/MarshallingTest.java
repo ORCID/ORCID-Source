@@ -26,9 +26,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.junit.Test;
-import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
-import org.orcid.jaxb.model.notification_rc2.NotificationType;
-
 /**
  * 
  * @author Will Simpson
@@ -38,10 +35,13 @@ import org.orcid.jaxb.model.notification_rc2.NotificationType;
 public class MarshallingTest {
 
     @Test
-    public void testUnMarshalling() throws JAXBException {
-        NotificationCustom notification = getNotification();
-        assertNotNull(notification);
-        assertEquals(NotificationType.CUSTOM, notification.getNotificationType());
+    public void testUnMarshallingRc2() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom_rc2");
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc2/samples/notification-custom-2.0_rc2.xml");
+        org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom notification = (org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom)unmarshaller.unmarshal(inputStream);
+        assertNotNull(notification);        
+        assertEquals(org.orcid.jaxb.model.notification_rc2.NotificationType.CUSTOM, notification.getNotificationType());
         assertEquals("Important Notification from ORCID", notification.getSubject());
         assertEquals("This is an email with important info.\n    ", notification.getBodyText());
         assertEquals("\n        <p>\n            This is an email with <em>important</em> info.\n        </p>\n    ", notification.getBodyHtml());
@@ -49,11 +49,18 @@ public class MarshallingTest {
         assertEquals("en-gb", notification.getLang());
     }
 
-    private NotificationCustom getNotification() throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom_rc2");
+    @Test
+    public void testUnMarshallingRc3() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance("org.orcid.jaxb.model.notification.custom_rc3");
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc2/samples/notification-custom-2.0_rc2.xml");
-        return (NotificationCustom) unmarshaller.unmarshal(inputStream);
+        InputStream inputStream = MarshallingTest.class.getResourceAsStream("/notification_2.0_rc3/samples/notification-custom-2.0_rc3.xml");
+        org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom notification = (org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom)unmarshaller.unmarshal(inputStream);
+        assertNotNull(notification);
+        assertEquals(org.orcid.jaxb.model.notification_rc3.NotificationType.CUSTOM, notification.getNotificationType());
+        assertEquals("Important Notification from ORCID", notification.getSubject());
+        assertEquals("This is an email with important info.\n    ", notification.getBodyText());
+        assertEquals("\n        <p>\n            This is an email with <em>important</em> info.\n        </p>\n    ", notification.getBodyHtml());
+        assertEquals("2014-01-01T14:45:32", notification.getSentDate().toXMLFormat());
+        assertEquals("en-gb", notification.getLang());
     }
-
 }

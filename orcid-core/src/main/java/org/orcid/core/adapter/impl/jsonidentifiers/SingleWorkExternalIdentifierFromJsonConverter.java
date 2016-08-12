@@ -16,11 +16,11 @@
  */
 package org.orcid.core.adapter.impl.jsonidentifiers;
 
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+
 import ma.glasnost.orika.converter.BidirectionalConverter;
 import ma.glasnost.orika.metadata.Type;
-
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
 
 /**
  * This class serializes a single ExternalID into a WorkExternalIdentifiers with

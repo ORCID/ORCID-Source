@@ -61,16 +61,16 @@ import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.PersonalDetails;
 import org.orcid.jaxb.model.message.SendChangeNotifications;
 import org.orcid.jaxb.model.message.Source;
-import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
-import org.orcid.jaxb.model.notification.amended_rc2.NotificationAmended;
-import org.orcid.jaxb.model.notification.custom_rc2.NotificationCustom;
-import org.orcid.jaxb.model.notification.permission_rc2.AuthorizationUrl;
-import org.orcid.jaxb.model.notification.permission_rc2.Item;
-import org.orcid.jaxb.model.notification.permission_rc2.Items;
-import org.orcid.jaxb.model.notification_rc2.Notification;
-import org.orcid.jaxb.model.notification_rc2.NotificationType;
-import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.model.notification.institutional_sign_in_rc2.NotificationInstitutionalConnection;
+import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc3.NotificationAmended;
+import org.orcid.jaxb.model.notification.custom_rc3.NotificationCustom;
+import org.orcid.jaxb.model.notification.permission_rc3.AuthorizationUrl;
+import org.orcid.jaxb.model.notification.permission_rc3.Item;
+import org.orcid.jaxb.model.notification.permission_rc3.Items;
+import org.orcid.jaxb.model.notification_rc3.Notification;
+import org.orcid.jaxb.model.notification_rc3.NotificationType;
+import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.GenericDao;
 import org.orcid.persistence.dao.NotificationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -1045,7 +1045,7 @@ public class NotificationManagerImpl implements NotificationManager {
             if(emails == null || emails.getEmails() == null)  {
                 throw new IllegalArgumentException("Unable to find primary email for: " + userOrcid);
             }
-            for(org.orcid.jaxb.model.record_rc2.Email email : emails.getEmails()) {
+            for(org.orcid.jaxb.model.record_rc3.Email email : emails.getEmails()) {
                 if(email.isPrimary()) {
                     primaryEmail = email.getEmail();
                 }

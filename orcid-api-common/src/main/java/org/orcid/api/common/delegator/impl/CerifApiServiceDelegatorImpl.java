@@ -34,10 +34,10 @@ import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.core.manager.WorkManager;
 import org.orcid.core.security.visibility.filter.VisibilityFilterV2;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 
 import com.google.common.base.Optional;
 
@@ -92,7 +92,7 @@ public class CerifApiServiceDelegatorImpl implements CerifApiServiceDelgator {
         Optional<String> family = (personalDetails.getName() != null && personalDetails.getName().getFamilyName() != null)
                 ? Optional.fromNullable(personalDetails.getName().getFamilyName().getContent()) : Optional.absent();
 
-        List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifier();
+        List<PersonExternalIdentifier> allExtIds = externalIdentifierManager.getExternalIdentifiers(orcid, getLastModifiedTime(orcid)).getExternalIdentifiers();
         @SuppressWarnings("unchecked")
         List<PersonExternalIdentifier> filteredExtIds = (List<PersonExternalIdentifier>) visibilityFilter.filter(allExtIds, orcid);
 

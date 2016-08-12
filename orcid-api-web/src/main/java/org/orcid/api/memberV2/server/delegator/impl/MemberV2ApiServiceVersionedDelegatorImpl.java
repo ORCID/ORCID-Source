@@ -255,12 +255,14 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateResearcherUrl(String orcid, Long putCode, Object researcherUrl) {
         checkProfileStatus(orcid);
+        researcherUrl = upgradeObject(researcherUrl);
         return downgradeResponse(memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl));
     }
 
     @Override
     public Response createResearcherUrl(String orcid, Object researcherUrl) {
         checkProfileStatus(orcid);
+        researcherUrl = upgradeObject(researcherUrl);
         return memberV2ApiServiceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
 
@@ -291,12 +293,14 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createOtherName(String orcid, Object otherName) {
         checkProfileStatus(orcid);
+        otherName = upgradeObject(otherName);
         return memberV2ApiServiceDelegator.createOtherName(orcid, otherName);
     }
 
     @Override
     public Response updateOtherName(String orcid, Long putCode, Object otherName) {
         checkProfileStatus(orcid);
+        otherName = upgradeObject(otherName);
         return downgradeResponse(memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName));
     }
 
@@ -327,12 +331,14 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, Object externalIdentifier) {
         checkProfileStatus(orcid);
+        externalIdentifier = upgradeObject(externalIdentifier);
         return downgradeResponse(memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier));
     }
 
     @Override
     public Response createExternalIdentifier(String orcid, Object externalIdentifier) {
         checkProfileStatus(orcid);
+        externalIdentifier = upgradeObject(externalIdentifier);
         return memberV2ApiServiceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
 

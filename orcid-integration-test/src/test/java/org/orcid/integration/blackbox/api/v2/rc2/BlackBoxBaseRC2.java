@@ -19,7 +19,6 @@ package org.orcid.integration.blackbox.api.v2.rc2;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -120,8 +119,7 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         g1.setPutCode(Long.valueOf(r1LocationPutCode));        
         
         return g1;
-    }            
-    
+    }                
     
     /**
      * EXTERNAL IDENTIFIERS
@@ -137,7 +135,7 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         return getPutCodeFromResponse(response);                       
-    }          
+    }                  
     
     @SuppressWarnings({ "deprecation", "rawtypes" })
     public Long getPutCodeFromResponse(ClientResponse response) {
@@ -150,7 +148,7 @@ public class BlackBoxBaseRC2 extends BlackBoxBase {
     }
 
     @SuppressWarnings({ "rawtypes", "deprecation" })
-    protected Long createExternalIdentifier(String name, Visibility defaultUserVisibility) throws InterruptedException, JSONException {
+    protected Long createExternalIdentifier(String name) throws InterruptedException, JSONException {
         
         //Get the access token
         String accessToken = getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
