@@ -17,11 +17,16 @@
 package org.orcid.core.manager.impl;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -33,10 +38,14 @@ import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
 import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record_rc3.BulkElement;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
@@ -243,7 +252,94 @@ public class WorkManagerImpl implements WorkManager {
     @Override
     @Transactional
     public WorkBulk createWorks(String orcid, WorkBulk workBulk) {
+        
+        SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
+        Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(orcid, sourceEntity.getSourceId());
+        
+        if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
+            List<BulkElement> bulk = workBulk.getBulk();
+            for(int i = 0; i < bulk.size(); i++) {
+                if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
+                    Work work = (Work) bulk.get(i);
+                    try {
+                        //Validate the work
+                        activityValidator.validateWork(work, sourceEntity, true, true, null);
+                        //Validate it is not duplicated
+                        if(work.getExternalIdentifiers() != null) {
+                            for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                                if(existingExternalIdentifiers.contains(extId)) {
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("clientName", sourceEntity.getSourceName());
+                                    throw new OrcidDuplicatedActivityException(params);
+                                }
+                            }
+                        }
+                    } catch(Exception e) {
+                        //TODO: set the error element
+                        bulk.set(i, new OrcidError());
+                    }
+                    
+                    //Save the work
+                    //TODO
+                    
+                    //Update the element in the bulk
+                    //TODO
+                    
+                    //Add the work extIds to the list of existing external identifiers
+                    for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                        existingExternalIdentifiers.add(extId);
+                    }
+                }
+            }
+        }
+        
+            
+        
+        
+        
         return workBulk;
+    }
+    
+    /**
+     * Return the list of existing external identifiers for the given user where the source matches the given sourceId
+     * 
+     * @param orcid
+     *          The user we want to add the works to
+     * @param sourceId
+     *          The client id we are evaluating
+     * @return A set of all the existing external identifiers that belongs to the given user and to the given source id                  
+     * */
+    private Set<ExternalID> buildExistingExternalIdsSet(String orcid, String sourceId) {
+        Set<ExternalID> existingExternalIds = new HashSet<ExternalID>();
+        Date lastModified = profileEntityManager.getLastModified(orcid);
+        long lastModifiedTime = (lastModified == null) ? 0 : lastModified.getTime();
+        List<Work> existingWorks = this.findWorks(orcid, lastModifiedTime);    
+        for(Work work : existingWorks) {
+            //If it is the same source
+            if(work.retrieveSourcePath().equals(sourceId)) {
+                if(work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
+                    for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                        //Don't include PART_OF external ids
+                        if(!Relationship.PART_OF.equals(extId.getRelationship())) {
+                            existingExternalIds.add(extId);
+                        }                        
+                    }
+                }
+            }
+        }
+        
+        return existingExternalIds;
+    }
+    
+    private void addExternalIdsToExistingSet(Work work, Set<ExternalID> existingExternalIDs) {
+        if(work != null && work.getExternalIdentifiers() != null && work.getExternalIdentifiers().getExternalIdentifier() != null) {
+            for(ExternalID extId : work.getExternalIdentifiers().getExternalIdentifier()) {
+                //Don't include PART_OF external ids
+                if(!Relationship.PART_OF.equals(extId.getRelationship())) {
+                    existingExternalIDs.add(extId);
+                }
+            }
+        }
     }
     
     @Override

@@ -82,7 +82,7 @@ public class SourceUtils {
         if(bulk != null) {
             if(!bulk.getBulk().isEmpty()) {
                 for(BulkElement element : bulk.getBulk()) {
-                    if(element instanceof Work) {
+                    if(Work.class.isAssignableFrom(element.getClass())) {
                         setSourceName((Work)element);
                     }
                 }
