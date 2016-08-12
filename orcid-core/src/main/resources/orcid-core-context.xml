@@ -798,5 +798,7 @@
 	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />			
+	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />		
+	
+	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />	
 </beans>

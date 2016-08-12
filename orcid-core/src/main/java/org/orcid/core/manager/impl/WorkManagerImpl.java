@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
+import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
@@ -91,6 +92,9 @@ public class WorkManagerImpl implements WorkManager {
 
     @Resource 
     private ActivityValidator activityValidator;
+    
+    @Resource
+    private OrcidCoreExceptionMapper orcidCoreExceptionMapper;        
 
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -274,37 +278,38 @@ public class WorkManagerImpl implements WorkManager {
                                 }
                             }
                         }
+                        
+                        //Save the work
+                        WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
+                        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
+                        workEntity.setProfile(profile);
+                        workEntity.setAddedToProfileDate(new Date());
+                        
+                        // Set source id 
+                        if(sourceEntity.getSourceProfile() != null) {
+                            workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
+                        }
+                        
+                        if(sourceEntity.getSourceClient() != null) {
+                            workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
+                        } 
+                        
+                        setIncomingWorkPrivacy(workEntity, profile);        
+                        DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);        
+                        workDao.persist(workEntity);                    
+                        
+                        //Update the element in the bulk
+                        Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
+                        
+                        bulk.set(i, updatedWork);
+                        
+                        //Add the work extIds to the list of existing external identifiers
+                        addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
                     } catch(Exception e) {
-                        //TODO: set the error element
-                        bulk.set(i, new OrcidError());
-                    }
-                    
-                    //Save the work
-                    WorkEntity workEntity = jpaJaxbWorkAdapter.toWorkEntity(work);
-                    ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-                    workEntity.setProfile(profile);
-                    workEntity.setAddedToProfileDate(new Date());
-                    
-                    // Set source id 
-                    if(sourceEntity.getSourceProfile() != null) {
-                        workEntity.setSourceId(sourceEntity.getSourceProfile().getId());
-                    }
-                    
-                    if(sourceEntity.getSourceClient() != null) {
-                        workEntity.setClientSourceId(sourceEntity.getSourceClient().getId());
-                    } 
-                    
-                    setIncomingWorkPrivacy(workEntity, profile);        
-                    DisplayIndexCalculatorHelper.setDisplayIndexOnNewEntity(workEntity, true);        
-                    workDao.persist(workEntity);                    
-                    
-                    //Update the element in the bulk
-                    Work updatedWork = jpaJaxbWorkAdapter.toWork(workEntity);
-                    
-                    bulk.set(i, updatedWork);
-                    
-                    //Add the work extIds to the list of existing external identifiers
-                    addExternalIdsToExistingSet(updatedWork, existingExternalIdentifiers);
+                        //Get the exception 
+                        OrcidError orcidError = orcidCoreExceptionMapper.getOrcidError(e);
+                        bulk.set(i, orcidError);
+                    }                                        
                 }
             }
             
