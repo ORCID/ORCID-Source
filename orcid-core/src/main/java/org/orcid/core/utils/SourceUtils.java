@@ -39,6 +39,7 @@ import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.Email;
 import org.orcid.jaxb.model.record_rc3.Emails;
 import org.orcid.jaxb.model.record_rc3.Keyword;
@@ -52,6 +53,8 @@ import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc3.SourceAware;
+import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class SourceUtils {
@@ -69,6 +72,18 @@ public class SourceUtils {
                         source.setSourceName(new SourceName(sourceName));
                     } else {
                         source.setSourceName(null);
+                    }
+                }
+            }
+        }
+    }
+    
+    public void setSourceName(WorkBulk bulk) {
+        if(bulk != null) {
+            if(!bulk.getBulk().isEmpty()) {
+                for(BulkElement element : bulk.getBulk()) {
+                    if(element instanceof Work) {
+                        setSourceName((Work)element);
                     }
                 }
             }

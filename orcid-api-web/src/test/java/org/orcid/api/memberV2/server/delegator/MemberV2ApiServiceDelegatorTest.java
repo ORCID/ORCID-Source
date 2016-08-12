@@ -62,8 +62,8 @@ import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -108,6 +108,7 @@ import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc3.Role;
 import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.jaxb.model.record_rc3.WorkTitle;
 import org.orcid.jaxb.model.record_rc3.WorkType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -124,7 +125,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
-    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     @BeforeClass
     public static void initDBUnitData() throws Exception {
@@ -5272,6 +5273,121 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
     }
             
+    
+    
+    
+    
+    
+    @Test
+    public void testCreateWorksWithBulkAllOK() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        
+        WorkBulk bulk = new WorkBulk();
+        for(int i = 0; i < 5; i++) {
+            Work work = new Work();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(new Title("Bulk work " + i));
+            work.setWorkTitle(title);
+            
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId = new ExternalID();
+            extId.setRelationship(Relationship.SELF);
+            extId.setType("doi");
+            extId.setUrl(new Url("http://doi/" + i));
+            extId.setValue("doi-" + i);
+            extIds.getExternalIdentifier().add(extId);
+            work.setWorkExternalIdentifiers(extIds);
+            
+            work.setWorkType(WorkType.BOOK);
+            bulk.getBulk().add(work);
+        }
+        
+        Response response = serviceDelegator.createWorks(orcid, bulk);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        bulk = (WorkBulk) response.getEntity();
+        
+        assertNotNull(bulk);
+        assertEquals(5, bulk.getBulk().size());
+        
+        for(int i = 0; i < 5; i++) {
+            assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
+            Work w = (Work)bulk.getBulk().get(i);
+            assertNotNull(w.getPutCode());
+            assertTrue(0L < w.getPutCode());
+            assertEquals("Bulk work " + i, w.getWorkTitle().getTitle().getContent());
+            
+            Response r = serviceDelegator.viewWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+            assertEquals("Bulk work " + i, ((Work)r.getEntity()).getWorkTitle().getTitle().getContent());            
+        
+            //Delete the work
+            r = serviceDelegator.deleteWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());            
+        }
+    }
+    
+    @Test
+    public void testCreateWorksWithBulkSomeOKSomeErrors() {
+        fail();
+    }
+    
+    @Test
+    public void testCreateWorksWithBulkAllErrors() {
+        String orcid = "4444-4444-4444-4499";
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+        
+        //Set up data: 
+        //Create one work with a DOI doi-1 so we can create a duplicate
+        Work work = new Work();
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title("work #1"));
+        work.setWorkTitle(workTitle);
+        
+        ExternalIDs extIds = new ExternalIDs();
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        extId.setType("doi");
+        extId.setUrl(new Url("http://doi/1"));
+        extId.setValue("doi-1");
+        extIds.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIds);
+        
+        work.setWorkType(WorkType.BOOK);
+        
+        Response response = serviceDelegator.createWork(orcid, work);
+        assertNotNull(response);
+        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
+        work = (Work) response.getEntity();
+        assertNotNull(work.getPutCode());
+        
+        WorkBulk bulk = new WorkBulk();
+        //Work # 1: No ext ids
+        Work work1 = getWork();
+        //Work # 2: No title
+        Work work2 = getWork();
+        //Work # 3: No work type
+        Work work3 = getWork();
+        //Work # 4: Ext id already exists
+        Work work4 = getWork();
+        
+        bulk.getBulk().add(work1);
+        bulk.getBulk().add(work2);
+        bulk.getBulk().add(work3);
+        bulk.getBulk().add(work4);
+        
+        
+        fail();
+    }
+    
+    
+    
+    
+    
+    
     private Address getAddress() {
         Address address = new Address();
         address.setVisibility(Visibility.PUBLIC);

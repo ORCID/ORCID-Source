@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
@@ -227,6 +228,24 @@ public class WorkManagerImpl implements WorkManager {
         return jpaJaxbWorkAdapter.toWork(workEntity);
     }
 
+    
+    /**
+     * Add a list of works to the given profile
+     * 
+     * @param works
+     *            The list of works that want to be added
+     * @param orcid
+     *            The id of the user we want to add the works to
+     * 
+     * @return the work bulk with the put codes of the new works or the error
+     *         that indicates why a work can't be added
+     */
+    @Override
+    @Transactional
+    public WorkBulk createWorks(String orcid, WorkBulk workBulk) {
+        return workBulk;
+    }
+    
     @Override
     @Transactional
     public Work updateWork(String orcid, Work work, boolean isApiRequest) {

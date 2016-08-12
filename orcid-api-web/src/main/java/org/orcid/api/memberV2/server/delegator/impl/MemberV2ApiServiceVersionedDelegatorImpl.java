@@ -26,10 +26,10 @@ import org.orcid.core.version.V2Convertible;
 import org.orcid.core.version.V2VersionConverterChain;
 
 public class MemberV2ApiServiceVersionedDelegatorImpl implements
-        MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
+        MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> {
 
     @Resource
-    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
+    private MemberV2ApiServiceDelegator<Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object> memberV2ApiServiceDelegator;
 
     private String externalVersion;
 
@@ -78,6 +78,13 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         return memberV2ApiServiceDelegator.createWork(orcid, work);
     }
 
+    @Override
+    public Response createWorks(String orcid, Object works) {
+        checkProfileStatus(orcid);
+        works = upgradeObject(works);
+        return memberV2ApiServiceDelegator.createWorks(orcid, works);
+    }
+    
     @Override
     public Response updateWork(String orcid, Long putCode, Object work) {
         checkProfileStatus(orcid);

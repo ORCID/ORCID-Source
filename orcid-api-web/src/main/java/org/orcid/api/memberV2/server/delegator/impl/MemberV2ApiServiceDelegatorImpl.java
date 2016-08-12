@@ -86,6 +86,7 @@ import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.springframework.beans.factory.annotation.Value;
@@ -102,7 +103,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("orcidT2ServiceDelegator")
 public class MemberV2ApiServiceDelegatorImpl
-        implements MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> {
+        implements MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> {
 
     @Resource
     private WorkManager workManager;
@@ -282,6 +283,14 @@ public class MemberV2ApiServiceDelegatorImpl
         return Response.ok(w).build();
     }
 
+    @Override
+    public Response createWorks(String orcid, WorkBulk works) {
+        orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_CREATE, orcid);
+        works = workManager.createWorks(orcid, works);
+        sourceUtils.setSourceName(works);
+        return Response.ok(works).build();
+    }
+    
     @Override
     public Response deleteWork(String orcid, Long putCode) {
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_UPDATE, orcid);
