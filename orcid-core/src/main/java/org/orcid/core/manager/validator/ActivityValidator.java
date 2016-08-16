@@ -57,7 +57,7 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
-        if(work.getWorkTitle() == null) {
+        if(work.getWorkType() == null) {
             throw new ActivityTypeValidationException();
         }
         
