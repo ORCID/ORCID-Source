@@ -170,35 +170,40 @@ public class SendBadOrgsEmail {
             OrgDisambiguatedEntity orgDisambiguated = org.getOrgDisambiguated();
             if (orgDisambiguated != null) {
                 long justAfterOrgDisambiguatedCreated = orgDisambiguated.getDateCreated().getTime() + 60000;
+                long justBeforeOrgDisambiguatedCreated = orgDisambiguated.getDateCreated().getTime() - 60000;
                 if (org.getDateCreated().getTime() > justAfterOrgDisambiguatedCreated) {
                     // The org was created well after the disambiguated org, so
                     // it is probably not the original org created for the
                     // disambiguated org
                     return true;
                 }
-                if (org.getDateCreated().before(orgDisambiguated.getDateCreated())) {
-                    // The org was created before the disambiguated org, so
+                if (org.getDateCreated().getTime() < justBeforeOrgDisambiguatedCreated) {
+                    // The org was created well before the disambiguated org, so
                     // can't be the original one.
+                    return true;
                 }
                 // Likely to be the original one, and if the meta-data are the
                 // same,
                 // it is probably OK. If anything is different, it could be a
                 // bad org.
-                if (!dryRun) {
-                    // XXX Change org meta-data to match disambiguated org?
-                }
+                boolean needsRevertingToDisambiguatedInfo = false;
                 if (!StringUtils.equals(org.getName(), orgDisambiguated.getName())) {
-                    return true;
+                    needsRevertingToDisambiguatedInfo = true;
+                } else if (!StringUtils.equals(org.getCity(), orgDisambiguated.getCity())) {
+                    needsRevertingToDisambiguatedInfo = true;
+                } else if (!StringUtils.equals(org.getRegion(), orgDisambiguated.getRegion())) {
+                    needsRevertingToDisambiguatedInfo = true;
+                } else if (!org.getCountry().equals(orgDisambiguated.getCountry())) {
+                    needsRevertingToDisambiguatedInfo = true;
                 }
-                if (!StringUtils.equals(org.getCity(), orgDisambiguated.getCity())) {
-                    return true;
+                if (needsRevertingToDisambiguatedInfo) {
+                    LOG.info("Found org to revert to disambiguated info: orcid={}, org id={}, disambiguated org id={}",
+                            new Object[] { org.getId(), orgDisambiguated.getId() });
+                    if (!dryRun) {
+                        // XXX Change org meta-data to match disambiguated org?
+                    }
                 }
-                if (!StringUtils.equals(org.getRegion(), orgDisambiguated.getRegion())) {
-                    return true;
-                }
-                if (!org.getCountry().equals(orgDisambiguated.getCountry())) {
-                    return true;
-                }
+                return needsRevertingToDisambiguatedInfo;
             } else {
                 return true;
             }
