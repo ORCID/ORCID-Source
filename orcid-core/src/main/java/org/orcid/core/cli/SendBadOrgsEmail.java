@@ -29,6 +29,9 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
@@ -55,6 +58,8 @@ public class SendBadOrgsEmail {
 
     private TransactionTemplate transactionTemplate;
     private ProfileDao profileDao;
+    private AffiliationsManager affiliationsManager;
+    private ProfileFundingManager profileFundingManager;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
@@ -127,7 +132,7 @@ public class SendBadOrgsEmail {
                     badAffs.forEach(a -> {
                         LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
                         if (!dryRun) {
-                            // XXX Set to private
+                            affiliationsManager.updateVisibility(orcid, a.getId(), Visibility.PRIVATE);
                         }
                     });
                     List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
@@ -135,7 +140,7 @@ public class SendBadOrgsEmail {
                     badFundings.forEach(a -> {
                         LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
                         if (!dryRun) {
-                            // XXX Set to private
+                            profileFundingManager.updateProfileFundingVisibility(orcid, a.getId(), Visibility.PRIVATE);
                         }
                     });
                     if (!badAffs.isEmpty() || !badFundings.isEmpty()) {
@@ -164,6 +169,8 @@ public class SendBadOrgsEmail {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         transactionTemplate = (TransactionTemplate) context.getBean("transactionTemplate");
         profileDao = (ProfileDao) context.getBean("profileDao");
+        affiliationsManager = (AffiliationsManager) context.getBean("affiliationsManager");
+        profileFundingManager = (ProfileFundingManager) context.getBean("profileFundingManager");
     }
 
     public boolean isBadOrg(OrgEntity org, Date activityDateCreated) {
