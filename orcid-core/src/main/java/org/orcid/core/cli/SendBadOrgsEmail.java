@@ -58,6 +58,8 @@ public class SendBadOrgsEmail {
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
     private String orcid;
+    @Option(name = "-d", usage = "Dry run only (default is false)")
+    private boolean dryRun;
     @Option(name = "-c", usage = "Continue to next record if there is an error (default = stop on error)")
     private boolean continueOnError;
     private int doneCount;
@@ -113,7 +115,7 @@ public class SendBadOrgsEmail {
     }
 
     private void processOrcid(final String orcid) {
-        LOG.info("Checking and sending record: {}", orcid);
+        LOG.info("Checking record: {}", orcid);
         try {
             transactionTemplate.execute(new TransactionCallbackWithoutResult() {
                 @Override
@@ -123,15 +125,24 @@ public class SendBadOrgsEmail {
                             .collect(Collectors.toList());
                     badAffs.forEach(a -> {
                         LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
-                        // XXX Set to private
+                        if (!dryRun) {
+                            // XXX Set to private
+                        }
                     });
                     List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg())).collect(Collectors.toList());
                     badFundings.forEach(a -> {
                         LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
-                        // XXX Set to private
+                        if (!dryRun) {
+                            // XXX Set to private
+                        }
                     });
-                    // XXX Update the profile for re-index and cache flush
-                    // XXX Send the email
+                    if (!badAffs.isEmpty() || !badFundings.isEmpty()) {
+                        // XXX Update the profile for re-index and cache flush
+                        LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}", new Object[] { orcid, badAffs.size(), badFundings.size() });
+                        if (!dryRun) {
+                            // XXX Send the email
+                        }
+                    }
                 }
             });
         } catch (RuntimeException e) {
@@ -173,6 +184,9 @@ public class SendBadOrgsEmail {
                 // same,
                 // it is probably OK. If anything is different, it could be a
                 // bad org.
+                if (!dryRun) {
+                    // XXX Change org meta-data to match disambiguated org?
+                }
                 if (!StringUtils.equals(org.getName(), orgDisambiguated.getName())) {
                     return true;
                 }
