@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,7 +122,7 @@ public class SendBadOrgsEmail {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     ProfileEntity profile = profileDao.find(orcid);
-                    List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg()))
+                    List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
                             .collect(Collectors.toList());
                     badAffs.forEach(a -> {
                         LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
@@ -129,7 +130,8 @@ public class SendBadOrgsEmail {
                             // XXX Set to private
                         }
                     });
-                    List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg())).collect(Collectors.toList());
+                    List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
+                            .collect(Collectors.toList());
                     badFundings.forEach(a -> {
                         LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
                         if (!dryRun) {
@@ -164,7 +166,7 @@ public class SendBadOrgsEmail {
         profileDao = (ProfileDao) context.getBean("profileDao");
     }
 
-    public boolean isBadOrg(OrgEntity org) {
+    public boolean isBadOrg(OrgEntity org, Date activityDateCreated) {
         boolean wasModified = org.getLastModified().after(org.getDateCreated());
         if (wasModified) {
             OrgDisambiguatedEntity orgDisambiguated = org.getOrgDisambiguated();
@@ -199,11 +201,11 @@ public class SendBadOrgsEmail {
                 if (needsRevertingToDisambiguatedInfo) {
                     LOG.info("Found org to revert to disambiguated info: orcid={}, org id={}, disambiguated org id={}",
                             new Object[] { org.getId(), orgDisambiguated.getId() });
-                    if (!dryRun) {
-                        // XXX Change org meta-data to match disambiguated org?
-                    }
+                    // The org will be bad once we revert it, if the user saw
+                    // the modified version.
+                    return activityDateCreated.after(org.getLastModified());
                 }
-                return needsRevertingToDisambiguatedInfo;
+                return true;
             } else {
                 return true;
             }
