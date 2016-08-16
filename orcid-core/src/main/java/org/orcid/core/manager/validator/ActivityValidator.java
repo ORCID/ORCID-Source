@@ -57,6 +57,10 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
+        if(work.getWorkTitle() == null) {
+            throw new ActivityTypeValidationException();
+        }
+        
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
             throw new ActivityIdentifierValidationException();

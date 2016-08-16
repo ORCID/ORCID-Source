@@ -255,8 +255,7 @@ public class WorkManagerImpl implements WorkManager {
      */
     @Override
     @Transactional
-    public WorkBulk createWorks(String orcid, WorkBulk workBulk) {
-        
+    public WorkBulk createWorks(String orcid, WorkBulk workBulk) {        
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         Set<ExternalID> existingExternalIdentifiers = buildExistingExternalIdsSet(orcid, sourceEntity.getSourceId());
         

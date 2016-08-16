@@ -60,6 +60,7 @@ import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -81,6 +82,7 @@ import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.Citation;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Email;
@@ -386,7 +388,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks().getWorkGroup().get(0).getWorkSummary());
         assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
 
-        Work work = getWork();
+        Work work = getWork("work # 1 " + System.currentTimeMillis());
        
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
@@ -4558,7 +4560,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testAddWorkWithInvalidExtIdTypeFail() {
         String orcid = "4444-4444-4444-4499";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Work work = getWork();
+        Work work = getWork("work # 1 " + System.currentTimeMillis());
         try {
             work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
             serviceDelegator.createWork(orcid, work);
@@ -4568,18 +4570,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }
-        
-        /* This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
-        try {
-            work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
-            serviceDelegator.createWork(orcid, work);
-            fail();
-        } catch(ActivityIdentifierValidationException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }*/
-        
+                
         //Assert that it could be created with a valid value
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
         Response response = serviceDelegator.createWork(orcid, work);
@@ -4763,7 +4754,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createWork(orcid, getWork());
+            serviceDelegator.createWork(orcid, getWork("work # 1 " + System.currentTimeMillis()));
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }        
@@ -5257,7 +5248,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
         //Test work
-        response = serviceDelegator.createWork(orcid, getWork());
+        response = serviceDelegator.createWork(orcid, getWork("work # 1 " + System.currentTimeMillis()));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         putCode = getPutCode(response);
@@ -5280,7 +5271,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testCreateWorksWithBulkAllOK() {
-        String orcid = "4444-4444-4444-4499";
+        String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         
         WorkBulk bulk = new WorkBulk();
@@ -5337,7 +5328,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     
     @Test
     public void testCreateWorksWithBulkAllErrors() {
-        String orcid = "4444-4444-4444-4499";
+        String orcid = "0000-0000-0000-0003";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
         
         //Set up data: 
@@ -5361,23 +5352,56 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         Response response = serviceDelegator.createWork(orcid, work);
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        work = (Work) response.getEntity();
-        assertNotNull(work.getPutCode());
         
         WorkBulk bulk = new WorkBulk();
         //Work # 1: No ext ids
-        Work work1 = getWork();
+        Work work1 = getWork("work # 1 " + System.currentTimeMillis());
+        work1.getExternalIdentifiers().getExternalIdentifier().clear();
+        
         //Work # 2: No title
-        Work work2 = getWork();
+        Work work2 = getWork("work # 2 " + System.currentTimeMillis());
+        work2.getWorkTitle().getTitle().setContent(null);
+        
         //Work # 3: No work type
-        Work work3 = getWork();
+        Work work3 = getWork("work # 3 " + System.currentTimeMillis());
+        work3.setWorkType(null);
+        
         //Work # 4: Ext id already exists
-        Work work4 = getWork();
+        Work work4 = getWork("work # 4 " + System.currentTimeMillis());
+        work4.getExternalIdentifiers().getExternalIdentifier().add(extId);
         
         bulk.getBulk().add(work1);
         bulk.getBulk().add(work2);
         bulk.getBulk().add(work3);
         bulk.getBulk().add(work4);
+        
+        Response createBulkResponse = serviceDelegator.createWorks(orcid, bulk);
+        assertNotNull(createBulkResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), createBulkResponse.getStatus());
+        bulk = (WorkBulk) createBulkResponse.getEntity();
+        
+        assertNotNull(bulk);
+        assertEquals(4, bulk.getBulk().size());
+        
+        for(int i = 0; i < bulk.getBulk().size(); i ++) {
+            BulkElement element = bulk.getBulk().get(i);
+            assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
+            OrcidError error = (OrcidError) element;
+            switch(i) {
+            case 0: 
+                break;
+            case 1: 
+                break;
+            case 2: 
+                break;
+            case 3:
+                break;
+            case 4: 
+                break;
+              
+            }
+        }
+        
         
         
         fail();
@@ -5411,10 +5435,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         return employment;
     }
     
-    private Work getWork() {
+    private Work getWork(String title) {
         Work work = new Work();
         WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("A new work!"));
+        workTitle.setTitle(new Title(title));
         work.setWorkTitle(workTitle);
         work.setWorkType(WorkType.BOOK);
         work.setVisibility(Visibility.PUBLIC);
