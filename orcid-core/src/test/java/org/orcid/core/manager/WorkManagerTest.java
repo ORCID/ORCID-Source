@@ -18,6 +18,7 @@ package org.orcid.core.manager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
+import org.orcid.core.exception.ActivityTypeValidationException;
 import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
@@ -154,6 +156,15 @@ public class WorkManagerTest extends BaseTest {
         
         assertNotNull(w1);
         assertEquals(Long.valueOf(0), w.getDisplayIndex());
+    }
+    
+    @Test(expected = ActivityTypeValidationException.class)
+    public void workShouldHaveTypeTest() {
+        when(sourceManager.retrieveSourceEntity()).thenReturn(new SourceEntity(new ClientDetailsEntity(CLIENT_1_ID)));
+        Work w1 = getWork("fromAPI-1");
+        w1.setWorkType(null);
+        workManager.createWork(claimedOrcid, w1, true);
+        fail();
     }
         
     private Work getWork(String extIdValue) {
