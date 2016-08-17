@@ -47,22 +47,6 @@
 	                </p>
 	            <hr />
 	            </div>
-	            
-	            <div class="col-md-12 col-sm-12 col-xs-12">   
-	                <h3>Contacts</h3>
-	                <div ng-if="membersListSrvc.currentMemberDetails.contacts" ng-repeat="contact in membersListSrvc.currentMemberDetails.contacts | orderBy : 'role'" ng-cloak>
-	                	<p><b>{{contact.role}}</b></p>
-	 					<ul>
-		                    <li>{{contact.name}}</li>
-		                    <li><a href="mailto:{{contact.email}}">{{contact.email}}</a></li>
-	                    </ul>
-	                </div>
-	                
-	                <div ng-hide="membersListSrvc.currentMemberDetails.contacts.length" ng-cloak> 
-	                    <p>This member has not provided contact details.</p>
-	                </div>	                
-	            </div> 
-	            <hr />
 	            <div class="col-md-12 col-sm-12 col-xs-12">   
 	                <h3>Integrations</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
