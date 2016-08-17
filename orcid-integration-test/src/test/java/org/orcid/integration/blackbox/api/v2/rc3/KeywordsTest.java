@@ -147,8 +147,7 @@ public class KeywordsTest extends BlackBoxBaseRC3 {
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         Keywords keywords = response.getEntity(Keywords.class);
         assertNotNull(keywords);
-        assertNotNull(keywords.getKeywords());
-        assertEquals(3, keywords.getKeywords().size());        
+        assertNotNull(keywords.getKeywords());             
         
         boolean found1 = false;
         boolean found2 = false;

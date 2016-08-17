@@ -16,6 +16,7 @@
  */
 package org.orcid.api.common.jaxb;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.XMLConstants;
@@ -34,6 +36,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -49,6 +52,7 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
+import javax.xml.validation.Validator;
 
 /**
  * orcid-api - Nov 10, 2011 - OrcidValidationJaxbContextResolver
@@ -134,13 +138,14 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
     @Override
     public Unmarshaller getContext(Class<?> type) {
         try {
-        	String schemaFilenamePrefix = getSchemaFilenamePrefix(type);
-            Unmarshaller unmarshaller = getJAXBContext().createUnmarshaller();
+            String apiVersion = getApiVersion();
+            String schemaFilenamePrefix = getSchemaFilenamePrefix(type, apiVersion);
+            Unmarshaller unmarshaller = getJAXBContext(apiVersion).createUnmarshaller();
             // Old OrcidMessage APIs - do not validate here as we will
             // break "broke" integrations 
             if (!type.equals(OrcidMessage.class)) {
                 if (schemaFilenamePrefix != null) {
-                    Schema schema = getSchema(schemaFilenamePrefix);
+                    Schema schema = getSchema(schemaFilenamePrefix, apiVersion);
                     unmarshaller.setSchema(schema);
                     unmarshaller.setEventHandler(new OrcidValidationHandler());
                 }
@@ -153,9 +158,25 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         }
     }
 
-    private JAXBContext getJAXBContext() {
+    public void validate(Object toValidate) {
+        String apiVersion = getApiVersion();
+        String schemaFilenamePrefix = getSchemaFilenamePrefix(toValidate.getClass(), apiVersion);
+        Schema schema;
         try {
-            String apiVersion = getApiVersion();
+            schema = getSchema(schemaFilenamePrefix, apiVersion);
+            JAXBContext context = JAXBContext.newInstance(toValidate.getClass());
+            Source source = new JAXBSource(context, toValidate);        
+            Validator validator = schema.newValidator();
+            validator.validate(source);
+        } catch (SAXException | JAXBException | IOException e) {
+            //Validation exceptions should return BAD_REQUEST status
+            throw new WebApplicationException(e, Status.BAD_REQUEST.getStatusCode());
+        }         
+    }
+    
+    
+    private JAXBContext getJAXBContext(String apiVersion) {
+        try {
             if(apiVersion != null) {
                 if(apiVersion.equals("2.0_rc3")) {
                     if(jaxbContext_2_0_rc3 == null) {
@@ -179,8 +200,8 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         }
     }
 
-    private Schema getSchema(String schemaFilenamePrefix) throws SAXException {
-        String apiVersion = (getApiVersion() == null ? "" : getApiVersion());
+    private Schema getSchema(String schemaFilenamePrefix, String apiVersion) throws SAXException {
+        apiVersion = (apiVersion == null ? "" : apiVersion);
         String schemaPath = "/" + schemaFilenamePrefix + apiVersion + ".xsd";
         Schema schema = schemaByPath.get(schemaPath);
         if (schema != null) {
@@ -192,8 +213,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         return schema;
     }
 
-    private String getSchemaFilenamePrefix(Class<?> type) {
-        String apiVersion = getApiVersion(); 
+    private String getSchemaFilenamePrefix(Class<?> type, String apiVersion) {        
         if(apiVersion != null) {
             if(apiVersion.equals("2.0_rc3")) {
                 return SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.get(type);
