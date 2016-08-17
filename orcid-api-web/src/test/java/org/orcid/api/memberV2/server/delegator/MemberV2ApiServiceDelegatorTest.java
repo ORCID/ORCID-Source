@@ -28,7 +28,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.security.AccessControlException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +61,6 @@ import org.orcid.jaxb.model.common_rc3.Title;
 import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
 import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.message.CreationMethod;
@@ -84,7 +82,6 @@ import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
-import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.Citation;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Email;
@@ -431,6 +428,61 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         //Delete them
         serviceDelegator.deleteWork("4444-4444-4444-4445", putCode);
     }
+    
+    @Test
+    public void testCreateWorksWithBulkAllOK() {
+        String orcid = "0000-0000-0000-0003";
+        Long time = System.currentTimeMillis();
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        WorkBulk bulk = new WorkBulk();
+        for (int i = 0; i < 5; i++) {
+            Work work = new Work();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(new Title("Bulk work " + i + " " + time));
+            work.setWorkTitle(title);
+
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId = new ExternalID();
+            extId.setRelationship(Relationship.SELF);
+            extId.setType("doi");
+            extId.setUrl(new Url("http://doi/" + i + "/" + time));
+            extId.setValue("doi-" + i + "-" + time);
+            extIds.getExternalIdentifier().add(extId);
+            work.setWorkExternalIdentifiers(extIds);
+
+            work.setWorkType(WorkType.BOOK);
+            bulk.getBulk().add(work);
+        }
+
+        Response response = serviceDelegator.createWorks(orcid, bulk);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        bulk = (WorkBulk) response.getEntity();
+
+        assertNotNull(bulk);
+        assertEquals(5, bulk.getBulk().size());
+
+        for (int i = 0; i < 5; i++) {
+            assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
+            Work w = (Work) bulk.getBulk().get(i);
+            assertNotNull(w.getPutCode());
+            assertTrue(0L < w.getPutCode());
+            assertEquals("Bulk work " + i + " " + time, w.getWorkTitle().getTitle().getContent());
+            assertNotNull(w.getExternalIdentifiers().getExternalIdentifier());
+            assertEquals("doi-" + i + "-" + time, w.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+
+            Response r = serviceDelegator.viewWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+            assertEquals("Bulk work " + i + " " + time, ((Work) r.getEntity()).getWorkTitle().getTitle().getContent());
+
+            // Delete the work
+            r = serviceDelegator.deleteWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
+        }
+    }    
 
     @Test
     public void testUpdateWork() {
@@ -5272,246 +5324,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.deleteWork(orcid, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-
-    @Test
-    public void testCreateWorksWithBulkAllOK() {
-        String orcid = "0000-0000-0000-0003";
-        Long time = System.currentTimeMillis();
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        
-        WorkBulk bulk = new WorkBulk();
-        for(int i = 0; i < 5; i++) {
-            Work work = new Work();
-            WorkTitle title = new WorkTitle();
-            title.setTitle(new Title("Bulk work " + i + " " + time));
-            work.setWorkTitle(title);
-            
-            ExternalIDs extIds = new ExternalIDs();
-            ExternalID extId = new ExternalID();
-            extId.setRelationship(Relationship.SELF);
-            extId.setType("doi");
-            extId.setUrl(new Url("http://doi/" + i + "/" + time));
-            extId.setValue("doi-" + i + "-" + time);
-            extIds.getExternalIdentifier().add(extId);
-            work.setWorkExternalIdentifiers(extIds);
-            
-            work.setWorkType(WorkType.BOOK);
-            bulk.getBulk().add(work);
-        }
-        
-        Response response = serviceDelegator.createWorks(orcid, bulk);
-        assertNotNull(response);
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        bulk = (WorkBulk) response.getEntity();
-        
-        assertNotNull(bulk);
-        assertEquals(5, bulk.getBulk().size());
-        
-        for(int i = 0; i < 5; i++) {
-            assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
-            Work w = (Work)bulk.getBulk().get(i);
-            assertNotNull(w.getPutCode());
-            assertTrue(0L < w.getPutCode());
-            assertEquals("Bulk work " + i + " " + time, w.getWorkTitle().getTitle().getContent());
-            assertNotNull(w.getExternalIdentifiers().getExternalIdentifier());
-            assertEquals("doi-" + i + "-" + time, w.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-            
-            Response r = serviceDelegator.viewWork(orcid, w.getPutCode());
-            assertNotNull(r);
-            assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
-            assertEquals("Bulk work " + i + " " + time, ((Work)r.getEntity()).getWorkTitle().getTitle().getContent());            
-        
-            //Delete the work
-            r = serviceDelegator.deleteWork(orcid, w.getPutCode());
-            assertNotNull(r);
-            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());            
-        }
-    }
-    
-    @Test
-    public void testCreateWorksWithBulkSomeOKSomeErrors() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        
-        //Lets send a bulk of 6 works
-        WorkBulk bulk = new WorkBulk();
-        
-        //Work # 1 - Fine
-        Work work1 = getWork("Work # 1");        
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("doi");
-        extId.setUrl(new Url("http://doi/1"));
-        extId.setValue("doi-1");
-        work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        work1.getExternalIdentifiers().getExternalIdentifier().add(extId);
-        bulk.getBulk().add(work1);
-        
-        //Work # 2 - Fine
-        Work work2 = getWork("Work # 2");
-        bulk.getBulk().add(work2);
-        
-        //Work # 3 - Duplicated of Work # 1
-        Work work3 = getWork("Work # 3");
-        work3.getExternalIdentifiers().getExternalIdentifier().clear();
-        work3.getExternalIdentifiers().getExternalIdentifier().add(extId);        
-        bulk.getBulk().add(work3);
-        
-        //Work # 4 - Fine
-        Work work4 = getWork("Work # 4");
-        bulk.getBulk().add(work4);
-        
-        //Work # 5 - Duplicated of existing work
-        Work work5 = getWork("Work # 5");
-        ExternalID dupExtId = new ExternalID();
-        dupExtId.setRelationship(Relationship.SELF);
-        dupExtId.setType("doi");
-        dupExtId.setValue("1");
-        work5.getExternalIdentifiers().getExternalIdentifier().clear();
-        work5.getExternalIdentifiers().getExternalIdentifier().add(dupExtId);        
-        bulk.getBulk().add(work5);        
-        
-        //Work # 6 - No title specified
-        Work work6 = getWork(null);
-        bulk.getBulk().add(work6);
-        
-        Response createBulkResponse = serviceDelegator.createWorks(orcid, bulk);
-        assertNotNull(createBulkResponse);
-        assertEquals(Response.Status.OK.getStatusCode(), createBulkResponse.getStatus());
-        bulk = (WorkBulk) createBulkResponse.getEntity();
-        
-        assertNotNull(bulk);
-        assertEquals(6, bulk.getBulk().size());
-        
-        List<Long> worksToDelete = new ArrayList<Long>();
-        
-        for(int i = 0; i < bulk.getBulk().size(); i ++) {
-            BulkElement element = bulk.getBulk().get(i);
-            switch(i) {
-            case 0:
-            case 1:
-            case 3:
-                assertTrue(Work.class.isAssignableFrom(element.getClass()));
-                Work work = (Work) element;
-                assertNotNull(work);
-                assertNotNull(work.getPutCode());
-                if(i == 0) {
-                    assertEquals("Work # 1", work.getWorkTitle().getTitle().getContent());
-                } else if (i == 1) {
-                    assertEquals("Work # 2", work.getWorkTitle().getTitle().getContent());
-                } else {
-                    assertEquals("Work # 4", work.getWorkTitle().getTitle().getContent());
-                }
-                worksToDelete.add(work.getPutCode());
-                break;
-            case 2:
-            case 4:
-            case 5:
-                assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
-                OrcidError error = (OrcidError) element;
-                if(i == 2) {
-                    assertEquals(Integer.valueOf(9021), error.getErrorCode());
-                } else if(i == 4) {
-                    assertEquals(Integer.valueOf(9021), error.getErrorCode());
-                } else {
-                    assertEquals(Integer.valueOf(9022), error.getErrorCode());                    
-                }
-                break;            
-            }
-        }                
-        
-        //Delete the work
-        for(Long putCode : worksToDelete) {
-            Response deleteResponse = serviceDelegator.deleteWork("0000-0000-0000-0003", putCode);
-            assertNotNull(deleteResponse);
-            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());           
-        }         
-    }
-    
-    @Test
-    public void testCreateWorksWithBulkAllErrors() {
-        String orcid = "0000-0000-0000-0003";
-        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        
-        //Set up data: 
-        //Create one work with a DOI doi-1 so we can create a duplicate
-        Work work = new Work();
-        WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("work #1"));
-        work.setWorkTitle(workTitle);
-        
-        ExternalIDs extIds = new ExternalIDs();
-        ExternalID extId = new ExternalID();
-        extId.setRelationship(Relationship.SELF);
-        extId.setType("doi");
-        extId.setUrl(new Url("http://doi/1"));
-        extId.setValue("doi-1");
-        extIds.getExternalIdentifier().add(extId);
-        work.setWorkExternalIdentifiers(extIds);
-        
-        work.setWorkType(WorkType.BOOK);
-        
-        Response response = serviceDelegator.createWork(orcid, work);
-        assertNotNull(response);
-        assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-        Long putCode = getPutCode(response);
-        
-        WorkBulk bulk = new WorkBulk();
-        //Work # 1: No ext ids
-        Work work1 = getWork("work # 1 " + System.currentTimeMillis());
-        work1.getExternalIdentifiers().getExternalIdentifier().clear();
-        
-        //Work # 2: No title
-        Work work2 = getWork("work # 2 " + System.currentTimeMillis());
-        work2.getWorkTitle().getTitle().setContent(null);
-        
-        //Work # 3: No work type
-        Work work3 = getWork("work # 3 " + System.currentTimeMillis());
-        work3.setWorkType(null);
-        
-        //Work # 4: Ext id already exists
-        Work work4 = getWork("work # 4 " + System.currentTimeMillis());
-        work4.getExternalIdentifiers().getExternalIdentifier().add(extId);
-        
-        bulk.getBulk().add(work1);
-        bulk.getBulk().add(work2);
-        bulk.getBulk().add(work3);
-        bulk.getBulk().add(work4);
-        
-        Response createBulkResponse = serviceDelegator.createWorks(orcid, bulk);
-        assertNotNull(createBulkResponse);
-        assertEquals(Response.Status.OK.getStatusCode(), createBulkResponse.getStatus());
-        bulk = (WorkBulk) createBulkResponse.getEntity();
-        
-        assertNotNull(bulk);
-        assertEquals(4, bulk.getBulk().size());
-        
-        for(int i = 0; i < bulk.getBulk().size(); i ++) {
-            BulkElement element = bulk.getBulk().get(i);
-            assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
-            OrcidError error = (OrcidError) element;
-            switch(i) {
-            case 0:
-                assertEquals(Integer.valueOf(9023), error.getErrorCode());
-                break;
-            case 1: 
-                assertEquals(Integer.valueOf(9022), error.getErrorCode());
-                break;
-            case 2: 
-                assertEquals(Integer.valueOf(9037), error.getErrorCode());
-                break;
-            case 3:
-                assertEquals(Integer.valueOf(9021), error.getErrorCode());
-                break;
-            }
-        }                
-        
-        //Delete the work
-        Response deleteResponse = serviceDelegator.deleteWork("0000-0000-0000-0003", putCode);
-        assertNotNull(deleteResponse);
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), deleteResponse.getStatus());        
-    }
+    }    
         
     private Address getAddress() {
         Address address = new Address();
