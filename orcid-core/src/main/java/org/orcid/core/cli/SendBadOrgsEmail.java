@@ -66,6 +66,8 @@ public class SendBadOrgsEmail {
     private String orcid;
     @Option(name = "-d", usage = "Dry run only (default is false)")
     private boolean dryRun;
+    @Option(name = "-l", usage = "Lenient mode (default is false)")
+    private boolean lenientMode;
     @Option(name = "-c", usage = "Continue to next record if there is an error (default = stop on error)")
     private boolean continueOnError;
     private int doneCount;
@@ -176,48 +178,59 @@ public class SendBadOrgsEmail {
     public boolean isBadOrg(OrgEntity org, Date activityDateCreated) {
         boolean wasModified = org.getLastModified().after(org.getDateCreated());
         if (wasModified) {
-            OrgDisambiguatedEntity orgDisambiguated = org.getOrgDisambiguated();
-            if (orgDisambiguated != null) {
-                long justAfterOrgDisambiguatedCreated = orgDisambiguated.getDateCreated().getTime() + 60000;
-                long justBeforeOrgDisambiguatedCreated = orgDisambiguated.getDateCreated().getTime() - 60000;
-                if (org.getDateCreated().getTime() > justAfterOrgDisambiguatedCreated) {
-                    // The org was created well after the disambiguated org, so
-                    // it is probably not the original org created for the
-                    // disambiguated org
+            if (lenientMode) {
+                OrgDisambiguatedEntity orgDisambiguated = org.getOrgDisambiguated();
+                if (orgDisambiguated != null) {
+                    long justAfterOrgDisambiguatedCreated = orgDisambiguated.getDateCreated().getTime() + 60000;
+                    long justBeforeOrgDisambiguatedCreated = orgDisambiguated.getDateCreated().getTime() - 60000;
+                    if (org.getDateCreated().getTime() > justAfterOrgDisambiguatedCreated) {
+                        // The org was created well after the disambiguated org,
+                        // so it is probably not the original org created for
+                        // the disambiguated org
+                        return true;
+                    }
+                    if (org.getDateCreated().getTime() < justBeforeOrgDisambiguatedCreated) {
+                        // The org was created well before the disambiguated
+                        // org, so can't be the original one.
+                        return true;
+                    }
+                    // Likely to be the original one, and if anything is
+                    // different, we could manually revert?
+                    if (needsReverting(org, orgDisambiguated)) {
+                        LOG.info("Found org to revert to disambiguated info: orcid={}, org id={}, disambiguated org id={}",
+                                new Object[] { org.getId(), orgDisambiguated.getId() });
+                        // The org will be bad once we revert it, if the user
+                        // saw the modified version.
+                        return activityDateCreated.after(org.getLastModified());
+                    } else {
+                        // Likely the original org, it matches the
+                        // disambiguated org, yet appears to have been modified.
+                        // This probably means it was changed to something
+                        // different, then changed back! Have to flag as bad.
+                        return true;
+                    }
+                } else {
                     return true;
                 }
-                if (org.getDateCreated().getTime() < justBeforeOrgDisambiguatedCreated) {
-                    // The org was created well before the disambiguated org, so
-                    // can't be the original one.
-                    return true;
-                }
-                // Likely to be the original one, and if the meta-data are the
-                // same,
-                // it is probably OK. If anything is different, it could be a
-                // bad org.
-                boolean needsRevertingToDisambiguatedInfo = false;
-                if (!StringUtils.equals(org.getName(), orgDisambiguated.getName())) {
-                    needsRevertingToDisambiguatedInfo = true;
-                } else if (!StringUtils.equals(org.getCity(), orgDisambiguated.getCity())) {
-                    needsRevertingToDisambiguatedInfo = true;
-                } else if (!StringUtils.equals(org.getRegion(), orgDisambiguated.getRegion())) {
-                    needsRevertingToDisambiguatedInfo = true;
-                } else if (!org.getCountry().equals(orgDisambiguated.getCountry())) {
-                    needsRevertingToDisambiguatedInfo = true;
-                }
-                if (needsRevertingToDisambiguatedInfo) {
-                    LOG.info("Found org to revert to disambiguated info: orcid={}, org id={}, disambiguated org id={}",
-                            new Object[] { org.getId(), orgDisambiguated.getId() });
-                    // The org will be bad once we revert it, if the user saw
-                    // the modified version.
-                    return activityDateCreated.after(org.getLastModified());
-                }
-                return true;
             } else {
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean needsReverting(OrgEntity org, OrgDisambiguatedEntity orgDisambiguated) {
+        boolean needsRevertingToDisambiguatedInfo = false;
+        if (!StringUtils.equals(org.getName(), orgDisambiguated.getName())) {
+            needsRevertingToDisambiguatedInfo = true;
+        } else if (!StringUtils.equals(org.getCity(), orgDisambiguated.getCity())) {
+            needsRevertingToDisambiguatedInfo = true;
+        } else if (!StringUtils.equals(org.getRegion(), orgDisambiguated.getRegion())) {
+            needsRevertingToDisambiguatedInfo = true;
+        } else if (!org.getCountry().equals(orgDisambiguated.getCountry())) {
+            needsRevertingToDisambiguatedInfo = true;
+        }
+        return needsRevertingToDisambiguatedInfo;
     }
 
 }
