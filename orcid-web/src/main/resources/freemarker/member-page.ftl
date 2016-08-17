@@ -69,13 +69,9 @@
 	                <table ng-show="membersListSrvc.currentMemberDetails.subMembers">
 	                	<tr>
 	                		<th>Member Name</th>
-	                		<th>Main Contact</th>
-	                		<th>Email</th>
 	                	</tr>
 	                	<tr ng-repeat="subMember in membersListSrvc.currentMemberDetails.subMembers | orderBy : 'opportunity.accountName'">
 							<td><a ng-href="{{membersListSrvc.getMemberPageUrl(subMember.slug)}}">{{subMember.opportunity.accountName}}</a></td>
-							<td><span>{{subMember.mainContact.name}}</span></td>
-							<td><a ng-href="mailto:{{subMember.mainContact.email}}">{{subMember.mainContact.email}}</a></td>
 	                	</tr>
 	                </table>
 	                <div ng-hide="membersListSrvc.currentMemberDetails.subMembers.length"> 
