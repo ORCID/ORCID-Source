@@ -54,13 +54,20 @@ public class WorksTest extends BlackBoxBaseRC3 {
     
     @Test
     public void testCreateBulkWork() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken();
-        
+        String accessToken = getAccessToken();        
         WorkBulk bulk = createBulk();
-        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), workToCreate, accessToken);
+        Long time1 = System.currentTimeMillis();
+        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
+        Long time2 = System.currentTimeMillis();
+        System.out.println("Difference: " + ((time2 - time1)/1000));
         assertNotNull(postResponse);
-        assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
         
+        WorkBulk bulk2 = createBulk();
+        Long time3 = System.currentTimeMillis();
+        ClientResponse postResponse2 = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk2, accessToken);
+        Long time4 = System.currentTimeMillis();
+        System.out.println("Difference: " + ((time4 - time3)/1000));
     }
     
     private WorkBulk createBulk() {
