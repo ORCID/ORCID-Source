@@ -160,8 +160,7 @@ public class WorkManagerTest extends BaseTest {
         assertNotNull(w1);
         assertEquals(Long.valueOf(0), w.getDisplayIndex());
     }
-        
-    
+            
     @Test
     public void testCreateWorksWithBulkAllOK() {
         String orcid = "0000-0000-0000-0003";

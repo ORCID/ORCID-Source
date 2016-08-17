@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -38,6 +40,7 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
@@ -50,13 +53,16 @@ import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
+import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.MessageSource;
 import org.springframework.transaction.annotation.Transactional;
 
 public class WorkManagerImpl implements WorkManager {
@@ -96,6 +102,18 @@ public class WorkManagerImpl implements WorkManager {
     @Resource
     private OrcidCoreExceptionMapper orcidCoreExceptionMapper;        
 
+    @Resource
+    private MessageSource messageSource;
+    
+    @Resource
+    private LocaleManager localeManager;
+    
+    @Value("${org.orcid.core.works.bulk.max.premium:1000}")
+    private Long maxSizeForPremium;
+    
+    @Value("${org.orcid.core.works.bulk.max.regular:100}")
+    private Long maxSize;
+    
     @Override
     public void setSourceManager(SourceManager sourceManager) {
         this.sourceManager = sourceManager;
@@ -261,6 +279,21 @@ public class WorkManagerImpl implements WorkManager {
         
         if(workBulk.getBulk() != null && !workBulk.getBulk().isEmpty()) {
             List<BulkElement> bulk = workBulk.getBulk();
+            
+            //Check bulk size
+            if(bulk.size() > maxSize) {
+                ClientDetailsEntity client = sourceEntity.getSourceClient();
+                Locale locale = localeManager.getLocale();
+                //If it is premium, allow 'maxSizeForPremium' works per bulk
+                if(ClientType.PREMIUM_CREATOR.equals(client.getClientType()) || ClientType.PREMIUM_UPDATER.equals(client.getClientType())) {
+                    if(bulk.size() > maxSizeForPremium) {
+                        throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxSizeForPremium}, locale));
+                    }
+                } else {
+                    throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxSize}, locale));
+                }
+            }
+                                    
             for(int i = 0; i < bulk.size(); i++) {
                 if(Work.class.isAssignableFrom(bulk.get(i).getClass())){
                     Work work = (Work) bulk.get(i);
