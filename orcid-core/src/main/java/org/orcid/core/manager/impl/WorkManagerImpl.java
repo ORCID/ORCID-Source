@@ -30,6 +30,7 @@ import org.orcid.core.adapter.JpaJaxbWorkAdapter;
 import org.orcid.core.exception.OrcidCoreExceptionMapper;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.locale.LocaleManager;
+import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -86,6 +87,9 @@ public class WorkManagerImpl implements WorkManager {
     
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
+    
+    @Resource
+    private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager; 
     
     @Resource
     private WorkEntityCacheManager workEntityCacheManager;
@@ -282,7 +286,7 @@ public class WorkManagerImpl implements WorkManager {
             
             //Check bulk size
             if(bulk.size() > maxSize) {
-                ClientDetailsEntity client = sourceEntity.getSourceClient();
+                ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(sourceEntity.getSourceId());
                 Locale locale = localeManager.getLocale();
                 //If it is premium, allow 'maxSizeForPremium' works per bulk
                 if(ClientType.PREMIUM_CREATOR.equals(client.getClientType()) || ClientType.PREMIUM_UPDATER.equals(client.getClientType())) {

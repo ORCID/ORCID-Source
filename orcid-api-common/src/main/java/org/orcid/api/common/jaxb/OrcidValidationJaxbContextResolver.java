@@ -121,7 +121,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrl.class, "record_2.0_rc3/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrls.class, "record_2.0_rc3/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Work.class, "record_2.0_rc3/work-");
-
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.WorkBulk.class, "record_2.0_rc3/work-");
     }
     private JAXBContext jaxbContext_2_0_rc1;
     private JAXBContext jaxbContext_2_0_rc2;

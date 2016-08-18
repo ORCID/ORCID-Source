@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.orcid.jaxb.model.error_rc3.OrcidError;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = { "bulk" })
 @XmlRootElement(name = "bulk", namespace = "http://www.orcid.org/ns/work")
@@ -34,8 +36,8 @@ public class WorkBulk implements Serializable {
     private static final long serialVersionUID = 1338769097760031210L;
     
     @XmlElements({
-        @XmlElement(name = "work", type = Work.class),
-        @XmlElement(name = "error", type = Error.class)
+        @XmlElement(namespace = "http://www.orcid.org/ns/work", name = "work", type = Work.class),
+        @XmlElement(namespace = "http://www.orcid.org/ns/error", name = "error", type = OrcidError.class)
     })
     private List<BulkElement> bulk;
 

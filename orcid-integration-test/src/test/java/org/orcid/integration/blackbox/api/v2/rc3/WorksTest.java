@@ -18,8 +18,7 @@ package org.orcid.integration.blackbox.api.v2.rc3;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
+import static org.junit.Assert.assertTrue;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -28,7 +27,9 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc3.Title;
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
+import org.orcid.jaxb.model.record_rc3.BulkElement;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 import org.orcid.jaxb.model.record_rc3.Relationship;
@@ -55,39 +56,95 @@ public class WorksTest extends BlackBoxBaseRC3 {
     @Test
     public void testCreateBulkWork() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();        
-        WorkBulk bulk = createBulk();
-        Long time1 = System.currentTimeMillis();
+        WorkBulk bulk = createBulk(10, null);
         ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
-        Long time2 = System.currentTimeMillis();
-        System.out.println("Difference: " + ((time2 - time1)/1000));
         assertNotNull(postResponse);
-        assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());
+        assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());  
         
-        WorkBulk bulk2 = createBulk();
-        Long time3 = System.currentTimeMillis();
-        ClientResponse postResponse2 = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk2, accessToken);
-        Long time4 = System.currentTimeMillis();
-        System.out.println("Difference: " + ((time4 - time3)/1000));
+        bulk = postResponse.getEntity(WorkBulk.class); 
+        assertNotNull(bulk);
+        assertNotNull(bulk.getBulk());
+        //All elements might be ok
+        for(BulkElement element : bulk.getBulk()) {
+            assertTrue(Work.class.isAssignableFrom(element.getClass()));
+            Work work = (Work) element;
+            //Remove the work
+            memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), work.getPutCode(), accessToken);
+        }
     }
     
-    private WorkBulk createBulk() {
+    @Test
+    public void testCreateBulkWithAllErrors() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        WorkBulk bulk = createBulk(10, "existing-ext-id-" + System.currentTimeMillis());
+        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());  
+        
+        bulk = postResponse.getEntity(WorkBulk.class); 
+        assertNotNull(bulk);
+        assertNotNull(bulk.getBulk());
+        boolean first = true;
+        //All elements might be ok
+        for(BulkElement element : bulk.getBulk()) {
+            if(first) {
+                assertTrue(Work.class.isAssignableFrom(element.getClass()));
+                Work work = (Work) element;
+                //Remove the work
+                memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), work.getPutCode(), accessToken);
+                first = false;
+            } else {
+                assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
+                OrcidError error = (OrcidError) element;
+                assertEquals(Integer.valueOf(9021), error.getErrorCode());
+            }
+        }
+    }
+    
+    @Test
+    public void testCantAddMoreThan1000WorksAtATime() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        WorkBulk bulk = createBulk(1001, null);
+        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());  
+        OrcidError error = postResponse.getEntity(OrcidError.class);
+        assertNotNull(error);
+        assertEquals(Integer.valueOf(9006), error.getErrorCode());
+    }
+    
+    private WorkBulk createBulk(int size, String extId) {
         WorkBulk bulk = new WorkBulk();
         Long time = System.currentTimeMillis();
-        for(int i = 0; i < 100; i++) {
-            Work work = new Work();
-            WorkTitle title = new WorkTitle();
-            title.setTitle(new Title("Work title # " + i + "-" + time));
-            work.setWorkTitle(title);
-            work.setWorkType(WorkType.BOOK);
-            ExternalID extId = new ExternalID();
-            extId.setRelationship(Relationship.SELF);
-            extId.setValue("work-ext-id-" + i + "-" + time);
-            extId.setType("artistic-performance");
-            ExternalIDs extIds = new ExternalIDs();
-            extIds.getExternalIdentifier().add(extId);
-            work.setWorkExternalIdentifiers(extIds);
+        for(int i = 0; i < size; i++) {            
+            if(extId == null) {
+                bulk.getBulk().add(getWork("Work title #" + i + "-" + time, true, null));
+            } else {
+                bulk.getBulk().add(getWork("Work title #" + i + "-" + time, false, String.valueOf(time)));
+            }            
         }
         return bulk;
+    }
+    
+    private Work getWork(String title, boolean randomExtId, String extIdValue) {
+        Long time = System.currentTimeMillis();
+        Work work = new Work();
+        WorkTitle workTitle = new WorkTitle();
+        workTitle.setTitle(new Title(title));
+        work.setWorkTitle(workTitle);
+        work.setWorkType(WorkType.BOOK);
+        ExternalID extId = new ExternalID();
+        extId.setRelationship(Relationship.SELF);
+        if(randomExtId) {
+            extId.setValue("work-ext-id-" + (Math.random() * 1000) + "-" + time);
+        } else {
+            extId.setValue("work-ext-id-" + extIdValue);
+        }
+        extId.setType("doi");
+        ExternalIDs extIds = new ExternalIDs();
+        extIds.getExternalIdentifier().add(extId);
+        work.setWorkExternalIdentifiers(extIds);        
+        return work;
     }
     
     private String getAccessToken() throws InterruptedException, JSONException {                
