@@ -321,6 +321,7 @@ public class PublicProfileVisibilityTest extends BlackBoxBaseRC3 {
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
         changeExternalIdentifiersVisibility(Visibility.PRIVATE);
+        saveExternalIdentifiersModal();
         try {
             //Verify it doesn't appear in the public page
             showPublicProfilePage(getUser1OrcidId());
