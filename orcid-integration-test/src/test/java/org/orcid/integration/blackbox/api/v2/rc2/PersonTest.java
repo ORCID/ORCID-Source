@@ -26,7 +26,9 @@ import static org.junit.Assert.assertTrue;
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -56,29 +58,22 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     private String limitedEmail = "limited@test.orcid.org";
 
-    @Before
-    public void setUpUser() throws InterruptedException, JSONException {
-        setUpUserInUi();
-        setUpUserInApi();
-        fixPrivacy();
-    }
-
-    public void setUpUserInUi() {
+    private static boolean allSet = false;
+    
+    @BeforeClass
+    public static void beforeClass() {
         signin();
-
-        openEditPersonalNamesSection();
-        updatePersonalNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
-        saveOtherNamesSection();
-
         openEditAddressModal();
         deleteAddresses();
         createAddress(Iso3166Country.US.name());
+        changeAddressVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);        
         saveEditAddressModal();
-        
+
         openEditOtherNamesModal();
         deleteOtherNames();
         createOtherName("other-name-1");
         createOtherName("other-name-2");
+        changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
         saveOtherNamesModal();
         
         openEditKeywordsModal();
@@ -86,14 +81,22 @@ public class PersonTest extends BlackBoxBaseRC2 {
         createKeyword("keyword-1");
         createKeyword("keyword-2");
         changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
-        saveKeywordsModal();       
-
-        if (hasExternalIdentifiers()) {
+        saveKeywordsModal();
+        
+        if(hasExternalIdentifiers()) {
+            showMyOrcidPage();        
             openEditExternalIdentifiersModal();
-            deleteAllExternalIdentifiersInModal();
+            deleteExternalIdentifiers();
             saveExternalIdentifiersModal();
         }
-
+    }
+    
+    @Before
+    public void setUpUserInUi() throws InterruptedException, JSONException {               
+        if(allSet) {
+            return;
+        }
+        
         showAccountSettingsPage();
         openEditEmailsSectionOnAccountSettingsPage();
         updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
@@ -103,20 +106,38 @@ public class PersonTest extends BlackBoxBaseRC2 {
         } else {
             addEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         }
-    }
-
-    public void setUpUserInApi() throws InterruptedException, JSONException {
-        String extId1Value = "A-0001";
-        String extId2Value = "A-0002";
-        createExternalIdentifier(extId1Value);
-        createExternalIdentifier(extId2Value);
-    }
-    
-    public void fixPrivacy() {
+        
+        String accessToken = getAccessToken();
+        createExternalIdentifier("A-0001", getUser1OrcidId(), accessToken);
+        createExternalIdentifier("A-0002", getUser1OrcidId(), accessToken);
+        
         showMyOrcidPage();
         openEditExternalIdentifiersModal();
-        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        updateExternalIdentifierVisibility("A-0001", org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);        
         saveExternalIdentifiersModal();
+        allSet = true;
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+        openEditAddressModal();
+        deleteAddresses();
+        saveEditAddressModal();
+
+        openEditOtherNamesModal();
+        deleteOtherNames();
+        saveOtherNamesModal();
+        
+        openEditKeywordsModal();
+        deleteKeywords();
+        saveKeywordsModal();
+        
+        showMyOrcidPage();
+        openEditExternalIdentifiersModal();
+        deleteExternalIdentifiers();
+        saveExternalIdentifiersModal();        
+        signout();
     }
     
     @Test
@@ -174,12 +195,10 @@ public class PersonTest extends BlackBoxBaseRC2 {
         boolean foundLimited = false;
 
         for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
-            if ("A-0001".equals(e.getType())) {
-                assertEquals("A-0001", e.getValue());
+            if ("A-0001".equals(e.getValue())) {
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
                 foundPublic = true;
-            } else {
-                assertEquals("A-0002", e.getValue());
+            } else if("A-0002".equals(e.getValue())) {
                 assertEquals(Visibility.LIMITED, e.getVisibility());
                 foundLimited = true;
             }
@@ -235,7 +254,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertNotNull(person.getExternalIdentifiers());
         assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
         assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
+        assertEquals("test", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
         assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
         assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
 
