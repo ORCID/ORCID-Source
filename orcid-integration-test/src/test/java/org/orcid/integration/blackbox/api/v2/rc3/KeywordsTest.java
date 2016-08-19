@@ -128,11 +128,11 @@ public class KeywordsTest extends BlackBoxBaseRC3 {
         
         String accessToken = getAccessToken();
         assertNotNull(accessToken);
-        Keyword keyword = new Keyword();
-        keyword.setContent("keyword-3");
-        keyword.setVisibility(Visibility.PUBLIC);
+        Keyword newKeyword = new Keyword();
+        newKeyword.setContent("keyword-3");
+        newKeyword.setVisibility(Visibility.PUBLIC);
         //Create
-        ClientResponse response = memberV2ApiClient.createKeyword(getUser1OrcidId(), keyword, accessToken);
+        ClientResponse response = memberV2ApiClient.createKeyword(getUser1OrcidId(), newKeyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
         Map map = response.getMetadata();
@@ -161,7 +161,7 @@ public class KeywordsTest extends BlackBoxBaseRC3 {
             } else if(existingKeyword.getContent().equals(keyword2)) {
                 assertEquals(Visibility.PUBLIC, existingKeyword.getVisibility());
                 found2 = true;
-            } else {
+            } else if(existingKeyword.getContent().equals(newKeyword.getContent())){
                 assertEquals(Visibility.LIMITED, existingKeyword.getVisibility());
                 assertEquals("keyword-3", existingKeyword.getContent());
                 assertEquals(getClient1ClientId(), existingKeyword.getSource().retrieveSourcePath());
@@ -176,33 +176,33 @@ public class KeywordsTest extends BlackBoxBaseRC3 {
         //Get it
         response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
         assertNotNull(response);
-        keyword = response.getEntity(Keyword.class);
-        assertNotNull(keyword);
-        assertNotNull(keyword.getSource());
-        assertEquals(getClient1ClientId(), keyword.getSource().retrieveSourcePath());
-        assertEquals("keyword-3", keyword.getContent());
-        assertEquals(Visibility.LIMITED, keyword.getVisibility());
-        assertNotNull(keyword.getDisplayIndex());
-        Long originalDisplayIndex = keyword.getDisplayIndex(); 
+        newKeyword = response.getEntity(Keyword.class);
+        assertNotNull(newKeyword);
+        assertNotNull(newKeyword.getSource());
+        assertEquals(getClient1ClientId(), newKeyword.getSource().retrieveSourcePath());
+        assertEquals("keyword-3", newKeyword.getContent());
+        assertEquals(Visibility.LIMITED, newKeyword.getVisibility());
+        assertNotNull(newKeyword.getDisplayIndex());
+        Long originalDisplayIndex = newKeyword.getDisplayIndex(); 
         
         //Save the original visibility
-        Visibility originalVisibility = keyword.getVisibility();
+        Visibility originalVisibility = newKeyword.getVisibility();
         Visibility updatedVisibility = Visibility.PRIVATE;
         
         //Verify you cant update the visibility
-        keyword.setVisibility(updatedVisibility);              
-        ClientResponse putResponse = memberV2ApiClient.updateKeyword(getUser1OrcidId(), keyword, accessToken);
+        newKeyword.setVisibility(updatedVisibility);              
+        ClientResponse putResponse = memberV2ApiClient.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), putResponse.getStatus());
         OrcidError error = putResponse.getEntity(OrcidError.class);
         assertNotNull(error);
         assertEquals(Integer.valueOf(9035), error.getErrorCode());
                         
         //Set the visibility again to the initial one
-        keyword.setVisibility(originalVisibility);
+        newKeyword.setVisibility(originalVisibility);
         
         //Update 
-        keyword.setContent("keyword-3-updated");
-        response = memberV2ApiClient.updateKeyword(getUser1OrcidId(), keyword, accessToken);
+        newKeyword.setContent("keyword-3-updated");
+        response = memberV2ApiClient.updateKeyword(getUser1OrcidId(), newKeyword, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.OK.getStatusCode(), response.getStatus());
         response = memberV2ApiClient.viewKeyword(getUser1OrcidId(), putCode, accessToken);
@@ -210,7 +210,7 @@ public class KeywordsTest extends BlackBoxBaseRC3 {
         Keyword updatedKeyword = response.getEntity(Keyword.class);
         assertNotNull(updatedKeyword);
         assertEquals("keyword-3-updated", updatedKeyword.getContent());
-        assertEquals(keyword.getPutCode(), updatedKeyword.getPutCode());
+        assertEquals(newKeyword.getPutCode(), updatedKeyword.getPutCode());
         assertEquals(originalDisplayIndex, updatedKeyword.getDisplayIndex());        
         
         //Delete
