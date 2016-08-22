@@ -22,11 +22,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
@@ -35,6 +38,9 @@ import org.kohsuke.args4j.Option;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.core.manager.TemplateManager;
+import org.orcid.core.manager.impl.MailGunManager;
+import org.orcid.core.manager.impl.OrcidUrlManager;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
@@ -48,6 +54,7 @@ import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -61,12 +68,18 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SendBadOrgsEmail {
 
     private static Logger LOG = LoggerFactory.getLogger(SendBadOrgsEmail.class);
+    private static final String FROM_ADDRESS = "laure@notify.orcid.org";
+    private static final String SUBJECT = "ORCID affiliation bug";
 
     private TransactionTemplate transactionTemplate;
     private ProfileDao profileDao;
     private AffiliationsManager affiliationsManager;
     private ProfileFundingManager profileFundingManager;
     private LocaleManager localeManager;
+    private TemplateManager templateManager;
+    private MessageSource messageSource;
+    private OrcidUrlManager orcidUrlManager;
+    private MailGunManager mailGunManager;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
@@ -139,8 +152,13 @@ public class SendBadOrgsEmail {
                     Set<String> orgDescriptions = new TreeSet<>();
                     List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
                             .collect(Collectors.toList());
+                    Locale locale = profile.getLocale();
+                    if (locale == null) {
+                        locale = Locale.EN;
+                    }
+                    final Locale finalLocale = locale;
                     badAffs.forEach(a -> {
-                        String orgDescription = createOrgDescription(a.getOrg(), profile.getLocale());
+                        String orgDescription = createOrgDescription(a.getOrg(), finalLocale);
                         orgDescriptions.add(orgDescription);
                         LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}, orgDescription={}",
                                 new Object[] { orcid, a.getId(), a.getVisibility(), orgDescription });
@@ -151,7 +169,7 @@ public class SendBadOrgsEmail {
                     List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
                             .collect(Collectors.toList());
                     badFundings.forEach(a -> {
-                        String orgDescription = createOrgDescription(a.getOrg(), profile.getLocale());
+                        String orgDescription = createOrgDescription(a.getOrg(), finalLocale);
                         orgDescriptions.add(orgDescription);
                         LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}, orgDescription={}",
                                 new Object[] { orcid, a.getId(), a.getVisibility(), orgDescription });
@@ -163,11 +181,19 @@ public class SendBadOrgsEmail {
                         LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
                                 new Object[] { orcid, badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
+                        Map<String, Object> templateParams = createTemplateParams(locale);
+                        // Generate body from template
+                        String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
+                        LOG.info("text email={}", body);
+                        // Generate html from template
+                        String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
+                        LOG.info("html email={}", html);
                         if (!dryRun) {
                             // Update the profile for re-index and cache
                             profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
                             profileDao.flush();
-                            // XXX Send the email
+                            // Send the email
+                            mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
                         }
                     }
                 }
@@ -192,9 +218,13 @@ public class SendBadOrgsEmail {
         affiliationsManager = (AffiliationsManager) context.getBean("affiliationsManager");
         profileFundingManager = (ProfileFundingManager) context.getBean("profileFundingManager");
         localeManager = (LocaleManager) context.getBean("localeManager");
+        templateManager = (TemplateManager) context.getBean("templateManager");
+        messageSource = (MessageSource) context.getBean("messageSource");
+        orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
+        mailGunManager = (MailGunManager) context.getBean("mailGunManager");
     }
 
-    public String createOrgDescription(OrgEntity org, Locale locale) {
+    private String createOrgDescription(OrgEntity org, Locale locale) {
         String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry().name(), locale);
         return Arrays.asList(new String[] { org.getName(), org.getCity(), org.getRegion(), orgCountry }).stream().filter(e -> e != null)
                 .collect(Collectors.joining(", "));
@@ -256,6 +286,16 @@ public class SendBadOrgsEmail {
             needsRevertingToDisambiguatedInfo = true;
         }
         return needsRevertingToDisambiguatedInfo;
+    }
+
+    public Map<String, Object> createTemplateParams(Locale locale) {
+        Map<String, Object> templateParams = new HashMap<String, Object>();
+        templateParams.put("messages", messageSource);
+        templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("locale", LocaleUtils.toLocale(locale.value()));
+        templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("subject", SUBJECT);
+        return templateParams;
     }
 
 }
