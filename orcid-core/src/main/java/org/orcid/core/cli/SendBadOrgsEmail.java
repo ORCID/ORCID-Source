@@ -20,8 +20,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,10 +32,13 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
 import org.orcid.core.manager.ProfileFundingManager;
+import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
+import org.orcid.persistence.jpa.entities.CountryIsoEntity;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -60,6 +66,7 @@ public class SendBadOrgsEmail {
     private ProfileDao profileDao;
     private AffiliationsManager affiliationsManager;
     private ProfileFundingManager profileFundingManager;
+    private LocaleManager localeManager;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
@@ -129,10 +136,14 @@ public class SendBadOrgsEmail {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     ProfileEntity profile = profileDao.find(orcid);
+                    Set<String> orgDescriptions = new TreeSet<>();
                     List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
                             .collect(Collectors.toList());
                     badAffs.forEach(a -> {
-                        LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
+                        String orgDescription = createOrgDescription(a.getOrg(), profile.getLocale());
+                        orgDescriptions.add(orgDescription);
+                        LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}, orgDescription={}",
+                                new Object[] { orcid, a.getId(), a.getVisibility(), orgDescription });
                         if (!dryRun) {
                             affiliationsManager.updateVisibility(orcid, a.getId(), Visibility.PRIVATE);
                         }
@@ -140,7 +151,10 @@ public class SendBadOrgsEmail {
                     List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
                             .collect(Collectors.toList());
                     badFundings.forEach(a -> {
-                        LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}", new Object[] { orcid, a.getId(), a.getVisibility() });
+                        String orgDescription = createOrgDescription(a.getOrg(), profile.getLocale());
+                        orgDescriptions.add(orgDescription);
+                        LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}, orgDescription={}",
+                                new Object[] { orcid, a.getId(), a.getVisibility(), orgDescription });
                         if (!dryRun) {
                             profileFundingManager.updateProfileFundingVisibility(orcid, a.getId(), Visibility.PRIVATE);
                         }
@@ -150,8 +164,9 @@ public class SendBadOrgsEmail {
                                 new Object[] { orcid, badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
                         if (!dryRun) {
-                            // XXX Update the profile for re-index and cache
-                            // flush
+                            // Update the profile for re-index and cache
+                            profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
+                            profileDao.flush();
                             // XXX Send the email
                         }
                     }
@@ -176,9 +191,16 @@ public class SendBadOrgsEmail {
         profileDao = (ProfileDao) context.getBean("profileDao");
         affiliationsManager = (AffiliationsManager) context.getBean("affiliationsManager");
         profileFundingManager = (ProfileFundingManager) context.getBean("profileFundingManager");
+        localeManager = (LocaleManager) context.getBean("localeManager");
     }
 
-    public boolean isBadOrg(OrgEntity org, Date activityDateCreated) {
+    public String createOrgDescription(OrgEntity org, Locale locale) {
+        String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry().name(), locale);
+        return Arrays.asList(new String[] { org.getName(), org.getCity(), org.getRegion(), orgCountry }).stream().filter(e -> e != null)
+                .collect(Collectors.joining(", "));
+    }
+
+    private boolean isBadOrg(OrgEntity org, Date activityDateCreated) {
         boolean wasModified = org.getLastModified().after(org.getDateCreated());
         if (wasModified) {
             if (lenientMode) {
