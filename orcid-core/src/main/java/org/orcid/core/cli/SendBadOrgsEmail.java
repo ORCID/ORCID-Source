@@ -83,7 +83,7 @@ public class SendBadOrgsEmail {
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
-    private String orcid;
+    private String singleOrcidToProcess;
     @Option(name = "-d", usage = "Dry run only (default is false)")
     private boolean dryRun;
     @Option(name = "-l", usage = "Lenient mode (default is false)")
@@ -113,7 +113,7 @@ public class SendBadOrgsEmail {
     }
 
     private void validateArgs(CmdLineParser parser) throws CmdLineException {
-        if (NullUtils.allNull(fileToLoad, orcid)) {
+        if (NullUtils.allNull(fileToLoad, singleOrcidToProcess)) {
             throw new CmdLineException(parser, "At least one of -f | -o must be specificed");
         }
     }
@@ -122,8 +122,8 @@ public class SendBadOrgsEmail {
         if (fileToLoad != null) {
             processFile();
         }
-        if (orcid != null) {
-            processOrcid(orcid);
+        if (singleOrcidToProcess != null) {
+            processOrcid(singleOrcidToProcess);
         }
     }
 
@@ -149,52 +149,12 @@ public class SendBadOrgsEmail {
                 @Override
                 protected void doInTransactionWithoutResult(TransactionStatus status) {
                     ProfileEntity profile = profileDao.find(orcid);
+                    final Locale locale = calculateLocale(profile);
                     Set<String> orgDescriptions = new TreeSet<>();
-                    List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
-                            .collect(Collectors.toList());
-                    Locale locale = profile.getLocale();
-                    if (locale == null) {
-                        locale = Locale.EN;
-                    }
-                    final Locale finalLocale = locale;
-                    badAffs.forEach(a -> {
-                        String orgDescription = createOrgDescription(a.getOrg(), finalLocale);
-                        orgDescriptions.add(orgDescription);
-                        LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}, orgDescription={}",
-                                new Object[] { orcid, a.getId(), a.getVisibility(), orgDescription });
-                        if (!dryRun) {
-                            affiliationsManager.updateVisibility(orcid, a.getId(), Visibility.PRIVATE);
-                        }
-                    });
-                    List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
-                            .collect(Collectors.toList());
-                    badFundings.forEach(a -> {
-                        String orgDescription = createOrgDescription(a.getOrg(), finalLocale);
-                        orgDescriptions.add(orgDescription);
-                        LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}, orgDescription={}",
-                                new Object[] { orcid, a.getId(), a.getVisibility(), orgDescription });
-                        if (!dryRun) {
-                            profileFundingManager.updateProfileFundingVisibility(orcid, a.getId(), Visibility.PRIVATE);
-                        }
-                    });
+                    List<OrgAffiliationRelationEntity> badAffs = processAffs(profile, locale, orgDescriptions);
+                    List<ProfileFundingEntity> badFundings = processFundings(profile, locale, orgDescriptions);
                     if (!badAffs.isEmpty() || !badFundings.isEmpty()) {
-                        LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
-                                new Object[] { orcid, badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
-                                        profile.getDeprecatedDate() != null, profile.getRecordLocked() });
-                        Map<String, Object> templateParams = createTemplateParams(locale);
-                        // Generate body from template
-                        String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
-                        LOG.info("text email={}", body);
-                        // Generate html from template
-                        String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
-                        LOG.info("html email={}", html);
-                        if (!dryRun) {
-                            // Update the profile for re-index and cache
-                            profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-                            profileDao.flush();
-                            // Send the email
-                            mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
-                        }
+                        sendEmail(profile, locale, badAffs, badFundings);
                     }
                 }
             });
@@ -228,6 +188,44 @@ public class SendBadOrgsEmail {
         String orgCountry = localeManager.resolveMessage(CountryIsoEntity.class.getName() + "." + org.getCountry().name(), locale);
         return Arrays.asList(new String[] { org.getName(), org.getCity(), org.getRegion(), orgCountry }).stream().filter(e -> e != null)
                 .collect(Collectors.joining(", "));
+    }
+
+    private Locale calculateLocale(ProfileEntity profile) {
+        Locale locale = profile.getLocale();
+        if (locale == null) {
+            locale = Locale.EN;
+        }
+        final Locale finalLocale = locale;
+        return finalLocale;
+    }
+
+    private List<OrgAffiliationRelationEntity> processAffs(ProfileEntity profile, final Locale locale, Set<String> orgDescriptions) {
+        List<OrgAffiliationRelationEntity> badAffs = profile.getOrgAffiliationRelations().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated()))
+                .collect(Collectors.toList());
+        badAffs.forEach(a -> {
+            String orgDescription = createOrgDescription(a.getOrg(), locale);
+            orgDescriptions.add(orgDescription);
+            LOG.info("Found bad affiliation: orcid={}, affiliation id={}, visibility={}, orgDescription={}",
+                    new Object[] { profile.getId(), a.getId(), a.getVisibility(), orgDescription });
+            if (!dryRun) {
+                affiliationsManager.updateVisibility(profile.getId(), a.getId(), Visibility.PRIVATE);
+            }
+        });
+        return badAffs;
+    }
+
+    private List<ProfileFundingEntity> processFundings(ProfileEntity profile, final Locale locale, Set<String> orgDescriptions) {
+        List<ProfileFundingEntity> badFundings = profile.getProfileFunding().stream().filter(e -> isBadOrg(e.getOrg(), e.getDateCreated())).collect(Collectors.toList());
+        badFundings.forEach(a -> {
+            String orgDescription = createOrgDescription(a.getOrg(), locale);
+            orgDescriptions.add(orgDescription);
+            LOG.info("Found bad funding: orcid={}, funding id={}, visibility={}, orgDescription={}",
+                    new Object[] { profile.getId(), a.getId(), a.getVisibility(), orgDescription });
+            if (!dryRun) {
+                profileFundingManager.updateProfileFundingVisibility(profile.getId(), a.getId(), Visibility.PRIVATE);
+            }
+        });
+        return badFundings;
     }
 
     private boolean isBadOrg(OrgEntity org, Date activityDateCreated) {
@@ -288,7 +286,7 @@ public class SendBadOrgsEmail {
         return needsRevertingToDisambiguatedInfo;
     }
 
-    public Map<String, Object> createTemplateParams(Locale locale) {
+    private Map<String, Object> createTemplateParams(Locale locale) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("messages", messageSource);
         templateParams.put("messageArgs", new Object[0]);
@@ -296,6 +294,26 @@ public class SendBadOrgsEmail {
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("subject", SUBJECT);
         return templateParams;
+    }
+
+    private void sendEmail(ProfileEntity profile, final Locale locale, List<OrgAffiliationRelationEntity> badAffs, List<ProfileFundingEntity> badFundings) {
+        LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
+                new Object[] { profile.getId(), badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
+                        profile.getDeprecatedDate() != null, profile.getRecordLocked() });
+        Map<String, Object> templateParams = createTemplateParams(locale);
+        // Generate body from template
+        String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
+        LOG.info("text email={}", body);
+        // Generate html from template
+        String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
+        LOG.info("html email={}", html);
+        if (!dryRun) {
+            // Update the profile for re-index and cache
+            profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId());
+            profileDao.flush();
+            // Send the email
+            mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
+        }
     }
 
 }
