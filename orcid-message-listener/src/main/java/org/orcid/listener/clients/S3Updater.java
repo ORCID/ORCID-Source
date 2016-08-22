@@ -38,6 +38,9 @@ public class S3Updater {
 
     private final ObjectMapper mapper;
     private final boolean writeToFileNotS3;
+    
+    @Value("org.orcid.persistence.messaging.dump_indexing.enabled")
+    private boolean isDumpEnabled;
 
     Logger LOG = LoggerFactory.getLogger(S3Updater.class);
 
@@ -55,12 +58,16 @@ public class S3Updater {
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        this.writeToFileNotS3 = writeToFileNotS3;
+        this.writeToFileNotS3 = writeToFileNotS3;        
     }
 
     public void updateS3(OrcidProfile profile) {
         LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + (writeToFileNotS3 ? " on local filesystem" : " in S3 index."));
-
+        if(!isDumpEnabled) {
+            LOG.info("Dump indexing is disabled");
+            return;
+        }
+        
         if (writeToFileNotS3) {
             writeToTempFile(profile);
             return;

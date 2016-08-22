@@ -77,11 +77,18 @@ public class SolrIndexUpdater {
     @Value("${org.orcid.core.indexPublicProfile}")
     private boolean indexPublicProfile;
 
+    @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
+    private boolean isSolrIndexingEnalbed;
+        
     @Resource(name = "solrServer")
     private SolrServer solrServer;
 
     public void updateSolrIndex(OrcidProfile profile) {
         LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + " in SOLR index. indexPublicProfile = " + indexPublicProfile);
+        if(!isSolrIndexingEnalbed) {
+            LOG.info("Solr indexing is disabled");
+            return;
+        }
         // Check if the profile is locked
         if (profile.isLocked()) {
             profile.downgradeToOrcidIdentifierOnly();

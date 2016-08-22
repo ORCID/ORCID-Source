@@ -41,7 +41,7 @@ public class ReIndexListener {
     @Resource
     private SolrIndexUpdater solrIndexUpdater;
     @Resource
-    private S3Updater s3Updater;
+    private S3Updater s3Updater; 
 
     /**
      * Processes messages on receipt.
