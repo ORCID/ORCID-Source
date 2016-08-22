@@ -146,9 +146,12 @@ public class SendBadOrgsEmail {
                         }
                     });
                     if (!badAffs.isEmpty() || !badFundings.isEmpty()) {
-                        // XXX Update the profile for re-index and cache flush
-                        LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}", new Object[] { orcid, badAffs.size(), badFundings.size() });
+                        LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
+                                new Object[] { orcid, badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
+                                        profile.getDeprecatedDate() != null, profile.getRecordLocked() });
                         if (!dryRun) {
+                            // XXX Update the profile for re-index and cache
+                            // flush
                             // XXX Send the email
                         }
                     }
