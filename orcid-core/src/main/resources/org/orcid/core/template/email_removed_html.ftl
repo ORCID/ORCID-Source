@@ -17,6 +17,7 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
+<#escape x as x?html>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -55,3 +56,4 @@
 		 </div>
 	 </body>
  </html>
+ </#escape>
