@@ -154,7 +154,7 @@ public class SendBadOrgsEmail {
                     List<OrgAffiliationRelationEntity> badAffs = processAffs(profile, locale, orgDescriptions);
                     List<ProfileFundingEntity> badFundings = processFundings(profile, locale, orgDescriptions);
                     if (!badAffs.isEmpty() || !badFundings.isEmpty()) {
-                        sendEmail(profile, locale, badAffs, badFundings);
+                        sendEmail(profile, locale, badAffs, badFundings, orgDescriptions);
                     }
                 }
             });
@@ -286,21 +286,23 @@ public class SendBadOrgsEmail {
         return needsRevertingToDisambiguatedInfo;
     }
 
-    private Map<String, Object> createTemplateParams(Locale locale) {
+    private Map<String, Object> createTemplateParams(Locale locale, Set<String> orgDescriptions) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("messages", messageSource);
         templateParams.put("messageArgs", new Object[0]);
         templateParams.put("locale", LocaleUtils.toLocale(locale.value()));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
         templateParams.put("subject", SUBJECT);
+        templateParams.put("orgDescriptions", orgDescriptions);
         return templateParams;
     }
 
-    private void sendEmail(ProfileEntity profile, final Locale locale, List<OrgAffiliationRelationEntity> badAffs, List<ProfileFundingEntity> badFundings) {
+    private void sendEmail(ProfileEntity profile, final Locale locale, List<OrgAffiliationRelationEntity> badAffs, List<ProfileFundingEntity> badFundings,
+            Set<String> orgDescriptions) {
         LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
                 new Object[] { profile.getId(), badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
-        Map<String, Object> templateParams = createTemplateParams(locale);
+        Map<String, Object> templateParams = createTemplateParams(locale, orgDescriptions);
         // Generate body from template
         String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
         LOG.info("text email={}", body);
