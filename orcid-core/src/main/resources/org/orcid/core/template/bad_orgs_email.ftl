@@ -17,7 +17,9 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-
+<#list orgDescriptions as orgDescription>
+     ${orgDescription}
+</#list>
 <@emailMacros.msg "email.common.kind_regards" />
 ${baseUri}
 
