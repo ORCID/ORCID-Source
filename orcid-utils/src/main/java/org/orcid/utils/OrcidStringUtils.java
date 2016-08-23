@@ -109,12 +109,10 @@ public class OrcidStringUtils {
 	        output = Jsoup.clean(s, "", Whitelist.simpleText(),
                         outputSettings);
 	    } else {
-	        output = Jsoup.clean(s, "", Whitelist.simpleText(),
+	        output = Jsoup.clean(s, "", Whitelist.none(),
                         outputSettings);
 	    }
-		output = Jsoup.clean(s, "", Whitelist.none(),
-				outputSettings);
-		// According to
+	        // According to
 		// http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
 		// jsoup scape lt, gt, amp, apos, and quot for xhtml
 		// So we want to restore them
