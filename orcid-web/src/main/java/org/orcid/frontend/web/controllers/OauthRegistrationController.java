@@ -30,6 +30,7 @@ import org.orcid.pojo.ajaxForm.OauthRegistrationForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -50,6 +51,14 @@ public class OauthRegistrationController extends OauthControllerBase {
     @Resource
     private RegistrationController registrationController;        
     
+    public RegistrationController getRegistrationController() {
+        return registrationController;
+    }
+
+    public void setRegistrationController(RegistrationController registrationController) {
+        this.registrationController = registrationController;
+    }
+
     @RequestMapping(value = "/oauth/custom/register/empty.json", method = RequestMethod.GET)
     public @ResponseBody OauthRegistrationForm getRegister(HttpServletRequest request, HttpServletResponse response) {
         // Remove the session hash if needed
@@ -129,7 +138,16 @@ public class OauthRegistrationController extends OauthControllerBase {
             if (request.getSession().getAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
                 request.getSession().removeAttribute(RegistrationController.GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
             }
-
+            
+            //Strip any html code from names before validating them
+            if(!PojoUtil.isEmpty(form.getFamilyNames())){
+                form.getFamilyNames().setValue(OrcidStringUtils.stripHtml(form.getFamilyNames().getValue()));
+            }
+            
+            if(!PojoUtil.isEmpty(form.getGivenNames())) {
+                form.getGivenNames().setValue(OrcidStringUtils.stripHtml(form.getGivenNames().getValue()));
+            }
+            
             // Check there are no errors
             registrationController.validateRegistrationFields(request, form);
             if (form.getErrors().isEmpty()) {
