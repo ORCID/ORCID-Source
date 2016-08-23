@@ -36,10 +36,10 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
 import org.orcid.core.exception.OrcidDuplicatedElementException;
-import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.Relationship;
+import org.orcid.jaxb.model.common_rc3.Url;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 

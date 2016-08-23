@@ -33,10 +33,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.orcid.core.BaseTest;
-import org.orcid.jaxb.model.common_rc2.Country;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.Address;
+import org.orcid.jaxb.model.common_rc3.Country;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 

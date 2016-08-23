@@ -21,9 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
@@ -51,20 +48,19 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
-public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
+public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {    
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
     
-    Visibility currentUserVisibility = null;
+    org.orcid.jaxb.model.common_rc3.Visibility currentUserVisibility = null;
     
     ArrayList<Long> createdPutCodes = new ArrayList<Long>();
     
     @After
     public void after() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         for(Long putCodeToDelete : createdPutCodes) {
             ClientResponse response = memberV2ApiClient.deleteExternalIdentifier(getUser1OrcidId(), putCodeToDelete, accessToken);
@@ -75,26 +71,26 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetExternalIdentifiersWihtMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         
         String extId1Value = "A-0001" + System.currentTimeMillis();
         String extId2Value = "A-0002" + System.currentTimeMillis();
         
-        Long putCode1 = createExternalIdentifier(extId1Value, Visibility.PUBLIC);
-        Long putCode2 = createExternalIdentifier(extId2Value, Visibility.LIMITED);
+        Long putCode1 = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        Long putCode2 = createExternalIdentifier(extId2Value, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
         
         //Check you can view them
         ClientResponse getResponse = memberV2ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);
         assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
         PersonExternalIdentifiers externalIdentifiers = getResponse.getEntity(PersonExternalIdentifiers.class);
         assertNotNull(externalIdentifiers);
-        assertNotNull(externalIdentifiers.getExternalIdentifier());
+        assertNotNull(externalIdentifiers.getExternalIdentifiers());
         
         boolean found1 = false;
         boolean found2 = false;
         
-        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {
                 assertEquals(extId1Value, e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -115,22 +111,22 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     @Test
     public void testCreateGetUpdateAndDeleteExternalIdentifier() throws InterruptedException, JSONException {        
         //Get access token
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
-        assertNotNull(accessToken);                
+        String accessToken = getAccessToken();
+        assertNotNull(accessToken);
 
         String extId1Value = "A-0003" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, Visibility.LIMITED);               
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);               
 
         //Get and verify
         ClientResponse response = memberV2ApiClient.viewExternalIdentifiers(getUser1OrcidId(), accessToken);        
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
         PersonExternalIdentifiers ExternalIdentifiers = response.getEntity(PersonExternalIdentifiers.class);
         assertNotNull(ExternalIdentifiers);
-        assertNotNull(ExternalIdentifiers.getExternalIdentifier());        
+        assertNotNull(ExternalIdentifiers.getExternalIdentifiers());        
         
         boolean haveNew = false;
         
-        for(PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : ExternalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {                
                 assertEquals(extId1Value, e.getType());
                 assertEquals(extId1Value, e.getValue());
@@ -203,11 +199,11 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testGetExternalIdentifiersWithPublicAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         
         String extId1Value = "A-0001" + System.currentTimeMillis();
-        Long putCode = createExternalIdentifier(extId1Value, Visibility.PUBLIC);
+        Long putCode = createExternalIdentifier(extId1Value, org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
                 
         ClientResponse response = publicV2ApiClient.viewExternalIdentifiersXML(getUser1OrcidId());
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -215,7 +211,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         
         boolean found1 = false;
         
-        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifier()) {
+        for(PersonExternalIdentifier e : externalIdentifiers.getExternalIdentifiers()) {
             if(extId1Value.equals(e.getType())) {
                 assertEquals(extId1Value, e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -237,7 +233,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
     
     @Test
     public void testInvalidPutCodeReturns404() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         
         PersonExternalIdentifier extId = getExternalIdentifier("A-0004" + System.currentTimeMillis());       
@@ -247,57 +243,20 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC2 {
         assertNotNull(response);
         assertEquals(ClientResponse.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
-    
-    @SuppressWarnings({ "rawtypes", "deprecation" })
-    private Long createExternalIdentifier(String name, Visibility defaultUserVisibility) throws InterruptedException, JSONException {
+        
+    private Long createExternalIdentifier(String name, org.orcid.jaxb.model.common_rc3.Visibility defaultUserVisibility) throws InterruptedException, JSONException {
         //Change user visibility if needed
         if(!defaultUserVisibility.equals(currentUserVisibility)) {
             changeDefaultUserVisibility(webDriver, defaultUserVisibility);
             currentUserVisibility = defaultUserVisibility;
         }
-        
-        //Get the access token
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
-        assertNotNull(accessToken);
-        
-        //Create the external identifier
-        PersonExternalIdentifier extId = getExternalIdentifier(name);                
-        ClientResponse response = memberV2ApiClient.createExternalIdentifier(getUser1OrcidId(), extId, accessToken);
-        assertNotNull(response);
-        assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
-        
-        Map map = response.getMetadata();
-        assertNotNull(map);
-        assertTrue(map.containsKey("Location"));
-        List resultWithPutCode = (List) map.get("Location");
-        String location = resultWithPutCode.get(0).toString();
-        Long putCode = Long.valueOf(location.substring(location.lastIndexOf('/') + 1));
+        Long putCode = super.createExternalIdentifier(name);
         createdPutCodes.add(putCode);
         return putCode;
     }
     
-    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_UPDATE.value() + " " + ScopePathType.READ_LIMITED.value(), clientId, clientSecret, redirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
-    }
-    
-    private PersonExternalIdentifier getExternalIdentifier(String value) {
-        PersonExternalIdentifier externalIdentifier = new PersonExternalIdentifier();
-        externalIdentifier.setType(value);
-        externalIdentifier.setValue(value);
-        externalIdentifier.setUrl(new Url("http://ext-id/" + value));        
-        externalIdentifier.setVisibility(Visibility.PUBLIC);
-        externalIdentifier.setSource(null);        
-        externalIdentifier.setPath(null);
-        externalIdentifier.setLastModifiedDate(null);
-        externalIdentifier.setCreatedDate(null);
-        externalIdentifier.setPutCode(null);
-        return externalIdentifier;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.PERSON_UPDATE, ScopePathType.READ_LIMITED));
     }
     
 }

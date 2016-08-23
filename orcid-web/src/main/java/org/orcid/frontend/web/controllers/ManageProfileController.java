@@ -45,7 +45,7 @@ import org.orcid.core.manager.ProfileEntityManager;
 import org.orcid.frontend.web.forms.ChangeSecurityQuestionForm;
 import org.orcid.frontend.web.forms.ManagePasswordOptionsForm;
 import org.orcid.frontend.web.forms.PreferencesForm;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.ApprovalDate;
 import org.orcid.jaxb.model.message.CreditName;
 import org.orcid.jaxb.model.message.DelegateSummary;
@@ -59,10 +59,10 @@ import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.message.SecurityDetails;
 import org.orcid.jaxb.model.message.SecurityQuestionId;
 import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.GivenPermissionToDao;
@@ -85,6 +85,7 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -830,15 +831,29 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
-    public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
         Name name = personalDetailsManager.getName(getCurrentUserOrcid());
         NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
 
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
-    public @ResponseBody NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
+        
+        //Strip any html code from names before validating them
+        if(!PojoUtil.isEmpty(nf.getFamilyName())){
+            nf.getFamilyName().setValue(OrcidStringUtils.stripHtml(nf.getFamilyName().getValue()));
+        }
+        
+        if(!PojoUtil.isEmpty(nf.getGivenNames())) {
+            nf.getGivenNames().setValue(OrcidStringUtils.stripHtml(nf.getGivenNames().getValue()));
+        }
+        
+        if(!PojoUtil.isEmpty(nf.getCreditName())) {
+            nf.getCreditName().setValue(OrcidStringUtils.stripHtml(nf.getCreditName().getValue()));
+        }
+        
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
         givenNameValidate(nf.getGivenNames());
@@ -871,7 +886,7 @@ public class ManageProfileController extends BaseWorkspaceController {
                 bio.setContent(bf.getBiography().getValue());
             }
             if(bf.getVisiblity() != null && bf.getVisiblity().getVisibility() != null) {
-                org.orcid.jaxb.model.common_rc2.Visibility v = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
+                org.orcid.jaxb.model.common_rc3.Visibility v = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(bf.getVisiblity().getVisibility().value());
                 bio.setVisibility(v);
             }
             

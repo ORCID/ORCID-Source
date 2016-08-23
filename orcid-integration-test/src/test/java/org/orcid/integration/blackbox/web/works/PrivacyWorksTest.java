@@ -23,21 +23,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.orcid.integration.blackbox.web.SigninTest;
+import org.orcid.integration.blackbox.api.BlackBoxBase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:test-web-context.xml" })
-public class PrivacyWorksTest {
-
-    private WebDriver webDriver;
-
+@ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
+public class PrivacyWorksTest extends BlackBoxBase {
     @Value("${org.orcid.web.baseUri}")
     public String baseUri;
     @Value("${org.orcid.web.testUser1.username}")
@@ -52,16 +47,12 @@ public class PrivacyWorksTest {
 
     @Before
     public void before() {
-        webDriver = new FirefoxDriver();
-        webDriver.get(baseUri + "/userStatus.json?logUserOut=true");
-        webDriver.get(baseUri + "/my-orcid3");
-        SigninTest.signIn(webDriver, user1UserName, user1Password);
-        SigninTest.dismissVerifyEmailModal(webDriver);
+        signin();
     }
-
+    
     @After
     public void after() {
-        webDriver.quit();
+        signout();
     }
 
     @Test

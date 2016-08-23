@@ -21,14 +21,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URISyntaxException;
+import java.util.List;
+
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.BBBUtil;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record.summary_rc1.ActivitiesSummary;
 import org.orcid.jaxb.model.record_rc1.Work;
@@ -40,22 +40,12 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
 public class MultipleTokensPerUserAndScopeTest extends BlackBoxBaseRC1 {
-
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-    
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
     
     @Test
-    public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException {
-        String scopes = ScopePathType.READ_LIMITED.value();
-        String token1 = getAccessToken(scopes, this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
-        String token2 = getAccessToken(scopes, this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+    public void useSameScopesGetDifferentTokensTest() throws InterruptedException, JSONException, URISyntaxException {
+        List<String> scopes = getScopes(ScopePathType.READ_LIMITED);
+        String token1 = getNonCachedAccessTokens(getUser1UserName(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String token2 = getNonCachedAccessTokens(getUser1UserName(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
 
         // Check the scopes are not null
         assertNotNull(token1);
@@ -92,8 +82,8 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBaseRC1 {
         assertEquals(Response.Status.FORBIDDEN.getStatusCode(), token2AddWorkresponse.getStatus());  
         
         // Check a new token with other scope can add the work
-        scopes += " " + ScopePathType.ACTIVITIES_UPDATE.value();
-        String token3 = getAccessToken(scopes, this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+        scopes.add(ScopePathType.ACTIVITIES_UPDATE.value());
+        String token3 = getNonCachedAccessTokens(getUser1UserName(), getUser1Password(), scopes, getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         assertNotNull(token3);
         assertFalse(token1.equals(token3));
         
@@ -110,5 +100,15 @@ public class MultipleTokensPerUserAndScopeTest extends BlackBoxBaseRC1 {
         ClientResponse token3AddWorkresponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, token3);
         assertNotNull(token3AddWorkresponse);
         assertEquals(Response.Status.CREATED.getStatusCode(), token3AddWorkresponse.getStatus());
+        
+        ClientResponse getResponse = memberV2ApiClient.viewLocationXml(token3AddWorkresponse.getLocation(), token3);
+        assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
+        Work gotWork = getResponse.getEntity(Work.class);
+        assertNotNull(gotWork);
+        assertNotNull(gotWork.getPutCode());
+        
+        ClientResponse deleteNewWork = memberV2ApiClient.deleteWorkXml(getUser1OrcidId(), gotWork.getPutCode(), token3);
+        assertNotNull(deleteNewWork);
+        assertEquals(ClientResponse.Status.NO_CONTENT.getStatusCode(), deleteNewWork.getStatus());
     }          
 }

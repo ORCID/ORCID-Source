@@ -46,6 +46,10 @@ public class OrcidUi {
         return new AccountSettingsPage(baseUri, webDriver);
     }
 
+    public DashboardPage getDashboardPage() {
+        return new DashboardPage(baseUri, webDriver); 
+    }
+    
     public AccountSwitcherSection getAccountSwitcherSection() {
         return new AccountSwitcherSection();
     }

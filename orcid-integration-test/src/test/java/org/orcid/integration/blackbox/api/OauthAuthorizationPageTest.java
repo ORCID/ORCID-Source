@@ -30,7 +30,6 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +41,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.api.common.OauthAuthorizationPageHelper;
 import org.orcid.integration.api.t2.T2OAuthAPIService;
-import org.orcid.integration.blackbox.api.v2.rc1.BlackBoxBaseRC1;
+import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
 import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -60,20 +59,19 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
+public class OauthAuthorizationPageTest extends BlackBoxBaseRC2 {
     private static final String STATE_PARAM = "MyStateParam";
-    private static final String SCOPES = "/activities/update /read-limited";
-    private static final int DEFAULT_TIMEOUT_SECONDS = 10;
+    private static final String SCOPES = "/activities/update /read-limited";    
     private static final Pattern AUTHORIZATION_CODE_PATTERN = Pattern.compile("code=(.*)");
     private static final Pattern STATE_PARAM_PATTERN = Pattern.compile("state=(.+)");
 
     @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-
+    private T2OAuthAPIService<ClientResponse> t2OAuthClient;    
+    
     @Before
     public void before() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
+        BBBUtil.logUserOut(getWebBaseUrl(), webDriver);
+    }        
     
     @Test
     public void stateParamIsPersistentAndReturnedOnLoginTest() throws JSONException, InterruptedException, URISyntaxException {
@@ -87,13 +85,9 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
     @Test
     public void stateParamIsPersistentAndReurnedWhenAlreadyLoggedInTest() throws JSONException, InterruptedException, URISyntaxException {
-        webDriver.get(this.getWebBaseUrl() + "/userStatus.json?logUserOut=true");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
-        webDriver.get(this.getWebBaseUrl() + "/my-orcid");
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
-        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
-        SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
-        String currentUrl = OauthAuthorizationPageHelper.authorizeOnAlreadyLoggedInUser(webDriver, this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), SCOPES, STATE_PARAM);
+        signout();
+        signin();
+        String currentUrl = OauthAuthorizationPageHelper.authorizeOnAlreadyLoggedInUser(webDriver, this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), "/read-limited /funding/update /orcid-works/update /orcid-bio/external-identifiers/create", STATE_PARAM);
         Matcher matcher = STATE_PARAM_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String stateParam = matcher.group(1);
@@ -178,14 +172,14 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void dontSkipAuthorizationScreenIfShortTokenAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
-        logUserOut();
-        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), false, webDriver);
+        signout();
+        String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), false, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
         String authorizationCode = matcher.group(1);
         assertFalse(PojoUtil.isEmpty(authorizationCode));
 
-        ClientResponse tokenResponse = getClientResponse(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.ORCID_BIO_UPDATE.getContent(), this.getClient1RedirectUri(),
+        ClientResponse tokenResponse = getClientResponse(this.getClient1ClientId(), this.getClient1ClientSecret(), ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.getContent(), this.getClient1RedirectUri(),
                 authorizationCode);
         assertEquals(200, tokenResponse.getStatus());
         String body = tokenResponse.getEntity(String.class);
@@ -204,7 +198,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         SigninTest.signIn(webDriver, this.getUser1UserName(), this.getUser1Password());
         //Then ask for the same permission
         String url =String.format("%s/oauth/authorize?client_id=%s&response_type=code&scope=%s&redirect_uri=%s", this.getWebBaseUrl(), this.getClient1ClientId(),
-                ScopePathType.ORCID_BIO_UPDATE.getContent(), this.getClient1RedirectUri());
+                ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.getContent(), this.getClient1RedirectUri());
         webDriver.get(url);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
@@ -214,7 +208,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void skipAuthorizationScreenIfTokenLongLifeAlreadyExists() throws InterruptedException, JSONException {
         // First get the authorization code
-        logUserOut();
+        signout();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_BIO_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
@@ -270,7 +264,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
     @Test
     public void testDifferentScopesGeneratesDifferentAccessTokens() throws InterruptedException, JSONException {
         // First get the authorization code
-        logUserOut();
+        signout();
         String currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.FUNDING_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         Matcher matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());
@@ -287,7 +281,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
         assertFalse(PojoUtil.isEmpty(accessToken));
         
         
-        logUserOut();
+        signout();
         // Then, ask again for permissions over other scopes. 
         currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.AFFILIATIONS_CREATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
@@ -305,7 +299,7 @@ public class OauthAuthorizationPageTest extends BlackBoxBaseRC1 {
 
         assertFalse(otherAccessToken.equals(accessToken));
 
-        logUserOut();
+        signout();
         currentUrl = OauthAuthorizationPageHelper.loginAndAuthorize(this.getWebBaseUrl(), this.getClient1ClientId(), this.getClient1RedirectUri(), ScopePathType.ORCID_WORKS_UPDATE.value(), null, this.getUser1UserName(), this.getUser1Password(), true, webDriver);
         matcher = AUTHORIZATION_CODE_PATTERN.matcher(currentUrl);
         assertTrue(matcher.find());

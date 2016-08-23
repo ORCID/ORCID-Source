@@ -163,4 +163,38 @@ public class GroupIdRecords {
         return this.groupIdRecord;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((groupIdRecord == null) ? 0 : groupIdRecord.hashCode());
+        result = prime * result + page;
+        result = prime * result + pageSize;
+        result = prime * result + total;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GroupIdRecords other = (GroupIdRecords) obj;
+        if (groupIdRecord == null) {
+            if (other.groupIdRecord != null)
+                return false;
+        } else if (!groupIdRecord.equals(other.groupIdRecord))
+            return false;
+        if (page != other.page)
+            return false;
+        if (pageSize != other.pageSize)
+            return false;
+        if (total != other.total)
+            return false;
+        return true;
+    }
+
 }

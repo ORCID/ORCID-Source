@@ -18,54 +18,55 @@ package org.orcid.integration.blackbox.api.security;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.error_rc2.OrcidError;
+import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Education;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.Employment;
-import org.orcid.jaxb.model.record_rc2.Funding;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.Person;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Education;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Employment;
+import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.Keyword;
+import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.Person;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc3.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.ClientResponse.Status;
 
 /**
  * 
@@ -74,7 +75,7 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
+public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC3 {
 
     @BeforeClass
     public static void beforeClass() {
@@ -88,7 +89,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testTokenIssuedForOneUserFailForOtherUsers() throws JSONException, InterruptedException, URISyntaxException {
-        String accessToken = super.getAccessToken(getUser2OrcidId(), getUser2Password(), getScopesString(), this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+        String accessToken = getNonCachedAccessTokens(getUser2OrcidId(), getUser2Password(), getScopes(), getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
         String orcid = getUser1OrcidId();
         Long putCode = 1L;
 
@@ -168,7 +169,6 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
 
         work.setPutCode(putCode);
         evaluateResponse(memberV2ApiClient.updateWork(orcid, work, accessToken));
-
         
         ClientResponse r = memberV2ApiClient.getResearcherUrls(orcid, accessToken);
         ResearcherUrls rUrls = r.getEntity(ResearcherUrls.class);
@@ -188,8 +188,8 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
         
         r = memberV2ApiClient.viewExternalIdentifiers(orcid, accessToken);
         PersonExternalIdentifiers extIds = r.getEntity(PersonExternalIdentifiers.class);
-        if(extIds != null && extIds.getExternalIdentifier() != null) {
-            for(PersonExternalIdentifier obj : extIds.getExternalIdentifier()) {
+        if(extIds != null && extIds.getExternalIdentifiers() != null) {
+            for(PersonExternalIdentifier obj : extIds.getExternalIdentifiers()) {
                 assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
             }
         }
@@ -209,18 +209,20 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
                 assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
             }
         }
-        
-        try {
-            r = memberV2ApiClient.viewBiography(orcid, accessToken);
+                
+        r = memberV2ApiClient.viewBiography(orcid, accessToken);
+        if(Status.OK.getStatusCode() == r.getStatus()) {
             Biography bio = r.getEntity(Biography.class);
             if(bio != null) {
                 assertEquals(Visibility.PUBLIC.value(), bio.getVisibility().value());
             }
-        } catch(OrcidUnauthorizedException o) {
-            assertEquals("The biography is not public", o.getMessage());
-        } catch(Exception e) {
-            fail();
-        }
+        } else if(Status.UNAUTHORIZED.getStatusCode() == r.getStatus()) {
+            OrcidError error = r.getEntity(OrcidError.class);
+            assertEquals(Integer.valueOf(9017), error.getErrorCode());
+            assertTrue(error.getDeveloperMessage().contains("The biography is not public"));
+        } else {
+            fail("Expecting OK or UNAUTHORIZED, but got " + r.getStatus());
+        }                
         
         r = memberV2ApiClient.viewPersonalDetailsXML(orcid, accessToken);
         PersonalDetails personalDetails = r.getEntity(PersonalDetails.class);
@@ -238,9 +240,7 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
                     assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
                 }
             }
-        }
-        
-        
+        }                
         
         r = memberV2ApiClient.viewActivities(orcid, accessToken);
         ActivitiesSummary summary = r.getEntity(ActivitiesSummary.class);
@@ -304,8 +304,8 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
                     assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
                 }
             }
-            if(person.getExternalIdentifiers() != null && person.getExternalIdentifiers().getExternalIdentifier() != null) {
-                for(PersonExternalIdentifier obj : person.getExternalIdentifiers().getExternalIdentifier()) {
+            if(person.getExternalIdentifiers() != null && person.getExternalIdentifiers().getExternalIdentifiers() != null) {
+                for(PersonExternalIdentifier obj : person.getExternalIdentifiers().getExternalIdentifiers()) {
                     assertEquals(Visibility.PUBLIC.value(), obj.getVisibility().value());
                 }
             }
@@ -330,14 +330,12 @@ public class AccessTokenSecurityChecksTest extends BlackBoxBaseRC2 {
         }        
     }
 
-    private String getScopesString() {
-        return ScopePathType.ACTIVITIES_READ_LIMITED.value() + " " + ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.AFFILIATIONS_CREATE.value() + " "
-                + ScopePathType.AFFILIATIONS_READ_LIMITED.value() + " " + ScopePathType.AFFILIATIONS_UPDATE.value() + " " + ScopePathType.AUTHENTICATE.value() + " "
-                + ScopePathType.FUNDING_CREATE.value() + " " + ScopePathType.FUNDING_READ_LIMITED.value() + " " + ScopePathType.FUNDING_UPDATE.value() + " "
-                + ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE.value() + " " + ScopePathType.ORCID_BIO_READ_LIMITED.value() + " "
-                + ScopePathType.ORCID_BIO_UPDATE.value() + " " + ScopePathType.ORCID_PROFILE_READ_LIMITED.value() + " " + ScopePathType.ORCID_WORKS_CREATE.value() + " "
-                + ScopePathType.ORCID_WORKS_READ_LIMITED.value() + " " + ScopePathType.ORCID_WORKS_UPDATE.value() + " " + ScopePathType.PEER_REVIEW_CREATE.value() + " "
-                + ScopePathType.PEER_REVIEW_READ_LIMITED.value();
+    private List<String> getScopes() {
+        return getScopes(ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE, ScopePathType.AFFILIATIONS_CREATE,
+                ScopePathType.AFFILIATIONS_READ_LIMITED, ScopePathType.AFFILIATIONS_UPDATE, ScopePathType.AUTHENTICATE, ScopePathType.FUNDING_CREATE,
+                ScopePathType.FUNDING_READ_LIMITED, ScopePathType.FUNDING_UPDATE, ScopePathType.ORCID_BIO_EXTERNAL_IDENTIFIERS_CREATE,
+                ScopePathType.ORCID_BIO_READ_LIMITED, ScopePathType.ORCID_BIO_UPDATE, ScopePathType.ORCID_PROFILE_READ_LIMITED, ScopePathType.ORCID_WORKS_CREATE,
+                ScopePathType.ORCID_WORKS_READ_LIMITED, ScopePathType.ORCID_WORKS_UPDATE, ScopePathType.PEER_REVIEW_CREATE, ScopePathType.PEER_REVIEW_READ_LIMITED);
     }
 
     private void evaluateResponse(ClientResponse response) {

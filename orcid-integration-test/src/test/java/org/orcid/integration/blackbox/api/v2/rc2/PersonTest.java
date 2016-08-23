@@ -23,12 +23,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
@@ -42,7 +40,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.ClientResponse;
- 
+
 /**
  * 
  * @author Angel Montenegro
@@ -51,12 +49,76 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class PersonTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
+    private String limitedEmail = "limited@test.orcid.org";
+
+    @Before
+    public void setUpUser() throws InterruptedException, JSONException {
+        setUpUserInUi();
+        setUpUserInApi();
+        fixPrivacy();
+    }
+
+    public void setUpUserInUi() {
+        signin();
+
+        openEditPersonalNamesSection();
+        updatePersonalNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        saveOtherNamesSection();
+
+        openEditAddressModal();
+        deleteAddresses();
+        createAddress(Iso3166Country.US.name());
+        saveEditAddressModal();
+        
+        openEditOtherNamesModal();
+        deleteOtherNames();
+        createOtherName("other-name-1");
+        createOtherName("other-name-2");
+        saveOtherNamesModal();
+        
+        openEditKeywordsModal();
+        deleteKeywords();
+        createKeyword("keyword-1");
+        createKeyword("keyword-2");
+        changeKeywordsVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        saveKeywordsModal();       
+
+        if (hasExternalIdentifiers()) {
+            openEditExternalIdentifiersModal();
+            deleteAllExternalIdentifiersInModal();
+            saveExternalIdentifiersModal();
+        }
+
+        showAccountSettingsPage();
+        openEditEmailsSectionOnAccountSettingsPage();
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);
+        removePopOver();
+        if (emailExists(limitedEmail)) {
+            updateEmailVisibility(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        } else {
+            addEmail(limitedEmail, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        }
+    }
+
+    public void setUpUserInApi() throws InterruptedException, JSONException {
+        String extId1Value = "A-0001";
+        String extId2Value = "A-0002";
+        createExternalIdentifier(extId1Value);
+        createExternalIdentifier(extId2Value);
+    }
+    
+    public void fixPrivacy() {
+        showMyOrcidPage();
+        openEditExternalIdentifiersModal();
+        updateExternalIdentifierVisibility("A-0002", org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        saveExternalIdentifiersModal();
+    }
+    
     @Test
     public void testGetBioFromPublicAPI() {
         ClientResponse response = publicV2ApiClient.viewBiographyXML(getUser1OrcidId());
@@ -69,7 +131,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testGetBioFromMemberAPI() throws Exception {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewBiography(getUser1OrcidId(), accessToken);
         assertNotNull(response);
@@ -81,11 +143,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
     @Test
     public void testViewPersonFromMemberAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         assertNotNull(accessToken);
         ClientResponse response = memberV2ApiClient.viewPerson(getUser1OrcidId(), accessToken);
-        assertNotNull(response);        
-        assertEquals("invalid "+response,200,response.getStatus());
+        assertNotNull(response);
+        assertEquals("invalid " + response, 200, response.getStatus());
         Thread.sleep(100);
         Person person = response.getEntity(Person.class);
         assertNotNull(person);
@@ -102,16 +164,16 @@ public class PersonTest extends BlackBoxBaseRC2 {
 
         assertNotNull(person.getEmails());
         EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
-        EmailTest.assertListContainsEmail("limited@test.orcid.org", Visibility.LIMITED, person.getEmails());
+        EmailTest.assertListContainsEmail(limitedEmail, Visibility.LIMITED, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifier().size());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(2, person.getExternalIdentifiers().getExternalIdentifiers().size());
 
         boolean foundPublic = false;
         boolean foundLimited = false;
 
-        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifier()) {
+        for (PersonExternalIdentifier e : person.getExternalIdentifiers().getExternalIdentifiers()) {
             if ("A-0001".equals(e.getType())) {
                 assertEquals("A-0001", e.getValue());
                 assertEquals(Visibility.PUBLIC, e.getVisibility());
@@ -171,11 +233,11 @@ public class PersonTest extends BlackBoxBaseRC2 {
         EmailTest.assertListContainsEmail(getUser1UserName(), Visibility.PUBLIC, person.getEmails());
 
         assertNotNull(person.getExternalIdentifiers());
-        assertNotNull(person.getExternalIdentifiers().getExternalIdentifier());
-        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifier().size());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getType());
-        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
-        assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifier().get(0).getVisibility());
+        assertNotNull(person.getExternalIdentifiers().getExternalIdentifiers());
+        assertEquals(1, person.getExternalIdentifiers().getExternalIdentifiers().size());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getType());
+        assertEquals("A-0001", person.getExternalIdentifiers().getExternalIdentifiers().get(0).getValue());
+        assertEquals(Visibility.PUBLIC, person.getExternalIdentifiers().getExternalIdentifiers().get(0).getVisibility());
 
         assertNotNull(person.getKeywords());
         assertNotNull(person.getKeywords().getKeywords());
@@ -201,14 +263,7 @@ public class PersonTest extends BlackBoxBaseRC2 {
         assertEquals(Visibility.PUBLIC, person.getName().getVisibility());
     }
 
-    public String getAccessToken(String clientId, String clientSecret, String redirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.PERSON_READ_LIMITED.value() + " " + ScopePathType.PERSON_UPDATE.value(), clientId, clientSecret,
-                redirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.PERSON_READ_LIMITED, ScopePathType.PERSON_UPDATE));
     }
 }

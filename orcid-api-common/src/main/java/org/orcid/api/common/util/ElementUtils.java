@@ -26,20 +26,20 @@ import static org.orcid.core.api.OrcidApiConstants.PERSON;
 import static org.orcid.core.api.OrcidApiConstants.PERSONAL_DETAILS;
 import static org.orcid.core.api.OrcidApiConstants.RESEARCHER_URLS;
 
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Addresses;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Emails;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.Keywords;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.Person;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifiers;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrls;
+import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.record_rc3.Addresses;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Emails;
+import org.orcid.jaxb.model.record_rc3.Keyword;
+import org.orcid.jaxb.model.record_rc3.Keywords;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc3.Person;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 
 public class ElementUtils {
 
@@ -63,8 +63,8 @@ public class ElementUtils {
     public static void setPathToExternalIdentifiers(PersonExternalIdentifiers extIds, String orcid) {
         if (extIds != null) {
             extIds.setPath(EXTERNAL_IDENTIFIERS.replace("{orcid}", orcid));
-            if (extIds.getExternalIdentifier() != null && !extIds.getExternalIdentifier().isEmpty()) {
-                for (PersonExternalIdentifier extId : extIds.getExternalIdentifier()) {
+            if (extIds.getExternalIdentifiers() != null && !extIds.getExternalIdentifiers().isEmpty()) {
+                for (PersonExternalIdentifier extId : extIds.getExternalIdentifiers()) {
                     setPathToExternalIdentifier(extId, orcid);
                 }
             }

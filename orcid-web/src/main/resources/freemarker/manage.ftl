@@ -47,7 +47,7 @@
     	<h1 id="account-settings">${springMacroRequestContext.getMessage("manage.account_settings")}</h1>
         <#assign open = "" />
 
-        <table class="table table-bordered settings-table"
+        <table class="table table-bordered settings-table account-settings"
             ng-controller="EditTableCtrl" style="margin: 0px, padding:  0px;">
             <tbody>
                 <tr>
@@ -524,10 +524,21 @@
 </script>
 
 <script type="text/ng-template" id="confirm-revoke-access-modal">
-    <div style="padding: 20px;">
-       <h3><@orcid.msg 'manage.application_access.revoke.confirm_revoke' /> {{appName}}</h3>
-       <button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.confirm' /></button>
-       <a href="" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
+    <div class="lightbox-container confirm-revoke-access-modal">		
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12 bottomBuffer">		
+				<h2><@orcid.msg 'manage.application_access.revoke.confirm_title' /></h2>		 
+				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_1' /></p>				
+				<p><@orcid.msg 'manage.application_access.revoke.confirm_copy_2' /> {{applicationSummary.name}} (<@orcid.msg 'manage.application_access.revoke.access' /><span ng-repeat="(key, value) in applicationSummary.scopePaths">{{$last?value:value + ', '}}</span>)</p>
+			</div>			
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="pull-right">
+	      			<a href="" ng-click="closeModal()"><@orcid.msg 'manage.application_access.revoke.confirm_close' /></a>&nbsp;&nbsp<button class="btn btn-danger" ng-click="revokeAccess()" id="confirmRevokeAppBtn"><@orcid.msg 'manage.application_access.revoke.remove' /></button>
+				</div>
+			</div>
+		</div>
     </div>
 </script>
 

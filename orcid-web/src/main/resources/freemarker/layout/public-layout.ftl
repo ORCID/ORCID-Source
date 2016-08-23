@@ -154,7 +154,7 @@
 					<!--  Desktop / Tablet menu -->				
 					<ul class="menu" ng-show="menuVisible == true" ng-cloak resize>
 						<!-- FOR RESEARCHERS -->
-						<li class="first expanded active-trail"><a
+						<li class="first expanded active-trail">
 							<a href="${aboutUri}/about/what-is-orcid/mission" ng-click="handleMobileMenuOption($event)" title=""><@orcid.msg
 							'public-layout.for_researchers'/></a>
 							<ul class="menu lang-fixes">

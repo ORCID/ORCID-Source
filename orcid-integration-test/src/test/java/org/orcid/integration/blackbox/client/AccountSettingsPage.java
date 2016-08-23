@@ -24,6 +24,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.orcid.integration.blackbox.api.BBBUtil;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 
 import com.google.common.base.Predicate;
 
@@ -67,7 +68,6 @@ public class AccountSettingsPage {
     }
 
     public class EmailsSection {
-
         public void toggleEdit() {
             BBBUtil.extremeWaitFor(ExpectedConditions.visibilityOfElementLocated(By.id("account-settings-toggle-email-edit")), webDriver);
             BBBUtil.ngAwareClick(webDriver.findElement(By.id("account-settings-toggle-email-edit")), webDriver);
@@ -95,6 +95,7 @@ public class AccountSettingsPage {
                 }
             });
         }
+        
         public void removeEmail(String emailValue) {
             String xpathEmailId = "//tr[@name = 'email' and descendant::td[text() = '" + emailValue + "']]/td[5]/a[@name='delete-email']";
             if(xpath.isPresent(xpathEmailId)) {                
@@ -103,7 +104,7 @@ public class AccountSettingsPage {
                 utils.getWait().until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathConfirmDeleteEmail)));
                 xpath.click(xpathConfirmDeleteEmail);
             }            
-        }
+        }                
     }
 
     public class Email {
@@ -117,6 +118,40 @@ public class AccountSettingsPage {
             return localXPath.findElement("td[1]").getText();
         }
 
+        public boolean isPrimary() {
+            return localXPath.findElement("td[2]").getText().equalsIgnoreCase("Primary Email");
+        }
+        
+        public Visibility getVisibility() {
+            WebElement element = localXPath.findElement("td[6]/descendant::ul/li[not(contains(@class, 'InActive'))]");
+            String className = element.getAttribute("class");
+            if("publicActive".equalsIgnoreCase(className)) {
+                return Visibility.PUBLIC;
+            } else if("limitedActive".equalsIgnoreCase(className)) {
+                return Visibility.LIMITED;
+            } else {
+                return Visibility.PRIVATE;
+            }
+        }
+        
+        public void changeVisibility(Visibility visibility) {
+            int index = 1;
+            switch(visibility) {
+            case LIMITED:
+                index = 2;
+                break;
+            case PRIVATE:
+                index = 3;
+                break;
+            default:
+                index = 1;
+                break;
+            }
+            
+            WebElement element = localXPath.findElement("td[6]/descendant::ul/li[" + index + "]/a");
+            element.click();
+        }
+        
         public void delete() {
             EmailsSection emailsSection = getEmailsSection();
             final int numberOfEmailsBefore = emailsSection.getEmails().size();

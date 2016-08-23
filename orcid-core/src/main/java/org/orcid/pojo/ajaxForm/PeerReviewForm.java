@@ -20,22 +20,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.orcid.jaxb.model.common_rc2.DisambiguatedOrganization;
-import org.orcid.jaxb.model.common_rc2.FuzzyDate;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.Organization;
-import org.orcid.jaxb.model.common_rc2.OrganizationAddress;
-import org.orcid.jaxb.model.common_rc2.Title;
-import org.orcid.jaxb.model.common_rc2.Url;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.PeerReview;
-import org.orcid.jaxb.model.record_rc2.PeerReviewType;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Role;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.ExternalIDs;
-import org.orcid.jaxb.model.record_rc2.WorkTitle;
-import org.orcid.jaxb.model.record_rc2.WorkType;
+import org.orcid.jaxb.model.common_rc3.DisambiguatedOrganization;
+import org.orcid.jaxb.model.common_rc3.FuzzyDate;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.Organization;
+import org.orcid.jaxb.model.common_rc3.OrganizationAddress;
+import org.orcid.jaxb.model.common_rc3.Title;
+import org.orcid.jaxb.model.common_rc3.Url;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.PeerReviewType;
+import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc3.Role;
+import org.orcid.jaxb.model.record_rc3.WorkTitle;
+import org.orcid.jaxb.model.record_rc3.WorkType;
 
 public class PeerReviewForm implements ErrorsInterface, Serializable {
 
@@ -419,7 +419,7 @@ public class PeerReviewForm implements ErrorsInterface, Serializable {
             }
             
             if(translatedSubjectName != null) {
-                org.orcid.jaxb.model.common_rc2.TranslatedTitle tTitle = new org.orcid.jaxb.model.common_rc2.TranslatedTitle();
+                org.orcid.jaxb.model.common_rc3.TranslatedTitle tTitle = new org.orcid.jaxb.model.common_rc3.TranslatedTitle();
                 if(!PojoUtil.isEmpty(translatedSubjectName.getContent())) {
                     tTitle.setContent(translatedSubjectName.getContent());
                 }

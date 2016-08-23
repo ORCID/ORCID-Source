@@ -53,7 +53,7 @@ public class OauthAuthorizationPageHelper {
         passwordElement.sendKeys(password);
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         if (!longLife) {
-            //     enablePersistentToken
+            //     disablePersistentToken
             WebElement persistentElement = webDriver.findElement(By.id("enablePersistentToken"));
             if (persistentElement.isSelected())
                     BBBUtil.ngAwareClick(persistentElement,webDriver);

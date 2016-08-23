@@ -41,7 +41,7 @@ public class PersonExternalIdentifiers implements Serializable {
     @XmlAttribute
     protected String path;
 
-    public List<PersonExternalIdentifier> getExternalIdentifier() {
+    public List<PersonExternalIdentifier> getExternalIdentifiers() {
         return externalIdentifiers;
     }
 

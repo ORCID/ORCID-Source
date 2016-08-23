@@ -21,10 +21,10 @@ import javax.persistence.NoResultException;
 import org.orcid.core.exception.OrcidDeprecatedException;
 import org.orcid.core.exception.OrcidNotClaimedException;
 import org.orcid.core.security.aop.LockedException;
-import org.orcid.jaxb.model.common_rc2.Filterable;
+import org.orcid.jaxb.model.common_rc3.Filterable;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Name;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Name;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
 

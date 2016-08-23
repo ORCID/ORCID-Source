@@ -21,34 +21,29 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.blackbox.api.BBBUtil;
-import org.orcid.integration.blackbox.api.v2.rc2.BlackBoxBaseRC2;
+import org.orcid.integration.blackbox.api.v2.rc3.BlackBoxBaseRC3;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc1.WorkExternalIdentifierType;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.Relationship;
-import org.orcid.jaxb.model.record_rc2.Work;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.jaxb.model.record_rc3.Work;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -61,28 +56,14 @@ import com.sun.jersey.api.client.ClientResponse;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-memberV2-context.xml" })
-public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
-
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
-
-    @BeforeClass
-    public static void beforeClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        BBBUtil.revokeApplicationsAccess(webDriver);
-    }
-
+public class MemberV2PerformanceTest extends BlackBoxBaseRC3 {    
     @After
     public void after() throws JSONException, InterruptedException, URISyntaxException {
         cleanActivities();
     }
 
     @Test
-    public void createManyWorks() throws JSONException, InterruptedException, URISyntaxException {
-        cleanActivities();
+    public void createManyWorks() throws JSONException, InterruptedException, URISyntaxException {        
         int numWorks = 1000;
         // Amount of linear increase allowed
         float scalingFactor = 1.5f;
@@ -94,7 +75,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
             StopWatch singleWorkStopWatch = new StopWatch();
             singleWorkStopWatch.start();
             long time = System.currentTimeMillis();
-            Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc2/samples/work-2.0_rc2.xml", Work.class);
+            Work workToCreate = (Work) unmarshallFromPath("/record_2.0_rc3/samples/work-2.0_rc3.xml", Work.class);
             workToCreate.setPutCode(null);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().clear();
             ExternalID wExtId = new ExternalID();
@@ -102,7 +83,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
             wExtId.setType(WorkExternalIdentifierType.AGR.value());
             wExtId.setRelationship(Relationship.SELF);
             workToCreate.getExternalIdentifiers().getExternalIdentifier().add(wExtId);
-            String accessToken = getAccessToken(this.getClient1ClientId(), this.getClient1ClientSecret(), this.getClient1RedirectUri());
+            String accessToken = getAccessToken();
 
             ClientResponse postResponse = memberV2ApiClient.createWorkXml(this.getUser1OrcidId(), workToCreate, accessToken);
             stopWatch.split();
@@ -119,7 +100,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
             assertEquals(Response.Status.CREATED.getStatusCode(), postResponse.getStatus());
             String locationPath = postResponse.getLocation().getPath();
             assertTrue("Location header path should match pattern, but was " + locationPath,
-                    locationPath.matches(".*/v2.0_rc2/" + this.getUser1OrcidId() + "/work/\\d+"));
+                    locationPath.matches(".*/v2.0_rc3/" + this.getUser1OrcidId() + "/work/\\d+"));
             ClientResponse getResponse = memberV2ApiClient.viewLocationXml(postResponse.getLocation(), accessToken);
             assertEquals(Response.Status.OK.getStatusCode(), getResponse.getStatus());
             Work gotWork = getResponse.getEntity(Work.class);
@@ -128,7 +109,8 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
         }
     }
 
-    private void cleanActivities(String token) throws JSONException, InterruptedException, URISyntaxException {
+    private void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
+        String token = getAccessToken();
         // Remove all activities
         ClientResponse activitiesResponse = memberV2ApiClient.viewActivities(this.getUser1OrcidId(), token);
         assertNotNull(activitiesResponse);
@@ -171,20 +153,7 @@ public class MemberV2PerformanceTest extends BlackBoxBaseRC2 {
         }
     }
 
-    private String getAccessToken(String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.ACTIVITIES_UPDATE.value() + " " + ScopePathType.ACTIVITIES_READ_LIMITED.value(), clientId, clientSecret,
-                clientRedirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
-    }
-
-    private void cleanActivities() throws JSONException, InterruptedException, URISyntaxException {
-        for (String token : accessTokens.values()) {
-            cleanActivities(token);
-        }
-    }
+    private String getAccessToken() throws InterruptedException, JSONException {
+        return getAccessToken(getScopes(ScopePathType.ACTIVITIES_UPDATE, ScopePathType.ACTIVITIES_READ_LIMITED));
+    }    
 }

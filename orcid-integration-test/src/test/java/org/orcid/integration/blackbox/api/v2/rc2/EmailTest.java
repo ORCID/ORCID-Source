@@ -21,17 +21,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.codehaus.jettison.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.orcid.integration.api.helper.OauthHelper;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.orcid.integration.api.pub.PublicV2ApiClientImpl;
-import org.orcid.integration.api.t2.T2OAuthAPIService;
+import org.orcid.integration.blackbox.api.BBBUtil;
+import org.orcid.integration.blackbox.web.SigninTest;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc2.Email;
@@ -49,21 +50,36 @@ import com.sun.jersey.api.client.ClientResponse;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:test-publicV2-context.xml" })
 public class EmailTest extends BlackBoxBaseRC2 {
-    protected static Map<String, String> accessTokens = new HashMap<String, String>();
-    @Resource(name = "t2OAuthClient")
-    private T2OAuthAPIService<ClientResponse> t2OAuthClient;
-
     @Resource(name = "memberV2ApiClient_rc2")
     private MemberV2ApiClientImpl memberV2ApiClient;
 
     @Resource(name = "publicV2ApiClient_rc2")
     private PublicV2ApiClientImpl publicV2ApiClient;
 
-    @Resource
-    private OauthHelper oauthHelper;
-
-    static String accessToken = null;
-
+    private String limitedEmailValue = "limited@test.orcid.org";
+    
+    @Before
+    public void setUpData() {
+        signout();
+        webDriver.get(getWebBaseUrl() + "/userStatus.json?logUserOut=true");
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        webDriver.get(getWebBaseUrl() + "/my-orcid");
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.documentReady());
+        (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
+        SigninTest.signIn(webDriver, getUser1UserName(), getUser1Password());
+        BBBUtil.extremeWaitFor(BBBUtil.angularHasFinishedProcessing(), webDriver);
+        BBBUtil.noSpinners(webDriver);
+        
+        showAccountSettingsPage();
+        openEditEmailsSectionOnAccountSettingsPage();
+        updatePrimaryEmailVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);  
+        removePopOver();
+        try {
+            updateEmailVisibility(limitedEmailValue, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        } catch(Exception e) {
+            addEmail(limitedEmailValue, org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);
+        }
+    }        
     
     /**
      * PRECONDITIONS: 
@@ -86,7 +102,7 @@ public class EmailTest extends BlackBoxBaseRC2 {
      * */
     @Test
     public void testGetWithMembersAPI() throws InterruptedException, JSONException {
-        String accessToken = getAccessToken(getClient1ClientId(), getClient1ClientSecret(), getClient1RedirectUri());
+        String accessToken = getAccessToken();
         ClientResponse getAllResponse = memberV2ApiClient.getEmails(getUser1OrcidId(), accessToken);
         assertNotNull(getAllResponse);
         Emails emails = getAllResponse.getEntity(Emails.class);
@@ -103,18 +119,12 @@ public class EmailTest extends BlackBoxBaseRC2 {
                 assertEquals(visibility, email.getVisibility());
                 return;
             }
-        }
-        
+        }        
         fail();
     }
     
-    public String getAccessToken(String clientId, String clientSecret, String clientRedirectUri) throws InterruptedException, JSONException {
-        if (accessTokens.containsKey(clientId)) {
-            return accessTokens.get(clientId);
-        }
-
-        String accessToken = super.getAccessToken(ScopePathType.READ_LIMITED.value(), clientId, clientSecret, clientRedirectUri);
-        accessTokens.put(clientId, accessToken);
-        return accessToken;
+    public String getAccessToken() throws InterruptedException, JSONException {
+        List<String> scopes = getScopes(ScopePathType.READ_LIMITED);
+        return getAccessToken(scopes);
     }
 }

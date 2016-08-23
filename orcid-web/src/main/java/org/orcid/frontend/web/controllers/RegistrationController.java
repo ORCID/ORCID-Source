@@ -80,7 +80,7 @@ import org.orcid.jaxb.model.message.SendEmailFrequency;
 import org.orcid.jaxb.model.message.SendOrcidNews;
 import org.orcid.jaxb.model.message.SubmissionDate;
 import org.orcid.jaxb.model.message.Visibility;
-import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
+import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.password.constants.OrcidPasswordConstants;
 import org.orcid.persistence.dao.EmailDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -96,6 +96,7 @@ import org.orcid.pojo.ajaxForm.RequestInfoForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidRequestUtil;
+import org.orcid.utils.OrcidStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,15 +190,23 @@ public class RegistrationController extends BaseController {
 
     @Resource
     private ShibbolethAjaxAuthenticationSuccessHandler ajaxAuthenticationSuccessHandlerShibboleth;
-    
+
     @Resource
     private ProfileEntityCacheManager profileEntityCacheManager;
-    
+
     @Resource
     private ProfileEntityManager profileEntityManager;
-    
+
     @Resource
-    private OrcidProfileCacheManager orcidProfileCacheManager;
+    private OrcidProfileCacheManager orcidProfileCacheManager;    
+    
+    public NotificationManager getNotificationManager() {
+        return notificationManager;
+    }
+
+    public void setNotificationManager(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
+    }
 
     public void setEncryptionManager(EncryptionManager encryptionManager) {
         this.encryptionManager = encryptionManager;
@@ -249,22 +258,22 @@ public class RegistrationController extends BaseController {
         reg.getSendEmailFrequencyDays().setValue(SendEmailFrequency.WEEKLY.value());
         reg.getTermsOfUse().setValue(false);
         setError(reg.getTermsOfUse(), "AssertTrue.registrationForm.acceptTermsAndConditions");
-        
-        RequestInfoForm requestInfoForm  = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
-        if(requestInfoForm != null) {
-            if(!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
+
+        RequestInfoForm requestInfoForm = (RequestInfoForm) request.getSession().getAttribute(OauthControllerBase.REQUEST_INFO_FORM);
+        if (requestInfoForm != null) {
+            if (!PojoUtil.isEmpty(requestInfoForm.getUserEmail())) {
                 reg.getEmail().setValue(requestInfoForm.getUserEmail());
-            } 
-            
-            if(!PojoUtil.isEmpty(requestInfoForm.getUserGivenNames())) {
+            }
+
+            if (!PojoUtil.isEmpty(requestInfoForm.getUserGivenNames())) {
                 reg.getGivenNames().setValue(requestInfoForm.getUserGivenNames());
             }
-            
-            if(!PojoUtil.isEmpty(requestInfoForm.getUserFamilyNames())) {
+
+            if (!PojoUtil.isEmpty(requestInfoForm.getUserFamilyNames())) {
                 reg.getFamilyNames().setValue(requestInfoForm.getUserFamilyNames());
-            }                                
-        }               
-        
+            }
+        }
+
         long numVal = generateRandomNumForValidation();
         reg.setValNumServer(numVal);
         reg.setValNumClient(0);
@@ -364,7 +373,8 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = { "/registerConfirm.json", "/shibboleth/registerConfirm.json" }, method = RequestMethod.POST)
-    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg) throws UnsupportedEncodingException {
+    public @ResponseBody Redirect setRegisterConfirm(HttpServletRequest request, HttpServletResponse response, @RequestBody Registration reg)
+            throws UnsupportedEncodingException {
         Redirect r = new Redirect();
 
         boolean usedCaptcha = false;
@@ -386,6 +396,15 @@ public class RegistrationController extends BaseController {
         // Remove the session hash if needed
         if (request.getSession().getAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME) != null) {
             request.getSession().removeAttribute(GRECAPTCHA_SESSION_ATTRIBUTE_NAME);
+        }
+
+        // Strip any html code from names before validating them
+        if (!PojoUtil.isEmpty(reg.getFamilyNames())) {
+            reg.getFamilyNames().setValue(OrcidStringUtils.stripHtml(reg.getFamilyNames().getValue()));
+        }
+
+        if (!PojoUtil.isEmpty(reg.getGivenNames())) {
+            reg.getGivenNames().setValue(OrcidStringUtils.stripHtml(reg.getGivenNames().getValue()));
         }
 
         // make sure validation still passes
@@ -933,24 +952,24 @@ public class RegistrationController extends BaseController {
     }
 
     @RequestMapping(value = "/claim/{encryptedEmail}.json", method = RequestMethod.POST)
-    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail, @RequestBody Claim claim)
-            throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
+    public @ResponseBody Claim submitClaimJson(HttpServletRequest request, HttpServletResponse response, @PathVariable("encryptedEmail") String encryptedEmail,
+            @RequestBody Claim claim) throws NoSuchRequestHandlingMethodException, UnsupportedEncodingException {
         claim.setErrors(new ArrayList<String>());
         String decryptedEmail = encryptionManager.decryptForExternalUse(new String(Base64.decodeBase64(encryptedEmail), "UTF-8")).trim();
         if (!isEmailOkForCurrentUser(decryptedEmail)) {
             claim.setUrl(getBaseUri() + "/claim/wrong_user");
             return claim;
         }
-                
-        Map<String, String> emails = emailManager.findIdByEmail(decryptedEmail); 
+
+        Map<String, String> emails = emailManager.findIdByEmail(decryptedEmail);
         String orcid = emails.get(decryptedEmail);
-        
-        if(PojoUtil.isEmpty(orcid)) {
+
+        if (PojoUtil.isEmpty(orcid)) {
             throw new OrcidBadRequestException("Unable to find an ORCID ID for the given email: " + decryptedEmail);
         }
-        
+
         ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        
+
         if (profile != null && profile.getClaimed() != null && profile.getClaimed()) {
             // Already claimed so send to sign in page
             claim.setUrl(getBaseUri() + "/signin?alreadyClaimed");
@@ -972,10 +991,10 @@ public class RegistrationController extends BaseController {
         orcidProfile.setPassword(claim.getPassword().getValue());
         orcidProfileManager.updatePasswordInformation(orcidProfile);
         automaticallyLogin(request, claim.getPassword().getValue(), orcidProfile);
-        //detech this situation
+        // detech this situation
         String targetUrl = orcidUrlManager.determineFullTargetUrlFromSavedRequest(request, response);
-        if (targetUrl==null)
-           claim.setUrl(getBaseUri() + "/my-orcid?recordClaimed");
+        if (targetUrl == null)
+            claim.setUrl(getBaseUri() + "/my-orcid?recordClaimed");
         else
             claim.setUrl(targetUrl);
         return claim;
@@ -1008,17 +1027,16 @@ public class RegistrationController extends BaseController {
     }
 
     @Transactional
-    private OrcidProfile confirmEmailAndClaim(String orcid, String email, Claim claim, HttpServletRequest request)
-            throws NoSuchRequestHandlingMethodException {
-        Locale requestLocale = RequestContextUtils.getLocale(request);        
+    private OrcidProfile confirmEmailAndClaim(String orcid, String email, Claim claim, HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+        Locale requestLocale = RequestContextUtils.getLocale(request);
         org.orcid.jaxb.model.message.Locale userLocale = requestLocale == null ? null : org.orcid.jaxb.model.message.Locale.fromValue(requestLocale.toString());
         boolean claimed = profileEntityManager.claimProfileAndUpdatePreferences(orcid, email, userLocale, claim);
-        if(!claimed) {
+        if (!claimed) {
             throw new IllegalStateException("Unable to claim record " + orcid);
         }
-        
+
         OrcidProfile profileToReturn = orcidProfileCacheManager.retrieve(orcid);
-        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);        
+        notificationManager.sendAmendEmail(profileToReturn, AmendedSection.UNKNOWN);
         return profileToReturn;
     }
 

@@ -203,7 +203,7 @@
                 <div class="control-group">
 					<ul class="inline-list margin-separator pull-left">
 						<li>
-							<button id="save-education" class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
+							<button id="save-affiliation" class="btn btn-primary" ng-click="addAffiliation()" ng-disabled="addingAffiliation" ng-class="{disabled:addingAffiliation}">
                         		<span ng-show="editAffiliation.putCode.value == null"><@orcid.msg 'manual_affiliation_form_contents.btnaddtolist'/></span>
                         		<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
                     		</button>

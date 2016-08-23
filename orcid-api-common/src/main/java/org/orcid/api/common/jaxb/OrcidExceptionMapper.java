@@ -126,6 +126,7 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private static final String V2_RC1 = "2.0_rc1";
     private static final String V2_RC2 = "2.0_rc2";
+    private static final String V2_RC3 = "2.0_rc3";
 
     private static Map<Class<? extends Throwable>, Pair<Response.Status, Integer>> HTTP_STATUS_AND_ERROR_CODE_BY_THROWABLE_TYPE = new HashMap<>();
     {
@@ -199,6 +200,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
                 return newStyleErrorResponse(t, V2_RC1);
             case V2_RC2:
                 return newStyleErrorResponse(t, V2_RC2);      
+            case V2_RC3:
+                return newStyleErrorResponse(t, V2_RC3);      
+            
             }
         } 
         
@@ -322,7 +326,9 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
 
     private Response getOrcidErrorResponse(int errorCode, int status, Throwable t, String version) {
         Object orcidError;
-        if (V2_RC2.equals(version)) {
+        if(V2_RC3.equals(version)) {
+            orcidError = (org.orcid.jaxb.model.error_rc3.OrcidError) getOrcidErrorV2Rc3(errorCode, status, t);
+        } else if (V2_RC2.equals(version)) {
             orcidError = (org.orcid.jaxb.model.error_rc2.OrcidError) getOrcidErrorV2Rc2(errorCode, status, t);
         } else {
             orcidError = (OrcidError) getOrcidErrorV2Rc1(errorCode, status, t);
@@ -367,6 +373,21 @@ public class OrcidExceptionMapper implements ExceptionMapper<Throwable> {
     private org.orcid.jaxb.model.error_rc2.OrcidError getOrcidErrorV2Rc2(int errorCode, int status, Throwable t) {
         Locale locale = localeManager.getLocale();
         org.orcid.jaxb.model.error_rc2.OrcidError orcidError = new org.orcid.jaxb.model.error_rc2.OrcidError();
+        orcidError.setResponseCode(status);
+        orcidError.setErrorCode(errorCode);
+        orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));
+        Map<String, String> params = null;
+        if (t instanceof ApplicationException) {
+            params = ((ApplicationException) t).getParams();
+        }
+        orcidError.setDeveloperMessage(getDeveloperMessage(errorCode, t, params));
+        orcidError.setUserMessage(resolveMessage(messageSource.getMessage("apiError." + errorCode + ".userMessage", null, locale), params));
+        return orcidError;
+    }
+    
+    private org.orcid.jaxb.model.error_rc3.OrcidError getOrcidErrorV2Rc3(int errorCode, int status, Throwable t) {
+        Locale locale = localeManager.getLocale();
+        org.orcid.jaxb.model.error_rc3.OrcidError orcidError = new org.orcid.jaxb.model.error_rc3.OrcidError();
         orcidError.setResponseCode(status);
         orcidError.setErrorCode(errorCode);
         orcidError.setMoreInfo(messageSource.getMessage("apiError." + errorCode + ".moreInfo", null, locale));

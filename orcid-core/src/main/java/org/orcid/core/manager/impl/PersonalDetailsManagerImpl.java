@@ -27,18 +27,18 @@ import org.orcid.core.manager.OtherNameManager;
 import org.orcid.core.manager.PersonalDetailsManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
-import org.orcid.core.version.impl.LastModifiedDatesHelper;
-import org.orcid.jaxb.model.common_rc2.CreatedDate;
-import org.orcid.jaxb.model.common_rc2.CreditName;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.FamilyName;
-import org.orcid.jaxb.model.record_rc2.GivenNames;
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.OtherNames;
-import org.orcid.jaxb.model.record_rc2.PersonalDetails;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
+import org.orcid.jaxb.model.common_rc3.CreatedDate;
+import org.orcid.jaxb.model.common_rc3.CreditName;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.FamilyName;
+import org.orcid.jaxb.model.record_rc3.GivenNames;
+import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.OtherNames;
+import org.orcid.jaxb.model.record_rc3.PersonalDetails;
 import org.orcid.persistence.jpa.entities.BiographyEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
@@ -112,12 +112,12 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
         OtherNames otherNames = getOtherNames(orcid);
         XMLGregorianCalendar otherNamesLatest = null;
         if(otherNames != null && otherNames.getOtherNames() != null) {            
-            otherNamesLatest = LastModifiedDatesHelper.calculateLatest(otherNames);
+            otherNamesLatest = Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(otherNames);
             otherNames.setLastModifiedDate(new LastModifiedDate(otherNamesLatest));
             personalDetails.setOtherNames(otherNames);            
         }               
         
-        personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+        personalDetails.setLastModifiedDate(new LastModifiedDate(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
                 
         if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {
             ProfileEntity profileEntity = profileEntityCacheManager.retrieve(orcid);                
@@ -171,7 +171,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
                 personalDetails.setOtherNames(null);
             } else {
                 otherNames.setOtherNames(publicOtherNames);
-                otherNamesLatest = LastModifiedDatesHelper.calculateLatest(otherNames);
+                otherNamesLatest = Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(otherNames);
                 otherNames.setLastModifiedDate(new LastModifiedDate(otherNamesLatest));
                 personalDetails.setOtherNames(otherNames);                
             }            
@@ -179,7 +179,7 @@ public class PersonalDetailsManagerImpl implements PersonalDetailsManager {
             personalDetails.setOtherNames(null);
         }
         
-        personalDetails.setLastModifiedDate(new LastModifiedDate(LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
+        personalDetails.setLastModifiedDate(new LastModifiedDate(Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(nameLastModified, bioLastModified, otherNamesLatest)));
         
         if(personalDetails.getLastModifiedDate() == null || personalDetails.getLastModifiedDate().getValue() == null) {            
             personalDetails.setLastModifiedDate(new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(lastModified)));

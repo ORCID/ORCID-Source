@@ -40,15 +40,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.orcid.core.locale.LocaleManager;
-import org.orcid.jaxb.model.common_rc2.Iso3166Country;
-import org.orcid.jaxb.model.common_rc2.Visibility;
-import org.orcid.jaxb.model.record_rc2.Address;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.Email;
-import org.orcid.jaxb.model.record_rc2.Keyword;
-import org.orcid.jaxb.model.record_rc2.OtherName;
-import org.orcid.jaxb.model.record_rc2.PersonExternalIdentifier;
-import org.orcid.jaxb.model.record_rc2.ResearcherUrl;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.Visibility;
+import org.orcid.jaxb.model.record_rc3.Address;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.Email;
+import org.orcid.jaxb.model.record_rc3.Keyword;
+import org.orcid.jaxb.model.record_rc3.OtherName;
+import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -103,7 +103,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
     }
     
     @SuppressWarnings("unchecked")
-	@Test
+    @Test
     public void testViewValidUser() {
         ModelAndView mav = publicProfileController.publicPreview(request, 1, 0, 15, userOrcid);
         assertEquals("public_profile_v3", mav.getViewName());
@@ -158,8 +158,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(1, publicKeywords.size());       
         assertEquals(Long.valueOf(9), publicKeywords.get(0).getPutCode());
         assertEquals("PUBLIC", publicKeywords.get(0).getContent());
-        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());  
-        
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());          
         
         assertTrue(model.containsKey("publicGroupedResearcherUrls"));
         Map<String, List<ResearcherUrl>> rUrls = (Map<String, List<ResearcherUrl>>) model.get("publicGroupedResearcherUrls");        
@@ -267,8 +266,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         assertEquals(Long.valueOf(18), publicOtherNames.get(0).getPutCode());
         assertEquals("PUBLIC", publicOtherNames.get(0).getContent());
         assertEquals(Visibility.PUBLIC, publicOtherNames.get(0).getVisibility());        
-        
-        
+                
         assertTrue(model.containsKey("publicGroupedAddresses"));
         Map<String, List<Address>> groupedAddresses = (Map<String, List<Address>>) model.get("publicGroupedAddresses");        
         assertNotNull(groupedAddresses);
@@ -287,8 +285,7 @@ public class PublicProfileControllerTest extends DBUnitTest {
         List<Keyword> publicKeywords = groupedKeywords.get("PUBLIC");
         assertEquals(Long.valueOf(14), publicKeywords.get(0).getPutCode());
         assertEquals("PUBLIC", publicKeywords.get(0).getContent());
-        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());
-        
+        assertEquals(Visibility.PUBLIC, publicKeywords.get(0).getVisibility());        
         
         assertTrue(model.containsKey("publicGroupedResearcherUrls"));
         Map<String, List<ResearcherUrl>> rUrls = ( Map<String, List<ResearcherUrl>>) model.get("publicGroupedResearcherUrls");

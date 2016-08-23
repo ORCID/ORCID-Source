@@ -58,37 +58,37 @@ import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
 import org.orcid.core.utils.activities.ActivitiesGroup;
 import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
-import org.orcid.core.version.impl.LastModifiedDatesHelper;
+import org.orcid.core.version.impl.Api2_0_rc3_LastModifiedDatesHelper;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
-import org.orcid.jaxb.model.common_rc2.LastModifiedDate;
-import org.orcid.jaxb.model.common_rc2.Visibility;
+import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
+import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
-import org.orcid.jaxb.model.notification.amended_rc2.AmendedSection;
-import org.orcid.jaxb.model.record.summary_rc2.ActivitiesSummary;
-import org.orcid.jaxb.model.record.summary_rc2.EducationSummary;
-import org.orcid.jaxb.model.record.summary_rc2.Educations;
-import org.orcid.jaxb.model.record.summary_rc2.EmploymentSummary;
-import org.orcid.jaxb.model.record.summary_rc2.Employments;
-import org.orcid.jaxb.model.record.summary_rc2.FundingGroup;
-import org.orcid.jaxb.model.record.summary_rc2.FundingSummary;
-import org.orcid.jaxb.model.record.summary_rc2.Fundings;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroup;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewGroupKey;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviewSummary;
-import org.orcid.jaxb.model.record.summary_rc2.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc2.WorkGroup;
-import org.orcid.jaxb.model.record.summary_rc2.WorkSummary;
-import org.orcid.jaxb.model.record.summary_rc2.Works;
-import org.orcid.jaxb.model.record_rc2.Biography;
-import org.orcid.jaxb.model.record_rc2.ExternalID;
-import org.orcid.jaxb.model.record_rc2.GroupAble;
-import org.orcid.jaxb.model.record_rc2.GroupableActivity;
-import org.orcid.jaxb.model.record_rc2.Name;
-import org.orcid.jaxb.model.record_rc2.Person;
+import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
+import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
+import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Educations;
+import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Employments;
+import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
+import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroupKey;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
+import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
+import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
+import org.orcid.jaxb.model.record_rc3.Biography;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
+import org.orcid.jaxb.model.record_rc3.GroupAble;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
+import org.orcid.jaxb.model.record_rc3.Name;
+import org.orcid.jaxb.model.record_rc3.Person;
 import org.orcid.persistence.aop.ProfileLastModifiedAspect;
 import org.orcid.persistence.dao.OrgAffiliationRelationDao;
 import org.orcid.persistence.dao.ProfileDao;
@@ -330,7 +330,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 recordName.setCreditName(null);
                 recordName.setGivenNames("Given Names Deactivated");
                 recordName.setFamilyName("Family Name Deactivated");
-                recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PRIVATE);
+                recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PRIVATE);
                 recordName.setProfile(new ProfileEntity(deprecatedOrcid));
                 recordNameManager.updateRecordName(recordName);                
             } 
@@ -455,7 +455,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                     educations.getSummaries().add(summary);
                 }
             }
-            LastModifiedDatesHelper.calculateLatest(educations);
+            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(educations);
             activities.setEducations(educations);
         }
 
@@ -472,29 +472,29 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                     employments.getSummaries().add(summary);
                 }
             }
-            LastModifiedDatesHelper.calculateLatest(employments);
+            Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(employments);
             activities.setEmployments(employments);
         }
 
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
         Fundings fundings = groupFundings(fundingSummaries, justPublic);
-        LastModifiedDatesHelper.calculateLatest(fundings);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
         activities.setFundings(fundings);
 
         // Set peer reviews
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
         PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries, justPublic);
-        LastModifiedDatesHelper.calculateLatest(peerReviews);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
         activities.setPeerReviews(peerReviews);
 
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
         Works works = groupWorks(workSummaries, justPublic);
-        LastModifiedDatesHelper.calculateLatest(works);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
         activities.setWorks(works);
 
-        LastModifiedDatesHelper.calculateLatest(activities);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
     }
 
@@ -503,7 +503,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Works result = new Works();
         // Group all works
         for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                 // If it is just public and the work is not public, just ignore
                 // it
             } else {
@@ -540,7 +540,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         Fundings result = new Fundings();
         for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {
@@ -580,7 +580,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
         PeerReviews result = new PeerReviews();
         for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC)) {
+            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
                 // If it is just public and the funding is not public, just
                 // ignore it
             } else {
@@ -794,23 +794,23 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         person.setExternalIdentifiers(externalIdentifierManager.getExternalIdentifiers(orcid, lastModifiedTime));
         LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setKeywords(profileKeywordManager.getKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);                
         
         person.setOtherNames(otherNameManager.getOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setResearcherUrls(researcherUrlManager.getResearcherUrls(orcid, lastModifiedTime));  
         temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setEmails(emailManager.getEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setLastModifiedDate(latest);    
         return person;
@@ -838,23 +838,23 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         
         person.setExternalIdentifiers(externalIdentifierManager.getPublicExternalIdentifiers(orcid, lastModifiedTime));
         LastModifiedDate temp = person.getExternalIdentifiers().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setKeywords(profileKeywordManager.getPublicKeywords(orcid, lastModifiedTime));
         temp = person.getKeywords().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setOtherNames(otherNameManager.getPublicOtherNames(orcid, lastModifiedTime));
         temp = person.getOtherNames().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setResearcherUrls(researcherUrlManager.getPublicResearcherUrls(orcid, lastModifiedTime));
         temp = person.getResearcherUrls().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
 
         person.setEmails(emailManager.getPublicEmails(orcid, lastModifiedTime));
         temp = person.getEmails().getLastModifiedDate();
-        latest = LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
+        latest = Api2_0_rc3_LastModifiedDatesHelper.returnLatestLastModifiedDate(latest, temp);
         
         person.setLastModifiedDate(latest);
         return person;
@@ -884,7 +884,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
                 
         //Update the visibility for every bio element to the visibility selected by the user
         //Update the bio
-        org.orcid.jaxb.model.common_rc2.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc2.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
+        org.orcid.jaxb.model.common_rc3.Visibility defaultVisibility = org.orcid.jaxb.model.common_rc3.Visibility.fromValue(claim.getActivitiesVisibilityDefault().getVisibility().value());
         if(profile.getBiographyEntity() != null) {
             profile.getBiographyEntity().setVisibility(defaultVisibility);
         }
@@ -987,7 +987,7 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
             recordName.setCreditName(null);
             recordName.setGivenNames("Given Names Deactivated");
             recordName.setFamilyName("Family Name Deactivated");
-            recordName.setVisibility(org.orcid.jaxb.model.common_rc2.Visibility.PUBLIC);                                      
+            recordName.setVisibility(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC);                                      
         }
         
         Set<EmailEntity> emails = toClear.getEmails();

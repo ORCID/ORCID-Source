@@ -3913,10 +3913,11 @@ this.w3cLatexCharMap = {
       return 'http://www.osti.gov/energycitations/product.biblio.jsp?osti_id=' + encodeURIComponent(id);
    };
 
-   typeMap['pmc'] = function (id) {
+   typeMap['pmc'] = function (id) { 
       if (id.toLowerCase().startsWith('pmc')) return 'http://europepmc.org/articles/' + id;
       if (id.toLowerCase().startsWith('www.ncbi.nlm.nih.gov')) return 'http://' + id;
-      return 'http://www.ncbi.nlm.nih.gov/pubmed/' + id;
+      //return 'http://www.ncbi.nlm.nih.gov/pubmed/' + id;
+      return 'http://europepmc.org/articles/' + id;
    };
 
    /* 
