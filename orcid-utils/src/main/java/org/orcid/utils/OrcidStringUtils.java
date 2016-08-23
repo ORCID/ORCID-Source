@@ -95,12 +95,24 @@ public class OrcidStringUtils {
 		return map;
 	}
 
+	public static String stripHtml(String s) {
+	    return stripHtml(s, false);
+	}
+	
 	/*
 	 * http://stackoverflow.com/questions/14453047/jsoup-to-strip-only-html-tagsnot
 	 * -new-line-character
 	 */
-	public static String stripHtml(String s) {
-		String output = Jsoup.clean(s, "", Whitelist.simpleText(),
+	public static String stripHtml(String s, boolean allowSimpleTextTags) {
+	    String output = null;
+	    if(allowSimpleTextTags) {
+	        output = Jsoup.clean(s, "", Whitelist.simpleText(),
+                        outputSettings);
+	    } else {
+	        output = Jsoup.clean(s, "", Whitelist.simpleText(),
+                        outputSettings);
+	    }
+		output = Jsoup.clean(s, "", Whitelist.none(),
 				outputSettings);
 		// According to
 		// http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
@@ -124,7 +136,7 @@ public class OrcidStringUtils {
 	 * @return true if the give string has html tags in it
 	 * */
 	public static boolean hasHtml(String s) {
-		String striped = stripHtml(s);
+		String striped = stripHtml(s, true);
 		return !striped.equals(s);
 	}
 
