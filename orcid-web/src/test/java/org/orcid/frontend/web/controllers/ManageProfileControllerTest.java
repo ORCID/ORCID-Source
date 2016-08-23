@@ -61,6 +61,7 @@ import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.SecurityQuestionEntity;
 import org.orcid.pojo.ManageDelegate;
 import org.orcid.pojo.ajaxForm.BiographyForm;
+import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,6 +69,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMethodException;
 
 /**
  * @author Declan Newman (declan) Date: 23/02/2012
@@ -132,7 +134,6 @@ public class ManageProfileControllerTest extends BaseControllerTest {
      */
     @Before
     public void initMocks() throws Exception {
-
         OrcidProfileManagerImpl orcidProfileManagerImpl = getTargetObject(orcidProfileManager, OrcidProfileManagerImpl.class);
         orcidProfileManagerImpl.setOrcidIndexManager(mockOrcidIndexManager);
         orcidProfileManagerImpl.setNotificationManager(mockNotificationManager);
@@ -265,6 +266,24 @@ public class ManageProfileControllerTest extends BaseControllerTest {
         assertNotNull(updatedBf);
         assertTrue(updatedBf.getErrors().isEmpty());
         assertNotNull(updatedBf.getBiography());
+    }
+    
+    @Test
+    public void testStripHtmlFromNames() throws NoSuchRequestHandlingMethodException {
+        NamesForm nf = new NamesForm();
+        nf.setCreditName(Text.valueOf("<button onclick=\"alert('hello')\">Credit Name</button>"));
+        nf.setGivenNames(Text.valueOf("<button onclick=\"alert('hello')\">Given Names</button>"));
+        nf.setFamilyName(Text.valueOf("<button onclick=\"alert('hello')\">Family Name</button>"));
+        nf = controller.setNameFormJson(nf);
+        assertEquals("Credit Name", nf.getCreditName().getValue());
+        assertEquals("Given Names", nf.getGivenNames().getValue());
+        assertEquals("Family Name", nf.getFamilyName().getValue());
+        
+        NamesForm nfFromDB = controller.getNameForm();
+        assertNotNull(nfFromDB);
+        assertEquals("Credit Name", nfFromDB.getCreditName().getValue());
+        assertEquals("Given Names", nfFromDB.getGivenNames().getValue());
+        assertEquals("Family Name", nfFromDB.getFamilyName().getValue());
     }
     
     public static TypeSafeMatcher<List<DelegationDetails>> onlyNewDelegateAdded() {
