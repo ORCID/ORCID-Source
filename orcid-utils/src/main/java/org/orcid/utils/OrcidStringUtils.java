@@ -96,34 +96,23 @@ public class OrcidStringUtils {
 	}
 
 	public static String stripHtml(String s) {
-	    return stripHtml(s, false);
+	    return Jsoup.clean(s, "", Whitelist.none(), outputSettings);
 	}
 	
-	/*
-	 * http://stackoverflow.com/questions/14453047/jsoup-to-strip-only-html-tagsnot
-	 * -new-line-character
-	 */
-	public static String stripHtml(String s, boolean allowSimpleTextTags) {
-	    String output = null;
-	    if(allowSimpleTextTags) {
-	        output = Jsoup.clean(s, "", Whitelist.simpleText(),
-                        outputSettings);
-	    } else {
-	        output = Jsoup.clean(s, "", Whitelist.none(),
-                        outputSettings);
-	    }
-	        // According to
-		// http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
-		// jsoup scape lt, gt, amp, apos, and quot for xhtml
-		// So we want to restore them
-		output = output.replace(LT, DECODED_LT);
-		output = output.replace(GT, DECODED_GT);
-		output = output.replace(AMP, DECODED_AMP);
-		output = output.replace(APOS, DECODED_APOS);
-		output = output.replace(QUOT, DECODED_QUOT);
-		return output;
+	public static String simpleHtml(String s) {
+	    String output = Jsoup.clean(s, "", Whitelist.simpleText(), outputSettings);
+	    // According to
+            // http://jsoup.org/apidocs/org/jsoup/nodes/Entities.EscapeMode.html#xhtml
+            // jsoup scape lt, gt, amp, apos, and quot for xhtml
+            // So we want to restore them
+            output = output.replace(LT, DECODED_LT);
+            output = output.replace(GT, DECODED_GT);
+            output = output.replace(AMP, DECODED_AMP);
+            output = output.replace(APOS, DECODED_APOS);
+            output = output.replace(QUOT, DECODED_QUOT);
+            return output;
 	}
-
+		
 	/**
 	 * Strips html and restore the following characters: ' " & > < If the string
 	 * resulting after that process doesnt match the given string, we can say it
@@ -134,7 +123,7 @@ public class OrcidStringUtils {
 	 * @return true if the give string has html tags in it
 	 * */
 	public static boolean hasHtml(String s) {
-		String striped = stripHtml(s, true);
+		String striped = simpleHtml(s);
 		return !striped.equals(s);
 	}
 
