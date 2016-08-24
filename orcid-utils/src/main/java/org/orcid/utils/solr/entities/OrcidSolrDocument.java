@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.solr.entities;
+package org.orcid.utils.solr.entities;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.solr.client.solrj.beans.Field;
-
-import schema.constants.SolrConstants;
 
 /**
  * Class representing public information that can be returned from the Solr

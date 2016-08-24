@@ -130,6 +130,7 @@
                        <exclude>**/.gitignore</exclude>
                        <exclude>**/src/test/manual-test/**</exclude>
                        <exclude>**/rebel.xml</exclude>
+                       <exclude>**/scripts/*sh</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -14,27 +14,34 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.solr.entities;
+package org.orcid.utils.solr.entities;
 
-import org.apache.solr.client.solrj.beans.Field;
-
-import schema.constants.SolrConstants;
+import java.util.List;
 
 /**
  * 
- * @author Angel Montenegro
+ * @author Will Simpson
  * 
  */
-public class OrgDefinedFundingTypeSolrDocument {
+public class OrcidSolrResults {
 
-    @Field(SolrConstants.ORG_DEFINED_FUNDING_TYPE)
-    private String orgDefinedFundingType;
+    private long numFound;
+    private List<OrcidSolrResult> results;
 
-    public String getOrgDefinedFundingType() {
-        return orgDefinedFundingType;
+    public long getNumFound() {
+        return numFound;
     }
 
-    public void setOrgDefinedFundingType(String orgDefinedFundingType) {
-        this.orgDefinedFundingType = orgDefinedFundingType;
-    }      
+    public void setNumFound(long numFound) {
+        this.numFound = numFound;
+    }
+
+    public List<OrcidSolrResult> getResults() {
+        return results;
+    }
+
+    public void setResults(List<OrcidSolrResult> results) {
+        this.results = results;
+    }
+
 }

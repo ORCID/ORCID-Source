@@ -14,13 +14,11 @@
  *
  * =============================================================================
  */
-package org.orcid.persistence.solr.entities;
+package org.orcid.utils.solr.entities;
 
 import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
-
-import schema.constants.SolrConstants;
 
 /**
  * 

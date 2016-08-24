@@ -133,9 +133,12 @@ import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
+import org.orcid.persistence.messaging.JmsMessageSender;
+import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.utils.DateUtils;
 import org.orcid.utils.OrcidStringUtils;
+import org.orcid.utils.listener.LastModifiedMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -1844,7 +1847,49 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
     static Object executorServiceLock = new Object();
     static ConcurrentHashMap<String, FutureTask<String>> futureHM = new ConcurrentHashMap<String, FutureTask<String>>();
 
+    @Resource
+    JmsMessageSender messaging;
+    
+    /** Simple method to be called by scheduler.
+     * Looks for profiles with REINDEX flag and adds LastModifiedMessages to the REINDEX queue
+     * Then sets indexing flag to DONE (although there is no guarantee it will be done!)
+     * 
+     */
+    private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination){
+        LOG.info("processing profiles with "+status.name()+" flag. sending to "+destination.name());
+        List<String> orcidsForIndexing = new ArrayList<>();
+        List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
+        indexingStatuses.add(status);
+        boolean connectionIssue = false;
+        do{
+            orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
+            LOG.info("processing batch of "+orcidsForIndexing.size());
+            for (String orcid : orcidsForIndexing){
+                Date last = profileDao.retrieveLastModifiedDate(orcid);
+                LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
+                if (messaging.send(mess,destination))
+                    profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                else
+                    connectionIssue = true;
+            }
+        }while (!connectionIssue && !orcidsForIndexing.isEmpty());
+        if (connectionIssue)
+            LOG.warn("ABORTED processing profiles with "+status.name()+" flag. sending to "+destination.name());
+    }
+    
     @Override
+    public void processProfilesWithReindexFlagAndAddToMessageQueue(){
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
+    }
+    
+    @Override
+    public void processProfilesWithFailedFlagAndAddToMessageQueue(){
+        this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
+    }
+    
+    
+    @Override
+    @Deprecated
     public void processProfilesPendingIndexing() {
         // XXX There are some concurrency related edge cases to fix here.
         LOG.info("About to process profiles pending indexing");

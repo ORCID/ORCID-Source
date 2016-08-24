@@ -22,8 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-
-import schema.constants.SolrConstants;
+import org.orcid.utils.solr.entities.SolrConstants;
 
 public class SolrQueryBuilderTest {
 

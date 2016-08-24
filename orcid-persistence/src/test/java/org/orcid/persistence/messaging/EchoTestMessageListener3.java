@@ -18,6 +18,7 @@ package org.orcid.persistence.messaging;
 
 import javax.annotation.Resource;
 
+import org.orcid.utils.listener.MessageConstants;
 import org.springframework.jms.annotation.JmsListener;
 
 // use @Component or add as a bean in the XML config.
@@ -28,7 +29,7 @@ public class EchoTestMessageListener3 {
     @Resource
     JmsMessageSender sender;
     
-    @JmsListener(destination=JmsMessageSender.TEST_REPLY)
+    @JmsListener(destination=MessageConstants.Queues.TEST_REPLY)
     public void processMessage(String text) {
       lastMessage = text;
     }

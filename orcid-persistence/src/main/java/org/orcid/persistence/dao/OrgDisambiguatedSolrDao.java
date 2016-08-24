@@ -18,7 +18,7 @@ package org.orcid.persistence.dao;
 
 import java.util.List;
 
-import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 
 public interface OrgDisambiguatedSolrDao {
 
