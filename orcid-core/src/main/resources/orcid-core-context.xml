@@ -155,7 +155,7 @@
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
 
-	<bean id="WorkEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl"/>
+	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl"/>
 
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
@@ -571,6 +571,18 @@
 
     <bean id="minimizedWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="minimized-work" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="30000" />
+        <property name="timeToLiveSeconds" value="604800" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="150000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+    </bean>
+    
+    <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="full-work-entity" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="30000" />
         <property name="timeToLiveSeconds" value="604800" />

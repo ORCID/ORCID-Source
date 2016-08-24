@@ -27,6 +27,7 @@ import javax.persistence.TypedQuery;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkBaseEntity;
 import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 import org.springframework.cache.annotation.Cacheable;
@@ -147,21 +148,31 @@ public class WorkDaoImpl extends GenericDaoImpl<WorkEntity, Long> implements Wor
     
     @Override
     public List<MinimizedWorkEntity> getMinimizedWorkEntities(List<Long> ids) {
-        //batch up list into sets of 50;
-        List<MinimizedWorkEntity> list = new ArrayList<MinimizedWorkEntity>();
-        for (List<Long> partition : Lists.partition(ids, 50)){
-            TypedQuery<MinimizedWorkEntity> query = entityManager
-                    .createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
+        // batch up list into sets of 50;
+        List<MinimizedWorkEntity> list = new ArrayList<>();
+        for (List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<MinimizedWorkEntity> query = entityManager.createQuery("SELECT x FROM MinimizedWorkEntity x WHERE x.id IN :ids", MinimizedWorkEntity.class);
             query.setParameter("ids", partition);
-            list.addAll(query.getResultList());            
+            list.addAll(query.getResultList());
         }
         return list;
-        
+    }
+
+    @Override
+    public List<WorkEntity> getWorkEntities(List<Long> ids) {
+        // batch up list into sets of 50;
+        List<WorkEntity> list = new ArrayList<>();
+        for (List<Long> partition : Lists.partition(ids, 50)) {
+            TypedQuery<WorkEntity> query = entityManager.createQuery("SELECT x FROM WorkEntity x WHERE x.id IN :ids", WorkEntity.class);
+            query.setParameter("ids", partition);
+            list.addAll(query.getResultList());
+        }
+        return list;
     }
     
     @Override
-    public void detach(MinimizedWorkEntity minimizedWorkEntity) {
-        entityManager.detach(minimizedWorkEntity);        
+    public void detach(WorkBaseEntity workBaseEntity) {
+        entityManager.detach(workBaseEntity);        
     }
     
     /**
