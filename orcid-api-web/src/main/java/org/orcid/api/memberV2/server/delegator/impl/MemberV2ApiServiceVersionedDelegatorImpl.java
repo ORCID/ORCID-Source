@@ -19,6 +19,7 @@ package org.orcid.api.memberV2.server.delegator.impl;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.orcid.api.common.jaxb.OrcidValidationJaxbContextResolver;
 import org.orcid.api.memberV2.server.delegator.MemberV2ApiServiceDelegator;
 import org.orcid.core.manager.OrcidSecurityManager;
 import org.orcid.core.manager.ProfileEntityCacheManager;
@@ -41,6 +42,8 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     
     @Resource
     private OrcidSecurityManager orcidSecurityManager;
+    
+    private OrcidValidationJaxbContextResolver schemaValidator = new OrcidValidationJaxbContextResolver();
     
     @Override
     public Response viewStatusText() {
@@ -74,6 +77,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createWork(String orcid, Object work) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(work);
         work = upgradeObject(work);
         return memberV2ApiServiceDelegator.createWork(orcid, work);
     }
@@ -88,6 +92,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateWork(String orcid, Long putCode, Object work) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(work);
         work = upgradeObject(work);
         return downgradeResponse(memberV2ApiServiceDelegator.updateWork(orcid, putCode, work));
     }
@@ -113,6 +118,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createFunding(String orcid, Object funding) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(funding);
         funding = upgradeObject(funding);
         return memberV2ApiServiceDelegator.createFunding(orcid, funding);
     }
@@ -120,6 +126,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateFunding(String orcid, Long putCode, Object funding) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(funding);
         funding = upgradeObject(funding);
         return downgradeResponse(memberV2ApiServiceDelegator.updateFunding(orcid, putCode, funding));
     }
@@ -145,6 +152,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createEducation(String orcid, Object education) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(education);
         education = upgradeObject(education);
         return memberV2ApiServiceDelegator.createEducation(orcid, education);
     }
@@ -152,6 +160,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateEducation(String orcid, Long putCode, Object education) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(education);
         education = upgradeObject(education);
         return downgradeResponse(memberV2ApiServiceDelegator.updateEducation(orcid, putCode, education));
     }
@@ -171,6 +180,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createEmployment(String orcid, Object employment) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(employment);
         employment = upgradeObject(employment);
         return memberV2ApiServiceDelegator.createEmployment(orcid, employment);
     }
@@ -178,6 +188,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateEmployment(String orcid, Long putCode, Object employment) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(employment);
         employment = upgradeObject(employment);
         return downgradeResponse(memberV2ApiServiceDelegator.updateEmployment(orcid, putCode, employment));
     }
@@ -203,6 +214,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createPeerReview(String orcid, Object peerReview) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(peerReview);
         peerReview = upgradeObject(peerReview);
         return memberV2ApiServiceDelegator.createPeerReview(orcid, peerReview);
     }
@@ -210,6 +222,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updatePeerReview(String orcid, Long putCode, Object peerReview) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(peerReview);
         peerReview = upgradeObject(peerReview);
         return downgradeResponse(memberV2ApiServiceDelegator.updatePeerReview(orcid, putCode, peerReview));
     }
@@ -262,6 +275,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateResearcherUrl(String orcid, Long putCode, Object researcherUrl) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(researcherUrl);
         researcherUrl = upgradeObject(researcherUrl);
         return downgradeResponse(memberV2ApiServiceDelegator.updateResearcherUrl(orcid, putCode, researcherUrl));
     }
@@ -269,6 +283,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createResearcherUrl(String orcid, Object researcherUrl) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(researcherUrl);
         researcherUrl = upgradeObject(researcherUrl);
         return memberV2ApiServiceDelegator.createResearcherUrl(orcid, researcherUrl);
     }
@@ -300,6 +315,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createOtherName(String orcid, Object otherName) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(otherName);
         otherName = upgradeObject(otherName);
         return memberV2ApiServiceDelegator.createOtherName(orcid, otherName);
     }
@@ -307,6 +323,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateOtherName(String orcid, Long putCode, Object otherName) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(otherName);
         otherName = upgradeObject(otherName);
         return downgradeResponse(memberV2ApiServiceDelegator.updateOtherName(orcid, putCode, otherName));
     }
@@ -338,6 +355,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateExternalIdentifier(String orcid, Long putCode, Object externalIdentifier) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(externalIdentifier);
         externalIdentifier = upgradeObject(externalIdentifier);
         return downgradeResponse(memberV2ApiServiceDelegator.updateExternalIdentifier(orcid, putCode, externalIdentifier));
     }
@@ -345,6 +363,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createExternalIdentifier(String orcid, Object externalIdentifier) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(externalIdentifier);
         externalIdentifier = upgradeObject(externalIdentifier);
         return memberV2ApiServiceDelegator.createExternalIdentifier(orcid, externalIdentifier);
     }
@@ -389,6 +408,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createKeyword(String orcid, Object keyword) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(keyword);
         keyword = upgradeObject(keyword);
         return memberV2ApiServiceDelegator.createKeyword(orcid, keyword);
     }
@@ -396,6 +416,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateKeyword(String orcid, Long putCode, Object keyword) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(keyword);
         keyword = upgradeObject(keyword);
         return downgradeResponse(memberV2ApiServiceDelegator.updateKeyword(orcid, putCode, keyword));
     }
@@ -421,6 +442,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response createAddress(String orcid, Object address) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(address);
         address = upgradeObject(address);
         return memberV2ApiServiceDelegator.createAddress(orcid, address);
     }
@@ -428,6 +450,7 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     @Override
     public Response updateAddress(String orcid, Long putCode, Object address) {
         checkProfileStatus(orcid);
+        schemaValidator.validate(address);
         address = upgradeObject(address);
         return downgradeResponse(memberV2ApiServiceDelegator.updateAddress(orcid, putCode, address));
     }
