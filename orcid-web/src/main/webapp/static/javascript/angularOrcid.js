@@ -10794,39 +10794,30 @@ orcidNgModule.filter('workIdLinkJs', function($filter){
 
 orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
-
         var output = '';
         var ngclass = '';
         var isPartOf = false;
         
         if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         
-        
-        
-        
-        
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;        
         if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;
-        
-        
-
-        var id = workExternalIdentifier.workExternalIdentifierId.value;
+        if (workExternalIdentifier.workExternalIdentifierId == null) return output;        var id = workExternalIdentifier.workExternalIdentifierId.value;
         var type;
-        
-        
-
         if (workExternalIdentifier.workExternalIdentifierType != null)
-            type = workExternalIdentifier.workExternalIdentifierType.value;
-        
+            type = workExternalIdentifier.workExternalIdentifierType.value;        
         if (type != null) {
-            
         	if(isPartOf) 
         		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
         	else 
         		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
+        
+        
+        
+        
+        
         
         var link = null;
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')

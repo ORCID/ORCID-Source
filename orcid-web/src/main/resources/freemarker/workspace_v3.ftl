@@ -381,40 +381,29 @@
 			        	          	<!-- External identifiers -->			        	          				        	          	
 			        	          	<span class="info-detail" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0">
 			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'>
-			        	          			<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:true'></span>
-			        	          			
-			        	          			
-		        	          				<!-- isPartOf = true -->
+		        	          				<!--
+			        	          				<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:true'></span>
+			        	          			-->
+		        	          				
 		        	          				<span ng-if="ie.workExternalIdentifierType != null && ie.workExternalIdentifierType.value != null">
-		        	          					
+		        	          					<!-- isPartOf = true -->		        	          					
 		        	          					<span ng-if="ie.relationship != null && ie.relationship.value == 'part-of'">
-		        	          						<span class="italic"><@orcid.msg "common.part_of" /><span class="type">{{ie.workExternalIdentifierType.value | uppercase}}</span></span>:
-		        	          						<span ng-if="ie.url != null && ie.url.value != ''">			        	          						
-		        	          							<a href="{{ie.url.value | urlProtocol}}" class ="" target="_blank" ng-bind="ie.url.value | urlProtocol"></a>
-		        	          						</span>
-		        	          						<span ng-if="ie.url == null" >
-		        	          							<a href="{{ie.workExternalIdentifierId.value | workIdLinkJs:ie.workExternalIdentifierId.value:ie.workExternalIdentifierType.value}}" class ="" target="_blank" ng-bind="ie.workExternalIdentifierId.value"></a>
-		        	          						</span>
+		        	          						<span class="italic"><@orcid.msg "common.part_of" /><span class="type" ng-bind="ie.workExternalIdentifierType.value | uppercase"></span></span>:		        	          						
 		        	          					</span>
-		        	          					
-		        	          					<span ng-if="ie.relationship == null">
-		        	          						<span class='type'>{{ie.workExternalIdentifierType.value | uppercase}}</span>:		        	          						
-		        	          						<span ng-if="ie.url != null && ie.url.value != ''">
-		        	          							<a href="{{ie.url.value | urlProtocol}}" class ="" target="_blank" ng-bind="ie.url.value | urlProtocol"></a>		        	          							
-		        	          						</span>  
-		        	          						<span ng-if="ie.url == null" >
-		        	          							<a href="{{ie.workExternalIdentifierId.value | workIdLinkJs:ie.workExternalIdentifierId.value:ie.workExternalIdentifierType.value}}" class ="" target="_blank" ng-bind="ie.workExternalIdentifierId.value"></a>
-		        	          						</span>			        	          								
+		        	          					<!-- part-of == null -->
+		        	          					<span ng-if="ie.relationship == null"> 
+		        	          						<span class='type' ng-bind="ie.workExternalIdentifierType.value | uppercase"></span>:        								
 		        	          					</span>
+		        	          					<!-- URL Rendering -->
+		        	          					<span ng-if="ie.url != null && ie.url.value != ''">			        	          						
+		        	          						<a href="{{ie.url.value | urlProtocol}}" class ="" target="_blank" ng-bind="ie.workExternalIdentifierId.value"></a>
+	        	          						</span>
+	        	          						<span ng-if="ie.url == null" >
+	        	          							<a href="{{ie.workExternalIdentifierId.value | workIdLinkJs:ie.workExternalIdentifierId.value:ie.workExternalIdentifierType.value}}" class ="" target="_blank" ng-bind="ie.workExternalIdentifierId.value"></a>
+	        	          						</span>
 											</span>
-														        	
-											<!-- isPartOf = false -->          					
-		        	          				<span ng-if="ie.workExternalIdentifierType == null">
-		        	          					
-		        	          				</span>
 		        	          				
-		        	          				
-			        	          		</span><!-- ng-repeat -->
+			        	          		</span><!-- /ng-repeat -->
 		                            </span>
 			        	          	
 			        	          	<!-- 
