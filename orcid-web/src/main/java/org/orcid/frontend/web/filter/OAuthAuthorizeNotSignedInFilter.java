@@ -55,7 +55,7 @@ public class OAuthAuthorizeNotSignedInFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         if (OrcidUrlManager.getPathWithoutContextPath(request).equals("/oauth/authorize")) {
             HttpServletResponse response = (HttpServletResponse) res;
-            HttpSession session = request.getSession(false);
+            HttpSession session = request.getSession();
             SecurityContext sci = null;
             if (session != null)
                 sci = (SecurityContext)session.getAttribute("SPRING_SECURITY_CONTEXT");
