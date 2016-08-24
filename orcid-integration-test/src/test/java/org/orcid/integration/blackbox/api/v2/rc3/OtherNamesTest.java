@@ -83,7 +83,7 @@ public class OtherNamesTest extends BlackBoxBaseRC3 {
      * @throws InterruptedException
      */
     @Test
-    public void testGetOtherNamesWihtMembersAPI() throws InterruptedException, JSONException {
+    public void testGetOtherNamesWithMembersAPI() throws InterruptedException, JSONException {
         showMyOrcidPage();
         openEditOtherNamesModal();                
         changeOtherNamesVisibility(org.orcid.jaxb.model.common_rc3.Visibility.LIMITED);

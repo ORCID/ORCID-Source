@@ -19,6 +19,7 @@ package org.orcid.core.adapter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,10 +31,16 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.orcid.core.adapter.impl.Jpa2JaxbAdapterImpl;
+import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
 import org.orcid.jaxb.model.message.Affiliation;
 import org.orcid.jaxb.model.message.AffiliationType;
@@ -66,6 +73,7 @@ import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
+import org.orcid.test.TargetProxyHelper;
 import org.orcid.utils.OrcidStringUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,9 +92,29 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
     @Resource
     private Jpa2JaxbAdapter adapter;
 
+    @Resource
+    private WorkEntityCacheManager realWorkEntityCacheManager;
+
+    @Mock
+    private WorkEntityCacheManager mockWorkEntityCacheManager;
+
+    Jpa2JaxbAdapterImpl jpa2JaxbAdapterImpl;
+
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
+    }
+
+    @Before
+    public void initMocks() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        jpa2JaxbAdapterImpl = TargetProxyHelper.getTargetObject(adapter, Jpa2JaxbAdapterImpl.class);
+        jpa2JaxbAdapterImpl.setWorkEntityCacheManager(mockWorkEntityCacheManager);
+    }
+
+    @After
+    public void replaceMocks() {
+        jpa2JaxbAdapterImpl.setWorkEntityCacheManager(realWorkEntityCacheManager);
     }
 
     @AfterClass
@@ -292,6 +320,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         work.setId(24816L);
         works.add(work);
         profile.setWorks(works);
+        when(mockWorkEntityCacheManager.retrieveFullWorks(userOrcid, 0)).thenReturn(new ArrayList<>(works));
 
         // Existing org
         OrgEntity newOrg = new OrgEntity();
@@ -398,14 +427,14 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertNotNull(orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry());
         assertEquals(org.orcid.jaxb.model.message.Iso3166Country.US, orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getValue());
         assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getContactDetails().getAddress().getCountry().getVisibility());
-        
+
         // Check keywords
         assertNotNull(orcidProfile.getOrcidBio().getKeywords());
         assertNotNull(orcidProfile.getOrcidBio().getKeywords().getKeyword());
         assertEquals(1, orcidProfile.getOrcidBio().getKeywords().getKeyword().size());
         assertEquals(Visibility.PUBLIC, orcidProfile.getOrcidBio().getKeywords().getVisibility());
-        assertEquals("My keyword", orcidProfile.getOrcidBio().getKeywords().getKeyword().get(0).getContent());        
-        
+        assertEquals("My keyword", orcidProfile.getOrcidBio().getKeywords().getKeyword().get(0).getContent());
+
         // Check researcher urls
         assertNotNull(orcidProfile.getOrcidBio().getResearcherUrls());
         assertNotNull(orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl());
@@ -413,7 +442,7 @@ public class Jpa2JaxbAdapterTest extends DBUnitTest {
         assertEquals(1, orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().size());
         assertEquals("My rUrl", orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrlName().getContent());
         assertEquals("http://orcid.org", orcidProfile.getOrcidBio().getResearcherUrls().getResearcherUrl().get(0).getUrl().getValue());
-                
+
         // Check external identifiers
         assertNotNull(orcidProfile.getOrcidBio().getExternalIdentifiers());
         assertNotNull(orcidProfile.getOrcidBio().getExternalIdentifiers().getExternalIdentifier());

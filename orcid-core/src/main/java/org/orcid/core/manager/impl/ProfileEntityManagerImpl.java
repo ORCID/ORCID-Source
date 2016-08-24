@@ -618,10 +618,16 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         return result;
     }
 
+    /** Returns the date cached in the request scope. 
+     * 
+     */
     public Date getLastModified(String orcid) {
         return profileLastModifiedAspect.retrieveLastModifiedDate(orcid);
     }
 
+    /** Updates the DB and the cached value in the request scope.
+     * 
+     */
     @Override
     public void updateLastModifed(String orcid) {
         profileLastModifiedAspect.updateLastModifiedDateAndIndexingStatus(orcid);

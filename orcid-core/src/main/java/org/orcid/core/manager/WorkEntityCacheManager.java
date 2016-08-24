@@ -19,9 +19,15 @@ package org.orcid.core.manager;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
+import org.orcid.core.manager.impl.LockerObjectsManager;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
+import org.orcid.persistence.jpa.entities.WorkBaseEntity;
+import org.orcid.persistence.jpa.entities.WorkEntity;
 import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
+
+import net.sf.ehcache.Cache;
 
 /**
  * 
@@ -31,16 +37,18 @@ import org.orcid.persistence.jpa.entities.WorkLastModifiedEntity;
 public interface WorkEntityCacheManager {
 
     List<WorkLastModifiedEntity> retrieveWorkLastModifiedList(String orcid, long profileLastModified);
-    
+
     List<WorkLastModifiedEntity> retrievePublicWorkLastModifiedList(String orcid, long profileLastModified);
 
     MinimizedWorkEntity retrieveMinimizedWork(long workId, long workLastModified);
 
-    List<MinimizedWorkEntity> retrieveMinimizedWorkList(Map<Long, Date> workIdsWithLastModified);
+    <T extends WorkBaseEntity> List<T> retrieveWorkList(Map<Long, Date> workIdsWithLastModified, Cache workCache, LockerObjectsManager lockerObjectsManager,
+            Function<List<Long>, List<T>> workRetriever);
 
     List<MinimizedWorkEntity> retrieveMinimizedWorks(String orcid, long profileLastModified);
 
     List<MinimizedWorkEntity> retrievePublicMinimizedWorks(String orcid, long profileLastModified);
 
+    List<WorkEntity> retrieveFullWorks(String orcid, long profileLastModified);
 
 }

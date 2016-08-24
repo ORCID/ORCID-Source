@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>orcid-message-listener</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>ORCID - Message Listener</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+  	  <org.orcid.message-listener.properties>message-listener.properties</org.orcid.message-listener.properties>
+	  <main.basedir>${project.parent.basedir}</main.basedir>
+  </properties>
+  
+  <dependencies>
+         <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-utils</artifactId>
+            <version>1.1.5-SNAPSHOT</version>
+        </dependency>
+         <dependency>
+            <groupId>org.orcid</groupId>
+            <artifactId>orcid-model</artifactId>
+            <version>1.1.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+       </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>            
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>5.13.3</version>
+        </dependency>
+  	  <dependency>
+	      <groupId>org.apache.activemq</groupId>
+	      <artifactId>activemq-spring</artifactId>
+	  	  <version>5.13.3</version>
+	  </dependency>
+	  
+	     <!-- Solr -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.sun.jersey</groupId>              
+            <artifactId>jersey-client</artifactId>
+        </dependency> 
+        
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <parent>
+  	<groupId>org.orcid</groupId>
+  	<artifactId>orcid-parent</artifactId>
+  	<version>1.1.5-SNAPSHOT</version>
+  	<relativePath>../pom.xml</relativePath>
+  </parent>
+  
+    <build>
+     <finalName>orcid-message-listener</finalName>
+     <plugins>
+             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>tomcat-maven-plugin</artifactId>
+                <configuration>
+                   <url>${tomcat.manager.url}</url>
+                   <server>${tomcat.server.id}</server>
+                   <path>${artifactID}</path>
+		   		   <update>true</update>
+                </configuration>
+            </plugin>
+        </plugins>
+        
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/orcid-message-listener-web-context.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                    <include>**/*.md</include>
+                </includes>
+                <excludes>
+                    <exclude>**/orcid-message-listener-web-context.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+    
+</project>

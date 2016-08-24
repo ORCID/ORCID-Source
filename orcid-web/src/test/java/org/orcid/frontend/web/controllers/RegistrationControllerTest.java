@@ -38,6 +38,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.AfterClass;
@@ -45,11 +46,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.orcid.core.manager.EncryptionManager;
 import org.orcid.core.manager.LoadOptions;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.OrcidProfileManager;
 import org.orcid.core.manager.OrcidSearchManager;
 import org.orcid.core.manager.RegistrationManager;
@@ -60,6 +65,7 @@ import org.orcid.frontend.web.forms.PasswordTypeAndConfirmForm;
 import org.orcid.jaxb.model.message.Biography;
 import org.orcid.jaxb.model.message.Claimed;
 import org.orcid.jaxb.model.message.ContactDetails;
+import org.orcid.jaxb.model.message.CreationMethod;
 import org.orcid.jaxb.model.message.Email;
 import org.orcid.jaxb.model.message.FamilyName;
 import org.orcid.jaxb.model.message.GivenNames;
@@ -78,6 +84,7 @@ import org.orcid.jaxb.model.message.Url;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.pojo.ajaxForm.Checkbox;
 import org.orcid.pojo.ajaxForm.Claim;
+import org.orcid.pojo.ajaxForm.Registration;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.test.DBUnitTest;
 import org.orcid.test.OrcidJUnit4ClassRunner;
@@ -115,6 +122,9 @@ public class RegistrationControllerTest extends DBUnitTest {
     EncryptionManager encryptionManager;
     
     @Mock
+    NotificationManager notificationManager;
+    
+    @Mock
     private HttpServletRequest servletRequest;
     
     @Mock
@@ -124,7 +134,6 @@ public class RegistrationControllerTest extends DBUnitTest {
     public static void beforeClass() throws Exception {
         initDBUnitData(DATA_FILES);
     }
-
     
     @AfterClass
     public static void afterClass() throws Exception {
@@ -138,6 +147,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         registrationController.setOrcidSearchManager(orcidSearchManager);
         registrationController.setOrcidProfileManager(orcidProfileManager);
         registrationController.setEncryptionManager(encryptionManager);
+        registrationController.setNotificationManager(notificationManager);
     }
 
     @Test
@@ -369,7 +379,7 @@ public class RegistrationControllerTest extends DBUnitTest {
         registrationController.resetPasswordConfirmValidate(form);
         form.setPassword(null);
         form.setRetypedPassword(new Text());
-        registrationController.resetPasswordConfirmValidate(form);
+        registrationController.resetPasswordConfirmValidate(form);               
     }
     
     @Test
@@ -403,6 +413,62 @@ public class RegistrationControllerTest extends DBUnitTest {
         } catch (UnsupportedEncodingException e) {
             fail();
         }
+    }
+    
+    @Test
+    public void testStripHtmlFromNames() throws UnsupportedEncodingException {
+        HttpSession session = mock(HttpSession.class);
+        when(servletRequest.getSession()).thenReturn(session);
+        Text email = Text.valueOf(System.currentTimeMillis() + "@test.orcid.org");
+        
+        when(registrationManager.createMinimalRegistration(Matchers.any(OrcidProfile.class),eq(false))).thenAnswer(new Answer<OrcidProfile>(){
+            @Override
+            public OrcidProfile answer(InvocationOnMock invocation) throws Throwable {
+                OrcidProfile orcidProfile = new OrcidProfile();
+                orcidProfile.setOrcidIdentifier("0000-0000-0000-0000");
+                OrcidBio bio = new OrcidBio();
+                ContactDetails contactDetails = new ContactDetails();
+                Email newEmail = new Email();
+                newEmail.setPrimary(true);
+                newEmail.setValue(email.getValue());
+                List<Email> emails = new ArrayList<Email>();
+                emails.add(newEmail);
+                contactDetails.setEmail(emails);
+                bio.setContactDetails(contactDetails);
+                orcidProfile.setOrcidBio(bio);        
+                return orcidProfile;
+            }
+        });
+        Registration reg = new Registration();
+        org.orcid.pojo.ajaxForm.Visibility fv = new org.orcid.pojo.ajaxForm.Visibility();
+        fv.setVisibility(Visibility.PUBLIC);
+        reg.setActivitiesVisibilityDefault(fv);        
+        reg.setEmail(email);
+        reg.setEmailConfirm(email);
+        reg.setFamilyNames(Text.valueOf("<button onclick=\"alert('hello')\">Family Name</button>"));
+        reg.setGivenNames(Text.valueOf("<button onclick=\"alert('hello')\">Given Names</button>"));
+        reg.setPassword(Text.valueOf("1234abcd"));
+        reg.setPasswordConfirm(Text.valueOf("1234abcd"));
+        reg.setValNumClient(2L);
+        reg.setValNumServer(4L);
+        Checkbox c = new Checkbox();
+        c.setValue(true);
+        reg.setTermsOfUse(c);
+        reg.setCreationType(Text.valueOf(CreationMethod.API.value()));
+        registrationController.setRegisterConfirm(servletRequest, servletResponse, reg);
+        
+        ArgumentCaptor<OrcidProfile> argument = ArgumentCaptor.forClass(OrcidProfile.class);
+        ArgumentCaptor<Boolean> argument2 = ArgumentCaptor.forClass(Boolean.class);
+        verify(registrationManager).createMinimalRegistration(argument.capture(), argument2.capture());
+        assertNotNull(argument.getValue());
+        OrcidProfile profile = argument.getValue();
+        assertNotNull(profile.getOrcidBio());
+        assertNotNull(profile.getOrcidBio().getPersonalDetails());
+        assertNotNull(profile.getOrcidBio().getPersonalDetails().getGivenNames());
+        assertNotNull(profile.getOrcidBio().getPersonalDetails().getFamilyName());
+        
+        assertEquals("Given Names", profile.getOrcidBio().getPersonalDetails().getGivenNames().getContent());
+        assertEquals("Family Name", profile.getOrcidBio().getPersonalDetails().getFamilyName().getContent());        
     }
     
     private OrcidProfile orcidWithSecurityQuestion() {

@@ -19,8 +19,11 @@ package org.orcid.integration.blackbox.api.v2.rc3;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+
 import java.util.List;
+
 import javax.annotation.Resource;
+
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -230,7 +233,7 @@ public class RecordTest extends BlackBoxBaseRC3 {
                     for(PersonExternalIdentifier e : list) {
                         assertNotNull(e.getVisibility());
                         if(Visibility.PRIVATE.equals(e.getVisibility())) {
-                            fail("External identifier " + e.getPutCode() + " is private");
+                            assertEquals(getClient1ClientId(), e.getSource().retrieveSourcePath());
                         }
                     }
                 }
@@ -243,7 +246,7 @@ public class RecordTest extends BlackBoxBaseRC3 {
                     for(Keyword e : list) {
                         assertNotNull(e.getVisibility());
                         if(Visibility.PRIVATE.equals(e.getVisibility())) {
-                            fail("External identifier " + e.getPutCode() + " is private");
+                            assertEquals(getClient1ClientId(), e.getSource().retrieveSourcePath());
                         }
                     }
                 }
@@ -263,7 +266,7 @@ public class RecordTest extends BlackBoxBaseRC3 {
                     for(OtherName e : list) {
                         assertNotNull(e.getVisibility());
                         if(Visibility.PRIVATE.equals(e.getVisibility())) {
-                            fail("Other name" + e.getPutCode() + " is private");
+                            assertEquals(getClient1ClientId(), e.getSource().retrieveSourcePath());
                         }
                     }
                 }
@@ -276,13 +279,13 @@ public class RecordTest extends BlackBoxBaseRC3 {
                     for(ResearcherUrl e : list) {
                         assertNotNull(e.getVisibility());
                         if(Visibility.PRIVATE.equals(e.getVisibility())) {
-                            fail("Researcher url " + e.getPutCode() + " is private");
+                            assertEquals(getClient1ClientId(), e.getSource().retrieveSourcePath());
                         }
                     }
                 }
             }            
         }
-    }
+    }    
     
     @Test
     public void testViewRecordFromPublicAPI() {

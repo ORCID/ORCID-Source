@@ -16,7 +16,7 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import static schema.constants.SolrConstants.ORG_DISAMBIGUATED_ID;
+import static org.orcid.utils.solr.entities.SolrConstants.ORG_DISAMBIGUATED_ID;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -29,7 +29,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.orcid.persistence.dao.OrgDisambiguatedSolrDao;
-import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class OrgDisambiguatedSolrDaoImpl implements OrgDisambiguatedSolrDao {

@@ -85,6 +85,7 @@ import org.orcid.pojo.ajaxForm.NamesForm;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 import org.orcid.pojo.ajaxForm.Text;
 import org.orcid.utils.DateUtils;
+import org.orcid.utils.OrcidStringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
@@ -830,15 +831,29 @@ public class ManageProfileController extends BaseWorkspaceController {
     }
     
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.GET)
-    public @ResponseBody NamesForm getNameForm(HttpServletRequest request) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm getNameForm() throws NoSuchRequestHandlingMethodException {
         Name name = personalDetailsManager.getName(getCurrentUserOrcid());
         NamesForm nf = NamesForm.valueOf(name);
         return nf;
     }
 
     @RequestMapping(value = "/nameForm.json", method = RequestMethod.POST)
-    public @ResponseBody NamesForm setNameFormJson(HttpServletRequest request, @RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
+    public @ResponseBody NamesForm setNameFormJson(@RequestBody NamesForm nf) throws NoSuchRequestHandlingMethodException {
         nf.setErrors(new ArrayList<String>());
+        
+        //Strip any html code from names before validating them
+        if(!PojoUtil.isEmpty(nf.getFamilyName())){
+            nf.getFamilyName().setValue(OrcidStringUtils.stripHtml(nf.getFamilyName().getValue()));
+        }
+        
+        if(!PojoUtil.isEmpty(nf.getGivenNames())) {
+            nf.getGivenNames().setValue(OrcidStringUtils.stripHtml(nf.getGivenNames().getValue()));
+        }
+        
+        if(!PojoUtil.isEmpty(nf.getCreditName())) {
+            nf.getCreditName().setValue(OrcidStringUtils.stripHtml(nf.getCreditName().getValue()));
+        }
+        
         if (nf.getGivenNames() == null)
             nf.setGivenNames(new Text());
         givenNameValidate(nf.getGivenNames());

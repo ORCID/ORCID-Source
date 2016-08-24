@@ -23,7 +23,7 @@ import javax.ws.rs.core.Response;
  * @author Will Simpson
  * 
  */
-public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK, ADDRESS, KEYWORD> {
+public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDENTIFIER, FUNDING, GROUP_ID_RECORD, OTHER_NAME, PEER_REVIEW, RESEARCHER_URL, WORK, WORK_BULK, ADDRESS, KEYWORD> {
 
     static final String LATEST_V2_VERSION = "2.0_rc3";
 
@@ -36,6 +36,8 @@ public interface MemberV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
     Response viewWork(String orcid, Long putCode);
 
     Response viewWorkSummary(String orcid, Long putCode);
+    
+    Response createWorks(String orcid, WORK_BULK bulk);
 
     Response createWork(String orcid, WORK work);
 

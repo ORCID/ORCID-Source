@@ -59,7 +59,7 @@ import org.orcid.jaxb.model.message.WorkExternalIdentifierType;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.SolrDao;
 import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.NullUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,6 +67,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@Deprecated
 public class OrcidIndexManagerImpl implements OrcidIndexManager {
 
     @Value("${org.orcid.core.indexPublicProfile:true}")
@@ -88,6 +89,8 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
     }
 
     @Override
+    @Deprecated
+    //now going via orcid-message-listener
     public void persistProfileInformationForIndexingIfNecessary(OrcidProfile orcidProfile) {
         String orcid = orcidProfile.getOrcidIdentifier().getPath();
         Date lastModifiedFromSolr = solrDao.retrieveLastModified(orcid);
@@ -105,6 +108,7 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
     }
 
     @Override
+    @Deprecated
     public void persistProfileInformationForIndexing(OrcidProfile orcidProfile) {
 
         // Check if the profile is locked

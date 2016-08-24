@@ -35,6 +35,7 @@ import org.orcid.core.manager.ClientDetailsEntityCacheManager;
 import org.orcid.core.manager.LoadOptions;
 import org.orcid.core.manager.ProfileEntityCacheManager;
 import org.orcid.core.manager.ProfileEntityManager;
+import org.orcid.core.manager.WorkEntityCacheManager;
 import org.orcid.core.oauth.OrcidOauth2TokenDetailService;
 import org.orcid.core.security.PermissionChecker;
 import org.orcid.core.security.visibility.OrcidVisibilityDefaults;
@@ -209,6 +210,13 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     @Resource
     private ClientDetailsEntityCacheManager clientDetailsEntityCacheManager;    
     
+    @Resource(name = "workEntityCacheManager")
+    private WorkEntityCacheManager workEntityCacheManager;
+    
+    public void setWorkEntityCacheManager(WorkEntityCacheManager workEntityCacheManager) {
+        this.workEntityCacheManager = workEntityCacheManager;
+    }
+
     @Override
     public OrcidProfile toOrcidProfile(ProfileEntity profileEntity) {
         return toOrcidProfile(profileEntity, LoadOptions.ALL);
@@ -408,8 +416,10 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     private OrcidWorks getOrcidWorks(ProfileEntity profileEntity) {
-        LOGGER.debug("About to convert works from entity: " + profileEntity.getId());
-        Set<WorkEntity> works = profileEntity.getWorks();
+        String orcid = profileEntity.getId();
+        LOGGER.debug("About to convert works from entity: " + orcid);
+        Date lastModified = profileEntity.getLastModified();
+        List<WorkEntity> works = workEntityCacheManager.retrieveFullWorks(orcid, lastModified != null ? lastModified.getTime() : 0);
         if (works != null && !works.isEmpty()) {
             OrcidWorks orcidWorks = new OrcidWorks();
             for (WorkEntity workEntity : works) {
