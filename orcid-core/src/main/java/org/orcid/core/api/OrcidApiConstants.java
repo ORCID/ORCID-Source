@@ -38,6 +38,7 @@ public class OrcidApiConstants {
     public static final String RECORD = "/{orcid:[^/]+}{ignore:(/record)?}";
     public static final String ACTIVITIES = "/{orcid}/activities";
     public static final String WORK = "/{orcid}/work";
+    public static final String WORKS = "/{orcid}/works";
     public static final String WORK_SUMMARY = "/{orcid}/work/summary";
     public static final String FUNDING = "/{orcid}/funding";
     public static final String FUNDING_SUMMARY = "/{orcid}/funding/summary";

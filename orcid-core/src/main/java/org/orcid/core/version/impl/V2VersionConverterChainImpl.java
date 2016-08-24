@@ -62,13 +62,20 @@ public class V2VersionConverterChainImpl implements V2VersionConverterChain {
 
     @Override
     public V2Convertible upgrade(V2Convertible objectToUpgrade, String requiredVersion) {
-        for (V2VersionConverter converter : converters) {
-            if (compareVersion(converter.getUpperVersion(), requiredVersion) < 1) {
-                objectToUpgrade = converter.upgrade(objectToUpgrade);
-            } else {
-                return objectToUpgrade;
+        String objectVersion = objectToUpgrade.getCurrentVersion();
+        
+        if(compareVersion(objectVersion, requiredVersion) < 0) {
+            for (V2VersionConverter converter : converters) {  
+                if(compareVersion(objectVersion, converter.getUpperVersion()) < 0) {
+                    if (compareVersion(converter.getUpperVersion(), requiredVersion) < 1) {
+                        objectToUpgrade = converter.upgrade(objectToUpgrade);
+                    } else {
+                        return objectToUpgrade;
+                    }
+                }
             }
-        }
+        }        
+                
         return objectToUpgrade;
     }
 
