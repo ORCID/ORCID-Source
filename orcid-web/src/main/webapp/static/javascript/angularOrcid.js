@@ -10803,49 +10803,36 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
         	isPartOf = true;        
         if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;        var id = workExternalIdentifier.workExternalIdentifierId.value;
+        if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
+        
+        var id = workExternalIdentifier.workExternalIdentifierId.value;
         var type;
+        
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;        
         if (type != null) {
         	if(isPartOf) 
-        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
         	else 
-        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
+        		output = output + "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
         }
-        
-        
-        
-        
-        
         
         var link = null;
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
         	link = workExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type);
-        
-        
-        
-        	
-        if (link != null){
-        	
-            link = $filter('urlProtocol')(link);
-        	
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
-            
+        else link = workIdLinkJs.getLink(id,type);	
+        if (link != null){        	
+            link = $filter('urlProtocol')(link);        	
+            output = output + '<a href="' + link.replace(/'/g, "&#39;").escapeHtml() + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
         }else{
-            output = output + id;        
+            output = output + id.escapeHtml();        
         }
-        
-        
-        
-        
         output += '<div class="popover-pos">\
 			<div class="popover-help-container">\
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    	<a href="'+link.escapeHtml()+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
 				    </div>\
 				</div>\
 			</div>\

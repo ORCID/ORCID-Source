@@ -369,7 +369,6 @@
 			        	          	<h3 ng-if="work.title.value != null" class="workspace-title bibtex-work-title">{{work.title.value}}</h3>
 			        	          	<h3 ng-if="work.title.value == null" class="workspace-title bibtex-work-title bibtex-content-missing">&lt;<@orcid.msg 'workspace.bibtexImporter.work.title_missing' />&gt;</h3>
 			        	          	
-			        	          	
 			        	          	<!-- Work Category --> 
 			        	          	<span class="info-detail" ng-if="work.workCategory.value.length > 0">{{work.workCategory.value | formatBibtexOutput}}</span>
 			        	          	<span class="bibtex-content-missing small-missing-info" ng-if="work.workCategory.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.category_missing' />&gt;</span>
@@ -380,29 +379,8 @@
 			        	          	
 			        	          	<!-- External identifiers -->			        	          				        	          	
 			        	          	<span class="info-detail" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0">
-			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'>
-		        	          				<!--
-			        	          				<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:true'></span>
-			        	          			-->
-		        	          				
-		        	          				<span ng-if="ie.workExternalIdentifierType != null && ie.workExternalIdentifierType.value != null">
-		        	          					<!-- isPartOf = true -->		        	          					
-		        	          					<span ng-if="ie.relationship != null && ie.relationship.value == 'part-of'">
-		        	          						<span class="italic"><@orcid.msg "common.part_of" /><span class="type" ng-bind="ie.workExternalIdentifierType.value | uppercase"></span></span>:		        	          						
-		        	          					</span>
-		        	          					<!-- part-of == null -->
-		        	          					<span ng-if="ie.relationship == null"> 
-		        	          						<span class='type' ng-bind="ie.workExternalIdentifierType.value | uppercase"></span>:        								
-		        	          					</span>
-		        	          					<!-- URL Rendering -->
-		        	          					<span ng-if="ie.url != null && ie.url.value != ''">			        	          						
-		        	          						<a href="{{ie.url.value | urlProtocol}}" class ="" target="_blank" ng-bind="ie.workExternalIdentifierId.value"></a>
-	        	          						</span>
-	        	          						<span ng-if="ie.url == null" >
-	        	          							<a href="{{ie.workExternalIdentifierId.value | workIdLinkJs:ie.workExternalIdentifierId.value:ie.workExternalIdentifierType.value}}" class ="" target="_blank" ng-bind="ie.workExternalIdentifierId.value"></a>
-	        	          						</span>
-											</span>
-		        	          				
+			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'>		        	          				
+			        	          			<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:true'></span>
 			        	          		</span><!-- /ng-repeat -->
 		                            </span>
 			        	          	
