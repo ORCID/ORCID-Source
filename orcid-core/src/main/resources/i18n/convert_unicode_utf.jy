@@ -50,8 +50,8 @@ for properties_filename in properties_filenames:
         #find unicode escapes and replace with utf8 characters
         newline = re.sub(search, decode_match, line)
         #remove newline characters
-        newline = newline.replace("\\n\\", "")
-        newline = newline.replace("\\n", "")
+        #newline = newline.replace("\\n\\", "")
+        #newline = newline.replace("\\n", "")
         o.write(newline)
         line = f.readline()
     o.close();
