@@ -381,12 +381,12 @@
 			        	          	<span class="info-detail" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length > 0">
 			        	          		<span ng-repeat='ie in work.workExternalIdentifiers'>		        	          				
 			        	          			<span ng-bind-html='ie | workExternalIdentifierHtml:$first:$last:work.workExternalIdentifiers.length:true'></span>
-			        	          		</span><!-- /ng-repeat -->
+			        	          		</span>
 		                            </span>
 			        	          	
-			        	          	<!-- 
+			        	          	<!--
 			        	          		<span class="info-detail bibtex-content-missing" ng-if="work.workExternalIdentifiers[0].workExternalIdentifierType.value.length == 0">&lt;<@orcid.msg 'workspace.bibtexImporter.work.external_id_missing' />&gt;</span>
-			        	          	 -->
+			        	          	-->
 			        	          
 			        	          </div>			        	          
 			        	          <div class="col-md-3 col-sm-3 col-xs-3 bibtex-options-menu">			        	          	

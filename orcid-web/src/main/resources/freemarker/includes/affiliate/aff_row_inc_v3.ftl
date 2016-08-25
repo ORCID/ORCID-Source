@@ -20,7 +20,7 @@
   	<!-- Information -->
 	<div class="col-md-10 col-sm-10 col-xs-8 bottomBuffer">
 	    <h3 class="workspace-title">	    	
-        	<span ng-bind-html="group.getActive().affiliationName.value"></span>:
+        	<span ng-bind="group.getActive().affiliationName.value"></span>:
         	<span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
         </h3>
         <div class="info-detail">
@@ -37,7 +37,7 @@
         	</div>
         	<span class="divisor" ng-if="(group.getActive().startDate || group.getActive().endDate) && (group.getActive().roleTitle.value || group.getActive().departmentName.value)"></span>        	
         	<div class="role" ng-if="group.getActive().roleTitle.value">
-	            <span ng-bind-html="group.getActive().roleTitle.value"></span>
+	            <span ng-bind="group.getActive().roleTitle.value"></span>
         	</div>
 			<span ng-if="group.getActive().departmentName.value">
 				<span ng-if="group.getActive().roleTitle.value">&nbsp;</span>(<span ng-bind="group.getActive().departmentName.value" ng-cloak></span>)

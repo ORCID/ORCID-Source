@@ -10785,10 +10785,11 @@ orcidNgModule.filter('contributorFilter', function(){
     };
 });
 
-orcidNgModule.filter('workIdLinkJs', function($filter){
-   return function(linkFilter, id, type){
-       var link = workIdLinkJs.getLink(id,type);       
-       return link;
+orcidNgModule.filter('clean', function($filter){
+   return function(x, idx){
+       console.log(idx);
+       
+       return x;
    }; 
 });
 
@@ -10823,7 +10824,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         else link = workIdLinkJs.getLink(id,type);	
         if (link != null){        	
             link = $filter('urlProtocol')(link);        	
-            output = output + '<a href="' + link.replace(/'/g, "&#39;").escapeHtml() + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
         }else{
             output = output + id.escapeHtml();        
         }
@@ -10832,7 +10833,7 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
-				    	<a href="'+link.escapeHtml()+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
+				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
 				    </div>\
 				</div>\
 			</div>\
@@ -10876,31 +10877,31 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         	link = $filter('urlProtocol')(link);
         	
         	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
         	} else {
         		if(type != null) {
         			
         			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         			
         			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
         			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
         			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
         			}
         			
         		}        		
         	}
         } else if(value != null) {
-        	output = output + " " + value;
+        	output = output + " " + value.escapeHtml();
         }
         output += '<div class="popover-pos">\
         				<div class="popover-help-container">\
 				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
 								<div class="arrow"></div>\
 								<div class="popover-content">\
-							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
 							    </div>\
 							</div>\
 						</div>\
@@ -10935,9 +10936,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
 	        if (type != null) {
 	        	if(isPartOf)
-	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
 	        	else 
-	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
+	        		output += "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
 	        }
         
         if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
@@ -10946,9 +10947,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         	
         if (link != null){
         	link = $filter('urlProtocol')(link);
-            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;").escapeHtml() + '</a>';
         }else{
-            output += id;        
+            output += id.escapeHtml();        
         }
         
         if (length > 1 && !last) output = output + ',';
@@ -10959,13 +10960,13 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank">'+link+'</a>\
+				    	<a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
 				    </div>\
 				</div>\
 			</div>\
 	   </div>';
         
-        if(own)
+       if(own)
         	output = '<br/>' + output;
         
        return output;      
