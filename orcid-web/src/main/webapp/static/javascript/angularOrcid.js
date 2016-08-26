@@ -3820,8 +3820,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-    };
-
+    };    
+    
     $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
@@ -3832,21 +3832,15 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                $scope.register.familyNames.value=familyName;
                $scope.register.email.value=email;
                $scope.register.linkType=linkFlag;
-               $scope.$apply();
-
-               if(email !== ''){
-                   // Validate the email as soon as the user arrives at the screen, if it has been pre-populated.
-                   $scope.serverValidate('Email');
-               }
+               $scope.$apply();               
     
                 // make sure inputs stayed trimmed
                 $scope.$watch('register.email.value', function(newValue, oldValue) {
                     if(newValue !== oldValue) {
                         trimAjaxFormText($scope.register.email);
-                        $scope.serverValidate('Email');
                     }
-                }); // initialize the watch
-    
+                }); // initialize the watch            
+                
                 // make sure email is trimmed
                 $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
                     if(newValue !== oldValue){
@@ -3973,7 +3967,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         });
     };
 
-    $scope.serverValidate = function (field) {
+    $scope.serverValidate = function (field) {        
         if (field === undefined) field = '';
         $.ajax({
             url: getBaseUri() + '/register' + field + 'Validate.json',
@@ -4037,10 +4031,6 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.setRecatchaResponse = function (response) {
         $scope.recatchaResponse = response;
     };
-    //init
-//    $scope.getRegister();
-    //$scope.getDuplicates();
-
 }]);
 
 orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
