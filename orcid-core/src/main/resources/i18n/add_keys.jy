@@ -1,0 +1,139 @@
+#!/usr/bin/env jython
+# Author: Liz Krznarich
+# A script to add a new property to en and xx versions of a i18n properties file
+# Unfortunately doesn't work with the email properties, because of the extra comment in those files
+# Assumes you have ORCID-Source checked out in ~/git
+# Developed using Jython 2.5.3 and Java 1.7.0_45
+# For more info run
+# ./add_i18n_message.jy --help
+
+import codecs
+import glob
+import logging
+import optparse
+import os
+import re
+import sys
+from java.io import FileInputStream
+from java.io import FileOutputStream
+from java.io import InputStreamReader
+from java.io import OutputStreamWriter
+from java.util import Collections
+from java.util import Properties
+from java.lang import System
+from __builtin__ import None
+
+# Init
+
+logging.basicConfig(format='%(asctime)s:%(levelname)s:%(message)s', level=logging.INFO)
+info = logging.info
+
+# Config
+
+resource_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+en_suffix = '_en.properties'
+lr_suffix = '_lr.properties'
+rl_suffix = '_rl.properties'
+xx_suffix = '_xx.properties'
+
+
+# Function definitions
+
+class SortedProperties(Properties):
+    def keys(self):
+        return Collections.enumeration(sorted(self.super__keys()))
+
+def load_props(properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
+    fis = FileInputStream(path)
+    isr = InputStreamReader(fis, 'UTF-8')
+    props = SortedProperties()
+    props.load(isr)
+    fis.close()
+    return props
+
+def store_props(props, comment_lines , properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
+    comment_string = str.join('', comment_lines)
+    fos = FileOutputStream(path)
+    osw = OutputStreamWriter(fos, 'UTF-8')
+    props.store(osw, comment_string)
+    fos.close();
+    tidy_license_header(path)
+  
+def detect_and_set_line_separator(line):
+    match = re.search('[\r\n]{1,2}$', line)
+    if(match):
+        System.setProperty('line.separator', match.group(0))
+
+def read_comment_lines(properties_filename):
+    path = os.path.join(resource_dir, properties_filename)
+    fis = FileInputStream(path)
+    file = codecs.open(path, 'r', 'UTF-8')
+    lines = file.readlines()
+    file.close()
+    detect_and_set_line_separator(lines[0])
+    comment_lines = [l for l in lines if l.startswith('#')]
+    # Need to remove initial # character as will be re-added automatically when storing the props
+    comment_lines[0] = re.sub('^#', '', comment_lines[0])
+    # Need to snip off any comments automatically added by properties storing
+    indices_to_delete = [-1, -2]
+    comment_lines_length = len(comment_lines);
+    for i in indices_to_delete:
+        comment_lines.pop(comment_lines_length + i)
+    return comment_lines
+
+def tidy_license_header(path):
+    file = codecs.open(path, 'r', 'UTF-8')
+    lines = file.readlines()
+    file.close
+    # Need to insert a blank line after the license, otherwise messes up the license check
+    rule_count = 0
+    for index, line in enumerate(lines):
+        if line.startswith('# ====='):
+            rule_count += 1
+            if (rule_count == 2):
+                lines.insert(index + 2, "\n")
+                break
+    file = codecs.open(path, 'w', 'UTF-8')
+    file.write(str.join('', lines))
+    file.close
+
+# Start of script
+parser = optparse.OptionParser(option_list=[
+    optparse.Option('-k', '--key', help='the key of the property'),
+    optparse.Option('-v', '--value', help='the value of the property'),
+    optparse.Option('-p', '--prefix', help='the prefix of the properties files (test_messages|messages|javascript|api)', choices=('test_messages', 'messages', 'javascript', 'api')),
+])
+(options, args) = parser.parse_args()
+
+# Validate args
+if(options.prefix is None):
+    parser.error("-p must be defined")
+if(options.key == None or options.value == None):
+    parser.error("-k and -v must be defined")
+
+dir_listing = os.listdir(resource_dir)
+properties_filenames = [f for f in dir_listing if f.startswith(options.prefix)]
+en_filename = options.prefix + en_suffix
+lr_filename = options.prefix + lr_suffix
+rl_filename = options.prefix + rl_suffix
+xx_filename = options.prefix + xx_suffix
+
+if(options.key):
+# Add a new key/value
+    for properties_filename in properties_filenames:
+        props = load_props(properties_filename)
+        comment_lines = read_comment_lines(properties_filename)
+        if(properties_filename not in (en_filename, xx_filename, lr_filename, rl_filename)):
+            continue
+        if(properties_filename == en_filename):
+            value = options.value
+        if(properties_filename == lr_filename):
+            value = "LR"
+        if(properties_filename == rl_filename):
+            value = "RL"
+        if(properties_filename == xx_filename):
+            value = "X"
+        props.put(options.key, value)
+        store_props(props, comment_lines, properties_filename)

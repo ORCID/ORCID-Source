@@ -46,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 public class Citation implements Serializable {
     private static final long serialVersionUID = 1L;
     @XmlElement(name = "citation-type", required = true, defaultValue = "formatted-unspecified", namespace = "http://www.orcid.org/ns/work")
-    protected CitationType citationType = CitationType.FORMATTED_UNSPECIFIED;
+    protected CitationType citationType;
     @XmlElement(required = true, namespace = "http://www.orcid.org/ns/work")
     protected String citation;
 
@@ -56,10 +56,6 @@ public class Citation implements Serializable {
     public Citation(String citation, CitationType citationType) {
         this.citation = citation;
         this.citationType = citationType;
-    }
-
-    public Citation(String citation) {
-        this(citation, CitationType.FORMATTED_UNSPECIFIED);
     }
 
     /**

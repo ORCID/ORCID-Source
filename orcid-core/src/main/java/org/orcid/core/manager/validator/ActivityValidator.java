@@ -31,6 +31,7 @@ import org.orcid.core.exception.InvalidPutCodeException;
 import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
+import org.orcid.jaxb.model.common_rc3.Amount;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
@@ -45,6 +46,7 @@ import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkTitle;
 import org.orcid.persistence.jpa.entities.SourceEntity;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ActivityValidator {
 
@@ -97,6 +99,15 @@ public class ActivityValidator {
             }
         }
 
+        if(funding.getAmount() != null) {
+            Amount amount = funding.getAmount();
+            if(PojoUtil.isEmpty(amount.getCurrencyCode()) && !PojoUtil.isEmpty(amount.getContent())) {
+                throw new OrcidValidationException("Please specify a currency code");
+            } else if(!PojoUtil.isEmpty(amount.getCurrencyCode()) && PojoUtil.isEmpty(amount.getContent())) {
+                throw new OrcidValidationException("Please specify an amount or remove the amount tag");
+            }
+        }
+        
         if (funding.getPutCode() != null && createFlag) {
             Map<String, String> params = new HashMap<String, String>();
             if (sourceEntity != null) {
