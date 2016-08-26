@@ -429,16 +429,19 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 orcidWork.setVisibility(workEntity.getVisibility());
                 unsorted.add(orcidWork);
             }
-            List<OrcidWork> sorted = sortWorks(unsorted);
             OrcidWorks orcidWorks = new OrcidWorks();
-            orcidWorks.setOrcidWork(sorted);
+            orcidWorks.setOrcidWork(sortWorks(unsorted));
             return orcidWorks;
         }
         return null;
     }
 
     public List<OrcidWork> sortWorks(List<OrcidWork> unsorted) {
-        List<OrcidWork> sorted = unsorted.stream().sorted((work1, work2) -> {
+        return unsorted.stream().sorted(workPubDateComparator().thenComparing(workTitleComparator())).collect(Collectors.toList());
+    }
+
+    public Comparator<OrcidWork> workPubDateComparator() {
+        return (work1, work2) -> {
             PublicationDate pubDate1 = work1.getPublicationDate();
             PublicationDate pubDate2 = work2.getPublicationDate();
             if (pubDate1 != null && pubDate2 != null) {
@@ -446,13 +449,15 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 String dateString1 = PojoUtil.createDateSortString(null, pubDate1);
                 @SuppressWarnings("deprecation")
                 String dateString2 = PojoUtil.createDateSortString(null, pubDate2);
-                int dateComparison = dateString1.compareTo(dateString2);
-                if (dateComparison != 0) {
-                    return dateComparison;
-                }
+                return dateString1.compareTo(dateString2);
             } else {
                 return NullUtils.compareNulls(pubDate1, pubDate2);
             }
+        };
+    }
+
+    public Comparator<OrcidWork> workTitleComparator() {
+        return (work1, work2) -> {
             WorkTitle title1 = work1.getWorkTitle();
             WorkTitle title2 = work2.getWorkTitle();
             if (title1 != null && title2 != null) {
@@ -460,8 +465,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
             } else {
                 return NullUtils.compareNulls(title1, title2);
             }
-        }).collect(Collectors.toList());
-        return sorted;
+        };
     }
 
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
