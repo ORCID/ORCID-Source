@@ -438,29 +438,27 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
     }
 
     public List<OrcidWork> sortWorks(List<OrcidWork> unsorted) {
-        List<OrcidWork> sorted = unsorted.stream().sorted(new Comparator<OrcidWork>() {
-            public int compare(OrcidWork work1, OrcidWork work2) {
-                PublicationDate pubDate1 = work1.getPublicationDate();
-                PublicationDate pubDate2 = work2.getPublicationDate();
-                if (pubDate1 != null && pubDate2 != null) {
-                    @SuppressWarnings("deprecation")
-                    String dateString1 = PojoUtil.createDateSortString(null, pubDate1);
-                    @SuppressWarnings("deprecation")
-                    String dateString2 = PojoUtil.createDateSortString(null, pubDate2);
-                    int dateComparison = dateString1.compareTo(dateString2);
-                    if (dateComparison != 0) {
-                        return dateComparison;
-                    }
-                } else {
-                    return NullUtils.compareNulls(pubDate1, pubDate2);
+        List<OrcidWork> sorted = unsorted.stream().sorted((work1, work2) -> {
+            PublicationDate pubDate1 = work1.getPublicationDate();
+            PublicationDate pubDate2 = work2.getPublicationDate();
+            if (pubDate1 != null && pubDate2 != null) {
+                @SuppressWarnings("deprecation")
+                String dateString1 = PojoUtil.createDateSortString(null, pubDate1);
+                @SuppressWarnings("deprecation")
+                String dateString2 = PojoUtil.createDateSortString(null, pubDate2);
+                int dateComparison = dateString1.compareTo(dateString2);
+                if (dateComparison != 0) {
+                    return dateComparison;
                 }
-                WorkTitle title1 = work1.getWorkTitle();
-                WorkTitle title2 = work2.getWorkTitle();
-                if (title1 != null && title2 != null) {
-                    return title1.getTitle().getContent().compareTo(title2.getTitle().getContent());
-                } else {
-                    return NullUtils.compareNulls(title1, title2);
-                }
+            } else {
+                return NullUtils.compareNulls(pubDate1, pubDate2);
+            }
+            WorkTitle title1 = work1.getWorkTitle();
+            WorkTitle title2 = work2.getWorkTitle();
+            if (title1 != null && title2 != null) {
+                return title1.getTitle().getContent().compareTo(title2.getTitle().getContent());
+            } else {
+                return NullUtils.compareNulls(title1, title2);
             }
         }).collect(Collectors.toList());
         return sorted;
