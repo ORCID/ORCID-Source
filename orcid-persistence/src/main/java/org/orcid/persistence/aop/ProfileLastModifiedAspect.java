@@ -31,15 +31,12 @@ import org.orcid.persistence.messaging.JmsMessageSender;
 import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.OrcidStringUtils;
 import org.orcid.utils.listener.LastModifiedMessage;
-import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -132,8 +129,11 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         //messaging
         Date last = retrieveLastModifiedDate(orcid);
         LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-        if (!messaging.send(mess,JmsDestination.UPDATED_ORCIDS))
-            profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.FAILED);
+        if (messaging.isEnabled()){
+            if(!messaging.send(mess,JmsDestination.UPDATED_ORCIDS)) {
+                profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.FAILED);    
+            }
+        }          
     }
 
     /** Fetches the last modified from the request-scope last modified cache
