@@ -83,6 +83,7 @@ import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.jaxb.model.record_rc3.Citation;
+import org.orcid.jaxb.model.record_rc3.CitationType;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Email;
 import org.orcid.jaxb.model.record_rc3.Emails;
@@ -355,7 +356,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testCleanEmptyFieldsOnWorks() {
         Work work = new Work();
-        work.setWorkCitation(new Citation(""));
+        work.setWorkCitation(new Citation("", CitationType.FORMATTED_UNSPECIFIED));
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("My Work"));
         title.setSubtitle(new Subtitle("My subtitle"));
