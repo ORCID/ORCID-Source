@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-*, body, .orcid-id, h1{
+*, body, .orcid-id, h1, h2, h3, h4, h5, h6, b, strong{
 	
 	font-family: 'Noto Sans', sans-serif;
 	font-style: normal;		
@@ -101,4 +101,8 @@ ul.menu-options li a{
 /* Used to be 20px */
 .login .title{
 	font-size: 18px;
+}
+
+small.italic{
+	line-height: 1.2em;
 }
