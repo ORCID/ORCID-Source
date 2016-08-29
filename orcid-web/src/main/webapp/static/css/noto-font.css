@@ -72,7 +72,8 @@ label,input,button,select,textarea,
 ul.toggle-menu > li,
 .btn,
 .popover-help-container .popover,
-.header .logo p{
+.header .logo p,
+.manage-button{
 	font-size: 12px;
 }
 
@@ -105,4 +106,8 @@ ul.menu-options li a{
 
 small.italic{
 	line-height: 1.2em;
+}
+
+ul.toggle-menu > li{
+	padding: 4px 10px;
 }
