@@ -3348,15 +3348,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.primaryElementIndex = null;
-    $scope.scrollTop = 0;
-    
-    $scope.openEdit = function() {
-        $scope.showEdit = true;        
-    };
-
-    $scope.close = function() {
-        $scope.showEdit = false;
-    };
+    $scope.scrollTop = 0;   
 
     $scope.getCountryForm = function(){
         $.ajax({
@@ -3433,9 +3425,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
             success: function(data) {
                 $scope.countryForm = data;
                 if ($scope.countryForm.errors.length == 0){
-                    $scope.close();
-                    $scope.getCountryForm();                
-                    $.colorbox.close();                    
+                    $.colorbox.close();
+                    $scope.getCountryForm();
                 }else{
                     console.log($scope.countryForm.errors);
                 }
