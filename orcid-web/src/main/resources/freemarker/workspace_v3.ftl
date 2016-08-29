@@ -350,7 +350,7 @@
 							   		<span class="bibtext-options">							   									   		
 									    <a class="bibtex-cancel" ng-click="openBibTextWizard()"><@orcid.msg 'workspace.bibtexImporter.cancel'/></a>			       
 									    <span ng-hide="worksFromBibtex.length > 0" class="import-label" ng-click="openFileDialog()"><@orcid.msg 'workspace.bibtexImporter.fileUpload'/></span>
-									    <span ng-if="worksFromBibtex.length > 0" class="import-label" ng-click="saveAllFromBibtex()">Save all</span>									    							           
+									    <span ng-if="worksFromBibtex.length > 0" class="import-label" ng-click="saveAllFromBibtex()"><@orcid.msg 'workspace.bibtexImporter.save_all'/></span>									    							           
 										<input id="inputBibtex" type="file" class="upload-button" ng-model="textFiles" accept="*" update-fn="loadBibtexJs()"  app-file-text-reader multiple />
 									</span>								    
 							   </div>
