@@ -36,18 +36,17 @@ public class OrcidStringUtilsTest {
     
     @Test
     public void testStripHtml() {
-        //Should be the same after stripping
         String _1 = "Test&apos;s";
         String _2 = "Test&quot;s";
         String _3 = "Test &gt; s";
         String _4 = "Test &lt; s";
         String _5 = "Test&amp;s";
         
-        assertEquals(_1, OrcidStringUtils.stripHtml(_1));
-        assertEquals(_2, OrcidStringUtils.stripHtml(_2));
-        assertEquals(_3, OrcidStringUtils.stripHtml(_3));
+        assertEquals("Test's", OrcidStringUtils.stripHtml(_1));
+        assertEquals("Test\"s", OrcidStringUtils.stripHtml(_2));
+        assertEquals("Test > s", OrcidStringUtils.stripHtml(_3));
         assertEquals(_4, OrcidStringUtils.stripHtml(_4));
-        assertEquals(_5, OrcidStringUtils.stripHtml(_5));
+        assertEquals("Test&s", OrcidStringUtils.stripHtml(_5));
         
         //Html should be removed
         String html_1 = "<a href=\"orcid.org\">This is a link</a>";
@@ -58,11 +57,16 @@ public class OrcidStringUtilsTest {
         String html_6 = "<a href=\"orcid.org\">This is a link < s</a>";
         
         assertEquals("This is a link", OrcidStringUtils.stripHtml(html_1));
-        assertEquals("This is a link&apos;s", OrcidStringUtils.stripHtml(html_2));
-        assertEquals("This is a link&quot;s", OrcidStringUtils.stripHtml(html_3));
-        assertEquals("This is a link&amp;s", OrcidStringUtils.stripHtml(html_4));
-        assertEquals("This is a link &gt; s", OrcidStringUtils.stripHtml(html_5));
+        assertEquals("This is a link's", OrcidStringUtils.stripHtml(html_2));
+        assertEquals("This is a link\"s", OrcidStringUtils.stripHtml(html_3));
+        assertEquals("This is a link&s", OrcidStringUtils.stripHtml(html_4));
+        assertEquals("This is a link > s", OrcidStringUtils.stripHtml(html_5));
         assertEquals("This is a link &lt; s", OrcidStringUtils.stripHtml(html_6));
+        
+        assertEquals("Name", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>Name</body></html>"));
+        assertEquals(">Name", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>>Name</body></html>"));
+        assertEquals("Name&lt;", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>Name<</body></html>"));
+        assertEquals(">Name&lt;", OrcidStringUtils.stripHtml("<head><script/><script/><head><body>>Name<</body></html>"));
     }
     
     @Test
@@ -81,5 +85,6 @@ public class OrcidStringUtilsTest {
         assertFalse(OrcidStringUtils.hasHtml("This \" is a test \""));
         assertFalse(OrcidStringUtils.hasHtml("This&this are tests"));
         assertFalse(OrcidStringUtils.hasHtml("Users's test"));
-    }
+    }    
+    
 }
