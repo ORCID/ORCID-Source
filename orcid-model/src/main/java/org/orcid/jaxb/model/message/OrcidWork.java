@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -113,6 +114,9 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     protected LastModifiedDate lastModifiedDate;
     @XmlElement(name = "created-date")
     protected CreatedDate createdDate;
+    
+    @XmlTransient
+    private Long displayIndex;
 
     /**
      * Gets the value of the putCode property.
@@ -581,6 +585,14 @@ public class OrcidWork implements VisibilityType, Activity, Serializable {
     @Override
     public void setLastModifiedDate(LastModifiedDate value) {
         lastModifiedDate = value;
+    }
+
+    public Long getDisplayIndex() {
+        return displayIndex;
+    }
+
+    public void setDisplayIndex(Long displayIndex) {
+        this.displayIndex = displayIndex;
     }
 
     /**
