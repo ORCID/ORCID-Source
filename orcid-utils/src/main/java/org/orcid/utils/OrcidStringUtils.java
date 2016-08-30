@@ -96,7 +96,10 @@ public class OrcidStringUtils {
 	}
 
 	public static String stripHtml(String s) {
-	    return Jsoup.clean(s, "", Whitelist.none(), outputSettings);
+	    String output = Jsoup.clean(s, "", Whitelist.none(), outputSettings);
+	    output = output.replace(GT, DECODED_GT);
+            output = output.replace(AMP, DECODED_AMP);            
+            return output;
 	}
 	
 	public static String simpleHtml(String s) {
@@ -111,8 +114,8 @@ public class OrcidStringUtils {
             output = output.replace(APOS, DECODED_APOS);
             output = output.replace(QUOT, DECODED_QUOT);
             return output;
-	}
-		
+	}	
+	
 	/**
 	 * Strips html and restore the following characters: ' " & > < If the string
 	 * resulting after that process doesnt match the given string, we can say it
