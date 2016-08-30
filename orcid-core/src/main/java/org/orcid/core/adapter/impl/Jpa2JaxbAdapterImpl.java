@@ -445,7 +445,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         return (work1, work2) -> {
             Long displayIndex1 = work1.getDisplayIndex();
             Long displayIndex2 = work2.getDisplayIndex();
-            if (displayIndex1 != null && displayIndex1 != null) {
+            if (displayIndex1 != null && displayIndex2 != null) {
                 return -displayIndex1.compareTo(displayIndex2);
             } else {
                 return NullUtils.compareNulls(displayIndex1, displayIndex2);
