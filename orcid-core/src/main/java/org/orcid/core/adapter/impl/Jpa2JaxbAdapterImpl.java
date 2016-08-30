@@ -449,7 +449,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
                 String dateString1 = PojoUtil.createDateSortString(null, pubDate1);
                 @SuppressWarnings("deprecation")
                 String dateString2 = PojoUtil.createDateSortString(null, pubDate2);
-                return dateString1.compareTo(dateString2);
+                return -dateString1.compareTo(dateString2);
             } else {
                 return NullUtils.compareNulls(pubDate1, pubDate2);
             }
