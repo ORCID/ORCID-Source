@@ -30,7 +30,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.orcid.jaxb.model.common_rc3.Visibility;
-import org.orcid.utils.OrcidStringUtils;
 
 /**
  * The persistent class for the name database table.
@@ -70,7 +69,7 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
      */
     @Column(name = "credit_name")
     public String getCreditName() {
-        return OrcidStringUtils.decodeSimpleHtml(creditName);
+        return creditName;
     }
 
     /**
@@ -85,7 +84,7 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
      */
     @Column(name = "given_names")
     public String getGivenNames() {
-        return OrcidStringUtils.decodeSimpleHtml(givenNames);
+        return givenNames;
     }
 
     /**
@@ -100,7 +99,7 @@ public class RecordNameEntity extends BaseEntity<Long> implements ProfileAware {
      */
     @Column(name = "family_name")
     public String getFamilyName() {
-        return OrcidStringUtils.decodeSimpleHtml(familyName);
+        return familyName;
     }
 
     /**
