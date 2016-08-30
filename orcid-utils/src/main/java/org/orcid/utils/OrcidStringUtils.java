@@ -112,7 +112,17 @@ public class OrcidStringUtils {
             output = output.replace(QUOT, DECODED_QUOT);
             return output;
 	}
-		
+	
+    public static String decodeSimpleHtml(String s) {
+        if (StringUtils.isEmpty(s)) {
+            return s;
+        }
+        String result = s.replace(APOS, DECODED_APOS);
+        result = result.replace(AMP, DECODED_AMP);
+        result = result.replace(QUOT, DECODED_QUOT);
+        return result;
+    }
+	
 	/**
 	 * Strips html and restore the following characters: ' " & > < If the string
 	 * resulting after that process doesnt match the given string, we can say it
