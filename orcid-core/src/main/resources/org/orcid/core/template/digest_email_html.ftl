@@ -26,10 +26,27 @@
             <img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
             <hr />
             <span style="font-weight: bold;">
-                <@emailMacros.msg "email.common.hi" />${emailName}<@emailMacros.msg "email.common.dear.comma" />
+                <@emailMacros.msg "email.common.hi" />
+                <@emailMacros.space />
+                ${emailName}
+                <@emailMacros.msg "email.common.dear.comma" />
             </span>
             <p>
-                <@emailMacros.msg "email.digest.youhave" />${totalMessageCount}<@emailMacros.msg "email.digest.new" /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.msg "email.digest.pleasevisit_1" /><a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a><@emailMacros.msg "email.digest.pleasevisit_4" />
+                <@emailMacros.msg "email.digest.youhave" />
+                <@emailMacros.space />
+                ${totalMessageCount}
+                <@emailMacros.space />
+                <@emailMacros.msg "email.digest.new" />
+                <@emailMacros.space />
+                <#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if>
+                <@emailMacros.space />
+                <@emailMacros.msg "email.digest.inyourinbox" />
+                <@emailMacros.space />
+                <@emailMacros.msg "email.digest.pleasevisit_1" />
+                <@emailMacros.space />
+                <a href="${baseUri}/inbox?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.orcidinbox" /></a>
+                <@emailMacros.space />
+                <@emailMacros.msg "email.digest.pleasevisit_4" />
             </p>
             <#if digestEmail.notificationsBySourceId['ORCID']??> 
             <p>
@@ -87,7 +104,17 @@
 			<#elseif notificationType == 'AMENDED'>
             <p>
                 <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
-                <div><img src="${baseUri}/static/img/update.png">&nbsp;<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if></div>
+                <div>
+                    <img src="${baseUri}/static/img/update.png">&nbsp;<@emailMacros.msg "email.digest.hasupdated_1" />
+                    ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}
+                    <@emailMacros.space />
+                    <@emailMacros.msg "email.digest.hasupdated_2" />
+                    <@emailMacros.space />
+                    ${amendedSection?lower_case}
+                    <@emailMacros.space />
+                    <@emailMacros.msg "email.digest.hasupdated_3" />
+                    <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
+                </div>
                 <#if notification.items??>
                 <ul>
                 <#list notification.items.items as item>
@@ -124,10 +151,18 @@
                      <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>
                 </#switch>
                 </#assign>
-                <@emailMacros.msg "email.digest.youhavereceived_1" />${frequency}<@emailMacros.msg "email.digest.youhavereceived_2" /><a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
+                <@emailMacros.msg "email.digest.youhavereceived_1" />
+                <@emailMacros.space />
+                ${frequency}
+                <@emailMacros.space />
+                <@emailMacros.msg "email.digest.youhavereceived_2" />
+                <@emailMacros.space />
+                <a href="<@emailMacros.msg "email.digest.learnmorelink" />" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.learnmore" /></a>
             </p>
             <p>
-                <@emailMacros.msg "email.digest.youmayadjust_1" /><a href="${baseUri}/account?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
+                <@emailMacros.msg "email.digest.youmayadjust_1" />
+                <@emailMacros.space />
+                <a href="${baseUri}/account?lang=${locale}" style="color: #338caf; text-decoration: none;"><@emailMacros.msg "email.digest.accountsettings" /></a>.
             </p>
             <hr />
             <p>

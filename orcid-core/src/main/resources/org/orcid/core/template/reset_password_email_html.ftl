@@ -28,24 +28,28 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+		      <@emailMacros.msg "email.common.dear" />
+              <@emailMacros.space />
+              ${emailName}
+              <@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-               <@emailMacros.msg "email.reset_password.to_reset" />
+                <@emailMacros.msg "email.reset_password.to_reset" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<a href="${passwordResetUrl}">${passwordResetUrl}</a>
+			    <a href="${passwordResetUrl}">${passwordResetUrl}</a>
  		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">		  
 				<@emailMacros.msg "email.reset_password.after" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		  		<@emailMacros.msg "email.common.if_you_have_any1" />
-		  		<a href="http://support.orcid.org">http://support.orcid.org</a><@emailMacros.msg "email.common.if_you_have_any2" />
+		  		<a href="http://support.orcid.org">http://support.orcid.org</a>
+                <@emailMacros.msg "email.common.if_you_have_any2" />
 		    </p>		    
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
+                <@emailMacros.msg "email.common.kind_regards" />
+                <a href="${baseUri}/home?lang=${locale}">${baseUri}/<a/>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
