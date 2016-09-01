@@ -61,6 +61,9 @@
 				 popoverStyle="left: 0; top: -178px;" 
 				 arrowStyle="left: 48px;"	                 	     
 			/>
+			<div style="float: left">
+				<a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+			</div>
 		   <ul class="workspace-section-toolbar">
  				<li class="pull-right">
 		   			<button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>

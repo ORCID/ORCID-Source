@@ -49,6 +49,7 @@
 	</div>
 </#macro>
 
+<#-- This macro is the base to improve the others privacy components into one -->
 <#macro privacyComponent angularModel publicClick limitedClick privateClick placement="" popoverStyle="" arrowStyle="">	
 	<div id="privacy-bar">
 		<div class="relative privacy-component" style="width: 100px; float: left">
@@ -71,10 +72,7 @@
 			        </div>
 			    </div>
 	    	</div>
-		</div>
-		<div style="float: left">
-			<a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
-		</div>
+		</div>		
 	</div>
 </#macro>
 
