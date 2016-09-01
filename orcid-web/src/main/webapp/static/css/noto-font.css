@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-*, body, .orcid-id, h1{
+*, body, .orcid-id, h1, h2, h3, h4, h5, h6, b, strong{
 	
 	font-family: 'Noto Sans', sans-serif;
 	font-style: normal;		
@@ -72,7 +72,8 @@ label,input,button,select,textarea,
 ul.toggle-menu > li,
 .btn,
 .popover-help-container .popover,
-.header .logo p{
+.header .logo p,
+.manage-button{
 	font-size: 12px;
 }
 
@@ -101,4 +102,12 @@ ul.menu-options li a{
 /* Used to be 20px */
 .login .title{
 	font-size: 18px;
+}
+
+small.italic{
+	line-height: 1.2em;
+}
+
+ul.toggle-menu > li{
+	padding: 4px 10px;
 }
