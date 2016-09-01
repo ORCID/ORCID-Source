@@ -40,15 +40,21 @@ for properties_filename in properties_filenames:
     fileWriter = FileWriter(output_path)
 
     #match unicode escape characters
-    search = re.compile(r'(\\u.{4})')
+    leading_space_search = re.compile(r'(=\\u0020)')
+    trailing_space_search = re.compile(r'(\\u0020\n)')
+    unicode_search = re.compile(r'(\\u.{4})')
 
     #decode the match and re-encode as utf8
     def decode_match(match):
         return codecs.decode(match.group(0), 'unicode-escape').encode('utf8')
 
     while line != "":
+        #remove leading space
+        newline = re.sub(leading_space_search, "=", line)
+        #remove trailing space
+        newline = re.sub(trailing_space_search, "\n", newline)
         #find unicode escapes and replace with utf8 characters
-        newline = re.sub(search, decode_match, line)
+        newline = re.sub(unicode_search, decode_match, newline)
         #remove newline characters
         #newline = newline.replace("\\n\\", "")
         #newline = newline.replace("\\n", "")
