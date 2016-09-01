@@ -179,7 +179,7 @@
                           <div class="col-md-3 col-sm-3 col-xs-3" ng-if="editSources[group.groupId]">
 
                             <div ng-if="editSources[group.groupId]">
-                                <span class="glyphicon glyphicon-check ng-hide" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                                <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <#if !(isPublicProfile??)>
                                     <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultPutCode">
                                          <span class="glyphicon glyphicon-unchecked"></span> <@orcid.msg 'groups.common.make_preferred' />

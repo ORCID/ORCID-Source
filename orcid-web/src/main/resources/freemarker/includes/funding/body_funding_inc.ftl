@@ -23,7 +23,7 @@
 			<div class="col-md-8 col-sm-8">
 				<h3 class="funding-title">
 					<strong ng-show="funding.fundingTitle.title.value">{{funding.fundingTitle.title.value}}:</strong>
-					<span class="funding-name" ng-bind-html="funding.fundingName.value"></span>
+					<span class="funding-name" ng-bind="funding.fundingName.value"></span>
 					<span class="funding-date" ng-show="funding.startDate && !funding.endDate">
 						(<span ng-show="funding.startDate.year">{{funding.startDate.year}}</span><span ng-show="funding.startDate.month">-{{funding.startDate.month}}</span>						
 				    	<@orcid.msg 'workspace_fundings.dateSeparator'/>

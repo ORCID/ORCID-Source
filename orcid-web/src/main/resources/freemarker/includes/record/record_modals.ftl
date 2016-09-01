@@ -39,7 +39,7 @@
 	        	      	   <div name="other-name" class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
-										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput"/>																				
+										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput" />																				
 										<span ng-bind="otherName.content" ng-if="otherName.source != orcidId && otherName.source != null"></span>										
 									</div>									    
 									<div class="source" ng-if="otherName.sourceName || otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null">{{orcidId}}</span></div>
@@ -53,7 +53,7 @@
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>											
+											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>
 										</li>
 										<li>											
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
