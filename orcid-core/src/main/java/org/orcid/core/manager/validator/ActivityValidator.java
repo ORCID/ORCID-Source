@@ -16,10 +16,12 @@
  */
 package org.orcid.core.manager.validator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -32,6 +34,7 @@ import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_rc3.Amount;
+import org.orcid.jaxb.model.common_rc3.Iso3166Country;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
@@ -42,9 +45,12 @@ import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.FundingTitle;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.PeerReviewType;
 import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkTitle;
+import org.orcid.jaxb.model.record_rc3.WorkType;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -60,7 +66,31 @@ public class ActivityValidator {
         }
 
         if(work.getWorkType() == null) {
-            throw new ActivityTypeValidationException();
+            Map<String, String> params = new HashMap<String, String>();
+            String values = Arrays.stream(WorkType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+            params.put("type", "language code");
+            params.put("values", values);
+            throw new ActivityTypeValidationException(params);
+        }
+        
+        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+            if(!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
+                Map<String, String> params = new HashMap<String, String>();
+                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                params.put("type", "work type");
+                params.put("values", values);
+                throw new ActivityTypeValidationException(params);
+            }
+        }
+        
+        if(work.getCountry() != null && work.getCountry().getValue() != null) {
+            if(!Arrays.stream(Iso3166Country.values()).anyMatch(work.getCountry().getValue()::equals)) {
+                Map<String, String> params = new HashMap<String, String>();
+                String values = Arrays.stream(Iso3166Country.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+                params.put("type", "country");
+                params.put("values", values);
+                throw new ActivityTypeValidationException(params);
+            }
         }
         
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
@@ -172,6 +202,10 @@ public class ActivityValidator {
         }
 
         if (peerReview.getType() == null) {
+            Map<String, String> params = new HashMap<String, String>();
+            String peerReviewTypes = Arrays.stream(PeerReviewType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+            params.put("type", "peer review type");
+            params.put("values", peerReviewTypes);
             throw new ActivityTypeValidationException();
         }
 
