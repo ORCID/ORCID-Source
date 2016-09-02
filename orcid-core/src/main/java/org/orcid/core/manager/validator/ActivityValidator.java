@@ -35,6 +35,7 @@ import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_rc3.Amount;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
+import org.orcid.jaxb.model.common_rc3.PublicationDate;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
@@ -92,6 +93,47 @@ public class ActivityValidator {
                 throw new ActivityTypeValidationException(params);
             }
         }
+        
+        //TODO!!!!!!!
+        //publication date
+        if(work.getPublicationDate() != null) {
+            PublicationDate pd = work.getPublicationDate(); 
+            if(pd.getYear() != null && pd.getYear().getValue() != null) {                
+                try {
+                    Integer.valueOf(pd.getYear().getValue());
+                } catch(NumberFormatException n) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "publication date -> year");
+                    params.put("values", "integers");
+                    throw new ActivityTypeValidationException(params);
+                }
+            }
+            
+            if(pd.getMonth() != null && pd.getMonth().getValue() != null) {
+                try {
+                    Integer.valueOf(pd.getMonth().getValue());
+                } catch(NumberFormatException n) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "publication date -> month");
+                    params.put("values", "integers");
+                    throw new ActivityTypeValidationException(params);
+                }
+            }
+            
+            if(pd.getDay() != null && pd.getDay().getValue() != null) {
+                try {
+                    Integer.valueOf(pd.getDay().getValue());
+                } catch(NumberFormatException n) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "publication date -> day");
+                    params.put("values", "integers");
+                    throw new ActivityTypeValidationException(params);
+                }
+            }
+        }
+        
+        //citation
+        //
         
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
                 || work.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
