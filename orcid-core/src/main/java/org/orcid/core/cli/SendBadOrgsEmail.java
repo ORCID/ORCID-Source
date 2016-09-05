@@ -70,7 +70,7 @@ public class SendBadOrgsEmail {
 
     private static Logger LOG = LoggerFactory.getLogger(SendBadOrgsEmail.class);
     private static final String FROM_ADDRESS = "laure@notify.orcid.org";
-    private static final String SUBJECT = "ORCID affiliation bug";
+    private static final String SUBJECT = "Affiliation bug in ORCID record";
 
     private TransactionTemplate transactionTemplate;
     private ProfileDao profileDao;
