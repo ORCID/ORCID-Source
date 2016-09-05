@@ -176,7 +176,9 @@ public class WorkToCiteprocTranslator {
         names.add(creditName);
         if (work.getWorkContributors() != null && work.getWorkContributors().getContributor() != null) {
             for (Contributor c : work.getWorkContributors().getContributor()) {
-                names.add(StringUtils.stripAccents(c.getCreditName().getContent()));
+                if (c.getCreditName() != null && c.getCreditName().getContent() != null) {
+                    names.add(StringUtils.stripAccents(c.getCreditName().getContent()));
+                }
             }
         }
         CSLNameBuilder name = new CSLNameBuilder();

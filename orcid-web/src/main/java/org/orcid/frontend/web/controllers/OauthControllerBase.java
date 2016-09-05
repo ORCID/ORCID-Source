@@ -82,6 +82,24 @@ public class OauthControllerBase extends BaseController {
     @Resource
     protected OrcidAuthorizationEndpoint authorizationEndpoint;
 
+    
+    
+    public AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
+
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    public OrcidAuthorizationEndpoint getAuthorizationEndpoint() {
+        return authorizationEndpoint;
+    }
+
+    public void setAuthorizationEndpoint(OrcidAuthorizationEndpoint authorizationEndpoint) {
+        this.authorizationEndpoint = authorizationEndpoint;
+    }
+
     protected @ResponseBody RequestInfoForm generateRequestInfoForm(HttpServletRequest request) throws UnsupportedEncodingException {
         String clientId = request.getParameter("client_id");
         String scopesString = request.getParameter("scope");

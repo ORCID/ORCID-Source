@@ -23,6 +23,7 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.orcid.api.common.util.ActivityUtils;
 import org.orcid.api.common.util.ElementUtils;
 import org.orcid.api.common.writer.citeproc.WorkToCiteprocTranslator;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.dao.WebhookDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
+import org.orcid.persistence.jpa.entities.RecordNameEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -221,11 +223,19 @@ public class PublicV2ApiServiceDelegatorImpl
         Work w = (Work) this.viewWork(orcid, putCode).getEntity();
         ProfileEntity entity = profileEntityManager.findByOrcid(orcid);
         String creditName = null;
-        if(entity.getRecordNameEntity() != null) {
-            if (!entity.getRecordNameEntity().getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)){
-                creditName = entity.getRecordNameEntity().getCreditName();
+        RecordNameEntity recordNameEntity = entity.getRecordNameEntity();
+        if(recordNameEntity != null) {
+            if (!recordNameEntity.getVisibility().isMoreRestrictiveThan(Visibility.PUBLIC)) {
+                creditName = recordNameEntity.getCreditName();
+                if (StringUtils.isBlank(creditName)) {
+                    creditName = recordNameEntity.getGivenNames();
+                    String familyName = recordNameEntity.getFamilyName();
+                    if (StringUtils.isNotBlank(familyName)) {
+                        creditName += " " + familyName;
+                    }
+                }
             }
-        } 
+        }
         
         WorkToCiteprocTranslator tran = new  WorkToCiteprocTranslator();
         CSLItemData item = tran.toCiteproc(w, creditName ,true);

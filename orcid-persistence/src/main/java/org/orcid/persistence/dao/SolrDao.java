@@ -21,9 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.persistence.solr.entities.OrcidSolrDocument;
-import org.orcid.persistence.solr.entities.OrcidSolrResult;
-import org.orcid.persistence.solr.entities.OrcidSolrResults;
+import org.orcid.utils.solr.entities.*;
 
 public interface SolrDao {
 

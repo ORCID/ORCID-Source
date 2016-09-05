@@ -253,5 +253,9 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
     
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
     
-    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);    
+    public void setCompareWorksUsingScopusWay(boolean compareWorksUsingScopusWay);
+
+    void processProfilesWithReindexFlagAndAddToMessageQueue();
+
+    void processProfilesWithFailedFlagAndAddToMessageQueue();    
 }

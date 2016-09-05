@@ -155,7 +155,7 @@
 	
 	<bean id="statisticsCacheManager" class="org.orcid.core.manager.impl.StatisticsCacheManagerImpl"/>
 
-	<bean id="WorkEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl"/>
+	<bean id="workEntityCacheManager" class="org.orcid.core.manager.impl.WorkEntityCacheManagerImpl"/>
 
 	<bean id="orcidJaxbCopyManager" class="org.orcid.core.manager.impl.OrcidJaxbCopyManagerImpl"/>
 
@@ -581,6 +581,18 @@
         <property name="copyOnWrite" value="false" />
     </bean>
     
+    <bean id="fullWorkEntityCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
+        <property name="cacheName" value="full-work-entity" />
+        <property name="cacheManager" ref="coreCacheManager" />
+        <property name="maxElementsInMemory" value="30000" />
+        <property name="timeToLiveSeconds" value="604800" />
+        <property name="timeToIdleSeconds" value="86400" />
+        <property name="maxElementsOnDisk" value="150000" />
+        <property name="strategy" value="LOCALTEMPSWAP" />
+        <property name="copyOnRead" value="false" />
+        <property name="copyOnWrite" value="false" />
+    </bean>
+    
     <bean id="salesForceMembersListCache" class="org.orcid.core.utils.OrcidEhCacheFactoryBean">
         <property name="cacheName" value="sales-force-members-list" />
         <property name="cacheManager" ref="coreCacheManager" />
@@ -798,5 +810,7 @@
 	<!-- We can add our Jms Message Sending Resource via @component - the whole package works like that-->
 
 	<bean id="orcidMessageUtil" class="org.orcid.core.utils.OrcidMessageUtil" />
-	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />			
+	<bean id="sourceUtils" class="org.orcid.core.utils.SourceUtils" />		
+	
+	<bean id="orcidCoreExceptionMapper" class="org.orcid.core.exception.OrcidCoreExceptionMapper" />	
 </beans>

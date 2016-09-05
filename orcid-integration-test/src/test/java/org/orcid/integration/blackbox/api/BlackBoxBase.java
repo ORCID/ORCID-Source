@@ -412,13 +412,7 @@ public class BlackBoxBase {
         waitForElementVisibility(elementLocation);
         WebElement privacyOption = findElement(elementLocation);
         ngAwareClick(privacyOption);
-    }
-    
-    public void saveOtherNamesSection() {
-        ngAwareClick(findElementByXpath("//div[@id='names-section']//button[contains('Save changes',text())]"));
-        waitForNoCboxOverlay();
-        waitForElementVisibility(By.id("open-edit-names"));
-    }
+    }    
     
     /**
      *  OTHER NAMES
@@ -620,23 +614,23 @@ public class BlackBoxBase {
     /**
      * EXTERNAL IDENTIFIERS
      */
-    public boolean hasExternalIdentifiers() {
+    public static boolean hasExternalIdentifiers() {
         WebElement openEditElement = findElementById("open-edit-external-identifiers");
         return openEditElement.isDisplayed();
     }
 
-    public void openEditExternalIdentifiersModal() {
+    public static void openEditExternalIdentifiersModal() {
         waitForElementVisibility(By.id("open-edit-external-identifiers"));
         ngAwareClick(findElementById("open-edit-external-identifiers"));
         waitForCboxComplete();
     }
     
-    public void saveExternalIdentifiersModal() {
+    public static void saveExternalIdentifiersModal() {
         ngAwareClick(webDriver.findElement(By.xpath(SAVE_BUTTON_XPATH)));        
         waitForNoCboxOverlay();
     }
     
-    public void deleteAllExternalIdentifiersInModal() {
+    public static void deleteAllExternalIdentifiersInModal() {
         waitForAngular();
         By rowBy = By.xpath("//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers']");
         waitForElementVisibility(rowBy);
@@ -647,10 +641,10 @@ public class BlackBoxBase {
         }
     }
     
-    public void updateExternalIdentifierVisibility(String extId, Visibility visibility) {
+    public static void updateExternalIdentifierVisibility(String extId, Visibility visibility) {
         By elementLocation = By.xpath(String.format(
-                "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'][.//a[text()='%s %s']]//div[@id='privacy-bar']/ul/li[%s]/a", extId,
-                extId, getPrivacyIndex(visibility)));
+                "//div[@ng-repeat='externalIdentifier in externalIdentifiersForm.externalIdentifiers'][descendant::a[contains(text(),'%s')]]//div[@id='privacy-bar']/ul/li[%s]/a", extId,
+                getPrivacyIndex(visibility)));
         waitForElementVisibility(elementLocation);
         WebElement privacyOption = findElement(elementLocation);
         ngAwareClick(privacyOption);
@@ -664,8 +658,7 @@ public class BlackBoxBase {
         List<WebElement> visibilityElements = webDriver.findElements(By.xpath(extIdsVisibilityXpath));
         for (WebElement webElement : visibilityElements) {
             BBBUtil.ngAwareClick(webElement, webDriver);
-        }       
-        saveKeywordsModal();
+        }        
     }
      
     public static void deleteExternalIdentifiers() {

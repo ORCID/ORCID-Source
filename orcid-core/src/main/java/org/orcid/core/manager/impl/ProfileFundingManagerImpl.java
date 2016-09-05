@@ -46,7 +46,7 @@ import org.orcid.persistence.jpa.entities.OrgEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
-import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
+import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;

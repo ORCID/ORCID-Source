@@ -67,8 +67,8 @@
     </div>
     <div>
         <label class="control-label">${springMacroRequestContext.getMessage("oauth_sign_up.labelemail")}</label>
-        <div class="relative">
-            <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" />
+        <div class="relative">        	
+            <input name="email234" type="text" tabindex="3" class="input-xlarge" ng-model="register.email.value" ng-blur="serverValidate('Email')"/>
             <span class="required" ng-class="isValidClass(register.email)">*</span>
             <span class="orcid-error" ng-show="register.email.errors.length > 0">
 				<div ng-repeat='error in register.email.errors' ng-bind-html="error"></div>

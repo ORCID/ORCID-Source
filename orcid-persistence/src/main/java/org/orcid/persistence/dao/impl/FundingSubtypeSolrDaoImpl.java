@@ -27,7 +27,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
-import org.orcid.persistence.solr.entities.OrgDefinedFundingTypeSolrDocument;
+import org.orcid.utils.solr.entities.OrgDefinedFundingTypeSolrDocument;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class FundingSubtypeSolrDaoImpl implements FundingSubTypeSolrDao {

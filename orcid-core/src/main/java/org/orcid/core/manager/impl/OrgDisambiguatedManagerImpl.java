@@ -32,7 +32,7 @@ import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
-import org.orcid.persistence.solr.entities.OrgDisambiguatedSolrDocument;
+import org.orcid.utils.solr.entities.OrgDisambiguatedSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;

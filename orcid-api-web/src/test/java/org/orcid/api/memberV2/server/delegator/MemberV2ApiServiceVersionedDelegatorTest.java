@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.test.DBUnitTest;
@@ -62,7 +63,7 @@ public class MemberV2ApiServiceVersionedDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegatorRc2")
-    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
     @Resource
     private ProfileDao profileDao;

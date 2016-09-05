@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package schema.constants;
+package org.orcid.utils.solr.entities;
 
 public class SolrConstants {
     public static final String SCORE = "score";

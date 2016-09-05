@@ -21,6 +21,7 @@ import java.util.List;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 
 public interface WorkManager {
     
@@ -108,6 +109,19 @@ public interface WorkManager {
      * */
     Work createWork(String orcid, Work work, boolean isApiRequest);
 
+    /**
+     * Add a list of works to the given profile
+     * 
+     * @param works
+     *            The list of works that want to be added
+     * @param orcid
+     *            The id of the user we want to add the works to
+     * 
+     * @return the work bulk with the put codes of the new works or the error
+     *         that indicates why a work can't be added
+     */
+    WorkBulk createWorks(String orcid, WorkBulk work);
+    
     /**
      * Edits an existing work
      * 

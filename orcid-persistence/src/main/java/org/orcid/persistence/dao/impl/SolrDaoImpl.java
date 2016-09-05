@@ -16,10 +16,10 @@
  */
 package org.orcid.persistence.dao.impl;
 
-import static schema.constants.SolrConstants.ORCID;
-import static schema.constants.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
-import static schema.constants.SolrConstants.PUBLIC_PROFILE;
-import static schema.constants.SolrConstants.SCORE;
+import static org.orcid.utils.solr.entities.SolrConstants.ORCID;
+import static org.orcid.utils.solr.entities.SolrConstants.PROFILE_LAST_MODIFIED_DATE;
+import static org.orcid.utils.solr.entities.SolrConstants.PUBLIC_PROFILE;
+import static org.orcid.utils.solr.entities.SolrConstants.SCORE;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +41,9 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrException;
 import org.orcid.persistence.dao.SolrDao;
-import org.orcid.persistence.solr.entities.OrcidSolrDocument;
-import org.orcid.persistence.solr.entities.OrcidSolrResult;
-import org.orcid.persistence.solr.entities.OrcidSolrResults;
+import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.OrcidSolrResult;
+import org.orcid.utils.solr.entities.OrcidSolrResults;
 import org.springframework.dao.NonTransientDataAccessResourceException;
 
 public class SolrDaoImpl implements SolrDao {

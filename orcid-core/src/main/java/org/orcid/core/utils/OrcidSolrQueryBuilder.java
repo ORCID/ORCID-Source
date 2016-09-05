@@ -16,7 +16,7 @@
  */
 package org.orcid.core.utils;
 
-import schema.constants.SolrConstants;
+import org.orcid.utils.solr.entities.SolrConstants;
 
 /**
  * Wrapper class for SolrQueryBuilder that encapsulates the fields named in the

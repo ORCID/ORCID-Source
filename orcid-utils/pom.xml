@@ -38,6 +38,16 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>18.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+        </dependency>
 
         <!-- Test dependencies -->
 

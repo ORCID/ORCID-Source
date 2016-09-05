@@ -49,6 +49,7 @@ import org.orcid.core.exception.OrcidUnauthorizedException;
 import org.orcid.core.exception.OrcidVisibilityException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.core.exception.WrongSourceException;
+import org.orcid.core.manager.WorkManager;
 import org.orcid.core.utils.SecurityContextTestUtils;
 import org.orcid.jaxb.model.common_rc3.Country;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
@@ -62,8 +63,8 @@ import org.orcid.jaxb.model.common_rc3.Url;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
-import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.CreationMethod;
+import org.orcid.jaxb.model.message.FundingExternalIdentifierType;
 import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.message.ScopePathType;
@@ -82,6 +83,7 @@ import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Biography;
 import org.orcid.jaxb.model.record_rc3.Citation;
+import org.orcid.jaxb.model.record_rc3.CitationType;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Email;
 import org.orcid.jaxb.model.record_rc3.Emails;
@@ -108,6 +110,7 @@ import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrls;
 import org.orcid.jaxb.model.record_rc3.Role;
 import org.orcid.jaxb.model.record_rc3.Work;
+import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.jaxb.model.record_rc3.WorkTitle;
 import org.orcid.jaxb.model.record_rc3.WorkType;
 import org.orcid.pojo.ajaxForm.PojoUtil;
@@ -124,13 +127,16 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             "/data/PeerReviewEntityData.xml", "/data/GroupIdRecordEntityData.xml", "/data/RecordNameEntityData.xml", "/data/BiographyEntityData.xml");
 
     @Resource(name = "memberV2ApiServiceDelegator")
-    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, Address, Keyword> serviceDelegator;
+    private MemberV2ApiServiceDelegator<Education, Employment, PersonExternalIdentifier, Funding, GroupIdRecord, OtherName, PeerReview, ResearcherUrl, Work, WorkBulk, Address, Keyword> serviceDelegator;
 
+    @Resource
+    private WorkManager workManager;
+    
     @BeforeClass
     public static void initDBUnitData() throws Exception {
         initDBUnitData(DATA_FILES);
     }
-
+    
     @AfterClass
     public static void removeDBUnitData() throws Exception {
         Collections.reverse(DATA_FILES);
@@ -350,7 +356,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     @Test
     public void testCleanEmptyFieldsOnWorks() {
         Work work = new Work();
-        work.setWorkCitation(new Citation(""));
+        work.setWorkCitation(new Citation("", CitationType.FORMATTED_UNSPECIFIED));
         WorkTitle title = new WorkTitle();
         title.setTitle(new Title("My Work"));
         title.setSubtitle(new Subtitle("My subtitle"));
@@ -385,11 +391,13 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(summary.getWorks().getWorkGroup().get(0).getWorkSummary());
         assertEquals(1, summary.getWorks().getWorkGroup().get(0).getWorkSummary().size());
 
-        Work work = getWork();
+        String title = "work # 1 " + System.currentTimeMillis();
+        Work work = getWork(title);
        
         response = serviceDelegator.createWork("4444-4444-4444-4445", work);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-
+        Long putCode = getPutCode(response);
+        
         response = serviceDelegator.viewActivities("4444-4444-4444-4445");
         assertNotNull(response);
         summary = (ActivitiesSummary) response.getEntity();
@@ -410,14 +418,72 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertNotNull(workSummary.getTitle().getTitle());
             if ("A Book With Contributors JSON".equals(workSummary.getTitle().getTitle().getContent())) {
                 haveOld = true;
-            } else if ("A new work!".equals(workSummary.getTitle().getTitle().getContent())) {
+            } else if (title.equals(workSummary.getTitle().getTitle().getContent())) {
                 haveNew = true;
             }
         }
 
         assertTrue(haveOld);
         assertTrue(haveNew);
+        
+        //Delete them
+        serviceDelegator.deleteWork("4444-4444-4444-4445", putCode);
     }
+    
+    @Test
+    public void testCreateWorksWithBulkAllOK() {
+        String orcid = "0000-0000-0000-0003";
+        Long time = System.currentTimeMillis();
+        SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
+
+        WorkBulk bulk = new WorkBulk();
+        for (int i = 0; i < 5; i++) {
+            Work work = new Work();
+            WorkTitle title = new WorkTitle();
+            title.setTitle(new Title("Bulk work " + i + " " + time));
+            work.setWorkTitle(title);
+
+            ExternalIDs extIds = new ExternalIDs();
+            ExternalID extId = new ExternalID();
+            extId.setRelationship(Relationship.SELF);
+            extId.setType("doi");
+            extId.setUrl(new Url("http://doi/" + i + "/" + time));
+            extId.setValue("doi-" + i + "-" + time);
+            extIds.getExternalIdentifier().add(extId);
+            work.setWorkExternalIdentifiers(extIds);
+
+            work.setWorkType(WorkType.BOOK);
+            bulk.getBulk().add(work);
+        }
+
+        Response response = serviceDelegator.createWorks(orcid, bulk);
+        assertNotNull(response);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        bulk = (WorkBulk) response.getEntity();
+
+        assertNotNull(bulk);
+        assertEquals(5, bulk.getBulk().size());
+
+        for (int i = 0; i < 5; i++) {
+            assertTrue(Work.class.isAssignableFrom(bulk.getBulk().get(i).getClass()));
+            Work w = (Work) bulk.getBulk().get(i);
+            assertNotNull(w.getPutCode());
+            assertTrue(0L < w.getPutCode());
+            assertEquals("Bulk work " + i + " " + time, w.getWorkTitle().getTitle().getContent());
+            assertNotNull(w.getExternalIdentifiers().getExternalIdentifier());
+            assertEquals("doi-" + i + "-" + time, w.getExternalIdentifiers().getExternalIdentifier().get(0).getValue());
+
+            Response r = serviceDelegator.viewWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.OK.getStatusCode(), r.getStatus());
+            assertEquals("Bulk work " + i + " " + time, ((Work) r.getEntity()).getWorkTitle().getTitle().getContent());
+
+            // Delete the work
+            r = serviceDelegator.deleteWork(orcid, w.getPutCode());
+            assertNotNull(r);
+            assertEquals(Response.Status.NO_CONTENT.getStatusCode(), r.getStatus());
+        }
+    }    
 
     @Test
     public void testUpdateWork() {
@@ -4557,7 +4623,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
     public void testAddWorkWithInvalidExtIdTypeFail() {
         String orcid = "4444-4444-4444-4499";
         SecurityContextTestUtils.setUpSecurityContext(orcid, ScopePathType.ACTIVITIES_READ_LIMITED, ScopePathType.ACTIVITIES_UPDATE);
-        Work work = getWork();
+        Work work = getWork("work # 1 " + System.currentTimeMillis());
         try {
             work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("INVALID");
             serviceDelegator.createWork(orcid, work);
@@ -4567,18 +4633,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         } catch(Exception e) {
             fail();
         }
-        
-        /* This case is now ok (external-id-api branch 05/16) - adapters ensure correct value is stored in DB.
-        try {
-            work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("DOI");
-            serviceDelegator.createWork(orcid, work);
-            fail();
-        } catch(ActivityIdentifierValidationException e) {
-            
-        } catch(Exception e) {
-            fail();
-        }*/
-        
+                
         //Assert that it could be created with a valid value
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("doi");
         Response response = serviceDelegator.createWork(orcid, work);
@@ -4762,7 +4817,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }
         try {
-            serviceDelegator.createWork(orcid, getWork());
+            serviceDelegator.createWork(orcid, getWork("work # 1 " + System.currentTimeMillis()));
         } catch (OrcidUnauthorizedException e) {
             assertEquals("Incorrect token for claimed record", e.getMessage());
         }        
@@ -5256,7 +5311,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         
         //Test work
-        response = serviceDelegator.createWork(orcid, getWork());
+        response = serviceDelegator.createWork(orcid, getWork("work # 1 " + System.currentTimeMillis()));
         assertNotNull(response);
         assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
         putCode = getPutCode(response);
@@ -5270,8 +5325,8 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         response = serviceDelegator.deleteWork(orcid, putCode);
         assertNotNull(response);
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
-    }
-            
+    }    
+        
     private Address getAddress() {
         Address address = new Address();
         address.setVisibility(Visibility.PUBLIC);
@@ -5295,10 +5350,10 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         return employment;
     }
     
-    private Work getWork() {
+    private Work getWork(String title) {
         Work work = new Work();
         WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title("A new work!"));
+        workTitle.setTitle(new Title(title));
         work.setWorkTitle(workTitle);
         work.setWorkType(WorkType.BOOK);
         work.setVisibility(Visibility.PUBLIC);
@@ -5402,7 +5457,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         newRecord.setDescription("TestDescription5");
         newRecord.setType("publisher");
         return newRecord;
-    }
+    }    
     
     private Long getPutCode(Response response) {
         Map<?, ?> map = response.getMetadata();
