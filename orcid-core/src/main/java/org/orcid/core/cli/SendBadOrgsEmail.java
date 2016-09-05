@@ -45,6 +45,7 @@ import org.orcid.jaxb.model.message.Locale;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.persistence.dao.ProfileDao;
 import org.orcid.persistence.jpa.entities.CountryIsoEntity;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 import org.orcid.persistence.jpa.entities.OrgAffiliationRelationEntity;
 import org.orcid.persistence.jpa.entities.OrgDisambiguatedEntity;
 import org.orcid.persistence.jpa.entities.OrgEntity;
@@ -310,8 +311,8 @@ public class SendBadOrgsEmail {
         String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
         LOG.info("html email={}", html);
         if (!dryRun) {
-            // Update the profile for re-index and cache
-            profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId());
+            // Update the profile for re-index and cache refresh
+            profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
             profileDao.flush();
             // Send the email
             mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
