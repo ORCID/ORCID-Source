@@ -27,6 +27,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.orcid.jaxb.model.common_rc3.Title;
+import org.orcid.jaxb.model.common_rc3.TranslatedTitle;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc3.BulkElement;
@@ -57,7 +58,7 @@ public class WorksTest extends BlackBoxBaseRC3 {
     public void testCreateBulkWork() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();        
         WorkBulk bulk = createBulk(10, null);
-        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorksJson(this.getUser1OrcidId(), bulk, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());  
         
@@ -77,7 +78,7 @@ public class WorksTest extends BlackBoxBaseRC3 {
     public void testCreateBulkWithAllErrors() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         WorkBulk bulk = createBulk(10, "existing-ext-id-" + System.currentTimeMillis());
-        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorksJson(this.getUser1OrcidId(), bulk, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());  
         
@@ -102,10 +103,64 @@ public class WorksTest extends BlackBoxBaseRC3 {
     }
     
     @Test
+    public void testThreeWithInvalidTypeAllOthersAreFine() throws InterruptedException, JSONException {
+        String accessToken = getAccessToken();
+        WorkBulk bulk = createBulk(10, null);
+        //Work 3: no type
+        Work work3 = (Work)bulk.getBulk().get(3);
+        work3.setWorkType(null);
+        bulk.getBulk().set(3, work3);
+        
+        //Work 5: empty title
+        Work work5 = (Work)bulk.getBulk().get(5);
+        work5.getWorkTitle().getTitle().setContent(null);
+        bulk.getBulk().set(5, work5);
+        
+        //Work 7: translated title language code empty
+        Work work7 = (Work)bulk.getBulk().get(7);
+        work7.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
+        bulk.getBulk().set(7, work7);
+        
+        ClientResponse postResponse = memberV2ApiClient.createWorksJson(this.getUser1OrcidId(), bulk, accessToken);
+        assertNotNull(postResponse);
+        assertEquals(Response.Status.OK.getStatusCode(), postResponse.getStatus());  
+        
+        bulk = postResponse.getEntity(WorkBulk.class); 
+        assertNotNull(bulk);
+        assertNotNull(bulk.getBulk());
+        
+        for(int i = 0; i < bulk.getBulk().size(); i++) {
+            BulkElement element = bulk.getBulk().get(i);
+            if(i == 3 || i == 5 || i == 7) {
+                assertTrue(OrcidError.class.isAssignableFrom(element.getClass()));
+                OrcidError error = (OrcidError) element;
+                switch(i) {
+                case 3: 
+                    assertEquals(Integer.valueOf(9037), error.getErrorCode());
+                    assertTrue(error.getDeveloperMessage().startsWith("Invalid work type"));
+                    break;
+                case 5: 
+                    assertEquals(Integer.valueOf(9022), error.getErrorCode());
+                    break;
+                case 7: 
+                    assertEquals(Integer.valueOf(9037), error.getErrorCode());
+                    assertTrue(error.getDeveloperMessage().startsWith("Invalid translated title"));
+                    break;
+                }
+            } else {
+                assertTrue(Work.class.isAssignableFrom(element.getClass()));
+                Work work = (Work) element;
+                assertNotNull(work.getPutCode());
+                memberV2ApiClient.deleteWorkXml(this.getUser1OrcidId(), work.getPutCode(), accessToken);
+            }
+        }
+    }
+    
+    @Test
     public void testCantAddMoreThan1000WorksAtATime() throws InterruptedException, JSONException {
         String accessToken = getAccessToken();
         WorkBulk bulk = createBulk(1001, null);
-        ClientResponse postResponse = memberV2ApiClient.createWorks(this.getUser1OrcidId(), bulk, accessToken);
+        ClientResponse postResponse = memberV2ApiClient.createWorksJson(this.getUser1OrcidId(), bulk, accessToken);
         assertNotNull(postResponse);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), postResponse.getStatus());  
         OrcidError error = postResponse.getEntity(OrcidError.class);
@@ -130,7 +185,9 @@ public class WorksTest extends BlackBoxBaseRC3 {
         Long time = System.currentTimeMillis();
         Work work = new Work();
         WorkTitle workTitle = new WorkTitle();
-        workTitle.setTitle(new Title(title));
+        Title wTitle = new Title(title);
+        workTitle.setTranslatedTitle(new TranslatedTitle(title, "en"));
+        workTitle.setTitle(wTitle);
         work.setWorkTitle(workTitle);
         work.setWorkType(WorkType.BOOK);
         ExternalID extId = new ExternalID();
