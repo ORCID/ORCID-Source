@@ -580,7 +580,8 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
                         }
                     }
                 }).fail(function(e) {
-                    console.log(e.statusText);
+                    console.log("Error adding affiliations to scope")
+                    console.log(e);
                 });
             } else {
                 serv.loading = false;
@@ -604,9 +605,10 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
                     serv.addAffiliationToScope('affiliations/affiliations.json');
                     $rootScope.$apply();
                 }
-            }).fail(function(){
+            }).fail(function(e){
                 // something bad is happening!
                 console.log("error fetching affiliations");
+                console.log(e);
             });
         },
         updateProfileAffiliation: function(aff) {
@@ -744,8 +746,9 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                             },50);
                         }
                     }
-                }).fail(function() {
+                }).fail(function(e) {
                     console.log("Error fetching fundings");
+                    console.log(e);
                 });
             } else {
                 fundingSrvc.loading = false;
@@ -831,9 +834,10 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     fundingSrvc.addFundingToScope('fundings/fundings.json');
                     $rootScope.$apply();
                 }
-            }).fail(function(){
+            }).fail(function(e){
                 // something bad is happening!
                 console.log("error fetching fundings");
+                console.log(e);
             });
         },
         getGroup: function(putCode) {
@@ -964,11 +968,12 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                             },50);
                         }
                     }
-                }).fail(function() {
+                }).fail(function(e) {
                     //$rootScope.$apply(function() {
                         worksSrvc.loading = false;
                     //});
                     console.log("Error fetching works: " + workIds);
+                    console.log(e);
                 });
             } else {
                 worksSrvc.loading = false;
@@ -1022,9 +1027,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                             if (callback != undefined) callback(worksSrvc.details[putCode]);
                         });
                     }
-                }).fail(function(){
+                }).fail(function(e){
                     // something bad is happening!
                     console.log("error fetching works");
+                    console.log(e);
                 });
             } else {
                 if (callback != undefined) callback(worksSrvc.details[putCode]);
@@ -1132,9 +1138,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                         worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
                         $rootScope.$apply();
                     }
-                }).fail(function(){
+                }).fail(function(e){
                     // something bad is happening!
                     console.log("error fetching works");
+                    console.log(e);
                 });
             };
         },
@@ -1279,9 +1286,10 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     if (callback)
                        callback(data);
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with multi email");
+                console.log(e);
             });
         },
         deleteEmail: function (callback) {
@@ -1442,11 +1450,12 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                     $rootScope.$apply();
                     serv.resizeIframes();
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 serv.loading = false;
                 serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
+                console.log(e);
             });
         },
         getNotificationAlerts: function(){
@@ -1457,9 +1466,10 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 success: function(data) {
                 	serv.notificationAlerts = data;
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("getNotificationsAlerts error in notificationsSrvc");
+                console.log(e);
             });
         },
         reloadNotifications: function() {
@@ -1477,9 +1487,10 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                     serv.unreadCount = data;                   
                     $rootScope.$apply();
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with getting count of unread notifications");
+                console.log(e);
             });
         },
         resizeIframes: function(){
@@ -1636,9 +1647,10 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
                     serv.feed = data;
                     $rootScope.$apply();
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with disco feed");
+                console.log(e);
                 serv.feed = [];
                 $rootScope.$apply();
             });
@@ -1823,9 +1835,10 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         	peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
                             $rootScope.$apply();
                         }
-                    }).fail(function(){
+                    }).fail(function(e){
                         // something bad is happening!
                         console.log("error fetching Peer Review");
+                        console.log(e);
                     });
                 };
     		},    		
@@ -1858,11 +1871,12 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                                 },50);
                             }
                         }
-                    }).fail(function() {
+                    }).fail(function(e) {
                         //$rootScope.$apply(function() {
                         	peerReviewSrvc.loading = false;
                         //});
                         console.log("Error fetching Peer Review: " + peerReviewIds);
+                        console.log(e);
                     });
                 } else {
                 	peerReviewSrvc.loading = false;
@@ -2613,9 +2627,10 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
                                 
                 $scope.$apply();
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching websites");
+            console.log(e);
         });
     };
 
@@ -3120,9 +3135,10 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
                 
                 $scope.$apply();                                
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching otherNames");
+            console.log(e);
         });
     };
 
@@ -3293,9 +3309,10 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
                 $scope.biographyForm = data;
                 $scope.$apply();
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching BiographyForm");
+            console.log(e);
         });
     };
 
@@ -3403,9 +3420,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
                 }     
                 $scope.$apply();                
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching external identifiers");
+            console.log(e);
         });
     };
 
@@ -3585,9 +3603,10 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
                 $scope.displayIndexInit();
                 $scope.$apply();
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching external identifiers");
+            console.log(e);
         });
     }
 
@@ -5772,9 +5791,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
             	}
             	$scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("WorkImportWizardError");
+            console.log(e);
         });
     }
     
@@ -6520,9 +6540,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         		});
             	$scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("PeerReviewImportWizardError");
+            console.log(e);
         });
     }
 }]);
@@ -6953,9 +6974,10 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
                 $scope.delegators = data.delegators;
                 $scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("error with delegates");
+            console.log(e);
         });
     };
 
@@ -7148,9 +7170,10 @@ orcidNgModule.controller('SwitchUserCtrl',['$scope', '$compile', '$document', fu
                 $scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
                 $scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("error with delegates");
+            console.log(e);
         });
     };
 
@@ -7216,6 +7239,7 @@ orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
         }).fail(function(error) {
             // something bad is happening!
             console.log("Error getting statistics Live iDs total amount");
+            console.log(error);
         });
     };
 
