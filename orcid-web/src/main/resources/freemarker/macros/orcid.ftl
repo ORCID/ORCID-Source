@@ -24,7 +24,6 @@
  * @author Will Simpson
  -->
 
-
 <#macro privacyToggle angularModel publicClick limitedClick privateClick popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div class="relative" id="privacy-bar">
 		<ul class="privacyToggle">
@@ -50,6 +49,32 @@
 	</div>
 </#macro>
 
+<#-- This macro is the base to improve the others privacy components into one -->
+<#macro privacyComponent angularModel publicClick limitedClick privateClick placement="" popoverStyle="" arrowStyle="">	
+	<div id="privacy-bar">
+		<div class="relative privacy-component" style="width: 100px; float: left">
+			<ul class="privacyToggle">
+				<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a href="" title="<@orcid.msg 'manage.lipublic' />" ng-click="${publicClick}"></a></li>
+				<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a href="" title="<@orcid.msg 'manage.lilimited' />" ng-click="${limitedClick}"></a></li>
+				<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a href="" title="<@orcid.msg 'manage.liprivate' />" ng-click="${privateClick}"></a></li>
+			</ul>
+			<div class="popover-help-container">
+	            <div class="popover ${placement}" style="${popoverStyle}">
+			        <div class="arrow" style="${arrowStyle}"></div>
+			        <div class="popover-content">
+			        	<strong>${springMacroRequestContext.getMessage("privacyToggle.help.who_can_see")}</strong>
+				        <ul class="privacyHelp">
+				        	<li class="public" style="color: #009900;">${springMacroRequestContext.getMessage("privacyToggle.help.everyone")}</li>
+				        	<li class="limited"style="color: #ffb027;">${springMacroRequestContext.getMessage("privacyToggle.help.trusted_parties")}</li>
+				        	<li class="private" style="color: #990000;">${springMacroRequestContext.getMessage("privacyToggle.help.only_me")}</li>
+				        </ul>
+				        <a href="http://support.orcid.org/knowledgebase/articles/124518-orcid-privacy-settings" target="_blank">${springMacroRequestContext.getMessage("privacyToggle.help.more_information")}</a>
+			        </div>
+			    </div>
+	    	</div>
+		</div>		
+	</div>
+</#macro>
 
 <#macro itemDetails item="" field="" tag="div">
     <#if item != "">

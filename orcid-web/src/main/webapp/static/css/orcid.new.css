@@ -2383,6 +2383,9 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	display: block;
 }
 
+.privacy-component:hover .popover-help-container .popover{
+	display: block;
+}
 
 .workspace-inner {
 	padding-left: 10px;
@@ -5770,10 +5773,6 @@ textarea.form-control,
 .settings-table .popover{
 	left: -138px;
   	top: -178px;
-}
-
-.glyphicon-question-sign{
-	cursor: default;
 }
 
 /* Widget */
