@@ -89,27 +89,6 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="bulk">
-		<xs:complexType>
-			<xs:annotation>
-				<xs:documentation>A work published by the researcher or contributor.
-					* The visibility attribute (private, limited or public) can be set
-					at record creation, and indicates who can see this section of
-					information.
-					* The put-code attribute is used only when reading this
-					element. When updating the item, the put-code attribute must be
-					included to indicate the specific record to be updated.
-				</xs:documentation>
-			</xs:annotation>
-			<xs:sequence maxOccurs="unbounded">
-				<xs:choice>
-					<xs:element ref="work:work" />
-					<xs:element ref="error:error" />
-				</xs:choice>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-
 	<xs:element name="work-summary">
 		<xs:complexType>
 			<xs:complexContent>

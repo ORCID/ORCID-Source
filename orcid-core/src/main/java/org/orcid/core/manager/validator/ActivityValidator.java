@@ -16,10 +16,12 @@
  */
 package org.orcid.core.manager.validator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -32,9 +34,11 @@ import org.orcid.core.exception.OrcidDuplicatedActivityException;
 import org.orcid.core.exception.OrcidValidationException;
 import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_rc3.Amount;
+import org.orcid.jaxb.model.common_rc3.PublicationDate;
 import org.orcid.jaxb.model.common_rc3.Source;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
+import org.orcid.jaxb.model.record_rc3.CitationType;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Employment;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
@@ -42,9 +46,12 @@ import org.orcid.jaxb.model.record_rc3.ExternalIDs;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.jaxb.model.record_rc3.FundingTitle;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
+import org.orcid.jaxb.model.record_rc3.PeerReviewType;
 import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkTitle;
+import org.orcid.jaxb.model.record_rc3.WorkType;
+import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
 
@@ -59,8 +66,83 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
+        //translated title language code
+        if(title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
+            //If translated title language code is null or invalid
+            if (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
+                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
+                Map<String, String> params = new HashMap<String, String>();
+                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                params.put("type", "translated title -> language code");
+                params.put("values", values);
+                throw new ActivityTypeValidationException(params);
+            }
+        }
+        
         if(work.getWorkType() == null) {
-            throw new ActivityTypeValidationException();
+            Map<String, String> params = new HashMap<String, String>();
+            String values = Arrays.stream(WorkType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+            params.put("type", "work type");
+            params.put("values", values);
+            throw new ActivityTypeValidationException(params);
+        }
+        
+        if(!PojoUtil.isEmpty(work.getLanguageCode())) {
+            if(!Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(work.getLanguageCode()::equals)) {
+                Map<String, String> params = new HashMap<String, String>();
+                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                params.put("type", "language code");
+                params.put("values", values);
+                throw new ActivityTypeValidationException(params);
+            }
+        }                
+        
+        //publication date
+        if(work.getPublicationDate() != null) {
+            PublicationDate pd = work.getPublicationDate(); 
+            if(pd.getYear() != null && pd.getYear().getValue() != null) {                
+                try {
+                    Integer.valueOf(pd.getYear().getValue());
+                } catch(NumberFormatException n) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "publication date -> year");
+                    params.put("values", "integers");
+                    throw new ActivityTypeValidationException(params);
+                }
+            }
+            
+            if(pd.getMonth() != null && pd.getMonth().getValue() != null) {
+                try {
+                    Integer.valueOf(pd.getMonth().getValue());
+                } catch(NumberFormatException n) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "publication date -> month");
+                    params.put("values", "integers");
+                    throw new ActivityTypeValidationException(params);
+                }
+            }
+            
+            if(pd.getDay() != null && pd.getDay().getValue() != null) {
+                try {
+                    Integer.valueOf(pd.getDay().getValue());
+                } catch(NumberFormatException n) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("type", "publication date -> day");
+                    params.put("values", "integers");
+                    throw new ActivityTypeValidationException(params);
+                }
+            }
+        }
+        
+        //citation
+        if(work.getWorkCitation() != null && !PojoUtil.isEmpty(work.getWorkCitation().getCitation())) {
+            if(work.getWorkCitation().getWorkCitationType() == null) {
+                Map<String, String> params = new HashMap<String, String>();
+                String values = Arrays.stream(CitationType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+                params.put("type", "citation type");
+                params.put("values", values);
+                throw new ActivityTypeValidationException(params);
+            }
         }
         
         if (work.getWorkExternalIdentifiers() == null || work.getWorkExternalIdentifiers().getExternalIdentifier() == null
@@ -92,6 +174,19 @@ public class ActivityValidator {
             throw new ActivityTitleValidationException();
         }
 
+        //translated title language code
+        if(title != null && title.getTranslatedTitle() != null && !PojoUtil.isEmpty(title.getTranslatedTitle().getContent())) {
+            //If translated title language code is null or invalid
+            if (PojoUtil.isEmpty(title.getTranslatedTitle().getLanguageCode())
+                    || !Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).anyMatch(title.getTranslatedTitle().getLanguageCode()::equals)) {
+                Map<String, String> params = new HashMap<String, String>();
+                String values = Arrays.stream(SiteConstants.AVAILABLE_ISO_LANGUAGES).collect(Collectors.joining(", "));
+                params.put("type", "translated title -> language code");
+                params.put("values", values);
+                throw new ActivityTypeValidationException(params);
+            }
+        }
+        
         if (isApiRequest) {
             if (funding.getExternalIdentifiers() == null || funding.getExternalIdentifiers().getExternalIdentifier() == null
                     || funding.getExternalIdentifiers().getExternalIdentifier().isEmpty()) {
@@ -172,6 +267,10 @@ public class ActivityValidator {
         }
 
         if (peerReview.getType() == null) {
+            Map<String, String> params = new HashMap<String, String>();
+            String peerReviewTypes = Arrays.stream(PeerReviewType.values()).map(element -> element.value()).collect(Collectors.joining(", "));
+            params.put("type", "peer review type");
+            params.put("values", peerReviewTypes);
             throw new ActivityTypeValidationException();
         }
 
