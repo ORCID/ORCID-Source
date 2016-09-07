@@ -427,8 +427,8 @@
 				<@orcid.msg 'workspace.ensure_future_access'/>
 				<br />
 				<br />						
-				<button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>
-				<button class="btn" id="modal-close" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></button>								
+				<button class="btn btn-primary" id="modal-close" ng-click="verifyEmail()"><@orcid.msg 'workspace.send_verification'/></button>				
+				<a class="cancel-option inner-row" ng-click="closeColorBox()"><@orcid.msg 'freemarker.btncancel'/></a>
 			</div>
 		</div>		
 	</div>		
