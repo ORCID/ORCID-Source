@@ -27,6 +27,7 @@ import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.Items;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.pojo.ajaxForm.PojoUtil;
 
 public class ExternalIDValidator {
 
@@ -51,6 +52,10 @@ public class ExternalIDValidator {
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
                 errors.add(id.getType());
+            }
+            
+            if(PojoUtil.isEmpty(id.getValue())) {
+                errors.add(id.getValue());
             }
         }
         checkAndThrow(errors);
