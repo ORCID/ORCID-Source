@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.pojo.SalesForceConsortium;
-import org.orcid.pojo.SalesForceContact;
-import org.orcid.pojo.SalesForceDetails;
-import org.orcid.pojo.SalesForceMember;
+import org.orcid.core.salesforce.model.Consortium;
+import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Member;
 
 /**
  * 
@@ -32,29 +32,29 @@ import org.orcid.pojo.SalesForceMember;
  */
 public interface SalesForceManager {
 
-    List<SalesForceMember> retrieveMembers();
+    List<Member> retrieveMembers();
 
-    List<SalesForceMember> retrieveFreshMembers();
+    List<Member> retrieveFreshMembers();
 
-    List<SalesForceMember> retrieveConsortia();
+    List<Member> retrieveConsortia();
 
-    List<SalesForceMember> retrieveFreshConsortia();
+    List<Member> retrieveFreshConsortia();
 
-    SalesForceConsortium retrieveConsortium(String consortiumId);
+    Consortium retrieveConsortium(String consortiumId);
 
-    SalesForceConsortium retrieveFreshConsortium(String consortiumId);
+    Consortium retrieveFreshConsortium(String consortiumId);
 
-    SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
+    MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
 
-    SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
+    MemberDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
 
-    SalesForceDetails retrieveDetailsBySlug(String memberSlug);
+    MemberDetails retrieveDetailsBySlug(String memberSlug);
 
-    List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId);
+    List<Contact> retrieveContactsByOpportunityId(String opportunityId);
 
-    Map<String, List<SalesForceContact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
+    Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
 
-    Map<String, List<SalesForceContact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds);
+    Map<String, List<Contact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds);
 
     /**
      * @return The sales force object id, if valid.

@@ -19,7 +19,7 @@ package org.orcid.core.manager.impl;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.pojo.SalesForceDetails;
+import org.orcid.core.salesforce.model.MemberDetails;
 
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 
@@ -36,7 +36,7 @@ public class SalesForceMemberDetailsCacheEntryFactory implements CacheEntryFacto
     @Override
     public Object createEntry(Object key) throws Exception {
         SalesForceMemberDetailsCacheKey detailsCacheKey = (SalesForceMemberDetailsCacheKey) key;
-        SalesForceDetails details = salesForceManager.retrieveFreshDetails(detailsCacheKey.getMemberId(), detailsCacheKey.getConsotiumLeadId());
+        MemberDetails details = salesForceManager.retrieveFreshDetails(detailsCacheKey.getMemberId(), detailsCacheKey.getConsotiumLeadId());
         return details;
     }
 

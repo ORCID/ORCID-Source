@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -24,7 +24,7 @@ import java.net.URL;
  * @author Will Simpson
  *
  */
-public class SalesForceMember implements Serializable {
+public class Member implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

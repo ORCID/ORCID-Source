@@ -14,30 +14,46 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
-
-import java.util.List;
+package org.orcid.core.salesforce.model;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public class SalesForceConsortium {
+public class Contact {
 
-    private List<SalesForceOpportunity> opportunities;
+    private String name;
+    private String email;
+    private String role;
 
-    public List<SalesForceOpportunity> getOpportunities() {
-        return opportunities;
+    public String getName() {
+        return name;
     }
 
-    public void setOpportunities(List<SalesForceOpportunity> opportunities) {
-        this.opportunities = opportunities;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override
     public String toString() {
-        return "SalesForceConsortium [opportunities=" + opportunities + "]";
+        return "SalesForceContact [name=" + name + ", email=" + email + ", role=" + role + "]";
     }
 
 }

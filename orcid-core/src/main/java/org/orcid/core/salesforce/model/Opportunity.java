@@ -14,14 +14,14 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.salesforce.model;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public class SalesForceOpportunity {
+public class Opportunity {
 
     private String id;
     private String targetAccountId;
