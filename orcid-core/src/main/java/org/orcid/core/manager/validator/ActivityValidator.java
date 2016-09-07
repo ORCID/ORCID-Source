@@ -131,12 +131,16 @@ public class ActivityValidator {
             
             if(year != null) {                
                 try {
-                    Integer.valueOf(year.getValue());
+                    Integer.valueOf(year.getValue());                    
                 } catch(NumberFormatException n) {
                     Map<String, String> params = new HashMap<String, String>();
                     params.put("type", "publication date -> year");
                     params.put("values", "integers");
                     throw new ActivityTypeValidationException(params);
+                }
+                
+                if(year.getValue().length() != 4) {
+                    throw new OrcidValidationException("Invalid year " + year.getValue() + " please specify a four digits value");
                 }
             }
             
@@ -149,6 +153,10 @@ public class ActivityValidator {
                     params.put("values", "integers");
                     throw new ActivityTypeValidationException(params);
                 }
+                
+                if(month.getValue().length() != 2) {
+                    throw new OrcidValidationException("Invalid month " + month.getValue() + " please specify a two digits value");
+                }
             }
             
             if(day != null) {
@@ -159,6 +167,10 @@ public class ActivityValidator {
                     params.put("type", "publication date -> day");
                     params.put("values", "integers");
                     throw new ActivityTypeValidationException(params);
+                }
+                
+                if(day.getValue().length() != 2) {
+                    throw new OrcidValidationException("Invalid day " + day.getValue() + " please specify a two digits value");
                 }
             }
             
