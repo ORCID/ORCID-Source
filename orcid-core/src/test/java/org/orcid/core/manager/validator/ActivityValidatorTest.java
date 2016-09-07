@@ -37,9 +37,11 @@ import org.orcid.core.exception.VisibilityMismatchException;
 import org.orcid.jaxb.model.common_rc3.Amount;
 import org.orcid.jaxb.model.common_rc3.Contributor;
 import org.orcid.jaxb.model.common_rc3.ContributorAttributes;
+import org.orcid.jaxb.model.common_rc3.ContributorEmail;
 import org.orcid.jaxb.model.common_rc3.ContributorOrcid;
 import org.orcid.jaxb.model.common_rc3.ContributorRole;
 import org.orcid.jaxb.model.common_rc3.Country;
+import org.orcid.jaxb.model.common_rc3.CreditName;
 import org.orcid.jaxb.model.common_rc3.Day;
 import org.orcid.jaxb.model.common_rc3.FuzzyDate;
 import org.orcid.jaxb.model.common_rc3.Iso3166Country;
@@ -108,6 +110,27 @@ public class ActivityValidatorTest {
         activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
+    @Test(expected = OrcidValidationException.class)
+    public void validateWork_emptyTranslatedTitleWithLanguageCodeTest() {
+        Work work = getWork();
+        work.getWorkTitle().getTranslatedTitle().setContent(null);
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityTypeValidationException.class)
+    public void validateWork_translatedTitleWithInvalidLanguageCodeTest() {
+        Work work = getWork();
+        work.getWorkTitle().getTranslatedTitle().setLanguageCode("xx");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityTypeValidationException.class)
+    public void validateWork_translatedTitleWithNoLanguageCodeTest() {
+        Work work = getWork();
+        work.getWorkTitle().getTranslatedTitle().setLanguageCode(null);
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
     @Test(expected = ActivityTypeValidationException.class)
     public void validateWork_emptyTypeTest() {
         Work work = getWork();
@@ -151,7 +174,42 @@ public class ActivityValidatorTest {
             
         }
         
+        try {
+            Work work = getWork();
+            work.setPublicationDate(new PublicationDate(null, new Month(1), new Day(1)));
+            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            fail();
+        } catch(OrcidValidationException e) {
+            
+        }
+        
+        try {
+            Work work = getWork();
+            work.setPublicationDate(new PublicationDate(new Year(2017), null, new Day(1)));
+            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            fail();
+        } catch(OrcidValidationException e) {
+            
+        }
+        
+        try {
+            Work work = getWork();
+            work.setPublicationDate(new PublicationDate(null, null, new Day(1)));
+            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            fail();
+        } catch(OrcidValidationException e) {
+            
+        }
+        
         Work work = getWork();
+        work.setPublicationDate(new PublicationDate(new Year(2017), new Month(1), null));
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+        
+        work = getWork();
+        work.setPublicationDate(new PublicationDate(new Year(2017), null, null));
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+                
+        work = getWork();
         activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
@@ -160,6 +218,48 @@ public class ActivityValidatorTest {
         Work work = getWork();
         work.getWorkCitation().setWorkCitationType(null);
         activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);        
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateWork_emptyCitationTest() {
+        Work work = getWork();
+        work.getWorkCitation().setCitation(null);
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateWork_contributorOrcidInvalidOrcidTest() {
+        Work work = getWork();
+        work.getWorkContributors().getContributor().get(0).getContributorOrcid().setPath("invalid");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateWork_contributorOrcidInvalidUriTest() {
+        Work work = getWork();
+        work.getWorkContributors().getContributor().get(0).getContributorOrcid().setUri("http://invalid.org");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateWork_emptyContributorCreditNameTest() {
+        Work work = getWork();
+        work.getWorkContributors().getContributor().get(0).getCreditName().setContent("");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = OrcidValidationException.class)
+    public void validateWork_emptyContributorEmailTest() {
+        Work work = getWork();
+        work.getWorkContributors().getContributor().get(0).getContributorEmail().setValue("");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityTypeValidationException.class)
+    public void validateWork_emptyCountryTest() {
+        Work work = getWork();        
+        work.getCountry().setValue((Iso3166Country) null);
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
     @Test(expected = InvalidPutCodeException.class)
@@ -177,9 +277,16 @@ public class ActivityValidatorTest {
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
-    public void validateWork_invalidExternalIdentifierTest() {
+    public void validateWork_invalidExternalIdentifierTypeTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("invalid");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void validateWork_emptyExternalIdentifierValueTest() {
+        Work work = getWork();
+        work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");;
         activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
@@ -205,6 +312,8 @@ public class ActivityValidatorTest {
         Contributor contributor = new Contributor();
         contributor.setContributorAttributes(attributes);
         contributor.setContributorOrcid(contributorOrcid);
+        contributor.setCreditName(new CreditName("credit name", Visibility.PUBLIC));
+        contributor.setContributorEmail(new ContributorEmail("email@test.orcid.org"));
         
         WorkContributors contributors = new WorkContributors(Stream.of(contributor).collect(Collectors.toList()));        
         work.setWorkContributors(contributors);
@@ -431,6 +540,13 @@ public class ActivityValidatorTest {
     public void validatePeerReview_noExternalIdentifiersTest() {
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().clear();
+        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void validatePeerReview_emptyExternalIdentifierValueTest() {
+        PeerReview pr = getPeerReview();
+        pr.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
         activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
