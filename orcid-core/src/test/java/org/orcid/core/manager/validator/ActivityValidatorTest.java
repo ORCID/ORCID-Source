@@ -277,9 +277,16 @@ public class ActivityValidatorTest {
     }
     
     @Test(expected = ActivityIdentifierValidationException.class)
-    public void validateWork_invalidExternalIdentifierTest() {
+    public void validateWork_invalidExternalIdentifierTypeTest() {
         Work work = getWork();
         work.getExternalIdentifiers().getExternalIdentifier().get(0).setType("invalid");
+        activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void validateWork_emptyExternalIdentifierValueTest() {
+        Work work = getWork();
+        work.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");;
         activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
@@ -533,6 +540,13 @@ public class ActivityValidatorTest {
     public void validatePeerReview_noExternalIdentifiersTest() {
         PeerReview pr = getPeerReview();
         pr.getExternalIdentifiers().getExternalIdentifier().clear();
+        activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+    }
+    
+    @Test(expected = ActivityIdentifierValidationException.class)
+    public void validatePeerReview_emptyExternalIdentifierValueTest() {
+        PeerReview pr = getPeerReview();
+        pr.getExternalIdentifiers().getExternalIdentifier().get(0).setValue("");
         activityValidator.validatePeerReview(pr, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
     }
     
