@@ -246,9 +246,10 @@ function checkOrcidLoggedIn() {
             }).fail(
             // detects server is down or CSRF mismatches
             // do to session expiration or server bounces
-            function() {
+            function(e) {
                 console.log("error with loggin check on :"
                         + window.location.href);
+                console.log(e);
                 window.location = window.location.href;
             });
 }
@@ -279,6 +280,8 @@ function logOffReload(reload_param) {
         }
     }).fail(function() {
         // something bad is happening!
+        console.log("Error with log out");
+        console.log(e);
         window.location.reload();
     });
 };
@@ -512,8 +515,10 @@ $(function() {
                                                     showLoginError(message);
                                                 };
                                             }
-                                        }).fail(function() {
+                                        }).fail(function(e) {
                                     // something bad is happening!
+                                    console.log("Error with log in");
+                                    console.log(e);
                                     window.location.reload();
                                 });
                         return false;
