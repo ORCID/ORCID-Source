@@ -25,13 +25,13 @@ import org.orcid.core.exception.PutCodeFormatException;
  */
 public class MemberV2ApiServiceImplHelper {
 
-	protected Long getPutCode(String putCode) {
-    	Long putCodeNum = null;
-    	try {
-    		putCodeNum = Long.valueOf(putCode);
-    	} catch(Exception e) {
+    protected Long getPutCode(String putCode) {
+        Long putCodeNum = null;
+        try {
+            putCodeNum = Long.valueOf(putCode);
+        } catch (Exception e) {
             throw new PutCodeFormatException();
-    	}
-    	return putCodeNum;
+        }
+        return putCodeNum;
     }
 }

@@ -23,12 +23,11 @@ import java.util.TreeMap;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.orcid.persistence.constants.SiteConstants;
 import org.springframework.cache.annotation.Cacheable;
 
 public class LanguagesMap {
-    private static final String X = "X";
-    
-    private static String[] AVAILABLE_ISO_LANGUAGES = {"aa", "ab", "ae", "af", "ak", "am", "an", "ar", "as", "av", "ay", "az", "ba", "be", "bg", "bh", "bi", "bm", "bn", "bo", "br", "bs", "ca", "ce", "ch", "co", "cr", "cs", "cu", "cv", "cy", "da", "de", "dv", "dz", "ee", "el", "en", "en", "eo", "es", "et", "eu", "fa", "ff", "fi", "fj", "fo", "fr", "fy", "ga", "gd", "gl", "gn", "gu", "gv", "ha", "hi", "ho", "hr", "ht", "hu", "hy", "hz", "ia", "ie", "ig", "ii", "ik", "in", "io", "is", "it", "iu", "iw", "ja", "ji", "jv", "ka", "kg", "ki", "kj", "kk", "kl", "km", "kn", "ko", "kr", "ks", "ku", "kv", "kw", "ky", "la", "lb", "lg", "li", "ln", "lo", "lt", "lu", "lv", "mg", "mh", "mi", "mk", "ml", "mn", "mo", "mr", "ms", "mt", "my", "na", "nb", "nd", "ne", "ng", "nl", "nn", "no", "nr", "nv", "ny", "oc", "oj", "om", "or", "os", "pa", "pi", "pl", "ps", "pt", "qu", "rm", "rn", "ro", "ru", "rw", "sa", "sc", "sd", "se", "sg", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr", "ss", "st", "su", "sv", "sw", "ta", "te", "tg", "th", "ti", "tk", "tl", "tn", "to", "tr", "ts", "tt", "tw", "ty", "ug", "uk", "ur", "uz", "ve", "vi", "vo", "wa", "wo", "xh", "yo", "za", "zh_CN", "zh_TW", "zu"};
+    private static final String X = "X";      
     
     /**
      * This map contains all the available languages in all available locales.
@@ -47,7 +46,7 @@ public class LanguagesMap {
 
     /* get all ISO languages, remove zh and add in zh_TW and zh_CN */ 
     static private Locale[] getLanguages() {
-        String[] codes = AVAILABLE_ISO_LANGUAGES;
+        String[] codes = SiteConstants.AVAILABLE_ISO_LANGUAGES;
         Locale[] orcidCodes = new Locale[codes.length];
         for (int i = 0; i< codes.length; i++) {
             orcidCodes[i] = LocaleUtils.toLocale(codes[i]);           
