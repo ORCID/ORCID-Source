@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.cache.MemberDetailsCacheKey;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
@@ -92,7 +93,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
         if (match.isPresent()) {
             Member salesForceMember = match.get();
             MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
-                    .get(new SalesForceMemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
+                    .get(new MemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);
             details.setContacts(findContacts(salesForceMember));
             details.setSubMembers(findSubMembers(memberId));
