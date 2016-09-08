@@ -34,35 +34,17 @@ public interface SalesForceManager {
 
     List<Member> retrieveMembers();
 
-    List<Member> retrieveFreshMembers();
-
     List<Member> retrieveConsortia();
-
-    List<Member> retrieveFreshConsortia();
 
     Consortium retrieveConsortium(String consortiumId);
 
-    Consortium retrieveFreshConsortium(String consortiumId);
-
     MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
-
-    MemberDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
 
     MemberDetails retrieveDetailsBySlug(String memberSlug);
 
     List<Contact> retrieveContactsByOpportunityId(String opportunityId);
 
     Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
-
-    Map<String, List<Contact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds);
-
-    /**
-     * @return The sales force object id, if valid.
-     * @throws IllegalArgumentException
-     *             if the sales force object id is not the correct format, or
-     *             could contain something malicious.
-     */
-    String validateSalesForceId(String memberId);
 
     /**
      * Clear caches
