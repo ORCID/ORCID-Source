@@ -16,12 +16,16 @@
  */
 package org.orcid.core.salesforce.model;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Will Simpson
  *
  */
-public class Contact {
+public class Contact implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String name;
     private String email;

@@ -200,7 +200,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
      * 
      */
     private Consortium retrieveConsortiumFromSalesForce(String accessToken, String consortiumId) throws SalesForceUnauthorizedException {
-        LOGGER.info("About get list of consortium from SalesForce");
+        LOGGER.info("About get consortium from SalesForce");
         validateSalesForceId(consortiumId);
         WebResource resource = createConsortiumResource(consortiumId);
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);

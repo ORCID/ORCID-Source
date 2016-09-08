@@ -14,33 +14,27 @@
  *
  * =============================================================================
  */
-package org.orcid.core.salesforce.model;
+package org.orcid.core.salesforce.cache;
 
-import java.io.Serializable;
-import java.util.List;
+import javax.annotation.Resource;
+
+import org.orcid.core.salesforce.dao.SalesForceDao;
+
+import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public class Consortium implements Serializable {
+public class ConsortiaListCacheEntryFactory implements CacheEntryFactory {
 
-    private static final long serialVersionUID = 1L;
-
-    private List<Opportunity> opportunities;
-
-    public List<Opportunity> getOpportunities() {
-        return opportunities;
-    }
-
-    public void setOpportunities(List<Opportunity> opportunities) {
-        this.opportunities = opportunities;
-    }
+    @Resource
+    private SalesForceDao salesForceDao;
 
     @Override
-    public String toString() {
-        return "SalesForceConsortium [opportunities=" + opportunities + "]";
+    public Object createEntry(Object key) throws Exception {
+        return salesForceDao.retrieveConsortia();
     }
 
 }

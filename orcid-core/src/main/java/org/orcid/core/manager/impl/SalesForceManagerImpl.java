@@ -57,6 +57,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Resource(name = "salesForceMemberDetailsCache")
     private SelfPopulatingCache salesForceMemberDetailsCache;
 
+    @Resource(name = "salesForceConsortiaListCache")
+    private SelfPopulatingCache salesForceConsortiaListCache;
+
+    @Resource(name = "salesForceConsortiumCache")
+    private SelfPopulatingCache salesForceConsortiumCache;
+
+    @Resource(name = "salesForceContactsCache")
+    private SelfPopulatingCache salesForceContactsCache;
+
     @Resource
     private SalesForceDao salesForceDao;
 
@@ -68,16 +77,15 @@ public class SalesForceManagerImpl implements SalesForceManager {
         return (List<Member>) salesForceMembersListCache.get(releaseName).getObjectValue();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Member> retrieveConsortia() {
-        // XXX Implement cache
-        return salesForceDao.retrieveConsortia();
+        return (List<Member>) salesForceConsortiaListCache.get(releaseName).getObjectValue();
     }
 
     @Override
     public Consortium retrieveConsortium(String consortiumId) {
-        // XXX Implement cache
-        return salesForceDao.retrieveConsortium(consortiumId);
+        return (Consortium) salesForceConsortiumCache.get(consortiumId).getObjectValue();
     }
 
     @Override
@@ -106,20 +114,23 @@ public class SalesForceManagerImpl implements SalesForceManager {
     public List<Contact> retrieveContactsByOpportunityId(String opportunityId) {
         List<String> opportunityIds = new ArrayList<>();
         opportunityIds.add(opportunityId);
-        Map<String, List<Contact>> results = salesForceDao.retrieveContactsByOpportunityId(opportunityIds);
-        return results.get(opportunityId);
+        Map<String, List<Contact>> contacts = retrieveContactsByOpportunityId(opportunityIds);
+        return contacts.get(opportunityId);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
-        // XXX Implement cache
-        return salesForceDao.retrieveContactsByOpportunityId(opportunityIds);
+        return (Map<String, List<Contact>>) salesForceContactsCache.get(opportunityIds).getObjectValue();
     }
 
     @Override
     public void evictAll() {
         salesForceMembersListCache.removeAll();
         salesForceMemberDetailsCache.removeAll();
+        salesForceConsortiaListCache.removeAll();
+        salesForceConsortiumCache.removeAll();
+        salesForceContactsCache.removeAll();
     }
 
     private List<Contact> findContacts(Member member) {
