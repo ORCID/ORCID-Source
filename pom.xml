@@ -37,6 +37,7 @@ the software.
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.port>9437</servlet.port>
         <ajp.port>9438</ajp.port>
+        <aws.version>1.11.32</aws.version>
         <main.basedir>${project.basedir}</main.basedir>
     </properties>
 
@@ -756,13 +757,13 @@ the software.
             <dependency>
 				<groupId>org.apache.httpcomponents</groupId>
 				<artifactId>httpclient</artifactId>
-				<version>4.3.5</version>
+				<version>4.5.2</version>
                 <scope>compile</scope>
 			</dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.5</version>
+                <version>1.9</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
@@ -843,7 +844,7 @@ the software.
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.0.3</version>
+                <version>1.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -1038,8 +1039,18 @@ the software.
                <groupId>io.swagger</groupId>
                <artifactId>swagger-jaxrs</artifactId>
                <version>${swagger.version}</version>
-            </dependency> 
-        </dependencies>
+            </dependency>
+            
+            <!-- AWS -->
+            <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-bom -->
+			<dependency>
+			    <groupId>com.amazonaws</groupId>
+			    <artifactId>aws-java-sdk-s3</artifactId>
+			    <version>${aws.version}</version>			    
+			</dependency>
+
+             
+        </dependencies>               
     </dependencyManagement>
 
     <repositories>

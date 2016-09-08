@@ -20,9 +20,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;

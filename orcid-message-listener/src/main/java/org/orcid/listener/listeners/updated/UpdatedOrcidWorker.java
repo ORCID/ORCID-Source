@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
@@ -55,13 +56,23 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue");
             LOG.info("Processing " + m.getLastUpdated());
             OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(m.getOrcid());
-            Date lastModifiedFromprofile = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
-            Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());
-            // note this is slightly different from existing behaviour
-            if (lastModifiedFromprofile.after(lastModifiedFromSolr))
-                solrIndexUpdater.updateSolrIndex(profile);
+            // update solr
+            //updateSolr(profile);
             // now do the same for S3...
-            s3Updater.updateS3(profile);
+            try {
+                s3Updater.updateS3(profile);
+            } catch(JsonProcessingException jpe) {
+                //Unable to update record in S3
+            }
         }
+    }
+    
+    private void updateSolr(OrcidProfile profile) {
+        String orcidId = profile.getOrcidIdentifier().getPath();
+        Date lastModifiedFromprofile = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(orcidId);
+        // note this is slightly different from existing behaviour
+        if (lastModifiedFromprofile.after(lastModifiedFromSolr))
+            solrIndexUpdater.updateSolrIndex(profile);
     }
 }

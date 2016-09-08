@@ -16,19 +16,17 @@
  */
 package org.orcid.listener.clients;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
@@ -36,12 +34,8 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 @Component
 public class S3Updater {
 
-    private final ObjectMapper mapper;
-    private final boolean writeToFileNotS3;
+    private final ObjectMapper mapper;    
     
-    @Value("org.orcid.persistence.messaging.dump_indexing.enabled")
-    private boolean isDumpEnabled;
-
     Logger LOG = LoggerFactory.getLogger(S3Updater.class);
 
     /**
@@ -51,59 +45,27 @@ public class S3Updater {
      *            if true, write to local file system temp directory instead of
      *            S3
      */
-    @Autowired
-    public S3Updater(@Value("${org.orcid.message-lisener.writeToFileNotS3}") boolean writeToFileNotS3) {
-        LOG.info("Creating S3Updater with writeToFileNotS3 = " + writeToFileNotS3);
+    public S3Updater() {
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        this.writeToFileNotS3 = writeToFileNotS3;        
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);    
     }
 
-    public void updateS3(OrcidProfile profile) {
-        LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + (writeToFileNotS3 ? " on local filesystem" : " in S3 index."));
-        if(!isDumpEnabled) {
-            LOG.info("Dump indexing is disabled");
-            return;
-        }
+    public void updateS3(OrcidProfile profile) throws JsonProcessingException {        
+        String elementName = profile.getOrcidIdentifier().getPath();
+        String jsonElement = mapper.writeValueAsString(profile);
+        String bucketName = "orcid-public-data-dump-dev";
+
+        AWSCredentials credentials = new BasicAWSCredentials("AKIAJ3FMFSKQZCNDFFIQ", "3DrzCw84+IdgHAEsr8YqtyqIsUh4kjPk+CDsdL2l");
         
-        if (writeToFileNotS3) {
-            writeToTempFile(profile);
-            return;
-        }
-
-        throw new UnsupportedOperationException();
-
-    }
-
-    /**
-     * Writes {orcid}.json and {orcid}.xml to the temp directory. Used during
-     * development
-     * 
-     * @param profile
-     */
-    private void writeToTempFile(OrcidProfile profile) {
-        // write xml
-        Path path;
+        final AmazonS3 s3 = new AmazonS3Client(credentials);
         try {
-            path = Files.createTempFile(profile.getOrcidIdentifier().getPath() + ".", ".xml");
-            Files.write(path, profile.toString().getBytes(StandardCharsets.UTF_8)).toFile().deleteOnExit();
-            LOG.info("wrote xml to " + path.toAbsolutePath().toString());
-        } catch (IOException e) {
-            LOG.error("cannot create xml", e);
+            s3.putObject(bucketName, elementName, jsonElement);
         }
-
-        // write json
-        try {
-            StringWriter json = new StringWriter();
-            mapper.writeValue(json, profile);
-            path = Files.createTempFile(profile.getOrcidIdentifier().getPath() + ".", ".json");
-            Files.write(path, json.toString().getBytes(StandardCharsets.UTF_8)).toFile().deleteOnExit();
-            LOG.info("wrote json to " + path.toAbsolutePath().toString());
-        } catch (IOException e) {
-            LOG.error("cannot create json", e);
+        catch (AmazonServiceException e) {
+            System.err.println(e.getErrorMessage());
+            System.exit(1);
         }
     }
-
 }

@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 @Component
 public class ReIndexListener {
 
@@ -47,9 +49,10 @@ public class ReIndexListener {
      * Processes messages on receipt.
      * 
      * @param map
+     * @throws JsonProcessingException 
      */
     @JmsListener(destination = MessageConstants.Queues.REINDEX)
-    public void processMessage(final Map<String, String> map) {
+    public void processMessage(final Map<String, String> map) throws JsonProcessingException {
         LastModifiedMessage message = new LastModifiedMessage(map);
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
         OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
