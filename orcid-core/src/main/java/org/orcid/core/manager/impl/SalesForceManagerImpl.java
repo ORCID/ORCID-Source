@@ -82,7 +82,6 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public MemberDetails retrieveDetailsBySlug(String memberSlug) {
         String memberId = SlugUtils.extractIdFromSlug(memberSlug);
-        salesForceDao.validateSalesForceId(memberId);
         return retrieveDetails(memberId);
     }
 
