@@ -33,6 +33,7 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.salesforce.model.SubMember;
 import org.orcid.utils.ReleaseNameUtils;
 import org.slf4j.Logger;
@@ -54,12 +55,12 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Resource(name = "salesForceMemberDetailsCache")
     private SelfPopulatingCache salesForceMemberDetailsCache;
-    
+
     @Resource
     private SalesForceDao salesForceDao;
 
     private String releaseName = ReleaseNameUtils.getReleaseName();
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public List<Member> retrieveMembers() {
@@ -80,7 +81,8 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Override
     public MemberDetails retrieveDetails(String memberId, String consortiumLeadId) {
-        MemberDetails details = (MemberDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName)).getObjectValue();
+        MemberDetails details = (MemberDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName))
+                .getObjectValue();
         List<Member> members = retrieveMembers();
         Optional<Member> match = members.stream().filter(e -> memberId.equals(e.getId())).findFirst();
         if (match.isPresent()) {
@@ -94,7 +96,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
 
     @Override
     public MemberDetails retrieveDetailsBySlug(String memberSlug) {
-        String id = memberSlug.substring(0, memberSlug.indexOf(SalesForceDao.SLUG_SEPARATOR));
+        String id = SlugUtils.extractIdFromSlug(memberSlug);
         salesForceDao.validateSalesForceId(id);
         List<Member> members = retrieveMembers();
         Optional<Member> match = members.stream().filter(e -> id.equals(e.getId())).findFirst();
@@ -159,7 +161,7 @@ public class SalesForceManagerImpl implements SalesForceManager {
             List<SubMember> subMembers = consortium.getOpportunities().stream().map(o -> {
                 SubMember subMember = new SubMember();
                 subMember.setOpportunity(o);
-                subMember.setSlug(salesForceDao.createSlug(o.getTargetAccountId(), o.getAccountName()));
+                subMember.setSlug(SlugUtils.createSlug(o.getTargetAccountId(), o.getAccountName()));
                 List<Contact> contactsList = contactsMap.get(o.getId());
                 Optional<Contact> mainContactOptional = contactsList.stream().filter(c -> SalesForceDao.MAIN_CONTACT_ROLE.equals(c.getRole())).findFirst();
                 if (mainContactOptional.isPresent()) {
@@ -171,5 +173,5 @@ public class SalesForceManagerImpl implements SalesForceManager {
         }
         return Collections.emptyList();
     }
-    
+
 }

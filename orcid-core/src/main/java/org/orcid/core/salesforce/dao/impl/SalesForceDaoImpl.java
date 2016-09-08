@@ -16,7 +16,6 @@
  */
 package org.orcid.core.salesforce.dao.impl;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -39,11 +38,11 @@ import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Opportunity;
+import org.orcid.core.salesforce.model.SlugUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.github.slugify.Slugify;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -77,15 +76,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     private String accessToken;
     
-    private Slugify slugify;
-    {
-        try {
-            slugify = new Slugify();
-        } catch (IOException e) {
-            throw new RuntimeException("Error initializing slugify", e);
-        }
-    }
-
     @Override
     public List<Member> retrieveFreshConsortia() {
         try {
@@ -297,7 +287,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
         Member member = new Member();
         member.setName(name);
         member.setId(id);
-        member.setSlug(createSlug(id, name));
+        member.setSlug(SlugUtils.createSlug(id, name));
         try {
             member.setWebsiteUrl(extractURL(record, "Website"));
         } catch (MalformedURLException e) {
@@ -335,7 +325,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
         MemberDetails details = new MemberDetails();
         String parentOrgName = retrieveParentOrgNameFromSalesForce(accessToken, consortiumLeadId);
         details.setParentOrgName(parentOrgName);
-        details.setParentOrgSlug(createSlug(consortiumLeadId, parentOrgName));
+        details.setParentOrgSlug(SlugUtils.createSlug(consortiumLeadId, parentOrgName));
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
         return details;
     }
@@ -544,11 +534,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new IllegalArgumentException("Unable to extract ID, url = " + url);
         }
         return url.substring(slashIndex + 1);
-    }
-
-    @Override
-    public String createSlug(String id, String name) {
-        return id + SLUG_SEPARATOR + slugify.slugify(name);
     }
 
     private String getAccessToken() {

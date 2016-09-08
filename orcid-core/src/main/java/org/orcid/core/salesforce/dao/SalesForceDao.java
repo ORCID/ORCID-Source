@@ -36,8 +36,6 @@ public interface SalesForceDao {
 
     static final String TECH_LEAD_ROLE = "Tech Lead";
 
-    static final String SLUG_SEPARATOR = "-";
-
     List<Member> retrieveFreshMembers();
 
     List<Member> retrieveFreshConsortia();
@@ -56,5 +54,4 @@ public interface SalesForceDao {
      */
     String validateSalesForceId(String memberId);
 
-    String createSlug(String id, String name);
 }
