@@ -38,9 +38,9 @@ public interface SalesForceManager {
 
     Consortium retrieveConsortium(String consortiumId);
 
-    MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
-
     MemberDetails retrieveDetailsBySlug(String memberSlug);
+
+    MemberDetails retrieveDetails(String memberId);
 
     List<Contact> retrieveContactsByOpportunityId(String opportunityId);
 

@@ -80,34 +80,26 @@ public class SalesForceManagerImpl implements SalesForceManager {
     }
 
     @Override
-    public MemberDetails retrieveDetails(String memberId, String consortiumLeadId) {
-        MemberDetails details = (MemberDetails) salesForceMemberDetailsCache.get(new SalesForceMemberDetailsCacheKey(memberId, consortiumLeadId, releaseName))
-                .getObjectValue();
+    public MemberDetails retrieveDetailsBySlug(String memberSlug) {
+        String memberId = SlugUtils.extractIdFromSlug(memberSlug);
+        salesForceDao.validateSalesForceId(memberId);
+        return retrieveDetails(memberId);
+    }
+
+    @Override
+    public MemberDetails retrieveDetails(String memberId) {
         List<Member> members = retrieveMembers();
         Optional<Member> match = members.stream().filter(e -> memberId.equals(e.getId())).findFirst();
         if (match.isPresent()) {
             Member salesForceMember = match.get();
+            MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
+                    .get(new SalesForceMemberDetailsCacheKey(memberId, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
             details.setMember(salesForceMember);
             details.setContacts(findContacts(salesForceMember));
-        }
-        details.setSubMembers(findSubMembers(memberId));
-        return details;
-    }
-
-    @Override
-    public MemberDetails retrieveDetailsBySlug(String memberSlug) {
-        String id = SlugUtils.extractIdFromSlug(memberSlug);
-        salesForceDao.validateSalesForceId(id);
-        List<Member> members = retrieveMembers();
-        Optional<Member> match = members.stream().filter(e -> id.equals(e.getId())).findFirst();
-        if (match.isPresent()) {
-            Member salesForceMember = match.get();
-            MemberDetails details = (MemberDetails) salesForceMemberDetailsCache
-                    .get(new SalesForceMemberDetailsCacheKey(id, salesForceMember.getConsortiumLeadId(), releaseName)).getObjectValue();
-            details.setMember(salesForceMember);
+            details.setSubMembers(findSubMembers(memberId));
             return details;
         }
-        throw new IllegalArgumentException("No member details found for " + memberSlug);
+        throw new IllegalArgumentException("No member details found for " + memberId);
     }
 
     @Override
