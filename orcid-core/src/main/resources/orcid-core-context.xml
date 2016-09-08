@@ -396,6 +396,8 @@
 
 	<bean id="identitifierTypeManager" class="org.orcid.core.manager.impl.IdentifierTypeManagerImpl" />
     
+    <bean id="salesForceAdapter" class="org.orcid.core.salesforce.adapter.SalesForceAdapter" />
+    
     <bean id="salesForceDao" class="org.orcid.core.salesforce.dao.impl.SalesForceDaoImpl" />
     
     <bean id="salesForceManager" class="org.orcid.core.manager.impl.SalesForceManagerImpl" />

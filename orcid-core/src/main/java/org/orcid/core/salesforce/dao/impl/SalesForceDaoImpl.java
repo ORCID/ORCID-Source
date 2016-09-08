@@ -16,28 +16,23 @@
  */
 package org.orcid.core.salesforce.dao.impl;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.exception.SalesForceUnauthorizedException;
+import org.orcid.core.salesforce.adapter.SalesForceAdapter;
 import org.orcid.core.salesforce.dao.SalesForceDao;
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
-import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.SlugUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +48,7 @@ import com.sun.jersey.api.representation.Form;
 public class SalesForceDaoImpl implements SalesForceDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceDaoImpl.class);
-    
+
     @Value("${org.orcid.core.salesForce.clientId}")
     private String clientId;
 
@@ -71,11 +66,14 @@ public class SalesForceDaoImpl implements SalesForceDao {
 
     @Value("${org.orcid.core.salesForce.apiBaseUrl:https://cs43.salesforce.com}")
     private String apiBaseUrl;
-    
+
+    @Resource
+    private SalesForceAdapter salesForceAdapter;
+
     private Client client = Client.create();
 
     private String accessToken;
-    
+
     @Override
     public List<Member> retrieveFreshConsortia() {
         try {
@@ -85,7 +83,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             return retrieveConsortiaFromSalesForce(getFreshAccessToken());
         }
     }
-    
+
     @Override
     public List<Member> retrieveFreshMembers() {
         try {
@@ -95,7 +93,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             return retrieveMembersFromSalesForce(getFreshAccessToken());
         }
     }
-    
+
     @Override
     public Consortium retrieveFreshConsortium(String consortiumId) {
         try {
@@ -105,7 +103,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             return retrieveConsortiumFromSalesForce(getFreshAccessToken(), consortiumId);
         }
     }
-    
+
     @Override
     public MemberDetails retrieveFreshDetails(String memberId, String consortiumLeadId) {
         validateSalesForceId(memberId);
@@ -119,7 +117,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             return retrieveDetailsFromSalesForce(getFreshAccessToken(), memberId, consortiumLeadId);
         }
     }
-    
+
     @Override
     public Map<String, List<Contact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds) {
         try {
@@ -129,7 +127,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             return retrieveContactsFromSalesForce(getFreshAccessToken(), opportunityIds);
         }
     }
-    
+
     @Override
     public String validateSalesForceId(String salesForceId) {
         if (!salesForceId.matches("[a-zA-Z0-9]+")) {
@@ -144,7 +142,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
         return "'" + String.join("','", salesForceIds) + "'";
     }
 
-    
     /**
      * 
      * @throws SalesForceUnauthorizedException
@@ -161,7 +158,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return createMembersListFromResponse(response);
+        return salesForceAdapter.createMembersListFromJson(response.getEntity(JSONObject.class));
     }
 
     private WebResource createMemberListResource() {
@@ -186,7 +183,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting consortia list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return createMembersListFromResponse(response);
+        return salesForceAdapter.createMembersListFromJson(response.getEntity(JSONObject.class));
     }
 
     private WebResource createConsortiaListResource() {
@@ -212,7 +209,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting consortium from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return createConsortiumFromResponse(response);
+        return salesForceAdapter.createConsortiumFromJson(response.getEntity(JSONObject.class));
     }
 
     private WebResource createConsortiumResource(String consortiumId) {
@@ -220,98 +217,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
                 "SELECT (SELECT Id, Account.Name FROM ConsortiaOpportunities__r WHERE IsClosed=TRUE AND IsWon=TRUE AND Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC) from Account WHERE Id='"
                         + validateSalesForceId(consortiumId) + "'");
         return resource;
-    }
-
-    private Consortium createConsortiumFromResponse(ClientResponse response) {
-        JSONObject results = response.getEntity(JSONObject.class);
-        try {
-            int numFound = extractInt(results, "totalSize");
-            if (numFound == 0) {
-                return null;
-            }
-            Consortium consortium = new Consortium();
-            List<Opportunity> opportunityList = new ArrayList<>();
-            consortium.setOpportunities(opportunityList);
-            JSONArray records = results.getJSONArray("records");
-            JSONObject firstRecord = records.getJSONObject(0);
-            JSONObject opportunities = extractObject(firstRecord, "ConsortiaOpportunities__r");
-            if (opportunities != null) {
-                JSONArray opportunityRecords = opportunities.getJSONArray("records");
-                for (int i = 0; i < opportunityRecords.length(); i++) {
-                    Opportunity salesForceOpportunity = new Opportunity();
-                    JSONObject opportunity = opportunityRecords.getJSONObject(i);
-                    salesForceOpportunity.setId(extractOpportunityId(opportunity));
-                    JSONObject account = extractObject(opportunity, "Account");
-                    salesForceOpportunity.setTargetAccountId(extractAccountId(account));
-                    salesForceOpportunity.setAccountName(extractString(account, "Name"));
-                    opportunityList.add(salesForceOpportunity);
-                }
-                return consortium;
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting consortium record from SalesForce JSON", e);
-        }
-        return null;
-    }
-
-    private String extractOpportunityId(JSONObject opportunity) throws JSONException {
-        JSONObject opportunityAttributes = extractObject(opportunity, "attributes");
-        String opportunityUrl = extractString(opportunityAttributes, "url");
-        return extractIdFromUrl(opportunityUrl);
-    }
-
-    private String extractAccountId(JSONObject account) throws JSONException {
-        JSONObject accountAttributes = extractObject(account, "attributes");
-        String accountUrl = extractString(accountAttributes, "url");
-        String accountId = extractIdFromUrl(accountUrl);
-        return accountId;
-    }
-
-    private List<Member> createMembersListFromResponse(ClientResponse response) {
-        List<Member> members = new ArrayList<>();
-        JSONObject results = response.getEntity(JSONObject.class);
-        try {
-            JSONArray records = results.getJSONArray("records");
-            for (int i = 0; i < records.length(); i++) {
-                members.add(createMemberFromSalesForceRecord(records.getJSONObject(i)));
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting member records from SalesForce JSON", e);
-        }
-        return members;
-    }
-
-    private Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
-        String name = extractString(record, "Name");
-        String id = extractString(record, "Id");
-        Member member = new Member();
-        member.setName(name);
-        member.setId(id);
-        member.setSlug(SlugUtils.createSlug(id, name));
-        try {
-            member.setWebsiteUrl(extractURL(record, "Website"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed website URL for member: {}", name, e);
-        }
-        member.setResearchCommunity(extractString(record, "Research_Community__c"));
-        member.setCountry(extractString(record, "BillingCountry"));
-        JSONObject opportunitiesObject = extractObject(record, "Opportunities");
-        if (opportunitiesObject != null) {
-            JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
-            if (opportunitiesArray.length() > 0) {
-                JSONObject mainOpportunity = opportunitiesArray.getJSONObject(0);
-                JSONObject mainOppAttributes = extractObject(mainOpportunity, "attributes");
-                member.setMainOpportunityId(extractIdFromUrl(extractString(mainOppAttributes, "url")));
-                member.setConsortiumLeadId(extractString(mainOpportunity, "Consortia_Lead__c"));
-            }
-        }
-        member.setDescription(extractString(record, "Public_Display_Description__c"));
-        try {
-            member.setLogoUrl(extractURL(record, "Logo_Description__c"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed logo URL for member: {}", name, e);
-        }
-        return member;
     }
 
     /**
@@ -329,7 +234,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
         details.setIntegrations(retrieveIntegrationsFromSalesForce(accessToken, memberId));
         return details;
     }
-    
+
     private String retrieveParentOrgNameFromSalesForce(String accessToken, String consortiumLeadId) {
         if (consortiumLeadId == null) {
             return null;
@@ -341,26 +246,13 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return extractParentOrgNameFromResponse(response);
+        return salesForceAdapter.extractParentOrgNameFromJson(response.getEntity(JSONObject.class));
     }
 
     private WebResource createParentOrgResource(String consortiumLeadId) {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
                 "SELECT Name from Account WHERE Id='" + validateSalesForceId(consortiumLeadId) + "'");
         return resource;
-    }
-
-    private String extractParentOrgNameFromResponse(ClientResponse response) {
-        JSONObject results = response.getEntity(JSONObject.class);
-        try {
-            JSONArray records = results.getJSONArray("records");
-            if (records.length() > 0) {
-                return extractString(records.getJSONObject(0), "Name");
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting parent org from SalesForce JSON", e);
-        }
-        return null;
     }
 
     /**
@@ -378,7 +270,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return createIntegrationsListFromResponse(response);
+        return salesForceAdapter.createIntegrationsListFromJson(response.getEntity(JSONObject.class));
     }
 
     private WebResource createIntegrationListResource(String memberId) {
@@ -388,41 +280,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
         return resource;
     }
 
-    private List<Integration> createIntegrationsListFromResponse(ClientResponse response) {
-        List<Integration> integrations = new ArrayList<>();
-        JSONObject results = response.getEntity(JSONObject.class);
-        try {
-            JSONArray records = results.getJSONArray("records");
-            if (records.length() > 0) {
-                JSONObject firstRecord = records.getJSONObject(0);
-                JSONObject integrationsObject = extractObject(firstRecord, "Integrations__r");
-                if (integrationsObject != null) {
-                    JSONArray integrationRecords = integrationsObject.getJSONArray("records");
-                    for (int i = 0; i < integrationRecords.length(); i++) {
-                        integrations.add(createIntegrationFromSalesForceRecord(integrationRecords.getJSONObject(i)));
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting integrations records from SalesForce JSON", e);
-        }
-        return integrations;
-    }
-
-    private Integration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
-        Integration integration = new Integration();
-        String name = extractString(integrationRecord, "Name");
-        integration.setName(name);
-        integration.setDescription(extractString(integrationRecord, "Description__c"));
-        integration.setStage(extractString(integrationRecord, "Integration_Stage__c"));
-        try {
-            integration.setResourceUrl(extractURL(integrationRecord, "Integration_URL__c"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed resource URL for member: {}", name, e);
-        }
-        return integration;
-    }
-
     /**
      * 
      * @throws SalesForceUnauthorizedException
@@ -430,8 +287,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
      *             expired.
      * 
      */
-    private Map<String, List<Contact>> retrieveContactsFromSalesForce(String accessToken, Collection<String> opportunityIds)
-            throws SalesForceUnauthorizedException {
+    private Map<String, List<Contact>> retrieveContactsFromSalesForce(String accessToken, Collection<String> opportunityIds) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of contacts from SalesForce");
         validateSalesForceIdsAndConcatenate(opportunityIds);
         WebResource resource = createContactsResource(opportunityIds);
@@ -441,7 +297,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting contacts from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return createContactsFromResponse(response);
+        return salesForceAdapter.createContactsFromJson(response.getEntity(JSONObject.class));
     }
 
     private WebResource createContactsResource(Collection<String> opportunityIds) {
@@ -449,91 +305,6 @@ public class SalesForceDaoImpl implements SalesForceDao {
                 "SELECT Id, (SELECT Contact.Name, Contact.Email, Role FROM OpportunityContactRoles WHERE Role IN ('" + MAIN_CONTACT_ROLE + "','" + TECH_LEAD_ROLE
                         + "')) FROM Opportunity WHERE Id IN (" + validateSalesForceIdsAndConcatenate(opportunityIds) + ")");
         return resource;
-    }
-
-    private Map<String, List<Contact>> createContactsFromResponse(ClientResponse response) {
-        Map<String, List<Contact>> map = new HashMap<>();
-        JSONObject results = response.getEntity(JSONObject.class);
-        try {
-            JSONArray records = results.getJSONArray("records");
-            for (int i = 0; i < records.length(); i++) {
-                JSONObject record = records.getJSONObject(i);
-                String oppId = extractString(record, "Id");
-                List<Contact> contacts = new ArrayList<>();
-                JSONObject opportunityContactRoleObject = extractObject(record, "OpportunityContactRoles");
-                if (opportunityContactRoleObject != null) {
-                    JSONArray contactRecords = opportunityContactRoleObject.getJSONArray("records");
-                    for (int j = 0; j < contactRecords.length(); j++) {
-                        contacts.add(createContactFromSalesForceRecord(contactRecords.getJSONObject(j)));
-                    }
-                }
-                map.put(oppId, contacts);
-            }
-        } catch (JSONException e) {
-            throw new RuntimeException("Error getting contact records from SalesForce JSON", e);
-        }
-        return map;
-    }
-
-    private Contact createContactFromSalesForceRecord(JSONObject contactRecord) throws JSONException {
-        Contact contact = new Contact();
-        contact.setRole(extractString(contactRecord, "Role"));
-        JSONObject contactDetails = extractObject(contactRecord, "Contact");
-        contact.setName(extractString(contactDetails, "Name"));
-        contact.setEmail(extractString(contactDetails, "Email"));
-        return contact;
-    }
-
-    private JSONObject extractObject(JSONObject parent, String key) throws JSONException {
-        if (parent.isNull(key)) {
-            return null;
-        }
-        return parent.getJSONObject(key);
-    }
-
-    private String extractString(JSONObject record, String key) throws JSONException {
-        if (record.isNull(key)) {
-            return null;
-        }
-        return record.getString(key);
-    }
-
-    private int extractInt(JSONObject record, String key) throws JSONException {
-        if (record.isNull(key)) {
-            return -1;
-        }
-        return record.getInt(key);
-    }
-
-    private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {
-        String urlString = tidyUrl(extractString(record, key));
-        return urlString != null ? new URL(urlString) : null;
-    }
-
-    private String tidyUrl(String urlString) {
-        if (StringUtils.isBlank(urlString)) {
-            return null;
-        }
-        // We were getting a
-        // http://www.fileformat.info/info/unicode/char/feff/index.htm at the
-        // beginning of one logo URL from SF.
-        urlString = urlString.replaceAll("\\p{C}", "");
-        urlString = urlString.trim();
-        if (!urlString.matches("^.*?://.*")) {
-            urlString = "http://" + urlString;
-        }
-        return urlString;
-    }
-
-    private String extractIdFromUrl(String url) {
-        if (url == null) {
-            return null;
-        }
-        int slashIndex = url.lastIndexOf('/');
-        if (slashIndex == -1) {
-            throw new IllegalArgumentException("Unable to extract ID, url = " + url);
-        }
-        return url.substring(slashIndex + 1);
     }
 
     private String getAccessToken() {
