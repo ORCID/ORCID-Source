@@ -34,7 +34,7 @@ public class MembersListCacheEntryFactory implements CacheEntryFactory {
 
     @Override
     public Object createEntry(Object key) throws Exception {
-        return salesForceDao.retrieveFreshMembers();
+        return salesForceDao.retrieveMembers();
     }
 
 }

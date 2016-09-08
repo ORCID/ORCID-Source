@@ -71,13 +71,13 @@ public class SalesForceManagerImpl implements SalesForceManager {
     @Override
     public List<Member> retrieveConsortia() {
         // XXX Implement cache
-        return salesForceDao.retrieveFreshConsortia();
+        return salesForceDao.retrieveConsortia();
     }
 
     @Override
     public Consortium retrieveConsortium(String consortiumId) {
         // XXX Implement cache
-        return salesForceDao.retrieveFreshConsortium(consortiumId);
+        return salesForceDao.retrieveConsortium(consortiumId);
     }
 
     @Override
@@ -106,14 +106,14 @@ public class SalesForceManagerImpl implements SalesForceManager {
     public List<Contact> retrieveContactsByOpportunityId(String opportunityId) {
         List<String> opportunityIds = new ArrayList<>();
         opportunityIds.add(opportunityId);
-        Map<String, List<Contact>> results = salesForceDao.retrieveFreshContactsByOpportunityId(opportunityIds);
+        Map<String, List<Contact>> results = salesForceDao.retrieveContactsByOpportunityId(opportunityIds);
         return results.get(opportunityId);
     }
 
     @Override
     public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
         // XXX Implement cache
-        return salesForceDao.retrieveFreshContactsByOpportunityId(opportunityIds);
+        return salesForceDao.retrieveContactsByOpportunityId(opportunityIds);
     }
 
     @Override

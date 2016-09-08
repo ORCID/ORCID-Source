@@ -36,15 +36,15 @@ public interface SalesForceDao {
 
     static final String TECH_LEAD_ROLE = "Tech Lead";
 
-    List<Member> retrieveFreshMembers();
+    List<Member> retrieveMembers();
 
-    List<Member> retrieveFreshConsortia();
+    List<Member> retrieveConsortia();
 
-    Consortium retrieveFreshConsortium(String consortiumId);
+    Consortium retrieveConsortium(String consortiumId);
 
-    MemberDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
+    MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
 
-    Map<String, List<Contact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds);
+    Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
 
     /**
      * @return The sales force object id, if valid.

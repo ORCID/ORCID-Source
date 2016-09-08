@@ -75,7 +75,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
     private String accessToken;
 
     @Override
-    public List<Member> retrieveFreshConsortia() {
+    public List<Member> retrieveConsortia() {
         try {
             return retrieveConsortiaFromSalesForce(getAccessToken());
         } catch (SalesForceUnauthorizedException e) {
@@ -85,7 +85,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public List<Member> retrieveFreshMembers() {
+    public List<Member> retrieveMembers() {
         try {
             return retrieveMembersFromSalesForce(getAccessToken());
         } catch (SalesForceUnauthorizedException e) {
@@ -95,7 +95,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public Consortium retrieveFreshConsortium(String consortiumId) {
+    public Consortium retrieveConsortium(String consortiumId) {
         try {
             return retrieveConsortiumFromSalesForce(getAccessToken(), consortiumId);
         } catch (SalesForceUnauthorizedException e) {
@@ -105,7 +105,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public MemberDetails retrieveFreshDetails(String memberId, String consortiumLeadId) {
+    public MemberDetails retrieveDetails(String memberId, String consortiumLeadId) {
         validateSalesForceId(memberId);
         if (consortiumLeadId != null) {
             validateSalesForceId(consortiumLeadId);
@@ -119,7 +119,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
     }
 
     @Override
-    public Map<String, List<Contact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds) {
+    public Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds) {
         try {
             return retrieveContactsFromSalesForce(getAccessToken(), opportunityIds);
         } catch (SalesForceUnauthorizedException e) {

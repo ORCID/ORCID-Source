@@ -36,7 +36,7 @@ public class MemberDetailsCacheEntryFactory implements CacheEntryFactory {
     @Override
     public Object createEntry(Object key) throws Exception {
         MemberDetailsCacheKey detailsCacheKey = (MemberDetailsCacheKey) key;
-        MemberDetails details = salesForceDao.retrieveFreshDetails(detailsCacheKey.getMemberId(), detailsCacheKey.getConsotiumLeadId());
+        MemberDetails details = salesForceDao.retrieveDetails(detailsCacheKey.getMemberId(), detailsCacheKey.getConsotiumLeadId());
         return details;
     }
 
