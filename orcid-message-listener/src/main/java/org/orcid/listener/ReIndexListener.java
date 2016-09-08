@@ -19,6 +19,7 @@ package org.orcid.listener;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.listener.clients.Orcid12APIClient;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.AmazonClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Component
@@ -50,9 +52,11 @@ public class ReIndexListener {
      * 
      * @param map
      * @throws JsonProcessingException 
+     * @throws JAXBException 
+     * @throws AmazonClientException 
      */
     @JmsListener(destination = MessageConstants.Queues.REINDEX)
-    public void processMessage(final Map<String, String> map) throws JsonProcessingException {
+    public void processMessage(final Map<String, String> map) throws JsonProcessingException, AmazonClientException, JAXBException {
         LastModifiedMessage message = new LastModifiedMessage(map);
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
         OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());

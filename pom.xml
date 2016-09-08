@@ -760,6 +760,12 @@ the software.
 				<version>4.5.2</version>
                 <scope>compile</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpcore</artifactId>
+				<version>4.4.4</version>
+                <scope>compile</scope>
+			</dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>

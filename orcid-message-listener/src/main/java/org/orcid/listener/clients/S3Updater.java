@@ -16,11 +16,20 @@
  */
 package org.orcid.listener.clients;
 
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
+
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -36,36 +45,60 @@ public class S3Updater {
 
     private final ObjectMapper mapper;    
     
+    private final Marshaller marshaller;
+    
     Logger LOG = LoggerFactory.getLogger(S3Updater.class);
 
+    @Value("${org.orcid.message-lisener.s3.accessKey}")
+    private String accessKey;
+    
+    @Value("${org.orcid.message-lisener.s3.secretKey}")
+    private String secretKey;
+    
     /**
      * Writes a profile to S3 TODO: implement S3 writer.
      * 
      * @param writeToFileNotS3
      *            if true, write to local file system temp directory instead of
      *            S3
+     * @throws JAXBException 
      */
-    public S3Updater() {
+    public S3Updater() throws JAXBException {
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);    
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true); 
+        
+        JAXBContext context = JAXBContext.newInstance(OrcidProfile.class);
+        marshaller = context.createMarshaller();
+        //for pretty-print XML in JAXB
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
     }
 
-    public void updateS3(OrcidProfile profile) throws JsonProcessingException {        
+    public void updateS3(OrcidProfile profile) throws JsonProcessingException, AmazonClientException, JAXBException {        
         String elementName = profile.getOrcidIdentifier().getPath();
-        String jsonElement = mapper.writeValueAsString(profile);
         String bucketName = "orcid-public-data-dump-dev";
 
-        AWSCredentials credentials = new BasicAWSCredentials("AKIAJ3FMFSKQZCNDFFIQ", "3DrzCw84+IdgHAEsr8YqtyqIsUh4kjPk+CDsdL2l");
+        AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         
         final AmazonS3 s3 = new AmazonS3Client(credentials);
         try {
-            s3.putObject(bucketName, elementName, jsonElement);
+            s3.putObject(bucketName, elementName + ".json", toJson(profile));
+            s3.putObject(bucketName, elementName + ".xml", toXML(profile));
         }
         catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
         }
+    }
+    
+    private String toJson(OrcidProfile profile) throws JsonProcessingException {
+        return mapper.writeValueAsString(profile);
+    }
+    
+    private String toXML(OrcidProfile profile) throws JAXBException {
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(profile, sw);
+        return sw.toString();
     }
 }

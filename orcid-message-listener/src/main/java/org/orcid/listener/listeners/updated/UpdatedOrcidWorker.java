@@ -19,6 +19,7 @@ package org.orcid.listener.listeners.updated;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.listener.clients.Orcid12APIClient;
@@ -29,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.AmazonClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
@@ -63,6 +65,12 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                 s3Updater.updateS3(profile);
             } catch(JsonProcessingException jpe) {
                 //Unable to update record in S3
+            } catch (AmazonClientException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (JAXBException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
     }
