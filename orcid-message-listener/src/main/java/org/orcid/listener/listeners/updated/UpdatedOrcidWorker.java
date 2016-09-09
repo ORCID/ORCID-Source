@@ -40,10 +40,10 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
 
     Logger LOG = LoggerFactory.getLogger(UpdatedOrcidWorker.class);
 
-    @Value("{org.orcid.persistence.messaging.dump_indexing.enabled}")
+    @Value("${org.orcid.persistence.messaging.dump_indexing.enabled}")
     private boolean dumpIndexingEnabled;
     
-    @Value("{org.orcid.persistence.messaging.solr_indexing.enabled}")
+    @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean solrIndexingEnabled;
     
     @Resource
