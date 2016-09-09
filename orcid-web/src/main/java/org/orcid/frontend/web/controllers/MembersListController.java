@@ -21,8 +21,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.pojo.SalesForceDetails;
-import org.orcid.pojo.SalesForceMember;
+import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Member;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,27 +47,21 @@ public class MembersListController extends BaseController {
         ModelAndView mav = new ModelAndView("members-list");
         return mav;
     }
-    
+
     @RequestMapping("/members/{memberSlug}")
     public ModelAndView memberPage(@PathVariable("memberSlug") String memberSlug) {
         ModelAndView mav = new ModelAndView("member-page");
         mav.addObject("memberSlug", memberSlug);
         return mav;
     }
-    
+
     @RequestMapping(value = "/members/members.json", method = RequestMethod.GET)
-    public @ResponseBody List<SalesForceMember> retrieveMembers() {
+    public @ResponseBody List<Member> retrieveMembers() {
         return salesForceManager.retrieveMembers();
     }
 
-    @RequestMapping(value = "/members/details.json", method = RequestMethod.GET)
-    public @ResponseBody SalesForceDetails retrieveDetails(@RequestParam("memberId") String memberId,
-            @RequestParam(value = "consortiumLeadId", required = false) String consortiumLeadId) {
-        return salesForceManager.retrieveDetails(memberId, consortiumLeadId);
-    }
-    
     @RequestMapping(value = "/members/detailsBySlug.json", method = RequestMethod.GET)
-    public @ResponseBody SalesForceDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
+    public @ResponseBody MemberDetails retrieveDetailsBySlug(@RequestParam("memberSlug") String memberSlug) {
         return salesForceManager.retrieveDetailsBySlug(memberSlug);
     }
 
@@ -76,9 +70,9 @@ public class MembersListController extends BaseController {
         ModelAndView mav = new ModelAndView("consortia-list");
         return mav;
     }
-    
+
     @RequestMapping(value = "/consortia/consortia.json", method = RequestMethod.GET)
-    public @ResponseBody List<SalesForceMember> retrieveConsortia() {
+    public @ResponseBody List<Member> retrieveConsortia() {
         return salesForceManager.retrieveConsortia();
     }
 

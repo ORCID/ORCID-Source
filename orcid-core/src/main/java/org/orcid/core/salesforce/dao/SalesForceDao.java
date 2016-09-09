@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager;
+package org.orcid.core.salesforce.dao;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,15 +22,19 @@ import java.util.Map;
 
 import org.orcid.core.salesforce.model.Consortium;
 import org.orcid.core.salesforce.model.Contact;
-import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.Member;
+import org.orcid.core.salesforce.model.MemberDetails;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public interface SalesForceManager {
+public interface SalesForceDao {
+
+    static final String MAIN_CONTACT_ROLE = "Main Contact";
+
+    static final String TECH_LEAD_ROLE = "Tech Lead";
 
     List<Member> retrieveMembers();
 
@@ -38,18 +42,16 @@ public interface SalesForceManager {
 
     Consortium retrieveConsortium(String consortiumId);
 
-    MemberDetails retrieveDetailsBySlug(String memberSlug);
-
-    MemberDetails retrieveDetails(String memberId);
-
-    List<Contact> retrieveContactsByOpportunityId(String opportunityId);
+    MemberDetails retrieveDetails(String memberId, String consortiumLeadId);
 
     Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
 
     /**
-     * Clear caches
-     * 
+     * @return The sales force object id, if valid.
+     * @throws IllegalArgumentException
+     *             if the sales force object id is not the correct format, or
+     *             could contain something malicious.
      */
-    void evictAll();
+    String validateSalesForceId(String memberId);
 
 }
