@@ -122,8 +122,8 @@
 
     <link rel="shortcut icon" href="${staticCdn}/img/favicon.ico"/>
     <link rel="apple-touch-icon" href="${staticCdn}/img/apple-touch-icon.png" />	
-    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>    
-    <#if springMacroRequestContext.requestUri?contains("qa.orcid.org")>
+    <link rel="stylesheet" href="${staticCdn}/css/orcid-print.css?v=${ver}"/>
+    <#if baseUri?contains("qa")>    
     	<link rel="stylesheet" href="${staticCdn}/css/noto-font.css?v=${ver}"/>
     </#if>
 </head>
