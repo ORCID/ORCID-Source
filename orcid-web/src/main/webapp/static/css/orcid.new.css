@@ -2090,6 +2090,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: visible;
 }
 
+.inline-list .cancel-option{
+	padding-top: 7px;
+}
+
 .inline-list > li {
 	float: left;
 }

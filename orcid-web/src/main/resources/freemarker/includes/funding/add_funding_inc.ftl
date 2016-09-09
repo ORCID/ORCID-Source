@@ -297,6 +297,8 @@
                 </div>
                 
 				<div class="control-group">
+					
+
 					<div class="control-group" ng-if="editFunding.putCode.value != null">
                     	<ul class="inline-list margin-separator pull-left">
 							<li>
@@ -304,8 +306,8 @@
                             		<@orcid.msg 'freemarker.btnsave'/>
                         		</button>
 							</li>
-							<li>
-								<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>
+							<li>								
+								<a class="cancel-option" ng-click="closeModal()" ><@orcid.msg 'freemarker.btncancel'/></a>
 							</li>
 							<li>
 								<span ng-show="addingFunding">
@@ -323,7 +325,7 @@
                         		</button>
 							</li>
 							<li>
-								<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel'/></button>
+								<a class="cancel-option" ng-click="closeModal()" ><@orcid.msg 'freemarker.btncancel'/></a>
 							</li>
 							<li>
 								<span ng-show="addingFunding">
