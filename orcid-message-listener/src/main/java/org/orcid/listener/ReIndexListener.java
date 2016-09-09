@@ -61,6 +61,6 @@ public class ReIndexListener {
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
         OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
         solrIndexUpdater.updateSolrIndex(profile);
-        s3Updater.updateS3(profile);
+        s3Updater.updateS3(message.getOrcid(), profile);
     }
 }
