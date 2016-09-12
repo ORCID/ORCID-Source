@@ -17,7 +17,10 @@
 package org.orcid.core.cli;
 
 public class UploadToS3 {
-    //# 1: get a batch of orcid's that are not in the amazon_s3_migration_process table
-    //# 2: upload them to S3
-    //# 3: update the amazon_s3_migration_process table
+    
+    
+    
+    //# 2: get a batch of orcid's that are not in the amazon_s3_migration_process table
+    //# 3: upload them to S3
+    //# 4: update the amazon_s3_migration_process table
 }
