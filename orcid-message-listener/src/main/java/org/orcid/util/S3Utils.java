@@ -1,15 +1,26 @@
+/**
+ * =============================================================================
+ *
+ * ORCID (R) Open Source
+ * http://orcid.org
+ *
+ * Copyright (c) 2012-2014 ORCID, Inc.
+ * Licensed under an MIT-Style License (MIT)
+ * http://orcid.org/open-source-license
+ *
+ * This copyright and license information (including a link to the full license)
+ * shall be included in its entirety in all copies or substantial portion of
+ * the software.
+ *
+ * =============================================================================
+ */
 package org.orcid.util;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
+import com.amazonaws.services.s3.model.Region;
 
 public class S3Utils {
     
@@ -29,36 +40,30 @@ public class S3Utils {
     public static void createBuckets(String bucketPrefix, String accessKey, String secretKey) {
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
         AmazonS3 s3 = new AmazonS3Client(credentials);
-        s3.setRegion(Region.getRegion(Regions.EU_WEST_1));
-        
+
         String api12JsonPrefix = bucketPrefix + "-api-1-2-json-";
         String api12XMLPrefix = bucketPrefix + "-api-1-2-xml-";
         String api20JsonPrefix = bucketPrefix + "-api-2-0-json-";
         String api20XMLPrefix = bucketPrefix + "-api-2-0-xml-";
-                
-        try {
-            if(!s3.doesBucketExist("testing-bucket-01")) {
-                s3.createBucket(new CreateBucketRequest("testing-bucket-01"));
+        
+        for(int i = 0; i <= 10; i++) {
+            char lastCharacter = (i == 10 ? 'x' : Character.forDigit(i, 10));
+            
+            if(!s3.doesBucketExist(api12JsonPrefix + lastCharacter)) {
+                s3.createBucket((api12JsonPrefix + lastCharacter), Region.EU_Ireland);
             }
-        } catch (AmazonServiceException ase) {
-            System.out.println("Caught an AmazonServiceException, which " +
-                        "means your request made it " +
-                    "to Amazon S3, but was rejected with an error response" +
-                    " for some reason.");
-            System.out.println("Error Message:    " + ase.getMessage());
-            System.out.println("HTTP Status Code: " + ase.getStatusCode());
-            System.out.println("AWS Error Code:   " + ase.getErrorCode());
-            System.out.println("Error Type:       " + ase.getErrorType());
-            System.out.println("Request ID:       " + ase.getRequestId());
-        } catch (AmazonClientException ace) {
-            System.out.println("Caught an AmazonClientException, which " +
-                        "means the client encountered " +
-                    "an internal error while trying to " +
-                    "communicate with S3, " +
-                    "such as not being able to access the network.");
-            System.out.println("Error Message: " + ace.getMessage());
+            
+            if(!s3.doesBucketExist(api12XMLPrefix + lastCharacter)) {
+                s3.createBucket((api12XMLPrefix + lastCharacter), Region.EU_Ireland);
+            }
+            
+            if(!s3.doesBucketExist(api20JsonPrefix + lastCharacter)) {
+                s3.createBucket((api20JsonPrefix + lastCharacter), Region.EU_Ireland);
+            }
+            
+            if(!s3.doesBucketExist(api20XMLPrefix + lastCharacter)) {
+                s3.createBucket((api20XMLPrefix + lastCharacter), Region.EU_Ireland);
+            }
         }
-        
-        
     } 
 }
