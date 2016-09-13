@@ -581,7 +581,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
                     }
                 }).fail(function(e) {
                     console.log("Error adding affiliations to scope")
-                    console.log(e);
+                    logAjaxError(e);
                 });
             } else {
                 serv.loading = false;
@@ -608,7 +608,7 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
             }).fail(function(e){
                 // something bad is happening!
                 console.log("error fetching affiliations");
-                console.log(e);
+                logAjaxError(e);
             });
         },
         updateProfileAffiliation: function(aff) {
@@ -748,7 +748,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     }
                 }).fail(function(e) {
                     console.log("Error fetching fundings");
-                    console.log(e);
+                    logAjaxError(e);
                 });
             } else {
                 fundingSrvc.loading = false;
@@ -837,7 +837,7 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
             }).fail(function(e){
                 // something bad is happening!
                 console.log("error fetching fundings");
-                console.log(e);
+                logAjaxError(e);
             });
         },
         getGroup: function(putCode) {
@@ -973,7 +973,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                         worksSrvc.loading = false;
                     //});
                     console.log("Error fetching works: " + workIds);
-                    console.log(e);
+                    logAjaxError(e);
                 });
             } else {
                 worksSrvc.loading = false;
@@ -1030,7 +1030,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function(e){
                     // something bad is happening!
                     console.log("error fetching works");
-                    console.log(e);
+                    logAjaxError(e);
                 });
             } else {
                 if (callback != undefined) callback(worksSrvc.details[putCode]);
@@ -1141,7 +1141,7 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                 }).fail(function(e){
                     // something bad is happening!
                     console.log("error fetching works");
-                    console.log(e);
+                    logAjaxError(e);
                 });
             };
         },
@@ -1289,7 +1289,7 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
             }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with multi email");
-                console.log(e);
+                logAjaxError(e);
             });
         },
         deleteEmail: function (callback) {
@@ -1455,7 +1455,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
-                console.log(e);
+                logAjaxError(e);
             });
         },
         getNotificationAlerts: function(){
@@ -1469,7 +1469,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             }).fail(function(e) {
                 // something bad is happening!
                 console.log("getNotificationsAlerts error in notificationsSrvc");
-                console.log(e);
+                logAjaxError(e);
             });
         },
         reloadNotifications: function() {
@@ -1490,7 +1490,7 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
             }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with getting count of unread notifications");
-                console.log(e);
+                logAjaxError(e);
             });
         },
         resizeIframes: function(){
@@ -1650,7 +1650,7 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
             }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with disco feed");
-                console.log(e);
+                logAjaxError(e);
                 serv.feed = [];
                 $rootScope.$apply();
             });
@@ -1838,7 +1838,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                     }).fail(function(e){
                         // something bad is happening!
                         console.log("error fetching Peer Review");
-                        console.log(e);
+                        logAjaxError(e);
                     });
                 };
     		},    		
@@ -1876,7 +1876,7 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         	peerReviewSrvc.loading = false;
                         //});
                         console.log("Error fetching Peer Review: " + peerReviewIds);
-                        console.log(e);
+                        logAjaxError(e);
                     });
                 } else {
                 	peerReviewSrvc.loading = false;
@@ -2630,7 +2630,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
         }).fail(function(e){
             // something bad is happening!
             console.log("error fetching websites");
-            console.log(e);
+            logAjaxError(e);
         });
     };
 
@@ -3138,7 +3138,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         }).fail(function(e){
             // something bad is happening!
             console.log("error fetching otherNames");
-            console.log(e);
+            logAjaxError(e);
         });
     };
 
@@ -3312,7 +3312,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
         }).fail(function(e){
             // something bad is happening!
             console.log("error fetching BiographyForm");
-            console.log(e);
+            logAjaxError(e);
         });
     };
 
@@ -3423,7 +3423,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
         }).fail(function(e){
             // something bad is happening!
             console.log("error fetching external identifiers");
-            console.log(e);
+            logAjaxError(e);
         });
     };
 
@@ -3606,7 +3606,7 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
         }).fail(function(e){
             // something bad is happening!
             console.log("error fetching external identifiers");
-            console.log(e);
+            logAjaxError(e);
         });
     }
 
@@ -5794,7 +5794,7 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
         }).fail(function(e) {
             // something bad is happening!
             console.log("WorkImportWizardError");
-            console.log(e);
+            logAjaxError(e);
         });
     }
     
@@ -6543,7 +6543,7 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         }).fail(function(e) {
             // something bad is happening!
             console.log("PeerReviewImportWizardError");
-            console.log(e);
+            logAjaxError(e);
         });
     }
 }]);
@@ -6977,7 +6977,7 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
         }).fail(function(e) {
             // something bad is happening!
             console.log("error with delegates");
-            console.log(e);
+            logAjaxError(e);
         });
     };
 
@@ -7173,7 +7173,7 @@ orcidNgModule.controller('SwitchUserCtrl',['$scope', '$compile', '$document', fu
         }).fail(function(e) {
             // something bad is happening!
             console.log("error with delegates");
-            console.log(e);
+            logAjaxError(e);
         });
     };
 
@@ -7236,10 +7236,10 @@ orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
                 $scope.liveIds = data;
                 $scope.$apply($scope.liveIds);
             }
-        }).fail(function(error) {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("Error getting statistics Live iDs total amount");
-            console.log(error);
+            logAjaxError(e);
         });
     };
 
@@ -8243,10 +8243,10 @@ orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($s
                     $scope.params.password=data;
                 });
             }
-        }).fail(function(error) {
-            console.log(error);
+        }).fail(function(e) {
             // something bad is happening!
             console.log("Error generating random string");
+            logAjaxError(e);
         });
     };
 
@@ -8800,10 +8800,10 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
                     }
                 });
             }
-        }).fail(function(error) {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("Error obtaining SSO credentials");
-            console.log(error);
+            logAjaxError(e);
         });
     };
 
