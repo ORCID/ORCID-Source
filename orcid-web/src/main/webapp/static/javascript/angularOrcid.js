@@ -10816,11 +10816,12 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         
         if (workExternalIdentifier.workExternalIdentifierType != null)
             type = workExternalIdentifier.workExternalIdentifierType.value;        
-        if (type != null) {
-        	if(isPartOf) 
-        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
+        if (type != null && typeof type != 'undefined') {
+            type.escapeHtml();
+        	if(isPartOf)
+        		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
         	else 
-        		output = output + "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
+        		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
         
         var link = null;
