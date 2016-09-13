@@ -38,6 +38,7 @@ import org.orcid.jaxb.model.error_rc1.OrcidError;
 import org.orcid.jaxb.model.message.ScopePathType;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -284,6 +285,7 @@ public class ExternalIdentifiersTest extends BlackBoxBaseRC3 {
         externalIdentifier.setValue(value);
         externalIdentifier.setUrl(new Url("http://ext-id/" + value));        
         externalIdentifier.setVisibility(Visibility.PUBLIC);
+        externalIdentifier.setRelationship(Relationship.SELF);
         externalIdentifier.setSource(null);        
         externalIdentifier.setPath(null);
         externalIdentifier.setLastModifiedDate(null);

@@ -43,10 +43,14 @@ import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 
 public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager {
 
+    @Value("${org.orcid.core.validations.requireRelationship:false}")
+    private boolean requireRelationshipOnExternalIdentifier;
+    
     @Resource
     private ExternalIdentifierDao externalIdentifierDao;
 
@@ -110,7 +114,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
     public PersonExternalIdentifier createExternalIdentifier(String orcid, PersonExternalIdentifier externalIdentifier, boolean isApiRequest) { 
         SourceEntity sourceEntity = sourceManager.retrieveSourceEntity();
         // Validate external identifier
-        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true, isApiRequest, null);
+        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, true, isApiRequest, null, requireRelationshipOnExternalIdentifier);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));
         for (ExternalIdentifierEntity existing : existingExternalIdentifiers) {
@@ -151,7 +155,7 @@ public class ExternalIdentifierManagerImpl implements ExternalIdentifierManager 
         
         Visibility originalVisibility = Visibility.fromValue(updatedExternalIdentifierEntity.getVisibility().value());
         // Validate external identifier
-        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false, isApiRequest, originalVisibility);
+        PersonValidator.validateExternalIdentifier(externalIdentifier, sourceEntity, false, isApiRequest, originalVisibility, requireRelationshipOnExternalIdentifier);
         // Validate it is not duplicated
         List<ExternalIdentifierEntity> existingExternalIdentifiers = externalIdentifierDao.getExternalIdentifiers(orcid, getLastModified(orcid));
         for (ExternalIdentifierEntity existing : existingExternalIdentifiers) {
