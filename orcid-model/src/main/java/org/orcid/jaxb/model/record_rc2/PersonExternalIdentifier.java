@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.common_rc2.VisibilityType;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -51,7 +52,7 @@ public class PersonExternalIdentifier implements VisibilityType, Serializable, F
     @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
     protected String value;
     @XmlElement(name="external-id-relationship", namespace = "http://www.orcid.org/ns/common")
-    protected Relationship relationship;
+    protected Relationship relationship = Relationship.SELF;
     @XmlElement(name="external-id-url", namespace = "http://www.orcid.org/ns/common")
     protected Url url;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")

@@ -51,7 +51,7 @@ public class PersonExternalIdentifier implements VisibilityType, Serializable, F
     @XmlElement(name = "external-id-value", namespace = "http://www.orcid.org/ns/common", required = true)
     protected String value;
     @XmlElement(name="external-id-relationship", namespace = "http://www.orcid.org/ns/common")
-    protected Relationship relationship;
+    protected Relationship relationship = Relationship.SELF;
     @XmlElement(name="external-id-url", namespace = "http://www.orcid.org/ns/common")
     protected Url url;    
     @XmlElement(namespace = "http://www.orcid.org/ns/common")
