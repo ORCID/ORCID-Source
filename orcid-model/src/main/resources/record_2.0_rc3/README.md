@@ -1,14 +1,14 @@
 # ORCID API v2.0_rc3 Guide
 
 ## Current State (Release Candidate Stable)
-As of 2016-07-15 changes to v2.0_rc3 will be avoided. Further model changes will be expressed in rc_3.
-A Release Candidate (RC) is the built to help ORCID and members check if any critical problems have gone
-undetected into the code during the previous development period. Release candidates are NOT suggested for production use.
+v2.0_r3 is in current development and should be avoided.
 
 ## XSDs and current state (all stable)
 - [activities-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/activities-2.0_rc3.xsd) 
 **stable**, developement ongoing
 - [address-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/address-2.0_rc3.xsd)
+**stable**, developement ongoing
+- [bulk-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/bulk-2.0_rc3.xsd)
 **stable**, developement ongoing
 - [common-2.0_rc3.xsd](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/common_2.0_rc3/common-2.0_rc3.xsd)
 **stable**, developement ongoing
@@ -40,40 +40,18 @@ undetected into the code during the previous development period. Release candida
 **stable**, developement ongoing
 
 ##Changes:
-###Person section
+###Post bulk works
 
-- Addition of [person section](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/person-2.0_rc3.xsd) corresponding to the v1.2 orcid-bio field. The children of the person field are:
-  - [address](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/address-2.0_rc3.xsd)
-  - [email](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/email-2.0_rc3.xsd)
-  - [external-identifiers](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/person-external-identifier-2.0_rc3.xsd)
-  - [keywords](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/keyword-2.0_rc3.xsd)
-  - [other-names](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/other-name-2.0_rc3.xsd)
-  - [personal-details](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/personal-details-2.0_rc3.xsd)
-  - [researcher-urls](https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/researcher-url-2.0_rc3.xsd)
-- Source and creation date is captured with other-names, country, keywords, researcher-urls, and external identifiers.
-- Display index is returned with repeatable person fields
-- Address (county) is repeatable
-- API 2.0_rc3 can not be used to edit non-repeatable person fields: give-name, family-name, biography. 
+- Addition of endpoint /works for bulk posting works
+- Update to schema of bulk element in works
+- Update to schema of error section for returning errors with bulk added works
 
-###External identifiers
-
- - Identifiers now use the common schema element *external-id* this affects how identifiers are recorded in the works, funding and peer-review sections
-```
-<external-id>
-    <external-id-type/>
-    <external-id-value/>
-    <external-id-url/>  
-</external-id>
-```
-
-###Last modified dates
-
- - Last-modified-date is now available for every section of the record, in addition to the last-modified-date on individual items.
-
-## Sample XML files:
+## Sample files:
 
 - [activities-2.0_rc3.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/activities-2.0_rc3.xml)
 - [address-2.0_rc3.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/address-2.0_rc3.xml)
+- [bulk-work-2.0_rc3.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/bulk-work-2.0_rc3.xml)
+- [bulk-work-2.0_rc3.json] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/bulk-work-2.0_rc3.json)
 - [biography-2.0_rc3.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/biography-2.0_rc3.xml)
 - [credit-name-2.0_rc3.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/credit-name-2.0_rc3.xml)
 - [education-2.0_rc3.xml] (https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/record_2.0_rc3/samples/education-2.0_rc3.xml)
@@ -122,6 +100,11 @@ The swagger interfaces to the API available at:
 | Read an activity   | GET         | /read-limited            | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Update an activity | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
 | Delete an activity | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/[ACTIVITY-TYPE]/[PUT-CODE] |
+
+### Bulk activities
+| Action             | HTTP method | Scope                    | URL                                                                      |
+|--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
+| Add works		     | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/works		             |
 
 ### Biography details
 | Action             | HTTP method | Scope                    | URL                                                                      |
@@ -186,6 +169,7 @@ The swagger interfaces to the API available at:
 | Peer review  |/activities/update|  NONE  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/peer-review-item.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/peer-review'```|
 | Researcher URL  |/person/update|  /orcid-bio/update  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/researcher-url.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/researcher-urls'```|
 | Work  |/activities/update|  /orcid-works/create  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/work.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/work'```|
+| Bulk works  |/activities/update|  /orcid-works/create  |```curl -i -H 'Content-type: application/orcid+xml' -H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' -d '@[FILE-PATH]/works.xml' -X POST 'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/works'```|
 
 ### Update Record Items
 |Item  |v2.0 Scope  |v1.2 Scope (deprecated)| Example cURL Statement  |
