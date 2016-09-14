@@ -2364,7 +2364,7 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
     };
 }]);
 
-orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout',function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies) {
 	bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
@@ -2531,6 +2531,25 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
         emailSrvc.saveEmail();
     };
     
+    /* Workaround for dealing with the Email table styles in Asian languages */
+    $scope.asianEmailTableStyleFix = function(){
+        if ($cookies.get('locale_v3') == 'zh_CN' || $cookies.get('locale_v3') == 'zh_TW' || $cookies.get('locale_v3') == 'ja' || $cookies.get('locale_v3') == 'ko'){            
+            
+            $scope.$watch(
+                function () {
+                    return document.getElementsByClassName('email-verified').length; 
+                },
+                function (newValue, oldValue) {                    
+                    $(".settings-table .table td:nth-child(1)").addClass('reset-width');
+                    $(".settings-table .table td:nth-child(2)").addClass('reset-width');
+                    $(".settings-table .table td:nth-child(4)").addClass('reset-width');                    
+                }
+            );
+            
+         };
+    };
+    
+    $scope.asianEmailTableStyleFix();
     
 }]);
 
