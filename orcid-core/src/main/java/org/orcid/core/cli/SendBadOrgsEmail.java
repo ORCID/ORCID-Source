@@ -87,6 +87,8 @@ public class SendBadOrgsEmail {
     private String singleOrcidToProcess;
     @Option(name = "-d", usage = "Dry run only (default is false)")
     private boolean dryRun;
+    @Option(name = "-b", usage = "Show email body in console output (default is false)")
+    private boolean showEmailBody;
     @Option(name = "-l", usage = "Lenient mode (default is false)")
     private boolean lenientMode;
     @Option(name = "-c", usage = "Continue to next record if there is an error (default = stop on error)")
@@ -306,10 +308,12 @@ public class SendBadOrgsEmail {
         Map<String, Object> templateParams = createTemplateParams(locale, orgDescriptions);
         // Generate body from template
         String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
-        LOG.info("text email={}", body);
         // Generate html from template
         String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
-        LOG.info("html email={}", html);
+        if (showEmailBody) {
+            LOG.info("text email={}", body);
+            LOG.info("html email={}", html);
+        }
         if (!dryRun) {
             // Update the profile for re-index and cache refresh
             profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
