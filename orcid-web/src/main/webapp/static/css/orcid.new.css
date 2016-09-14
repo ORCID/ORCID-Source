@@ -6651,6 +6651,9 @@ a:hover .mozilla-badge{
 	margin-right: 16px;
 }
 
+.wizard-header{
+	font-size: 31px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
