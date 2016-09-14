@@ -214,8 +214,8 @@ public class MailGunManager {
         int indexOfLt = from.indexOf('<');
         if (indexOfLt != -1) {
             int indexOfGt = from.indexOf('>');
-            return from.substring(indexOfLt + 1, indexOfGt);
+            from = from.substring(indexOfLt + 1, indexOfGt);
         }
-        return from;
+        return from.trim();
     }
 }
