@@ -292,13 +292,15 @@ public class SendBadOrgsEmail {
         return needsRevertingToDisambiguatedInfo;
     }
 
-    private Map<String, Object> createTemplateParams(String emailName, Locale locale, Set<String> orgDescriptions) {
+    private Map<String, Object> createTemplateParams(String orcid, String emailName, Locale locale, Set<String> orgDescriptions) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("messages", messageSource);
         templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("orcidId", orcid);
         templateParams.put("emailName", emailName);
         templateParams.put("locale", LocaleUtils.toLocale(locale.value()));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", SUBJECT);
         templateParams.put("orgDescriptions", orgDescriptions);
         return templateParams;
@@ -310,7 +312,7 @@ public class SendBadOrgsEmail {
                 new Object[] { profile.getId(), badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
         String emailName = notificationManager.deriveEmailFriendlyName(profile);
-        Map<String, Object> templateParams = createTemplateParams(emailName, locale, orgDescriptions);
+        Map<String, Object> templateParams = createTemplateParams(profile.getId(), emailName, locale, orgDescriptions);
         // Generate body from template
         String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
         // Generate html from template
