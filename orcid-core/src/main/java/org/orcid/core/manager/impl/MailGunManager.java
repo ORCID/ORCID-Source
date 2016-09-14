@@ -101,21 +101,22 @@ public class MailGunManager {
         // determine correct api based off domain.
         WebResource webResource = null;
         String toAddress = to.trim();
+        String fromEmail = getFromEmail(from);
         if (shouldBeSentThroughDedicatedIP(toAddress)) {
             if (custom)
                 webResource = client.resource(getAltNotifyApiUrl());
-            else if (from.trim().endsWith("@verify.orcid.org"))
+            else if (fromEmail.endsWith("@verify.orcid.org"))
                 webResource = client.resource(getAltVerifyApiUrl());
-            else if (from.trim().endsWith("@notify.orcid.org"))
+            else if (fromEmail.endsWith("@notify.orcid.org"))
                 webResource = client.resource(getAltNotifyApiUrl());
             else
                 webResource = client.resource(getAltApiUrl());
         } else {
             if (custom)
                 webResource = client.resource(getNotifyApiUrl());
-            else if (from.trim().endsWith("@verify.orcid.org"))
+            else if (fromEmail.endsWith("@verify.orcid.org"))
                 webResource = client.resource(getVerifyApiUrl());
-            else if (from.trim().endsWith("@notify.orcid.org"))
+            else if (fromEmail.endsWith("@notify.orcid.org"))
                 webResource = client.resource(getNotifyApiUrl());
             else
                 webResource = client.resource(getApiUrl());
@@ -207,5 +208,14 @@ public class MailGunManager {
             }
         }
         return false;
+    }
+
+    private String getFromEmail(String from) {
+        int indexOfLt = from.indexOf('<');
+        if (indexOfLt != -1) {
+            int indexOfGt = from.indexOf('>');
+            return from.substring(indexOfLt + 1, indexOfGt);
+        }
+        return from;
     }
 }
