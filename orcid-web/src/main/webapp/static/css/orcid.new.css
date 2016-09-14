@@ -6651,6 +6651,12 @@ a:hover .mozilla-badge{
 	margin-right: 16px;
 }
 
+.reset-width{
+	width: auto !important;
+	min-width: 0  !important;
+    display: table  !important;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
