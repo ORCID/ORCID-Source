@@ -17,6 +17,8 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
+Dear ${emailName},
+
 We are writing to let you know about a bug that we identified recently, which may have affected the display of one or more of the organization names in your ORCID record.
 As a result, your record may currently include incorrect information about the following organization(s):
 
