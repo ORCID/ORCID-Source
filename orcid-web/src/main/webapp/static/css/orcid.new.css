@@ -6655,6 +6655,14 @@ a:hover .mozilla-badge{
 	font-size: 31px;
 }
 
+.reset-width{
+	width: auto !important;
+	min-width: 0  !important;
+    display: table  !important;
+}
+
+>>>>>>> master
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.container{
