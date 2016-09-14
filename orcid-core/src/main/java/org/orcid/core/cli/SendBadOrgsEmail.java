@@ -69,7 +69,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SendBadOrgsEmail {
 
     private static Logger LOG = LoggerFactory.getLogger(SendBadOrgsEmail.class);
-    private static final String FROM_ADDRESS = "laure@notify.orcid.org";
+    private static final String FROM_ADDRESS = "\"Laure Haak, Executive Director, ORCID\" <laure@notify.orcid.org>";
     private static final String SUBJECT = "Affiliation bug in ORCID record";
 
     private TransactionTemplate transactionTemplate;
@@ -315,7 +315,10 @@ public class SendBadOrgsEmail {
             profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
             profileDao.flush();
             // Send the email
-            mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
+            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
+            if (!mailSent) {
+                throw new RuntimeException("Failed to send email, orcid=" + profile.getId());
+            }
         }
     }
 
