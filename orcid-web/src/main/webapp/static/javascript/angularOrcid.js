@@ -5860,8 +5860,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                     $scope.editWork = data;                    
                     commonSrvc.copyErrorsLeft($scope.editWork, data);
                     
-                    $scope.addExternalIdentifier();
-                    
                     $scope.addingWork = false;
                     $scope.$apply();
                     // make sure colorbox is shown if there are errors

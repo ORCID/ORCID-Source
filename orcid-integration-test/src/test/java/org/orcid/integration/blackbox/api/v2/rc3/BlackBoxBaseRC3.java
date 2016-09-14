@@ -47,6 +47,7 @@ import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.jaxb.model.record_rc3.Work;
 
@@ -150,6 +151,7 @@ public class BlackBoxBaseRC3 extends BlackBoxBase {
         e.setValue(value);
         e.setType("test");
         e.setUrl(new Url("http://test.orcid.org"));
+        e.setRelationship(Relationship.SELF);
         ClientResponse response = memberV2ApiClient.createExternalIdentifier(userOrcid, e, accessToken);
         assertNotNull(response);
         assertEquals(ClientResponse.Status.CREATED.getStatusCode(), response.getStatus());
