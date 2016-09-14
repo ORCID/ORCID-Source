@@ -37,6 +37,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.orcid.core.locale.LocaleManager;
 import org.orcid.core.manager.AffiliationsManager;
+import org.orcid.core.manager.NotificationManager;
 import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.TemplateManager;
 import org.orcid.core.manager.impl.MailGunManager;
@@ -69,7 +70,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class SendBadOrgsEmail {
 
     private static Logger LOG = LoggerFactory.getLogger(SendBadOrgsEmail.class);
-    private static final String FROM_ADDRESS = "laure@notify.orcid.org";
+    private static final String FROM_ADDRESS = "\"Laure Haak, Executive Director, ORCID\" <laure@notify.orcid.org>";
     private static final String SUBJECT = "Affiliation bug in ORCID record";
 
     private TransactionTemplate transactionTemplate;
@@ -81,12 +82,15 @@ public class SendBadOrgsEmail {
     private MessageSource messageSource;
     private OrcidUrlManager orcidUrlManager;
     private MailGunManager mailGunManager;
+    private NotificationManager notificationManager;
     @Option(name = "-f", usage = "Path to file containing ORCIDs to check and send")
     private File fileToLoad;
     @Option(name = "-o", usage = "ORCID to check and send")
     private String singleOrcidToProcess;
     @Option(name = "-d", usage = "Dry run only (default is false)")
     private boolean dryRun;
+    @Option(name = "-b", usage = "Show email body in console output (default is false)")
+    private boolean showEmailBody;
     @Option(name = "-l", usage = "Lenient mode (default is false)")
     private boolean lenientMode;
     @Option(name = "-c", usage = "Continue to next record if there is an error (default = stop on error)")
@@ -183,6 +187,7 @@ public class SendBadOrgsEmail {
         messageSource = (MessageSource) context.getBean("messageSource");
         orcidUrlManager = (OrcidUrlManager) context.getBean("orcidUrlManager");
         mailGunManager = (MailGunManager) context.getBean("mailGunManager");
+        notificationManager = (NotificationManager) context.getBean("notificationManager");
     }
 
     private String createOrgDescription(OrgEntity org, Locale locale) {
@@ -287,12 +292,15 @@ public class SendBadOrgsEmail {
         return needsRevertingToDisambiguatedInfo;
     }
 
-    private Map<String, Object> createTemplateParams(Locale locale, Set<String> orgDescriptions) {
+    private Map<String, Object> createTemplateParams(String orcid, String emailName, Locale locale, Set<String> orgDescriptions) {
         Map<String, Object> templateParams = new HashMap<String, Object>();
         templateParams.put("messages", messageSource);
         templateParams.put("messageArgs", new Object[0]);
+        templateParams.put("orcidId", orcid);
+        templateParams.put("emailName", emailName);
         templateParams.put("locale", LocaleUtils.toLocale(locale.value()));
         templateParams.put("baseUri", orcidUrlManager.getBaseUrl());
+        templateParams.put("baseUriHttp", orcidUrlManager.getBaseUriHttp());
         templateParams.put("subject", SUBJECT);
         templateParams.put("orgDescriptions", orgDescriptions);
         return templateParams;
@@ -303,19 +311,25 @@ public class SendBadOrgsEmail {
         LOG.info("Sending bad orgs email: orcid={}, num bad affs={}, num bad fundings={}, claimed={}, deactivated={}, deprecated={}, locked={}",
                 new Object[] { profile.getId(), badAffs.size(), badFundings.size(), profile.getClaimed(), profile.getDeactivationDate() != null,
                         profile.getDeprecatedDate() != null, profile.getRecordLocked() });
-        Map<String, Object> templateParams = createTemplateParams(locale, orgDescriptions);
+        String emailName = notificationManager.deriveEmailFriendlyName(profile);
+        Map<String, Object> templateParams = createTemplateParams(profile.getId(), emailName, locale, orgDescriptions);
         // Generate body from template
         String body = templateManager.processTemplate("bad_orgs_email.ftl", templateParams);
-        LOG.info("text email={}", body);
         // Generate html from template
         String html = templateManager.processTemplate("bad_orgs_email_html.ftl", templateParams);
-        LOG.info("html email={}", html);
+        if (showEmailBody) {
+            LOG.info("text email={}", body);
+            LOG.info("html email={}", html);
+        }
         if (!dryRun) {
             // Update the profile for re-index and cache refresh
             profileDao.updateLastModifiedDateAndIndexingStatus(profile.getId(), IndexingStatus.REINDEX);
             profileDao.flush();
             // Send the email
-            mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
+            boolean mailSent = mailGunManager.sendEmail(FROM_ADDRESS, profile.getPrimaryEmail().getId(), SUBJECT, body, html);
+            if (!mailSent) {
+                throw new RuntimeException("Failed to send email, orcid=" + profile.getId());
+            }
         }
     }
 
