@@ -438,7 +438,7 @@
 						<div class="col-md-12 col-sm-12 col-xs-12">								
 							<h3><@orcid.msg 'developer_tools.public_member.additional_resources' /></h3>																	
 							<ul class="dotted">
-								<li><a href="http://support.orcid.org/knowledgebase/articles/335483" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
+								<li><a href="http://members.orcid.org/api/introduction-orcid-public-api" target="_blank"><@orcid.msg 'developer_tools.public_member.read_more' /></a></li>
 							</ul>
 						</div>
 					</div>
