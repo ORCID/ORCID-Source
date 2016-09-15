@@ -155,7 +155,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subject", subject);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
-        
+
         EmailMessage emailMessage = new EmailMessage();
 
         emailMessage.setSubject(subject);
@@ -194,10 +194,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                             return;
                         }
                         digestMessage.setTo(primaryEmail.getId());
+                        flagAsSent(notifications);
                         boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                                 digestMessage.getBodyText(), digestMessage.getBodyHtml());
-                        if (successfullySent) {
-                            flagAsSent(notifications);
+                        if (!successfullySent) {
+                            status.setRollbackOnly();
                         }
                     }
                 });
@@ -214,6 +215,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
             notificationIds.add(notification.getPutCode());
         }
         notificationDao.flagAsSent(notificationIds);
+        notificationDao.flush();
     }
 
 }
