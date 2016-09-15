@@ -22,6 +22,7 @@ import java.util.List;
 import org.orcid.core.adapter.JpaJaxbExternalIdentifierAdapter;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifiers;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.persistence.jpa.entities.ExternalIdentifierEntity;
 
 import ma.glasnost.orika.MapperFacade;
@@ -53,7 +54,9 @@ public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIden
         if (entity == null) {
             return null;
         }
-        return mapperFacade.map(entity, PersonExternalIdentifier.class);
+        PersonExternalIdentifier result = mapperFacade.map(entity, PersonExternalIdentifier.class);
+        result.setRelationship(Relationship.SELF);
+        return result;
     }
 
     @Override
@@ -63,6 +66,9 @@ public class JpaJaxbExternalIdentifierAdapterImpl implements JpaJaxbExternalIden
         }
 
         List<PersonExternalIdentifier> externalIdentifier = mapperFacade.mapAsList(entities, PersonExternalIdentifier.class);
+        for(PersonExternalIdentifier e : externalIdentifier) {
+            e.setRelationship(Relationship.SELF);
+        }
         PersonExternalIdentifiers externalIdentifiers = new PersonExternalIdentifiers();
         externalIdentifiers.setExternalIdentifiers(externalIdentifier);
         return externalIdentifiers;
