@@ -54,6 +54,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  * @author Will Simpson
@@ -214,7 +216,10 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         for (Notification notification : notifications) {
             notificationIds.add(notification.getPutCode());
         }
-        notificationDao.flagAsSent(notificationIds);
+        List<List<Long>> batches = Lists.partition(notificationIds, 30000);
+        for (List<Long> batch : batches) {
+            notificationDao.flagAsSent(batch);
+        }
         notificationDao.flush();
     }
 
