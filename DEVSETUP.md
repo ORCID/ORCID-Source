@@ -70,35 +70,72 @@ We'll set up postgres using the default settings in
     psql -U orcid -d orcid -c "\list" -h localhost
     psql -U statistics -d statistics -c "\list" -h localhost
     ```
+## Install Java and JCE
 
+    Follow intructions at [Oracle Install Overview](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html#CJAGAACB)
+    
+    _osx_
+    
+    * Create JAVA_HOME pointing to /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
+    
+    Extract the contents of UnlimitedJCEPolicyJDK7.zip into /Users/jeffrey/Sites/UnlimitedJCEPolicy/
+
+    ```    
+    mkdir /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
+    mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
+    cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
+    ```    
+## Setup Maven & Tomcat
+
+    Extract next files into ~/Bin folder (Create if it does not exist)
+    * apache-maven-3.3.9-bin.tar.gz
+    * apache-tomcat-8.0.37.tar.gz
+
+    ```
+    SJO-WS2555:~ jperez$ JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk
+    SJO-WS2555:~ jperez$ ~/Bin/apache-maven-3.3.9/bin/mvn -version                                                                        
+        Apache Maven 3.3.9 (bb52d8502b132ec0a5a3f4c09453c07478323dc5; 2015-11-10T10:41:47-06:00)                                              
+        Maven home: /Users/jeffrey/Bin/apache-maven-3.3.9                                                                                     
+        Java version: 1.8.0_92, vendor: Oracle Corporation                                                                                    
+        Java home: /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre                                                        
+        Default locale: en_US, platform encoding: UTF-8                                                                                       
+        OS name: "mac os x", version: "10.11.3", arch: "x86_64", family: "mac"
+    SJO-WS2555:~ jperez$
+    ```
 
 ## Clone the git repository
 
 * Make a git directory if one doesn't exist
 
-
     ```
     mkdir ~/git
     ```
 
-
 * Clone the repository
 
-	```
-	cd ~/git
+    ```
+    cd ~/git
     git clone git@github.com:ORCID/ORCID-Source.git
     ```
 
-
 ## Clone the git ORCID-Fonts-Dot-Com repository
+
 Do to licensing issues this is only available to ORCID.org employees.
 
 * Clone the ORCID-Fonts-Dot-Com repository into the static directory
 
-	```
+    ```
     git clone git@github.com:ORCID/ORCID-Fonts-Dot-Com.git ~/git/ORCID-Source/orcid-web/src/main/webapp/static/ORCID-Fonts-Dot-Com
     ```
+    
+* Alternatively create a symbolic link inside static folder
 
+    ```
+    cd ~/Sites    
+    git clone git@github.com:ORCID/ORCID-Source.git
+    git clone git@github.com:ORCID/ORCID-Fonts-Dot-Com.git
+    ln -s ORCID-Fonts-Dot-Com/ ORCID-Source/orcid-web/src/main/webapp/static/   
+    ```
 
 ## Run Maven Task - First Time Only
 * maven clean install
@@ -206,7 +243,7 @@ http://www.springsource.org/downloads/sts-ggts
 
 * Right click on "Apache Tomcat Server".
 
-* Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web, orcid-solr-web, orcid-integration-test and orcid-web
+* Select "Add and Remove" Add orcid-api-web, orcid-pub-web, orcid-scheduler-web, orcid-solr-web and orcid-web
 
 
 ### Setting up Eclipse to use ORCID formatting rules 

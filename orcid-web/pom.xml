@@ -224,6 +224,20 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
+            
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                        <url>http://localhost:8080/manager/text</url>
+                        <server>TomcatServer</server>
+                        <username>maven</username>
+                        <password>admin</password>                        
+                        <path>/orcid-web</path>
+                </configuration>
+            </plugin>            
+            
         </plugins>
     </build>
     <profiles>
