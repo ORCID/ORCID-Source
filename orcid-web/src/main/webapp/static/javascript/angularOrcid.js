@@ -4697,40 +4697,44 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
     $scope.fundingImportWizard = false;
     $scope.wizardDescExpanded = {};
     $scope.displayURLPopOver = {};
-    $scope.emptyExtId = {
-            "errors": [],
-            "type": {
-                "errors": [],
-                "value": "award",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "value": {
-                "errors": [],
-                "value": "",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "url": {
-                "errors": [],
-                "value": "",
-                "required": true,
-                "getRequiredMessage": null
-            },
-            "putCode": null,
-            "relationship": {
-    			"errors": [],
-    			"value": "self",
-    			"required": true,
-    			"getRequiredMessage": null
-    		}
-        };
+    
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
     $scope.sort = function(key) {
         $scope.sortState.sortBy(key);
     };
 
+    $scope.getEmptyExtId = function() {
+    	return {
+                "errors": [],
+                "type": {
+                    "errors": [],
+                    "value": "award",
+                    "required": true,
+                    "getRequiredMessage": null
+                },
+                "value": {
+                    "errors": [],
+                    "value": "",
+                    "required": true,
+                    "getRequiredMessage": null
+                },
+                "url": {
+                    "errors": [],
+                    "value": "",
+                    "required": true,
+                    "getRequiredMessage": null
+                },
+                "putCode": null,
+                "relationship": {
+        			"errors": [],
+        			"value": "self",
+        			"required": true,
+        			"getRequiredMessage": null
+        		}
+            };
+    }
+    
     // remove once grouping is live
     $scope.toggleClickMoreInfo = function(key) {
         if (!document.documentElement.className.contains('no-touch')) {
@@ -4792,8 +4796,8 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
         } else {
             $scope.editFunding = data;
             if($scope.editFunding.externalIdentifiers == null || $scope.editFunding.externalIdentifiers.length == 0) {
-                $scope.editFunding.externalIdentifiers.push($scope.emptyExtId);
-            }
+                $scope.editFunding.externalIdentifiers.push($scope.getEmptyExtId());
+            }            
             $scope.showAddModal();
         }
     };
