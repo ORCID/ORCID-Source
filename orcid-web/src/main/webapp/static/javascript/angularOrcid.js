@@ -4717,7 +4717,13 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
                 "required": true,
                 "getRequiredMessage": null
             },
-            "putCode": null
+            "putCode": null,
+            "relationship": {
+    			"errors": [],
+    			"value": "self",
+    			"required": true,
+    			"getRequiredMessage": null
+    		}
         };
 
     $scope.sortState = new ActSortState(GroupedActivities.FUNDING);
@@ -4775,7 +4781,7 @@ orcidNgModule.controller('FundingCtrl',['$scope', '$compile', '$filter', 'fundin
                 url: getBaseUri() + '/fundings/funding.json',
                 dataType: 'json',
                 success: function(data) {
-                    $scope.$apply(function() {
+                    $scope.$apply(function() {                    	
                         $scope.editFunding = data;
                         $scope.showAddModal();
                     });
