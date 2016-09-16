@@ -184,7 +184,8 @@
                               {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}
                           </div>                          
                           <div class="col-md-3 col-sm-3 col-xs-3" ng-if="editSources[group.groupId] == true">
-                          <span class="glyphicon glyphicon-check ng-hide" ng-if="funding.putCode.value == group.defaultPutCode"></span><span ng-if="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
+                          
+                          <span class="glyphicon glyphicon-check" ng-if="funding.putCode.value == group.defaultPutCode"></span><span ng-if="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                              <#if !(isPublicProfile??)>
                                 <div ng-if="editSources[group.groupId]">
                                     <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" ng-if="funding.putCode.value != group.defaultPutCode" class="">

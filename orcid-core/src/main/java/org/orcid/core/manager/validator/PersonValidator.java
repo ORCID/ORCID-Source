@@ -29,6 +29,7 @@ import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Keyword;
 import org.orcid.jaxb.model.record_rc3.OtherName;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
+import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.ResearcherUrl;
 import org.orcid.persistence.constants.SiteConstants;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -106,7 +107,7 @@ public class PersonValidator {
         validateAndFixVisibility(otherName, createFlag, isApiRequest, originalVisibility);
     }
     
-    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility) {
+    public static void validateExternalIdentifier(PersonExternalIdentifier externalIdentifier, SourceEntity sourceEntity, boolean createFlag, boolean isApiRequest, Visibility originalVisibility, boolean requireRelationshipOnExternalIdentifier) {
         //Validate common name not empty
         if(PojoUtil.isEmpty(externalIdentifier.getType())) {
             String message = "Common name field must not be empty";
@@ -128,6 +129,15 @@ public class PersonValidator {
         } else {
             if(SiteConstants.MAX_LENGTH_255 < externalIdentifier.getValue().length()) {
                 String message = "Reference field must not be longer than " + SiteConstants.MAX_LENGTH_255 + " characters";
+                LOGGER.error(message);
+                throw new OrcidValidationException(message);
+            }
+        }
+        
+        //Validate relationship
+        if(requireRelationshipOnExternalIdentifier) {
+            if(externalIdentifier.getRelationship() == null || !Relationship.SELF.equals(externalIdentifier.getRelationship())) {
+                String message = "Relationship field should be self for person identifiers";
                 LOGGER.error(message);
                 throw new OrcidValidationException(message);
             }

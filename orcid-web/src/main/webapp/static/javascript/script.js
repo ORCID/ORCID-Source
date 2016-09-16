@@ -217,6 +217,13 @@ var om = new OrcidMessage();
  * their session going and if they get logged out (server restart ect...) it
  * will redir them to the signin page.
  */
+function logAjaxError(e){
+    console.log("status: " + e.status);
+    console.log("statusText: " + e.statusText);
+    console.log("readyState: " + e.readyState);
+    console.log("responseText: " + e.responseText);
+}
+
 function getBaseUri() {
     return 'https:' == document.location.protocol ? orcidVar.baseUri
             : orcidVar.baseUriHttp;
@@ -246,9 +253,10 @@ function checkOrcidLoggedIn() {
             }).fail(
             // detects server is down or CSRF mismatches
             // do to session expiration or server bounces
-            function() {
+            function(e) {
                 console.log("error with loggin check on :"
                         + window.location.href);
+                logAjaxError(e);
                 window.location = window.location.href;
             });
 }
@@ -279,6 +287,8 @@ function logOffReload(reload_param) {
         }
     }).fail(function() {
         // something bad is happening!
+        console.log("Error with log out");
+        logAjaxError(e);
         window.location.reload();
     });
 };
@@ -512,8 +522,10 @@ $(function() {
                                                     showLoginError(message);
                                                 };
                                             }
-                                        }).fail(function() {
+                                        }).fail(function(e) {
                                     // something bad is happening!
+                                    console.log("Error with log in");
+                                    logAjaxError(e);
                                     window.location.reload();
                                 });
                         return false;

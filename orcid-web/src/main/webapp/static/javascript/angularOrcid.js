@@ -580,7 +580,8 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
                         }
                     }
                 }).fail(function(e) {
-                    console.log(e.statusText);
+                    console.log("Error adding affiliations to scope")
+                    logAjaxError(e);
                 });
             } else {
                 serv.loading = false;
@@ -604,9 +605,10 @@ orcidNgModule.factory("affiliationsSrvc", ['$rootScope', function ($rootScope) {
                     serv.addAffiliationToScope('affiliations/affiliations.json');
                     $rootScope.$apply();
                 }
-            }).fail(function(){
+            }).fail(function(e){
                 // something bad is happening!
                 console.log("error fetching affiliations");
+                logAjaxError(e);
             });
         },
         updateProfileAffiliation: function(aff) {
@@ -744,8 +746,9 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                             },50);
                         }
                     }
-                }).fail(function() {
+                }).fail(function(e) {
                     console.log("Error fetching fundings");
+                    logAjaxError(e);
                 });
             } else {
                 fundingSrvc.loading = false;
@@ -831,9 +834,10 @@ orcidNgModule.factory("fundingSrvc", ['$rootScope', function ($rootScope) {
                     fundingSrvc.addFundingToScope('fundings/fundings.json');
                     $rootScope.$apply();
                 }
-            }).fail(function(){
+            }).fail(function(e){
                 // something bad is happening!
                 console.log("error fetching fundings");
+                logAjaxError(e);
             });
         },
         getGroup: function(putCode) {
@@ -964,11 +968,12 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                             },50);
                         }
                     }
-                }).fail(function() {
+                }).fail(function(e) {
                     //$rootScope.$apply(function() {
                         worksSrvc.loading = false;
                     //});
                     console.log("Error fetching works: " + workIds);
+                    logAjaxError(e);
                 });
             } else {
                 worksSrvc.loading = false;
@@ -1022,9 +1027,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                             if (callback != undefined) callback(worksSrvc.details[putCode]);
                         });
                     }
-                }).fail(function(){
+                }).fail(function(e){
                     // something bad is happening!
                     console.log("error fetching works");
+                    logAjaxError(e);
                 });
             } else {
                 if (callback != undefined) callback(worksSrvc.details[putCode]);
@@ -1132,9 +1138,10 @@ orcidNgModule.factory("worksSrvc", ['$rootScope', function ($rootScope) {
                         worksSrvc.addAbbrWorksToScope(worksSrvc.constants.access_type.USER);
                         $rootScope.$apply();
                     }
-                }).fail(function(){
+                }).fail(function(e){
                     // something bad is happening!
                     console.log("error fetching works");
+                    logAjaxError(e);
                 });
             };
         },
@@ -1279,9 +1286,10 @@ orcidNgModule.factory("emailSrvc", function ($rootScope) {
                     if (callback)
                        callback(data);
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with multi email");
+                logAjaxError(e);
             });
         },
         deleteEmail: function (callback) {
@@ -1442,11 +1450,12 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                     $rootScope.$apply();
                     serv.resizeIframes();
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 serv.loading = false;
                 serv.loadingMore = false;
                 // something bad is happening!
                 console.log("error with getting notifications");
+                logAjaxError(e);
             });
         },
         getNotificationAlerts: function(){
@@ -1457,9 +1466,10 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                 success: function(data) {
                 	serv.notificationAlerts = data;
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("getNotificationsAlerts error in notificationsSrvc");
+                logAjaxError(e);
             });
         },
         reloadNotifications: function() {
@@ -1477,9 +1487,10 @@ orcidNgModule.factory("notificationsSrvc", ['$rootScope', '$q', function ($rootS
                     serv.unreadCount = data;                   
                     $rootScope.$apply();
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with getting count of unread notifications");
+                logAjaxError(e);
             });
         },
         resizeIframes: function(){
@@ -1636,9 +1647,10 @@ orcidNgModule.factory("discoSrvc", ['$rootScope', 'widgetSrvc', function ($rootS
                     serv.feed = data;
                     $rootScope.$apply();
                 }
-            }).fail(function() {
+            }).fail(function(e) {
                 // something bad is happening!
                 console.log("error with disco feed");
+                logAjaxError(e);
                 serv.feed = [];
                 $rootScope.$apply();
             });
@@ -1823,9 +1835,10 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                         	peerReviewSrvc.addPeerReviewsToScope(peerReviewSrvc.constants.access_type.USER);
                             $rootScope.$apply();
                         }
-                    }).fail(function(){
+                    }).fail(function(e){
                         // something bad is happening!
                         console.log("error fetching Peer Review");
+                        logAjaxError(e);
                     });
                 };
     		},    		
@@ -1858,11 +1871,12 @@ orcidNgModule.factory("peerReviewSrvc", ['$rootScope', function ($rootScope) {
                                 },50);
                             }
                         }
-                    }).fail(function() {
+                    }).fail(function(e) {
                         //$rootScope.$apply(function() {
                         	peerReviewSrvc.loading = false;
                         //});
                         console.log("Error fetching Peer Review: " + peerReviewIds);
+                        logAjaxError(e);
                     });
                 } else {
                 	peerReviewSrvc.loading = false;
@@ -2350,7 +2364,7 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
     };
 }]);
 
-orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout',function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies) {
 	bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
@@ -2517,6 +2531,25 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
         emailSrvc.saveEmail();
     };
     
+    /* Workaround for dealing with the Email table styles in Asian languages */
+    $scope.asianEmailTableStyleFix = function(){
+        if ($cookies.get('locale_v3') == 'zh_CN' || $cookies.get('locale_v3') == 'zh_TW' || $cookies.get('locale_v3') == 'ja' || $cookies.get('locale_v3') == 'ko'){            
+            
+            $scope.$watch(
+                function () {
+                    return document.getElementsByClassName('email-verified').length; 
+                },
+                function (newValue, oldValue) {                    
+                    $(".settings-table .table td:nth-child(1)").addClass('reset-width');
+                    $(".settings-table .table td:nth-child(2)").addClass('reset-width');
+                    $(".settings-table .table td:nth-child(4)").addClass('reset-width');                    
+                }
+            );
+            
+         };
+    };
+    
+    $scope.asianEmailTableStyleFix();
     
 }]);
 
@@ -2613,9 +2646,10 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
                                 
                 $scope.$apply();
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching websites");
+            logAjaxError(e);
         });
     };
 
@@ -3120,9 +3154,10 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
                 
                 $scope.$apply();                                
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching otherNames");
+            logAjaxError(e);
         });
     };
 
@@ -3293,9 +3328,10 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
                 $scope.biographyForm = data;
                 $scope.$apply();
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching BiographyForm");
+            logAjaxError(e);
         });
     };
 
@@ -3348,15 +3384,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.primaryElementIndex = null;
-    $scope.scrollTop = 0;
-    
-    $scope.openEdit = function() {
-        $scope.showEdit = true;        
-    };
-
-    $scope.close = function() {
-        $scope.showEdit = false;
-    };
+    $scope.scrollTop = 0;   
 
     $scope.getCountryForm = function(){
         $.ajax({
@@ -3411,9 +3439,10 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
                 }     
                 $scope.$apply();                
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching external identifiers");
+            logAjaxError(e);
         });
     };
 
@@ -3433,9 +3462,8 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
             success: function(data) {
                 $scope.countryForm = data;
                 if ($scope.countryForm.errors.length == 0){
-                    $scope.close();
-                    $scope.getCountryForm();                
-                    $.colorbox.close();                    
+                    $.colorbox.close();
+                    $scope.getCountryForm();
                 }else{
                     console.log($scope.countryForm.errors);
                 }
@@ -3594,9 +3622,10 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
                 $scope.displayIndexInit();
                 $scope.$apply();
             }
-        }).fail(function(){
+        }).fail(function(e){
             // something bad is happening!
             console.log("error fetching external identifiers");
+            logAjaxError(e);
         });
     }
 
@@ -3820,8 +3849,8 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
             $scope.privacyHelp[key]=!$scope.privacyHelp[key];
-    };
-
+    };    
+    
     $scope.getRegister = function(givenName, familyName, email, linkFlag){
         $.ajax({
             url: getBaseUri() + '/register.json',
@@ -3832,21 +3861,15 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
                $scope.register.familyNames.value=familyName;
                $scope.register.email.value=email;
                $scope.register.linkType=linkFlag;
-               $scope.$apply();
-
-               if(email !== ''){
-                   // Validate the email as soon as the user arrives at the screen, if it has been pre-populated.
-                   $scope.serverValidate('Email');
-               }
+               $scope.$apply();               
     
                 // make sure inputs stayed trimmed
                 $scope.$watch('register.email.value', function(newValue, oldValue) {
                     if(newValue !== oldValue) {
                         trimAjaxFormText($scope.register.email);
-                        $scope.serverValidate('Email');
                     }
-                }); // initialize the watch
-    
+                }); // initialize the watch            
+                
                 // make sure email is trimmed
                 $scope.$watch('register.emailConfirm.value', function(newValue, oldValue) {
                     if(newValue !== oldValue){
@@ -3973,7 +3996,7 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
         });
     };
 
-    $scope.serverValidate = function (field) {
+    $scope.serverValidate = function (field) {        
         if (field === undefined) field = '';
         $.ajax({
             url: getBaseUri() + '/register' + field + 'Validate.json',
@@ -4037,10 +4060,6 @@ orcidNgModule.controller('RegistrationCtrl', ['$scope', '$compile', 'commonSrvc'
     $scope.setRecatchaResponse = function (response) {
         $scope.recatchaResponse = response;
     };
-    //init
-//    $scope.getRegister();
-    //$scope.getDuplicates();
-
 }]);
 
 orcidNgModule.controller('ClaimCtrl', ['$scope', '$compile', 'commonSrvc', function ($scope, $compile, commonSrvc) {
@@ -5791,9 +5810,10 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
             	}
             	$scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("WorkImportWizardError");
+            logAjaxError(e);
         });
     }
     
@@ -5839,8 +5859,6 @@ orcidNgModule.controller('WorkCtrl', ['$scope', '$compile', '$filter', 'worksSrv
                 } else {
                     $scope.editWork = data;                    
                     commonSrvc.copyErrorsLeft($scope.editWork, data);
-                    
-                    $scope.addExternalIdentifier();
                     
                     $scope.addingWork = false;
                     $scope.$apply();
@@ -6539,9 +6557,10 @@ orcidNgModule.controller('PeerReviewCtrl', ['$scope', '$compile', '$filter', 'wo
         		});
             	$scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("PeerReviewImportWizardError");
+            logAjaxError(e);
         });
     }
 }]);
@@ -6972,9 +6991,10 @@ orcidNgModule.controller('DelegatorsCtrl',['$scope', '$compile', function ($scop
                 $scope.delegators = data.delegators;
                 $scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("error with delegates");
+            logAjaxError(e);
         });
     };
 
@@ -7167,9 +7187,10 @@ orcidNgModule.controller('SwitchUserCtrl',['$scope', '$compile', '$document', fu
                 $scope.unfilteredLength = $scope.delegators != null ? $scope.delegators.delegationDetails.length : 0;
                 $scope.$apply();
             }
-        }).fail(function() {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("error with delegates");
+            logAjaxError(e);
         });
     };
 
@@ -7232,9 +7253,10 @@ orcidNgModule.controller('statisticCtrl',['$scope', function ($scope){
                 $scope.liveIds = data;
                 $scope.$apply($scope.liveIds);
             }
-        }).fail(function(error) {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("Error getting statistics Live iDs total amount");
+            logAjaxError(e);
         });
     };
 
@@ -8238,10 +8260,10 @@ orcidNgModule.controller('resetPasswordCtrl',['$scope', '$compile', function ($s
                     $scope.params.password=data;
                 });
             }
-        }).fail(function(error) {
-            console.log(error);
+        }).fail(function(e) {
             // something bad is happening!
             console.log("Error generating random string");
+            logAjaxError(e);
         });
     };
 
@@ -8795,10 +8817,10 @@ orcidNgModule.controller('SSOPreferencesCtrl',['$scope', '$compile', '$sce', 'em
                     }
                 });
             }
-        }).fail(function(error) {
+        }).fail(function(e) {
             // something bad is happening!
             console.log("Error obtaining SSO credentials");
-            console.log(error);
+            logAjaxError(e);
         });
     };
 
@@ -10785,54 +10807,56 @@ orcidNgModule.filter('contributorFilter', function(){
     };
 });
 
+orcidNgModule.filter('clean', function($filter){
+   return function(x, idx){
+       console.log(idx);
+       
+       return x;
+   }; 
+});
+
 orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
     return function(workExternalIdentifier, first, last, length, moreInfo){
-
         var output = '';
         var ngclass = '';
         var isPartOf = false;
         
         if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         
-        
         if(workExternalIdentifier.relationship != null && workExternalIdentifier.relationship.value == 'part-of')
-        	isPartOf = true;
-        
+        	isPartOf = true;        
         if (workExternalIdentifier == null) return output;
-        if (workExternalIdentifier.workExternalIdentifierId == null) return output;
-
+        if (workExternalIdentifier.workExternalIdentifierId == null) return output;        
+        
         var id = workExternalIdentifier.workExternalIdentifierId.value;
         var type;
-
+        
         if (workExternalIdentifier.workExternalIdentifierType != null)
-            type = workExternalIdentifier.workExternalIdentifierType.value;
-        if (type != null) {
-        	if(isPartOf) 
+            type = workExternalIdentifier.workExternalIdentifierType.value;        
+        if (type != null && typeof type != 'undefined') {
+            type.escapeHtml();
+        	if(isPartOf)
         		output = output + "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
         	else 
         		output = output + "<span class='type'>" + type.toUpperCase() + "</span>: ";
         }
+        
         var link = null;
-
         if (workExternalIdentifier.url != null && workExternalIdentifier.url.value != '')
         	link = workExternalIdentifier.url.value;
-        else link = workIdLinkJs.getLink(id,type); 
-        	
-        if (link != null){
-        	link = $filter('urlProtocol')(link);
-        	
-            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
-            
+        else link = workIdLinkJs.getLink(id,type);	
+        if (link != null){        	
+            link = $filter('urlProtocol')(link);        	
+            output = output + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(work.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(work.putCode.value + $index)\">" + id.escapeHtml() + '</a>';            
         }else{
-            output = output + id;        
+            output = output + id.escapeHtml();        
         }
-        
         output += '<div class="popover-pos">\
 			<div class="popover-help-container">\
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
 				    </div>\
 				</div>\
 			</div>\
@@ -10876,31 +10900,31 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         	link = $filter('urlProtocol')(link);
         	
         	if(value != null) {
-        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value + "</a>";
+        		output += "<a href='" + link + "' class='truncate-anchor' target='_blank' ng-mouseenter='showURLPopOver(funding.putCode.value+ $index)' ng-mouseleave='hideURLPopOver(funding.putCode.value + $index)'>" + value.escapeHtml() + "</a>";
         	} else {
         		if(type != null) {
         			
         			if (moreInfo == false || typeof moreInfo == 'undefined') ngclass = 'truncate-anchor';
         			
         			if(type.value == 'grant') {
-        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.grant') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
         			} else if(type.value == 'contract') {
-        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.contract') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
         			} else {
-        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link + "</a>";
+        				output = om.get('funding.add.external_id.url.label.award') + ': <a href="' + link + '" class="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(funding.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(funding.putCode.value + $index)\">" + link.escapeHtml() + "</a>";
         			}
         			
         		}        		
         	}
         } else if(value != null) {
-        	output = output + " " + value;
+        	output = output + " " + value.escapeHtml();
         }
         output += '<div class="popover-pos">\
         				<div class="popover-help-container">\
 				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
 								<div class="arrow"></div>\
 								<div class="popover-content">\
-							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link+'</a>\
+							    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
 							    </div>\
 							</div>\
 						</div>\
@@ -10935,9 +10959,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
             type = peerReviewExternalIdentifier.workExternalIdentifierType.value;
 	        if (type != null) {
 	        	if(isPartOf)
-	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase() + "</span></span>: ";
+	        		output += "<span class='italic'>" + om.get("common.part_of") + " <span class='type'>" + type.toUpperCase().escapeHtml() + "</span></span>: ";
 	        	else 
-	        		output += "<span class='type'>" + type.toUpperCase() + "</span>: ";
+	        		output += "<span class='type'>" + type.toUpperCase().escapeHtml() + "</span>: ";
 	        }
         
         if (peerReviewExternalIdentifier.url != null && peerReviewExternalIdentifier.url.value != '')
@@ -10946,9 +10970,9 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         	
         if (link != null){
         	link = $filter('urlProtocol')(link);
-            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;") + '</a>';
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;").escapeHtml() + '</a>';
         }else{
-            output += id;        
+            output += id.escapeHtml();        
         }
         
         if (length > 1 && !last) output = output + ',';
@@ -10959,13 +10983,13 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
 	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
 					<div class="arrow"></div>\
 					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank">'+link+'</a>\
+				    	<a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
 				    </div>\
 				</div>\
 			</div>\
 	   </div>';
         
-        if(own)
+       if(own)
         	output = '<br/>' + output;
         
        return output;      

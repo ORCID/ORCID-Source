@@ -208,8 +208,9 @@
                         		<span ng-show="editAffiliation.putCode.value != null"><@orcid.msg 'manual_affiliation_form_contents.btnedit'/></span>
                     		</button>
 						</li>						
-						<li>
-							<button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>		
+						<li>		
+							<!-- <button id="" class="btn close-button" ng-click="closeModal()" type="reset"><@orcid.msg 'freemarker.btncancel' /></button>-->					
+							<a class="cancel-option" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>					
 						</li>
 						<li>
 							<span ng-if="addingAffiliation">

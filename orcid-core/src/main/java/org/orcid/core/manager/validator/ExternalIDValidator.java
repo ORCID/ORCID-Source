@@ -27,21 +27,45 @@ import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.Items;
 import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.ExternalIDs;
+import org.orcid.pojo.ajaxForm.PojoUtil;
+import org.springframework.beans.factory.annotation.Value;
 
 public class ExternalIDValidator {
 
     @Resource
     IdentifierTypeManager identifierTypeManager;
 
+    @Value("${org.orcid.core.validations.requireRelationship:false}")
+    private boolean requireRelationshipOnExternalIdentifier;
+    
     public ExternalIDValidator() {
+    }
+
+    public void setRequireRelationshipOnExternalIdentifier(boolean requireRelationshipOnExternalIdentifier) {
+        this.requireRelationshipOnExternalIdentifier = requireRelationshipOnExternalIdentifier;
     }
 
     public void validateWorkOrPeerReview(ExternalID id) {
         if (id == null)
             return;
+        
+        List<String> errors = Lists.newArrayList();
+        
         if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
-            checkAndThrow(Lists.newArrayList(id.getType()));
+            errors.add("type");
         }
+        
+        if(PojoUtil.isEmpty(id.getValue())) {
+            errors.add("value");
+        }
+        
+        if(requireRelationshipOnExternalIdentifier) {
+            if(id.getRelationship() == null) {
+                errors.add("relationship");
+            }
+        }
+        
+        checkAndThrow(errors);
     }
 
     public void validateWorkOrPeerReview(ExternalIDs ids) {
@@ -51,6 +75,16 @@ public class ExternalIDValidator {
         for (ExternalID id : ids.getExternalIdentifier()) {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
                 errors.add(id.getType());
+            }
+            
+            if(PojoUtil.isEmpty(id.getValue())) {
+                errors.add("value");
+            }
+            
+            if(requireRelationshipOnExternalIdentifier) {
+                if(id.getRelationship() == null) {
+                    errors.add("relationship");
+                }
             }
         }
         checkAndThrow(errors);
@@ -64,7 +98,18 @@ public class ExternalIDValidator {
             if (id.getType() == null || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(id.getType())) {
                 errors.add(id.getType());
             }
-        }
+            
+            if(PojoUtil.isEmpty(id.getValue())) {
+                errors.add("value");
+            }
+            
+            if(requireRelationshipOnExternalIdentifier) {
+                if(id.getRelationship() == null) {
+                    errors.add("relationship");
+                }
+            }
+        }                
+        
         checkAndThrow(errors);
     }
 
@@ -74,9 +119,20 @@ public class ExternalIDValidator {
         List<String> errors = Lists.newArrayList();
         for (Item i : items.getItems()) {
             if (i.getExternalIdentifier() != null && i.getExternalIdentifier().getType() != null) {
-                if (i.getExternalIdentifier().getType() == null
-                        || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(i.getExternalIdentifier().getType())) {
+                ExternalID extId = i.getExternalIdentifier();
+                if (extId.getType() == null
+                        || !identifierTypeManager.fetchIdentifierTypesByAPITypeName().containsKey(extId.getType())) {
                     errors.add(i.getExternalIdentifier().getType());
+                }
+                
+                if(PojoUtil.isEmpty(extId.getValue())) {
+                    errors.add("value");
+                }
+                
+                if(requireRelationshipOnExternalIdentifier) {
+                    if(extId.getRelationship() == null) {
+                        errors.add("relationship");
+                    }
                 }
             }
         }

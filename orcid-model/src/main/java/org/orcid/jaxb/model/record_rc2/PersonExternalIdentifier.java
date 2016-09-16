@@ -32,6 +32,7 @@ import org.orcid.jaxb.model.common_rc2.Source;
 import org.orcid.jaxb.model.common_rc2.Url;
 import org.orcid.jaxb.model.common_rc2.Visibility;
 import org.orcid.jaxb.model.common_rc2.VisibilityType;
+import org.orcid.jaxb.model.record_rc2.Relationship;
 
 import io.swagger.annotations.ApiModelProperty;
 

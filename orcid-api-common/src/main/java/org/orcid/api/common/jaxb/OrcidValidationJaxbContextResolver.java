@@ -52,6 +52,8 @@ import org.orcid.jaxb.model.message.OrcidMessage;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import javax.xml.validation.Validator;
 
 /**
@@ -125,7 +127,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrl.class, "record_2.0_rc3/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.ResearcherUrls.class, "record_2.0_rc3/researcher-url-");
         SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.Work.class, "record_2.0_rc3/work-");
-        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.WorkBulk.class, "record_2.0_rc3/work-");
+        SCHEMA_FILENAME_PREFIX_BY_CLASS_RC3.put(org.orcid.jaxb.model.record_rc3.WorkBulk.class, "record_2.0_rc3/bulk-");
     }
     private JAXBContext jaxbContext_2_0_rc1;
     private JAXBContext jaxbContext_2_0_rc2;
@@ -245,7 +247,7 @@ public class OrcidValidationJaxbContextResolver implements ContextResolver<Unmar
 
     public class OrcidValidationHandler implements ValidationEventHandler {
         @Override
-        public boolean handleEvent(ValidationEvent event) {
+        public boolean handleEvent(ValidationEvent event) {            
             if (event.getSeverity() == ValidationEvent.FATAL_ERROR || event.getSeverity() == ValidationEvent.ERROR) {
                 logger.error(event.getMessage());
                 throw new OrcidBadRequestException(event.getMessage());

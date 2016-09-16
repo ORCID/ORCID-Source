@@ -14,8 +14,9 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.salesforce.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,15 +24,17 @@ import java.util.List;
  * @author Will Simpson
  *
  */
-public class SalesForceConsortium {
+public class Consortium implements Serializable {
 
-    private List<SalesForceOpportunity> opportunities;
+    private static final long serialVersionUID = 1L;
 
-    public List<SalesForceOpportunity> getOpportunities() {
+    private List<Opportunity> opportunities;
+
+    public List<Opportunity> getOpportunities() {
         return opportunities;
     }
 
-    public void setOpportunities(List<SalesForceOpportunity> opportunities) {
+    public void setOpportunities(List<Opportunity> opportunities) {
         this.opportunities = opportunities;
     }
 

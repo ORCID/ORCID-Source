@@ -368,8 +368,8 @@ public class WorksController extends BaseWorkspaceController {
     public @ResponseBody
     WorkForm postWork(HttpServletRequest request, @RequestBody WorkForm workForm) throws Exception {
         validateWork(workForm);
-        removeEmptyExternalIdentifiers(workForm);
         if (workForm.getErrors().size() == 0) {
+            removeEmptyExternalIdentifiers(workForm);            
             if (workForm.getPutCode() != null)  
                 updateWork(workForm);
             else

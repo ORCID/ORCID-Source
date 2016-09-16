@@ -16,6 +16,8 @@
  */
 package org.orcid.core.exception;
 
+import java.util.Map;
+
 /**
  * 
  * @author Shobhit Tyagi
@@ -28,6 +30,10 @@ public class ActivityTypeValidationException extends ApplicationException {
     public ActivityTypeValidationException() {
     }
 
+    public ActivityTypeValidationException(Map<String, String> params) {
+        super(params);
+    }
+    
     public ActivityTypeValidationException(String message, Throwable cause) {
         super(message, cause);
     }

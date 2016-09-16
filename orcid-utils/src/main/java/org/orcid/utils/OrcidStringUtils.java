@@ -37,7 +37,8 @@ import java.util.regex.Pattern;
 public class OrcidStringUtils {
 
         public static String ORCID_STRING = "(\\d{4}-){3}\\d{3}[\\dX]";
-    
+        public static String ORCID_URI_STRING = "http://([^/]*orcid\\.org|localhost.*/orcid-web)/(\\d{4}-){3,}\\d{3}[\\dX]";
+        
 	private static String LT = "&lt;";
 	private static String GT = "&gt;";
 	private static String AMP = "&amp;";
@@ -52,6 +53,8 @@ public class OrcidStringUtils {
 
 	private static final Pattern orcidPattern = Pattern
 			.compile(ORCID_STRING);
+	private static final Pattern orcidUriPattern = Pattern
+                .compile(ORCID_URI_STRING);
 	private static final Pattern clientIdPattern = Pattern
 			.compile("APP-[\\dA-Z]{16}");
 
@@ -64,6 +67,14 @@ public class OrcidStringUtils {
 		} else {
 			return false;
 		}
+	}
+	
+	public static boolean isValidOrcidUri(String orcidUri) {
+	    if (StringUtils.isNotBlank(orcidUri)) {
+                return orcidUriPattern.matcher(orcidUri).matches();
+        } else {
+                return false;
+        }
 	}
 
 	public static String getOrcidNumber(String orcid) {
@@ -96,7 +107,10 @@ public class OrcidStringUtils {
 	}
 
 	public static String stripHtml(String s) {
-	    return Jsoup.clean(s, "", Whitelist.none(), outputSettings);
+	    String output = Jsoup.clean(s, "", Whitelist.none(), outputSettings);
+	    output = output.replace(GT, DECODED_GT);
+            output = output.replace(AMP, DECODED_AMP);            
+            return output;
 	}
 	
 	public static String simpleHtml(String s) {
@@ -111,8 +125,8 @@ public class OrcidStringUtils {
             output = output.replace(APOS, DECODED_APOS);
             output = output.replace(QUOT, DECODED_QUOT);
             return output;
-	}
-		
+	}	
+	
 	/**
 	 * Strips html and restore the following characters: ' " & > < If the string
 	 * resulting after that process doesnt match the given string, we can say it

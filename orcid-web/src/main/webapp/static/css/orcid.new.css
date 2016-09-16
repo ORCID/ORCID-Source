@@ -2090,6 +2090,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: visible;
 }
 
+.inline-list .cancel-option{
+	padding-top: 7px;
+}
+
 .inline-list > li {
 	float: left;
 }
@@ -2383,6 +2387,9 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	display: block;
 }
 
+.privacy-component:hover .popover-help-container .popover{
+	display: block;
+}
 
 .workspace-inner {
 	padding-left: 10px;
@@ -5772,10 +5779,6 @@ textarea.form-control,
   	top: -178px;
 }
 
-.glyphicon-question-sign{
-	cursor: default;
-}
-
 /* Widget */
 
 .widget-container{
@@ -6646,6 +6649,16 @@ a:hover .mozilla-badge{
 
 .account-settings .pull-right{
 	margin-right: 16px;
+}
+
+.wizard-header{
+	font-size: 31px;
+}
+
+.reset-width{
+	width: auto !important;
+	min-width: 0  !important;
+    display: table  !important;
 }
 
 

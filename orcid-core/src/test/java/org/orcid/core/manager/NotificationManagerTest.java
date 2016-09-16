@@ -211,6 +211,10 @@ public class NotificationManagerTest extends DBUnitTest {
 
     @Test
     public void testAddedDelegatesSentCorrectEmail() throws JAXBException, IOException, URISyntaxException {
+        SourceEntity sourceEntity = new SourceEntity(new ClientDetailsEntity("APP-5555555555555555"));
+        when(sourceManager.retrieveSourceEntity()).thenReturn(sourceEntity);
+        when(sourceManager.retrieveSourceOrcid()).thenReturn("APP-5555555555555555");
+        
         String delegateOrcid = "1234-5678-1234-5678";
         ProfileEntity delegateProfileEntity = new ProfileEntity(delegateOrcid);
         EmailEntity delegateEmail = new EmailEntity();
@@ -220,7 +224,7 @@ public class NotificationManagerTest extends DBUnitTest {
         delegateEmail.setVerified(true);
         delegateProfileEntity.setPrimaryEmail(delegateEmail);
         delegateProfileEntity.setSendChangeNotifications(true);
-        //delegateProfileEntity.setSendAdministrativeChangeNotifications(true);
+        delegateProfileEntity.setSendAdministrativeChangeNotifications(true);
         profileDao.merge(delegateProfileEntity);
 
         for (Locale locale : Locale.values()) {

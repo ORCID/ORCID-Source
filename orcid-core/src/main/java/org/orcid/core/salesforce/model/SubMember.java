@@ -14,18 +14,18 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.salesforce.model;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public class SalesForceSubMember {
+public class SubMember {
 
     private String slug;
-    private SalesForceOpportunity opportunity;
-    private SalesForceContact mainContact;
+    private Opportunity opportunity;
+    private Contact mainContact;
 
     public String getSlug() {
         return slug;
@@ -35,19 +35,19 @@ public class SalesForceSubMember {
         this.slug = slug;
     }
 
-    public SalesForceOpportunity getOpportunity() {
+    public Opportunity getOpportunity() {
         return opportunity;
     }
 
-    public void setOpportunity(SalesForceOpportunity opportunity) {
+    public void setOpportunity(Opportunity opportunity) {
         this.opportunity = opportunity;
     }
 
-    public SalesForceContact getMainContact() {
+    public Contact getMainContact() {
         return mainContact;
     }
 
-    public void setMainContact(SalesForceContact mainContact) {
+    public void setMainContact(Contact mainContact) {
         this.mainContact = mainContact;
     }
 

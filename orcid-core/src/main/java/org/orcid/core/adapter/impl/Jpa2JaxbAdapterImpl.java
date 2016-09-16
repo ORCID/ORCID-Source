@@ -19,9 +19,11 @@ package org.orcid.core.adapter.impl;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -421,15 +423,62 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
         Date lastModified = profileEntity.getLastModified();
         List<WorkEntity> works = workEntityCacheManager.retrieveFullWorks(orcid, lastModified != null ? lastModified.getTime() : 0);
         if (works != null && !works.isEmpty()) {
-            OrcidWorks orcidWorks = new OrcidWorks();
+            List<OrcidWork> unsorted = new ArrayList<>();
             for (WorkEntity workEntity : works) {
                 OrcidWork orcidWork = getOrcidWork(workEntity);
                 orcidWork.setVisibility(workEntity.getVisibility());
-                orcidWorks.getOrcidWork().add(orcidWork);
+                unsorted.add(orcidWork);
             }
+            OrcidWorks orcidWorks = new OrcidWorks();
+            orcidWorks.setOrcidWork(sortWorks(unsorted));
             return orcidWorks;
         }
         return null;
+    }
+
+    public List<OrcidWork> sortWorks(List<OrcidWork> unsorted) {
+        return unsorted.stream().sorted(workDisplayIndexComparator().thenComparing(workPubDateComparator()).thenComparing(workTitleComparator()))
+                .collect(Collectors.toList());
+    }
+    
+    public Comparator<OrcidWork> workDisplayIndexComparator() {
+        return (work1, work2) -> {
+            Long displayIndex1 = work1.getDisplayIndex();
+            Long displayIndex2 = work2.getDisplayIndex();
+            if (displayIndex1 != null && displayIndex2 != null) {
+                return -displayIndex1.compareTo(displayIndex2);
+            } else {
+                return NullUtils.compareNulls(displayIndex1, displayIndex2);
+            }
+        };
+    }
+
+    public Comparator<OrcidWork> workPubDateComparator() {
+        return (work1, work2) -> {
+            PublicationDate pubDate1 = work1.getPublicationDate();
+            PublicationDate pubDate2 = work2.getPublicationDate();
+            if (pubDate1 != null && pubDate2 != null) {
+                @SuppressWarnings("deprecation")
+                String dateString1 = PojoUtil.createDateSortString(null, pubDate1);
+                @SuppressWarnings("deprecation")
+                String dateString2 = PojoUtil.createDateSortString(null, pubDate2);
+                return -dateString1.compareTo(dateString2);
+            } else {
+                return NullUtils.compareNulls(pubDate1, pubDate2);
+            }
+        };
+    }
+
+    public Comparator<OrcidWork> workTitleComparator() {
+        return (work1, work2) -> {
+            WorkTitle title1 = work1.getWorkTitle();
+            WorkTitle title2 = work2.getWorkTitle();
+            if (title1 != null && title2 != null) {
+                return title1.getTitle().getContent().compareTo(title2.getTitle().getContent());
+            } else {
+                return NullUtils.compareNulls(title1, title2);
+            }
+        };
     }
 
     private OrcidBio getOrcidBio(ProfileEntity profileEntity) {
@@ -861,6 +910,7 @@ public class Jpa2JaxbAdapterImpl implements Jpa2JaxbAdapter {
 
         orcidWork.setCreatedDate(new CreatedDate(toXMLGregorianCalendar(work.getDateCreated())));
         orcidWork.setLastModifiedDate(new LastModifiedDate(toXMLGregorianCalendar(work.getLastModified())));
+        orcidWork.setDisplayIndex(work.getDisplayIndex());
 
         return orcidWork;
     }

@@ -342,8 +342,8 @@
 									<@orcid.msg 'freemarker.btnsave'/>
 								</button>
 							</li>
-							<li>
-								<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+							<li>								
+								<a class="cancel-option" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 							</li>
 							<li>
 								<span ng-show="addingWork">
@@ -360,8 +360,8 @@
 									<@orcid.msg 'manual_work_form_contents.btnaddtolist'/>
 								</button>
 							</li>
-							<li>
-								<button id="" class="btn close-button" type="reset"  ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></button>
+							<li>								
+								<a class="cancel-option" ng-click="closeModal()"><@orcid.msg 'freemarker.btncancel' /></a>
 							</li>
 							<li>
 								<span ng-show="addingWork">

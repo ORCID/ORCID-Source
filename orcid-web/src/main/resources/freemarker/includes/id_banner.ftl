@@ -52,12 +52,18 @@
 		   <input type="text" ng-model="nameForm.familyName.value" ng-enter="setNameForm()" class="full-width-input"></input>
 		   <label for="creditName">${springMacroRequestContext.getMessage("manage_bio_settings.labelpublishedname")}</label>		   		        	   
 		   <input type="text" ng-model="nameForm.creditName.value" ng-enter="setNameForm()" class="full-width-input"></input>		   
-		   <@orcid.privacyToggle  angularModel="nameForm.namesVisibility.visibility"
-				             questionClick="toggleClickPrivacyHelp()"
-				             clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-				             publicClick="setNamesVisibility('PUBLIC', $event)" 
-	                 	     limitedClick="setNamesVisibility('LIMITED', $event)" 
-	                 	     privateClick="setNamesVisibility('PRIVATE', $event)" />
+		   <@orcid.privacyComponent 
+				 angularModel="nameForm.namesVisibility.visibility"
+	          	 publicClick="setNamesVisibility('PUBLIC', $event)" 
+	           	 limitedClick="setNamesVisibility('LIMITED', $event)" 
+	           	 privateClick="setNamesVisibility('PRIVATE', $event)"
+	           	 placement="top" 
+				 popoverStyle="left: 0; top: -178px;" 
+				 arrowStyle="left: 48px;"	                 	     
+			/>
+			<div style="float: left">
+				<a href="http://support.orcid.org/knowledgebase/articles/142948-names-in-the-orcid-registry" target="_blank"><i class="glyphicon glyphicon-question-sign" style="width: 14px;"></i></a>
+			</div>
 		   <ul class="workspace-section-toolbar">
  				<li class="pull-right">
 		   			<button class="btn btn-primary" ng-click="setNameForm()"><@spring.message "freemarker.btnsavechanges"/></button>
