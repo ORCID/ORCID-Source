@@ -6651,6 +6651,10 @@ a:hover .mozilla-badge{
 	margin-right: 16px;
 }
 
+.wizard-header{
+	font-size: 31px;
+}
+
 .reset-width{
 	width: auto !important;
 	min-width: 0  !important;

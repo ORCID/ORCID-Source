@@ -122,6 +122,8 @@ public class FundingExternalIdentifierForm implements ErrorsInterface, Serializa
             result.setUrl(new Url());
         if (!PojoUtil.isEmpty(value))
             result.setValue(value.getValue());
+        if(!PojoUtil.isEmpty(relationship))
+            result.setRelationship(Relationship.fromValue(relationship.getValue()));
         return result;
     }
     
