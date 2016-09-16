@@ -10851,18 +10851,21 @@ orcidNgModule.filter('workExternalIdentifierHtml', function($filter){
         }else{
             output = output + id.escapeHtml();        
         }
-        output += '<div class="popover-pos">\
-			<div class="popover-help-container">\
-	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
-					<div class="arrow"></div>\
-					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
-				    </div>\
-				</div>\
-			</div>\
-	  </div>';
-
-      return output;
+        
+        if( link != null ) {
+            output += '<div class="popover-pos">\
+    			<div class="popover-help-container">\
+    	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[work.putCode.value + $index] == true}">\
+    					<div class="arrow"></div>\
+    					<div class="popover-content">\
+    				    	<a href="'+link+'" target="_blank" class="ng-binding">'+link.escapeHtml()+'</a>\
+    				    </div>\
+    				</div>\
+    			</div>\
+    	  </div>';
+       }
+            
+       return output;
     };
 });
 
@@ -10919,7 +10922,9 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
         } else if(value != null) {
         	output = output + " " + value.escapeHtml();
         }
-        output += '<div class="popover-pos">\
+        
+        if( link != null ) {            
+            output += '<div class="popover-pos">\
         				<div class="popover-help-container">\
 				        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[funding.putCode.value + $index] == true}">\
 								<div class="arrow"></div>\
@@ -10929,7 +10934,7 @@ orcidNgModule.filter('externalIdentifierHtml', ['fundingSrvc', '$filter', functi
 							</div>\
 						</div>\
 				  </div>';
-      
+        }
         
         //if (length > 1 && !last) output = output + ',';
         	return output;
@@ -10977,17 +10982,21 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         
         if (length > 1 && !last) output = output + ',';
         
-        output += '\
-        <div class="popover-pos">\
-			<div class="popover-help-container">\
-	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
-					<div class="arrow"></div>\
-					<div class="popover-content">\
-				    	<a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
-				    </div>\
-				</div>\
-			</div>\
-	   </div>';
+        
+        
+        if (link != null){
+            output += '\
+            <div class="popover-pos">\
+    			<div class="popover-help-container">\
+    	        	<div class="popover bottom" ng-class="{'+"'block'"+' : displayURLPopOver[peerReview.putCode.value + $index] == true}">\
+    					<div class="arrow"></div>\
+    					<div class="popover-content">\
+    				    	<a href="'+link+'" target="_blank">'+link.escapeHtml()+'</a>\
+    				    </div>\
+    				</div>\
+    			</div>\
+    	   </div>';
+        }
         
        if(own)
         	output = '<br/>' + output;
