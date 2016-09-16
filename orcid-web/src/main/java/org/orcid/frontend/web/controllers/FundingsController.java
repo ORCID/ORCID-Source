@@ -697,13 +697,19 @@ public class FundingsController extends BaseWorkspaceController {
                 if(extId.getType() != null)
                     extId.getType().setErrors(new ArrayList<String>());
                 if(extId.getUrl() != null)
-                    extId.getUrl().setErrors(new ArrayList<String>());                    
+                    extId.getUrl().setErrors(new ArrayList<String>()); 
+                if(extId.getValue() != null)
+                    extId.getValue().setErrors(new ArrayList<String>());
+                
                 if (!PojoUtil.isEmpty(extId.getType()) && extId.getType().getValue().length() > 255)
                     setError(extId.getType(), "fundings.lenght_less_255");
                 if (!PojoUtil.isEmpty(extId.getUrl()) && extId.getUrl().getValue().length() > 350)
                     setError(extId.getUrl(), "fundings.length_less_350");
                 if (!PojoUtil.isEmpty(extId.getValue()) && extId.getValue().getValue().length() > 2084)
-                    setError(extId.getValue(), "fundings.length_less_2084");
+                    setError(extId.getValue(), "fundings.length_less_2084");                
+                if(!PojoUtil.isEmpty(extId.getUrl()) && PojoUtil.isEmpty(extId.getValue())) {
+                    setError(extId.getValue(), "NotBlank.fundings.ext_id.value");
+                }                
             }
         }
         return funding;

@@ -17,9 +17,9 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.hi" />${emailName}<@emailMacros.msg "email.common.dear.comma" />
+<@emailMacros.msg "email.common.hi" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.digest.youhave" />${totalMessageCount}<@emailMacros.msg "email.digest.new" /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.msg "email.digest.orcidinbox" /><@emailMacros.msg "email.digest.pleasevisit_2" />${baseUri}/inbox<@emailMacros.msg "email.digest.pleasevisit_3" /><@emailMacros.msg "email.digest.pleasevisit_4" />
+<@emailMacros.msg "email.digest.youhave" /><@emailMacros.space />${totalMessageCount}<@emailMacros.space /><@emailMacros.msg "email.digest.new" /><@emailMacros.space /><#if ((totalMessageCount?number) == 1)><@emailMacros.msg "email.digest.notification" /><#else><@emailMacros.msg "email.digest.notifications" /></#if><@emailMacros.space /><@emailMacros.msg "email.digest.inyourinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.orcidinbox" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_2" />${baseUri}/inbox<@emailMacros.msg "email.digest.pleasevisit_3" /><@emailMacros.space /><@emailMacros.msg "email.digest.pleasevisit_4" />
 
 <#if digestEmail.notificationsBySourceId['ORCID']??>
 <@emailMacros.msg "email.digest.orcidwouldlikeyoutoknow" />
@@ -44,12 +44,12 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
     ${item.itemName?trim} <#if item.externalIdentifier??>(${item.externalIdentifier.type?lower_case}: ${item.externalIdentifier.value})</#if>
 </#list>
 
-<@emailMacros.msg "email.digest.plaintext.addnow" />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
-<@emailMacros.msg "email.digest.plaintext.moreinfo" />${baseUri}/inbox#${notification.putCode}
+<@emailMacros.msg "email.digest.plaintext.addnow" /><@emailMacros.space />${baseUri}/inbox/encrypted/${notification.encryptedPutCode}/action
+<@emailMacros.msg "email.digest.plaintext.moreinfo" /><@emailMacros.space />${baseUri}/inbox#${notification.putCode}
 </#list>
 <#elseif notificationType == 'AMENDED'>
 <#assign amendedSection><@emailMacros.msg "email.common.recordsection." + notification.amendedSection /></#assign>
-<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.msg "email.digest.hasupdated_2" />${amendedSection?lower_case}<@emailMacros.msg "email.digest.hasupdated_3" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
+<@emailMacros.msg "email.digest.hasupdated_1" />${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sourceId}<@emailMacros.space /><@emailMacros.msg "email.digest.hasupdated_2" /><@emailMacros.space />${amendedSection?lower_case}<@emailMacros.space /><@emailMacros.msg "email.digest.hasupdated_3" /> <#if notification.createdDate??>(${notification.createdDate.year?c}-<#if notification.createdDate.month?string?length == 1>0${notification.createdDate.month?c}<#else>${notification.createdDate.month?c}</#if>-<#if notification.createdDate.day?string?length == 1>0${notification.createdDate.day?c}<#else>${notification.createdDate.day?c}</#if>)</#if>
 <#if notification.items??>
 
 <#list notification.items.items as item>
@@ -69,7 +69,7 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
 
 <#if ((totalMessageCount?number) > 1)>
 </#if>
-<@emailMacros.msg "email.digest.plaintext.viewyourinbox" />${baseUri}/inbox
+<@emailMacros.msg "email.digest.plaintext.viewyourinbox" /><@emailMacros.space />${baseUri}/inbox
 
 <#assign frequency>
     <#switch orcidProfile.orcidInternal.preferences.sendEmailFrequencyDays>
@@ -78,6 +78,6 @@ ${(digestEmail.notificationsBySourceId[sourceId].source.sourceName.content)!sour
         <#case "91.3105"><@emailMacros.msg "email.digest.frequency.quarterly" /><#break>
     </#switch>
 </#assign>
-<@emailMacros.msg "email.digest.youhavereceived_1" />${frequency}<@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.msg "email.digest.plaintext.learnmore_1" /><@emailMacros.msg "email.digest.learnmorelink" /><@emailMacros.msg "email.digest.plaintext.learnmore_2" />
-<@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.msg "email.digest.accountsettings" /><@emailMacros.msg "email.digest.youmayadjust_2" />${baseUri}/account<@emailMacros.msg "email.digest.youmayadjust_3" />
+<@emailMacros.msg "email.digest.youhavereceived_1" /><@emailMacros.space />${frequency}<@emailMacros.space /><@emailMacros.msg "email.digest.youhavereceived_2" /><@emailMacros.space /><@emailMacros.msg "email.digest.plaintext.learnmore_1" /><@emailMacros.msg "email.digest.learnmorelink" /><@emailMacros.msg "email.digest.plaintext.learnmore_2" />
+<@emailMacros.msg "email.digest.youmayadjust_1" /><@emailMacros.space /><@emailMacros.msg "email.digest.accountsettings" /><@emailMacros.space /><@emailMacros.msg "email.digest.youmayadjust_2" />${baseUri}/account<@emailMacros.msg "email.digest.youmayadjust_3" />
 <#include "email_footer.ftl"/>

@@ -17,7 +17,7 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.deactivate.you_have_requested.1" /> 
 ${baseUriHttp}/${orcid}?lang=${locale} <@emailMacros.msg "email.deactivate.you_have_requested.2" />

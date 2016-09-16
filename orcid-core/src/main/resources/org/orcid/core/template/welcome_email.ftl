@@ -17,20 +17,20 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
-<@emailMacros.msg "email.welcome.thank_you.1" /> ${source_name_if_exists} <@emailMacros.msg "email.welcome.thank_you.2" />
+<@emailMacros.msg "email.welcome.thank_you.1" /><@emailMacros.space />${source_name_if_exists}<@emailMacros.space /><@emailMacros.msg "email.welcome.thank_you.2" />
 
 ${verificationUrl}?lang=${locale}
 
-* <@emailMacros.msg "email.welcome.your_id.id" /> ${orcidId}
-* <@emailMacros.msg "email.welcome.your_id.link" /> ${baseUri}/${orcidId}
+* <@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space />${orcidId}
+* <@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space />${baseUri}/${orcidId}
 
 <@emailMacros.msg "email.welcome.next_steps" />
 
 <@emailMacros.msg "email.welcome.next_steps.1" />
 
-<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /> ${baseUri}/my-orcid <@emailMacros.msg "email.welcome.next_steps.1.description.1.2" />
+<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /><@emailMacros.space />${baseUri}/my-orcid <@emailMacros.msg "email.welcome.next_steps.1.description.1.2" />
 <@emailMacros.msg "email.welcome.next_steps.1.description.2" />
 
 <@emailMacros.msg "email.welcome.next_steps.1.description.tips" />

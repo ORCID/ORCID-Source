@@ -28,10 +28,10 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		    <span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+				<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 			</span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<@emailMacros.msg "email.welcome.thank_you.1" />${source_name_if_exists} <@emailMacros.msg "email.welcome.thank_you.2" />
+				<@emailMacros.msg "email.welcome.thank_you.1" />${source_name_if_exists}<@emailMacros.space /><@emailMacros.msg "email.welcome.thank_you.2" />
 				<br />
 				<div align="center">
 					<a href="${verificationUrl}?lang=${locale}" target="_blank" 
@@ -45,8 +45,8 @@
 				<a href="${verificationUrl}?lang=${locale}" target="_blank">${verificationUrl}?lang=${locale}</a>
 				<br />
 				<ul>
-					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /> <a href="${baseUriHttp}/${orcidId}" target="_blank">${orcidId}</a></li>
-					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /> <a href="${baseUriHttp}/${orcidId}" target="_blank">${baseUriHttp}/${orcidId}</a></li>
+					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.id" /><@emailMacros.space /><a href="${baseUriHttp}/${orcidId}" target="_blank">${orcidId}</a></li>
+					<li style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;"><@emailMacros.msg "email.welcome.your_id.link" /><@emailMacros.space /><a href="${baseUriHttp}/${orcidId}" target="_blank">${baseUriHttp}/${orcidId}</a></li>
 				</ul>				
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 18px; color: #666666; font-weight: bold;">
@@ -56,8 +56,7 @@
 				<strong><@emailMacros.msg "email.welcome.next_steps.1" /></strong>
 			</p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-				<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /> ${baseUri}/my-orcid <@emailMacros.msg "email.welcome.next_steps.1.description.1.2" />
-				<@emailMacros.msg "email.welcome.next_steps.1.description.2" />
+				<@emailMacros.msg "email.welcome.next_steps.1.description.1.1" /><@emailMacros.space />${baseUri}/my-orcid<@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.1.2" /><@emailMacros.space /><@emailMacros.msg "email.welcome.next_steps.1.description.2" />
 				<br /><br />
 				<@emailMacros.msg "email.welcome.next_steps.1.description.tips" />				
 			</p>
@@ -74,8 +73,7 @@
 				<@emailMacros.msg "email.welcome.need_help.description" />
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-<@emailMacros.msg "email.common.kind_regards" />
-<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
+				<@emailMacros.msg "email.common.kind_regards" /><a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
