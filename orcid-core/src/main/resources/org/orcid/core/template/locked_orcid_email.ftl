@@ -17,7 +17,7 @@
 
 -->
 <#import "email_macros.ftl" as emailMacros />
-<@emailMacros.msg "email.common.dear" />${emailName}<@emailMacros.msg "email.common.dear.comma" />
+<@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 
 <@emailMacros.msg "email.locked.this_is_an_important_message.1" />${baseUriHttp}/${orcid}?lang=${locale}<@emailMacros.msg "email.locked.this_is_an_important_message.2" />
 

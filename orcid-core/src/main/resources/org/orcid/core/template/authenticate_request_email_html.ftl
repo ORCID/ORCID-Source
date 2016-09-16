@@ -28,11 +28,11 @@
 			<img src="https://orcid.org/sites/all/themes/orcid/img/orcid-logo.png" alt="ORCID.org"/>
 		    <hr />
 		  	<span style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; font-weight: bold;">
-		    <@emailMacros.msg "email.common.dear" /> ${emailName}<@emailMacros.msg "email.common.dear.comma" />
+		    <@emailMacros.msg "email.common.dear" /><@emailMacros.space />${emailName}<@emailMacros.msg "email.common.dear.comma" />
 		    </span>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg 'email.institutional_connection.1' /> ${clientName}.<br />
-		    	<@emailMacros.msg 'email.institutional_connection.2' /> <a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a> <@emailMacros.msg 'email.institutional_connection.3' />
+		    	<@emailMacros.msg 'email.institutional_connection.1' /><@emailMacros.space />${clientName}.<br />
+		    	<@emailMacros.msg 'email.institutional_connection.2' /><@emailMacros.space /><a href="${authorization_url}"><@emailMacros.msg 'email.institutional_connection.here' /></a><@emailMacros.space /><@emailMacros.msg 'email.institutional_connection.3' />
 		    </p>		    
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
 <@emailMacros.msg "email.common.kind_regards" />
