@@ -65,18 +65,17 @@
             <artifactId>jersey-client</artifactId>
         </dependency> 
         
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
+	    <dependency>
+	      <groupId>junit</groupId>
+	      <artifactId>junit</artifactId>
+	      <scope>test</scope>
+	    </dependency>
     
-    <!-- AWS -->
-    <dependency>
-    	<groupId>com.amazonaws</groupId>
-    	<artifactId>aws-java-sdk-s3</artifactId>
-  	</dependency>
-        
+	    <!-- AWS -->
+	    <dependency>
+	    	<groupId>com.amazonaws</groupId>
+	    	<artifactId>aws-java-sdk-s3</artifactId>
+	  	</dependency>	  		  	
   </dependencies>
   <parent>
   	<groupId>org.orcid</groupId>

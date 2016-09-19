@@ -36,6 +36,7 @@
     <!-- ${org.orcid.persistence.properties} gets replaced during the Maven
        build, but other properties are escaped from Maven build replacement by preceding
        with \ and so are handled by Spring. -->
+       
     <context:property-placeholder location="\${org.orcid.message-listener.config.file:}" ignore-resource-not-found="true" ignore-unresolvable="true" />
     <context:property-placeholder location="classpath:${org.orcid.message-listener.properties}" ignore-resource-not-found="true"
         ignore-unresolvable="true" />
@@ -85,5 +86,4 @@
 		<property name="connectionFactory" ref="jmsConnectionFactory" />
 		<property name="defaultDestination" ref="defaultJmsDestination" />
 	</bean>
-
 </beans>

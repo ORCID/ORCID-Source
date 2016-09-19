@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.core.salesforce.cache;
 
 import java.io.Serializable;
 
@@ -23,7 +23,7 @@ import java.io.Serializable;
  * @author Will Simpson
  *
  */
-public class SalesForceMemberDetailsCacheKey implements Serializable {
+public class MemberDetailsCacheKey implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class SalesForceMemberDetailsCacheKey implements Serializable {
     private String consortiumLeadId;
     private String releaseName;
 
-    SalesForceMemberDetailsCacheKey(String memberId, String consortiumLeadId, String releaseName) {
+    public MemberDetailsCacheKey(String memberId, String consortiumLeadId, String releaseName) {
         this.memberId = memberId;
         this.consortiumLeadId = consortiumLeadId;
         this.releaseName = releaseName;
@@ -67,7 +67,7 @@ public class SalesForceMemberDetailsCacheKey implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SalesForceMemberDetailsCacheKey other = (SalesForceMemberDetailsCacheKey) obj;
+        MemberDetailsCacheKey other = (MemberDetailsCacheKey) obj;
         if (consortiumLeadId == null) {
             if (other.consortiumLeadId != null)
                 return false;

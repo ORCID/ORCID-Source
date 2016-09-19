@@ -14,11 +14,11 @@
  *
  * =============================================================================
  */
-package org.orcid.core.manager.impl;
+package org.orcid.core.salesforce.cache;
 
 import javax.annotation.Resource;
 
-import org.orcid.core.manager.SalesForceManager;
+import org.orcid.core.salesforce.dao.SalesForceDao;
 
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 
@@ -27,14 +27,14 @@ import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
  * @author Will Simpson
  *
  */
-public class SalesForceMembersListCacheEntryFactory implements CacheEntryFactory {
+public class ConsortiumCacheEntryFactory implements CacheEntryFactory {
 
     @Resource
-    private SalesForceManager salesForceManager;
+    private SalesForceDao salesForceDao;
 
     @Override
     public Object createEntry(Object key) throws Exception {
-        return salesForceManager.retrieveFreshMembers();
+        return salesForceDao.retrieveConsortium((String) key);
     }
 
 }

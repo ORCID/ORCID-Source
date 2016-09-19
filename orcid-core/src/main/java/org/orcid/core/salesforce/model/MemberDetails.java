@@ -14,7 +14,7 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.salesforce.model;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,22 +24,22 @@ import java.util.List;
  * @author Will Simpson
  *
  */
-public class SalesForceDetails implements Serializable {
+public class MemberDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private SalesForceMember member;
+    private Member member;
     private String parentOrgName;
     private String parentOrgSlug;
-    private List<SalesForceIntegration> integrations;
-    private List<SalesForceContact> contacts;
-    private List<SalesForceSubMember> subMembers;
+    private List<Integration> integrations;
+    private List<Contact> contacts;
+    private List<SubMember> subMembers;
 
-    public SalesForceMember getMember() {
+    public Member getMember() {
         return member;
     }
 
-    public void setMember(SalesForceMember member) {
+    public void setMember(Member member) {
         this.member = member;
     }
 
@@ -59,27 +59,27 @@ public class SalesForceDetails implements Serializable {
         this.parentOrgSlug = parentOrgSlug;
     }
 
-    public List<SalesForceIntegration> getIntegrations() {
+    public List<Integration> getIntegrations() {
         return integrations;
     }
 
-    public void setIntegrations(List<SalesForceIntegration> integrations) {
+    public void setIntegrations(List<Integration> integrations) {
         this.integrations = integrations;
     }
 
-    public List<SalesForceContact> getContacts() {
+    public List<Contact> getContacts() {
         return contacts;
     }
 
-    public void setContacts(List<SalesForceContact> contacts) {
+    public void setContacts(List<Contact> contacts) {
         this.contacts = contacts;
     }
 
-    public List<SalesForceSubMember> getSubMembers() {
+    public List<SubMember> getSubMembers() {
         return subMembers;
     }
 
-    public void setSubMembers(List<SalesForceSubMember> subMembers) {
+    public void setSubMembers(List<SubMember> subMembers) {
         this.subMembers = subMembers;
     }
 

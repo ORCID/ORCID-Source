@@ -22,7 +22,9 @@ import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
+import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.utils.listener.LastModifiedMessage;
@@ -42,8 +44,13 @@ public class ReIndexListener {
 
     @Resource
     private Orcid12APIClient orcid12ApiClient;
+    
+    @Resource
+    private Orcid20APIClient orcid20ApiClient;
+    
     @Resource
     private SolrIndexUpdater solrIndexUpdater;
+    
     @Resource
     private S3Updater s3Updater; 
 
@@ -59,8 +66,16 @@ public class ReIndexListener {
     public void processMessage(final Map<String, String> map) throws JsonProcessingException, AmazonClientException, JAXBException {
         LastModifiedMessage message = new LastModifiedMessage(map);
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
-        OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
+        String orcid = message.getOrcid();
+        OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(orcid);
+        //Reindex solr
         solrIndexUpdater.updateSolrIndex(profile);
-        s3Updater.updateS3(message.getOrcid(), profile);
+        
+        //Update 1.2 buckets
+        s3Updater.updateS3(orcid, profile);
+        
+        //Update 2.0 buckets
+        Record record = orcid20ApiClient.fetchPublicProfile(orcid);        
+        s3Updater.updateS3(orcid, record);
     }
 }

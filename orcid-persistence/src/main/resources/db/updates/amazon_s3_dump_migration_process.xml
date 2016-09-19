@@ -20,15 +20,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<changeSet author="Angel Montenegro" id="CREATE-AMAZON-S3-DUMP-MIGRATION-PROCESS-TABLE">
+	<changeSet id="CREATE-AMAZON-S3-DUMP-MIGRATION-PROCESS-TABLE" author="Angel Montenegro">
 	    <preConditions onFail="MARK_RAN">
 			<not>
-				<tableExists tableName="amazon_s3_dump_migration_process" />
+				<columnExists tableName="profile" columnName="s3_dumped_status"/>
 			</not>
 		</preConditions>			
-	    <createTable tableName="amazon_s3_dump_migration_process">
-	    	<column name="orcid" type="varchar(19)"/>
-	    	<column name="date" type="TIMESTAMP WITH TIME ZONE" />
-	    </createTable>
-    </changeSet>
+	    <sql>ALTER TABLE profile ADD s3_dumped_status VARCHAR(10);</sql>
+	    <sql>CREATE INDEX amazon_s3_dumped_status_index on profile(s3_dumped_status);</sql>	    
+    </changeSet>        
 </databaseChangeLog>	

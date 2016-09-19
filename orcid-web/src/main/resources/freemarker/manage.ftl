@@ -164,9 +164,8 @@
                             <br />
                             <div>
                                 <button id="bottom-submit-password-change"
-                                    class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>
-                                <button id="bottom-clear-password-changes"
-                                    class="btn close-parent-popover" ng-click="getChangePassword()">${springMacroRequestContext.getMessage("freemarker.btncancel")}</button>
+                                    class="btn btn-primary" ng-click="saveChangePassword()">${springMacroRequestContext.getMessage("freemarker.btnsavechanges")}</button>                                    
+                                <a class="cancel-option inner-row" ng-click="getChangePassword()" id="bottom-clear-password-changes">${springMacroRequestContext.getMessage("freemarker.btncancel")}</a>                                    
                             </div>
                         </div>
                     </td>
@@ -234,10 +233,8 @@
                             <#else>
                                 <div class="control-group">
                                     <button id="bottom-submit-security-question"
-                                        class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>
-                                    <button id="bottom-reset-security-question"
-                                        class="btn close-parent-popover"
-                                        ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></button>
+                                        class="btn btn-primary" ng-click="checkCredentials()"><@orcid.msg 'freemarker.btnsavechanges' /></button>                                        
+                                    <a id="bottom-reset-security-question" class="cancel-option inner-row" ng-click="getSecurityQuestion()"><@orcid.msg 'freemarker.btncancel' /></a>                                    
                                 </div>
                             </#if>
                         </div>

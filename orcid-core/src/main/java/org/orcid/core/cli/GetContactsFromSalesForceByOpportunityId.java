@@ -19,7 +19,7 @@ package org.orcid.core.cli;
 import java.util.List;
 
 import org.orcid.core.manager.SalesForceManager;
-import org.orcid.pojo.SalesForceContact;
+import org.orcid.core.salesforce.model.Contact;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,7 +34,7 @@ public class GetContactsFromSalesForceByOpportunityId {
     public static void main(String args[]) {
         ApplicationContext context = new ClassPathXmlApplicationContext("orcid-core-context.xml");
         SalesForceManager salesForceManager = (SalesForceManager) context.getBean("salesForceManager");
-        List<SalesForceContact> contacts = salesForceManager.retrieveContactsByOpportunityId(args[0]);
+        List<Contact> contacts = salesForceManager.retrieveContactsByOpportunityId(args[0]);
         System.out.println(contacts);
         System.exit(0);
     }

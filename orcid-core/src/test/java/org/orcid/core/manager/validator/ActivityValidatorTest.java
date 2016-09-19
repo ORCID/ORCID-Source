@@ -201,6 +201,36 @@ public class ActivityValidatorTest {
             
         }
         
+        try {
+            Work work = getWork();
+            //Invalid 2 digits year
+            work.setPublicationDate(new PublicationDate(new Year(25), new Month(1), new Day(1)));
+            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            fail();
+        } catch(OrcidValidationException e) {
+            
+        }
+        
+        try {
+            Work work = getWork();
+            //Invalid 3 digits month
+            work.setPublicationDate(new PublicationDate(new Year(2017), new Month(100), new Day(1)));
+            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            fail();
+        } catch(OrcidValidationException e) {
+            
+        }
+        
+        try {
+            Work work = getWork();
+            //Invalid 3 digits day
+            work.setPublicationDate(new PublicationDate(new Year(2017), new Month(1), new Day(100)));
+            activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);
+            fail();
+        } catch(OrcidValidationException e) {
+            
+        }
+        
         Work work = getWork();
         work.setPublicationDate(new PublicationDate(new Year(2017), new Month(1), null));
         activityValidator.validateWork(work, null, true, true, org.orcid.jaxb.model.message.Visibility.PUBLIC);

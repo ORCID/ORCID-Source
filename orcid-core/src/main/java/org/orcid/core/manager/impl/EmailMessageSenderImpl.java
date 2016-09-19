@@ -54,6 +54,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  * @author Will Simpson
@@ -155,7 +157,7 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         params.put("subject", subject);
         String bodyText = templateManager.processTemplate("digest_email.ftl", params, locale);
         String bodyHtml = templateManager.processTemplate("digest_email_html.ftl", params, locale);
-        
+
         EmailMessage emailMessage = new EmailMessage();
 
         emailMessage.setSubject(subject);
@@ -194,10 +196,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
                             return;
                         }
                         digestMessage.setTo(primaryEmail.getId());
+                        flagAsSent(notifications);
                         boolean successfullySent = mailGunManager.sendEmail(digestMessage.getFrom(), digestMessage.getTo(), digestMessage.getSubject(),
                                 digestMessage.getBodyText(), digestMessage.getBodyHtml());
-                        if (successfullySent) {
-                            flagAsSent(notifications);
+                        if (!successfullySent) {
+                            status.setRollbackOnly();
                         }
                     }
                 });
@@ -213,7 +216,11 @@ public class EmailMessageSenderImpl implements EmailMessageSender {
         for (Notification notification : notifications) {
             notificationIds.add(notification.getPutCode());
         }
-        notificationDao.flagAsSent(notificationIds);
+        List<List<Long>> batches = Lists.partition(notificationIds, 30000);
+        for (List<Long> batch : batches) {
+            notificationDao.flagAsSent(batch);
+        }
+        notificationDao.flush();
     }
 
 }

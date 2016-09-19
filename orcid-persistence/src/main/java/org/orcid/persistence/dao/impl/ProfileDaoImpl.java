@@ -686,4 +686,26 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         query.setParameter("batchSize", batchSize);        
         return (List<Object[]>) query.getResultList();
     }
+
+    @Override
+    public boolean setDumpedStatusAsSent(String orcid) {
+        Query query = entityManager.createNativeQuery("UPDATE profile SET s3_dumped_status='SENT' where orcid=:orcid");
+        query.setParameter("orcid", orcid);        
+        return query.executeUpdate() > 0;
+    }
+
+    @Override
+    public boolean setDumpedStatusAsDone(String orcid) {
+        Query query = entityManager.createNativeQuery("UPDATE profile SET s3_dumped_status='DONE' where orcid=:orcid");
+        query.setParameter("orcid", orcid);        
+        return query.executeUpdate() > 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<String> getIdsNotDumpedYet(int batchSize) {
+        Query query = entityManager.createNativeQuery("SELECT orcid FROM profile WHERE s3_dumped_status IS NULL LIMIT :batchSize");
+        query.setParameter("batchSize", batchSize);        
+        return query.getResultList();
+    }
 }

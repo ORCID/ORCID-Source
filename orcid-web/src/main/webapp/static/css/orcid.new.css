@@ -2090,6 +2090,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	overflow: visible;
 }
 
+.inline-list .cancel-option{
+	padding-top: 7px;
+}
+
 .inline-list > li {
 	float: left;
 }
@@ -6645,6 +6649,16 @@ a:hover .mozilla-badge{
 
 .account-settings .pull-right{
 	margin-right: 16px;
+}
+
+.wizard-header{
+	font-size: 31px;
+}
+
+.reset-width{
+	width: auto !important;
+	min-width: 0  !important;
+    display: table  !important;
 }
 
 

@@ -44,19 +44,18 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 @Component
 public class S3Updater {
 
+    Logger LOG = LoggerFactory.getLogger(S3Updater.class);
+    
     private final ObjectMapper mapper;
 
     private final Marshaller marshaller;
 
     private final AmazonS3 s3;
 
-    Logger LOG = LoggerFactory.getLogger(S3Updater.class);
-
-    @Value("${org.orcid.message-lisener.s3.bucket_prefix}")
     private String bucketPrefix;
 
     /**
-     * Writes a profile to S3 TODO: implement S3 writer.
+     * Writes a profile to S3
      * 
      * @param writeToFileNotS3
      *            if true, write to local file system temp directory instead of
@@ -64,8 +63,9 @@ public class S3Updater {
      * @throws JAXBException
      */
     @Autowired    
-    public S3Updater(@Value("${org.orcid.message-lisener.s3.secretKey}") String secretKey, @Value("${org.orcid.message-lisener.s3.accessKey}") String accessKey)
-            throws JAXBException {
+    public S3Updater(@Value("${org.orcid.message-lisener.s3.secretKey}") String secretKey, @Value("${org.orcid.message-lisener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-lisener.s3.bucket_prefix}") String bucketPrefix)
+            throws JAXBException {        
+        this.bucketPrefix = bucketPrefix;        
         mapper = new ObjectMapper();
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         mapper.registerModule(module);
@@ -77,7 +77,7 @@ public class S3Updater {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
-        s3 = new AmazonS3Client(credentials);
+        this.s3 = new AmazonS3Client(credentials);
     }
 
     public void updateS3(String orcid, Object profile) throws JsonProcessingException, AmazonClientException, JAXBException {
@@ -100,7 +100,7 @@ public class S3Updater {
 
     private void putJsonElement(String orcid, OrcidProfile profile) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-1-2-json-" + orcid.charAt(orcid.length() - 1);
+            String bucket = bucketPrefix + "-api-1-2-json-" + getBucketCheckSum(orcid);
             s3.putObject(bucket, orcid + ".json", toJson(profile));
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -109,7 +109,7 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, OrcidProfile profile) throws AmazonClientException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-1-2-xml-" + orcid.charAt(orcid.length() - 1);
+            String bucket = bucketPrefix + "-api-1-2-xml-" + getBucketCheckSum(orcid);
             s3.putObject(bucket, orcid + ".xml", toXML(profile));
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -118,7 +118,7 @@ public class S3Updater {
     
     private void putJsonElement(String orcid, Record record) throws JsonProcessingException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-json-" + orcid.charAt(orcid.length() - 1);
+            String bucket = bucketPrefix + "-api-2-0-json-" + getBucketCheckSum(orcid);
             s3.putObject(bucket, orcid + ".json", toJson(record));
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -127,7 +127,7 @@ public class S3Updater {
 
     private void putXmlElement(String orcid, Record record) throws AmazonClientException, JAXBException {
         try {
-            String bucket = bucketPrefix + "-api-2-0-xml-" + orcid.charAt(orcid.length() - 1);
+            String bucket = bucketPrefix + "-api-2-0-xml-" + getBucketCheckSum(orcid);
             s3.putObject(bucket, orcid + ".xml", toXML(record));
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
@@ -142,5 +142,17 @@ public class S3Updater {
         StringWriter sw = new StringWriter();
         marshaller.marshal(profile, sw);
         return sw.toString();
+    }
+    
+    private String getBucketCheckSum(String orcid) {
+        if(bucketPrefix.endsWith("-qa") || bucketPrefix.endsWith("-sandbox")) {
+            return "all"; 
+        } else {
+            String c = String.valueOf(orcid.charAt(orcid.length() - 1));
+            if("X".equals(c)){
+                c = "x";
+            }
+            return c;
+        }       
     }
 }

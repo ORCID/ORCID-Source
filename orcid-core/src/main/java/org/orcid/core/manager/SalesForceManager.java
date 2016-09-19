@@ -20,10 +20,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.orcid.pojo.SalesForceConsortium;
-import org.orcid.pojo.SalesForceContact;
-import org.orcid.pojo.SalesForceDetails;
-import org.orcid.pojo.SalesForceMember;
+import org.orcid.core.salesforce.model.Consortium;
+import org.orcid.core.salesforce.model.Contact;
+import org.orcid.core.salesforce.model.MemberDetails;
+import org.orcid.core.salesforce.model.Member;
 
 /**
  * 
@@ -32,37 +32,19 @@ import org.orcid.pojo.SalesForceMember;
  */
 public interface SalesForceManager {
 
-    List<SalesForceMember> retrieveMembers();
+    List<Member> retrieveMembers();
 
-    List<SalesForceMember> retrieveFreshMembers();
+    List<Member> retrieveConsortia();
 
-    List<SalesForceMember> retrieveConsortia();
+    Consortium retrieveConsortium(String consortiumId);
 
-    List<SalesForceMember> retrieveFreshConsortia();
+    MemberDetails retrieveDetailsBySlug(String memberSlug);
 
-    SalesForceConsortium retrieveConsortium(String consortiumId);
+    MemberDetails retrieveDetails(String memberId);
 
-    SalesForceConsortium retrieveFreshConsortium(String consortiumId);
+    List<Contact> retrieveContactsByOpportunityId(String opportunityId);
 
-    SalesForceDetails retrieveDetails(String memberId, String consortiumLeadId);
-
-    SalesForceDetails retrieveFreshDetails(String memberId, String consortiumLeadId);
-
-    SalesForceDetails retrieveDetailsBySlug(String memberSlug);
-
-    List<SalesForceContact> retrieveContactsByOpportunityId(String opportunityId);
-
-    Map<String, List<SalesForceContact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
-
-    Map<String, List<SalesForceContact>> retrieveFreshContactsByOpportunityId(Collection<String> opportunityIds);
-
-    /**
-     * @return The sales force object id, if valid.
-     * @throws IllegalArgumentException
-     *             if the sales force object id is not the correct format, or
-     *             could contain something malicious.
-     */
-    String validateSalesForceId(String memberId);
+    Map<String, List<Contact>> retrieveContactsByOpportunityId(Collection<String> opportunityIds);
 
     /**
      * Clear caches

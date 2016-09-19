@@ -1,0 +1,71 @@
+#!/usr/bin/env jython
+# Author: Liz Krznarich
+# A script to add a new property to en and xx versions of a i18n properties file
+# Unfortunately doesn't work with the email properties, because of the extra comment in those files
+# Assumes you have ORCID-Source checked out in ~/git
+# Developed using Jython 2.5.3 and Java 1.7.0_45
+# For more info run
+# ./add_i18n_message.jy --help
+
+import codecs
+import glob
+import logging
+import optparse
+import os
+import re
+import sys
+from java.io import File
+from java.io import FileWriter
+from java.io import FileInputStream
+from java.io import FileOutputStream
+from java.lang import System
+from __builtin__ import None
+
+parser = optparse.OptionParser(option_list=[
+    optparse.Option('-p', '--prefix', help='the prefix of the properties files (test_messages|messages|javascript|api|email)', choices=('test_messages', 'messages', 'javascript', 'api', 'email')),
+])
+(options, args) = parser.parse_args()
+
+#get files in current directory
+resource_dir = os.path.dirname(os.path.realpath(sys.argv[0]))
+dir_listing = os.listdir(resource_dir)
+properties_filenames = [f for f in dir_listing if f.startswith(options.prefix)]
+
+for properties_filename in properties_filenames:
+    input_path = properties_filename
+    output_path = "tmp_" + input_path
+    f = open(input_path)
+    o = open(output_path, 'w')
+    line = f.readline()
+    fileWriter = FileWriter(output_path)
+
+    #match unicode escape characters
+    leading_space_search = re.compile(r'(=\\u0020)')
+    trailing_space_search = re.compile(r'(\\u0020\n)')
+    unicode_search = re.compile(r'(\\u.{4})')
+
+    #decode the match and re-encode as utf8
+    def decode_match(match):
+        return codecs.decode(match.group(0), 'unicode-escape').encode('utf8')
+
+    while line != "":
+        #remove leading space
+        newline = re.sub(leading_space_search, "=", line)
+        #remove trailing space
+        newline = re.sub(trailing_space_search, "\n", newline)
+        #find unicode escapes and replace with utf8 characters
+        newline = re.sub(unicode_search, decode_match, newline)
+        #remove newline characters
+        #newline = newline.replace("\\n\\", "")
+        #newline = newline.replace("\\n", "")
+        o.write(newline)
+        line = f.readline()
+    o.close();
+    
+    #delete old file
+    oldFile = File(input_path)
+    oldFile.delete()
+
+    #rename tmp file to old file name
+    newFile = File(output_path)
+    newFile.renameTo(oldFile)

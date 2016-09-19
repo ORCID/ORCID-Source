@@ -14,18 +14,24 @@
  *
  * =============================================================================
  */
-package org.orcid.pojo;
+package org.orcid.core.salesforce.model;
+
+import java.io.Serializable;
+import java.net.URL;
 
 /**
  * 
  * @author Will Simpson
  *
  */
-public class SalesForceContact {
+public class Integration implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String name;
-    private String email;
-    private String role;
+    private String description;
+    private String stage;
+    private URL resourceUrl;
 
     public String getName() {
         return name;
@@ -35,25 +41,28 @@ public class SalesForceContact {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getDescription() {
+        return description;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getRole() {
-        return role;
+    public String getStage() {
+        return stage;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setStage(String stage) {
+        this.stage = stage;
     }
 
-    @Override
-    public String toString() {
-        return "SalesForceContact [name=" + name + ", email=" + email + ", role=" + role + "]";
+    public URL getResourceUrl() {
+        return resourceUrl;
+    }
+
+    public void setResourceUrl(URL resourceUrl) {
+        this.resourceUrl = resourceUrl;
     }
 
 }
