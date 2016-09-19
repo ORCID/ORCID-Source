@@ -16,20 +16,17 @@
  */
 package org.orcid.core.manager;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.orcid.core.BaseTest;
 import org.orcid.core.crypto.OrcidCheckDigitGenerator;
 import org.springframework.test.annotation.Rollback;
+
+import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Will Simpson (will) Date: 15/12/2011

@@ -16,8 +16,8 @@
  */
 package org.orcid.core.security.visibility.aop;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;

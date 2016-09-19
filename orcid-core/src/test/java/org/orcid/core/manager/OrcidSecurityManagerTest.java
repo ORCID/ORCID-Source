@@ -26,8 +26,8 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.junit.After;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -53,8 +53,8 @@ import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.IdentifierTypeEntity;
 import org.orcid.persistence.jpa.entities.OtherNameEntity;
-import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceAwareEntity;
+import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
 
 /**

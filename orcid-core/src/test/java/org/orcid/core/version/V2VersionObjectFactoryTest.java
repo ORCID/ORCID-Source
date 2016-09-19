@@ -16,8 +16,7 @@
  */
 package org.orcid.core.version;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import javax.annotation.Resource;
 
