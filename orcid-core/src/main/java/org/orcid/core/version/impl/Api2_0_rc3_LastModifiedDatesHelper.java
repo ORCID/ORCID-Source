@@ -25,12 +25,12 @@ import java.util.List;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecord;
 import org.orcid.jaxb.model.groupid_rc3.GroupIdRecords;
 import org.orcid.jaxb.model.record_rc3.ActivitiesContainer;
 import org.orcid.jaxb.model.record_rc3.Activity;
-import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Addresses;
 import org.orcid.jaxb.model.record_rc3.Email;
 import org.orcid.jaxb.model.record_rc3.Emails;
