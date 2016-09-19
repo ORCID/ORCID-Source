@@ -52,7 +52,7 @@
 		        <@emailMacros.msg "email.api_record_creation.read_privacy.1" /><@emailMacros.space /><a href="${baseUri}/privacy-policy/?lang=${locale}">${baseUri}/privacy-policy/</a><@emailMacros.msg "email.api_record_creation.read_privacy.2" /><@emailMacros.msg "email.common.if_you_have_any1" /><a href="http://support.orcid.org">http://support.orcid.org</a><@emailMacros.msg "email.common.if_you_have_any2" />
 		    </p>
 		  	<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
-                <@emailMacros.msg "email.common.kind_regards" />
+<@emailMacros.msg "email.common.kind_regards" />
 			</p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
