@@ -42,9 +42,10 @@
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
 		    	<@emailMacros.msg "email.email_removed.important" />
 		    </p>		    
-		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666;">
-		    	<@emailMacros.msg "email.common.kind_regards" />${baseUri}/home?lang=${locale}
-		    </p>
+            <p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666; white-space: pre;">
+<@emailMacros.msg "email.common.kind_regards" />
+<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>
+            </p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />
 			</p>
