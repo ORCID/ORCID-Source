@@ -17,7 +17,7 @@ XML for the ```peer-review``` activity follows the [peer-review-2.0_rc3.xsd](htt
 
 **DESCRIBING THE REVIEW**
 
-- **reivew-identifiers** _(required)_ Unique identifier(s) of the review. *This identifier refers to the review itself, NOT to the item that was reviewed.* At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
+- **review-identifiers** _(required)_ Unique identifier(s) of the review. *This identifier refers to the review itself, NOT to the item that was reviewed.* At least one identifier is required. In the case where there is no persistent unique identifier for the review, the source providing the data should generate a locally-sourced unique identifier for the review (e.g., type "organization-defined-type"). This field will be checked when adding new reviews to prevent double counting of review activity.
 
 - **review-url** _(optional)_ A link to a representation of the review on the web. *This URL refers to the review itself, NOT to the item that was reviewed.*
 
@@ -42,7 +42,7 @@ XML for the ```peer-review``` activity follows the [peer-review-2.0_rc3.xsd](htt
 
 **DESCRIBING THE ORGANIZATION THAT THE REVIEW WAS DONE FOR**
 
-- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc) . Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
+- **convening-organization** _(required)_ Information about the organization convening the review (journal publisher, conference organizer, funding agency, etc.). Whenever possible, this organization is identified by a unique identifier like the Ringgold ID or FundRef ID.
 
 ###Example file
 
@@ -71,15 +71,15 @@ Other notable differences between v2.0_rcX previous versions include:
 ###Read Activities Summary
 | Action                   | HTTP method | Scope                    | URL                                                      |
 |-------------------------|-------------|--------------------------|----------------------------------------------------------|
-| Read activities summary | GET         | /read-limited | http://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/activities |
+| Read activities summary | GET         | /read-limited | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/activities |
 
 ###Read/Modifiy Peer Review Activities
 | Action             | HTTP method | Scope                    | URL                                                                      |
 |--------------------|-------------|--------------------------|--------------------------------------------------------------------------|
-| Add peer-review item    | POST        | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review            |
-| Read peer-review item   | GET         | /read-limited | http://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review/[PUT-CODE] |
-| Update peer-review item | PUT         | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review/[PUT-CODE] |
-| Delete peer-review item | DELETE      | /activities/update       | http://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Add peer-review item    | POST        | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review            |
+| Read peer-review item   | GET         | /read-limited | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Update peer-review item | PUT         | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review/[PUT-CODE] |
+| Delete peer-review item | DELETE      | /activities/update       | https://api.sandbox.orcid.org/v2.0_rc3/[ORCID-iD]/peer-review/[PUT-CODE] |
 
 
 - **[ORCID-iD]** is the ORCID iD for the record, formatted as XXXX-XXXX-XXXX-XXXX
@@ -91,7 +91,7 @@ Other notable differences between v2.0_rcX previous versions include:
 ```shell
 curl -i -H "Accept: application/orcid+xml" \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
-	'http://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/activities'
+	'https://api.sandbox.orcid.org/v2.0_rc3/0000-0002-1306-4180/activities'
 ```
 
 ####Add Peer-Review Activity
@@ -100,7 +100,7 @@ curl -i -H "Accept: application/orcid+xml" \
 curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
 	-d '@[FILE-PATH]/peer-review-item.xml' \
-	-X POST 'http://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review'
+	-X POST 'https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review'
 ```
 
 ####Read Peer-Review Activity
@@ -108,7 +108,7 @@ curl -i -H 'Content-type: application/orcid+xml’ \
 ```
 curl -i -H "Accept: application/orcid+xml" \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
-	'http://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review/[PUT-CODE]'
+	'https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review/[PUT-CODE]'
 ```
 
 ####Update Peer-Review Activity
@@ -117,7 +117,7 @@ curl -i -H "Accept: application/orcid+xml" \
 curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
 	-d '@[FILE-PATH]/peer-review-item-updated.xml' \
-	-X PUT 'http://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review/[PUT-CODE]'
+	-X PUT 'https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review/[PUT-CODE]'
 ```
 
 ####Delete Peer-Review Activity
@@ -125,7 +125,7 @@ curl -i -H 'Content-type: application/orcid+xml’ \
 ```shell
 curl -i -H 'Content-type: application/orcid+xml’ \
 	-H 'Authorization: Bearer dd91868d-d29a-475e-9acb-bd3fdf2f43f4' \
-	-X DELETE 'http://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review/[PUT-CODE]'
+	-X DELETE 'https://api.sandbox.orcid.org/v2.0_rc3/[ORCID]/peer-review/[PUT-CODE]'
 ```
 
 
