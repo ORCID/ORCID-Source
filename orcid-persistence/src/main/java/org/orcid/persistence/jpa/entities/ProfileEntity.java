@@ -147,9 +147,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     
     private RecordNameEntity recordNameEntity;
     
-    private BiographyEntity biographyEntity;
-    
-    private String s3DumpedStatus;
+    private BiographyEntity biographyEntity;    
     
     @Id
     @Column(name = "orcid", length = 19)
@@ -892,15 +890,6 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
 
     public void setReviewed(boolean reviewed) {
         this.reviewed = reviewed;
-    }
-        
-    @Column(name = "s3_dumped_status")
-    public String getS3DumpedStatus() {
-        return s3DumpedStatus;
-    }
-
-    public void setS3DumpedStatus(String s3DumpedStatus) {
-        this.s3DumpedStatus = s3DumpedStatus;
     }
 
     /**

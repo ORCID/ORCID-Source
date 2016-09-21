@@ -71,7 +71,7 @@ public class S3Updater {
         mapper.registerModule(module);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        JAXBContext context = JAXBContext.newInstance(OrcidProfile.class);
+        JAXBContext context = JAXBContext.newInstance(OrcidProfile.class, Record.class);
         marshaller = context.createMarshaller();
         // for pretty-print XML in JAXB
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);

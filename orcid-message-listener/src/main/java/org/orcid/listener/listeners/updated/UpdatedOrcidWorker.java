@@ -84,6 +84,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             s3Updater.updateS3(orcid, profile);
         } catch(Exception e) {
             //Unable to update record in S3
+            LOG.error("Unable to update S3 bucket for 1.2 API", e);
         } 
         
         // Update API 2.0
@@ -92,6 +93,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             s3Updater.updateS3(orcid, record);
         } catch(Exception e) {
             //Unable to update record in S3
+            LOG.error("Unable to update S3 bucket for 2.0 API", e);
         }
     }
         

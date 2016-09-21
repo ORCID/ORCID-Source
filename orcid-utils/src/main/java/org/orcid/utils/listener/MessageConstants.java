@@ -34,7 +34,6 @@ public enum MessageConstants {
         public static final String TEST = "test";
         public static final String TEST_REPLY = "test_reply";
         public static final String REINDEX = "reindex";
-        public static final String S3_ONLY = "s3_only";
     }
         
     public final String value;

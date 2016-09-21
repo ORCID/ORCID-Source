@@ -56,8 +56,7 @@ public class JmsMessageSender {
         TEST(MessageConstants.Queues.TEST),
         TEST_REPLY(MessageConstants.Queues.TEST_REPLY), 
         UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS), 
-        REINDEX(MessageConstants.Queues.REINDEX),
-        S3_ONLY(MessageConstants.Queues.S3_ONLY);
+        REINDEX(MessageConstants.Queues.REINDEX);        
         public final String value;
         JmsDestination(String value){
             this.value = value;
