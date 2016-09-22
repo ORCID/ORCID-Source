@@ -185,13 +185,10 @@
 					           		<span ng-click="showWorkImportWizard()" class="close-wizard"><@orcid.msg 'workspace.LinkResearchActivities.hide_link_works'/></span>
 								</div>
 							</div>
-							<div class="row bottomBuffer">
+							<div class="row">
 								<div class="col-md-12 col-sm-12 col-xs-12">
 									<p class="wizard-content">
 						           		<@orcid.msg 'workspace.LinkResearchActivities.description'/> <@orcid.msg 'workspace.LinkResearchActivities.description.more_info'/>
-						           	</p>
-						           	<p class="wizard-content alert">
-						           		The Crossref Metadata Search & Link wizard is temporarily unavailable. Please check back later and, in the meantime, we apologize for any inconvenience.						           	
 						           	</p>								
 					           	</div>
 							</div>
