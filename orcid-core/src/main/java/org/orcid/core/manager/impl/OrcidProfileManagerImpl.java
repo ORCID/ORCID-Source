@@ -1877,11 +1877,17 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             LOG.warn("ABORTED processing profiles with "+status.name()+" flag. sending to "+destination.name());
     }
     
+    /**
+     * TODO: Disabled until we get move our solr indexing to the message listener 
+     * */
     @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue(){
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
     }
     
+    /**
+     * TODO: Disabled until we get move our solr indexing to the message listener 
+     * */
     @Override
     public void processProfilesWithFailedFlagAndAddToMessageQueue(){
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
@@ -1985,6 +1991,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     LOG.debug("Got profile to index: {}", orcid);
                     orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                }
+                
+                //TODO: XXX send the message through the message queue
+                Date last = profileDao.retrieveLastModifiedDate(orcid);
+                LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
+                LOG.info("Sending record " + orcid + " to the message queue");
+                if (messaging.send(mess, JmsDestination.REINDEX)) {
+                    LOG.warn("Record " + orcid + " was sent to the message queue");
+                } else {
+                    LOG.error("Record " + orcid + " couldnt been sent to the message queue");
                 }
             }
         });

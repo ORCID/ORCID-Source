@@ -81,7 +81,7 @@ public class JmsMessageSender {
             jmsTemplate.convertAndSend(dest.value, map);
             return true;
         }
-        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
+        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile="+pauseForAWhile);
         return false;                
     }
     
@@ -95,7 +95,9 @@ public class JmsMessageSender {
         try{
             return this.sendMap(mess.getMap(), d);                             
         }catch(JmsException e){
-            flagConnectionProblem(e);
+            //TODO: How we unflag the problem?
+            //flagConnectionProblem(e);
+            LOG.error("Couldnt send " + mess.getOrcid() + " to the message queue", e);
         }
         return false;
     }
