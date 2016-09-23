@@ -328,11 +328,11 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
-        List<String> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
+        List<Object[]> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
         assertNotNull(results);
         assertEquals(2, results.size());
-        assertEquals("4444-4444-4444-4445", results.get(0));
-        assertEquals("4444-4444-4444-4446", results.get(1));
+        assertEquals("4444-4444-4444-4445", results.get(0)[0]);
+        assertEquals("4444-4444-4444-4446", results.get(1)[0]);
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
         assertEquals(16, results.size());

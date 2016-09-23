@@ -1930,8 +1930,8 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 futureHM.put(orcid, task);
             }
             for (final Object[] o : orcidsForIndexing) {
-                try {
-                    String orcid = (String) o[0];
+                String orcid = (String) o[0];
+                try {                    
                     futureHM.remove(orcid).get(240, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
@@ -1974,7 +1974,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
         @Override
         public String call() throws Exception {
-            processProfilePendingIndexingInTransaction(orcid);
+            processProfilePendingIndexingInTransaction(orcid, status);
             return "was successful " + orcid;
         }
 
@@ -1985,7 +1985,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
-    public void processProfilePendingIndexingInTransaction(final String orcid) {
+    public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -1999,14 +1999,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
                 }
                 
-                //TODO: XXX send the message through the message queue
-                Date last = profileDao.retrieveLastModifiedDate(orcid);
-                LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
-                LOG.info("Sending record " + orcid + " to the message queue");
-                if (messaging.send(mess, JmsDestination.REINDEX)) {
-                    LOG.warn("Record " + orcid + " was sent to the message queue");
-                } else {
-                    LOG.error("Record " + orcid + " couldnt been sent to the message queue");
+                //TODO: Phase # 1: when sending messages to SOLR, also send them to the MQ in case the record is in REINDEX state
+                if(IndexingStatus.REINDEX.equals(indexingStatus)) {
+                    Date last = profileDao.retrieveLastModifiedDate(orcid);
+                    LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
+                    LOG.info("Sending record " + orcid + " to the message queue");
+                    if (messaging.send(mess, JmsDestination.REINDEX)) {
+                        LOG.warn("Record " + orcid + " was sent to the message queue");
+                    } else {
+                        LOG.error("Record " + orcid + " couldnt been sent to the message queue");
+                    }
                 }
             }
         });
