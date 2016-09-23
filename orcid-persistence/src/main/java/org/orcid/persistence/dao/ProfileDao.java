@@ -124,11 +124,5 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean unreviewProfile(String orcid);
     
-    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);
-    
-    List<String> getIdsNotDumpedYet(int batchSize);
-    
-    boolean setDumpedStatusAsSent(String orcid);
-    
-    boolean setDumpedStatusAsDone(String orcid);
+    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);    
 }
