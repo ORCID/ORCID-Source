@@ -110,7 +110,7 @@ public class WorkManagerImpl implements WorkManager {
     @Resource
     private LocaleManager localeManager;
     
-    @Value("${org.orcid.core.works.bulk.max:1000}")
+    @Value("${org.orcid.core.works.bulk.max:100}")
     private Long maxBulkSize;
     
     @Override
