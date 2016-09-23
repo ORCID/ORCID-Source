@@ -55,22 +55,51 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
         super.remove(id);
     }
 
+    /**
+     * Get a list of the ORCID id's with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
     @SuppressWarnings("unchecked")
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
+    @Override
+    public List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST);
     }
 
+    /**
+     * Get a list of the ORCID id's with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @param orcidsToExclude
+     *          List of ORCID id's to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
     @Override
-    public List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
+    public List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
         List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
         indexingStatuses.add(indexingStatus);
         return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude);
     }
 
+    /**
+     * Get a list of the ORCID id's with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @param orcidsToExclude
+     *          List of ORCID id's to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
-        StringBuilder builder = new StringBuilder("SELECT p.orcid FROM profile p WHERE p.indexing_status IN :indexingStatus");
+    public List<Object[]> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
+        StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus");
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
         }

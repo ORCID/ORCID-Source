@@ -36,11 +36,39 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
+    /**
+     * Get a list of the ORCID ids with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
+    List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
+    /**
+     * Get a list of the ORCID ids with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @param orcidsToExclude
+     *          List of ORCID ids to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
+    List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
 
-    List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
+    /**
+     * Get a list of the ORCID ids with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @param orcidsToExclude
+     *          List of ORCID ids to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
+    List<Object[]> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
