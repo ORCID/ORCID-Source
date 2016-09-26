@@ -41,7 +41,6 @@ import org.orcid.core.manager.WorkManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.manager.validator.ExternalIDValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
-import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.common_rc3.Visibility;
 import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
@@ -54,7 +53,6 @@ import org.orcid.jaxb.model.record_rc3.Relationship;
 import org.orcid.jaxb.model.record_rc3.Work;
 import org.orcid.jaxb.model.record_rc3.WorkBulk;
 import org.orcid.persistence.dao.WorkDao;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.MinimizedWorkEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.SourceEntity;
@@ -112,11 +110,8 @@ public class WorkManagerImpl implements WorkManager {
     @Resource
     private LocaleManager localeManager;
     
-    @Value("${org.orcid.core.works.bulk.max.premium:1000}")
-    private Long maxSizeForPremium;
-    
-    @Value("${org.orcid.core.works.bulk.max.regular:100}")
-    private Long maxSize;
+    @Value("${org.orcid.core.works.bulk.max:100}")
+    private Long maxBulkSize;
     
     @Override
     public void setSourceManager(SourceManager sourceManager) {
@@ -285,17 +280,9 @@ public class WorkManagerImpl implements WorkManager {
             List<BulkElement> bulk = workBulk.getBulk();
             
             //Check bulk size
-            if(bulk.size() > maxSize) {
-                ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(sourceEntity.getSourceId());
-                Locale locale = localeManager.getLocale();
-                //If it is premium, allow 'maxSizeForPremium' works per bulk
-                if(ClientType.PREMIUM_CREATOR.equals(client.getClientType()) || ClientType.PREMIUM_UPDATER.equals(client.getClientType())) {
-                    if(bulk.size() > maxSizeForPremium) {
-                        throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxSizeForPremium}, locale));
-                    }
-                } else {
-                    throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxSize}, locale));
-                }
+            if(bulk.size() > maxBulkSize) {
+                Locale locale = localeManager.getLocale();                
+                throw new IllegalArgumentException(messageSource.getMessage("apiError.validation_too_many_elements_in_bulk.exception", new Object[]{maxBulkSize}, locale));                
             }
                                     
             for(int i = 0; i < bulk.size(); i++) {
