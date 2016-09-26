@@ -52,11 +52,11 @@
 	            <table class="table" style="position: static">
 	                <tr ng-repeat="email in emailSrvc.emails.emails | orderBy:['value']" class="data-row-group" name="email">
 	                    <!-- Primary Email -->
-	                    <td ng-class="{primaryEmail:email.primary}" class="col-md-3 col-xs-12 email" ng-cloak>														
+	                    <td ng-class="{primaryEmail:email.primary, 'reset-width': styleFix}" class="col-md-3 col-xs-12 email" ng-cloak>														
 							<span>{{email.value}}</span>
 	                    </td>
 	                    <!-- Set Primary options -->
-						<td>							
+						<td ng-class="{'reset-width': styleFix}">							
 	                        <span ng-hide="email.primary"> <a href=""
 	                            ng-click="emailSrvc.setPrimary(email)">${springMacroRequestContext.getMessage("manage.email.set_primary")}</a>
 	                        </span> <span ng-show="email.primary" class="muted" style="color: #bd362f;">
@@ -69,7 +69,7 @@
 								ng-change="emailSrvc.saveEmail()">						
   							</select>
 						</td>
-	                    <td class="email-verified">
+	                    <td class="email-verified" ng-class="{'reset-width': styleFix}">
 	                        <span ng-hide="email.verified" class="left">
 								<a ng-click="verifyEmail(email, emailSrvc.popUp)">${springMacroRequestContext.getMessage("manage.email.verify")}</a>
 							</span>
