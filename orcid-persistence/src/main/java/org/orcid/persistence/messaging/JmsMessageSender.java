@@ -94,7 +94,7 @@ public class JmsMessageSender {
     public boolean send(LastModifiedMessage mess, JmsDestination d){
         try{
             return this.sendMap(mess.getMap(), d);                             
-        }catch(JmsException e){
+        } catch(JmsException e) {
             //TODO: How we unflag the problem?
             //flagConnectionProblem(e);
             LOG.error("Couldnt send " + mess.getOrcid() + " to the message queue", e);

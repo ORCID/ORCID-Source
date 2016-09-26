@@ -2008,6 +2008,12 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                         LOG.warn("Record " + orcid + " was sent to the message queue");
                     } else {
                         LOG.error("Record " + orcid + " couldnt been sent to the message queue");
+                        // TODO: we need a better way to handle failures, but,
+                        // for now, we set it as re-index again, so, SOLR will
+                        // not pick it again since it have the same last
+                        // modified date, and, we will try sending it again to
+                        // the MQ later
+                        profileDao.updateIndexingStatus(orcid, IndexingStatus.REINDEX);
                     }
                 }
             }
