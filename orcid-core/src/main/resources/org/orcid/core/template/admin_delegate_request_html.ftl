@@ -47,7 +47,8 @@
                 <@emailMacros.msg "email.admin_delegate_request.for_a_tutorial" />
 		    </p>
 		    <p style="font-family: arial, helvetica, sans-serif; font-size: 15px; color: #666666; white-space: pre;">
-                <@emailMacros.msg "email.admin_delegate_request.kind_regards" /><a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>		
+<@emailMacros.msg "email.admin_delegate_request.kind_regards" />
+<a href="${baseUri}/home?lang=${locale}">${baseUri}/</a>		
 		    </p>
 			<p style="font-family: arial,  helvetica, sans-serif;font-size: 15px;color: #666666;">
 				<@emailMacros.msg "email.common.you_have_received_this_email" />

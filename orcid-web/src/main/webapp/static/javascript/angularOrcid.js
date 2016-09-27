@@ -2533,16 +2533,17 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     
     /* Workaround for dealing with the Email table styles in Asian languages */
     $scope.asianEmailTableStyleFix = function(){
-        if ($cookies.get('locale_v3') == 'zh_CN' || $cookies.get('locale_v3') == 'zh_TW' || $cookies.get('locale_v3') == 'ja' || $cookies.get('locale_v3') == 'ko'){            
-            
+        if ($cookies.get('locale_v3') == 'zh_CN' || $cookies.get('locale_v3') == 'zh_TW' || $cookies.get('locale_v3') == 'ja' || $cookies.get('locale_v3') == 'ko'){     
             $scope.$watch(
                 function () {
-                    return document.getElementsByClassName('email-verified').length; 
+                    return $('.email-verified').length; 
                 },
-                function (newValue, oldValue) {                    
-                    $(".settings-table .table td:nth-child(1)").addClass('reset-width');
-                    $(".settings-table .table td:nth-child(2)").addClass('reset-width');
-                    $(".settings-table .table td:nth-child(4)").addClass('reset-width');                    
+                function (newValue, oldValue) {
+                    setTimeout(function() { 
+                        $(".settings-table .table td:nth-child(1)").addClass('reset-width');
+                        $(".settings-table .table td:nth-child(2)").addClass('reset-width');
+                        $(".settings-table .table td:nth-child(4)").addClass('reset-width');
+                    }, 0);        
                 }
             );
             
