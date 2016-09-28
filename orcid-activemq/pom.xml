@@ -7,9 +7,8 @@
   <name>ORCID - ActiveMQ</name>
   <url>http://maven.apache.org</url>
   
-    <properties>
-	    <org.orcid.message-listener.properties>orcid-activemq.properties</org.orcid.message-listener.properties>
-        <main.basedir>${project.parent.basedir}</main.basedir>
+    <properties>    	
+    	<main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
     
   <parent>
@@ -63,7 +62,7 @@
 		   		   <update>true</update>
                 </configuration>
             </plugin>
-        </plugins>
+        </plugins>        
     </build>
   
 </project>
