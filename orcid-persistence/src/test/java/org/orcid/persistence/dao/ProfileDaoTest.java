@@ -34,6 +34,7 @@ import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.dbunit.dataset.DataSetException;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -328,11 +329,11 @@ public class ProfileDaoTest extends DBUnitTest {
 
     @Test
     public void testOrcidsFindByIndexingStatus() {
-        List<Object[]> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
+        List<Pair<String, IndexingStatus>> results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.PENDING, 10);
         assertNotNull(results);
         assertEquals(2, results.size());
-        assertEquals("4444-4444-4444-4445", results.get(0)[0]);
-        assertEquals("4444-4444-4444-4446", results.get(1)[0]);
+        assertEquals("4444-4444-4444-4445", results.get(0).getLeft());
+        assertEquals("4444-4444-4444-4446", results.get(1).getLeft());
 
         results = profileDao.findOrcidsByIndexingStatus(IndexingStatus.DONE, Integer.MAX_VALUE);
         assertEquals(16, results.size());

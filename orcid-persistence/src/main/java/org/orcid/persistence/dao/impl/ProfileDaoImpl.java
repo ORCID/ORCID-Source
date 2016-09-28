@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
@@ -65,7 +66,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
+    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults) {
         return findOrcidsByIndexingStatus(indexingStatus, maxResults, Collections.EMPTY_LIST);
     }
 
@@ -80,7 +81,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
     @Override
-    public List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
+    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude) {
         List<IndexingStatus> indexingStatuses = new ArrayList<>(1);
         indexingStatuses.add(indexingStatus);
         return findOrcidsByIndexingStatus(indexingStatuses, maxResults, orcidsToExclude);
@@ -98,7 +99,7 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
      * */
     @SuppressWarnings("unchecked")
     @Override
-    public List<Object[]> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
+    public List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude) {
         StringBuilder builder = new StringBuilder("SELECT p.orcid, p.indexing_status FROM profile p WHERE p.indexing_status IN :indexingStatus");
         if (!orcidsToExclude.isEmpty()) {
             builder.append(" AND p.orcid NOT IN :orcidsToExclude");
@@ -112,7 +113,14 @@ public class ProfileDaoImpl extends GenericDaoImpl<ProfileEntity, String> implem
             query.setParameter("orcidsToExclude", orcidsToExclude);
         }
         query.setMaxResults(maxResults);
-        return query.getResultList();
+        List<Object[]> dbInfo = query.getResultList();
+        List<Pair<String, IndexingStatus>> results = new ArrayList<Pair<String, IndexingStatus>>();  
+        dbInfo.stream().forEach(element -> {
+            IndexingStatus i = element[1] == null ? null : IndexingStatus.valueOf((String) element[1]);
+            Pair<String, IndexingStatus> pair = Pair.of((String) element[0], i);
+            results.add(pair);
+        });
+        return results;
     }
 
     @SuppressWarnings("unchecked")

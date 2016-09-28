@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
@@ -44,7 +45,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          Max number of results
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -56,7 +57,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          List of ORCID ids to exclude from the results
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Object[]> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
 
     /**
      * Get a list of the ORCID ids with the given indexing status
@@ -68,7 +69,7 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
      *          List of ORCID ids to exclude from the results
      * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
      * */
-    List<Object[]> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 

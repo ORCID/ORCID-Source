@@ -8,7 +8,7 @@
   <url>http://maven.apache.org</url>
   
     <properties>
-	    <org.orcid.message-listener.properties>message-listener.properties</org.orcid.message-listener.properties>
+	    <org.orcid.message-listener.properties>orcid-activemq.properties</org.orcid.message-listener.properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
     </properties>
     

@@ -46,6 +46,7 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
@@ -1857,15 +1858,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination){
         LOG.info("processing profiles with "+status.name()+" flag. sending to "+destination.name());
-        List<Object[]> orcidsForIndexing = new ArrayList<>();
+        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
         indexingStatuses.add(status);
         boolean connectionIssue = false;
         do{
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
             LOG.info("processing batch of "+orcidsForIndexing.size());
-            for (Object[] o : orcidsForIndexing){
-                String orcid = (String) o[0];
+            for (Pair<String, IndexingStatus> p : orcidsForIndexing){
+                String orcid = p.getLeft();
                 Date last = profileDao.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
                 if (messaging.send(mess,destination))
@@ -1914,7 +1915,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             return;
         }
 
-        List<Object[]> orcidsForIndexing = new ArrayList<>();
+        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         List<String> orcidFailures = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(2);
         indexingStatuses.add(IndexingStatus.PENDING);
@@ -1922,15 +1923,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         do {
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, orcidFailures);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
-            for (final Object[] o : orcidsForIndexing) {
-                String orcid = (String) o[0];
-                IndexingStatus status = PojoUtil.isEmpty((String) o[1]) ? null : IndexingStatus.valueOf((String) o[1]);
+            for (final Pair<String, IndexingStatus> p : orcidsForIndexing) {
+                String orcid = p.getLeft();
+                IndexingStatus status = p.getRight();
                 FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid, status));
                 executorService.execute(task);
                 futureHM.put(orcid, task);
             }
-            for (final Object[] o : orcidsForIndexing) {
-                String orcid = (String) o[0];
+            for (final Pair<String, IndexingStatus> p : orcidsForIndexing) {
+                String orcid = p.getLeft();
                 try {                    
                     futureHM.remove(orcid).get(240, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
