@@ -382,7 +382,7 @@
 	<div class="row bulk-edit-modal">
 		<div class="pull-right bio-edit-modal">				
 			<span class="custom-control-title">bulk edit</span>
-			<div class="position: static;">
+			<div style="position: static;">
 				<@orcid.privacyToggle3  angularModel="bioModel"
 		        	questionClick="toggleClickPrivacyHelp($index)"
 		        	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
