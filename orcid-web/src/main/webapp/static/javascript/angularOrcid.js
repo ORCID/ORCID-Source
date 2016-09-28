@@ -364,9 +364,10 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         		&& activityIdentifiers[idPath].value != null
         		&& activityIdentifiers[idPath].value != '') {    		
             key = activityIdentifiers[idTypePath].value;
-            // currently I've been told all know identifiers are case insensitive so we are
-            // lowercase the value for consistency
-            key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';
+            // Removed conversion to lower case as per card: https://trello.com/c/b7jLWgNq/3070-api-groups-are-case-sensitive-ui-groups-are-not
+            key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : '';
+            
+            
         }
     }
     return key;
