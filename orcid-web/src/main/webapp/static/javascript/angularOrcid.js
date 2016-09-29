@@ -2534,16 +2534,15 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     /* Workaround for dealing with the Email table styles in Asian languages */
     $scope.asianEmailTableStyleFix = function(){
         if ($cookies.get('locale_v3') == 'zh_CN' || $cookies.get('locale_v3') == 'zh_TW' || $cookies.get('locale_v3') == 'ja' || $cookies.get('locale_v3') == 'ko'){     
+            $scope.styleFix = false;
             $scope.$watch(
                 function () {
-                    return $('.email-verified').length; 
+                    return angular.element(document.getElementsByClassName("email-verified")[0]).length; 
                 },
                 function (newValue, oldValue) {
-                    setTimeout(function() { 
-                        $(".settings-table .table td:nth-child(1)").addClass('reset-width');
-                        $(".settings-table .table td:nth-child(2)").addClass('reset-width');
-                        $(".settings-table .table td:nth-child(4)").addClass('reset-width');
-                    }, 0);        
+                    if(newValue > oldValue){
+                        $scope.styleFix = true;                        
+                    }        
                 }
             );
             
