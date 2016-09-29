@@ -5404,11 +5404,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	max-width: 500px !important; /* forcing temporally */
 }
 
-.oAuthFix{
-	float: left;
-	width: 100%;
-}
-
 .clearfix {
 	clear: both;
 }
