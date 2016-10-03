@@ -364,9 +364,10 @@ GroupedActivities.prototype.key = function(activityIdentifiers) {
         		&& activityIdentifiers[idPath].value != null
         		&& activityIdentifiers[idPath].value != '') {    		
             key = activityIdentifiers[idTypePath].value;
-            // currently I've been told all know identifiers are case insensitive so we are
-            // lowercase the value for consistency
-            key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value.toLowerCase() : '';
+            // Removed conversion to lower case as per card: https://trello.com/c/b7jLWgNq/3070-api-groups-are-case-sensitive-ui-groups-are-not
+            key += activityIdentifiers[idPath] != null ? activityIdentifiers[idPath].value : '';
+            
+            
         }
     }
     return key;
@@ -2534,16 +2535,15 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     /* Workaround for dealing with the Email table styles in Asian languages */
     $scope.asianEmailTableStyleFix = function(){
         if ($cookies.get('locale_v3') == 'zh_CN' || $cookies.get('locale_v3') == 'zh_TW' || $cookies.get('locale_v3') == 'ja' || $cookies.get('locale_v3') == 'ko'){     
+            $scope.styleFix = false;
             $scope.$watch(
                 function () {
-                    return $('.email-verified').length; 
+                    return angular.element(document.getElementsByClassName("email-verified")[0]).length; 
                 },
                 function (newValue, oldValue) {
-                    setTimeout(function() { 
-                        $(".settings-table .table td:nth-child(1)").addClass('reset-width');
-                        $(".settings-table .table td:nth-child(2)").addClass('reset-width');
-                        $(".settings-table .table td:nth-child(4)").addClass('reset-width');
-                    }, 0);        
+                    if(newValue > oldValue){
+                        $scope.styleFix = true;                        
+                    }        
                 }
             );
             
@@ -10993,7 +10993,7 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
         	
         if (link != null){
         	link = $filter('urlProtocol')(link);
-            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>' + ' | ' + '<a href="' + link.replace(/'/g, "&#39;") + '" class ="' + ngclass + '"' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + link.replace(/'/g, "&#39;").escapeHtml() + '</a>';
+            output += '<a href="' + link.replace(/'/g, "&#39;") + '" class =""' + " target=\"_blank\" ng-mouseenter=\"showURLPopOver(peerReview.putCode.value + $index)\" ng-mouseleave=\"hideURLPopOver(peerReview.putCode.value + $index)\">" + id.escapeHtml() + '</a>';
         }else{
             output += id.escapeHtml();        
         }

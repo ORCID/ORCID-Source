@@ -4262,7 +4262,7 @@ ul.id-details li{
 .workspace-title{
 	float: left;
 	display: block;
-	color: #494A4C;
+	color: #939598;
 	font-weight: normal;
 }
 
@@ -4275,10 +4275,15 @@ ul.id-details li{
 	word-break: normal;
 }
 
-.info-date, .role, .divisor{
+.info-date, .divisor{
 	display: block;
-	float: left;	
+	float: left;
+	width: 100%;	
 }
+
+.role{
+	float: left;
+} 
 
 .divisor{
 	margin: 0 5px; 

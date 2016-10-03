@@ -330,18 +330,20 @@ kind of variable. This temp value is only used in this macro lib -->
  	</div>
 </#macro>
 
-<#macro registrationEmailFrequencySelector angularElementName>	
+<#macro registrationEmailFrequencySelector angularElementName>
+<div>	
     <h4>${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-    <label>
+    <label class="control-label">
         ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
-        <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
-        	class="input-xlarge"
-        	ng-model="${angularElementName}.sendEmailFrequencyDays.value">
-			<#list sendEmailFrequencies?keys as key>
-				<option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
-			</#list>
-        </select>        
-    </label>    
+    </label>
+    <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"
+    	class="input-xlarge"
+     	ng-model="${angularElementName}.sendEmailFrequencyDays.value">
+		<#list sendEmailFrequencies?keys as key>
+			<option value="${key}" ng-selected="${angularElementName}.sendEmailFrequencyDays.value === ${key}">${sendEmailFrequencies[key]}</option>
+		</#list>
+    </select>        
+</div>        
 </#macro>
 
 

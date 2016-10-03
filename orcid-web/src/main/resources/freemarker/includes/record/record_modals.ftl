@@ -42,13 +42,13 @@
 								</div>							
 							</div>		
 						</#if>
-
 				
 						<div class="scroll-area 
 							<#if RequestParameters['bulkEdit']??>
 							scroll-area-padding
 							</#if>
 						   ">		
+
 	        	      	   <div name="other-name" class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
