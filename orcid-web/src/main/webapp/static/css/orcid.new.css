@@ -4044,6 +4044,30 @@ ul#body-work-list > li{
 }
 
 
+.workspace-section-title{
+	position: relative;
+	padding-right: 30px;	
+}
+
+.workspace-section-title .edit-option{
+	position: absolute;
+	cursor: pointer; 
+	right: 0;
+    top: 0;
+}
+
+.workspace-section-title .edit-option .popover-tooltip{
+	top: -40px;
+    left: -18px;
+    display: none;
+    color: #939598;
+}
+
+.edit-option:hover .popover-tooltip{
+	display: block;	
+}
+
+
 .workspace-profile .workspace-section ul.workspace-section-toolbar{
 	width: 100%;	
 	margin: 0;
@@ -4473,9 +4497,8 @@ ul.sources-edit-list > li{
 	margin-top: 15px;
 }
 
-.workspace-profile span.glyphicon-pencil,
-#workspace-personal span.glyphicon-pencil{
-	//float: right;
+.workspace-profile div.glyphicon-pencil,
+#workspace-personal span.glyphicon-pencil{	
 	background: #949599;
 	padding: 5px;
 	border-radius: 50%;

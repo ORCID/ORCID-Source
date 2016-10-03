@@ -66,79 +66,151 @@
                         </div>
                     </div>
                 </div>
-            </div>            	       	
-	       	
+            </div>
+            
 	       	<!-- Other Names -->	       	
-       		<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">        	   
+       		<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
         	   <div class="workspace-section-header">
-        	   	   <span class="workspace-section-title"><@orcid.msg 'workspace.Alsoknownas'/></span>
-	        	   <span ng-hide="showEdit == true" ng-click="openEditModal()">		        	   	  
-	        	      <span class="glyphicon glyphicon-pencil edit-other-names edit-option pull-right" title="" id="open-edit-other-names"></span>
-	        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
-	        	         {{ $last?otherName.content:otherName.content + ", "}}
-	        	      </span>
-	        	   </span>		        	   
+        	   	   <div class="workspace-section-title">
+        	   	   		<div><@orcid.msg 'workspace.Alsoknownas'/></div>
+        	   	   		<div class="edit-other-names edit-option" id="open-edit-other-names" ng-click="openEditModal()">	        	   	   		
+		        	   	   	<div class="glyphicon glyphicon-pencil">
+	        	   	   			<div class="popover popover-tooltip top"> 
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span><@orcid.msg 'manage_bio_settings.editOtherNames' /></span>
+								    </div>                
+							    </div>									
+							</div>
+						</div>
+        	   	   </div>        	   	   
+	        	</div>
+        	   <div class="workspace-section-content">
+        	      <span ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>
+        	         {{ $last?otherName.content:otherName.content + ", "}}
+        	      </span>
         	   </div>
         	</div>
             
             <!-- Country -->            
            	<div ng-controller="CountryCtrl" class="workspace-section country">
             	<div class="workspace-section-header">
-		        	<span class="workspace-section-title"><@orcid.msg 'public_profile.labelCountry'/></span>
-		            <span id="country-open-edit-modal" class="glyphicon glyphicon-pencil edit-country edit-option pull-right" ng-click="openEditModal()" title=""></span>
-		            <span ng-repeat="country in countryForm.addresses">			            				            	
-		            	<span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
-		            </span>			            
+		        	<div class="workspace-section-title">		        	
+			        	<div><@orcid.msg 'public_profile.labelCountry'/></div>
+			            <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
+				            <div class="glyphicon glyphicon-pencil"> 
+					            <div class="popover popover-tooltip top"> 
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span><@orcid.msg 'manage_bio_settings.editCountry' /></span>
+								    </div>                
+							    </div>
+				            </div>			            
+			           </div>
+		            </div>
+	            </div>
+	            <div class="workspace-section-content">
+	            	<span ng-repeat="country in countryForm.addresses">			            				            	
+				    	<span ng-if="country != null && country.countryName != null" ng-bind="country.countryName"></span>
+				    </span>
 	            </div>
 	        </div>
               
 	       	<!-- Keywords -->	       	
        		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 	        	<div class="workspace-section-header">
-        	   		<span class="workspace-section-title"><@orcid.msg 'public_profile.labelKeywords'/></span>
-	        	   	<span>
-	        	   	  	<span id="open-edit-keywords" class="glyphicon glyphicon-pencil edit-keywords edit-option pull-right" ng-click="openEditModal()" title=""></span>	
-	        	      	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
-	        	         	{{ $last?keyword.content:keyword.content+ ", "}}
-	        	      	</span>
-	        	   	</span>
-        	   	</div>
-       		</div>	       	
+        	   		<div class="workspace-section-title">
+	       	   			<div><@orcid.msg 'public_profile.labelKeywords'/></div>
+		        	   	<div id="open-edit-keywords" class="edit-keywords edit-option" ng-click="openEditModal()">
+		        	   	  	<div class="glyphicon glyphicon-pencil">
+		        	   	  		<div class="popover popover-tooltip top">
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span><@orcid.msg 'manage_bio_settings.editKeywords' /></span>
+								    </div>                
+							    </div>
+		        	   	  	</div>
+		        	   	</div>
+	        	   	</div>
+	        	   	<div class="workspace-section-content">
+		        	   	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
+		       	         	{{ $last?keyword.content:keyword.content+ ", "}}
+		       	        </span>
+	       	      	</div>
+	       	     </div>
+       		</div>
 	       	
 	      	<!-- Websites  -->	      	
       		<div ng-controller="WebsitesCtrl" class="workspace-section websites">
 	        	<div class="workspace-section-header">
-	        	   <span class="workspace-section-title"><@orcid.msg 'public_profile.labelWebsites'/></span>
-	        	   <span>
-	        	      <span id="open-edit-websites" class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()" title=""></span><br />
-                         <div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
-	        	         <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
-	        	      </div>
-	        	   </span>
+	        	    <div class="workspace-section-title">
+						<div><@orcid.msg 'public_profile.labelWebsites'/></div>						
+						<div id="open-edit-websites" class="edit-websites edit-option" ng-click="openEditModal()">
+						   <div class="glyphicon glyphicon-pencil">
+						   		<div class="popover popover-tooltip top">
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span><@orcid.msg 'manage_bio_settings.editWebsites' /></span>
+								    </div>                
+							    </div>
+						   </div>         
+						</div>
+		        	</div>
 	        	</div>	
+	        	<div class="workspace-section-content">
+	        		<div ng-repeat="website in websitesForm.websites" ng-cloak class="wrap">
+					      <a href="{{website.url}}" target="_blank" rel="me nofollow">{{website.urlName != null? website.urlName : website.url}}</a>
+					</div>
+	        	</div>
 	       	</div>
 	       	
 	       	<!-- Emails  -->	       	
        		<div ng-controller="EmailsCtrl" class="workspace-section">
 	        	<div class="workspace-section-header">
-	        	   <span class="workspace-section-title"><@orcid.msg 'manage.emails'/></span>		        	   
-	        	   <span class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
+	        	   <div class="workspace-section-title">
+	        	   		<div><@orcid.msg 'manage.emails'/></div>
+	        	   		<div class="edit-websites edit-option" ng-click="openEditModal()">
+	        	   			<div class="glyphicon glyphicon-pencil">
+	        	   				<div class="popover popover-tooltip top">
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span><@orcid.msg 'manage.email.my_email_addresses' /></span>
+								    </div>                
+							    </div>
+	        	   			</div>	        	   		
+	        	   		</div>
+	        	   </div>
 	        	</div> 
-	        	<div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
-	        	   <span ng-bind="email.value"></span>
-	        	</div>
+	        	<div class="workspace-section-content">
+		        	<div ng-repeat="email in emailSrvc.emails.emails" class="mobile-box emails-box">
+		        	   <span ng-bind="email.value"></span>
+		        	</div>
+		        </div>
 	       	</div>
 			
 			<!--  External Identifiers -->	       	
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
        			<div class="workspace-section-header">
-       				<span class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></span>
-       				<span id="open-edit-external-identifiers" class="glyphicon glyphicon-pencil edit-websites edit-option pull-right" ng-click="openEditModal()"></span>
+       				<div class="workspace-section-title">
+       					<div><@orcid.msg 'public_profile.labelOtherIDs'/></div>
+       					<div id="open-edit-external-identifiers" class="edit-websites edit-option" ng-click="openEditModal()">
+							<div class="glyphicon glyphicon-pencil">
+								<div class="popover popover-tooltip top">
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span><@orcid.msg 'manage_bio_settings.editExternalIdentifiers' /></span>
+								    </div>                
+							    </div>
+							</div>
+						</div>
+       				</div>
        			</div>
-       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
-		        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>
-		        	<span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>				   		
-       			</div>
+       			<div class="workspace-section-content">
+	       			<div ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
+			        	<span ng-hide="externalIdentifier.url">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</span>
+			        	<span ng-if="externalIdentifier.url"><a href="{{externalIdentifier.url}}" target="_blank">{{externalIdentifier.commonName}}: {{externalIdentifier.reference}}</a></span>				   		
+	       			</div>
+	       		</div>
 			</div>					
 		</div>
     </div>
