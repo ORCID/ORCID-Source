@@ -174,7 +174,7 @@
 	        	   				<div class="popover popover-tooltip top">
 								    <div class="arrow"></div>
 								    <div class="popover-content">
-								        <span><@orcid.msg 'manage.email.my_email_addresses' /></span>
+								        <span><@orcid.msg 'manage_bio_settings.editEmail' /></span>
 								    </div>                
 							    </div>
 	        	   			</div>	        	   		

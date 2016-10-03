@@ -4058,9 +4058,13 @@ ul#body-work-list > li{
 
 .workspace-section-title .edit-option .popover-tooltip{
 	top: -40px;
-    left: -18px;
+    left: -10px;
     display: none;
     color: #939598;
+}
+
+.workspace-section-title .edit-option .popover-tooltip .arrow{
+	left: 20px;
 }
 
 .edit-option:hover .popover-tooltip{

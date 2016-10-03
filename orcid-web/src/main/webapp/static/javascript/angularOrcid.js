@@ -10545,7 +10545,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	    				<div class="edit-record edit-record-emails" style="position: relative">\
 	    					<div class="row">\
 	    						<div class="col-md-12 col-sm-12 col-xs-12">\
-	    								<h1 class="lightbox-title pull-left"> Edit Emails </h1>\
+	    								<h1 class="lightbox-title pull-left">'+ om.get("manage.edit.emails") +'</h1>\
 	    						</div>\
 	    					</div>\
 	    					<div class="row">\
