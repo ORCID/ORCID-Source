@@ -25,7 +25,9 @@
 			<div class="col-md-3 col-sm-4 col-xs-8">
 				<ul class="inline-list bio-edit right">
 	             	<li>
-						<a ng-click="toggleEdit()" ng-hide="showEdit == true"><span class="glyphicon glyphicon-pencil edit-biography edit-option"></span></a>
+						<a ng-click="toggleEdit()" ng-hide="showEdit == true">
+							<span class="glyphicon glyphicon-pencil edit-biography edit-option"></span>
+						</a>
 					</li>
 					<li ng-cloak>
              	    	<@orcid.privacyToggle2 angularModel="biographyForm.visiblity.visibility"

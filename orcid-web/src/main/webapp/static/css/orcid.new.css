@@ -4023,6 +4023,7 @@ ul#body-work-list > li{
 .workspace-profile .workspace-section{
 	float: left;
 	width: 100%;
+	min-height: 50px;
 	height: auto;	
 	margin: 10px 0;
 } 
