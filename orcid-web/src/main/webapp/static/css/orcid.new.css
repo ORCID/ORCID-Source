@@ -2338,6 +2338,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	display: none;
 }
 
+.privacy-toggle-lbl{
+	color: #494A4C;
+}
+
 .privacy-toggle-lbl select {
 	display: none;
 }
@@ -6664,6 +6668,11 @@ a:hover .mozilla-badge{
 	width: auto !important;
 	min-width: 0  !important;
     display: table  !important;
+}
+
+#register p,
+#register .dark-label{
+	color: #494A4C;
 }
 
 

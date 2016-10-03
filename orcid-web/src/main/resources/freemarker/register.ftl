@@ -17,6 +17,7 @@
 
 -->
 <@public classes=['home'] nav="register">
+<div id="register">
     <div class="row">        
         <div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
             <#if (RequestParameters['linkRequest'])??>
@@ -51,4 +52,5 @@
     		<#include "/includes/register_inc.ftl" />
         </div>
     </div>
+</div>
 </@public>
