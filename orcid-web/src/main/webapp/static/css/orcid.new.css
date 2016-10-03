@@ -6694,6 +6694,20 @@ a:hover .mozilla-badge{
     display: table  !important;
 }
 
+#bio-section .popover{
+	top: -40px;
+    left: -4px;
+    display: none;
+}
+
+#bio-section .popover .arrow{
+	left: 56px;
+}
+
+#bio-section .edit-biography:hover .popover{
+	display: block;
+}
+
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

@@ -25,9 +25,15 @@
 			<div class="col-md-3 col-sm-4 col-xs-8">
 				<ul class="inline-list bio-edit right">
 	             	<li>
-						<a ng-click="toggleEdit()" ng-hide="showEdit == true">
-							<span class="glyphicon glyphicon-pencil edit-biography edit-option"></span>
-						</a>
+						<div ng-click="toggleEdit()" ng-hide="showEdit == true" class="edit-biography edit-option">
+							<span class="glyphicon glyphicon-pencil"></span>
+							<div class="popover popover-tooltip top">
+							    <div class="arrow"></div>
+							    <div class="popover-content">
+							        <span><@orcid.msg 'manage_bio_settings.editBio' /></span>
+							    </div>                
+						    </div>
+						</div>
 					</li>
 					<li ng-cloak>
              	    	<@orcid.privacyToggle2 angularModel="biographyForm.visiblity.visibility"
