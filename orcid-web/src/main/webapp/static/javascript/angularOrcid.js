@@ -3194,25 +3194,22 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     };
     
     $scope.showTooltip = function(elem, event){
-        
-        angular.element('.edit-aka .popover-help-container').css({
-            top: -195,
-            left: -4
-        });        
-        
     	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-    	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
     	$scope.$watch('scrollTop', function (value) {
-    	    if (elem !== '-privacy'){
-        	  	angular.element('.edit-aka .popover-help-container').css({
-    	  			top: $scope.top - $scope.scrollTop,
-    	  			left: $scope.left - 5
-        	  	});    
+    	    if (elem === '-privacy'){
+    	        angular.element('.edit-aka .popover-help-container').css({
+    	            top: -195,
+    	            left: -4
+    	        });
+    	    }else{
+    	        angular.element('.edit-aka .popover-help-container').css({
+                    top: $scope.top - $scope.scrollTop,
+                    left: $scope.left - 5
+                });
     	    }
     	});
-        $scope.showElement[elem] = true;
-        
+        $scope.showElement[elem] = true;        
     };
 
     $scope.hideTooltip = function(elem){

@@ -389,7 +389,7 @@
 		            publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
                 	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
                 	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-                	elementId="$index" />
+                	elementId="bulkEdit" />
 			</div>
 		</div>			
 	</div>
