@@ -4507,29 +4507,31 @@ ul.sources-edit-list > li{
 }
 
 .workspace-profile div.glyphicon-pencil,
-#workspace-personal span.glyphicon-pencil{	
-	background: #949599;
+#workspace-personal span.glyphicon-pencil{
+	
 	padding: 5px;
 	border-radius: 50%;
-	color: #fff;
-	font-size: 10px;
+	color: #338caf;
+	font-size: 13px;
 	z-index: 100;
 	cursor: pointer;
+}
+
+.workspace-profile div.glyphicon-pencil:hover{
+	color: #9FC836;
 }
 
 #workspace-personal span.glyphicon-pencil{
 	height: 28px;
 	padding: 7px;
 	width: 28px;
-	font-size: 14px;
-	color: #494A4C;
-	background: #C9C9CA;
+	font-size: 13px;
+	color: #494A4C;	
 	margin-right: 5px;
 }
 
-#workspace-personal span.glyphicon-pencil:hover{
-	background: #a6ce39;
-	color: #FFF;
+#workspace-personal span.glyphicon-pencil:hover{	
+	color: #a6ce39;
 }
 
 #workspace-personal{
