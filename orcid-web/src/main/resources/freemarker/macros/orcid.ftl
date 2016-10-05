@@ -332,8 +332,8 @@ kind of variable. This temp value is only used in this macro lib -->
 
 <#macro registrationEmailFrequencySelector angularElementName>
 <div>	
-    <h4>${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
-    <label class="control-label">
+    <h4 class="dark-label">${springMacroRequestContext.getMessage("claim.notifications")}</h4>                
+    <label class="control-label dark-label">
         ${springMacroRequestContext.getMessage("claim.notificationsemailfrequency")}
     </label>
     <select id="sendEmailFrequencyDays" name="sendEmailFrequencyDays"

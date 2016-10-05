@@ -14,8 +14,8 @@
  *
  * =============================================================================
  */
-*, body, .orcid-id, h1, h2, h3, h4, h5, h6, b, strong{
-	
+ 
+*, body, .orcid-id, h1, h2, h3, h4, h5, h6, b, strong, .table th, .close, .nav-header, .label, .badge, .header .main>.menu>li>a, .btn-update, .btn-update:visited, .overview-count, .overview-count:visited, .overview-title, .workspace-header-public h3, .workspace-help a, .full-name, .tabs a, .tabs a:visited{	
 	font-family: 'Noto Sans', sans-serif;
 	font-style: normal;		
 }

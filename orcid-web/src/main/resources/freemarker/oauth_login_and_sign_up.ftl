@@ -217,7 +217,7 @@
 							        </div>			       
 							    </div>				
 							    
-							    <div class="form-group oAuthFix">
+							    <div class="form-group">
 							        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
 							        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 							            <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
@@ -250,23 +250,24 @@
 							   			</span>
 							        </div>			        
 							    </div>
-								
-								<div class="oauth-privacy" style="margin-bottom: 20px; margin-top: 10px;">							        
-							        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
-        							<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
-    						    	<@orcid.privacyToggle 
-							    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
-							    	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
-										clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
-										publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
-										limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
-										privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
-							    </div>                    		   		   
-							   <div>
+								<div class="form-group">
+									<div class="oauth-privacy"">							        
+								        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
+	        							<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
+	    						    	<@orcid.privacyToggle 
+								    	    angularModel="registrationForm.activitiesVisibilityDefault.visibility" 
+								    	    questionClick="toggleClickPrivacyHelp('workPrivHelp')"
+											clickedClassCheck="{'popover-help-container-show':privacyHelp['workPrivHelp']==true}" 
+											publicClick="updateActivitiesVisibilityDefault('PUBLIC', $event)"
+											limitedClick="updateActivitiesVisibilityDefault('LIMITED', $event)"
+											privateClick="updateActivitiesVisibilityDefault('PRIVATE', $event)" />
+								    </div>
+							    </div>
+							    <div>
 					        		<div class="relative">	            
 					        			<@orcid.registrationEmailFrequencySelector angularElementName="registrationForm" />
 					        		</div>
-							   </div>		   		   		   		    		  
+							    </div>		   		   		   		    		  
 							    <div>
 					        		<div class="relative recaptcha"  id="recaptcha" style="margin-bottom: 15px;">			
 								 		<div
@@ -425,7 +426,7 @@
 			        </div>			       
 			    </div>				
 			    
-			    <div class="form-group oAuthFix">
+			    <div class="form-group">
 			        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
 			        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 			            <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />

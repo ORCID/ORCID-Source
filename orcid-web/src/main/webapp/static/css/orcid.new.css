@@ -2338,6 +2338,10 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	display: none;
 }
 
+.privacy-toggle-lbl{
+	color: #494A4C;
+}
+
 .privacy-toggle-lbl select {
 	display: none;
 }
@@ -5404,11 +5408,6 @@ multiselect .dropdown-menu .dropdown-menu-list {
 	max-width: 500px !important; /* forcing temporally */
 }
 
-.oAuthFix{
-	float: left;
-	width: 100%;
-}
-
 .clearfix {
 	clear: both;
 }
@@ -6681,6 +6680,11 @@ a:hover .mozilla-badge{
 	width: auto !important;
 	min-width: 0  !important;
     display: table  !important;
+}
+
+#register p,
+#register .dark-label{
+	color: #494A4C;
 }
 
 
