@@ -108,7 +108,7 @@
 								<h4 ng-bind-html="nameToDisplay"></h4>													
 							</div>
 							<div class="col-md-2 col-sm-2 col-xs-3">				
-								<ul class="sso-options pull-right">							
+								<ul class="sso-options-light pull-right">							
 									<li><a href ng-click="showEditLayout()" class="edit" title="<@orcid.msg 'manage.developer_tools.tooltip.edit' />"><span class="glyphicon glyphicon-pencil"></span></a></li>							
 								</ul>					
 							</div>				

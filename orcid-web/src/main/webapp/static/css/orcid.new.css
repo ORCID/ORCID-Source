@@ -3558,12 +3558,6 @@ ul.sso-options li span {
 	padding-bottom: 10px;
 }
 
-/*
-.developer-tools .col-md-10{
-	padding-left: 0;
-	padding-right: 0;
-}
-*/
 .developer-tools .sso-options a {
 	display: block;
 	-webkit-border-radius: 50%;
@@ -3573,6 +3567,10 @@ ul.sso-options li span {
 	width: 35px;
 	height: 35px;
 	padding: 9px 10px;
+}
+
+.developer-tools .sso-options-light{
+	margin-top: 10px;
 }
 
 .developer-tools .sso-options a:hover {
@@ -4514,9 +4512,9 @@ ul.sources-edit-list > li{
 	margin-top: 15px;
 }
 
-.workspace-profile div.glyphicon-pencil,
+.workspace-section-title div.glyphicon-pencil,
 #workspace-personal span.glyphicon-pencil{
-	padding: 5px;
+	padding: 3px 5px 5px 0;
 	border-radius: 50%;
 	color: #338caf;
 	font-size: 13px;
