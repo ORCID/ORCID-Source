@@ -32,10 +32,24 @@
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div ng-include="'bulk-edit'"></div>
-					<div class="fixed-area" scroll>						
-						<div class="scroll-area">						   
-	        	      	   <div name="other-name" class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
+					<div class="fixed-area" scroll>
+
+						<#if RequestParameters['bulkEdit']??>
+							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+							<div class="fixed-bar">
+								<div style="position: relative">							
+									<div ng-include="'bulk-edit'"></div>
+								</div>							
+							</div>		
+						</#if>
+				
+						<div class="scroll-area 
+							<#if RequestParameters['bulkEdit']??>
+							scroll-area-padding
+							</#if>
+						   ">		
+
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
 										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput" />																				
@@ -94,12 +108,24 @@
 				</div>			
 			</div>
 
-			<div ng-include="'bulk-edit'"></div>
-
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
-						<div class="scroll-area">		
+
+						<#if RequestParameters['bulkEdit']??>
+							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+							<div class="fixed-bar">
+								<div style="position: relative">							
+									<div ng-include="'bulk-edit'"></div>
+								</div>							
+							</div>		
+						</#if>
+				
+						<div class="scroll-area 
+							<#if RequestParameters['bulkEdit']??>
+							scroll-area-padding
+							</#if>
+						   ">		
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
 									<div class="aka">
@@ -168,12 +194,24 @@
 				</div>			
 			</div>
 
-			<div ng-include="'bulk-edit'"></div>
-
 			<div class="row">
-				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">					
+				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
-						<div class="scroll-area">		
+
+						<#if RequestParameters['bulkEdit']??>
+							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+							<div class="fixed-bar">
+								<div style="position: relative">							
+									<div ng-include="'bulk-edit'"></div>
+								</div>							
+							</div>		
+						</#if>
+				
+						<div class="scroll-area 
+							<#if RequestParameters['bulkEdit']??>
+							scroll-area-padding
+							</#if>
+						   ">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">		
 								<div class="col-md-6">
 									<div class="aka">										
@@ -232,13 +270,25 @@
 					</h1>
 				</div>			
 			</div>
-		
-			<div ng-include="'bulk-edit'"></div>
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
-						<div class="scroll-area">		
+
+						<#if RequestParameters['bulkEdit']??>
+							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+							<div class="fixed-bar">
+								<div style="position: relative">							
+									<div ng-include="'bulk-edit'"></div>
+								</div>							
+							</div>		
+						</#if>
+				
+						<div class="scroll-area 
+							<#if RequestParameters['bulkEdit']??>
+							scroll-area-padding
+							</#if>
+						   ">		
 							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites">
 								<div class="col-md-6">
 									<div class="aka">										
@@ -305,12 +355,24 @@
 				</div>			
 			</div>
 
-			<div ng-include="'bulk-edit'"></div>
-
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
-						<div class="scroll-area">		
+
+						<#if RequestParameters['bulkEdit']??>
+							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+							<div class="fixed-bar">
+								<div style="position: relative">							
+									<div ng-include="'bulk-edit'"></div>
+								</div>							
+							</div>		
+						</#if>
+				
+						<div class="scroll-area 
+							<#if RequestParameters['bulkEdit']??>
+							scroll-area-padding
+							</#if>
+						   ">		
 							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
 								<div class="col-md-6">
 									<div class="aka">										
@@ -364,21 +426,19 @@
 	</div>
 </script>
 
-<script type="text/ng-template" id="bulk-edit">
-<#if RequestParameters['bulkEdit']??>					
+<script type="text/ng-template" id="bulk-edit">					
 	<div class="row bulk-edit-modal">
 		<div class="pull-right bio-edit-modal">				
 			<span class="custom-control-title">bulk edit</span>
-			<div style="position: static">
+			<div style="position: static;">
 				<@orcid.privacyToggle3  angularModel="bioModel"
 		        	questionClick="toggleClickPrivacyHelp($index)"
 		        	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
 		            publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
                 	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
                 	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-                	elementId="$index" />
+                	elementId="bulkEdit" />
 			</div>
 		</div>			
-	</div>	
-</#if>
+	</div>
 </script>
