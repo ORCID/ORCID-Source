@@ -4027,6 +4027,7 @@ ul#body-work-list > li{
 .workspace-profile .workspace-section{
 	float: left;
 	width: 100%;
+	min-height: 50px;
 	height: auto;	
 	margin: 10px 0;
 } 
@@ -4045,6 +4046,34 @@ ul#body-work-list > li{
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
 	color: #494A4C;
 	font-weight: normal;
+}
+
+
+.workspace-section-title{
+	position: relative;
+	padding-right: 30px;	
+}
+
+.workspace-section-title .edit-option{
+	position: absolute;
+	cursor: pointer; 
+	right: 0;
+    top: 0;
+}
+
+.workspace-section-title .edit-option .popover-tooltip{
+	top: -40px;
+    left: -10px;
+    display: none;
+    color: #939598;
+}
+
+.workspace-section-title .edit-option .popover-tooltip .arrow{
+	left: 20px;
+}
+
+.edit-option:hover .popover-tooltip{
+	display: block;	
 }
 
 
@@ -4477,9 +4506,8 @@ ul.sources-edit-list > li{
 	margin-top: 15px;
 }
 
-.workspace-profile span.glyphicon-pencil,
-#workspace-personal span.glyphicon-pencil{
-	//float: right;
+.workspace-profile div.glyphicon-pencil,
+#workspace-personal span.glyphicon-pencil{	
 	background: #949599;
 	padding: 5px;
 	border-radius: 50%;
@@ -6663,6 +6691,20 @@ a:hover .mozilla-badge{
 	width: auto !important;
 	min-width: 0  !important;
     display: table  !important;
+}
+
+#bio-section .popover{
+	top: -40px;
+    left: -4px;
+    display: none;
+}
+
+#bio-section .popover .arrow{
+	left: 56px;
+}
+
+#bio-section .edit-biography:hover .popover{
+	display: block;
 }
 
 #register p,

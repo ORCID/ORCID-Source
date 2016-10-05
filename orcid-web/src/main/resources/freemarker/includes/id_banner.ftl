@@ -37,7 +37,18 @@
 					</h2>
 				</div>
 				<div class="col-md-3 col-sm-3 col-xs-2">
-					<span class="glyphicon glyphicon-pencil edit-name edit-option right" title="" ng-hide="showEdit == true" id="open-edit-names"></span>
+					<div class="workspace-section-title">
+						<div class="edit-name edit-option" ng-hide="showEdit == true" id="open-edit-names">
+							<div class="glyphicon glyphicon-pencil right">
+								<div class="popover popover-tooltip top">
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span>Edit</span>
+								    </div>                
+							    </div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

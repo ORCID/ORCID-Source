@@ -81,7 +81,7 @@
 								<a ng-click="openEditAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-edit')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-edit')">
 								    <span class="glyphicon glyphicon-pencil"></span>
 								</a>
-								<div class="popover popover-tooltip top edit-source-popover ng-hide" ng-if="showElement[group.getActive().putCode.value+'-edit']"> 
+								<div class="popover popover-tooltip top edit-source-popover" ng-if="showElement[group.getActive().putCode.value+'-edit']"> 
 								    <div class="arrow"></div>
 								    <div class="popover-content">
 								        <span ><@orcid.msg 'groups.common.edit_my'/></span>
@@ -90,7 +90,7 @@
 							</li>   
 					        <li>
 					            <a id="delete-affiliation_{{group.getActive().putCode.value}}" href ng-click="deleteAffiliation(group.getActive())" ng-mouseenter="showTooltip(group.getActive().putCode.value+'-delete')" ng-mouseleave="hideTooltip(group.getActive().putCode.value+'-delete')" class="glyphicon glyphicon-trash"></a>
-					            <div class="popover popover-tooltip top delete-source-popover ng-hide" ng-if="showElement[group.getActive().putCode.value+'-delete']"> 
+					            <div class="popover popover-tooltip top delete-source-popover" ng-if="showElement[group.getActive().putCode.value+'-delete']"> 
 								 	<div class="arrow"></div>
 								    <div class="popover-content">
 								    	 <@orcid.msg 'groups.common.delete_this_source' />
