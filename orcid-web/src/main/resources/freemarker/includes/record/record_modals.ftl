@@ -49,7 +49,7 @@
 							</#if>
 						   ">		
 
-	        	      	   <div name="other-name" class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
+	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
 										<input type="text" ng-model="otherName.content" ng-if="otherName.source == orcidId"  focus-me="newInput" />																				
@@ -108,12 +108,24 @@
 				</div>			
 			</div>
 
-			<div ng-include="'bulk-edit'"></div>
-
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
-						<div class="scroll-area">		
+
+						<#if RequestParameters['bulkEdit']??>
+							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+							<div class="fixed-bar">
+								<div style="position: relative">							
+									<div ng-include="'bulk-edit'"></div>
+								</div>							
+							</div>		
+						</#if>
+				
+						<div class="scroll-area 
+							<#if RequestParameters['bulkEdit']??>
+							scroll-area-padding
+							</#if>
+						   ">		
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
 									<div class="aka">
