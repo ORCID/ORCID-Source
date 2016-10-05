@@ -3786,17 +3786,22 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
    };
    
    $scope.showTooltip = function(elem, event){
-	   	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-	   	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-	   	if(typeof $scope.scrollTop == 'undefined') $scope.scrollTop = 0;
-	   	$scope.$watch('scrollTop', function (value) {		
-	   	  	angular.element('.edit-external-identifiers .popover-help-container').css({
-	  			top: $scope.top - $scope.scrollTop,
-	  			left: $scope.left - 5
-	   	  	});    
-	   	});
-	   	
-	   	$scope.showElement[elem] = true;
+       $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+       $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+       $scope.$watch('scrollTop', function (value) {
+           if (elem === '-privacy'){
+               angular.element('.edit-external-identifiers .popover-help-container').css({
+                   top: -195,
+                   left: -4
+               });
+           }else{
+               angular.element('.edit-external-identifiers .popover-help-container').css({
+                   top: $scope.top - $scope.scrollTop,
+                   left: $scope.left - 5
+               });
+           }
+       });
+       $scope.showElement[elem] = true;  
    };
    
    $scope.hideTooltip = function(elem){
