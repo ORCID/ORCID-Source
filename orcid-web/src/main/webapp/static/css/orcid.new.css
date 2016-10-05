@@ -1822,6 +1822,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	line-height: 1;
 	word-break: break-word;
 	padding-bottom: 10px;
+	float: left;
+	max-width: 215px;
 }
 
 .privacy-list,.workspace-body-list {
@@ -4046,19 +4048,25 @@ ul#body-work-list > li{
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
 	color: #494A4C;
 	font-weight: normal;
+	float: left;
 }
 
+.workspace-section-label{
+	float: left;
+}
 
-.workspace-section-title{
-	position: relative;
-	padding-right: 30px;	
+.workspace-section-content{
+	clear: both;
+	float: left;
 }
 
 .workspace-section-title .edit-option{
-	position: absolute;
-	cursor: pointer; 
-	right: 0;
-    top: 0;
+	float: left;
+	line-height: 16px;	
+}
+
+.workspace-section-title .edit-name{
+	margin-top: 11px;	
 }
 
 .workspace-section-title .edit-option .popover-tooltip{
@@ -4508,7 +4516,6 @@ ul.sources-edit-list > li{
 
 .workspace-profile div.glyphicon-pencil,
 #workspace-personal span.glyphicon-pencil{
-	
 	padding: 5px;
 	border-radius: 50%;
 	color: #338caf;
@@ -4526,7 +4533,7 @@ ul.sources-edit-list > li{
 	padding: 7px;
 	width: 28px;
 	font-size: 13px;
-	color: #494A4C;	
+	color: #338caf;	
 	margin-right: 5px;
 }
 
