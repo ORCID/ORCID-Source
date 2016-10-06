@@ -5276,10 +5276,8 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 /* Bulk Edit Pop up */
 
-.lightbox-container.bulk-delete-modal{	
-	max-width: 550px;
-	padding-right: 0;
-	padding-bottom: 0;	
+.bulk-delete-modal{
+	width: 550px;
 }
 
 .bulk-delete-modal h3,
