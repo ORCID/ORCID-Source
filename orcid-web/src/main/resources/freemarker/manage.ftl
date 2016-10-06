@@ -329,7 +329,7 @@
 		        <table class="table table-bordered settings-table normal-width">
 		            <thead>
 		                <tr>
-		                    <th width="35%">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+		                    <th width="35%">${springMacroRequestContext.getMessage("manage.trusted_organization")}</th>
 		                    <th width="5%">${springMacroRequestContext.getMessage("manage.thapprovaldate")}</th>
 		                    <th width="35%">${springMacroRequestContext.getMessage("manage.thaccesstype")}</th>
 		                    <td width="5%"></td>
@@ -376,7 +376,7 @@
             <table class="table table-bordered settings-table normal-width" ng-show="delegation.givenPermissionTo.delegationDetails" ng-cloak>
                 <thead>
                     <tr>
-                        <th width="40%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.thproxy")}</th>
+                        <th width="40%" ng-click="changeSorting('delegateSummary.creditName.content')">${springMacroRequestContext.getMessage("manage.trustindividual")}</th>
                         <th width="30%" ng-click="changeSorting('delegateSummary.orcidIdentifier.path')">${springMacroRequestContext.getMessage("search_results.thORCIDID")}</th>
                         <th width="20%" ng-click="changeSorting('approvalDate.value')"><@orcid.msg 'manage_delegators.delegates_table.access_granted' /></th>
                         <td width="10%"></td>
