@@ -25,7 +25,28 @@
 	<div ng-controller="NameCtrl" class="workspace-section" id="names-section">
 		<div ng-show="showEdit == false" ng-click="toggleEdit()">
 			<div class="row">
-				<div class="col-md-9 col-sm-9 col-xs-10">
+				<!-- 
+					<div class="col-md-9 col-sm-9 col-xs-10">
+					
+					</div>
+					<div class="col-md-3 col-sm-3 col-xs-2">
+						
+					</div>
+				 -->
+				 <div class="col-md-12">
+					 <div class="workspace-section-title">
+						<div class="edit-name edit-option" ng-hide="showEdit == true" id="open-edit-names">
+							<div class="glyphicon glyphicon-pencil">
+								<div class="popover popover-tooltip top">
+								    <div class="arrow"></div>
+								    <div class="popover-content">
+								        <span>Edit</span>
+								    </div>                
+							    </div>
+							</div>
+						</div>
+					</div>
+					
 					<h2 class="full-name">
 						<span ng-hide="nameForm != null 
 						    && (nameForm.creditName == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-bind="nameForm.creditName.value" ng-cloak>
@@ -36,20 +57,7 @@
 						</span>						 
 					</h2>
 				</div>
-				<div class="col-md-3 col-sm-3 col-xs-2">
-					<div class="workspace-section-title">
-						<div class="edit-name edit-option" ng-hide="showEdit == true" id="open-edit-names">
-							<div class="glyphicon glyphicon-pencil right">
-								<div class="popover popover-tooltip top">
-								    <div class="arrow"></div>
-								    <div class="popover-content">
-								        <span>Edit</span>
-								    </div>                
-							    </div>
-							</div>
-						</div>
-					</div>
-				</div>
+				
 			</div>
 		</div>
 		<!-- Edit Mode -->

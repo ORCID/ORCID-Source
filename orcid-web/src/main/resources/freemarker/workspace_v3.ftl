@@ -72,7 +72,6 @@
        		<div ng-controller="OtherNamesCtrl" class="workspace-section other-names" id="other-names-section">
         	   <div class="workspace-section-header">
         	   	   <div class="workspace-section-title">
-        	   	   		<div><@orcid.msg 'workspace.Alsoknownas'/></div>
         	   	   		<div class="edit-other-names edit-option" id="open-edit-other-names" ng-click="openEditModal()">	        	   	   		
 		        	   	   	<div class="glyphicon glyphicon-pencil">
 	        	   	   			<div class="popover popover-tooltip top"> 
@@ -83,6 +82,7 @@
 							    </div>									
 							</div>
 						</div>
+						<div class="workspace-section-label"><@orcid.msg 'workspace.Alsoknownas'/></div>
         	   	   </div>        	   	   
 	        	</div>
         	   <div class="workspace-section-content">
@@ -95,8 +95,7 @@
             <!-- Country -->            
            	<div ng-controller="CountryCtrl" class="workspace-section country">
             	<div class="workspace-section-header">
-		        	<div class="workspace-section-title">		        	
-			        	<div><@orcid.msg 'public_profile.labelCountry'/></div>
+		        	<div class="workspace-section-title">
 			            <div id="country-open-edit-modal" class="edit-country edit-option" ng-click="openEditModal()" title="">
 				            <div class="glyphicon glyphicon-pencil"> 
 					            <div class="popover popover-tooltip top"> 
@@ -107,6 +106,7 @@
 							    </div>
 				            </div>			            
 			           </div>
+			           <div class="workspace-section-label"><@orcid.msg 'public_profile.labelCountry'/></div>
 		            </div>
 	            </div>
 	            <div class="workspace-section-content">
@@ -120,7 +120,6 @@
        		<div ng-controller="KeywordsCtrl" class="workspace-section keywords">
 	        	<div class="workspace-section-header">
         	   		<div class="workspace-section-title">
-	       	   			<div><@orcid.msg 'public_profile.labelKeywords'/></div>
 		        	   	<div id="open-edit-keywords" class="edit-keywords edit-option" ng-click="openEditModal()">
 		        	   	  	<div class="glyphicon glyphicon-pencil">
 		        	   	  		<div class="popover popover-tooltip top">
@@ -131,6 +130,7 @@
 							    </div>
 		        	   	  	</div>
 		        	   	</div>
+		        	   	<div class="workspace-section-label"><@orcid.msg 'public_profile.labelKeywords'/></div>
 	        	   	</div>
 	        	   	<div class="workspace-section-content">
 		        	   	<span ng-repeat="keyword in keywordsForm.keywords" ng-cloak>
@@ -144,7 +144,6 @@
       		<div ng-controller="WebsitesCtrl" class="workspace-section websites">
 	        	<div class="workspace-section-header">
 	        	    <div class="workspace-section-title">
-						<div><@orcid.msg 'public_profile.labelWebsites'/></div>						
 						<div id="open-edit-websites" class="edit-websites edit-option" ng-click="openEditModal()">
 						   <div class="glyphicon glyphicon-pencil">
 						   		<div class="popover popover-tooltip top">
@@ -155,6 +154,7 @@
 							    </div>
 						   </div>         
 						</div>
+						<div class="workspace-section-label"><@orcid.msg 'public_profile.labelWebsites'/></div>
 		        	</div>
 	        	</div>	
 	        	<div class="workspace-section-content">
@@ -167,8 +167,7 @@
 	       	<!-- Emails  -->	       	
        		<div ng-controller="EmailsCtrl" class="workspace-section">
 	        	<div class="workspace-section-header">
-	        	   <div class="workspace-section-title">
-	        	   		<div><@orcid.msg 'manage.emails'/></div>
+	        	   <div class="workspace-section-title">	        	   		
 	        	   		<div class="edit-websites edit-option" ng-click="openEditModal()">
 	        	   			<div class="glyphicon glyphicon-pencil">
 	        	   				<div class="popover popover-tooltip top">
@@ -179,6 +178,7 @@
 							    </div>
 	        	   			</div>	        	   		
 	        	   		</div>
+	        	   		<div class="workspace-section-title"><@orcid.msg 'manage.emails'/></div>
 	        	   </div>
 	        	</div> 
 	        	<div class="workspace-section-content">
@@ -191,8 +191,7 @@
 			<!--  External Identifiers -->	       	
        		<div ng-controller="ExternalIdentifierCtrl" ng-hide="!externalIdentifiersForm.externalIdentifiers.length" ng-cloak  class="workspace-section">
        			<div class="workspace-section-header">
-       				<div class="workspace-section-title">
-       					<div><@orcid.msg 'public_profile.labelOtherIDs'/></div>
+       				<div class="workspace-section-title">       					
        					<div id="open-edit-external-identifiers" class="edit-websites edit-option" ng-click="openEditModal()">
 							<div class="glyphicon glyphicon-pencil">
 								<div class="popover popover-tooltip top">
@@ -203,6 +202,7 @@
 							    </div>
 							</div>
 						</div>
+						<div class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></div>
        				</div>
        			</div>
        			<div class="workspace-section-content">

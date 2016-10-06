@@ -1822,6 +1822,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	line-height: 1;
 	word-break: break-word;
 	padding-bottom: 10px;
+	float: left;
+	max-width: 215px;
 }
 
 .privacy-list,.workspace-body-list {
@@ -3556,12 +3558,6 @@ ul.sso-options li span {
 	padding-bottom: 10px;
 }
 
-/*
-.developer-tools .col-md-10{
-	padding-left: 0;
-	padding-right: 0;
-}
-*/
 .developer-tools .sso-options a {
 	display: block;
 	-webkit-border-radius: 50%;
@@ -3571,6 +3567,10 @@ ul.sso-options li span {
 	width: 35px;
 	height: 35px;
 	padding: 9px 10px;
+}
+
+.developer-tools .sso-options-light{
+	margin-top: 10px;
 }
 
 .developer-tools .sso-options a:hover {
@@ -4046,19 +4046,25 @@ ul#body-work-list > li{
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
 	color: #494A4C;
 	font-weight: normal;
+	float: left;
 }
 
+.workspace-section-label{
+	float: left;
+}
 
-.workspace-section-title{
-	position: relative;
-	padding-right: 30px;	
+.workspace-section-content{
+	clear: both;
+	float: left;
 }
 
 .workspace-section-title .edit-option{
-	position: absolute;
-	cursor: pointer; 
-	right: 0;
-    top: 0;
+	float: left;
+	line-height: 16px;	
+}
+
+.workspace-section-title .edit-name{
+	margin-top: 11px;	
 }
 
 .workspace-section-title .edit-option .popover-tooltip{
@@ -4506,30 +4512,31 @@ ul.sources-edit-list > li{
 	margin-top: 15px;
 }
 
-.workspace-profile div.glyphicon-pencil,
-#workspace-personal span.glyphicon-pencil{	
-	background: #949599;
-	padding: 5px;
+.workspace-section-title div.glyphicon-pencil,
+#workspace-personal span.glyphicon-pencil{
+	padding: 3px 5px 5px 0;
 	border-radius: 50%;
-	color: #fff;
-	font-size: 10px;
+	color: #338caf;
+	font-size: 13px;
 	z-index: 100;
 	cursor: pointer;
+}
+
+.workspace-profile div.glyphicon-pencil:hover{
+	color: #9FC836;
 }
 
 #workspace-personal span.glyphicon-pencil{
 	height: 28px;
 	padding: 7px;
 	width: 28px;
-	font-size: 14px;
-	color: #494A4C;
-	background: #C9C9CA;
+	font-size: 13px;
+	color: #338caf;	
 	margin-right: 5px;
 }
 
-#workspace-personal span.glyphicon-pencil:hover{
-	background: #a6ce39;
-	color: #FFF;
+#workspace-personal span.glyphicon-pencil:hover{	
+	color: #a6ce39;
 }
 
 #workspace-personal{
