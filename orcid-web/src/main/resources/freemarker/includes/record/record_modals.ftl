@@ -429,7 +429,7 @@
 <script type="text/ng-template" id="bulk-edit">					
 	<div class="row bulk-edit-modal">
 		<div class="pull-right bio-edit-modal">				
-			<span class="custom-control-title">bulk edit</span>
+			<span class="custom-control-title"><@spring.message "groups.common.bulk_edit"/></span>
 			<div style="position: static;">
 				<@orcid.privacyToggle3  angularModel="bioModel"
 		        	questionClick="toggleClickPrivacyHelp($index)"
