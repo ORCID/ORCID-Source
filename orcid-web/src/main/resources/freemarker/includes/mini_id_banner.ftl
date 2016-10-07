@@ -17,7 +17,7 @@
 
 -->
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
-	<div class="full-name">
+	<div class="full-name" ng-cloak>
 		{{requestInfoForm.userName}}		
 	</div>
 	<div class="oid">
@@ -26,7 +26,7 @@
 				<div class="dropdown id-banner-container" ng-show="unfilteredLength"
 					ng-cloak>
 					<a ng-click="openMenu($event)" class="id-banner-switch">
-						<div class="orcid-id-container">
+						<div class="orcid-id-container" ng-cloak>
 							${baseUriHttp}/{{requestInfoForm.userOrcid}}
 							<span class="glyphicon glyphicon-chevron-down"></span>
 						</div>

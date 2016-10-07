@@ -24,15 +24,7 @@
     <!-- Name -->    
 	<div ng-controller="NameCtrl" class="workspace-section" id="names-section">
 		<div ng-show="showEdit == false" ng-click="toggleEdit()">
-			<div class="row">
-				<!-- 
-					<div class="col-md-9 col-sm-9 col-xs-10">
-					
-					</div>
-					<div class="col-md-3 col-sm-3 col-xs-2">
-						
-					</div>
-				 -->
+			<div class="row">				
 				 <div class="col-md-12">
 					 <div class="workspace-section-title">
 						<div class="edit-name edit-option" ng-hide="showEdit == true" id="open-edit-names">
@@ -53,9 +45,12 @@
 						</span>
 						<span ng-show="nameForm != null 
 						    && (nameForm.creditName == null || nameForm.creditName.value == null || nameForm.namesVisibility.visibility != 'PUBLIC')" ng-cloak>
-						    {{nameForm.givenNames.value}} {{nameForm.familyName.value}}
-						</span>						 
+						    {{nameForm.givenNames.value}} <span ng-show="nameForm.familyName.value != null" ng-cloak>{{nameForm.familyName.value}}</span>
+						</span>
 					</h2>
+					
+					
+					
 				</div>
 				
 			</div>
