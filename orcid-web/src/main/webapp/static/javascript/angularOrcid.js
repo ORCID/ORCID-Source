@@ -7436,7 +7436,23 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
                     if(value.value == data.locale){
                         $scope.language = $scope.languages[key];                        
                         $scope.widgetSrvc.setLocale($scope.language.value);
-                        window.location.reload(true);
+                        //In case some parameters were sent via URL
+                        var params = window.location.href.split("?")[1].split("&");
+                        if (params.length > 0){
+                            //Removing language parameter (lang=[code]) if it exists
+                            for ( var i = 0; i < params.length; i++ )
+                                if(params[i].indexOf("lang=") > -1)
+                                    params.splice(i, 1);    
+                            
+                            if ( params.length > 0 ) {                                
+                                window.location.href = window.location.href.split("?")[0] + '?' + params.join("&");
+                            } else {
+                                window.location.href = window.location.href.split("?")[0];
+                            }
+                            
+                        }else{
+                            window.location.reload(true);
+                        }
                     }
                 });
             }
