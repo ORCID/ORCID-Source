@@ -5052,11 +5052,10 @@ ul.toggle-menu li:hover ul{
 }
 
 .bulk-edit .bulk-edit-delete{	
-	display: block;
-	float: left;
-	margin: 5px 0 0 3px;
-	text-align: center;
-	position: relative;
+	float: right;
+    clear: both;
+    margin-right: 10px;
+    position: relative;
 	
 }
 
@@ -8030,6 +8029,10 @@ a:hover .mozilla-badge{
 
 	.member-list tr { 
 		padding: 10px 0 10px 0;
+	}
+	
+	.bulk-edit .bulk-edit-delete{
+		margin-right: 15px;
 	}
 
 }
