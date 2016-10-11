@@ -75,100 +75,100 @@ public class OrcidSolrDocument {
     private List<String> digitalObjectIds;
 
     @Field(SolrConstants.AGR)
-    private List<String> agr;
+    private List<String> agr = new ArrayList<String>();
 
     @Field(SolrConstants.ARXIV)
-    private List<String> arxiv;
+    private List<String> arxiv = new ArrayList<String>();
 
     @Field(SolrConstants.ASIN)
-    private List<String> asin;
+    private List<String> asin = new ArrayList<String>();
 
     @Field(SolrConstants.ASIN_TLD)
-    private List<String> asintld;
+    private List<String> asintld = new ArrayList<String>();
 
     @Field(SolrConstants.BIBCODE)
-    private List<String> bibcode;
+    private List<String> bibcode = new ArrayList<String>();
 
     @Field(SolrConstants.CBA)
-    private List<String> cba;
+    private List<String> cba = new ArrayList<String>();
 
     @Field(SolrConstants.CIT)
-    private List<String> cit;
+    private List<String> cit = new ArrayList<String>();
 
     @Field(SolrConstants.CTX)
-    private List<String> ctx;
+    private List<String> ctx = new ArrayList<String>();
     
     @Field(SolrConstants.EID)
-    private List<String> eid;
+    private List<String> eid = new ArrayList<String>();
     
     @Field(SolrConstants.ETHOS)
-    private List<String> ethos;
+    private List<String> ethos = new ArrayList<String>();
 
     @Field(SolrConstants.HANDLE)
-    private List<String> handle;
+    private List<String> handle = new ArrayList<String>();
 
     @Field(SolrConstants.HIR)
-    private List<String> hir;
+    private List<String> hir = new ArrayList<String>();
 
     @Field(SolrConstants.ISBN)
-    private List<String> isbn;
+    private List<String> isbn = new ArrayList<String>();
 
     @Field(SolrConstants.ISSN)
-    private List<String> issn;
+    private List<String> issn = new ArrayList<String>();
 
     @Field(SolrConstants.JFM)
-    private List<String> jfm;
+    private List<String> jfm = new ArrayList<String>();
 
     @Field(SolrConstants.JSTOR)
-    private List<String> jstor;
+    private List<String> jstor = new ArrayList<String>();
 
     @Field(SolrConstants.LCCN)
-    private List<String> lccn;
+    private List<String> lccn = new ArrayList<String>();
 
     @Field(SolrConstants.MR)
-    private List<String> mr;
+    private List<String> mr = new ArrayList<String>();
 
     @Field(SolrConstants.OCLC)
-    private List<String> oclc;
+    private List<String> oclc = new ArrayList<String>();
 
     @Field(SolrConstants.OL)
-    private List<String> ol;
+    private List<String> ol = new ArrayList<String>();
 
     @Field(SolrConstants.OSTI)
-    private List<String> osti;
+    private List<String> osti = new ArrayList<String>();
 
     @Field(SolrConstants.PAT)
-    private List<String> pat;
+    private List<String> pat = new ArrayList<String>();
 
     @Field(SolrConstants.PMC)
-    private List<String> pmc;
+    private List<String> pmc = new ArrayList<String>();
 
     @Field(SolrConstants.PMID)
-    private List<String> pmid;
+    private List<String> pmid = new ArrayList<String>();
 
     @Field(SolrConstants.RFC)
-    private List<String> rfc;
+    private List<String> rfc = new ArrayList<String>();
 
     @Field(SolrConstants.SOURCE_WORK_ID)
-    private List<String> sourceWorkId;
+    private List<String> sourceWorkId = new ArrayList<String>();
     
     @Field(SolrConstants.SSRN)
-    private List<String> ssrn;
+    private List<String> ssrn = new ArrayList<String>();
     
     @Field(SolrConstants.URI)
-    private List<String> uri;
+    private List<String> uri = new ArrayList<String>();
 
     @Field(SolrConstants.URN)
-    private List<String> urn;
+    private List<String> urn = new ArrayList<String>();
 
     @Field(SolrConstants.WOSUID)
-    private List<String> wosuid;
+    private List<String> wosuid = new ArrayList<String>();
 
     @Field(SolrConstants.ZBL)
-    private List<String> zbl;
+    private List<String> zbl = new ArrayList<String>();
 
     @Field(SolrConstants.OTHER_IDENTIFIER_TYPE)
-    private List<String> otherIdentifierType;
+    private List<String> otherIdentifierType = new ArrayList<String>();
 
     @Field(SolrConstants.WORK_TITLES)
     private List<String> workTitles;
