@@ -8034,6 +8034,16 @@ a:hover .mozilla-badge{
 	.bulk-edit .bulk-edit-delete{
 		margin-right: 15px;
 	}
+	
+	.source-active > .sources-header div[class^="col-"]:not(:last-child){
+		padding-top: 3px;
+	}
+	
+	.sources-options .glyphicon-pencil,
+	.sources-options .glyphicon-trash{
+		font-size: 20px;
+		margin-left: 10px;
+	}
 
 }
 
