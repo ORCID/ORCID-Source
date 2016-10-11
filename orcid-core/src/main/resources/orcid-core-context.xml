@@ -479,8 +479,8 @@
         <property name="cacheName" value="public-profile" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="250000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
@@ -489,8 +489,8 @@
         <property name="cacheName" value="public-bio" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
@@ -499,8 +499,8 @@
         <property name="cacheName" value="profile-bio-and-internal" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="500" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="500000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
     </bean>
@@ -521,8 +521,8 @@
 		<property name="cacheName" value="statistics-entity" />
 		<property name="cacheManager" ref="coreCacheManager" />
 		<property name="maxElementsInMemory" value="${org.orcid.core.statisticsCache.maxElementsInMemory:100}" />
-		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:86400}" />
-		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:86400}" />
+		<property name="timeToLiveSeconds" value="${org.orcid.core.statisticsCache.timeToLiveSeconds:7200}" />
+		<property name="timeToIdleSeconds" value="${org.orcid.core.statisticsCache.timeToIdleSeconds:7200}" />
 		<property name="maxElementsOnDisk" value="1000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
@@ -553,8 +553,8 @@
         <property name="cacheName" value="work-last-modified" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="6000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
@@ -565,8 +565,8 @@
         <property name="cacheName" value="public-work-last-modified" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="2000" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="6000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
@@ -577,8 +577,8 @@
         <property name="cacheName" value="minimized-work" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="150000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
@@ -589,8 +589,8 @@
         <property name="cacheName" value="full-work-entity" />
         <property name="cacheManager" ref="coreCacheManager" />
         <property name="maxElementsInMemory" value="30000" />
-        <property name="timeToLiveSeconds" value="604800" />
-        <property name="timeToIdleSeconds" value="86400" />
+        <property name="timeToLiveSeconds" value="86400" />
+        <property name="timeToIdleSeconds" value="7200" />
         <property name="maxElementsOnDisk" value="150000" />
         <property name="strategy" value="LOCALTEMPSWAP" />
         <property name="copyOnRead" value="false" />
