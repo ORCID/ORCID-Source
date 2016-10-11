@@ -19,6 +19,7 @@ package org.orcid.utils.solr.entities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.solr.client.solrj.beans.Field;
@@ -199,6 +200,14 @@ public class OrcidSolrDocument {
 
     @Field(SolrConstants.PRIMARY_RECORD)
     private String primaryRecord;
+    
+    //e.g. doi-self
+    @Field(SolrConstants.DYNAMIC_SELF)
+    public Map<String, List<String>> selfIds;
+
+    //e.g. arxiv-part-of
+    @Field(SolrConstants.DYNAMIC_PART_OF)
+    public Map<String, List<String>> partOfIds;
 
     public String getOrcid() {
         return orcid;
@@ -431,6 +440,8 @@ public class OrcidSolrDocument {
         result = prime * result + ((uri == null) ? 0 : uri.hashCode());
         result = prime * result + ((urn == null) ? 0 : urn.hashCode());
         result = prime * result + ((wosuid == null) ? 0 : wosuid.hashCode());
+        result = prime * result + ((selfIds == null) ? 0 : selfIds.hashCode());
+        result = prime * result + ((partOfIds == null) ? 0 : partOfIds.hashCode());
         return result;
     }
 
@@ -708,6 +719,20 @@ public class OrcidSolrDocument {
                 return false;
         } else if (!wosuid.equals(other.wosuid))
             return false;
+        
+        if (selfIds == null) {
+            if (other.selfIds != null)
+                return false;
+        } else if (!selfIds.equals(other.selfIds))
+            return false;
+        
+        if (partOfIds == null) {
+            if (other.partOfIds != null)
+                return false;
+        } else if (!partOfIds.equals(other.partOfIds))
+            return false;
+        
+        
         return true;
     }
 
@@ -1004,4 +1029,20 @@ public class OrcidSolrDocument {
 	public void setWosuid(List<String> wosuid) {
 		this.wosuid = wosuid;
 	}
+	
+    public Map<String, List<String>> getSelfIds() {
+        return selfIds;
+    }
+
+    public void setSelfIds(Map<String, List<String>> selfIds) {
+        this.selfIds = selfIds;
+    }
+
+    public Map<String, List<String>> getPartOfIds() {
+        return partOfIds;
+    }
+
+    public void setPartOfIds(Map<String, List<String>> partOfIds) {
+        this.partOfIds = partOfIds;
+    }
 }

@@ -84,4 +84,6 @@ public class SolrConstants {
     public static final String ORG_DEFINED_FUNDING_TYPE = "org-defined-funding-type";
     public static final String ORG_NAMES = "org-names";
     public static final String IS_FUNDING_ORG = "is-funding-org";
+    public static final String DYNAMIC_SELF = "*-self";
+    public static final String DYNAMIC_PART_OF = "*-part-of";
 }
