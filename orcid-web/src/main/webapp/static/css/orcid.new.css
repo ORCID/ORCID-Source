@@ -6734,6 +6734,33 @@ a:hover .mozilla-badge{
 	color: #494A4C;
 }
 
+.peer-review-delete{
+	display: inline;
+	position: relative;
+	color: #337ab7;
+}
+
+.peer-review-delete:hover{
+	color: #a6ce39;
+	cursor: pointer;
+}
+
+.peer-review-delete .popover-tooltip{
+	display: none;
+	color: #939598;
+}
+
+.peer-review-delete .popover-tooltip .arrow{
+	left: 63px;
+}
+
+.peer-review-delete:hover .popover-tooltip{
+	display: block;
+	color: #939598;
+	top: -42px;
+    left: -48px;	
+    cursor: default;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
