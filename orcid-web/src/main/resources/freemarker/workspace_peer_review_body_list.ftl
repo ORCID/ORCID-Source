@@ -51,12 +51,7 @@
 									        </li>									        
 									    </ul>									    
 									</div>	
-								</li>
-								<li class="hidden-md hidden-sm visible-xs-inline">
-							       	<a class="action-option manage-button" ng-click="addPeerReviewModal()">
-							           	<span class="glyphicon glyphicon-plus"></span> <@orcid.msg 'workspace_peer_review_body_list.addManually'/>                                            
-							        </a>
-							    </li>
+								</li>								
 							</ul>
 						</#if>
 					</div>	
