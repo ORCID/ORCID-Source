@@ -70,7 +70,6 @@
                         			<a href="{{peerReview.url.value}}" ng-if="peerReview.url != null" target="_blank"><span>view</span></a><span ng-if="peerReview.url == null">view</span>
                         			 <#if !(isPublicProfile??)>
                         				<div ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
-	                        				
 	                        				<div class="popover popover-tooltip top">
 											    <div class="arrow"></div>
 											    <div class="popover-content">

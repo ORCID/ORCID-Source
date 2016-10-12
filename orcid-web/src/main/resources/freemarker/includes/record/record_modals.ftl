@@ -66,7 +66,15 @@
 											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>
+											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)">
+												<div class="popover popover-tooltip top">
+											    	<div class="arrow"></div>
+											    	<div class="popover-content">
+												        <span><@orcid.msg 'common.modals.delete'/></span>
+											    	</div>                
+										    	</div>
+											</span>
+
 										</li>
 										<li>											
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"

@@ -6762,6 +6762,25 @@ a:hover .mozilla-badge{
     cursor: default;
 }
 
+.edit-record .glyphicon-trash .popover-tooltip{
+	display: none;
+	top: -43px;
+    left: -31px;
+}
+
+.edit-record .glyphicon-trash .popover-tooltip .arrow{
+	left: 39px;
+}
+
+
+.edit-record .glyphicon-trash:hover .popover-tooltip{
+	display: block;
+}
+
+
+
+
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.container{
