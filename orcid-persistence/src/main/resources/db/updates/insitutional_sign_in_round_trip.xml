@@ -60,7 +60,7 @@
     </changeSet>
     
     <changeSet id="SET-PROVIDER-ID-ON-EXISTING-NOTIFICATIONS" author="Will Simpson">
-        <sql>UPDATE notification SET authentication_provider_id = c.authentication_provider_id FROM client_details c WHERE (client_source_id = c.client_details_id or source_id = c.client_details_id) AND notification_type = 'INSTITUTIONAL_CONNECTION' AND authentication_provider_id IS NULL;</sql>
+        <sql>UPDATE notification n SET authentication_provider_id = c.authentication_provider_id FROM client_details c WHERE (n.client_source_id = c.client_details_id or n.source_id = c.client_details_id) AND n.notification_type = 'INSTITUTIONAL_CONNECTION' AND n.authentication_provider_id IS NULL;</sql>
     </changeSet>
 
 </databaseChangeLog>                   
