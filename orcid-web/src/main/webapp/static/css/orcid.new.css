@@ -2598,7 +2598,12 @@ header overrides
 	border-top: 10px solid #A3CD39;	
 }
 
+.oauth-login{
+	color: #494A4C;
+}
+
 .oauth-login .alert {
+	
 	width: 330px;
 }
 
@@ -5572,8 +5577,7 @@ ul.oauth-icons li {
 	color: #A3CD39;	
 }
 
-.gray-bold-about{
-	color: #939598;
+.gray-bold-about{	
 	font-weight: bold;
 	font-style: normal;
 	font-size: 14px;
