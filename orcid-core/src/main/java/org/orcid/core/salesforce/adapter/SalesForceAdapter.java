@@ -175,6 +175,7 @@ public class SalesForceAdapter {
         }
         member.setResearchCommunity(extractString(record, "Research_Community__c"));
         member.setCountry(extractString(record, "BillingCountry"));
+        member.setPublicDisplayEmail(extractString(record, "Public_Display_Email__c"));
         JSONObject opportunitiesObject = extractObject(record, "Opportunities");
         if (opportunitiesObject != null) {
             JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");

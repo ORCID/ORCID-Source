@@ -48,6 +48,16 @@
 	            <hr />
 	            </div>
 	            <div class="col-md-12 col-sm-12 col-xs-12">   
+	                <h3>Contact Information</h3>
+	                <p ng-if="membersListSrvc.currentMemberDetails.member.publicDisplayEmail" ng-cloak>
+		                <a href="mailto:{{membersListSrvc.currentMemberDetails.member.publicDisplayEmail}}">{{membersListSrvc.currentMemberDetails.member.publicDisplayEmail}}</a>
+	                </p>
+	                <p ng-if="!membersListSrvc.currentMemberDetails.member.publicDisplayEmail" ng-cloak> 
+	                    This member has not provided contact details.
+	                </p>	                
+	            </div> 
+	            <hr />
+	            <div class="col-md-12 col-sm-12 col-xs-12">   
 	                <h3>Integrations</h3>
 	                <div ng-if="membersListSrvc.currentMemberDetails.integrations" ng-repeat="integration in membersListSrvc.currentMemberDetails.integrations" ng-cloak>
 	                    <p><b>{{integration.name}}</b> <em>{{integration.stage}}</em></p>
