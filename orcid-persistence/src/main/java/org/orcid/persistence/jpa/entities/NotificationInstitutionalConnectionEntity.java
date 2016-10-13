@@ -27,6 +27,7 @@ public class NotificationInstitutionalConnectionEntity extends NotificationEntit
     private static final long serialVersionUID = 1L;
 
     private String authorizationUrl;
+    private String authenticationProviderId;
 
     @Column(name = "authorization_url")
     public String getAuthorizationUrl() {
@@ -35,6 +36,15 @@ public class NotificationInstitutionalConnectionEntity extends NotificationEntit
 
     public void setAuthorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
+    }
+
+    @Column(name = "authentication_provider_id")
+    public String getAuthenticationProviderId() {
+        return authenticationProviderId;
+    }
+
+    public void setAuthenticationProviderId(String authenticationProviderId) {
+        this.authenticationProviderId = authenticationProviderId;
     }
 
 }

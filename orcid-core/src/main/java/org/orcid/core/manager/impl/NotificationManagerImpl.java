@@ -79,6 +79,7 @@ import org.orcid.persistence.jpa.entities.ClientRedirectUriEntity;
 import org.orcid.persistence.jpa.entities.CustomEmailEntity;
 import org.orcid.persistence.jpa.entities.EmailType;
 import org.orcid.persistence.jpa.entities.NotificationEntity;
+import org.orcid.persistence.jpa.entities.NotificationInstitutionalConnectionEntity;
 import org.orcid.persistence.jpa.entities.ProfileEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventEntity;
 import org.orcid.persistence.jpa.entities.ProfileEventType;
@@ -1035,9 +1036,10 @@ public class NotificationManagerImpl implements NotificationManager {
             NotificationInstitutionalConnection notification = new NotificationInstitutionalConnection();
             notification.setNotificationType(NotificationType.INSTITUTIONAL_CONNECTION);            
             notification.setAuthorizationUrl(new AuthorizationUrl(authorizationUrl));
-            NotificationEntity notificationEntity = notificationAdapter.toNotificationEntity(notification);            
+            NotificationInstitutionalConnectionEntity notificationEntity = (NotificationInstitutionalConnectionEntity) notificationAdapter.toNotificationEntity(notification);            
             notificationEntity.setProfile(new ProfileEntity(userOrcid));
-            notificationEntity.setClientSourceId(clientId);                                    
+            notificationEntity.setClientSourceId(clientId);
+            notificationEntity.setAuthenticationProviderId(clientDetails.getAuthenticationProviderId());
             notificationDao.persist(notificationEntity);                                   
         } else {            
             Emails emails = emailManager.getEmails(userOrcid, (profileEntity.getLastModified() == null ? System.currentTimeMillis() : profileEntity.getLastModified().getTime()));
