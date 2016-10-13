@@ -24,15 +24,15 @@
                 <li ng-if="editSources[group.groupId]" class="source-header" ng-class="{'source-active' : editSources[group.groupId] == true}" ng-model="group.activities">
                     <div class="sources-header">
                         <div class="row">
-                            <div class="col-md-7 col-sm-7 col-xs-7">
+                            <div class="col-md-7 col-sm-7 col-xs-6">
                                 <@orcid.msg 'groups.common.sources' /> <span class="hide-sources" ng-click="hideSources(group)"><@orcid.msg 'groups.common.close_sources' /></span>
                             </div>
                             
-                            <div class="col-md-2 col-sm-2 col-xs-2">
+                            <div class="col-md-2 col-sm-2 hidden-xs">
                                 <@orcid.msgCapFirst 'groups.common.preferred' />
                             </div>
                             
-                            <div class="col-md-3 col-sm-3 col-xs-3 right padding-left-fix">
+                            <div class="col-md-3 col-sm-3 col-xs-6 right padding-left-fix">
                                     <div class="workspace-toolbar">
                                         <ul class="workspace-private-toolbar">
                                             <#if !(isPublicProfile??)>
@@ -76,7 +76,7 @@
 
                     <!-- active row summary info -->
                     <div class="row" ng-if="group.activePutCode == work.putCode.value">
-                        <div class="col-md-9 col-sm-9 col-xs-8">
+                        <div class="col-md-9 col-sm-9 col-xs-12">
                             <h3 class="workspace-title">
                                 <span ng-bind="work.title.value"></span>
                                 <span class="journaltitle" ng-if="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
@@ -87,13 +87,13 @@
                         </div>
 
 
-                          <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
-                              <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
+                          <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">
+                              <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">                              	  
                                   <#if !(isPublicProfile??)>
                                       <!-- Bulk edit tool -->
-                                      <li ng-if="bulkEditShow" class="bulk-checkbox-item">
-                                              <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
-                                      </li>
+   									   <li ng-if="bulkEditShow" class="bulk-checkbox-item">
+                                          <input type="checkbox" ng-model="bulkEditMap[work.putCode.value]" class="bulk-edit-input ng-pristine ng-valid pull-right">       
+                                       </li>
                                   </#if>                                     
                                   <!-- Show/Hide Details -->
                                   <li class="works-details" ng-hide="editSources[group.groupId] == true">
@@ -173,10 +173,10 @@
 
                      <!-- active row  source display -->
                       <div class="row source-line" ng-if="group.activePutCode == work.putCode.value">
-                          <div class="col-md-7 col-sm-7 col-xs-7" ng-if="editSources[group.groupId]">
+                          <div class="col-md-7 col-sm-7 col-xs-12" ng-if="editSources[group.groupId]">
                               {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                           </div>
-                          <div class="col-md-3 col-sm-3 col-xs-3" ng-if="editSources[group.groupId]">
+                          <div class="col-md-3 col-sm-3 col-xs-10" ng-if="editSources[group.groupId]">
 
                             <div ng-if="editSources[group.groupId]">
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
@@ -188,7 +188,7 @@
                             </div>
 
                           </div>
-                          <div class="col-md-2 trash-source" ng-if="editSources[group.groupId]">
+                          <div class="col-md-2 col-sm-2 trash-source" ng-if="editSources[group.groupId]">
                               <div ng-if="editSources[group.groupId]">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
@@ -235,13 +235,13 @@
 
                     <!-- not active row && edit sources -->
                     <div ng-if="group.activePutCode != work.putCode.value" class="row source-line">
-                        <div class="col-md-7 col-sm-7 col-xs-7">
+                        <div class="col-md-7 col-sm-7 col-xs-12">
                             <a ng-click="group.activePutCode = work.putCode.value;;showMozillaBadges(group.activePutCode);">                                
                                 {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                             </a>
                         </div>
                         
-                        <div class="col-md-3 col-sm-3 col-xs-3">
+                        <div class="col-md-3 col-sm-3 col-xs-10">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-if="work.putCode.value == group.defaultPutCode"></span><span ng-if="work.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <a ng-click="worksSrvc.makeDefault(group, work.putCode.value); " ng-if="work.putCode.value != group.defaultPutCode">
@@ -293,11 +293,11 @@
                     <!--  Bottom row -->                     
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">                        
                         
-                        <div class="col-md-7 col-sm-7 col-xs-7">
+                        <div class="col-md-7 col-sm-7 col-xs-12">
                              <@orcid.msg 'groups.common.source'/>: {{(work.sourceName == null || work.sourceName == '') ? work.source : work.sourceName }}
                         </div>
                         
-                        <div class="col-md-3 col-sm-3 col-xs-3">
+                        <div class="col-md-3 col-sm-3 col-xs-9">
                               <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
 
                               <div class="popover popover-tooltip top sources-popover" ng-if="showElement[group.groupId+'-sources']">
@@ -308,7 +308,7 @@
                               </div>
                         </div>
 
-                        <div class="col-md-2 col-sm-2 col-xs-2" ng-if="group.activePutCode == work.putCode.value">
+                        <div class="col-md-2 col-sm-2 col-xs-3" ng-if="group.activePutCode == work.putCode.value">
                             <ul class="sources-options" ng-cloak>
                                 <#if !(isPublicProfile??)>
                                     <#if RequestParameters['combine']??>

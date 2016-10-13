@@ -16,6 +16,9 @@
  */
 package org.orcid.core.salesforce.adapter;
 
+import static org.orcid.core.utils.JsonUtils.extractObject;
+import static org.orcid.core.utils.JsonUtils.extractString;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
 import org.orcid.core.salesforce.model.SlugUtils;
+import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +51,7 @@ public class SalesForceAdapter {
 
     public Consortium createConsortiumFromJson(JSONObject results) {
         try {
-            int numFound = extractInt(results, "totalSize");
+            int numFound = JsonUtils.extractInt(results, "totalSize");
             if (numFound == 0) {
                 return null;
             }
@@ -65,7 +69,7 @@ public class SalesForceAdapter {
                     salesForceOpportunity.setId(extractOpportunityId(opportunity));
                     JSONObject account = extractObject(opportunity, "Account");
                     salesForceOpportunity.setTargetAccountId(extractAccountId(account));
-                    salesForceOpportunity.setAccountName(extractString(account, "Name"));
+                    salesForceOpportunity.setAccountName(JsonUtils.extractString(account, "Name"));
                     opportunityList.add(salesForceOpportunity);
                 }
                 return consortium;
@@ -171,6 +175,7 @@ public class SalesForceAdapter {
         }
         member.setResearchCommunity(extractString(record, "Research_Community__c"));
         member.setCountry(extractString(record, "BillingCountry"));
+        member.setPublicDisplayEmail(extractString(record, "Public_Display_Email__c"));
         JSONObject opportunitiesObject = extractObject(record, "Opportunities");
         if (opportunitiesObject != null) {
             JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
@@ -211,27 +216,6 @@ public class SalesForceAdapter {
         contact.setName(extractString(contactDetails, "Name"));
         contact.setEmail(extractString(contactDetails, "Email"));
         return contact;
-    }
-
-    private JSONObject extractObject(JSONObject parent, String key) throws JSONException {
-        if (parent.isNull(key)) {
-            return null;
-        }
-        return parent.getJSONObject(key);
-    }
-
-    private String extractString(JSONObject record, String key) throws JSONException {
-        if (record.isNull(key)) {
-            return null;
-        }
-        return record.getString(key);
-    }
-
-    private int extractInt(JSONObject record, String key) throws JSONException {
-        if (record.isNull(key)) {
-            return -1;
-        }
-        return record.getInt(key);
     }
 
     private URL extractURL(JSONObject record, String key) throws JSONException, MalformedURLException {

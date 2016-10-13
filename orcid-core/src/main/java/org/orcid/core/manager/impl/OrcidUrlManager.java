@@ -21,17 +21,21 @@ import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 public class OrcidUrlManager {
+
+    private static final String DEFAULT_APP_NAME = "default";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrcidUrlManager.class);
 
@@ -53,6 +57,22 @@ public class OrcidUrlManager {
 
     @Value("${org.orcid.core.internalApiBaseUri}")
     private String internalApiBaseUrl;
+
+    @Autowired(required = false)
+    private ServletContext servletContext;
+
+    public String getAppName() {
+        if (servletContext != null) {
+            String contextPath = servletContext.getContextPath();
+            return contextPath.substring(1);
+        }
+        return DEFAULT_APP_NAME;
+    }
+
+    public String getAppNameSuffix() {
+        String appName = getAppName();
+        return "_" + appName;
+    }
 
     public String getBaseUrl() {
         return baseUrl;

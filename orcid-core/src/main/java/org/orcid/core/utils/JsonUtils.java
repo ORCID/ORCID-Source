@@ -18,6 +18,9 @@ package org.orcid.core.utils;
 
 import java.io.IOException;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,12 +31,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class JsonUtils {
 
-    static ObjectMapper mapper = new ObjectMapper(); //thread safe!
-    static ObjectMapper mapperFromJSON = new ObjectMapper(); //thread safe!
+    static ObjectMapper mapper = new ObjectMapper(); // thread safe!
+    static ObjectMapper mapperFromJSON = new ObjectMapper(); // thread safe!
     static {
-        mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true); 
+        mapperFromJSON.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     }
-    
+
     public static String convertToJsonString(Object object) {
         try {
             return mapper.writeValueAsString(object);
@@ -48,5 +51,39 @@ public class JsonUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }        
+    }
+
+    public static JSONObject extractObject(JSONObject parent, String key) {
+        if (parent.isNull(key)) {
+            return null;
+        }
+        try {
+            return parent.getJSONObject(key);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error extracting json object", e);
+        }
+    }
+
+    public static String extractString(JSONObject record, String key) {
+        if (record.isNull(key)) {
+            return null;
+        }
+        try {
+            return record.getString(key);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error extracting string from json", e);
+        }
+    }
+
+    public static int extractInt(JSONObject record, String key) {
+        if (record.isNull(key)) {
+            return -1;
+        }
+        try {
+            return record.getInt(key);
+        } catch (JSONException e) {
+            throw new RuntimeException("Error extracting int from json", e);
+        }
+    }
+
 }

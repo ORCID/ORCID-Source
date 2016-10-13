@@ -64,7 +64,6 @@ import org.orcid.jaxb.model.record_rc3.WorkContributors;
 import org.orcid.model.notification.institutional_sign_in_rc3.NotificationInstitutionalConnection;
 import org.orcid.persistence.dao.WorkDao;
 import org.orcid.persistence.jpa.entities.AddressEntity;
-import org.orcid.persistence.jpa.entities.ClientDetailsEntity;
 import org.orcid.persistence.jpa.entities.CompletionDateEntity;
 import org.orcid.persistence.jpa.entities.EmailEntity;
 import org.orcid.persistence.jpa.entities.EndDateEntity;
@@ -103,6 +102,8 @@ import ma.glasnost.orika.metadata.TypeFactory;
  * 
  */
 public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
+
+    private static final String LAST_RESORT_IDENTITY_PROVIDER_NAME = "identity provider";
 
     @Resource
     private OrcidUrlManager orcidUrlManager;
@@ -186,16 +187,12 @@ public class MapperFacadeFactory implements FactoryBean<MapperFacade> {
                                     authUrl.setPath(extractFullPath(authUrl.getUri()));
                                     authUrl.setHost(orcidUrlManager.getBaseHost());
                                 }
-                                String clientId = entity.getElementSourceId();
-                                if (clientId != null) {
-                                    ClientDetailsEntity client = clientDetailsEntityCacheManager.retrieve(clientId);
-                                    if (client != null) {
-                                        String providerId = client.getAuthenticationProviderId();
-                                        if (providerId != null) {
-                                            String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
-                                            notification.setIdpName(idpName);
-                                        }
-                                    }
+                                String providerId = entity.getAuthenticationProviderId();
+                                if (StringUtils.isNotBlank(providerId)) {
+                                    String idpName = identityProviderManager.retrieveIdentitifyProviderName(providerId);
+                                    notification.setIdpName(idpName);
+                                } else {
+                                    notification.setIdpName(LAST_RESORT_IDENTITY_PROVIDER_NAME);
                                 }
                             }
                         })).register();

@@ -308,14 +308,14 @@
 					<div ng-if="bulkEditShow && workspaceSrvc.displayWorks" ng-cloak>						
 						<div class="bulk-edit">
 							<div class="row">
-								<div class="col-md-7 col-sm-7 col-xs-6">
+								<div class="col-md-7 col-sm-7 col-xs-12">
 									<h4><@orcid.msg 'workspace.bulkedit.title'/></h4><span class="hide-bulk" ng-click="toggleBulkEdit()"><@orcid.msg 'workspace.bulkedit.hide'/></span>
 									<ol>
 										<li><@orcid.msg 'workspace.bulkedit.selectWorks'/></li>
 										<li><@orcid.msg 'workspace.bulkedit.selectAction'/></li>
 									</ol>
 								</div>
-								<div class="col-md-5 col-sm-5 col-xs-6">
+								<div class="col-md-5 col-sm-5 col-xs-12">
 									<ul class="bulk-edit-toolbar">
 																			
 										<li class="bulk-edit-toolbar-item work-multiple-selector"><!-- Select all -->
@@ -346,22 +346,22 @@
 														publicClick="setBulkGroupPrivacy('PUBLIC', $event)" 
 									                	limitedClick="setBulkGroupPrivacy('LIMITED', $event)" 
 									                	privateClick="setBulkGroupPrivacy('PRIVATE', $event)"/>
-								 			</div>
-								 			<div class="bulk-edit-delete pull-right">
-											    <div class="centered">
-													<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
-														<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
-													</a>
-													<div class="popover popover-tooltip top bulk-edit-popover" ng-if="showElement['Bulk-Edit']">
-		                                             <div class="arrow"></div>
-			                                            <div class="popover-content">
-			                                                <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
-			                                            </div>
-			                                        </div>
-												</div>
-											</div>
-										</li>
+								 			</div>								 			
+										</li>										
 									</ul>
+									<div class="bulk-edit-delete">
+									    <div class="centered">
+											<a ng-click="deleteBulkConfirm()" class="ignore toolbar-button edit-item-button" ng-mouseenter="showTooltip('Bulk-Edit')" ng-mouseleave="hideTooltip('Bulk-Edit')">
+												<span class="edit-option-toolbar glyphicon glyphicon-trash"></span>
+											</a>
+											<div class="popover popover-tooltip top bulk-edit-popover" ng-if="showElement['Bulk-Edit']">
+                                             <div class="arrow"></div>
+	                                            <div class="popover-content">
+	                                                <span><@orcid.msg 'workspace.bulkedit.delete'/></span>
+	                                            </div>
+	                                        </div>
+										</div>
+									</div>
 								</div>							
 							</div>						  
 					   </div>
