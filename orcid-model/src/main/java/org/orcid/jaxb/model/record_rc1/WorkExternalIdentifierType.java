@@ -96,7 +96,8 @@ public enum WorkExternalIdentifierType implements Serializable {
                 return wit;
             }
         }
-        throw new IllegalArgumentException(value);
+        return WorkExternalIdentifierType.OTHER_ID;
+        //throw new IllegalArgumentException(value);
     }
 
 }
