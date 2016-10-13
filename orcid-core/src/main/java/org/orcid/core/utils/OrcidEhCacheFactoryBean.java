@@ -24,6 +24,8 @@ import net.sf.ehcache.config.PersistenceConfiguration;
 import net.sf.ehcache.constructs.blocking.CacheEntryFactory;
 import net.sf.ehcache.constructs.blocking.SelfPopulatingCache;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -33,6 +35,8 @@ import org.springframework.beans.factory.InitializingBean;
  * 
  */
 public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, InitializingBean {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrcidEhCacheFactoryBean.class);
 
     private CacheManager cacheManager;
 
@@ -164,6 +168,8 @@ public class OrcidEhCacheFactoryBean implements FactoryBean<Ehcache>, Initializi
     @Override
     public void afterPropertiesSet() throws Exception {
         Ehcache existingCache = cacheManager.getEhcache(cacheName);
+        String diskStorePath = cacheManager.getConfiguration().getDiskStoreConfiguration().getPath();
+        LOGGER.debug("Cache manager disk store path = " + diskStorePath);
         if (existingCache == null) {
             CacheConfiguration config = createConfig();
             if (cacheEntryFactory != null) {

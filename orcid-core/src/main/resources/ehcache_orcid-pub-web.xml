@@ -19,7 +19,7 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="ehcache.xsd">
 
-	<diskStore path="java.io.tmpdir" />
+	<diskStore path="java.io.tmpdir/ehcache/orcid-pub-web" />
 
 	<defaultCache maxElementsInMemory="5" eternal="false"
 		timeToIdleSeconds="20" timeToLiveSeconds="20"
