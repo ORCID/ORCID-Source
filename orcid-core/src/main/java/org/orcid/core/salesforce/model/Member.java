@@ -36,6 +36,7 @@ public class Member implements Serializable {
     private String country;
     private String description;
     private URL logoUrl;
+    private String publicDisplayEmail;
     private String mainOpportunityId;
     private String consortiumLeadId;
 
@@ -101,6 +102,14 @@ public class Member implements Serializable {
 
     public void setLogoUrl(URL logoUrl) {
         this.logoUrl = logoUrl;
+    }
+
+    public String getPublicDisplayEmail() {
+        return publicDisplayEmail;
+    }
+
+    public void setPublicDisplayEmail(String publicDisplayEmail) {
+        this.publicDisplayEmail = publicDisplayEmail;
     }
 
     public String getMainOpportunityId() {
