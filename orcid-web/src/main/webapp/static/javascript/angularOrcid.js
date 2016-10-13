@@ -3201,7 +3201,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
             console.log("OtherNames.serverValidate() error");
         });
     };
-    
+
     $scope.showTooltip = function(elem, event){
     	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
@@ -3220,9 +3220,29 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     	});
         $scope.showElement[elem] = true;        
     };
+    
+    $scope.showIconTooltip = function(elem, event){
+        
+        $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+        $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+        
+        console.log($scope.top);
+        console.log($scope.left);
+        
+        
+        $scope.$watch('scrollTop', function (value) {
+            angular.element('.edit-aka .popover-tooltip').css({
+                top: $scope.top - $scope.scrollTop,
+                left: $scope.left - 5
+            });
+        });
+        
+        $scope.showTooltip[elem] = true;
+    }
 
     $scope.hideTooltip = function(elem){
-    	$scope.showElement[elem] = false;	
+    	$scope.showElement[elem] = false;
+    	$scope.showTooltip[elem] = false;
     };
 
     $scope.setPrivacy = function(priv, $event) {

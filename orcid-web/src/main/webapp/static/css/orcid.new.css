@@ -6403,19 +6403,19 @@ a:hover .mozilla-badge{
     color: #C9C9CA;
 }
 
-.record-settings span{
+.record-settings div{
 	margin: 0 5px;
 	cursor: pointer;
 }
 
-.record-settings span.circle{
+.record-settings div.circle{
 	background: #C9C9CA;
     padding: 5px;
     border-radius: 50%;
     color: #FFF;        
 }
 
-.record-settings span.circle:hover{
+.record-settings div.circle:hover{
 	background: #a6ce39;    
     color: #FFF;
 }
@@ -6423,8 +6423,6 @@ a:hover .mozilla-badge{
 .fixed-area ul.record-settings li .glyphicon-trash:hover{
 	color: #a6ce39;
 }
-
-
 
 .record-buttons .cancel-option{
 	margin: 5px 15px 0 0;
@@ -6530,8 +6528,6 @@ a:hover .mozilla-badge{
 .settings-table .table-responsive{
 	overflow-x: initial;
 }
-
-
 
 .workspace-section .workspace-section-heading li:last-child{
 	float: right;
@@ -6766,22 +6762,19 @@ a:hover .mozilla-badge{
     cursor: default;
 }
 
-.edit-record .glyphicon-trash .popover-tooltip{
-	display: none;
-	top: -43px;
-    left: -31px;
-}
-
-.edit-record .glyphicon-trash .popover-tooltip .arrow{
-	left: 39px;
-}
-
-
-.edit-record .glyphicon-trash:hover .popover-tooltip{
+.record-settings .popover-tooltip{
 	display: block;
 }
 
 
+.fixed-area .scroll-area .popover-help-container {
+	width: auto !important;
+}
+
+.popover{	
+	border-color: rgba(0,0,0,.2);
+	/*box-shadow: none;*/
+}
 
 
 

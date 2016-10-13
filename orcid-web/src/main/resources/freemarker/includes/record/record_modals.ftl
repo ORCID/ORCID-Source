@@ -60,21 +60,17 @@
 								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)">
+
+											</div>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></div>											
 										</li>
-										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)">
-												<div class="popover popover-tooltip top">
-											    	<div class="arrow"></div>
-											    	<div class="popover-content">
-												        <span><@orcid.msg 'common.modals.delete'/></span>
-											    	</div>                
-										    	</div>
-											</span>
-
+										<li>
+											<div class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)" ng-mouseover="showIconTooltip('tooltip-aka-'+$index, $event)" ng-mouseleave="hideTooltip('tooltip-aka-'+$index)">
+											</div>
+											<@orcid.tooltip elementId="'tooltip-aka-'+$index" message="common.modals.delete" />
 										</li>
 										<li>											
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
@@ -450,3 +446,5 @@
 		</div>			
 	</div>
 </script>
+
+	
