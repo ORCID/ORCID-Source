@@ -20,9 +20,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.orcid.persistence.dao.ProfileDao;
-import org.orcid.persistence.jpa.entities.IndexingStatus;
-import org.orcid.persistence.messaging.JmsMessageSender.JmsDestination;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
@@ -59,7 +56,7 @@ public class JmsMessageSender {
         TEST(MessageConstants.Queues.TEST),
         TEST_REPLY(MessageConstants.Queues.TEST_REPLY), 
         UPDATED_ORCIDS(MessageConstants.Queues.UPDATED_ORCIDS), 
-        REINDEX(MessageConstants.Queues.REINDEX);
+        REINDEX(MessageConstants.Queues.REINDEX);        
         public final String value;
         JmsDestination(String value){
             this.value = value;
@@ -84,7 +81,7 @@ public class JmsMessageSender {
             jmsTemplate.convertAndSend(dest.value, map);
             return true;
         }
-        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile"+pauseForAWhile);
+        LOG.info("Not sending message: isEnabled="+isEnabled()+" pauseForAWhile="+pauseForAWhile);
         return false;                
     }
     
@@ -97,8 +94,10 @@ public class JmsMessageSender {
     public boolean send(LastModifiedMessage mess, JmsDestination d){
         try{
             return this.sendMap(mess.getMap(), d);                             
-        }catch(JmsException e){
-            flagConnectionProblem(e);
+        } catch(JmsException e) {
+            //TODO: How we unflag the problem?
+            //flagConnectionProblem(e);
+            LOG.error("Couldnt send " + mess.getOrcid() + " to the message queue", e);
         }
         return false;
     }
