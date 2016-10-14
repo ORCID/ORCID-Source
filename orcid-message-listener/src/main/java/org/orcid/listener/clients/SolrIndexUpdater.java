@@ -45,9 +45,6 @@ public class SolrIndexUpdater {
 
     Logger LOG = LoggerFactory.getLogger(SolrIndexUpdater.class);
 
-    @Value("${org.orcid.core.indexPublicProfile}")
-    private boolean indexPublicProfile;
-
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean isSolrIndexingEnalbed;
         
@@ -65,7 +62,7 @@ public class SolrIndexUpdater {
      * @param profile
      */
     public void updateSolrIndex(OrcidProfile profile) {
-        LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + " in SOLR index. indexPublicProfile = " + indexPublicProfile);
+        LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + " in SOLR index");
         if(!isSolrIndexingEnalbed) {
             LOG.info("Solr indexing is disabled");
             return;
