@@ -39,8 +39,8 @@ public class S3Updater {
     private final ObjectMapper mapper;
     private final boolean writeToFileNotS3;
     
-    @Value("org.orcid.persistence.messaging.dump_indexing.enabled")
-    private boolean isDumpEnabled;
+    //@Value("org.orcid.persistence.messaging.dump_indexing.enabled")
+    private boolean isDumpEnabled = false;
 
     Logger LOG = LoggerFactory.getLogger(S3Updater.class);
 
