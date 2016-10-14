@@ -6761,8 +6761,8 @@ a:hover .mozilla-badge{
     cursor: default;
 }
 
-.record-settings .popover-tooltip{
-	display: block;
+.edit-record  .popover-tooltip{
+	display: none;
 }
 
 
@@ -6770,12 +6770,16 @@ a:hover .mozilla-badge{
 	width: auto !important;
 }
 
-.popover{	
-	border-color: rgba(0,0,0,.2);
-	/*box-shadow: none;*/
+.edit-record .popover{
+	border: 1px solid #ccc;
+	box-shadow: none;	
 }
 
-
+.edit-record .popover .arrow{
+	border-top-color: #ccc;
+	background: none;
+	left: 39px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

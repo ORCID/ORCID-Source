@@ -3221,19 +3221,17 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
         $scope.showElement[elem] = true;        
     };
     
-    $scope.showIconTooltip = function(elem, event){
-        
+    $scope.showIconTooltip = function(elem, event, topOffset, leftOffset){
         $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
         $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
         
         console.log($scope.top);
-        console.log($scope.left);
-        
+        console.log($scope.left);        
         
         $scope.$watch('scrollTop', function (value) {
             angular.element('.edit-aka .popover-tooltip').css({
-                top: $scope.top - $scope.scrollTop,
-                left: $scope.left - 5
+                top: $scope.top - $scope.scrollTop - topOffset,
+                left: $scope.left + leftOffset
             });
         });
         
