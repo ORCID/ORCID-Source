@@ -142,7 +142,7 @@ var OrcidGA = function() {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
-        if(window.ga) {
+        if(window.ga && window.gaGlobal) {
             if(typeof trackArray === 'function') {
                 ga(trackArray);
             } else {
