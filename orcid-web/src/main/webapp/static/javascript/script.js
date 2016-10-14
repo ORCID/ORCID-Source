@@ -137,11 +137,14 @@ var OrcidCookie = new function() {
 };
 
 var OrcidGA = function() {
-    // test and make sure _gaq is working. disconnect.me chrome plugin has
     this.buildClientString = function(clientGroupName, clientName) {
         return clientGroupName + ' - ' + clientName
     };
     this.gaPush = function(trackArray) {
+        /*
+         * window.ga is blocked by Ghostery and disconnect.me 
+         * window.gaGlobal is blocked by uBlock
+        */
         if(window.ga && window.gaGlobal) {
             if(typeof trackArray === 'function') {
                 ga(trackArray);
