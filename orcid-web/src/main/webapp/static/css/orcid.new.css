@@ -4050,12 +4050,13 @@ ul#body-work-list > li{
 
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
 	color: #494A4C;
-	font-weight: normal;
+	font-weight: bold;
 	float: left;
 }
 
 .workspace-section-label{
 	float: left;
+	font-weight: bold;
 }
 
 .workspace-section-content{
