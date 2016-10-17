@@ -274,7 +274,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
         if (response.getStatus() != 200) {
-            throw new RuntimeException("Error getting integrations list from SalesForce, status code =  " + response.getStatus() + ", reason = "
+            throw new RuntimeException("Error getting parent org name from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
         return salesForceAdapter.extractParentOrgNameFromJson(response.getEntity(JSONObject.class));
