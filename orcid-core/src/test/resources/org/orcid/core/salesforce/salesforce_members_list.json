@@ -42,7 +42,7 @@
           "type" : "Opportunity",
           "url" : "/services/data/v20.0/sobjects/Opportunity/006J000000LThfcIAD"
         },
-        "Consortia_Lead__c" : "001J000001pZwWWIA0"
+        "Consortia_Lead__c" : null
       } ]
     },
     "Research_Community__c" : "Research Institute",

@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -35,10 +37,11 @@ import org.orcid.core.salesforce.model.Contact;
 import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.Opportunity;
-import org.orcid.core.salesforce.model.SlugUtils;
 import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ma.glasnost.orika.MapperFacade;
 
 /**
  * 
@@ -48,6 +51,13 @@ import org.slf4j.LoggerFactory;
 public class SalesForceAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SalesForceAdapter.class);
+
+    @Resource(name = "salesForceMemberMapperFacade")
+    private MapperFacade mapperFacade;
+    
+    public void setMapperFacade(MapperFacade mapperFacade) {
+        this.mapperFacade = mapperFacade;
+    }
 
     public Consortium createConsortiumFromJson(JSONObject results) {
         try {
@@ -161,38 +171,8 @@ public class SalesForceAdapter {
         return accountId;
     }
 
-    private Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
-        String name = extractString(record, "Name");
-        String id = extractString(record, "Id");
-        Member member = new Member();
-        member.setName(name);
-        member.setId(id);
-        member.setSlug(SlugUtils.createSlug(id, name));
-        try {
-            member.setWebsiteUrl(extractURL(record, "Website"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed website URL for member: {}", name, e);
-        }
-        member.setResearchCommunity(extractString(record, "Research_Community__c"));
-        member.setCountry(extractString(record, "BillingCountry"));
-        member.setPublicDisplayEmail(extractString(record, "Public_Display_Email__c"));
-        JSONObject opportunitiesObject = extractObject(record, "Opportunities");
-        if (opportunitiesObject != null) {
-            JSONArray opportunitiesArray = opportunitiesObject.getJSONArray("records");
-            if (opportunitiesArray.length() > 0) {
-                JSONObject mainOpportunity = opportunitiesArray.getJSONObject(0);
-                JSONObject mainOppAttributes = extractObject(mainOpportunity, "attributes");
-                member.setMainOpportunityId(extractIdFromUrl(extractString(mainOppAttributes, "url")));
-                member.setConsortiumLeadId(extractString(mainOpportunity, "Consortia_Lead__c"));
-            }
-        }
-        member.setDescription(extractString(record, "Public_Display_Description__c"));
-        try {
-            member.setLogoUrl(extractURL(record, "Logo_Description__c"));
-        } catch (MalformedURLException e) {
-            LOGGER.info("Malformed logo URL for member: {}", name, e);
-        }
-        return member;
+    Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
+        return mapperFacade.map(record, Member.class);
     }
 
     private Integration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
@@ -238,7 +218,7 @@ public class SalesForceAdapter {
         return urlString;
     }
 
-    private String extractIdFromUrl(String url) {
+    public static String extractIdFromUrl(String url) {
         if (url == null) {
             return null;
         }
