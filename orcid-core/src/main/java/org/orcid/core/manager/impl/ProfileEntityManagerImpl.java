@@ -73,7 +73,6 @@ import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Employments;
-import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
@@ -477,13 +476,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
         // Set fundings
         List<FundingSummary> fundingSummaries = fundingManager.getFundingSummaryList(orcid, lastModifiedTime);
-        Fundings fundings = groupFundings(fundingSummaries, justPublic);
+        Fundings fundings = fundingManager.groupFundings(fundingSummaries, justPublic);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
         activities.setFundings(fundings);
 
         // Set peer reviews
         List<PeerReviewSummary> peerReviewSummaries = peerReviewManager.getPeerReviewSummaryList(orcid, lastModifiedTime);
-        PeerReviews peerReviews = groupPeerReviews(peerReviewSummaries, justPublic);
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewSummaries, justPublic);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
         activities.setPeerReviews(peerReviews);
 
@@ -496,88 +495,6 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
     }    
-
-    private Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic) {
-        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        Fundings result = new Fundings();
-        for (FundingSummary funding : fundings) {
-            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
-                // If it is just public and the funding is not public, just
-                // ignore it
-            } else {
-                groupGenerator.group(funding);
-            }
-        }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            FundingGroup fundingGroup = new FundingGroup();
-
-            // Fill the funding groups with the external identifiers
-            for (GroupAble extId : externalIdentifiers) {
-                ExternalID fundingExtId = (ExternalID) extId;
-                fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
-            }
-
-            // Fill the funding group with the list of activities
-            for (GroupableActivity activity : activities) {
-                FundingSummary fundingSummary = (FundingSummary) activity;
-                fundingGroup.getFundingSummary().add(fundingSummary);
-            }
-
-            // Sort the fundings
-            Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
-
-            result.getFundingGroup().add(fundingGroup);
-        }
-
-        return result;
-    }
-
-    private PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic) {
-        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        PeerReviews result = new PeerReviews();
-        for (PeerReviewSummary peerReview : peerReviews) {
-            if (justPublic && !peerReview.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
-                // If it is just public and the funding is not public, just
-                // ignore it
-            } else {
-                groupGenerator.group(peerReview);
-            }
-        }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> groupKeys = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            PeerReviewGroup peerReviewGroup = new PeerReviewGroup();
-            // Fill the peer review groups with the external identifiers
-            for (GroupAble groupKey : groupKeys) {
-                PeerReviewGroupKey key = (PeerReviewGroupKey) groupKey;
-                ExternalID id = new ExternalID();
-                id.setType(PeerReviewGroupKey.KEY_NAME);//TODO: this is not nice
-                id.setValue(key.getGroupId());
-                peerReviewGroup.getIdentifiers().getExternalIdentifier().add(id);
-            }
-
-            // Fill the peer review group with the list of activities
-            for (GroupableActivity activity : activities) {
-                PeerReviewSummary peerReviewSummary = (PeerReviewSummary) activity;
-                peerReviewGroup.getPeerReviewSummary().add(peerReviewSummary);
-            }
-
-            // Sort the peer reviews
-            Collections.sort(peerReviewGroup.getPeerReviewSummary(), new GroupableActivityComparator());
-
-            result.getPeerReviewGroup().add(peerReviewGroup);
-        }
-
-        return result;
-    }
 
     /** Returns the date cached in the request scope. 
      * 

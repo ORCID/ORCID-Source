@@ -18,7 +18,9 @@ package org.orcid.core.manager.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -33,12 +35,19 @@ import org.orcid.core.manager.ProfileFundingManager;
 import org.orcid.core.manager.SourceManager;
 import org.orcid.core.manager.validator.ActivityValidator;
 import org.orcid.core.utils.DisplayIndexCalculatorHelper;
+import org.orcid.core.utils.activities.ActivitiesGroup;
+import org.orcid.core.utils.activities.ActivitiesGroupGenerator;
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.notification.amended_rc3.AmendedSection;
 import org.orcid.jaxb.model.notification.permission_rc3.Item;
 import org.orcid.jaxb.model.notification.permission_rc3.ItemType;
+import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
+import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.Funding;
+import org.orcid.jaxb.model.record_rc3.GroupAble;
+import org.orcid.jaxb.model.record_rc3.GroupableActivity;
 import org.orcid.persistence.dao.FundingSubTypeSolrDao;
 import org.orcid.persistence.dao.FundingSubTypeToIndexDao;
 import org.orcid.persistence.dao.ProfileFundingDao;
@@ -424,4 +433,53 @@ public class ProfileFundingManagerImpl implements ProfileFundingManager {
         return item;
     }
     
+    /**
+     * Generate a grouped list of funding with the given list of funding
+     * 
+     * @param fundings
+     *          The list of fundings to group
+     * @param justPublic
+     *          Specify if we want to group only the public elements in the given list
+     * @return Fundings element with the FundingSummary elements grouped                  
+     * */
+    @Override
+    public Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic) {
+        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
+        Fundings result = new Fundings();
+        for (FundingSummary funding : fundings) {
+            if (justPublic && !funding.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
+                // If it is just public and the funding is not public, just
+                // ignore it
+            } else {
+                groupGenerator.group(funding);
+            }
+        }
+
+        List<ActivitiesGroup> groups = groupGenerator.getGroups();
+
+        for (ActivitiesGroup group : groups) {
+            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
+            Set<GroupableActivity> activities = group.getActivities();
+            FundingGroup fundingGroup = new FundingGroup();
+
+            // Fill the funding groups with the external identifiers
+            for (GroupAble extId : externalIdentifiers) {
+                ExternalID fundingExtId = (ExternalID) extId;
+                fundingGroup.getIdentifiers().getExternalIdentifier().add(fundingExtId.clone());
+            }
+
+            // Fill the funding group with the list of activities
+            for (GroupableActivity activity : activities) {
+                FundingSummary fundingSummary = (FundingSummary) activity;
+                fundingGroup.getFundingSummary().add(fundingSummary);
+            }
+
+            // Sort the fundings
+            Collections.sort(fundingGroup.getFundingSummary(), new GroupableActivityComparator());
+
+            result.getFundingGroup().add(fundingGroup);
+        }
+
+        return result;
+    }
 }

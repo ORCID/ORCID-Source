@@ -120,6 +120,26 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
     }
 
     @Override
+    public Fundings filter(Fundings fundings, String orcid) {
+        if (fundings != null) {
+            List<FundingGroup> fundingGroups = fundings.getFundingGroup();
+            filterGroups(fundingGroups, orcid);            
+        }
+        
+        return fundings;
+    }
+    
+    @Override
+    public PeerReviews filter(PeerReviews peerReviews, String orcid) {
+        if(peerReviews != null) {
+            List<PeerReviewGroup> peerReviewGroups = peerReviews.getPeerReviewGroup();
+            filterGroups(peerReviewGroups, orcid);
+        }
+        
+        return peerReviews;
+    }
+    
+    @Override
     public Collection<? extends Filterable> filter(Collection<? extends Filterable> filterables, String orcid) {
         if (filterables == null) {
             return null;

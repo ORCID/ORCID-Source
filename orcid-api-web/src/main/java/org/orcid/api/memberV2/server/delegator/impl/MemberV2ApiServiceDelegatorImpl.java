@@ -66,7 +66,9 @@ import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Employments;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
@@ -251,10 +253,9 @@ public class MemberV2ApiServiceDelegatorImpl
     }
     
     @Override
-    public Response viewWorks(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+    public Response viewWorks(String orcid) {        
         orcidSecurityManager.checkPermissions(ScopePathType.ORCID_WORKS_READ_LIMITED, orcid);
-        List<WorkSummary> worksList = workManager.getWorksSummaryList(orcid, lastModified.getTime());
+        List<WorkSummary> worksList = workManager.getWorksSummaryList(orcid, getLastModifiedTime(orcid));
         Works works = workManager.groupWorks(worksList, false);
         works = visibilityFilter.filter(works, orcid);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
@@ -321,25 +322,17 @@ public class MemberV2ApiServiceDelegatorImpl
         sourceUtils.setSourceName(f);
         return Response.ok(f).build();
     }
-
-    
-    
-    
-    
-    
     
     @Override
     public Response viewFundings(String orcid) {
-        //TODO
-        return null;
+        
+        orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);        
+        List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
+        Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);        
+        fundings = visibilityFilter.filter(fundings, orcid);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
+        return Response.ok(fundings).build();
     }
-    
-    
-    
-    
-    
-    
-    
     
     @Override    
     public Response viewFundingSummary(String orcid, Long putCode) {
@@ -394,9 +387,9 @@ public class MemberV2ApiServiceDelegatorImpl
     
     @Override
     public Response viewEducations(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
-        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, lastModified.getTime());
+        List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
 
         Educations educations = new Educations();
         for(EducationSummary summary : educationsList) {
@@ -460,9 +453,9 @@ public class MemberV2ApiServiceDelegatorImpl
     
     @Override
     public Response viewEmployments(String orcid) {
-        Date lastModified = profileEntityManager.getLastModified(orcid);
+        
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
-        List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, lastModified.getTime());
+        List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
 
         Employments employments = new Employments();
         for(EmploymentSummary summary : employmentsList) {
@@ -533,8 +526,14 @@ public class MemberV2ApiServiceDelegatorImpl
 
     @Override
     public Response viewPeerReviews(String orcid) {
-        //TODO
-        return null;
+        
+        orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
+        List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));        
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);
+        
+        peerReviews = visibilityFilter.filter(peerReviews, orcid);
+        Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
+        return Response.ok(peerReviews).build();
     }
     
     @Override
