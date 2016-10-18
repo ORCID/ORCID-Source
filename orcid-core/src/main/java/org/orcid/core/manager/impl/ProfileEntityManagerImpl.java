@@ -80,7 +80,6 @@ import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroup;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewGroupKey;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
-import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
 import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Biography;
@@ -490,51 +489,13 @@ public class ProfileEntityManagerImpl implements ProfileEntityManager {
 
         // Set works
         List<WorkSummary> workSummaries = workManager.getWorksSummaryList(orcid, lastModifiedTime);
-        Works works = groupWorks(workSummaries, justPublic);
+        Works works = workManager.groupWorks(workSummaries, justPublic);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
         activities.setWorks(works);
 
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(activities);
         return activities;
-    }
-
-    private Works groupWorks(List<WorkSummary> works, boolean justPublic) {
-        ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();
-        Works result = new Works();
-        // Group all works
-        for (WorkSummary work : works) {
-            if (justPublic && !work.getVisibility().equals(org.orcid.jaxb.model.common_rc3.Visibility.PUBLIC)) {
-                // If it is just public and the work is not public, just ignore
-                // it
-            } else {
-                groupGenerator.group(work);
-            }
-        }
-
-        List<ActivitiesGroup> groups = groupGenerator.getGroups();
-
-        for (ActivitiesGroup group : groups) {
-            Set<GroupAble> externalIdentifiers = group.getGroupKeys();
-            Set<GroupableActivity> activities = group.getActivities();
-            WorkGroup workGroup = new WorkGroup();
-            // Fill the work groups with the external identifiers
-            for (GroupAble extId : externalIdentifiers) {
-                ExternalID workExtId = (ExternalID) extId;
-                workGroup.getIdentifiers().getExternalIdentifier().add(workExtId.clone());
-            }
-
-            // Fill the work group with the list of activities
-            for (GroupableActivity activity : activities) {
-                WorkSummary workSummary = (WorkSummary) activity;
-                workGroup.getWorkSummary().add(workSummary);
-            }
-
-            // Sort the works
-            Collections.sort(workGroup.getWorkSummary(), new GroupableActivityComparator());
-            result.getWorkGroup().add(workGroup);
-        }
-        return result;
-    }
+    }    
 
     private Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic) {
         ActivitiesGroupGenerator groupGenerator = new ActivitiesGroupGenerator();

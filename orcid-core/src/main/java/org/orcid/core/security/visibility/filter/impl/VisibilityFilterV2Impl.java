@@ -87,6 +87,7 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
                 activitiesSummary.setFundings(null);
             }
         }
+        
         Works works = activitiesSummary.getWorks();
         if (works != null) {
             List<WorkGroup> workGroups = works.getWorkGroup();
@@ -106,6 +107,16 @@ public class VisibilityFilterV2Impl implements VisibilityFilterV2 {
         }
         
         return activitiesSummary;
+    }
+    
+    @Override
+    public Works filter(Works works, String orcid) {
+        if (works != null) {
+            List<WorkGroup> workGroups = works.getWorkGroup();
+            filterGroups(workGroups, orcid);            
+        }
+        
+        return works;
     }
 
     @Override
