@@ -531,7 +531,7 @@ orcidNgModule.factory("bioBulkSrvc", ['$rootScope', function ($rootScope) {
     return bioBulkSrvc;
 }]);
 
-orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
+orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootScope, $window) {
     var commonSrvc = {
     	copyErrorsLeft: function (data1, data2) {
     		for (var key in data1) {
@@ -542,7 +542,56 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', function ($rootScope) {
                         data1[key].errors = data2[key].errors;
                 };
     		};
-        }
+        },
+        shownElement: [],        
+        showPrivacyHelp: function(elem, event, offsetArrow){
+            var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+            var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+            var scrollTop = angular.element('.fixed-area').scrollTop();
+            
+            console.log(elem);
+            console.log(top);
+            
+            if (elem === '-privacy'){
+                angular.element('.edit-record .popover-help-container').css({
+                    top: -145,
+                    left: 461
+                });
+            }else{
+                angular.element('.edit-record .popover-help-container').css({
+                    top: top - scrollTop - 160,
+                    left: left + 25
+                });             
+            }
+            angular.element('.edit-record .popover-help-container .arrow').css({                    
+                left: offsetArrow
+            }); 
+            commonSrvc.shownElement[elem] = true;
+        },
+        showTooltip: function(elem, event, topOffset, leftOffset, arrowOffset){
+            var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+            var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');    
+            var scrollTop = angular.element('.fixed-area').scrollTop();
+            if (elem === '-privacy'){
+                angular.element('.edit-record .popover-help-container').css({
+                    top: -145,
+                    left: 461
+                });
+            }else{
+                angular.element('.edit-record .popover-tooltip').css({
+                    top: top - scrollTop - topOffset,
+                    left: left + leftOffset
+                });
+            }
+            angular.element('.edit-record .popover-tooltip .arrow').css({                
+                left: arrowOffset
+            });            
+            
+            commonSrvc.shownElement[elem] = true;
+       },
+       hideTooltip: function(elem){
+           commonSrvc.shownElement[elem] = false;
+       }
     };
     return commonSrvc;
 }]);
@@ -2554,7 +2603,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     
 }]);
 
-orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', function WebsitesCtrl($scope, $compile, bioBulkSrvc) {
+orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', 'commonSrvc', function WebsitesCtrl($scope, $compile, bioBulkSrvc, commonSrvc) {
 	bioBulkSrvc.initScope($scope);
     $scope.showEdit = false;
     $scope.websitesForm = null;
@@ -2564,6 +2613,7 @@ orcidNgModule.controller('WebsitesCtrl', ['$scope', '$compile','bioBulkSrvc', fu
     $scope.newElementDefaultVisibility = null;
     $scope.orcidId = orcidVar.orcidId; //Do not remove
     $scope.scrollTop = 0;
+    $scope.commonSrvc = commonSrvc;
     
     $scope.openEdit = function() {
         $scope.addNew();

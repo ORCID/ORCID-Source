@@ -6436,10 +6436,6 @@ a:hover .mozilla-badge{
 	width: 100%;
 }
 
-.fixed-area .scroll-area .popover-help-container .popover{
-	top: -143px;
-}
-
 .not-allowed{
 	cursor:not-allowed;
 }

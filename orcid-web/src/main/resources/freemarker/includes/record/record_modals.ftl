@@ -311,13 +311,16 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>											
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)"></span>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-websites-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-websites-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-websites-move-up-'+$index" message="common.modals.move_up"/>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="swapDown($index)"></span>
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-websites-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-websites-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-websites-move-down-'+$index" message="common.modals.move_down" />
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)" ng-mouseover="commonSrvc.showTooltip('tooltip-websites-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-websites-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-websites-delete-'+$index" message="common.modals.delete" />
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="website.visibility.visibility"
@@ -326,7 +329,8 @@
 		             	  						publicClick="setPrivacyModal('PUBLIC', $event, website)" 
                 	      						limitedClick="setPrivacyModal('LIMITED', $event, website)" 
                 	      						privateClick="setPrivacyModal('PRIVATE', $event, website)"
-                	      						elementId="$index"/>	
+                	      						elementId="$index"
+											/>
 										</li>
 									</ul>
 									<span class="created-date pull-right" ng-show="website.createdDate" ng-class="{'hidden-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
@@ -446,7 +450,8 @@
 		            publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
                 	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
                 	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-                	elementId="bulkEdit" />
+                	elementId="bulkEdit"
+				/>
 			</div>
 		</div>			
 	</div>
