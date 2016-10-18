@@ -73,7 +73,7 @@ public class OrcidSolrDocument {
     private List<String> externalIdSourcesAndReferences;
 
     @Field(SolrConstants.DIGITAL_OBJECT_IDS)
-    private List<String> digitalObjectIds;
+    private List<String> digitalObjectIds = new ArrayList<String>();;
 
     @Field(SolrConstants.AGR)
     private List<String> agr = new ArrayList<String>();

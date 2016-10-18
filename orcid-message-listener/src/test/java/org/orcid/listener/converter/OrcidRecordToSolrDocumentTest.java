@@ -70,12 +70,12 @@ public class OrcidRecordToSolrDocumentTest {
         OrcidSolrDocument v20Doc = v20.convert(record);
         System.out.println(v20Doc);
         
-        Assert.assertEquals("cite-self",v20Doc.getSelfIds().get("cit").get(0));
-        Assert.assertEquals("pdb-value-self",v20Doc.getSelfIds().get("pdb").get(0));
-        Assert.assertEquals("cit-part-of",v20Doc.getPartOfIds().get("cit").get(0));
-        Assert.assertEquals("pdb-value-part-of",v20Doc.getPartOfIds().get("pdb").get(0));
-        Assert.assertTrue(v20Doc.getDigitalObjectIds().containsAll(v20Doc.getSelfIds().get("doi")));
-        Assert.assertTrue(v20Doc.getSelfIds().get("doi").containsAll(v20Doc.getDigitalObjectIds()));
+        Assert.assertEquals("cite-self",v20Doc.getSelfIds().get("cit-self").get(0));
+        Assert.assertEquals("pdb-value-self",v20Doc.getSelfIds().get("pdb-self").get(0));
+        Assert.assertEquals("cit-part-of",v20Doc.getPartOfIds().get("cit-part-of").get(0));
+        Assert.assertEquals("pdb-value-part-of",v20Doc.getPartOfIds().get("pdb-part-of").get(0));
+        Assert.assertTrue(v20Doc.getDigitalObjectIds().containsAll(v20Doc.getSelfIds().get("doi-self")));
+        Assert.assertTrue(v20Doc.getSelfIds().get("doi-self").containsAll(v20Doc.getDigitalObjectIds()));
         Assert.assertTrue(v20Doc.getOtherIdentifierType().contains("pdb-value-self"));
         Assert.assertTrue(v20Doc.getOtherIdentifierType().contains("pdb-value-part-of"));
     }
