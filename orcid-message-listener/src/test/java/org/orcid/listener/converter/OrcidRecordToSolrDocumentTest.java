@@ -37,11 +37,11 @@ public class OrcidRecordToSolrDocumentTest {
     @Test
     public void test12SameAs20() throws IOException, SolrServerException, JAXBException{
         OrcidProfileToSolrDocument v12 = new  OrcidProfileToSolrDocument();
-        OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument();
+        OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument(false);
         Record record = getRecord("/v20record.xml");
         OrcidMessage message = getOrcidMessage();
         OrcidSolrDocument v12Doc = v12.convert(message.getOrcidProfile());
-        OrcidSolrDocument v20Doc = v20.convert(record);
+        OrcidSolrDocument v20Doc = v20.convert(record,message.getOrcidProfile().toString());
         System.out.println(v12Doc);
         System.out.println(v20Doc);
         Assert.assertEquals(v12Doc.getOrcid(), v20Doc.getOrcid());
@@ -66,8 +66,8 @@ public class OrcidRecordToSolrDocumentTest {
     public void testNonSchemaExternalID() throws JAXBException{
         //as above, but with PDB identifier
         Record record = getRecord("/v20recordWithPDB.xml");
-        OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument();
-        OrcidSolrDocument v20Doc = v20.convert(record);
+        OrcidRecordToSolrDocument v20 = new  OrcidRecordToSolrDocument(false);
+        OrcidSolrDocument v20Doc = v20.convert(record,"");
         System.out.println(v20Doc);
         
         Assert.assertEquals("cite-self",v20Doc.getSelfIds().get("cit-self").get(0));

@@ -48,20 +48,26 @@ public class SolrIndexUpdater {
 
     @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
     private boolean isSolrIndexingEnalbed;
+    @Value("${org.orcid.core.indexPublicProfile:false}")
+    private boolean indexPublicProfile;
         
     @Resource(name = "solrServer")
     private SolrServer solrServer;
 
     private OrcidProfileToSolrDocument conv = new OrcidProfileToSolrDocument();
-    private OrcidRecordToSolrDocument recordConv = new OrcidRecordToSolrDocument();
+    private OrcidRecordToSolrDocument recordConv;
     
-    public void updateSolrIndex(Record record) {
+    public SolrIndexUpdater(){
+        recordConv = new OrcidRecordToSolrDocument(indexPublicProfile);
+    }
+    
+    public void updateSolrIndex(Record record, String v12profileXML) {
         LOG.info("Updating using Record " + record.getOrcidIdentifier().getPath() + " in SOLR index");
         if(!isSolrIndexingEnalbed) {
             LOG.info("Solr indexing is disabled");
             return;
         }
-        this.persist(recordConv.convert(record));
+        this.persist(recordConv.convert(record,v12profileXML));
     }
     
     /** Converts the profile to a OrcidSolrDocument and persists it

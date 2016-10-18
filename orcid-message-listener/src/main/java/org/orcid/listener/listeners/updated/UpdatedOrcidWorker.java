@@ -76,7 +76,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                 
                 // Phase # 2 - update solr
                 if(solrIndexingEnabled) {
-                    updateSolr(m.getOrcid(), record);    
+                    updateSolr(m.getOrcid(), record, profile.toString());    
                 } 
 
             }catch(LockedRecordException e){
@@ -107,12 +107,12 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         }
     }
         
-    private void updateSolr(String orcid,Record record) {
+    private void updateSolr(String orcid,Record record, String v12profileXML) {
         Date lastModifiedFromprofile = record.getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(orcid);
         // note this is slightly different from existing behaviour
         if (lastModifiedFromprofile.after(lastModifiedFromSolr))
-            solrIndexUpdater.updateSolrIndex(record);
+            solrIndexUpdater.updateSolrIndex(record,v12profileXML);
 
     }
 }

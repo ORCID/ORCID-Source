@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
@@ -43,9 +44,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OrcidRecordToSolrDocument {
+    
+    private final boolean indexProfile;
+  
+    public OrcidRecordToSolrDocument(boolean indexProfile){
+        this.indexProfile=indexProfile;
+    }
+    
+    
     Logger LOG = LoggerFactory.getLogger(OrcidRecordToSolrDocument.class);
 
-    public OrcidSolrDocument convert(Record record) {
+    public OrcidSolrDocument convert(Record record, String v12profileXML) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
         
@@ -204,6 +213,9 @@ public class OrcidRecordToSolrDocument {
             //now do affiliations
         }
 
+        if (indexProfile)
+            profileIndexDocument.setPublicProfileMessage(v12profileXML);
+        
         LOG.debug(profileIndexDocument.toString());
         return profileIndexDocument;
     }

@@ -71,7 +71,7 @@ public class ReIndexListener {
         try{
             OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
             Record record = orcid20ApiClient.fetchPublicProfile(message.getOrcid());//can we not just transform the above?
-            solrIndexUpdater.updateSolrIndex(record);
+            solrIndexUpdater.updateSolrIndex(record,profile.toString());
             //Update 1.2 buckets
             s3Updater.updateS3(message.getOrcid(), profile);   
             s3Updater.updateS3(message.getOrcid(), record);
