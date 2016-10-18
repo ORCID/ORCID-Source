@@ -178,7 +178,7 @@
 							    </div>
 	        	   			</div>	        	   		
 	        	   		</div>
-	        	   		<div class="workspace-section-title"><@orcid.msg 'manage.emails'/></div>
+	        	   		<div class="workspace-section-label"><@orcid.msg 'manage.emails'/></div>
 	        	   </div>
 	        	</div> 
 	        	<div class="workspace-section-content">
@@ -202,7 +202,7 @@
 							    </div>
 							</div>
 						</div>
-						<div class="workspace-section-title"><@orcid.msg 'public_profile.labelOtherIDs'/></div>
+						<div class="workspace-section-label"><@orcid.msg 'public_profile.labelOtherIDs'/></div>
        				</div>
        			</div>
        			<div class="workspace-section-content">

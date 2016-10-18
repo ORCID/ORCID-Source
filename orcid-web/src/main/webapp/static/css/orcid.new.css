@@ -1229,19 +1229,19 @@ ul.privacyHelp li.private {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
-	color: #939498;	 
+	color: #494A4C;	 
 }
 
 #statistics span.stat-name-st{
 	font-size: 1.0em;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-style: normal;
-	color: #939498;	 
+	color: #494A4C;	 
 }
 
 #statistics span.stat-data {
 	font-size: 2em;
-	color: #939498;
+	color: #494A4C;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;	
@@ -4050,12 +4050,13 @@ ul#body-work-list > li{
 
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
 	color: #494A4C;
-	font-weight: normal;
+	font-weight: bold;
 	float: left;
 }
 
 .workspace-section-label{
 	float: left;
+	font-weight: bold;
 }
 
 .workspace-section-content{
@@ -5293,7 +5294,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .bulk-delete-modal h3,
 .bulk-delete-modal p{	
-	color: #929497;
+	color: #494A4C;
 }
 
 .bulk-delete-modal button{
