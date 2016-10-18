@@ -35,11 +35,16 @@ import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.Relationship;
+import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
+import org.orcid.utils.solr.entities.SolrConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OrcidRecordToSolrDocument {
-    
+    Logger LOG = LoggerFactory.getLogger(OrcidRecordToSolrDocument.class);
+
     public OrcidSolrDocument convert(Record record) {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
@@ -139,19 +144,19 @@ public class OrcidRecordToSolrDocument {
                                     }
                                     //new way
                                     if (Relationship.SELF.equals(id.getRelationship())){
-                                        if (!self.containsKey(id.getType())){
-                                            self.put(id.getType(), new ArrayList<String>());
+                                        if (!self.containsKey(id.getType()+SolrConstants.DYNAMIC_SELF)){
+                                            self.put(id.getType()+SolrConstants.DYNAMIC_SELF, new ArrayList<String>());
                                         } 
-                                        if (!self.get(id.getType()).contains(id.getValue())){
-                                            self.get(id.getType()).add(id.getValue());
+                                        if (!self.get(id.getType()+SolrConstants.DYNAMIC_SELF).contains(id.getValue())){
+                                            self.get(id.getType()+SolrConstants.DYNAMIC_SELF).add(id.getValue());
                                         }
                                     }
                                     if (Relationship.PART_OF.equals(id.getRelationship())){
-                                        if (!partOf.containsKey(id.getType())){
-                                            partOf.put(id.getType(), new ArrayList<String>());
+                                        if (!partOf.containsKey(id.getType()+SolrConstants.DYNAMIC_PART_OF)){
+                                            partOf.put(id.getType()+SolrConstants.DYNAMIC_PART_OF, new ArrayList<String>());
                                         }                                 
-                                        if (!partOf.get(id.getType()).contains(id.getValue())){
-                                            partOf.get(id.getType()).add(id.getValue());
+                                        if (!partOf.get(id.getType()+SolrConstants.DYNAMIC_PART_OF).contains(id.getValue())){
+                                            partOf.get(id.getType()+SolrConstants.DYNAMIC_PART_OF).add(id.getValue());
                                         }
                                     }
                                 }
@@ -199,6 +204,7 @@ public class OrcidRecordToSolrDocument {
             //now do affiliations
         }
 
+        LOG.debug(profileIndexDocument.toString());
         return profileIndexDocument;
     }
     

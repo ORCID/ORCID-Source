@@ -33,6 +33,7 @@ import org.apache.solr.common.SolrDocument;
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.converters.OrcidProfileToSolrDocument;
+import org.orcid.listener.converters.OrcidRecordToSolrDocument;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +53,15 @@ public class SolrIndexUpdater {
     private SolrServer solrServer;
 
     private OrcidProfileToSolrDocument conv = new OrcidProfileToSolrDocument();
+    private OrcidRecordToSolrDocument recordConv = new OrcidRecordToSolrDocument();
     
     public void updateSolrIndex(Record record) {
-        
+        LOG.info("Updating using Record " + record.getOrcidIdentifier().getPath() + " in SOLR index");
+        if(!isSolrIndexingEnalbed) {
+            LOG.info("Solr indexing is disabled");
+            return;
+        }
+        this.persist(recordConv.convert(record));
     }
     
     /** Converts the profile to a OrcidSolrDocument and persists it

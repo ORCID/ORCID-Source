@@ -202,12 +202,12 @@ public class OrcidSolrDocument {
     private String primaryRecord;
     
     //e.g. doi-self
-    @Field(SolrConstants.DYNAMIC_SELF)
-    public Map<String, List<String>> selfIds;
+    @Field("*"+SolrConstants.DYNAMIC_SELF)
+    private Map<String, List<String>> selfIds;
 
     //e.g. arxiv-part-of
-    @Field(SolrConstants.DYNAMIC_PART_OF)
-    public Map<String, List<String>> partOfIds;
+    @Field("*"+SolrConstants.DYNAMIC_PART_OF)
+    private Map<String, List<String>> partOfIds;
 
     public String getOrcid() {
         return orcid;
@@ -1045,4 +1045,6 @@ public class OrcidSolrDocument {
     public void setPartOfIds(Map<String, List<String>> partOfIds) {
         this.partOfIds = partOfIds;
     }
+    
+    
 }

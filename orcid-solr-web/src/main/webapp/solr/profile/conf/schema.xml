@@ -629,8 +629,8 @@
 			stored="true" multiValued="false" />
 			
 		<!-- work external identifier fields -->
-		<dynamicField name="*_self" type="string" indexed="true" stored="false"/>
-		<dynamicField name="*_part-of" type="string" indexed="true" stored="false"/>
+		<dynamicField name="*-self" type="string" indexed="true" stored="false" multiValued="true"/>
+		<dynamicField name="*-part-of" type="string" indexed="true" stored="false" multiValued="true"/>
 		
 		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
 			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 
