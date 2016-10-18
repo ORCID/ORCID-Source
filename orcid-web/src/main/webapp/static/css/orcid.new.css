@@ -2368,7 +2368,8 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	position: absolute;
 	left: -134px;
 	top: 17px;
-	width: 300px;
+	max-width: 500px;
+	width: auto;
 	background-color: #ffffff;
 	font-size: 14px;
 }
@@ -6361,11 +6362,6 @@ a:hover .mozilla-badge{
 	padding-right: 0;
 }
 
-.fixed-bar .popover-help-container{
-	top: -195 !important;
-    left: -4 !important;
-}
-
 .aka-row{
 	margin-bottom: 25px;
 	min-height:55px;
@@ -6435,9 +6431,8 @@ a:hover .mozilla-badge{
     color: #FFF; 
 }
 
-.fixed-area .scroll-area .popover-help-container{
-	position: absolute;
-	top: 0;
+.fixed-area .popover-help-container{
+	position: absolute;	
 	width: 100%;
 }
 
@@ -6766,11 +6761,6 @@ a:hover .mozilla-badge{
 	display: none;
 }
 
-
-.fixed-area .scroll-area .popover-help-container {
-	width: auto !important;
-}
-
 .edit-record .popover{
 	border: 1px solid #ccc;
 	box-shadow: none;	
@@ -6779,7 +6769,6 @@ a:hover .mozilla-badge{
 .edit-record .popover .arrow{
 	border-top-color: #ccc;
 	background: none;
-	left: 39px;
 }
 
 /* Media Queries */

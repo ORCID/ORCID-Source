@@ -60,15 +60,15 @@
 								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>
-											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="showIconTooltip('tooltip-aka-move-up-'+$index, $event, 37, -33)" ng-mouseleave="hideTooltip('tooltip-aka-move-up-'+$index)"></div>											
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="showIconTooltip('tooltip-aka-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="hideTooltip('tooltip-aka-move-up-'+$index)"></div>											
 											<@orcid.tooltip elementId="'tooltip-aka-move-up-'+$index" message="common.modals.move_up"/>
 										</li>
 										<li>																						
-											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="showIconTooltip('tooltip-aka-move-down-'+$index, $event, 37, -2)" ng-mouseleave="hideTooltip('tooltip-aka-move-down-'+$index)"></div>
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="showIconTooltip('tooltip-aka-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="hideTooltip('tooltip-aka-move-down-'+$index)"></div>
 											<@orcid.tooltip elementId="'tooltip-aka-move-down-'+$index" message="common.modals.move_down" />											
 										</li>
 										<li>
-											<div class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)" ng-mouseover="showIconTooltip('tooltip-aka-delete-'+$index, $event, 37, 50)" ng-mouseleave="hideTooltip('tooltip-aka-delete-'+$index)"></div>
+											<div class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)" ng-mouseover="showIconTooltip('tooltip-aka-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="hideTooltip('tooltip-aka-delete-'+$index)"></div>
 											<@orcid.tooltip elementId="'tooltip-aka-delete-'+$index" message="common.modals.delete" />
 										</li>
 										<li>											
@@ -144,13 +144,16 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">																				
 										<li>									
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="showIconTooltip('tooltip-country-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="hideTooltip('tooltip-country-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-country-move-up-'+$index" message="common.modals.move_up"/>											
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="showIconTooltip('tooltip-country-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="hideTooltip('tooltip-country-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-country-move-down-'+$index" message="common.modals.move_down" />
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)" ng-mouseover="showIconTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="hideTooltip('tooltip-country-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />											
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="country.visibility.visibility"

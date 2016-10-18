@@ -308,7 +308,7 @@ kind of variable. This temp value is only used in this macro lib -->
 
 <#macro privacyToggle3 angularModel publicClick limitedClick privateClick elementId publicId="" limitedId="" privateId="" popoverStyle="" arrowStyle="" questionClick="alert('no function passed')" clickedClassCheck="{'popover-help-container-show':privacyHelp['work']==true}">	
 	<div ng-class="{'relative' : modal == false}" id="privacy-bar">
-		<ul class="privacyToggle" ng-mouseenter="showTooltip(${elementId} +'-privacy', $event)" ng-mouseleave="hideTooltip(${elementId} +'-privacy')">
+		<ul class="privacyToggle" ng-mouseenter="showTooltip(${elementId} +'-privacy', $event, 176)" ng-mouseleave="hideTooltip(${elementId} +'-privacy')">
 			<li class="publicActive" ng-class="{publicInActive: ${angularModel} != 'PUBLIC'}"><a ng-click="${publicClick}" name="privacy-toggle-3-public" id="${publicId}"></a></li>
 			<li class="limitedActive" ng-class="{limitedInActive: ${angularModel} != 'LIMITED'}"><a ng-click="${limitedClick}" name="privacy-toggle-3-limited" id="${limitedId}"></a></li>
 			<li class="privateActive" ng-class="{privateInActive: ${angularModel} != 'PRIVATE'}"><a ng-click="${privateClick}"  name="privacy-toggle-3-private" id="${privateId}"></a></li>
