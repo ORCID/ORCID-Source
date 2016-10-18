@@ -2941,27 +2941,46 @@ orcidNgModule.controller('KeywordsCtrl', ['$scope', '$compile', 'bioBulkSrvc',  
         }
     };
     
-    $scope.showTooltip = function(elem, event){    	
+    $scope.showTooltip = function(elem, event, offsetArrow){    	
         $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
         $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
         $scope.$watch('scrollTop', function (value) {
             if (elem === '-privacy'){
                 angular.element('.edit-keyword .popover-help-container').css({
-                    top: -195,
-                    left: -4
+                    top: -145,
+                    left: 461
                 });
             }else{
                 angular.element('.edit-keyword .popover-help-container').css({
                     top: $scope.top - $scope.scrollTop,
                     left: $scope.left - 5
                 });
-            }
+            };
+            angular.element('.edit-keyword .popover-help-container .arrow').css({                    
+                left: offsetArrow
+            });
         });
         $scope.showElement[elem] = true; 
     }
     
+    $scope.showIconTooltip = function(elem, event, topOffset, leftOffset, arrowOffset){
+        $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
+        $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
+        $scope.$watch('scrollTop', function (value) {
+            angular.element('.edit-keyword .popover-tooltip').css({
+                top: $scope.top - $scope.scrollTop - topOffset,
+                left: $scope.left + leftOffset
+            });
+            angular.element('.edit-keyword .popover-tooltip .arrow').css({                
+                left: arrowOffset
+            });
+        });        
+        $scope.showTooltip[elem] = true;
+    };
+    
     $scope.hideTooltip = function(elem){
     	$scope.showElement[elem] = false;
+    	$scope.showTooltip[elem] = false;
     }
     
     $scope.openEditModal = function(){

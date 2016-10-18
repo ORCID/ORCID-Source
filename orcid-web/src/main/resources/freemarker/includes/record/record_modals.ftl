@@ -230,13 +230,16 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>							
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="showIconTooltip('tooltip-keyword-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="hideTooltip('tooltip-keyword-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-keyword-move-up-'+$index" message="common.modals.move_up"/>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="showIconTooltip('tooltip-keyword-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="hideTooltip('tooltip-keyword-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-keyword-move-down-'+$index" message="common.modals.move_down" />											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)" ng-mouseover="showIconTooltip('tooltip-keyword-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="hideTooltip('tooltip-keyword-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-keyword-delete-'+$index" message="common.modals.delete" />											
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="keyword.visibility.visibility"
