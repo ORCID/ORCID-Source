@@ -121,6 +121,11 @@
 							<div class="fixed-bar">
 								<div style="position: relative">							
 									<div ng-include="'bulk-edit'"></div>
+								</div>
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+										<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+									</div>		
 								</div>							
 							</div>		
 						</#if>
@@ -207,7 +212,12 @@
 							<div class="fixed-bar">
 								<div style="position: relative">							
 									<div ng-include="'bulk-edit'"></div>
-								</div>							
+								</div>
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+										<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+									</div>		
+								</div>	
 							</div>		
 						</#if>
 				
@@ -284,7 +294,12 @@
 							<div class="fixed-bar">
 								<div style="position: relative">							
 									<div ng-include="'bulk-edit'"></div>
-								</div>							
+								</div>
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+										<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+									</div>		
+								</div>								
 							</div>		
 						</#if>
 				
@@ -368,6 +383,11 @@
 							<div class="fixed-bar">
 								<div style="position: relative">							
 									<div ng-include="'bulk-edit'"></div>
+								</div>	
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+										<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+									</div>		
 								</div>							
 							</div>		
 						</#if>
