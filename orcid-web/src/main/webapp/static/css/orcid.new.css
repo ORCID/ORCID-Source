@@ -2368,10 +2368,19 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	position: absolute;
 	left: -134px;
 	top: 17px;
-	max-width: 500px;
+	max-width: 800px;
 	width: auto;
 	background-color: #ffffff;
 	font-size: 14px;
+}
+
+.popover-pos{
+	width: 100%;
+	display: inline;
+}
+
+.popover-pos .popover-help-container .popover{
+	min-width: 250px;
 }
 
 .workspace-top .popover-help-container .popover{
