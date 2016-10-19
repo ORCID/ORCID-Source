@@ -144,15 +144,15 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">																				
 										<li>									
-											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="showIconTooltip('tooltip-country-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="hideTooltip('tooltip-country-move-up-'+$index)"></div>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-up-'+$index)"></div>
 											<@orcid.tooltip elementId="'tooltip-country-move-up-'+$index" message="common.modals.move_up"/>											
 										</li>
 										<li>
-											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="showIconTooltip('tooltip-country-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="hideTooltip('tooltip-country-move-down-'+$index)"></div>
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-down-'+$index)"></div>
 											<@orcid.tooltip elementId="'tooltip-country-move-down-'+$index" message="common.modals.move_down" />
 										</li>
 										<li>
-											<div class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)" ng-mouseover="showIconTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="hideTooltip('tooltip-country-delete-'+$index)"></div>
+											<div class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"></div>
 											<@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />											
 										</li>
 										<li>

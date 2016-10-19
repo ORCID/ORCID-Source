@@ -3426,7 +3426,7 @@ orcidNgModule.controller('BiographyCtrl',['$scope', '$compile',function ($scope,
 
 }]);
 
-orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',function ($scope, $compile, bioBulkSrvc) {
+orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc',function ($scope, $compile, bioBulkSrvc, commonSrvc) {
 	bioBulkSrvc.initScope($scope);
     $scope.showEdit = false;
     $scope.countryForm = null;
@@ -3438,6 +3438,7 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
     $scope.newElementDefaultVisibility = null;
     $scope.primaryElementIndex = null;
     $scope.scrollTop = 0;   
+    $scope.commonSrvc = commonSrvc;
 
     $scope.getCountryForm = function(){
         $.ajax({
@@ -3549,48 +3550,6 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc',fun
             }
         }
     };
-    
-    $scope.showTooltip = function(elem, event, offsetArrow){    	
-        $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-        $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-        $scope.$watch('scrollTop', function (value) {
-            if (elem === '-privacy'){
-                angular.element('.edit-country .popover-help-container').css({
-                    top: -145,
-                    left: 461
-                });
-            }else{
-                angular.element('.edit-country .popover-help-container').css({
-                    top: $scope.top - $scope.scrollTop,
-                    left: $scope.left - 5
-                });
-            }
-            angular.element('.edit-country .popover-help-container .arrow').css({                    
-                left: offsetArrow
-            });
-        });
-        $scope.showElement[elem] = true;    
-    }
-    
-    $scope.showIconTooltip = function(elem, event, topOffset, leftOffset, arrowOffset){
-        $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-        $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-        $scope.$watch('scrollTop', function (value) {
-            angular.element('.edit-country .popover-tooltip').css({
-                top: $scope.top - $scope.scrollTop - topOffset,
-                left: $scope.left + leftOffset
-            });
-            angular.element('.edit-country .popover-tooltip .arrow').css({                
-                left: arrowOffset
-            });
-        });        
-        $scope.showTooltip[elem] = true;
-    };
-
-    $scope.hideTooltip = function(elem){
-    	$scope.showElement[elem] = false;
-    	$scope.showTooltip[elem] = false;
-    }
     
     $scope.openEditModal = function() {
     	
