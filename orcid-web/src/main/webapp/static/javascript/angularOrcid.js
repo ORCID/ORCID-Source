@@ -555,6 +555,7 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
                     left: 461
                 });
             }else{
+                if (elem.indexOf('@') > -1) left = 530; //Emails modal fix
                 angular.element('.edit-record .popover-help-container').css({
                     top: top - scrollTop - 160,
                     left: left + 25
