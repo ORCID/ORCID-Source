@@ -40,9 +40,13 @@
 	                    	<p>
 	            				<a class="selected" href="<@orcid.rootPath '/members'/>">All members</a> | <a href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
 	            			</p>
+	            			
+<select name="show-filter" ng-model="countryModel" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country'">
+                <option value="">--Choose Country--</option>
+            </select>
 	    
 	                    </div>
-	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | orderBy : 'name'">
+	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter: countryModel | orderBy : 'name' ">
 	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
