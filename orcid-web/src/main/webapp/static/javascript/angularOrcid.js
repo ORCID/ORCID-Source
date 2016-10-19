@@ -548,6 +548,7 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
             var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
             var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
             var scrollTop = angular.element('.fixed-area').scrollTop();
+            
             if (elem === '-privacy'){
                 angular.element('.edit-record .popover-help-container').css({
                     top: -145,
@@ -568,8 +569,6 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
             var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
             var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');    
             var scrollTop = angular.element('.fixed-area').scrollTop();
-            
-            console.log(top);
             
             angular.element('.edit-record .popover-tooltip').css({
                 top: top - scrollTop - topOffset,
@@ -3142,7 +3141,7 @@ orcidNgModule.controller('NameCtrl', ['$scope', '$compile',function NameCtrl($sc
     $scope.getNameForm();
 }]);
 
-orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile ,bioBulkSrvc) {
+orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile ,bioBulkSrvc, commonSrvc) {
 	bioBulkSrvc.initScope($scope);	
     $scope.showEdit = false;
     $scope.otherNamesForm = null;
@@ -3152,6 +3151,7 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     $scope.defaultVisibility = null;
     $scope.newElementDefaultVisibility = null;
     $scope.scrollTop = 0;
+    $scope.commonSrvc = commonSrvc;
     
     $scope.openEdit = function() {
         $scope.addNew();
@@ -3262,48 +3262,6 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
             // something bad is happening!
             console.log("OtherNames.serverValidate() error");
         });
-    };
-
-    $scope.showTooltip = function(elem, event, offsetArrow){
-    	$scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-    	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-    	$scope.$watch('scrollTop', function (value) {
-    	    if (elem === '-privacy'){
-    	        angular.element('.edit-aka .popover-help-container').css({
-    	            top: -145,
-    	            left: 461
-    	        });
-    	    }else{
-    	        angular.element('.edit-aka .popover-help-container').css({
-                    top: $scope.top - $scope.scrollTop,
-                    left: $scope.left - 5
-                });    	        
-    	    }
-    	    angular.element('.edit-aka .popover-help-container .arrow').css({                    
-                left: offsetArrow
-            });
-    	});
-        $scope.showElement[elem] = true;        
-    };
-    
-    $scope.showIconTooltip = function(elem, event, topOffset, leftOffset, arrowOffset){
-        $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-        $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-        $scope.$watch('scrollTop', function (value) {
-            angular.element('.edit-aka .popover-tooltip').css({
-                top: $scope.top - $scope.scrollTop - topOffset,
-                left: $scope.left + leftOffset
-            });
-            angular.element('.edit-aka .popover-tooltip .arrow').css({                
-                left: arrowOffset
-            });
-        });        
-        $scope.showTooltip[elem] = true;
-    };
-
-    $scope.hideTooltip = function(elem){
-    	$scope.showElement[elem] = false;
-    	$scope.showTooltip[elem] = false;
     };
 
     $scope.setPrivacy = function(priv, $event) {
