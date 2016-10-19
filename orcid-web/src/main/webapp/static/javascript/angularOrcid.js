@@ -2406,7 +2406,7 @@ orcidNgModule.controller('PasswordEditCtrl', ['$scope', '$http', function ($scop
     };
 }]);
 
-orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies) {
+orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , 'bioBulkSrvc', '$timeout', '$cookies', 'commonSrvc', function EmailEditCtrl($scope, $compile, emailSrvc, bioBulkSrvc, $timeout, $cookies, commonSrvc) {
 	bioBulkSrvc.initScope($scope);
     $scope.emailSrvc = emailSrvc;
     $scope.privacyHelp = {};
@@ -2417,6 +2417,7 @@ orcidNgModule.controller('EmailEditCtrl', ['$scope', '$compile', 'emailSrvc' , '
     $scope.showDeleteBox = false;
     $scope.showConfirmationBox = false;
     $scope.showEmailVerifBox = false;
+    $scope.commonSrvc = commonSrvc;
     $scope.scrollTop = 0;    
 
     $scope.toggleClickPrivacyHelp = function(key) {
@@ -10533,8 +10534,8 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	
 	$scope.openEditModal = function(){
 		
-	    var HTML = '<div class="lightbox-container">\
-	    				<div class="edit-record edit-record-emails" style="position: relative">\
+	    var HTML = '<div class="lightbox-container" style="position: static">\
+	    				<div class="edit-record edit-record-emails" style="position: static">\
 	    					<div class="row">\
 	    						<div class="col-md-12 col-sm-12 col-xs-12">\
 	    								<h1 class="lightbox-title pull-left">'+ om.get("manage.edit.emails") +'</h1>\
@@ -10542,7 +10543,7 @@ orcidNgModule.controller('EmailsCtrl',['$scope', 'emailSrvc', '$compile','prefsS
 	    					</div>\
 	    					<div class="row">\
 	    						<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">\
-	    							<table class="settings-table">\
+	    							<table class="settings-table" style="position: static">\
 	    								<tr>' +
 	    									$('#edit-emails').html()
 	    							  +'</tr>\

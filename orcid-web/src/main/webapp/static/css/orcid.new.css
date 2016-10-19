@@ -2281,6 +2281,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .settings-table .popover {
 	top: 80%;
 	left: -220px;
+	min-width: 270px;	 
 }
 
 .settings-table .table-responsive{
@@ -5239,6 +5240,7 @@ ul.sources-actions > li .popover-tooltip > .arrow{
 	top: -143px;
 	left: -138px;
 	min-width: 242px;
+	width: auto;
 }
 
 .popover-help-container > .privacy-myorcid3 >.arrow{
@@ -6774,6 +6776,20 @@ a:hover .mozilla-badge{
 .edit-record .popover .arrow{
 	border-top-color: #ccc;
 	background: none;
+}
+
+.edit-record a span.glyphicon-plus:hover .popover-tooltip-add{
+	display: block;
+	top: -40px;
+    left: -16px;        
+}
+
+.edit-record a span.glyphicon-plus .popover-tooltip-add .arrow{
+	left: 28px;
+}
+
+.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span{
+	color: #494a4c;
 }
 
 /* Media Queries */

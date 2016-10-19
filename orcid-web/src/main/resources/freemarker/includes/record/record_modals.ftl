@@ -88,7 +88,14 @@
 						</div>
 					</div>
 					<div class="record-buttons">
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span>Add</span>
+	    						</div>
+	   						</div> 
+						</span></a>	        	      		
 			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
 			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>					
@@ -177,7 +184,14 @@
 						</div>
 					</div>					
 					<div class="record-buttons">						
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span>Add</span>
+	    						</div>
+	   						</div>
+						</span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
@@ -258,7 +272,14 @@
 						</div>
 					</div>
 					<div class="record-buttons">						
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span>Add</span>
+	    						</div>
+	   						</div>
+						</span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
@@ -346,7 +367,14 @@
 					</div>
 					
 					<div class="record-buttons">						
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span>Add</span>
+	    						</div>
+	   						</div>
+						</span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
