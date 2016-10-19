@@ -174,6 +174,10 @@ public class SalesForceAdapter {
     Member createMemberFromSalesForceRecord(JSONObject record) throws JSONException {
         return mapperFacade.map(record, Member.class);
     }
+    
+    JSONObject createSaleForceRecordFromMember(Member member){
+        return mapperFacade.map(member, JSONObject.class);
+    }
 
     private Integration createIntegrationFromSalesForceRecord(JSONObject integrationRecord) throws JSONException {
         Integration integration = new Integration();

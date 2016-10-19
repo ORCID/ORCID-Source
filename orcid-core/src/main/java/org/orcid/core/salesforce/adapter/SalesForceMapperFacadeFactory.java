@@ -1,5 +1,7 @@
 package org.orcid.core.salesforce.adapter;
 
+import java.net.URL;
+
 import org.codehaus.jettison.json.JSONObject;
 import org.orcid.core.salesforce.model.Member;
 import org.springframework.beans.factory.FactoryBean;
@@ -39,11 +41,12 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
 
     public MapperFacade getMemberMapperFacade() throws Exception {
         MapperFactory mapperFactory = new DefaultMapperFactory.Builder().propertyResolverStrategy(new JSONPropertyResolver()).build();
-        
+
         ConverterFactory converterFactory = mapperFactory.getConverterFactory();
         converterFactory.registerConverter(new StringConverter());
-        
-        ClassMapBuilder<Member, JSONObject> classMap = mapperFactory.classMap(Member.class, JSONObject.class);
+        converterFactory.registerConverter(new URLConverter());
+
+        ClassMapBuilder<Member, JSONObject> classMap = mapperFactory.classMap(Member.class, JSONObject.class).mapNulls(false).mapNullsInReverse(false);
         classMap.field("id", "Id");
         classMap.field("name", "Name");
         classMap.field("websiteUrl", "Website");
@@ -76,14 +79,10 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
                                 + (isNestedLookup ? "org.codehaus.jettison.json.JSONArray" : "Object") + "}");
                     } else if (FIRST_ITEM_FROM_ARRAY_EXPRESSION.equals(expr)) {
                         property = super.resolveInlineProperty(type,
-                                FIRST_ITEM_FROM_ARRAY_EXPRESSION + ":{get(0)|put(0, %s)|type=org.codehaus.jettison.json.JSONObject}");
+                                FIRST_ITEM_FROM_ARRAY_EXPRESSION + ":{opt(0)|put(0, %s)|type=org.codehaus.jettison.json.JSONObject}");
                     } else {
-                        if (isNestedLookup) {
-                            property = super.resolveInlineProperty(type,
-                                    expr + ":{opt(\"" + expr + "\")|put(\"" + expr + "\",%s)|type=org.codehaus.jettison.json.JSONObject}");
-                        } else {
-                            property = super.resolveInlineProperty(type, expr + ":{opt(\"" + expr + "\")|put(\"" + expr + "\",%s)|type=java.lang.Object}");
-                        }
+                        property = super.resolveInlineProperty(type, expr + ":{opt(\"" + expr + "\")|put(\"" + expr + "\",%s)|type="
+                                + (isNestedLookup ? "org.codehaus.jettison.json.JSONObject" : "Object") + "}");
                     }
                 } catch (MappingException e2) {
                     throw e; // throw the original exception
@@ -101,7 +100,13 @@ public class SalesForceMapperFacadeFactory implements FactoryBean<MapperFacade> 
             }
             return source.toString();
         }
+    }
 
+    private class URLConverter extends CustomConverter<URL, Object> {
+        @Override
+        public Object convert(URL source, Type<? extends Object> destinationType) {
+            return source.toString();
+        }
     }
 
 }

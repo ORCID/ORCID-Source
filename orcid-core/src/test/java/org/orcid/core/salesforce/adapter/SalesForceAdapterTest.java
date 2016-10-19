@@ -1,8 +1,11 @@
 package org.orcid.core.salesforce.adapter;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -86,6 +89,15 @@ public class SalesForceAdapterTest {
         assertEquals("orcid@org2.org", member.getPublicDisplayEmail());
         assertEquals("006J000000LThfbIAD", member.getMainOpportunityId());
         assertEquals("001J000001pZwWWIA0", member.getConsortiumLeadId());
+    }
+
+    @Test
+    public void testCreateSalesForceRecordFromMember() throws MalformedURLException {
+        Member member = new Member();
+        member.setName("Org 1 Consortium Lead New Name");
+        member.setWebsiteUrl(new URL("http://org1newsite.org"));
+        JSONObject record = salesForceAdapter.createSaleForceRecordFromMember(member);
+        assertEquals("{\"Name\":\"Org 1 Consortium Lead New Name\",\"Website\":\"http:\\/\\/org1newsite.org\"}", record.toString());
     }
 
 }
