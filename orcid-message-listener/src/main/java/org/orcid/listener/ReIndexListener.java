@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.listener.clients.LockedRecordException;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
@@ -66,16 +67,19 @@ public class ReIndexListener {
     public void processMessage(final Map<String, String> map) throws JsonProcessingException, AmazonClientException, JAXBException {
         LastModifiedMessage message = new LastModifiedMessage(map);
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
-        String orcid = message.getOrcid();
-        OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(orcid);
-        //Reindex solr
-        solrIndexUpdater.updateSolrIndex(profile);
-        
-        //Update 1.2 buckets
-        s3Updater.updateS3(orcid, profile);
-        
-        //Update 2.0 buckets
-        Record record = orcid20ApiClient.fetchPublicProfile(orcid);        
-        s3Updater.updateS3(orcid, record);
+
+        try{
+            OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
+            Record record = orcid20ApiClient.fetchPublicProfile(message.getOrcid());//can we not just transform the above?
+            solrIndexUpdater.updateSolrIndex(record,profile.toString());
+            //Update 1.2 buckets
+            s3Updater.updateS3(message.getOrcid(), profile);   
+            s3Updater.updateS3(message.getOrcid(), record);
+        }catch (LockedRecordException e){
+            //if the record is locked then 'blank' it in Solr.
+            solrIndexUpdater.updateSolrIndexForLockedRecord(message.getOrcid(),message.getLastUpdated());
+            //TODO: s3 does what here?
+        }
+
     }
 }

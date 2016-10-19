@@ -55,10 +55,12 @@ public class Orcid20APIClient {
      * @param orcid
      * @return
      */
-    public Record fetchPublicProfile(String orcid) {
+    public Record fetchPublicProfile(String orcid) throws LockedRecordException{
         WebResource webResource = jerseyClient.resource(baseUri);
         ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
         if (response.getStatus() != 200) {
+            if (response.getStatus() == 409)
+                throw new LockedRecordException();
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
         return response.getEntity(Record.class);

@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.listener.clients.LockedRecordException;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
@@ -63,24 +64,34 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             LastModifiedMessage m = removal.getValue();
             LOG.info("Removing " + removal.getKey() + " from UpdatedOrcidCacheQueue");
             LOG.info("Processing " + m.getLastUpdated());
-            String orcid = m.getOrcid();
             
-            // Phase #1: update S3 
-            if(dumpIndexingEnabled) {
-                updateS3(orcid);    
+            try{
+                OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(m.getOrcid());
+                Record record = orcid20ApiClient.fetchPublicProfile(m.getOrcid());//can we not just transform the above?
+                                
+                // Phase #1: update S3 
+                if(dumpIndexingEnabled) {
+                    updateS3(m.getOrcid(), profile, record);    
+                }
+                
+                // Phase # 2 - update solr
+                if(solrIndexingEnabled) {
+                    updateSolr(m.getOrcid(), record, profile.toString());    
+                } 
+
+            }catch(LockedRecordException e){
+                Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());                // note this is slightly different from existing behaviour
+                if (m.getLastUpdated().after(lastModifiedFromSolr))
+                    solrIndexUpdater.updateSolrIndexForLockedRecord(m.getOrcid(), m.getLastUpdated());
+                //TODO: something with S3
             }
-            
-            // Phase # 2 - update solr
-            if(solrIndexingEnabled) {
-                updateSolr(orcid);    
-            }                        
         }
+
     }
     
-    private void updateS3(String orcid) {
+    private void updateS3(String orcid,OrcidProfile profile,Record record) {
         // Update API 1.2
         try {
-            OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(orcid);                
             s3Updater.updateS3(orcid, profile);
         } catch(Exception e) {
             //Unable to update record in S3
@@ -89,7 +100,6 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         
         // Update API 2.0
         try {
-            Record record = orcid20ApiClient.fetchPublicProfile(orcid);
             s3Updater.updateS3(orcid, record);
         } catch(Exception e) {
             //Unable to update record in S3
@@ -97,12 +107,12 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         }
     }
         
-    private void updateSolr(String orcid) {
-        OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(orcid);                
-        Date lastModifiedFromprofile = profile.getOrcidHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+    private void updateSolr(String orcid,Record record, String v12profileXML) {
+        Date lastModifiedFromprofile = record.getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(orcid);
         // note this is slightly different from existing behaviour
         if (lastModifiedFromprofile.after(lastModifiedFromSolr))
-            solrIndexUpdater.updateSolrIndex(profile);
+            solrIndexUpdater.updateSolrIndex(record,v12profileXML);
+
     }
 }

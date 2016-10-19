@@ -1,0 +1,689 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<record:record xmlns:internal="http://www.orcid.org/ns/internal" xmlns:funding="http://www.orcid.org/ns/funding" xmlns:preferences="http://www.orcid.org/ns/preferences" xmlns:address="http://www.orcid.org/ns/address" xmlns:education="http://www.orcid.org/ns/education" xmlns:work="http://www.orcid.org/ns/work" xmlns:deprecated="http://www.orcid.org/ns/deprecated" xmlns:other-name="http://www.orcid.org/ns/other-name" xmlns:history="http://www.orcid.org/ns/history" xmlns:employment="http://www.orcid.org/ns/employment" xmlns:error="http://www.orcid.org/ns/error" xmlns:common="http://www.orcid.org/ns/common" xmlns:person="http://www.orcid.org/ns/person" xmlns:activities="http://www.orcid.org/ns/activities" xmlns:record="http://www.orcid.org/ns/record" xmlns:researcher-url="http://www.orcid.org/ns/researcher-url" xmlns:peer-review="http://www.orcid.org/ns/peer-review" xmlns:personal-details="http://www.orcid.org/ns/personal-details" xmlns:keyword="http://www.orcid.org/ns/keyword" xmlns:email="http://www.orcid.org/ns/email" xmlns:external-identifier="http://www.orcid.org/ns/external-identifier">
+    <common:last-modified-date>2016-10-13T16:32:35.297Z</common:last-modified-date>
+    <common:orcid-identifier>
+        <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+        <common:path>0000-0003-0902-4386</common:path>
+        <common:host>orcid.org</common:host>
+    </common:orcid-identifier>
+    <preferences:preferences>
+        <preferences:locale>en</preferences:locale>
+    </preferences:preferences>
+    <history:history>
+        <history:creation-method>website</history:creation-method>
+        <history:completion-date>2013-01-18T12:09:28.451Z</history:completion-date>
+        <history:submission-date>2013-01-18T12:09:28.451Z</history:submission-date>
+        <common:last-modified-date>2016-10-13T16:32:35.297Z</common:last-modified-date>
+        <history:claimed>true</history:claimed>
+        <history:verified-email>true</history:verified-email>
+        <history:verified-primary-email>true</history:verified-primary-email>
+    </history:history>
+    <person:person path="/0000-0003-0902-4386/person">
+        <person:name visibility="public">
+            <common:created-date>2016-04-15T23:35:41.154Z</common:created-date>
+            <common:last-modified-date>2016-04-15T23:35:41.154Z</common:last-modified-date>
+            <personal-details:given-names>Tom</personal-details:given-names>
+            <personal-details:family-name>Demeranville</personal-details:family-name>
+        </person:name>
+        <other-name:other-names path="/0000-0003-0902-4386/other-names"/>
+        <person:biography visibility="public" path="/0000-0003-0902-4386/biography">
+            <common:created-date>2016-04-15T23:35:41.157Z</common:created-date>
+            <common:last-modified-date>2016-06-17T11:41:32.504Z</common:last-modified-date>
+            <personal-details:content>THOR Senior Project Officer and ORCID Software Engineer.</personal-details:content>
+        </person:biography>
+        <researcher-url:researcher-urls path="/0000-0003-0902-4386/researcher-urls"/>
+        <email:emails path="/0000-0003-0902-4386/email"/>
+        <address:addresses path="/0000-0003-0902-4386/address"/>
+        <keyword:keywords path="/0000-0003-0902-4386/keywords"/>
+        <external-identifier:external-identifiers path="/0000-0003-0902-4386/external-identifiers"/>
+    </person:person>
+    <activities:activities-summary>
+        <common:last-modified-date>2016-10-13T16:44:23.221Z</common:last-modified-date>
+        <activities:educations>
+            <common:last-modified-date>2015-09-15T13:16:41.905Z</common:last-modified-date>
+            <education:education-summary put-code="990546" path="/0000-0003-0902-4386/education/990546" visibility="public">
+                <common:created-date>2015-06-25T16:01:12.718Z</common:created-date>
+                <common:last-modified-date>2015-09-15T13:16:41.905Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                        <common:path>0000-0003-0902-4386</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Tom Demeranville</common:source-name>
+                </common:source>
+                <education:department-name>Computer Science</education:department-name>
+                <education:role-title>1st class with honours</education:role-title>
+                <education:organization>
+                    <common:name>Open University</common:name>
+                    <common:address>
+                        <common:city>Milton Keynes</common:city>
+                        <common:region>Milton Keynes</common:region>
+                        <common:country>GB</common:country>
+                    </common:address>
+                    <common:disambiguated-organization>
+                        <common:disambiguated-organization-identifier>5488</common:disambiguated-organization-identifier>
+                        <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                    </common:disambiguated-organization>
+                </education:organization>
+            </education:education-summary>
+        </activities:educations>
+        <activities:employments>
+            <common:last-modified-date>2015-09-15T13:17:17.800Z</common:last-modified-date>
+            <employment:employment-summary put-code="990530" path="/0000-0003-0902-4386/employment/990530" visibility="public">
+                <common:created-date>2015-06-25T15:56:57.057Z</common:created-date>
+                <common:last-modified-date>2015-09-15T13:17:17.800Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                        <common:path>0000-0003-0902-4386</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Tom Demeranville</common:source-name>
+                </common:source>
+                <employment:department-name>Project Thor</employment:department-name>
+                <employment:role-title>Senior Technical Officer</employment:role-title>
+                <common:start-date>
+                    <common:year>2015</common:year>
+                    <common:month>06</common:month>
+                </common:start-date>
+                <employment:organization>
+                    <common:name>ORCID EU</common:name>
+                    <common:address>
+                        <common:city>Bath</common:city>
+                        <common:country>GB</common:country>
+                    </common:address>
+                </employment:organization>
+            </employment:employment-summary>
+            <employment:employment-summary put-code="990539" path="/0000-0003-0902-4386/employment/990539" visibility="public">
+                <common:created-date>2015-06-25T15:59:36.562Z</common:created-date>
+                <common:last-modified-date>2015-06-25T16:03:04.090Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                        <common:path>0000-0003-0902-4386</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Tom Demeranville</common:source-name>
+                </common:source>
+                <employment:department-name>Athens</employment:department-name>
+                <employment:role-title>Senior Software Engineer</employment:role-title>
+                <common:start-date>
+                    <common:year>2005</common:year>
+                    <common:month>01</common:month>
+                </common:start-date>
+                <common:end-date>
+                    <common:year>2013</common:year>
+                    <common:month>02</common:month>
+                </common:end-date>
+                <employment:organization>
+                    <common:name>Eduserv Athens</common:name>
+                    <common:address>
+                        <common:city>Bath</common:city>
+                        <common:region>Bath and North East Somer</common:region>
+                        <common:country>GB</common:country>
+                    </common:address>
+                    <common:disambiguated-organization>
+                        <common:disambiguated-organization-identifier>226102</common:disambiguated-organization-identifier>
+                        <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                    </common:disambiguated-organization>
+                </employment:organization>
+            </employment:employment-summary>
+            <employment:employment-summary put-code="990536" path="/0000-0003-0902-4386/employment/990536" visibility="public">
+                <common:created-date>2015-06-25T15:58:43.783Z</common:created-date>
+                <common:last-modified-date>2015-06-25T16:03:02.295Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                        <common:path>0000-0003-0902-4386</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Tom Demeranville</common:source-name>
+                </common:source>
+                <employment:department-name>ODIN Project</employment:department-name>
+                <employment:role-title>Technical Lead</employment:role-title>
+                <common:start-date>
+                    <common:year>2013</common:year>
+                    <common:month>02</common:month>
+                </common:start-date>
+                <common:end-date>
+                    <common:year>2014</common:year>
+                    <common:month>12</common:month>
+                </common:end-date>
+                <employment:organization>
+                    <common:name>British Library</common:name>
+                    <common:address>
+                        <common:city>London</common:city>
+                        <common:country>GB</common:country>
+                    </common:address>
+                    <common:disambiguated-organization>
+                        <common:disambiguated-organization-identifier>4925</common:disambiguated-organization-identifier>
+                        <common:disambiguation-source>RINGGOLD</common:disambiguation-source>
+                    </common:disambiguated-organization>
+                </employment:organization>
+            </employment:employment-summary>
+            <employment:employment-summary put-code="990534" path="/0000-0003-0902-4386/employment/990534" visibility="public">
+                <common:created-date>2015-06-25T15:57:40.252Z</common:created-date>
+                <common:last-modified-date>2015-06-25T16:03:01.713Z</common:last-modified-date>
+                <common:source>
+                    <common:source-orcid>
+                        <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                        <common:path>0000-0003-0902-4386</common:path>
+                        <common:host>orcid.org</common:host>
+                    </common:source-orcid>
+                    <common:source-name>Tom Demeranville</common:source-name>
+                </common:source>
+                <employment:department-name>Delivery</employment:department-name>
+                <employment:role-title>Technical Lead</employment:role-title>
+                <common:start-date>
+                    <common:year>2014</common:year>
+                    <common:month>12</common:month>
+                </common:start-date>
+                <common:end-date>
+                    <common:year>2015</common:year>
+                    <common:month>06</common:month>
+                </common:end-date>
+                <employment:organization>
+                    <common:name>IPL</common:name>
+                    <common:address>
+                        <common:city>Bath</common:city>
+                        <common:country>GB</common:country>
+                    </common:address>
+                </employment:organization>
+            </employment:employment-summary>
+        </activities:employments>
+        <activities:fundings>
+            <common:last-modified-date>2016-09-21T08:26:35</common:last-modified-date>
+            <activities:group>
+                <common:last-modified-date>2016-09-21T08:26:35.681Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>grant_number</common:external-id-type>
+                        <common:external-id-value>H2020-EU.1.4.1.3.</common:external-id-value>
+                        <common:external-id-url>http://cordis.europa.eu/project/rcn/194927_en.html</common:external-id-url>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <funding:summary put-code="133362" path="/0000-0003-0902-4386/funding/133362" visibility="public" display-index="0">
+                    <common:created-date>2015-12-08T13:16:16.370Z</common:created-date>
+                    <common:last-modified-date>2016-09-21T08:26:35.681Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                            <common:path>0000-0003-0902-4386</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Tom Demeranville</common:source-name>
+                    </common:source>
+                    <funding:title>
+                        <common:title>THOR - Technical and Human Infrastructure for Open Research</common:title>
+                    </funding:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>grant_number</common:external-id-type>
+                            <common:external-id-value>H2020-EU.1.4.1.3.</common:external-id-value>
+                            <common:external-id-url>http://cordis.europa.eu/project/rcn/194927_en.html</common:external-id-url>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <funding:type>grant</funding:type>
+                    <common:start-date>
+                        <common:year>2015</common:year>
+                        <common:month>06</common:month>
+                    </common:start-date>
+                    <common:end-date>
+                        <common:year>2017</common:year>
+                        <common:month>11</common:month>
+                    </common:end-date>
+                </funding:summary>
+            </activities:group>
+        </activities:fundings>
+        <activities:peer-reviews/>
+        <activities:works>
+            <common:last-modified-date>2016-10-13T12:10:45</common:last-modified-date>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.6084/M9.FIGSHARE.1373669</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="17080227" path="/0000-0003-0902-4386/work/17080227" visibility="public" display-index="3">
+                    <common:created-date>2015-06-25T15:53:00.221Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.719Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>D4.2: Workflow for interoperability</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.6084/M9.FIGSHARE.1373669</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>data-set</work:type>
+                    <common:publication-date>
+                        <common:year>2015</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+                <work:work-summary put-code="17080287" path="/0000-0003-0902-4386/work/17080287" visibility="public" display-index="1">
+                    <common:created-date>2015-06-25T11:54:29.117Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                            <common:path>0000-0003-0902-4386</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Tom Demeranville</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>D4.2: Workflow for interoperability</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.6084/M9.FIGSHARE.1373669</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>report</work:type>
+                    <common:publication-date>
+                        <common:year>2015</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-13T16:31:52.227Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>cit</common:external-id-type>
+                        <common:external-id-value>cite-self</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                    <common:external-id>
+                        <common:external-id-type>pdb</common:external-id-type>
+                        <common:external-id-value>pdb-value-self</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="27365906" path="/0000-0003-0902-4386/work/27365906" visibility="public" display-index="1">
+                    <common:created-date>2016-10-13T16:31:52.221Z</common:created-date>
+                    <common:last-modified-date>2016-10-13T16:31:52.227Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                            <common:path>0000-0003-0902-4386</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Tom Demeranville</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>PDB TEST</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>pdb</common:external-id-type>
+                            <common:external-id-value>pdb-value-self</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                        <common:external-id>
+                            <common:external-id-type>cit</common:external-id-type>
+                            <common:external-id-value>cite-self</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>journal-article</work:type>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-13T16:44:23.221Z</common:last-modified-date>
+                <work:work-summary put-code="27366023" path="/0000-0003-0902-4386/work/27366023" visibility="public" display-index="1">
+                    <common:created-date>2016-10-13T16:44:23.199Z</common:created-date>
+                    <common:last-modified-date>2016-10-13T16:44:23.221Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>http://orcid.org/0000-0003-0902-4386</common:uri>
+                            <common:path>0000-0003-0902-4386</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>Tom Demeranville</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>PDB TEST PART OF</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>pdb</common:external-id-type>
+                            <common:external-id-value>pdb-value-part-of</common:external-id-value>
+                            <common:external-id-relationship>part-of</common:external-id-relationship>
+                        </common:external-id>
+                        <common:external-id>
+                            <common:external-id-type>cit</common:external-id-type>
+                            <common:external-id-value>cit-part-of</common:external-id-value>
+                            <common:external-id-relationship>part-of</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>journal-article</work:type>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.719Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.6084/M9.FIGSHARE.824317</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="18003936" path="/0000-0003-0902-4386/work/18003936" visibility="public" display-index="0">
+                    <common:created-date>2015-08-19T15:03:59.727Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.719Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>D3.1 Humanities and Social Science Proof of Concept</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.6084/M9.FIGSHARE.824317</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>data-set</work:type>
+                    <common:publication-date>
+                        <common:year>2013</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.5281/ZENODO.30030</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="18875588" path="/0000-0003-0902-4386/work/18875588" visibility="public" display-index="0">
+                    <common:created-date>2015-10-01T14:15:06.024Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>ORCID and DATACITE Interoperability Network (ODIN)</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.5281/ZENODO.30030</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>other</work:type>
+                    <common:publication-date>
+                        <common:year>2012</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.6084/m9.figshare.1598096</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="20140994" path="/0000-0003-0902-4386/work/20140994" visibility="public" display-index="0">
+                    <common:created-date>2015-11-10T15:35:41.596Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-9892-9368</common:uri>
+                            <common:path>0000-0001-9892-9368</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>figshare ORCID integration</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>ORCID and CERIF</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.6084/m9.figshare.1598096</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>other</work:type>
+                    <common:publication-date>
+                        <common:year>2015</common:year>
+                        <common:month>11</common:month>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.6084/M9.FIGSHARE.1582705.V1</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="23239357" path="/0000-0003-0902-4386/work/23239357" visibility="public" display-index="0">
+                    <common:created-date>2016-03-31T09:23:46.538Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>ORCID Public Data File 2015</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.6084/M9.FIGSHARE.1582705.V1</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>data-set</work:type>
+                    <common:publication-date>
+                        <common:year>2015</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.5281/ZENODO.48228</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="23239358" path="/0000-0003-0902-4386/work/23239358" visibility="public" display-index="0">
+                    <common:created-date>2016-03-31T09:23:46.870Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>THOR Communications Plan</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.5281/ZENODO.48228</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>other</work:type>
+                    <common:publication-date>
+                        <common:year>2016</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.5281/ZENODO.30799</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="23239361" path="/0000-0003-0902-4386/work/23239361" visibility="public" display-index="0">
+                    <common:created-date>2016-03-31T09:24:01.937Z</common:created-date>
+                    <common:last-modified-date>2016-04-25T10:49:27.720Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>D2.1: Artefact, Contributor, and Organisation Relationship Data Schema</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.5281/ZENODO.30799</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>other</work:type>
+                    <common:publication-date>
+                        <common:year>2015</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-13T12:10:42.100Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.5281/ZENODO.48705</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="24798864" path="/0000-0003-0902-4386/work/24798864" visibility="public" display-index="0">
+                    <common:created-date>2016-06-17T12:54:30.578Z</common:created-date>
+                    <common:last-modified-date>2016-10-13T12:10:42.100Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-client-id>
+                            <common:uri>http://orcid.org/client/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-client-id>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>THOR: Conceptual Model of Persistent Identifier Linking</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.5281/ZENODO.48705</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>other</work:type>
+                    <common:publication-date>
+                        <common:year>2016</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+            <activities:group>
+                <common:last-modified-date>2016-10-13T12:10:45.224Z</common:last-modified-date>
+                <common:external-ids>
+                    <common:external-id>
+                        <common:external-id-type>doi</common:external-id-type>
+                        <common:external-id-value>10.5281/ZENODO.46761</common:external-id-value>
+                        <common:external-id-relationship>self</common:external-id-relationship>
+                    </common:external-id>
+                </common:external-ids>
+                <work:work-summary put-code="25382907" path="/0000-0003-0902-4386/work/25382907" visibility="public" display-index="0">
+                    <common:created-date>2016-07-13T16:29:29.403Z</common:created-date>
+                    <common:last-modified-date>2016-10-13T12:10:45.224Z</common:last-modified-date>
+                    <common:source>
+                        <common:source-orcid>
+                            <common:uri>http://orcid.org/0000-0001-8099-6984</common:uri>
+                            <common:path>0000-0001-8099-6984</common:path>
+                            <common:host>orcid.org</common:host>
+                        </common:source-orcid>
+                        <common:source-name>DataCite</common:source-name>
+                    </common:source>
+                    <work:title>
+                        <common:title>THOR: Metrics and Tools</common:title>
+                    </work:title>
+                    <common:external-ids>
+                        <common:external-id>
+                            <common:external-id-type>doi</common:external-id-type>
+                            <common:external-id-value>10.5281/ZENODO.46761</common:external-id-value>
+                            <common:external-id-relationship>self</common:external-id-relationship>
+                        </common:external-id>
+                    </common:external-ids>
+                    <work:type>other</work:type>
+                    <common:publication-date>
+                        <common:year>2016</common:year>
+                    </common:publication-date>
+                </work:work-summary>
+            </activities:group>
+        </activities:works>
+    </activities:activities-summary>
+</record:record>
