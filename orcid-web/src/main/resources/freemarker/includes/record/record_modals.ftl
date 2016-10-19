@@ -400,13 +400,17 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>										
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-external-identifiers-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-external-identifiers-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-external-identifiers-move-up-'+$index" message="common.modals.move_up"/>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-external-identifiers-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-external-identifiers-move-down-'+$index)"
+ ></div>
+											<@orcid.tooltip elementId="'tooltip-external-identifiers-move-down-'+$index" message="common.modals.move_down" />											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)" ng-mouseover="commonSrvc.showTooltip('tooltip-external-identifiers-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-external-identifiers-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-external-identifiers-delete-'+$index" message="common.modals.delete" />
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="externalIdentifier.visibility.visibility"

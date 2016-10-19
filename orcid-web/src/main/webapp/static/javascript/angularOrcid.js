@@ -3599,13 +3599,14 @@ orcidNgModule.controller('CountryCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'c
     $scope.getCountryForm();
 }]);
 
-orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', function ($scope, $compile, bioBulkSrvc){
+orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBulkSrvc', 'commonSrvc', function ($scope, $compile, bioBulkSrvc, commonSrvc){
 	bioBulkSrvc.initScope($scope);
 	$scope.externalIdentifiersForm = null;
     $scope.orcidId = orcidVar.orcidId;
     $scope.primary = true;
     $scope.showElement = [];
     $scope.scrollTop = 0;
+    $scope.commonSrvc = commonSrvc;
     
     $scope.getExternalIdentifiersForm = function(){
         $.ajax({
@@ -3759,30 +3760,6 @@ orcidNgModule.controller('ExternalIdentifierCtrl', ['$scope', '$compile', 'bioBu
 		   $scope.externalIdentifiersForm.externalIdentifiers[idx]['displayIndex'] = $scope.externalIdentifiersForm.externalIdentifiers.length - idx;
        }       
    };
-   
-   $scope.showTooltip = function(elem, event){
-       $scope.top = angular.element(event.target.parentNode).parent().prop('offsetTop');
-       $scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
-       $scope.$watch('scrollTop', function (value) {
-           if (elem === '-privacy'){
-               angular.element('.edit-external-identifiers .popover-help-container').css({
-                   top: -195,
-                   left: -4
-               });
-           }else{
-               angular.element('.edit-external-identifiers .popover-help-container').css({
-                   top: $scope.top - $scope.scrollTop,
-                   left: $scope.left - 5
-               });
-           }
-       });
-       $scope.showElement[elem] = true;  
-   };
-   
-   $scope.hideTooltip = function(elem){
-   		$scope.showElement[elem] = false;
-   };
-
     
    $scope.closeEditModal = function(){
 	   $.colorbox.close();
