@@ -10569,6 +10569,11 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
         return $sce.trustAsHtml(htmlCode);
     };
     
+    $scope.clearFilters = function () {
+        $scope.country = null;
+        $scope.researchCommunity = null;
+    };
+    
     // populate the members feed
     membersListSrvc.getMembersList();
     
@@ -10595,6 +10600,11 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     
     $scope.renderHtml = function (htmlCode) {
         return $sce.trustAsHtml(htmlCode);
+    };
+    
+    $scope.clearFilters = function () {
+        $scope.country = null;
+        $scope.researchCommunity = null;
     };
     
     // populate the consortia feed

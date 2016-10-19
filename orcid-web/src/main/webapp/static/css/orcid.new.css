@@ -6686,6 +6686,14 @@ a:hover .mozilla-badge{
 	color: #a6ce39;
 }
 
+.member-list select{
+	margin: 0;
+}
+
+.member-list .btn-primary{
+	height: 30px;
+}
+
 /* Bulk edit bio*/
 
 .bio-edit-modal{
