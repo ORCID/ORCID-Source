@@ -92,7 +92,7 @@
 							<div class="popover popover-tooltip-add top">
 	    						<div class="arrow"></div>
 	    						<div class="popover-content">
-									<span>Add</span>
+									<span><@orcid.msg 'common.modals.add' /></span>
 	    						</div>
 	   						</div> 
 						</span></a>	        	      		
@@ -188,7 +188,7 @@
 							<div class="popover popover-tooltip-add top">
 	    						<div class="arrow"></div>
 	    						<div class="popover-content">
-									<span>Add</span>
+									<span><@orcid.msg 'common.modals.add' /></span>
 	    						</div>
 	   						</div>
 						</span></a>	        	    		
@@ -276,7 +276,7 @@
 							<div class="popover popover-tooltip-add top">
 	    						<div class="arrow"></div>
 	    						<div class="popover-content">
-									<span>Add</span>
+									<span><@orcid.msg 'common.modals.add' /></span>
 	    						</div>
 	   						</div>
 						</span></a>	        	    		
@@ -371,7 +371,7 @@
 							<div class="popover popover-tooltip-add top">
 	    						<div class="arrow"></div>
 	    						<div class="popover-content">
-									<span>Add</span>
+									<span><@orcid.msg 'common.modals.add' /></span>
 	    						</div>
 	   						</div>
 						</span></a>	        	    		
