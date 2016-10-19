@@ -18,7 +18,7 @@
 -->
 <div class="row">        
   	<!-- Information -->
-	<div class="col-md-10 col-sm-10 col-xs-12 bottomBuffer">
+	<div class="col-md-10 col-sm-10 col-xs-8 bottomBuffer">
 	    <h3 class="workspace-title">	    	
         	<span ng-bind="group.getActive().affiliationName.value"></span>:
         	<span ng-bind="group.getActive().city.value"></span><span ng-if="group.getActive().region.value">, </span><span ng-bind="group.getActive().region.value"></span>, <span ng-bind="group.getActive().countryForDisplay"></span>        	        	        	        	
@@ -49,7 +49,7 @@
         </div>
        </div>
        <!-- Privacy Settings -->
-       <div class="col-md-2 col-sm-2 col-xs-12 workspace-toolbar">       	
+       <div class="col-md-2 col-sm-2 col-xs-4 workspace-toolbar">       	
        	<#if !(isPublicProfile??)>       		
        		<ul class="workspace-private-toolbar">	
 			 	<li>
