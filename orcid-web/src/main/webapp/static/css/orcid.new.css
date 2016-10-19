@@ -5823,11 +5823,6 @@ textarea.form-control,
 	padding: 0;
 }
 
-.settings-table .popover{
-	left: -138px;
-  	top: -178px;
-}
-
 /* Widget */
 
 .widget-container{
@@ -6800,6 +6795,12 @@ a:hover .mozilla-badge{
 	cursor: normal;
 	color: #494a4c;
 }
+
+.settings-table #name-help.popover{
+	left: -127px;
+    top: 17px;
+}
+ 
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
