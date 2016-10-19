@@ -348,7 +348,7 @@ kind of variable. This temp value is only used in this macro lib -->
 
 <#macro tooltip elementId message>
 	<div>	
-		<div class="popover popover-tooltip top" ng-class="shownTooltip[${elementId}] == true ? 'block' : ''">
+		<div class="popover popover-tooltip top" ng-class="commonSrvc.shownElement[${elementId}] == true ? 'block' : ''">
     	<div class="arrow"></div>
     	<div class="popover-content">
 			<span><@spring.message "${message}"/></span>

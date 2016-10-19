@@ -548,10 +548,6 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
             var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
             var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
             var scrollTop = angular.element('.fixed-area').scrollTop();
-            
-            console.log(elem);
-            console.log(top);
-            
             if (elem === '-privacy'){
                 angular.element('.edit-record .popover-help-container').css({
                     top: -145,
@@ -572,17 +568,14 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
             var top = angular.element(event.target.parentNode).parent().prop('offsetTop');
             var left = angular.element(event.target.parentNode).parent().prop('offsetLeft');    
             var scrollTop = angular.element('.fixed-area').scrollTop();
-            if (elem === '-privacy'){
-                angular.element('.edit-record .popover-help-container').css({
-                    top: -145,
-                    left: 461
-                });
-            }else{
-                angular.element('.edit-record .popover-tooltip').css({
-                    top: top - scrollTop - topOffset,
-                    left: left + leftOffset
-                });
-            }
+            
+            console.log(top);
+            
+            angular.element('.edit-record .popover-tooltip').css({
+                top: top - scrollTop - topOffset,
+                left: left + leftOffset
+            });
+            
             angular.element('.edit-record .popover-tooltip .arrow').css({                
                 left: arrowOffset
             });            
