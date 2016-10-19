@@ -3207,12 +3207,12 @@ orcidNgModule.controller('OtherNamesCtrl',['$scope', '$compile', 'bioBulkSrvc', 
     	$scope.left = angular.element(event.target.parentNode).parent().prop('offsetLeft');
     	$scope.$watch('scrollTop', function (value) {
     	    if (elem === '-privacy'){
-    	        angular.element('.edit-aka .popover-help-container').css({
+    	        angular.element('.edit-aka .bulk-privacy-bar .popover-help-container').css({
     	            top: -195,
     	            left: -4
     	        });
     	    }else{
-    	        angular.element('.edit-aka .popover-help-container').css({
+    	        angular.element('.edit-aka .scroll-area .popover-help-container').css({
                     top: $scope.top - $scope.scrollTop,
                     left: $scope.left - 5
                 });
