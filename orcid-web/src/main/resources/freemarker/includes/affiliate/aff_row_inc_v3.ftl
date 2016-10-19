@@ -68,13 +68,13 @@
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="sources-container-header">          
 			<div class="row">
-				<div class="col-md-7 col-sm-7 col-xs-7">
+				<div class="col-md-7 col-sm-7 col-xs-12">
 					<@orcid.msg 'groups.common.source'/>: {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}	
 				</div>
-				<div class="col-md-3 col-sm-3 col-xs-3">
+				<div class="col-md-3 col-sm-3 col-xs-6">
 					<@orcid.msg 'groups.common.created'/>: <span ng-bind="group.getActive().createdDate | ajaxFormDateToISO8601"></span>
 				</div>				
-				<div class="col-md-2 col-sm-2 col-xs-2">
+				<div class="col-md-2 col-sm-2 col-xs-6">
 					<ul class="sources-options">
 						<#if !(isPublicProfile??)>
 							<li ng-if="group.getActive().source == '${effectiveUserOrcid}'">

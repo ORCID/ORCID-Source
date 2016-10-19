@@ -16,6 +16,7 @@
  */
 package org.orcid.core.salesforce.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.orcid.core.salesforce.model.Integration;
 import org.orcid.core.salesforce.model.Member;
 import org.orcid.core.salesforce.model.MemberDetails;
 import org.orcid.core.salesforce.model.SlugUtils;
+import org.orcid.core.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -151,6 +153,20 @@ public class SalesForceDaoImpl implements SalesForceDao {
      */
     private List<Member> retrieveMembersFromSalesForce(String accessToken) throws SalesForceUnauthorizedException {
         LOGGER.info("About get list of members from SalesForce");
+        List<Member> membersList = new ArrayList<>();
+        JSONObject jsonObject = retrieveMembersObject(accessToken);
+        String nextRecordsUrl = null;
+        do {
+            membersList.addAll(salesForceAdapter.createMembersListFromJson(jsonObject));
+            nextRecordsUrl = JsonUtils.extractString(jsonObject, "nextRecordsUrl");
+            if (nextRecordsUrl != null) {
+                jsonObject = retrieveMembersNextObject(accessToken, nextRecordsUrl);
+            }
+        } while (nextRecordsUrl != null);
+        return membersList;
+    }
+
+    private JSONObject retrieveMembersObject(String accessToken) {
         WebResource resource = createMemberListResource();
         ClientResponse response = resource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
         checkAuthorization(response);
@@ -158,12 +174,27 @@ public class SalesForceDaoImpl implements SalesForceDao {
             throw new RuntimeException("Error getting member list from SalesForce, status code =  " + response.getStatus() + ", reason = "
                     + response.getStatusInfo().getReasonPhrase() + ", body = " + response.getEntity(String.class));
         }
-        return salesForceAdapter.createMembersListFromJson(response.getEntity(JSONObject.class));
+        return response.getEntity(JSONObject.class);
+    }
+
+    private JSONObject retrieveMembersNextObject(String accessToken, String nextRecordsUrl) {
+        WebResource nextResource = creatNextRecordsResource(nextRecordsUrl);
+        ClientResponse nextResponse = nextResource.header("Authorization", "Bearer " + accessToken).accept(MediaType.APPLICATION_JSON_TYPE).get(ClientResponse.class);
+        if (nextResponse.getStatus() != 200) {
+            throw new RuntimeException("Error getting next results for member list from SalesForce, status code =  " + nextResponse.getStatus() + ", reason = "
+                    + nextResponse.getStatusInfo().getReasonPhrase() + ", body = " + nextResponse.getEntity(String.class));
+        }
+        return nextResponse.getEntity(JSONObject.class);
     }
 
     private WebResource createMemberListResource() {
         WebResource resource = client.resource(apiBaseUrl).path("services/data/v20.0/query").queryParam("q",
-                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c from Account WHERE Active_Member__c=TRUE");
+                "SELECT Account.Id, Account.Name, Account.Website, Account.BillingCountry, Account.Research_Community__c, (SELECT Consortia_Lead__c from Opportunities WHERE Membership_Start_Date__c=THIS_YEAR AND Membership_End_Date__c>TODAY ORDER BY Membership_Start_Date__c DESC), Account.Public_Display_Description__c, Account.Logo_Description__c, Account.Public_Display_Email__c from Account WHERE Active_Member__c=TRUE");
+        return resource;
+    }
+
+    private WebResource creatNextRecordsResource(String nextRecordsUrl) {
+        WebResource resource = client.resource(apiBaseUrl).path(nextRecordsUrl);
         return resource;
     }
 

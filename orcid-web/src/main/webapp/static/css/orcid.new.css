@@ -218,7 +218,7 @@ html {
 body {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-style: normal;  
-	color: #939598;
+	color: #494A4C; /* it was #939598 */
 	font-size: 16px;
 	min-height: 100%;
 	height: 100%;
@@ -1229,19 +1229,19 @@ ul.privacyHelp li.private {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;
-	color: #939498;	 
+	color: #494A4C;	 
 }
 
 #statistics span.stat-name-st{
 	font-size: 1.0em;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-style: normal;
-	color: #939498;	 
+	color: #494A4C;	 
 }
 
 #statistics span.stat-data {
 	font-size: 2em;
-	color: #939498;
+	color: #494A4C;
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: bold;
 	font-style: normal;	
@@ -1584,7 +1584,7 @@ ul.privacyHelp li.private {
 }
 
 h3,h4 {
-	color: #949599;
+	color: #494A4c;
 }
 
 a:hover {
@@ -1950,7 +1950,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .label-clear {
 	background: #fff;
 	border: 1px solid #c9c9c9;
-	color: #949599;
+	color: #494a4c;
 	text-shadow: 0;
 	font-weight: normal;
 }
@@ -1960,7 +1960,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 }
 
 .grey {
-	color: #949599;
+	color: #494a4c;
 }
 
 .green {
@@ -2547,7 +2547,7 @@ input.error {
 .workspace-public .alert,.workspace-public .alert.alert-info strong {
 	font-family: 'Gill Sans W02', 'Helvetica', sans-serif;
 	font-weight: normal;
-	color: #939598;
+	color: #494A4C;
 }
 
 /*
@@ -2598,7 +2598,12 @@ header overrides
 	border-top: 10px solid #A3CD39;	
 }
 
+.oauth-login{
+	color: #494A4C;
+}
+
 .oauth-login .alert {
+	
 	width: 330px;
 }
 
@@ -2744,7 +2749,7 @@ header overrides
 }
 
 .oauth-title {
-	color: #949599;
+	color: #494a4c;
 	line-height: 1.2;
 	font-weight: normal;
 	font-size: 18px;
@@ -2980,7 +2985,7 @@ a.btn-primary:hover {
 ul.personal-inf-display{
 	margin:0;
 	padding: 0;	
-	background: #939598; 	
+	background: #494A4C; 	
 }
 
 ul.personal-inf-display li{
@@ -3071,7 +3076,7 @@ ul.personal-inf-display li:last-child{
 }
 
 .twitter-typeahead .tt-hint{	
-	color: #939598; /* Hint text */		
+	color: #494A4C; /* Hint text */		
 }
 
 .tt-suggestion {
@@ -3307,7 +3312,7 @@ ul.personal-inf-display li:last-child{
 p.orcid-id-container{
 	width: 100%;
 	padding: 4px 5px 0px 5px;
-	background-color: #939598;
+	background-color: #494A4C;
 	margin-bottom: 1px;
 	float: left;	
 }
@@ -3535,7 +3540,7 @@ ul.sso-options li span {
 }
 
 .developer-tools .table-header-dt {
-	background-color: #939598;
+	background-color: #494A4C;
 	color: #FFF;
 }
 
@@ -3562,7 +3567,7 @@ ul.sso-options li span {
 	display: block;
 	-webkit-border-radius: 50%;
 	border-radius: 50%;
-	background: #949599;
+	background: #494a4c;
 	color: #FFF;
 	width: 35px;
 	height: 35px;
@@ -3584,7 +3589,7 @@ ul.sso-options li span {
 .developer-tools .icon-href-bg {
 	display: inline-block;
 	padding: 5px 10px;
-	background: #949599;
+	background: #494a4c;
 	color: #FFF;
 }
 
@@ -3660,7 +3665,7 @@ ul.sso-options li span {
 .developer-tools .tab-container .tab {
 	padding: 2px 10px;
 	text-align: center;
-	background: #949599;
+	background: #494a4c;
 	color: #FFF;
 }
 
@@ -3735,7 +3740,7 @@ ul.sso-options li span {
 	display: block;
 	-webkit-border-radius: 50%;
 	border-radius: 50%;
-	background: #949599;
+	background: #494a4c;
 	color: #FFF;
 	width: 35px;
 	height: 35px;
@@ -3944,7 +3949,7 @@ ul.sso-options li span {
 }
 
 .no-delegator-matches {
-	color: #949599;
+	color: #494a4c;
 }
 
 .no-delegate-matches {
@@ -4045,12 +4050,13 @@ ul#body-work-list > li{
 
 .workspace-profile .workspace-section .workspace-section-header .workspace-section-title{
 	color: #494A4C;
-	font-weight: normal;
+	font-weight: bold;
 	float: left;
 }
 
 .workspace-section-label{
 	float: left;
+	font-weight: bold;
 }
 
 .workspace-section-content{
@@ -4071,7 +4077,7 @@ ul#body-work-list > li{
 	top: -40px;
     left: -10px;
     display: none;
-    color: #939598;
+    color: #494A4C;
 }
 
 .workspace-section-title .edit-option .popover-tooltip .arrow{
@@ -4142,7 +4148,7 @@ ul#body-work-list > li{
 
 .confirm-oauth-access .id-banner .id-banner-container a.id-banner-switch, .id-banner-orcid-id
 	{
-	color: #939598;
+	color: #494A4C;
 	background: transparent;
 	font-size: 14px;
 }
@@ -4301,7 +4307,7 @@ ul.id-details li{
 .workspace-title{
 	float: left;
 	display: block;
-	color: #939598;
+	color: #494A4C;
 	font-weight: normal;
 }
 
@@ -4862,10 +4868,6 @@ ul.toggle-menu li:hover ul{
 	padding-right: 5px;
 }
 
-.bulk-edit .col-md-7{
-	padding-right: 0;
-}
-
 .bulk-edit ol{
 	padding-left: 16px;
 }
@@ -5052,11 +5054,10 @@ ul.toggle-menu li:hover ul{
 }
 
 .bulk-edit .bulk-edit-delete{	
-	display: block;
-	float: left;
-	margin: 5px 0 0 3px;
-	text-align: center;
-	position: relative;
+	float: right;
+    clear: both;
+    margin-right: 10px;
+    position: relative;
 	
 }
 
@@ -5163,7 +5164,7 @@ ul.sources-edit-list ul.sources-actions .git_create:hover:before{
 
 .sources-actions .git_create.grey:before,
 .sources-options .git_create.grey:before{	
-	color: #939598;
+	color: #494A4C;
 }	
 
 .sources-actions .git_pull_request:hover:before{
@@ -5212,11 +5213,11 @@ ul.sources-actions > li .popover-tooltip > .arrow{
 .workspace-toolbar .works-details .show-hide-details-popover{	
 	top: -38px;
 	left: -33px;
-	color: #939598;
+	color: #494A4C;
 }
 
 .popover-content strong{
-	color: #939598;
+	color: #494A4C;
 }
 
 .workspace-top .popover-help-container .popover.privacy-myorcid3,
@@ -5289,7 +5290,7 @@ ul.workspace-private-toolbar .popover-help-container .popover{
 
 .bulk-delete-modal h3,
 .bulk-delete-modal p{	
-	color: #929497;
+	color: #494A4C;
 }
 
 .bulk-delete-modal button{
@@ -5572,8 +5573,7 @@ ul.oauth-icons li {
 	color: #A3CD39;	
 }
 
-.gray-bold-about{
-	color: #939598;
+.gray-bold-about{	
 	font-weight: bold;
 	font-style: normal;
 	font-size: 14px;
@@ -5679,7 +5679,7 @@ ul.oauth-scopes li{
 .journaltitle{
 	font-size: 16px;
 	font-weight: normal;	
-	color: #939598;
+	color: #494A4C;
 	display: block;	
 	clear: both;
 }
@@ -5903,14 +5903,14 @@ textarea.form-control,
 .orcid-summary-widget{
 	height: auto;
 	font-family: 'Helvetica', 'Sans serif', 'Verdana';
-	color: #939598;
+	color: #494A4C;
 	background: #FFF;
 	margin: 0 auto;
 }
 
 .orcid-summary-widget a{
 	text-decoration: none;
-	color: #939598;
+	color: #494A4C;
 	width: 100%;
 }
 
@@ -5939,7 +5939,7 @@ textarea.form-control,
 }
 
 .orcid-summary-widget .orcid-widget-details .orcid-summary-items{
-	background: #939598;
+	background: #494A4C;
 	padding: 5px;
 	color: #FFF;
 	margin-top: 10px;
@@ -6015,7 +6015,7 @@ textarea.form-control,
 
 .workspace-peer-review span.title{
 	font-size: 14px;
-    color: #939598;
+    color: #494A4C;
     font-weight: normal;
     cursor: pointer;
 }
@@ -6396,7 +6396,7 @@ a:hover .mozilla-badge{
 .fixed-area ul.record-settings li .glyphicon-trash{
     margin-top: 5px;
     font-size: 18px;
-    color: #C9C9CA;
+    color: #494a4c;
 }
 
 .record-settings span{
@@ -6405,7 +6405,7 @@ a:hover .mozilla-badge{
 }
 
 .record-settings span.circle{
-	background: #C9C9CA;
+	background: #494a4c;
     padding: 5px;
     border-radius: 50%;
     color: #FFF;        
@@ -6556,7 +6556,7 @@ a:hover .mozilla-badge{
 
 .workspace-section .workspace-section-heading li span i:before{
 	font: 17px/1em 'Glyphicons Regular';
-	color: #939598;
+	color: #494A4C;
 }
 
 .glyphicons{
@@ -6579,7 +6579,7 @@ a:hover .mozilla-badge{
 
 .public-profile .workspace-section .workspace-section-header .inline-list .right .popover .popover-content{
 	white-space: nowrap;
-	color: #939598;	
+	color: #494A4C;	
 }
 
 
@@ -8030,6 +8030,20 @@ a:hover .mozilla-badge{
 
 	.member-list tr { 
 		padding: 10px 0 10px 0;
+	}
+	
+	.bulk-edit .bulk-edit-delete{
+		margin-right: 15px;
+	}
+	
+	.source-active > .sources-header div[class^="col-"]:not(:last-child){
+		padding-top: 3px;
+	}
+	
+	.sources-options .glyphicon-pencil,
+	.sources-options .glyphicon-trash{
+		font-size: 20px;
+		margin-left: 10px;
 	}
 
 }

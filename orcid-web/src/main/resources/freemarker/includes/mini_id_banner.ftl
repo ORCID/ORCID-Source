@@ -17,7 +17,7 @@
 
 -->
 <div class="id-banner <#if inDelegationMode>delegation-mode</#if>">
-	<div class="full-name" ng-cloak>
+	<div class="full-name pull-right" ng-if="requestInfoForm.userName != null" ng-cloak>	
 		{{requestInfoForm.userName}}		
 	</div>
 	<div class="oid">

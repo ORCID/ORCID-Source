@@ -7437,8 +7437,9 @@ orcidNgModule.controller('languageCtrl',['$scope', '$cookies', 'widgetSrvc', fun
                         $scope.language = $scope.languages[key];                        
                         $scope.widgetSrvc.setLocale($scope.language.value);
                         //In case some parameters were sent via URL
-                        var params = window.location.href.split("?")[1].split("&");
-                        if (params.length > 0){
+                        var params = window.location.href.split("?")[1];
+                        if (typeof params != 'undefined'){
+                            params = params.split("&");
                             //Removing language parameter (lang=[code]) if it exists
                             for ( var i = 0; i < params.length; i++ )
                                 if(params[i].indexOf("lang=") > -1)

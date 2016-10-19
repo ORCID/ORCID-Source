@@ -69,7 +69,7 @@
                 <li ng-repeat="funding in group.activities" ng-if="group.activePutCode == funding.putCode.value || editSources[group.groupId]" funding-put-code="{{funding.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-if="group.activePutCode == funding.putCode.value">
-                        <div class="col-md-9 col-sm-9 col-xs-8">
+                        <div class="col-md-9 col-sm-9 col-xs-7">
                             <h3 class="workspace-title">                                
                                <span ng-if="group.getActive().fundingTitle.title.value" ng-bind="group.getActive().fundingTitle.title.value"></span>                               
                             </h3>
@@ -98,7 +98,7 @@
                         </div>
 
 
-                            <div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">
+                            <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <#if !(isPublicProfile??)>
                                         <!-- Bulk edit tool / for further implementation
@@ -180,10 +180,10 @@
 
                      <!-- active row source display -->
                       <div class="row source-line" ng-if="group.activePutCode == funding.putCode.value">
-                          <div class="col-md-7 col-sm-7 col-xs-7" ng-if="editSources[group.groupId] == true">                              
+                          <div class="col-md-7 col-sm-7 col-xs-12" ng-if="editSources[group.groupId] == true">                              
                               {{(group.getActive().sourceName == null || group.getActive().sourceName == '') ? group.getActive().source : group.getActive().sourceName}}
                           </div>                          
-                          <div class="col-md-3 col-sm-3 col-xs-3" ng-if="editSources[group.groupId] == true">
+                          <div class="col-md-3 col-sm-3 col-xs-6" ng-if="editSources[group.groupId] == true">
                           
                           <span class="glyphicon glyphicon-check" ng-if="funding.putCode.value == group.defaultPutCode"></span><span ng-if="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                              <#if !(isPublicProfile??)>
@@ -194,7 +194,7 @@
                                 </div>
                             </#if>
                           </div>
-                          <div class="col-md-2 col-sm-2  col-xs-2 trash-source" ng-if="editSources[group.groupId]">
+                          <div class="col-md-2 col-sm-2  col-xs-6 trash-source" ng-if="editSources[group.groupId]">
 
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
@@ -227,12 +227,12 @@
 
                     <!-- not active row && edit sources -->
                     <div ng-if="group.activePutCode != funding.putCode.value" class="row source-line">
-                        <div class="col-md-7 col-sm-7 col-xs-7">
+                        <div class="col-md-7 col-sm-7 col-xs-12">
                                 <a ng-click="group.activePutCode = funding.putCode.value;">                                
                                 {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                             </a>
                         </div>                        
-                        <div class="col-md-3 col-sm-3 col-xs-5">
+                        <div class="col-md-3 col-sm-3 col-xs-6">
                              <#if !(isPublicProfile??)>
                                 <span class="glyphicon glyphicon-check" ng-if="funding.putCode.value == group.defaultPutCode"></span><span ng-if="funding.putCode.value == group.defaultPutCode"> <@orcid.msg 'groups.common.preferred_source' /></span>
                                 <a ng-click="fundingSrvc.makeDefault(group, funding.putCode.value);" ng-if="funding.putCode.value != group.defaultPutCode">
@@ -242,7 +242,7 @@
                         </div>
 
 
-                        <div class="col-md-2 col-sm-2 col-xs-2 trash-source">
+                        <div class="col-md-2 col-sm-2 col-xs-6 trash-source">
                             <#if !(isPublicProfile??)>
                                 <ul class="sources-actions">
                                     <li> 
@@ -274,10 +274,10 @@
                     <!-- Bottom row -->
 
                     <div class="row source-line" ng-hide="editSources[group.groupId] == true">
-                        <div class="col-md-7 col-sm-7 col-xs-7">
+                        <div class="col-md-7 col-sm-7 col-xs-12">
                               <@orcid.msg 'groups.common.source'/>: {{(funding.sourceName == null || funding.sourceName == '') ? funding.source : funding.sourceName}}
                         </div>                          
-                        <div class="col-md-3 col-sm-3 col-xs-3" ng-if="group.activePutCode == funding.putCode.value">
+                        <div class="col-md-3 col-sm-3 col-xs-6" ng-if="group.activePutCode == funding.putCode.value">
                             <span class="glyphicon glyphicon-check"></span><span> <@orcid.msg 'groups.common.preferred_source' /></span> <span ng-hide="group.activitiesCount == 1">(</span><a ng-click="showSources(group)" ng-hide="group.activitiesCount == 1" ng-mouseenter="showTooltip(group.groupId+'-sources')" ng-mouseleave="hideTooltip(group.groupId+'-sources')"><@orcid.msg 'groups.common.of'/> {{group.activitiesCount}}</a><span ng-hide="group.activitiesCount == 1">)</span>
                             
                             <div class="popover popover-tooltip top sources-popover" ng-if="showElement[group.groupId+'-sources']">
@@ -287,7 +287,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 col-sm-2 col-xs-2">
+                        <div class="col-md-2 col-sm-2 col-xs-6">
                             <ul class="sources-options" ng-cloak>
                                 <#if !(isPublicProfile??)>
 	                                <li>

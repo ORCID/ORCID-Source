@@ -47,5 +47,20 @@
 		</preConditions>
 		<sql>UPDATE userconnection SET status = 'STARTED' WHERE status is null;</sql>
 	</changeSet>
+    
+    <changeSet id="ADD-AUTHENTICATION-PROVIDER-ID-TO-THE-NOTIFICATION-TABLE" author="Will Simpson">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="notification" columnName="authentication_provider_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="notification">
+            <column name="authentication_provider_id" type="VARCHAR(1000)"/>
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="SET-PROVIDER-ID-ON-EXISTING-NOTIFICATIONS" author="Will Simpson" dbms="postgresql">
+        <sql>UPDATE notification n SET authentication_provider_id = c.authentication_provider_id FROM client_details c WHERE (n.client_source_id = c.client_details_id or n.source_id = c.client_details_id) AND n.notification_type = 'INSTITUTIONAL_CONNECTION' AND n.authentication_provider_id IS NULL;</sql>
+    </changeSet>
 
 </databaseChangeLog>                   

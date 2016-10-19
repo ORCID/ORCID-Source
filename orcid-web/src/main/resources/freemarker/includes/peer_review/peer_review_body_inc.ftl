@@ -24,7 +24,7 @@
                 <div class="row">
                     <div class="col-md-9 col-sm-9 col-xs-8">
                     	<div ng-init="peerReviewSrvc.getPeerReviewGroupDetails(peerReview.groupIdPutCode.value, peerReview.putCode.value)">
-                    		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span>review activity for </span><span class="peer-review-title"><span ng-bind="group.groupName"></span>(<span ng-bind="group.activitiesCount"></span>)</span></span>
+                    		<span class="title" ng-click="showDetailsMouseClick(group.groupId,$event);"><span ng-class="{'glyphicon x075 glyphicon-chevron-right': showDetails[group.groupId] == false || showDetails[group.groupId] == null, 'glyphicon x075 glyphicon-chevron-down': showDetails[group.groupId] == true}"></span> <span><@orcid.msg 'peer_review.review_activity_for' /> </span><span class="peer-review-title"><span ng-bind="group.groupName"></span>(<span ng-bind="group.activitiesCount"></span>)</span></span>
                     	</div>
                     </div>
                 	<div class="col-md-3 col-sm-3 col-xs-4 workspace-toolbar">

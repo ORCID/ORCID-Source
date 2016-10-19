@@ -83,7 +83,7 @@ public class IdentifierTypeManagerTest extends BaseTest{
     @Test
     public void test0FetchEntities(){
         Map<String,IdentifierType> map = idTypeMan.fetchIdentifierTypesByAPITypeName();
-        assertEquals(34, map.size()); //default set is 34 
+        assertEquals(35, map.size()); //default set is 34 
         assertTrue(map.containsKey("other-id"));
         assertEquals("other-id",map.get("other-id").getName());
         assertNotNull(map.get("other-id").getPutCode());        

@@ -416,7 +416,7 @@
 		<xs:sequence>
 			<xs:element name="citation-type" default="formatted-unspecified"
 				type="work:citation-type" maxOccurs="1" minOccurs="1" />
-			<xs:element name="citation" type="xs:string" maxOccurs="1"
+			<xs:element name="citation-value" type="xs:string" maxOccurs="1"
 				minOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
