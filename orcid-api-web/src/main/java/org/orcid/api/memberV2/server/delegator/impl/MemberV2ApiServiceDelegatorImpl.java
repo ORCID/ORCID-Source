@@ -324,8 +324,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
     
     @Override
-    public Response viewFundings(String orcid) {
-        
+    public Response viewFundings(String orcid) {        
         orcidSecurityManager.checkPermissions(ScopePathType.FUNDING_READ_LIMITED, orcid);        
         List<FundingSummary> fundingSummaries = profileFundingManager.getFundingSummaryList(orcid, getLastModifiedTime(orcid));
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);        
@@ -386,8 +385,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
     
     @Override
-    public Response viewEducations(String orcid) {
-        
+    public Response viewEducations(String orcid) {        
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         List<EducationSummary> educationsList = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
 
@@ -452,8 +450,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
     
     @Override
-    public Response viewEmployments(String orcid) {
-        
+    public Response viewEmployments(String orcid) {        
         orcidSecurityManager.checkPermissions(ScopePathType.AFFILIATIONS_READ_LIMITED, orcid);
         List<EmploymentSummary> employmentsList = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
 
@@ -525,8 +522,7 @@ public class MemberV2ApiServiceDelegatorImpl
     }
 
     @Override
-    public Response viewPeerReviews(String orcid) {
-        
+    public Response viewPeerReviews(String orcid) {        
         orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
         List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));        
         PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);
