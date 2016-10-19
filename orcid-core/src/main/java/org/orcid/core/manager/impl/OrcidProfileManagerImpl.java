@@ -46,6 +46,7 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.core.adapter.Jaxb2JpaAdapter;
 import org.orcid.core.constants.DefaultPreferences;
 import org.orcid.core.exception.ExceedMaxNumberOfElementsException;
@@ -1857,14 +1858,15 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
      */
     private void processProfilesWithFlagAndAddToMessageQueue(IndexingStatus status, JmsDestination destination){
         LOG.info("processing profiles with "+status.name()+" flag. sending to "+destination.name());
-        List<String> orcidsForIndexing = new ArrayList<>();
+        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(1);
         indexingStatuses.add(status);
         boolean connectionIssue = false;
         do{
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, new ArrayList<String>());
             LOG.info("processing batch of "+orcidsForIndexing.size());
-            for (String orcid : orcidsForIndexing){
+            for (Pair<String, IndexingStatus> p : orcidsForIndexing){
+                String orcid = p.getLeft();
                 Date last = profileDao.retrieveLastModifiedDate(orcid);
                 LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
                 if (messaging.send(mess,destination))
@@ -1877,11 +1879,17 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             LOG.warn("ABORTED processing profiles with "+status.name()+" flag. sending to "+destination.name());
     }
     
+    /**
+     * TODO: Disabled until we get move our solr indexing to the message listener 
+     * */
     @Override
     public void processProfilesWithReindexFlagAndAddToMessageQueue(){
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.REINDEX, JmsDestination.REINDEX);
     }
     
+    /**
+     * TODO: Disabled until we get move our solr indexing to the message listener 
+     * */
     @Override
     public void processProfilesWithFailedFlagAndAddToMessageQueue(){
         this.processProfilesWithFlagAndAddToMessageQueue(IndexingStatus.FAILED, JmsDestination.UPDATED_ORCIDS);
@@ -1907,7 +1915,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
             return;
         }
 
-        List<String> orcidsForIndexing = new ArrayList<>();
+        List<Pair<String, IndexingStatus>> orcidsForIndexing = new ArrayList<>();
         List<String> orcidFailures = new ArrayList<>();
         List<IndexingStatus> indexingStatuses = new ArrayList<IndexingStatus>(2);
         indexingStatuses.add(IndexingStatus.PENDING);
@@ -1915,13 +1923,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
         do {
             orcidsForIndexing = profileDao.findOrcidsByIndexingStatus(indexingStatuses, INDEXING_BATCH_SIZE, orcidFailures);
             LOG.info("Got batch of {} profiles for indexing", orcidsForIndexing.size());
-            for (final String orcid : orcidsForIndexing) {
-                FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid));
+            for (final Pair<String, IndexingStatus> p : orcidsForIndexing) {
+                String orcid = p.getLeft();
+                IndexingStatus status = p.getRight();
+                FutureTask<String> task = new FutureTask<String>(new GetPendingOrcid(orcid, status));
                 executorService.execute(task);
                 futureHM.put(orcid, task);
             }
-            for (final String orcid : orcidsForIndexing) {
-                try {
+            for (final Pair<String, IndexingStatus> p : orcidsForIndexing) {
+                String orcid = p.getLeft();
+                try {                    
                     futureHM.remove(orcid).get(240, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     orcidFailures.add(orcid);
@@ -1955,14 +1966,16 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
 
     class GetPendingOrcid implements Callable<String> {
         String orcid = null;
+        IndexingStatus status = null;
 
-        public GetPendingOrcid(String orcid) {
+        public GetPendingOrcid(String orcid, IndexingStatus status) {
             this.orcid = orcid;
+            this.status = status;
         }
 
         @Override
         public String call() throws Exception {
-            processProfilePendingIndexingInTransaction(orcid);
+            processProfilePendingIndexingInTransaction(orcid, status);
             return "was successful " + orcid;
         }
 
@@ -1973,7 +1986,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 new LinkedBlockingQueue<Runnable>(INDEXING_BATCH_SIZE), Executors.defaultThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
-    public void processProfilePendingIndexingInTransaction(final String orcid) {
+    public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
             protected void doInTransactionWithoutResult(TransactionStatus status) {
@@ -1985,6 +1998,24 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                     LOG.debug("Got profile to index: {}", orcid);
                     orcidIndexManager.persistProfileInformationForIndexingIfNecessary(orcidProfile);
                     profileDao.updateIndexingStatus(orcid, IndexingStatus.DONE);
+                }
+                
+                //TODO: Phase # 1: when sending messages to SOLR, also send them to the MQ in case the record is in REINDEX state
+                if(IndexingStatus.REINDEX.equals(indexingStatus)) {
+                    Date last = profileDao.retrieveLastModifiedDate(orcid);
+                    LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
+                    LOG.info("Sending record " + orcid + " to the message queue");
+                    if (messaging.send(mess, JmsDestination.REINDEX)) {
+                        LOG.warn("Record " + orcid + " was sent to the message queue");
+                    } else {
+                        LOG.error("Record " + orcid + " couldnt been sent to the message queue");
+                        // TODO: we need a better way to handle failures, but,
+                        // for now, we set it as re-index again, so, SOLR will
+                        // not pick it again since it have the same last
+                        // modified date, and, we will try sending it again to
+                        // the MQ later
+                        profileDao.updateIndexingStatus(orcid, IndexingStatus.REINDEX);
+                    }
                 }
             }
         });

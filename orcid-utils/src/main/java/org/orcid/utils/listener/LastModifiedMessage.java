@@ -64,8 +64,7 @@ public class LastModifiedMessage {
     public String getOrcid(){
         return map.get(MessageConstants.ORCID.value);
     }
-    
-    @SuppressWarnings("deprecation")
+        
     public Date getLastUpdated(){
         String time = map.get(MessageConstants.DATE.value);
         if (time == null)

@@ -98,9 +98,6 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         
         //update and clear scope cache
         this.updateLastModifiedDateAndIndexingStatus(orcid);
-        //profileDao.updateLastModifiedDateAndIndexingStatus(orcid);
-        
-        
     }
 
     @AfterReturning(POINTCUT_DEFINITION_BASE + " && args(profileAware, ..)")
@@ -130,7 +127,7 @@ public class ProfileLastModifiedAspect implements PriorityOrdered {
         Date last = retrieveLastModifiedDate(orcid);
         LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
         if (messaging.isEnabled()){
-            if(!messaging.send(mess,JmsDestination.UPDATED_ORCIDS)) {
+            if(!messaging.send(mess, JmsDestination.UPDATED_ORCIDS)) {
                 profileDao.updateLastModifiedDateAndIndexingStatus(orcid, IndexingStatus.FAILED);    
             }
         }          
