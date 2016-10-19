@@ -35,10 +35,10 @@
 	            		<a href="<@orcid.rootPath '/members'/>">All members</a> | <a class="selected" href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
 	            	<p>
 	            			Filter by
-							<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.consortiaList | unique:'country'">
+							<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.consortiaList | unique:'country' | orderBy : 'country'">
                 					<option value="">Country</option>
             				</select>
-            				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.consortiaList | unique:'researchCommunity'">
+            				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.consortiaList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
                 					<option value="">Research community</option>
             				</select>
             				<button class="btn btn-primary" ng-click="clearFilters()">Reset filters</button>

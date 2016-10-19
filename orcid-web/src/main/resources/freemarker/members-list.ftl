@@ -42,10 +42,10 @@
 	            			</p>
 	            			<p>
 	            			Filter by
-							<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country'">
+							<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country' | orderBy : 'country'">
                 					<option value="">Country</option>
             				</select>
-            				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity'">
+            				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
                 					<option value="">Research community</option>
             				</select>
             				<button class="btn btn-primary" ng-click="clearFilters()">Reset filters</button>
