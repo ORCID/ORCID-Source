@@ -77,11 +77,11 @@
 								${springMacroRequestContext.getMessage("manage.email.verified")}
 							</span>
 	                    </td>
-	                    <td width="26" id="delete-emails">
+	                    <td width="26" class="tooltip-container">
 	                        <a name="delete-email" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && !emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmail(email)" ng-cloak>
-									<div class="popover popover-tooltip top">
+									<div class="popover small-popover popover-tooltip top">
 	    								<div class="arrow"></div>
 	    								<div class="popover-content">
 											<span><@spring.message "common.modals.delete"/></span>
@@ -91,7 +91,7 @@
 							<a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && emailSrvc.popUp"
 	                            ng-click="confirmDeleteEmailInline(email, $event)" ng-cloak>
-								<div class="popover popover-tooltip top">
+								<div class="popover small-popover popover-tooltip top">
 	    							<div class="arrow"></div>
 	    							<div class="popover-content">
 										<span><@spring.message "common.modals.delete"/></span>

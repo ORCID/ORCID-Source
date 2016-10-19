@@ -6783,17 +6783,21 @@ a:hover .mozilla-badge{
 	color: #494a4c;
 }
 
-#delete-emails a.glyphicon-trash .popover-tooltip{
+.tooltip-container a.glyphicon-trash .popover-tooltip{
 	display: none;
 	min-width: 30px;
 	top: -43px;
     left: -27px;
 }
 
-#delete-emails a.glyphicon-trash:hover .popover-tooltip{
+.tooltip-container a.glyphicon-trash:hover .popover-tooltip{
 	display: block;
 	cursor: normal;
 	color: #494a4c;
+}
+
+.tooltip-container a.glyphicon-trash:hover .arrow{
+	left: 34px;
 }
 
 .settings-table #name-help.popover{

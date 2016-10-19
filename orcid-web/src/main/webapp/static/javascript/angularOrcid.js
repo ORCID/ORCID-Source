@@ -2248,10 +2248,11 @@ orcidNgModule.controller('EmailFrequencyLinkCtrl',['$scope','$rootScope', functi
     $scope.getEmailFrequencies();
 }]);
 
-orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', function ($scope, prefsSrvc) {
+orcidNgModule.controller('WorksPrivacyPreferencesCtrl',['$scope', 'prefsSrvc', 'commonSrvc', function ($scope, prefsSrvc, commonSrvc) {
     $scope.prefsSrvc = prefsSrvc;
     $scope.privacyHelp = {};
     $scope.showElement = {};
+    $scope.commonSrvc = commonSrvc;
 
     $scope.toggleClickPrivacyHelp = function(key) {
         if (!document.documentElement.className.contains('no-touch'))
