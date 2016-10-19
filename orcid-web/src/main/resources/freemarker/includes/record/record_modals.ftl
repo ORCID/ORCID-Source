@@ -48,7 +48,11 @@
 							scroll-area-padding
 							</#if>
 						   ">		
-
+						   <div class="row">
+								<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+									<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+								</div>		
+							</div>
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		
@@ -57,7 +61,7 @@
 									</div>									    
 									<div class="source" ng-if="otherName.sourceName || otherName.sourceName == null"><@orcid.msg 'manage_bio_settings.source'/>: <span ng-if="otherName.sourceName">{{otherName.sourceName}}</span><span ng-if="otherName.sourceName == null">{{orcidId}}</span></div>
 								</div>							
-								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">
+								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">																															
 									<ul class="record-settings pull-right">
 										<li>
 											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
@@ -68,7 +72,7 @@
 										<li>										
 											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>
 										</li>
-										<li>											
+										<li>
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
 				             					questionClick="toggleClickPrivacyHelp($index)"
 				             					clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
@@ -429,7 +433,7 @@
 <script type="text/ng-template" id="bulk-edit">					
 	<div class="row bulk-edit-modal">
 		<div class="pull-right bio-edit-modal">				
-			<span class="custom-control-title"><@spring.message "groups.common.bulk_edit"/></span>
+			<span class="custom-control-title"><@spring.message "groups.common.bulk_edit_privacy"/></span>
 			<div style="position: static;">
 				<@orcid.privacyToggle3  angularModel="bioModel"
 		        	questionClick="toggleClickPrivacyHelp($index)"
