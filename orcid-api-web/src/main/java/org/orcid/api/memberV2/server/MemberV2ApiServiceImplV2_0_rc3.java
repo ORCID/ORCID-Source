@@ -80,10 +80,15 @@ import org.orcid.jaxb.model.notification.permission_rc3.NotificationPermission;
 import org.orcid.jaxb.model.notification_rc3.Notification;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
 import org.orcid.jaxb.model.record.summary_rc3.EducationSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Educations;
 import org.orcid.jaxb.model.record.summary_rc3.EmploymentSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Employments;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record.summary_rc3.WorkSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Works;
 import org.orcid.jaxb.model.record_rc3.Address;
 import org.orcid.jaxb.model.record_rc3.Education;
 import org.orcid.jaxb.model.record_rc3.Employment;
@@ -197,7 +202,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(WORKS)
-    @ApiOperation(value = "Fetch all works", response = Work.class, authorizations = {
+    @ApiOperation(value = "Fetch all works", response = Works.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })
     public Response viewWorks(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewWorks(orcid);
@@ -274,7 +279,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(FUNDINGS)
-    @ApiOperation(value = "Fetch all fundings", response = Funding.class, authorizations = {
+    @ApiOperation(value = "Fetch all fundings", response = Fundings.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })    
     public Response viewFundings(@PathParam("orcid") String orcid) {        
         return serviceDelegator.viewFundings(orcid);
@@ -340,7 +345,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EDUCATIONS)
-    @ApiOperation(value = "Fetch all educations", response = Funding.class, authorizations = {
+    @ApiOperation(value = "Fetch all educations", response = Educations.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })    
     public Response viewEducations(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEducations(orcid);
@@ -402,7 +407,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(EMPLOYMENTS)
-    @ApiOperation(value = "Fetch all employments", response = Funding.class, authorizations = {
+    @ApiOperation(value = "Fetch all employments", response = Employments.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })    
     public Response viewEmployments(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewEmployments(orcid);
@@ -464,7 +469,7 @@ public class MemberV2ApiServiceImplV2_0_rc3 extends MemberV2ApiServiceImplHelper
     @GET
     @Produces(value = { VND_ORCID_XML, ORCID_XML, MediaType.APPLICATION_XML, VND_ORCID_JSON, ORCID_JSON, MediaType.APPLICATION_JSON })
     @Path(PEER_REVIEWS)
-    @ApiOperation(value = "Fetch all peer reviews", response = Funding.class, authorizations = {
+    @ApiOperation(value = "Fetch all peer reviews", response = PeerReviews.class, authorizations = {
             @Authorization(value = "orcid_auth", scopes = { @AuthorizationScope(scope = ScopeConstants.READ_LIMITED, description = "you need this") }) })    
     public Response viewPeerReviews(@PathParam("orcid") String orcid) {
         return serviceDelegator.viewPeerReviews(orcid);

@@ -259,6 +259,9 @@ public class MemberV2ApiServiceDelegatorImpl
         Works works = workManager.groupWorks(worksList, false);
         works = visibilityFilter.filter(works, orcid);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(works);
+        ActivityUtils.cleanEmptyFields(works);
+        ActivityUtils.setPathToWorks(works, orcid);
+        sourceUtils.setSourceName(works);
         return Response.ok(works).build();
     }
 
@@ -330,6 +333,8 @@ public class MemberV2ApiServiceDelegatorImpl
         Fundings fundings = profileFundingManager.groupFundings(fundingSummaries, false);        
         fundings = visibilityFilter.filter(fundings, orcid);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(fundings);
+        ActivityUtils.setPathToFundings(fundings, orcid);
+        sourceUtils.setSourceName(fundings);
         return Response.ok(fundings).build();
     }
     
@@ -525,10 +530,11 @@ public class MemberV2ApiServiceDelegatorImpl
     public Response viewPeerReviews(String orcid) {        
         orcidSecurityManager.checkPermissions(ScopePathType.PEER_REVIEW_READ_LIMITED, orcid);
         List<PeerReviewSummary> peerReviewList = peerReviewManager.getPeerReviewSummaryList(orcid, getLastModifiedTime(orcid));        
-        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);
-        
+        PeerReviews peerReviews = peerReviewManager.groupPeerReviews(peerReviewList, false);        
         peerReviews = visibilityFilter.filter(peerReviews, orcid);
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(peerReviews);
+        ActivityUtils.setPathToPeerReviews(peerReviews, orcid);
+        sourceUtils.setSourceName(peerReviews);
         return Response.ok(peerReviews).build();
     }
     
