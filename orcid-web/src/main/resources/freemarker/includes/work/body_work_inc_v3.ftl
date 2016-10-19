@@ -76,7 +76,7 @@
 
                     <!-- active row summary info -->
                     <div class="row" ng-if="group.activePutCode == work.putCode.value">
-                        <div class="col-md-9 col-sm-9 col-xs-12">
+                        <div class="col-md-9 col-sm-9 col-xs-7">
                             <h3 class="workspace-title">
                                 <span ng-bind="work.title.value"></span>
                                 <span class="journaltitle" ng-if="work.journalTitle.value" ng-bind="work.journalTitle.value"></span>                                
@@ -87,7 +87,7 @@
                         </div>
 
 
-                          <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">
+                          <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                               <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">                              	  
                                   <#if !(isPublicProfile??)>
                                       <!-- Bulk edit tool -->
