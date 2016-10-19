@@ -6788,6 +6788,19 @@ a:hover .mozilla-badge{
 	color: #494a4c;
 }
 
+#delete-emails a.glyphicon-trash .popover-tooltip{
+	display: none;
+	min-width: 30px;
+	top: -43px;
+    left: -27px;
+}
+
+#delete-emails a.glyphicon-trash:hover .popover-tooltip{
+	display: block;
+	cursor: normal;
+	color: #494a4c;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.container{
