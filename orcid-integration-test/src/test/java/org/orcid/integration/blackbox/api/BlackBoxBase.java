@@ -273,7 +273,7 @@ public class BlackBoxBase {
         (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS, BBBUtil.SLEEP_MILLISECONDS)).until(BBBUtil.angularHasFinishedProcessing());
         
         try {
-            By editBio = By.xpath("//div[@ng-controller='BiographyCtrl']//div[@class='row']//div[2]//ul//li//a[@ng-click='toggleEdit()']");
+            By editBio = By.xpath("//div[@ng-controller='BiographyCtrl']//div[@class='row']//div[2]//div[@ng-click='toggleEdit()']");
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.visibilityOfAllElementsLocatedBy(editBio));
             WebElement editBioButton = webDriver.findElement(editBio);
             editBioButton.click();
@@ -308,7 +308,7 @@ public class BlackBoxBase {
         int privacyIndex = getPrivacyIndex(changeTo);
         
         try {                                    
-            By openEditNames = By.xpath("//div[@id = 'names-section']//span[@id = 'open-edit-names']"); 
+            By openEditNames = By.xpath("//div[@id = 'names-section']//div[@id = 'open-edit-names']"); 
             (new WebDriverWait(webDriver, BBBUtil.TIMEOUT_SECONDS)).until(ExpectedConditions.presenceOfElementLocated(openEditNames));            
             WebElement openEditNamesElement = webDriver.findElement(openEditNames);
             openEditNamesElement.click();

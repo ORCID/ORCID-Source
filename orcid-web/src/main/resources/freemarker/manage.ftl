@@ -348,10 +348,17 @@
 		                    		</span>
 		                    	</div>
 		                    </td>
-		                    <td width="5%">
+		                    <td width="5%" class="tooltip-container">
 	            				<a id="revokeAppBtn" name="{{applicationSummary.orcidPath}}" ng-click="confirmRevoke(applicationSummary)"
-	            					class="glyphicon glyphicon-trash grey" title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"
-	            					ng-hide="isPasswordConfirmationRequired"></a>
+	            					class="glyphicon glyphicon-trash grey"
+	            					ng-hide="isPasswordConfirmationRequired">
+		            					<div class="popover popover-tooltip top">
+		    								<div class="arrow"></div>
+		    								<div class="popover-content">
+												<span><@spring.message "manage.revokeaccess"/></span>
+		    								</div>
+		   								</div>
+	            					</a>
 		    				</td>
 		                </tr>
 		            </tbody>
@@ -387,12 +394,18 @@
                         <td width="40%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.creditName.content}}</a></td>
                         <td width="30%"><a href="{{delegationDetails.delegateSummary.orcidIdentifier.uri}}" target="_blank">{{delegationDetails.delegateSummary.orcidIdentifier.path}}</a></td>
                         <td width="20%">{{delegationDetails.approvalDate.value|date:'yyyy-MM-dd'}}</td>
-                        <td width="10%">
+                        <td width="10%" class="tooltip-container">
                             <a
                             ng-hide="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path || isPasswordConfirmationRequired"
                             ng-click="confirmRevoke(delegationDetails.delegateSummary.creditName.content, delegationDetails.delegateSummary.orcidIdentifier.path)"
-                            class="glyphicon glyphicon-trash grey"
-                            title="${springMacroRequestContext.getMessage("manage.revokeaccess")}"></a>
+                            class="glyphicon glyphicon-trash grey"">
+                           		<div class="popover popover-tooltip top">
+    								<div class="arrow"></div>
+    								<div class="popover-content">
+										<span><@spring.message "manage.revokeaccess"/></span>
+    								</div>
+   								</div>                            
+                            </a>
                             <span ng-show="realUserOrcid === delegationDetails.delegateSummary.orcidIdentifier.path">${springMacroRequestContext.getMessage("manage_delegation.you")}</span>
                         </td>
                     </tr>

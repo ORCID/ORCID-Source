@@ -68,7 +68,15 @@
                         			</a> | 
                         			<a href="{{peerReview.url.value}}" ng-if="peerReview.url != null" target="_blank"><span><@orcid.msg 'peer_review.view' /></span></a><span ng-if="peerReview.url == null"><@orcid.msg 'peer_review.view' /></span>
                         			 <#if !(isPublicProfile??)>
-                        				<a ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)"> | <span class="glyphicon glyphicon-trash"></span></a>
+                        				<div ng-click="deletePeerReviewConfirm(group.getActive().putCode.value, false)" class="peer-review-delete"> | <span class="glyphicon glyphicon-trash"></span>
+	                        				<div class="popover popover-tooltip top">
+											    <div class="arrow"></div>
+											    <div class="popover-content">
+											        <span><@orcid.msg 'groups.common.delete_this_source'/></span>
+											    </div>                
+										    </div>
+										                            				
+                        				</div>
                         			 </#if>
                         		</span>
                         	</div>

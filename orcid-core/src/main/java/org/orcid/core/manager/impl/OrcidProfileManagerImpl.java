@@ -2001,7 +2001,7 @@ public class OrcidProfileManagerImpl extends OrcidProfileManagerReadOnlyImpl imp
                 }
                 
                 //TODO: Phase # 1: when sending messages to SOLR, also send them to the MQ in case the record is in REINDEX state
-                if(IndexingStatus.REINDEX.equals(indexingStatus)) {
+                if(messaging.isEnabled() && IndexingStatus.REINDEX.equals(indexingStatus)) {
                     Date last = profileDao.retrieveLastModifiedDate(orcid);
                     LastModifiedMessage mess = new LastModifiedMessage(orcid,last);
                     LOG.info("Sending record " + orcid + " to the message queue");

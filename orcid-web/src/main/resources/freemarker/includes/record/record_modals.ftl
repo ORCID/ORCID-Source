@@ -64,13 +64,16 @@
 								<div class="col-md-6 col-sm-6 col-xs-12" style="position: static">																															
 									<ul class="record-settings pull-right">
 										<li>
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-aka-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-aka-move-up-'+$index)"></div>											
+											<@orcid.tooltip elementId="'tooltip-aka-move-up-'+$index" message="common.modals.move_up"/>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-aka-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-aka-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-aka-move-down-'+$index" message="common.modals.move_down" />											
 										</li>
-										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)"></span>
+										<li>
+											<div class="glyphicon glyphicon-trash" ng-click="deleteOtherName(otherName)" ng-mouseover="commonSrvc.showTooltip('tooltip-aka-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-aka-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-aka-delete-'+$index" message="common.modals.delete" />
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="otherName.visibility.visibility"
@@ -89,7 +92,14 @@
 						</div>
 					</div>
 					<div class="record-buttons">
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	      		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span><@orcid.msg 'common.modals.add' /></span>
+	    						</div>
+	   						</div> 
+						</span></a>	        	      		
 			            <button class="btn btn-primary pull-right" ng-click="setOtherNamesForm()"><@spring.message "freemarker.btnsavechanges"/></button>	        	      		
 			            <a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>					
@@ -150,13 +160,16 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">																				
 										<li>									
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-country-move-up-'+$index" message="common.modals.move_up"/>											
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-country-move-down-'+$index" message="common.modals.move_down" />
 										</li>
 										<li>
-											<span class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteCountry(country)" ng-mouseover="commonSrvc.showTooltip('tooltip-country-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-country-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-country-delete-'+$index" message="common.modals.delete" />											
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="country.visibility.visibility"
@@ -180,7 +193,14 @@
 						</div>
 					</div>					
 					<div class="record-buttons">						
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span><@orcid.msg 'common.modals.add' /></span>
+	    						</div>
+	   						</div>
+						</span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setCountryForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
@@ -238,13 +258,16 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>							
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-keyword-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-keyword-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-keyword-move-up-'+$index" message="common.modals.move_up"/>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-keyword-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-keyword-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-keyword-move-down-'+$index" message="common.modals.move_down" />											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteKeyword(keyword)" ng-mouseover="commonSrvc.showTooltip('tooltip-keyword-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-keyword-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-keyword-delete-'+$index" message="common.modals.delete" />											
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="keyword.visibility.visibility"
@@ -263,7 +286,14 @@
 						</div>
 					</div>
 					<div class="record-buttons">						
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span><@orcid.msg 'common.modals.add' /></span>
+	    						</div>
+	   						</div>
+						</span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setKeywordsForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
@@ -321,13 +351,16 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>											
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)"></span>
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-websites-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-websites-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-websites-move-up-'+$index" message="common.modals.move_up"/>
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="swapDown($index)"></span>
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-websites-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-websites-move-down-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-websites-move-down-'+$index" message="common.modals.move_down" />
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteWebsite(website)" ng-mouseover="commonSrvc.showTooltip('tooltip-websites-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-websites-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-websites-delete-'+$index" message="common.modals.delete" />
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="website.visibility.visibility"
@@ -336,7 +369,8 @@
 		             	  						publicClick="setPrivacyModal('PUBLIC', $event, website)" 
                 	      						limitedClick="setPrivacyModal('LIMITED', $event, website)" 
                 	      						privateClick="setPrivacyModal('PRIVATE', $event, website)"
-                	      						elementId="$index"/>	
+                	      						elementId="$index"
+											/>
 										</li>
 									</ul>
 									<span class="created-date pull-right" ng-show="website.createdDate" ng-class="{'hidden-xs' : website.createdDate}"><@orcid.msg 'manage_bio_settings.created'/>: {{website.createdDate.year + '-' + website.createdDate.month + '-' + website.createdDate.day}}</span>
@@ -352,7 +386,14 @@
 					</div>
 					
 					<div class="record-buttons">						
-						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left"></span></a>	        	    		
+						<a ng-click="addNewModal()"><span class="glyphicon glyphicon-plus pull-left">
+							<div class="popover popover-tooltip-add top">
+	    						<div class="arrow"></div>
+	    						<div class="popover-content">
+									<span><@orcid.msg 'common.modals.add' /></span>
+	    						</div>
+	   						</div>
+						</span></a>	        	    		
 		            	<button class="btn btn-primary pull-right" ng-click="setWebsitesForm()"><@spring.message "freemarker.btnsavechanges"/></button>
 		            	<a class="cancel-option pull-right" ng-click="closeEditModal()"><@spring.message "freemarker.btncancel"/></a>
 					</div>
@@ -411,13 +452,17 @@
 								<div class="col-md-6" style="position: static">
 									<ul class="record-settings pull-right">
 										<li>										
-											<span class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-up circle" ng-click="$first || swapUp($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-external-identifiers-move-up-'+$index, $event, 37, -33, 44)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-external-identifiers-move-up-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-external-identifiers-move-up-'+$index" message="common.modals.move_up"/>											
 										</li>
 										<li>																						
-											<span class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)"></span>											
+											<div class="glyphicon glyphicon-arrow-down circle" ng-click="$last || swapDown($index)" ng-mouseover="commonSrvc.showTooltip('tooltip-external-identifiers-move-down-'+$index, $event, 37, -2, 53)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-external-identifiers-move-down-'+$index)"
+ ></div>
+											<@orcid.tooltip elementId="'tooltip-external-identifiers-move-down-'+$index" message="common.modals.move_down" />											
 										</li>
 										<li>										
-											<span class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)"></span>											
+											<div class="glyphicon glyphicon-trash" ng-click="deleteExternalIdentifier(externalIdentifier)" ng-mouseover="commonSrvc.showTooltip('tooltip-external-identifiers-delete-'+$index, $event, 37, 50, 39)" ng-mouseleave="commonSrvc.hideTooltip('tooltip-external-identifiers-delete-'+$index)"></div>
+											<@orcid.tooltip elementId="'tooltip-external-identifiers-delete-'+$index" message="common.modals.delete" />
 										</li>
 										<li>
 											<@orcid.privacyToggle3  angularModel="externalIdentifier.visibility.visibility"
@@ -470,8 +515,11 @@
 		            publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
                 	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
                 	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-                	elementId="bulkEdit" />			
+                	elementId="bulkEdit" />		
+
 			</div>
 		</div>			
 	</div>
 </script>
+
+	
