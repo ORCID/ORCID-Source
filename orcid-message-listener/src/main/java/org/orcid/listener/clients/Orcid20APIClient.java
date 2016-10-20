@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.record_rc3.Record;
@@ -42,11 +43,14 @@ public class Orcid20APIClient {
     protected Client jerseyClient;
     
     protected final URI baseUri;
+    
+    protected final String host;
 
     @Autowired
-    public Orcid20APIClient(@Value("${org.orcid.message-lisener.api20BaseURI}") String baseUri) throws URISyntaxException {
-        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri);
+    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri, @Value("${org.orcid.message-listener.host_header_override}") String hostHeaderOverride) throws URISyntaxException {
+        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri + " and host = " + hostHeaderOverride);
         this.baseUri = new URI(baseUri);
+        this.host = hostHeaderOverride;
     }
 
     /**
@@ -57,12 +61,12 @@ public class Orcid20APIClient {
      */
     public Record fetchPublicProfile(String orcid) throws LockedRecordException{
         WebResource webResource = jerseyClient.resource(baseUri);
-        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
+        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).header(HttpHeaders.HOST, host).get(ClientResponse.class);
         if (response.getStatus() != 200) {
             if (response.getStatus() == 409)
                 throw new LockedRecordException();
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
         return response.getEntity(Record.class);
-    }
+    }        
 }

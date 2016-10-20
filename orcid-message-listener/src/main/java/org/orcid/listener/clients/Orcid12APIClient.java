@@ -44,7 +44,7 @@ public class Orcid12APIClient {
     protected final URI baseUri;
 
     @Autowired
-    public Orcid12APIClient(@Value("${org.orcid.message-lisener.api12BaseURI}") String baseUri) throws URISyntaxException {
+    public Orcid12APIClient(@Value("${org.orcid.message-listener.api12BaseURI}") String baseUri) throws URISyntaxException {
         LOG.info("Creating Orcid12APIClient with baseUri = " + baseUri);
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJaxbJsonProvider.class);
