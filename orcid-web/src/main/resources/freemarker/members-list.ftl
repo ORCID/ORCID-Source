@@ -40,19 +40,26 @@
 	                    	<p>
 	            				<a class="selected" href="<@orcid.rootPath '/members'/>">All members</a> | <a href="<@orcid.rootPath '/consortia'/>">Consortia members</a>
 	            			</p>
+	            			
 	            			<p>
-	            			Filter by
 							<select ng-model="country" ng-options="member.country as member.country for member in membersListSrvc.membersList | unique:'country' | orderBy : 'country'">
                 					<option value="">Country</option>
             				</select>
             				<select ng-model="researchCommunity" ng-options="member.researchCommunity as member.researchCommunity for member in membersListSrvc.membersList | unique:'researchCommunity' | orderBy : 'researchCommunity'">
                 					<option value="">Research community</option>
             				</select>
-            				<button class="btn btn-primary" ng-click="clearFilters()">Reset filters</button>
+            				<button class="btn btn-primary" ng-click="clearFilters()">Reset</button>
             				</p>
-	    
+            				
+            				<hr class="no-margin-top no-margin-bottom" />
+	            			<ul class="filter">
+      							<li ng-click="activateLetter('')" ng-class="{'active':activeLetter==''}"><a>ALL</a></li>
+      							<li ng-repeat="letter in alphabet track by $index " ng-click="activateLetter(letter)" ng-class="{'active':letter==activeLetter}"><a>{{letter}}</a></li>
+	
+    						</ul>
+            				
 	                    </div>
-	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter: country | filter: researchCommunity | orderBy : 'name' ">
+	                    <div class="member" ng-repeat="member in membersListSrvc.membersList | filter: country | filter: researchCommunity | startsWithLetter : activeLetter | orderBy : 'name' ">
 	                    	<hr class="no-margin-top" />
 	                    	<div class="col-md-12 col-sm-12 col-xs-12">
 	                        	<h2 ng-bind="member.name" ng-cloak></h2>	                        
