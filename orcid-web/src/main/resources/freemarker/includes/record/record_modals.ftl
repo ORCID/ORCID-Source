@@ -499,15 +499,6 @@
 	<div class="row bulk-edit-modal">
 		<div class="pull-right bio-edit-modal">				
 			<span class="custom-control-title"><@spring.message "groups.common.bulk_edit_privacy"/></span>
-			<div class="bulk-help popover-help-container">
-            	<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                <div id="bulk-help" class="popover bottom">
-                	<div class="arrow"></div>
-                    <div class="popover-content">
-                    	<p><@orcid.msg "groups.common.bulk_edit_privacy_help" /></p>
-                    </div>
-               </div>
-            </div>			
 			<div class="bulk-privacy-bar">
 				<@orcid.privacyToggle3  angularModel="bioModel"
 		        	questionClick="toggleClickPrivacyHelp($index)"
@@ -518,6 +509,15 @@
                 	elementId="bulkEdit" />		
 
 			</div>
+			<div class="bulk-help popover-help-container">
+            	<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+                <div id="bulk-help" class="popover bottom">
+                	<div class="arrow"></div>
+                    <div class="popover-content">
+                    	<p><@orcid.msg "groups.common.bulk_edit_privacy_help" /></p>
+                    </div>
+               </div>
+            </div>
 		</div>			
 	</div>
 </script>

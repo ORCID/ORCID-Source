@@ -6433,11 +6433,6 @@ a:hover .mozilla-badge{
     color: #FFF; 
 }
 
-.fixed-area .popover-help-container{
-	position: absolute;	
-	width: 100%;
-}
-
 .not-allowed{
 	cursor:not-allowed;
 }
@@ -6804,6 +6799,12 @@ a:hover .mozilla-badge{
 	left: -127px;
     top: 17px;
 }
+
+.edit-record .record-settings .popover-help-container,
+.edit-record .bulk-privacy-bar .popover-help-container{
+	position: absolute;	
+	width: 100%;
+}
  
 
 .edit-record .bulk-edit-modal #privacy-bar{
@@ -6817,16 +6818,17 @@ a:hover .mozilla-badge{
 	font-size: 12px;
 }
 
-.edit-record .bulk-edit-modal .popover-help-container{
-	right: 118px;
-	position: absolute;
+.bulk-edit-modal .bulk-help{
+	float: right;
+	margin-right: 5px;
+	position: relative;
 }
 
-.privacy-bar{
-	display: static;
-} 
-
-
+.bulk-edit-modal #bulk-help{
+	left: -142px;
+	width: 300px;
+	width: 300px;
+}
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
