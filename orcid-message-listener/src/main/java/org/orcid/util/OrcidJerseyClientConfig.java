@@ -99,7 +99,7 @@ public class OrcidJerseyClientConfig extends DefaultClientConfig implements Init
     private SSLContext createSslContext() {
         try {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-            kmf.init(keyStore, keyStorePassword.toCharArray());
+            kmf.init(keyStore, keyStorePassword == null ? null : keyStorePassword.toCharArray());
             KeyManager[] keyManagers = kmf.getKeyManagers();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
             // Use the trustStore if present, otherwise default to keyStore.
