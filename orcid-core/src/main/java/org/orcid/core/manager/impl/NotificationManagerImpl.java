@@ -1058,6 +1058,9 @@ public class NotificationManagerImpl implements NotificationManager {
     
     public String buildAuthorizationUrlForInstitutionalSignIn(ClientDetailsEntity clientDetails) throws UnsupportedEncodingException {
         ClientRedirectUriEntity rUri = getRedirectUriForInstitutionalSignIn(clientDetails);
+        if(rUri == null){
+            return null;
+        }
         String urlEncodedScopes = URLEncoder.encode(rUri.getPredefinedClientScope(), "UTF-8");
         String urlEncodedRedirectUri = URLEncoder.encode(rUri.getRedirectUri(), "UTF-8");
         return MessageFormat.format(AUTHORIZATION_END_POINT, orcidUrlManager.getBaseUrl(), clientDetails.getClientId(), urlEncodedScopes, urlEncodedRedirectUri);        
