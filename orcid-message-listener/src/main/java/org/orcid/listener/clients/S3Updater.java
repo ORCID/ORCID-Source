@@ -63,7 +63,7 @@ public class S3Updater {
      * @throws JAXBException
      */
     @Autowired    
-    public S3Updater(@Value("${org.orcid.message-lisener.s3.secretKey}") String secretKey, @Value("${org.orcid.message-lisener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-lisener.s3.bucket_prefix}") String bucketPrefix)
+    public S3Updater(@Value("${org.orcid.message-listener.s3.secretKey}") String secretKey, @Value("${org.orcid.message-listener.s3.accessKey}") String accessKey, @Value("${org.orcid.message-listener.s3.bucket_prefix}") String bucketPrefix)
             throws JAXBException {        
         this.bucketPrefix = bucketPrefix;        
         mapper = new ObjectMapper();

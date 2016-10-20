@@ -95,7 +95,7 @@
         <constructor-arg ref="providers"/>
         <property name="properties" ref="jerseyProperties"/>
         <property name="keyStore" ref="keyStore"/>
-        <property name="keyStorePassword" value="${org.orcid.t2.client.keyStorePass}"/>
+        <property name="keyStorePassword" value="${org.orcid.t2.client.keyStorePass:#{null}}"/>
         <property name="trustStore" ref="trustStore"/>
     </bean>
     
@@ -104,13 +104,13 @@
     </util:set>
     
 	<bean id="keyStore" class="org.orcid.util.KeyStoreFactoryBean">
-        <property name="location" value="${org.orcid.t2.client.keyStoreLocation}"/>
-        <property name="password" value="${org.orcid.t2.client.keyStorePass}"/>
+        <property name="location" value="${org.orcid.t2.client.keyStoreLocation:#{null}}"/>
+        <property name="password" value="${org.orcid.t2.client.keyStorePass:#{null}}"/>
     </bean>
 
     <bean id="trustStore" class="org.orcid.util.KeyStoreFactoryBean">
-        <property name="location" value="${org.orcid.t2.client.trustStoreLocation}"/>
-        <property name="password" value="${org.orcid.t2.client.trustStorePass}"/>
+        <property name="location" value="${org.orcid.t2.client.trustStoreLocation:#{null}}"/>
+        <property name="password" value="${org.orcid.t2.client.trustStorePass:#{null}}"/>
     </bean>
 
 
