@@ -10581,7 +10581,7 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     $scope.activateLetter = function(letter) {
       $scope.activeLetter = letter
     };
-    
+
     //clear filters 
     $scope.clearFilters = function () {
         $scope.country = null;
@@ -10590,7 +10590,7 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
     };
     
     // populate the consortia feed
-    membersListSrvc.getConsortiaList();
+    membersListSrvc.getConsortiaList();    
     
 }]);
 

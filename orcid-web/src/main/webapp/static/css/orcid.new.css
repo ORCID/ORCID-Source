@@ -6696,6 +6696,11 @@ a:hover .mozilla-badge{
 	border: #338caf;
 }
 
+.member-list .btn-primary:hover, .member-list .btn-primary:active{
+	background: #a6ce39;
+	border: #a6ce39;
+}
+
 .member-list a{
 	padding: 2px 4px;
 }
