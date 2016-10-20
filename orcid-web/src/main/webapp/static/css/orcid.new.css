@@ -6675,6 +6675,38 @@ a:hover .mozilla-badge{
 	color: #a6ce39;
 }
 
+.member-list select{
+	margin: 0;
+}
+
+.member-list .btn-primary{
+	height: 30px;
+	background: #338caf;
+	border: #338caf;
+}
+
+.member-list .btn-primary:hover, .member-list .btn-primary:active{
+	background: #a6ce39;
+	border: #a6ce39;
+}
+
+.member-list a{
+	padding: 2px 4px;
+}
+.member-list .active a {
+  color: #fff;
+  background: #338caf;
+  border-radius: 2px;
+}
+.member-list .filter li {
+  display: inline;
+  padding: 3px;
+}
+.member-list ul.filter {
+  list-style-type: none;
+  margin: 6px 0;
+}
+
 /* Bulk edit bio*/
 
 .bio-edit-modal{

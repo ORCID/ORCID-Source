@@ -10481,8 +10481,24 @@ orcidNgModule.controller('MembersListController',['$scope', '$sce', 'membersList
         $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
     }
     
+    //render html from salesforce data
     $scope.renderHtml = function (htmlCode) {
         return $sce.trustAsHtml(htmlCode);
+    };
+    
+    //create alphabetical list for filter
+    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
+    $scope.alphabet = alphaStr.toUpperCase().split("");
+    $scope.activeLetter = '';
+    $scope.activateLetter = function(letter) {
+      $scope.activeLetter = letter
+    };
+    
+    //clear filters 
+    $scope.clearFilters = function () {
+        $scope.country = null;
+        $scope.researchCommunity = null;
+        $scope.activeLetter = '';
     };
     
     // populate the members feed
@@ -10508,12 +10524,28 @@ orcidNgModule.controller('ConsortiaListController',['$scope', '$sce', 'membersLi
         $scope.displayMoreDetails[memberId] = !$scope.displayMoreDetails[memberId];
     }
     
+    //render html from salesforce data
     $scope.renderHtml = function (htmlCode) {
         return $sce.trustAsHtml(htmlCode);
     };
     
+    //create alphabetical list for filter
+    var alphaStr = "abcdefghijklmnopqrstuvwxyz";
+    $scope.alphabet = alphaStr.toUpperCase().split("");
+    $scope.activeLetter = '';
+    $scope.activateLetter = function(letter) {
+      $scope.activeLetter = letter
+    };
+
+    //clear filters 
+    $scope.clearFilters = function () {
+        $scope.country = null;
+        $scope.researchCommunity = null;
+        $scope.activeLetter = '';
+    };
+    
     // populate the consortia feed
-    membersListSrvc.getConsortiaList();
+    membersListSrvc.getConsortiaList();    
     
 }]);
 
@@ -11012,6 +11044,62 @@ orcidNgModule.filter('peerReviewExternalIdentifierHtml', function($filter){
      
     };
 });
+
+//used in dropdown filters on /members and /consortia
+orcidNgModule.filter('unique', function () {
+
+    return function (items, filterOn) {
+
+      if (filterOn === false) {
+        return items;
+      }
+
+      if ((filterOn || angular.isUndefined(filterOn)) && angular.isArray(items)) {
+        var hashCheck = {}, newItems = [];
+
+        var extractValueToCompare = function (item) {
+          if (angular.isObject(item) && angular.isString(filterOn)) {
+            return item[filterOn];
+          } else {
+            return item;
+          }
+        };
+
+        angular.forEach(items, function (item) {
+          var valueToCheck, isDuplicate = false;
+
+          for (var i = 0; i < newItems.length; i++) {
+            if (angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))) {
+              isDuplicate = true;
+              break;
+            }
+          }
+          if (!isDuplicate) {
+            newItems.push(item);
+          }
+
+        });
+        items = newItems;
+      }
+      return items;
+    };
+  });
+
+//used in alphabetical filter on /members and /consortia
+orcidNgModule.filter('startsWithLetter', function() {
+    return function(items, letter) {
+
+        var filtered = [];
+        var letterMatch = new RegExp(letter, 'i');
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (letterMatch.test(item.name.substring(0, 1))) {
+            filtered.push(item);
+          }
+        }
+        return filtered;
+      };
+    });
 
 
 /*
