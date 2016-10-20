@@ -2358,21 +2358,19 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	width: 452px;
 	overflow-y: hidden
 }
-
-.popover-help-container {
-	position: relative;
+/* Do not modify */
+.popover-help-container {	
 	display: inline;
 }
-
+/* Do not modify */
 .popover-help-container .popover {
 	display: none;
-	position: absolute;
-	left: -134px;
-	top: 17px;
-	max-width: 800px;
-	width: auto;
-	background-color: #ffffff;
-	font-size: 14px;
+    position: absolute;
+    left: -134px;
+    top: 17px;
+    width: 300px;
+    background-color: #ffffff;
+    font-size: 14px;
 }
 
 .popover-pos{

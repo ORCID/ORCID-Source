@@ -37,7 +37,7 @@
 						<#if RequestParameters['bulkEdit']??>
 							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
 							<div class="fixed-bar">
-								<div style="position: relative">							
+								<div>							
 									<div ng-include="'bulk-edit'"></div>
 								</div>
 								<div class="row">
