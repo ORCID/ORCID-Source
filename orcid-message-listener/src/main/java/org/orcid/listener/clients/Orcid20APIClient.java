@@ -47,10 +47,10 @@ public class Orcid20APIClient {
     protected final String host;
 
     @Autowired
-    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri, @Value("${org.orcid.message-listener.host}") String host) throws URISyntaxException {
-        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri + " and host = " + host);
+    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri, @Value("${org.orcid.message-listener.host_header_override}") String hostHeaderOverride) throws URISyntaxException {
+        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri + " and host = " + hostHeaderOverride);
         this.baseUri = new URI(baseUri);
-        this.host = host;
+        this.host = hostHeaderOverride;
     }
 
     /**
