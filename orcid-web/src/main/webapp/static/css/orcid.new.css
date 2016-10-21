@@ -6853,6 +6853,19 @@ a:hover .mozilla-badge{
 	left: 187px;
 }
 
+#social-login-help,
+#institution-login-help{
+	left: -115px;
+}
+
+#qrcode-help{	
+	left: -113px;
+}
+
+#qrcode-help .arrow{
+	left: 119px;
+}
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.container{
