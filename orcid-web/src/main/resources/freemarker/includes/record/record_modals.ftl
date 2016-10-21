@@ -30,29 +30,29 @@
 				</div>			
 			</div>
 
+			<#if RequestParameters['bulkEdit']??>
+				<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+				
+				<div class="row bottomBuffer">							
+					<div ng-include="'bulk-edit'"></div>					
+				</div>				
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
+						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+					</div>
+				</div>		
+			</#if>
+
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
 					<div class="fixed-area" scroll>
-
-						<#if RequestParameters['bulkEdit']??>
-							<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
-							<div class="fixed-bar">
-								<div>							
-									<div ng-include="'bulk-edit'"></div>
-								</div>
-								<div class="row">
-									<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
-										<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
-									</div>		
-								</div>
-							</div>		
-						</#if>
-				
 						<div class="scroll-area 
+							
 							<#if RequestParameters['bulkEdit']??>
 							scroll-area-padding
 							</#if>
 						   ">
+
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		

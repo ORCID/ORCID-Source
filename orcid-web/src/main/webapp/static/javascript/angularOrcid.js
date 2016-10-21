@@ -551,8 +551,8 @@ orcidNgModule.factory("commonSrvc", ['$rootScope', '$window', function ($rootSco
             
             if (elem === '-privacy'){
                 angular.element('.edit-record .bulk-privacy-bar .popover-help-container').css({
-                    top: -145,
-                    left: 461
+                    top: -75,
+                    left: 512
                 });
             }else{
                 if (elem.indexOf('@') > -1) left = 530; //Emails modal fix
