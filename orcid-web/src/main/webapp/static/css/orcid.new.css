@@ -6866,6 +6866,12 @@ a:hover .mozilla-badge{
 	left: 119px;
 }
 
+#ul li.bio-edit{
+	display: inline-block;
+    vertical-align: top;
+}
+	
+
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
 	.container{
