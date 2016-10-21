@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.listener.exception.LockedRecordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public class Orcid12APIClient {
      * @return
      * @throws LockedRecordException 
      */
-    public OrcidProfile fetchPublicProfile(String orcid) throws LockedRecordException {
+    public OrcidMessage fetchPublicProfile(String orcid) throws LockedRecordException {
         WebResource webResource = jerseyClient.resource(baseUri);
         ClientResponse response = webResource.path(orcid + "/orcid-profile").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
         if (response.getStatus() != 200) {
@@ -69,7 +68,6 @@ public class Orcid12APIClient {
             LOG.error("Unable to fetch public record " + orcid + " on API 1.2 HTTP error code: " + response.getStatus());
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
-        OrcidMessage output = response.getEntity(OrcidMessage.class);
-        return output.getOrcidProfile();
+        return response.getEntity(OrcidMessage.class);        
     }
 }

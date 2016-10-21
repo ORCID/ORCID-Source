@@ -20,7 +20,7 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
@@ -70,7 +70,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                 
                 //TODO: Update S3 buckets for deprecated or locked files: 
                 //See https://trello.com/c/LSrdG59t/3162-deprecated-or-locked-in-s3-for-2-0
-                OrcidProfile profile = fetchPublicProfile(orcid);
+                OrcidMessage profile = fetchPublicProfile(orcid);
                 Record record = fetchPublicRecord(orcid);
                 
                 // Phase #1: update S3 
@@ -101,7 +101,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
      * @return public OrcidProfile or null in case an exception happens
      * @throws LockedRecordException          
      * */
-    private OrcidProfile fetchPublicProfile(String orcid) throws Exception {
+    private OrcidMessage fetchPublicProfile(String orcid) throws Exception {
         try {
             return orcid12ApiClient.fetchPublicProfile(orcid);
         } catch (Exception e) {
@@ -132,7 +132,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
         return null;
     }
     
-    private void updateS3(String orcid,OrcidProfile profile,Record record) {
+    private void updateS3(String orcid, OrcidMessage profile, Record record) {
         // Update API 1.2
         if(profile != null) {
             try {
