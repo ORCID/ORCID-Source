@@ -53,6 +53,10 @@ public class S3Updater {
     @Resource
     private S3MessagingService s3MessagingService;    
 
+    public void setS3MessagingService(S3MessagingService s3MessagingService) {
+        this.s3MessagingService = s3MessagingService;
+    }
+    
     /**
      * Writes a profile to S3
      * 
@@ -140,7 +144,7 @@ public class S3Updater {
         return sw.toString();
     }
     
-    private String getBucketCheckSum(String orcid) {
+    public String getBucketCheckSum(String orcid) {
         if(bucketPrefix.endsWith("-qa") || bucketPrefix.endsWith("-sandbox")) {
             return "all"; 
         } else {

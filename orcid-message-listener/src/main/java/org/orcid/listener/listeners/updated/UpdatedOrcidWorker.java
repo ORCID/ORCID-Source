@@ -22,11 +22,11 @@ import javax.annotation.Resource;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.listener.clients.LockedRecordException;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.clients.SolrIndexUpdater;
+import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
