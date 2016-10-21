@@ -24,6 +24,7 @@ import org.orcid.jaxb.model.message.OrcidWork;
 import org.orcid.jaxb.model.message.OrcidWorks;
 import org.orcid.jaxb.model.message.Preferences;
 import org.orcid.jaxb.model.record_rc3.PersonalDetails;
+import org.orcid.persistence.jpa.entities.IndexingStatus;
 
 /**
  * @author Will Simpson
@@ -249,7 +250,7 @@ public interface OrcidProfileManager extends OrcidProfileManagerReadOnly {
 
     public void addLocale(OrcidProfile orcidProfile, Locale locale);
 
-    public void processProfilePendingIndexingInTransaction(final String orcid);
+    public void processProfilePendingIndexingInTransaction(final String orcid, final IndexingStatus indexingStatus);
     
     public void checkWorkExternalIdentifiersAreNotDuplicated(List<OrcidWork> newOrcidWorksList, List<OrcidWork> existingWorkList);
     

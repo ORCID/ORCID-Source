@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+    =============================================================================
+
+    ORCID (R) Open Source
+    http://orcid.org
+
+    Copyright (c) 2012-2014 ORCID, Inc.
+    Licensed under an MIT-Style License (MIT)
+    http://orcid.org/open-source-license
+
+    This copyright and license information (including a link to the full license)
+    shall be included in its entirety in all copies or substantial portion of
+    the software.
+
+    =============================================================================
+
+-->
+<orcid-message xmlns="http://www.orcid.org/ns/orcid">
+    <message-version>1.2</message-version>
+    <orcid-profile type="user">
+        <orcid-identifier>
+            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+            <path>0000-0003-0902-4386</path>
+            <host>orcid.org</host>
+        </orcid-identifier>
+        <orcid-preferences>
+            <locale>en</locale>
+        </orcid-preferences>
+        <orcid-history>
+            <creation-method>website</creation-method>
+            <completion-date>2013-01-18T12:09:28.451Z</completion-date>
+            <submission-date>2013-01-18T12:09:28.451Z</submission-date>
+            <last-modified-date>2016-10-13T16:32:35.297Z</last-modified-date>
+            <claimed>true</claimed>
+            <verified-email>true</verified-email>
+            <verified-primary-email>true</verified-primary-email>
+        </orcid-history>
+        <orcid-bio>
+            <personal-details>
+                <given-names>Tom</given-names>
+                <family-name>Demeranville</family-name>
+            </personal-details>
+            <biography visibility="public">THOR Senior Project Officer and ORCID Software Engineer.</biography>
+        </orcid-bio>
+        <orcid-activities>
+            <affiliations>
+                <affiliation visibility="public" put-code="990530">
+                    <type>employment</type>
+                    <department-name>Project Thor</department-name>
+                    <role-title>Senior Technical Officer</role-title>
+                    <start-date>
+                        <year>2015</year>
+                        <month>06</month>
+                    </start-date>
+                    <organization>
+                        <name>ORCID EU</name>
+                        <address>
+                            <city>Bath</city>
+                            <country>GB</country>
+                        </address>
+                    </organization>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-06-25T15:56:57.057Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T15:56:57.057Z</created-date>
+                    <last-modified-date>2015-09-15T13:17:17.800Z</last-modified-date>
+                </affiliation>
+                <affiliation visibility="public" put-code="990546">
+                    <type>education</type>
+                    <department-name>Computer Science</department-name>
+                    <role-title>1st class with honours</role-title>
+                    <organization>
+                        <name>Open University</name>
+                        <address>
+                            <city>Milton Keynes</city>
+                            <region>Milton Keynes</region>
+                            <country>GB</country>
+                        </address>
+                        <disambiguated-organization>
+                            <disambiguated-organization-identifier>5488</disambiguated-organization-identifier>
+                            <disambiguation-source>RINGGOLD</disambiguation-source>
+                        </disambiguated-organization>
+                    </organization>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-06-25T16:01:12.718Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T16:01:12.718Z</created-date>
+                    <last-modified-date>2015-09-15T13:16:41.905Z</last-modified-date>
+                </affiliation>
+                <affiliation visibility="public" put-code="990534">
+                    <type>employment</type>
+                    <department-name>Delivery</department-name>
+                    <role-title>Technical Lead</role-title>
+                    <start-date>
+                        <year>2014</year>
+                        <month>12</month>
+                    </start-date>
+                    <end-date>
+                        <year>2015</year>
+                        <month>06</month>
+                    </end-date>
+                    <organization>
+                        <name>IPL</name>
+                        <address>
+                            <city>Bath</city>
+                            <country>GB</country>
+                        </address>
+                    </organization>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-06-25T15:57:40.252Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T15:57:40.252Z</created-date>
+                    <last-modified-date>2015-06-25T16:03:01.713Z</last-modified-date>
+                </affiliation>
+                <affiliation visibility="public" put-code="990536">
+                    <type>employment</type>
+                    <department-name>ODIN Project</department-name>
+                    <role-title>Technical Lead</role-title>
+                    <start-date>
+                        <year>2013</year>
+                        <month>02</month>
+                    </start-date>
+                    <end-date>
+                        <year>2014</year>
+                        <month>12</month>
+                    </end-date>
+                    <organization>
+                        <name>British Library</name>
+                        <address>
+                            <city>London</city>
+                            <country>GB</country>
+                        </address>
+                        <disambiguated-organization>
+                            <disambiguated-organization-identifier>4925</disambiguated-organization-identifier>
+                            <disambiguation-source>RINGGOLD</disambiguation-source>
+                        </disambiguated-organization>
+                    </organization>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-06-25T15:58:43.783Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T15:58:43.783Z</created-date>
+                    <last-modified-date>2015-06-25T16:03:02.295Z</last-modified-date>
+                </affiliation>
+                <affiliation visibility="public" put-code="990539">
+                    <type>employment</type>
+                    <department-name>Athens</department-name>
+                    <role-title>Senior Software Engineer</role-title>
+                    <start-date>
+                        <year>2005</year>
+                        <month>01</month>
+                    </start-date>
+                    <end-date>
+                        <year>2013</year>
+                        <month>02</month>
+                    </end-date>
+                    <organization>
+                        <name>Eduserv Athens</name>
+                        <address>
+                            <city>Bath</city>
+                            <region>Bath and North East Somer</region>
+                            <country>GB</country>
+                        </address>
+                        <disambiguated-organization>
+                            <disambiguated-organization-identifier>226102</disambiguated-organization-identifier>
+                            <disambiguation-source>RINGGOLD</disambiguation-source>
+                        </disambiguated-organization>
+                    </organization>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-06-25T15:59:36.562Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T15:59:36.562Z</created-date>
+                    <last-modified-date>2015-06-25T16:03:04.090Z</last-modified-date>
+                </affiliation>
+            </affiliations>
+            <orcid-works>
+                <orcid-work put-code="17080227" visibility="public">
+                    <work-title>
+                        <title>D4.2: Workflow for interoperability</title>
+                    </work-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@misc{dataciteeab77b04-1af2-4454-8b0e-8e558ac00fef,
+  doi = {10.6084/M9.FIGSHARE.1373669},
+  url = {http://dx.doi.org/10.6084/M9.FIGSHARE.1373669},
+  author = {Josh Brown; Amir Aryani; Amy J Barton; jan brase; Tom Demeranville; Patricia Herterich; Lynne McAvoy; Laura Paglione; Sergio Ruiz; Gudmundur Thorisson; Todd Vision; Frauke Ziedorn; },
+  publisher = {Figshare},
+  title = {D4.2: Workflow for interoperability},
+  year = {2015}
+}</citation>
+                    </work-citation>
+                    <work-type>data-set</work-type>
+                    <publication-date>
+                        <year>2015</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.6084/M9.FIGSHARE.1373669</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2015-06-25T15:53:00.221Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T15:53:00.221Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.719Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="17080287" visibility="public">
+                    <work-title>
+                        <title>D4.2: Workflow for interoperability</title>
+                    </work-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@misc{dataciteeab77b04-1af2-4454-8b0e-8e558ac00fef,
+  doi = {10.6084/M9.FIGSHARE.1373669},
+  url = {http://dx.doi.org/10.6084/M9.FIGSHARE.1373669},
+  author = {Josh Brown; Amir Aryani; Amy J Barton; jan brase; Tom Demeranville; Patricia Herterich; Lynne McAvoy; Laura Paglione; Sergio Ruiz; Gudmundur Thorisson; Todd Vision; Frauke Ziedorn; },
+  publisher = {Figshare},
+  title = {D4.2: Workflow for interoperability},
+  year = {2015}
+}</citation>
+                    </work-citation>
+                    <work-type>report</work-type>
+                    <publication-date>
+                        <year>2015</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.6084/M9.FIGSHARE.1373669</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <url>http://text.com</url>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-06-25T11:54:29.117Z</source-date>
+                    </source>
+                    <created-date>2015-06-25T11:54:29.117Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.720Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="27365906" visibility="public">
+                    <work-title>
+                        <title>PDB TEST</title>
+                    </work-title>
+                    <work-type>journal-article</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>agr</work-external-identifier-type>
+                            <work-external-identifier-id>pdb-value-self</work-external-identifier-id>
+                        </work-external-identifier>
+                        <work-external-identifier>
+                            <work-external-identifier-type>cit</work-external-identifier-type>
+                            <work-external-identifier-id>cite-self</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2016-10-13T16:31:52.221Z</source-date>
+                    </source>
+                    <created-date>2016-10-13T16:31:52.221Z</created-date>
+                    <last-modified-date>2016-10-13T16:31:52.227Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="27366023" visibility="public">
+                    <work-title>
+                        <title>PDB TEST PART OF</title>
+                    </work-title>
+                    <work-type>journal-article</work-type>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>agr</work-external-identifier-type>
+                            <work-external-identifier-id>pdb-value-part-of</work-external-identifier-id>
+                        </work-external-identifier>
+                        <work-external-identifier>
+                            <work-external-identifier-type>cit</work-external-identifier-type>
+                            <work-external-identifier-id>cit-part-of</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2016-10-13T16:32:30.192Z</source-date>
+                    </source>
+                    <created-date>2016-10-13T16:32:30.192Z</created-date>
+                    <last-modified-date>2016-10-13T16:32:35.291Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="23239358" visibility="public">
+                    <work-title>
+                        <title>THOR Communications Plan</title>
+                    </work-title>
+                    <journal-title>Zenodo</journal-title>
+                    <short-description>["&lt;p&gt;This document defines the THOR project communications plan and strategy, including stakeholder analysis, objectives, methods, and a timeline for delivering these.&lt;/p&gt;\n\n&lt;p&gt;Externally, we will direct capacity-building resources to sections of the community, and bring feedback to bear on improving and refining those resources. Internally, information will flow between project&amp;nbsp;teams, with the findings and lessons from each task being used to shape and populate our external communications and with feedback flowing in each direction.&lt;/p&gt;\n\n&lt;p&gt;Our strategy will evolve over the lifetime of the project to meet newly discovered needs gained through this feedback. Through nuanced, targeted communication we will not only promote PID adoption, but will also gain insight into the requirements of our stakeholders and build the infrastructure they really need.&lt;/p&gt;"]</short-description>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@data{http://doi.org/10.5281/ZENODO.48228, author = {Brown, Josh and Demeranville, Tom}, title = {THOR Communications Plan}, publisher = {Zenodo}, doi = {10.5281/ZENODO.48228}, url = {http://doi.org/10.5281/ZENODO.48228}, year = {2016}}</citation>
+                    </work-citation>
+                    <work-type>other</work-type>
+                    <publication-date>
+                        <year>2016</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.5281/ZENODO.48228</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <work-contributors>
+                        <contributor>
+                            <credit-name visibility="public">Josh Brown</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Tom Demeranville</credit-name>
+                        </contributor>
+                    </work-contributors>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2016-03-31T09:23:46.870Z</source-date>
+                    </source>
+                    <created-date>2016-03-31T09:23:46.870Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.720Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="24798864" visibility="public">
+                    <work-title>
+                        <title>THOR: Conceptual Model of Persistent Identifier Linking</title>
+                    </work-title>
+                    <journal-title>Zenodo</journal-title>
+                    <short-description>&amp;lt;p&amp;gt;In this report we describe the current state of the art for persistent identifier linking in scholarly e-Infrastructure, with a focus on persistent identifiers for contributors and data. We look at persistent identifier linking between datasets, for example different versions of the same data, as well as linking data with other resources, including articles, contributors, institutions, and funding information.&amp;lt;/p&amp;gt;</short-description>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@data{http://doi.org/10.5281/ZENODO.48705, author = {Fenner, Martin and Demeranville, Tom and Kotarski, Rachael and Dasler, Robin and McEntyre, Johanna and Mello, Guilherme and Vision, Todd and Dappert, Angela and Farquhar, Adam}, title = {THOR: Conceptual Model of Persistent Identifier Linking}, publisher = {Zenodo}, doi = {10.5281/ZENODO.48705}, url = {http://doi.org/10.5281/ZENODO.48705}, year = {2016}}</citation>
+                    </work-citation>
+                    <work-type>other</work-type>
+                    <publication-date>
+                        <year>2016</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.5281/ZENODO.48705</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <work-contributors>
+                        <contributor>
+                            <credit-name visibility="public">Martin Fenner</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Tom Demeranville</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Rachael Kotarski</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Robin Dasler</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Johanna McEntyre</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Guilherme Mello</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Todd Vision</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Angela Dappert</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Adam Farquhar</credit-name>
+                        </contributor>
+                    </work-contributors>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2016-06-17T12:54:30.578Z</source-date>
+                    </source>
+                    <created-date>2016-06-17T12:54:30.578Z</created-date>
+                    <last-modified-date>2016-10-13T12:10:42.100Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="25382907" visibility="public">
+                    <work-title>
+                        <title>THOR: Metrics and Tools</title>
+                    </work-title>
+                    <journal-title>Zenodo</journal-title>
+                    <short-description>&amp;lt;p&amp;gt;This report describes the work of the THOR Project to develop a dashboard to monitor interoperability of persistent identifiers. The dashboard is an essential step towards a suite of tools to measure the impact of the project.&amp;lt;/p&amp;gt;</short-description>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@data{http://doi.org/10.5281/ZENODO.46761, author = {Dasler, Robin}, title = {THOR: Metrics and Tools}, publisher = {Zenodo}, doi = {10.5281/ZENODO.46761}, url = {http://doi.org/10.5281/ZENODO.46761}, year = {2016}}</citation>
+                    </work-citation>
+                    <work-type>other</work-type>
+                    <publication-date>
+                        <year>2016</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.5281/ZENODO.46761</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <work-contributors>
+                        <contributor>
+                            <credit-name visibility="public">Robin Dasler</credit-name>
+                        </contributor>
+                    </work-contributors>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2016-07-13T16:29:29.403Z</source-date>
+                    </source>
+                    <created-date>2016-07-13T16:29:29.403Z</created-date>
+                    <last-modified-date>2016-10-13T12:10:45.224Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="20140994" visibility="public">
+                    <work-title>
+                        <title>ORCID and CERIF</title>
+                    </work-title>
+                    <work-citation>
+                        <work-citation-type>formatted-unspecified</work-citation-type>
+                        <citation>ORCID and CERIF. Tom Demeranville. figshare.
+                http://dx.doi.org/10.6084/m9.figshare.1598096</citation>
+                    </work-citation>
+                    <work-type>other</work-type>
+                    <publication-date>
+                        <year>2015</year>
+                        <month>11</month>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.6084/m9.figshare.1598096</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-9892-9368</uri>
+                            <path>0000-0001-9892-9368</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>figshare ORCID integration</source-name>
+                        <source-date>2015-11-10T15:35:41.596Z</source-date>
+                    </source>
+                    <created-date>2015-11-10T15:35:41.596Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.720Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="23239361" visibility="public">
+                    <work-title>
+                        <title>D2.1: Artefact, Contributor, and Organisation Relationship Data Schema</title>
+                    </work-title>
+                    <journal-title>Zenodo</journal-title>
+                    <short-description>["&lt;p&gt;This document identifies gaps in existing PID infrastructures, with a focus on ORCID and DataCite Metadata and links between contributors, organizations and artefacts. What prevents us from establishing interoperability and overcoming barriers between PID platforms for contributors, artefacts and organisations, and research solutions for federated attribution, claiming, publishing and direct data access? It goes on to propose strategies to overcome these gaps.&amp;nbsp;&lt;/p&gt;"]</short-description>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@data{http://doi.org/10.5281/ZENODO.30799, author = {Fenner, Martin and Demeranville, Tom and Kotarski, Rachael and Vision, Todd and Rueda, Laura and Dasler, Robin and Haak, Laure and Cruse, Patricia and Consortium, THOR}, title = {D2.1: Artefact, Contributor, and Organisation Relationship Data Schema}, publisher = {Zenodo}, doi = {10.5281/ZENODO.30799}, url = {http://doi.org/10.5281/ZENODO.30799}, year = {2015}}</citation>
+                    </work-citation>
+                    <work-type>other</work-type>
+                    <publication-date>
+                        <year>2015</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.5281/ZENODO.30799</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <work-contributors>
+                        <contributor>
+                            <credit-name visibility="public">Martin Fenner</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Tom Demeranville</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Rachael Kotarski</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Todd Vision</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Laura Rueda</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Robin Dasler</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Laure Haak</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Patricia Cruse</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">THOR Consortium</credit-name>
+                        </contributor>
+                    </work-contributors>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2016-03-31T09:24:01.937Z</source-date>
+                    </source>
+                    <created-date>2016-03-31T09:24:01.937Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.720Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="23239357" visibility="public">
+                    <work-title>
+                        <title>ORCID Public Data File 2015</title>
+                    </work-title>
+                    <journal-title>Figshare</journal-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@data{http://doi.org/10.6084/M9.FIGSHARE.1582705.V1, author = {Paglione, Laura and Peters, Robert and Wilmers, Catalina and Simpson, Will and Montenegro, Angel and Monge, Fran Ramírez and Tyagi, Shobhit and Krznarich, Elizabeth and Demeranville, Tom and Brown, Josh and Miyairi, Nobuko and Buys, Matthew and Cardoso, Ana and Sethate, Cheryl and Haak, Laurel}, title = {ORCID Public Data File 2015}, publisher = {Figshare}, doi = {10.6084/M9.FIGSHARE.1582705.V1}, url = {http://doi.org/10.6084/M9.FIGSHARE.1582705.V1}, year = {2015}}</citation>
+                    </work-citation>
+                    <work-type>data-set</work-type>
+                    <publication-date>
+                        <year>2015</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.6084/M9.FIGSHARE.1582705.V1</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <work-contributors>
+                        <contributor>
+                            <credit-name visibility="public">Laura Paglione</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Robert Peters</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Catalina Wilmers</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Will Simpson</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Angel Montenegro</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Fran Ramírez Monge</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Shobhit Tyagi</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Elizabeth Krznarich</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Tom Demeranville</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Josh Brown</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Nobuko Miyairi</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Matthew Buys</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Ana Cardoso</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Cheryl Sethate</credit-name>
+                        </contributor>
+                        <contributor>
+                            <credit-name visibility="public">Laurel Haak</credit-name>
+                        </contributor>
+                    </work-contributors>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2016-03-31T09:23:46.538Z</source-date>
+                    </source>
+                    <created-date>2016-03-31T09:23:46.538Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.720Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="18003936" visibility="public">
+                    <work-title>
+                        <title>D3.1 Humanities and Social Science Proof of Concept</title>
+                    </work-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@misc{datacite068b4f45-7228-4492-81ba-50c192a6a40a,
+  doi = {10.6084/M9.FIGSHARE.824317},
+  url = {http://dx.doi.org/10.6084/M9.FIGSHARE.824317},
+  author = {ODIN Consortium; John Kaye; Tom Demeranville; Steven McEachern; },
+  publisher = {Figshare},
+  title = {D3.1 Humanities and Social Science Proof of Concept},
+  year = {2013}
+}</citation>
+                    </work-citation>
+                    <work-type>data-set</work-type>
+                    <publication-date>
+                        <year>2013</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.6084/M9.FIGSHARE.824317</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2015-08-19T15:03:59.727Z</source-date>
+                    </source>
+                    <created-date>2015-08-19T15:03:59.727Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.719Z</last-modified-date>
+                </orcid-work>
+                <orcid-work put-code="18875588" visibility="public">
+                    <work-title>
+                        <title>ORCID and DATACITE Interoperability Network (ODIN)</title>
+                    </work-title>
+                    <work-citation>
+                        <work-citation-type>bibtex</work-citation-type>
+                        <citation>@misc{datacite44afd193-ccc1-4575-852d-46c15582d79d,
+  doi = {10.5281/ZENODO.30030},
+  url = {http://dx.doi.org/10.5281/ZENODO.30030},
+  author = {Aryani, Amir; Brase, Jan; Brown, Josh; Burton, Adrian; Dallmeier-Thiessen, Sünje; Demeranville, Tom; England, Jude; Fenner, Martin; Herterich, Patricia; Haak, Laurel; Kotarski, Rachael; Lavasa, Artemis; Mele, Salvatore; Rueda, Laura; Ruiz, Sergio; Thorisson, Gudmundur; Vision, Todd; Warner, Simeon; Ziedorn, Frauke; },
+  publisher = {Zenodo},
+  title = {ORCID and DATACITE Interoperability Network (ODIN)},
+  year = {2012}
+}</citation>
+                    </work-citation>
+                    <work-type>other</work-type>
+                    <publication-date>
+                        <year>2012</year>
+                    </publication-date>
+                    <work-external-identifiers>
+                        <work-external-identifier>
+                            <work-external-identifier-type>doi</work-external-identifier-type>
+                            <work-external-identifier-id>10.5281/ZENODO.30030</work-external-identifier-id>
+                        </work-external-identifier>
+                    </work-external-identifiers>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0001-8099-6984</uri>
+                            <path>0000-0001-8099-6984</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>DataCite</source-name>
+                        <source-date>2015-10-01T14:15:06.024Z</source-date>
+                    </source>
+                    <created-date>2015-10-01T14:15:06.024Z</created-date>
+                    <last-modified-date>2016-04-25T10:49:27.720Z</last-modified-date>
+                </orcid-work>
+            </orcid-works>
+            <funding-list>
+                <funding put-code="133362" visibility="public">
+                    <funding-type>grant</funding-type>
+                    <funding-title>
+                        <title>THOR - Technical and Human Infrastructure for Open Research</title>
+                    </funding-title>
+                    <url></url>
+                    <start-date>
+                        <year>2015</year>
+                        <month>06</month>
+                    </start-date>
+                    <end-date>
+                        <year>2017</year>
+                        <month>11</month>
+                    </end-date>
+                    <funding-external-identifiers>
+                        <funding-external-identifier>
+                            <funding-external-identifier-type>grant_number</funding-external-identifier-type>
+                            <funding-external-identifier-value>H2020-EU.1.4.1.3.</funding-external-identifier-value>
+                            <funding-external-identifier-url>http://cordis.europa.eu/project/rcn/194927_en.html</funding-external-identifier-url>
+                        </funding-external-identifier>
+                    </funding-external-identifiers>
+                    <funding-contributors>
+                        <funding-contributor>
+                            <funding-contributor-attributes>
+                                <funding-contributor-role>other-contribution</funding-contributor-role>
+                            </funding-contributor-attributes>
+                        </funding-contributor>
+                    </funding-contributors>
+                    <organization>
+                        <name>European Commission</name>
+                        <address>
+                            <city>Brussels</city>
+                            <country>BE</country>
+                        </address>
+                        <disambiguated-organization>
+                            <disambiguated-organization-identifier>http://dx.doi.org/10.13039/100004431</disambiguated-organization-identifier>
+                            <disambiguation-source>FUNDREF</disambiguation-source>
+                        </disambiguated-organization>
+                    </organization>
+                    <source>
+                        <source-orcid>
+                            <uri>http://orcid.org/0000-0003-0902-4386</uri>
+                            <path>0000-0003-0902-4386</path>
+                            <host>orcid.org</host>
+                        </source-orcid>
+                        <source-name>Tom Demeranville</source-name>
+                        <source-date>2015-12-08T13:16:16.370Z</source-date>
+                    </source>
+                    <created-date>2015-12-08T13:16:16.370Z</created-date>
+                    <last-modified-date>2016-09-21T08:26:35.681Z</last-modified-date>
+                </funding>
+            </funding-list>
+        </orcid-activities>
+    </orcid-profile>
+</orcid-message>

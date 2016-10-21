@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.orcid.jaxb.model.clientgroup.ClientType;
 import org.orcid.jaxb.model.clientgroup.MemberType;
 import org.orcid.jaxb.model.message.Locale;
@@ -36,11 +37,39 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     List<String> findByMissingEventTypes(int maxResults, List<ProfileEventType> pet, Collection<String> orcidsToExclude, boolean not);
 
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
+    /**
+     * Get a list of the ORCID ids with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults);
 
-    List<String> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
+    /**
+     * Get a list of the ORCID ids with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @param orcidsToExclude
+     *          List of ORCID ids to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(IndexingStatus indexingStatus, int maxResults, Collection<String> orcidsToExclude);
 
-    List<String> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
+    /**
+     * Get a list of the ORCID ids with the given indexing status
+     * @param indexingStatuses
+     *          The list of desired indexing status
+     * @param maxResults
+     *          Max number of results
+     * @param orcidsToExclude
+     *          List of ORCID ids to exclude from the results
+     * @return a list of object arrays where the object[0] contains the orcid id and object[1] contains the indexing status                           
+     * */
+    List<Pair<String, IndexingStatus>> findOrcidsByIndexingStatus(Collection<IndexingStatus> indexingStatuses, int maxResults, Collection<String> orcidsToExclude);
 
     List<String> findUnclaimedNotIndexedAfterWaitPeriod(int waitPeriodDays, int maxDaysBack, int maxResults, Collection<String> orcidsToExclude);
 
@@ -124,5 +153,5 @@ public interface ProfileDao extends GenericDao<ProfileEntity, String> {
 
     boolean unreviewProfile(String orcid);
     
-    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);
+    List<Object[]> findProfilesWhereNamesAreNotMigrated(int batchSize);    
 }

@@ -69,7 +69,7 @@
                 <li ng-repeat="funding in group.activities" ng-if="group.activePutCode == funding.putCode.value || editSources[group.groupId]" funding-put-code="{{funding.putCode.value}}">
                     <!-- active row summary info -->
                     <div class="row" ng-if="group.activePutCode == funding.putCode.value">
-                        <div class="col-md-9 col-sm-9 col-xs-12">
+                        <div class="col-md-9 col-sm-9 col-xs-7">
                             <h3 class="workspace-title">                                
                                <span ng-if="group.getActive().fundingTitle.title.value" ng-bind="group.getActive().fundingTitle.title.value"></span>                               
                             </h3>
@@ -98,7 +98,7 @@
                         </div>
 
 
-                            <div class="col-md-3 col-sm-3 col-xs-12 workspace-toolbar">
+                            <div class="col-md-3 col-sm-3 col-xs-5 workspace-toolbar">
                                 <ul class="workspace-private-toolbar" ng-hide="editSources[group.groupId] == true">
                                     <#if !(isPublicProfile??)>
                                         <!-- Bulk edit tool / for further implementation

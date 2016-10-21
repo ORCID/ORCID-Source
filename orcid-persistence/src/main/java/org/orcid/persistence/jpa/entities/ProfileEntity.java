@@ -147,7 +147,7 @@ public class ProfileEntity extends BaseEntity<String> implements UserDetails, Se
     
     private RecordNameEntity recordNameEntity;
     
-    private BiographyEntity biographyEntity;
+    private BiographyEntity biographyEntity;    
     
     @Id
     @Column(name = "orcid", length = 19)
