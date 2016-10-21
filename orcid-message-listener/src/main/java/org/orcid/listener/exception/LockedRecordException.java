@@ -14,8 +14,8 @@
  *
  * =============================================================================
  */
-package org.orcid.listener.clients;
+package org.orcid.listener.exception;
 
-public class LockedRecordException extends Exception{
-
+public class LockedRecordException extends Exception {
+    private static final long serialVersionUID = 1L;
 }

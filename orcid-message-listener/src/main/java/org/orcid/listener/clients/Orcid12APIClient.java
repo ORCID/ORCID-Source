@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.listener.exception.LockedRecordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

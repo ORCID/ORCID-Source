@@ -23,11 +23,11 @@ import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record_rc3.Record;
-import org.orcid.listener.clients.LockedRecordException;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.clients.SolrIndexUpdater;
+import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
@@ -74,10 +74,11 @@ public class ReIndexListener {
             solrIndexUpdater.updateSolrIndex(record,profile.toString());
             //Update 1.2 buckets
             s3Updater.updateS3(message.getOrcid(), profile);   
+            //Update 2.0 buckets
             s3Updater.updateS3(message.getOrcid(), record);
         }catch (LockedRecordException e){
             //if the record is locked then 'blank' it in Solr.
-            solrIndexUpdater.updateSolrIndexForLockedRecord(message.getOrcid(),message.getLastUpdated());
+            solrIndexUpdater.updateSolrIndexForLockedRecord(message.getOrcid(), message.getLastUpdated());
             //TODO: s3 does what here?
         }
 
