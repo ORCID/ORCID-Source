@@ -24,6 +24,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.listener.exception.LockedRecordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,11 +61,14 @@ public class Orcid20APIClient {
      * @return
      */
     public Record fetchPublicProfile(String orcid) throws LockedRecordException{
-        WebResource webResource = jerseyClient.resource(baseUri);
+        WebResource webResource = jerseyClient.resource(baseUri);                
         ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).header(HttpHeaders.HOST, host).get(ClientResponse.class);
         if (response.getStatus() != 200) {
-            if (response.getStatus() == 409)
+            if (response.getStatus() == 409) {
                 throw new LockedRecordException();
+            }
+            
+            LOG.error("Unable to fetch public record " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
         return response.getEntity(Record.class);
