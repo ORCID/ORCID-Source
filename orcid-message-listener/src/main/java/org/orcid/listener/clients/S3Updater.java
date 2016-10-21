@@ -23,7 +23,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.service.S3MessagingService;
 import org.slf4j.Logger;
@@ -46,7 +46,8 @@ public class S3Updater {
     
     private final ObjectMapper mapper;
 
-    private final Marshaller marshaller;
+    private final Marshaller marshaller1_2;
+    private final Marshaller marshaller2_0;
    
     private final String bucketPrefix;
     
@@ -73,17 +74,25 @@ public class S3Updater {
         mapper.registerModule(module);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        JAXBContext context = JAXBContext.newInstance(OrcidProfile.class, Record.class);
-        marshaller = context.createMarshaller();
+        //Initialize 1.2 Marshaller
+        JAXBContext context = JAXBContext.newInstance(OrcidMessage.class);        
+        marshaller1_2 = context.createMarshaller();
         // for pretty-print XML in JAXB
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        marshaller1_2.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        
+        //Initialize 2.0 Marshaller
+        context = JAXBContext.newInstance(Record.class);
+        marshaller2_0 = context.createMarshaller();
+        // for pretty-print XML in JAXB
+        marshaller2_0.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        
         this.bucketPrefix = bucketPrefix;
     }
 
     public void updateS3(String orcid, Object profile) throws JsonProcessingException, AmazonClientException, JAXBException {
         // API 1.2            
-        if(OrcidProfile.class.isAssignableFrom(profile.getClass())) {
-            OrcidProfile orcidProfile = (OrcidProfile) profile;
+        if(OrcidMessage.class.isAssignableFrom(profile.getClass())) {
+            OrcidMessage orcidProfile = (OrcidMessage) profile;
             putJsonElement(orcid, orcidProfile);
             putXmlElement(orcid, orcidProfile);
             return;
@@ -98,7 +107,7 @@ public class S3Updater {
         }        
     }
 
-    private void putJsonElement(String orcid, OrcidProfile profile) throws JsonProcessingException {
+    private void putJsonElement(String orcid, OrcidMessage profile) throws JsonProcessingException {
         try {
             String bucket = bucketPrefix + "-api-1-2-json-" + getBucketCheckSum(orcid);
             s3MessagingService.send(bucket, orcid + ".json", toJson(profile));
@@ -107,7 +116,7 @@ public class S3Updater {
         }
     }
 
-    private void putXmlElement(String orcid, OrcidProfile profile) throws AmazonClientException, JAXBException {
+    private void putXmlElement(String orcid, OrcidMessage profile) throws AmazonClientException, JAXBException {
         try {
             String bucket = bucketPrefix + "-api-1-2-xml-" + getBucketCheckSum(orcid);
             s3MessagingService.send(bucket, orcid + ".xml", toXML(profile));
@@ -140,7 +149,11 @@ public class S3Updater {
 
     private String toXML(Object profile) throws JAXBException {
         StringWriter sw = new StringWriter();
-        marshaller.marshal(profile, sw);
+        if(OrcidMessage.class.isAssignableFrom(profile.getClass())) {
+            marshaller1_2.marshal(profile, sw);
+        } else {
+            marshaller2_0.marshal(profile, sw);
+        }        
         return sw.toString();
     }
     
