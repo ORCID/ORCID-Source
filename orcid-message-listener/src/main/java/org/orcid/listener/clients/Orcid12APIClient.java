@@ -65,6 +65,7 @@ public class Orcid12APIClient {
         if (response.getStatus() != 200) {
             if (response.getStatus() == 409)
                 throw new LockedRecordException();
+            LOG.error("Unable to fetch public record " + orcid + " on API 1.2 HTTP error code: " + response.getStatus());
             throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
         }
         OrcidMessage output = response.getEntity(OrcidMessage.class);

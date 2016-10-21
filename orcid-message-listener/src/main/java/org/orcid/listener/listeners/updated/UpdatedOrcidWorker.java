@@ -66,9 +66,13 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             LOG.info("Processing " + m.getLastUpdated());
             
             try{
-                OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(m.getOrcid());
-                Record record = orcid20ApiClient.fetchPublicProfile(m.getOrcid());//can we not just transform the above?
-                                
+                String orcid = m.getOrcid();
+                
+                //TODO: Update S3 buckets for deprecated or locked files: 
+                //See https://trello.com/c/LSrdG59t/3162-deprecated-or-locked-in-s3-for-2-0
+                OrcidProfile profile = fetchPublicProfile(orcid);
+                Record record = fetchPublicRecord(orcid);
+                
                 // Phase #1: update S3 
                 if(dumpIndexingEnabled) {
                     updateS3(m.getOrcid(), profile, record);    
@@ -79,31 +83,74 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
                     updateSolr(m.getOrcid(), record, profile.toString());    
                 } 
 
-            }catch(LockedRecordException e){
-                Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());                // note this is slightly different from existing behaviour
+            } catch(LockedRecordException e) {
+                // note this is slightly different from existing behaviour
+                Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());                
                 if (m.getLastUpdated().after(lastModifiedFromSolr))
-                    solrIndexUpdater.updateSolrIndexForLockedRecord(m.getOrcid(), m.getLastUpdated());
-                //TODO: something with S3
+                    solrIndexUpdater.updateSolrIndexForLockedRecord(m.getOrcid(), m.getLastUpdated());                
+            } catch(Exception e) {
+                LOG.error("Unable to fetch record " + m.getOrcid() + " so, unable to feed nor S3 nor SOLR");
             }
         }
-
+    }
+    
+    /**
+     * Fetch the public OrcidProfile element from the 1.2 API
+     * @param orcid
+     *          The record id
+     * @return public OrcidProfile or null in case an exception happens
+     * @throws LockedRecordException          
+     * */
+    private OrcidProfile fetchPublicProfile(String orcid) throws Exception {
+        try {
+            return orcid12ApiClient.fetchPublicProfile(orcid);
+        } catch (Exception e) {
+            // If we can't fetch the record from 1.2, we should throw any
+            // exception, since we will not be able to index SOLR nor feed S3
+            LOG.error("Unable to fetch OrcidProfile (1.2 API) " + orcid, e);
+            throw e;
+        }
+    }
+    
+    /**
+     * Fetch the public Record element from the 2.0 API
+     * @param orcid
+     *          The record id
+     * @return public Record or null in case an exception happens
+     * @throws LockedRecordException          
+     * */
+    private Record fetchPublicRecord(String orcid) {
+        try {
+            return orcid20ApiClient.fetchPublicProfile(orcid);
+        } catch(Exception e) {
+            // If we can't fetch the record from 2.0 we can ignore the error for
+            // now, since the only thing that will fail is feeding S3, which is
+            // still a prototype
+            //TODO: What should we do in this case when this actually moves live?
+            LOG.error("Unable to fetch Record (2.0 API) " + orcid, e);
+        } 
+        return null;
     }
     
     private void updateS3(String orcid,OrcidProfile profile,Record record) {
         // Update API 1.2
-        try {
-            s3Updater.updateS3(orcid, profile);
-        } catch(Exception e) {
-            //Unable to update record in S3
-            LOG.error("Unable to update S3 bucket for 1.2 API", e);
-        } 
+        if(profile != null) {
+            try {
+                s3Updater.updateS3(orcid, profile);
+            } catch(Exception e) {
+                //Unable to update record in S3
+                LOG.error("Unable to update S3 bucket for 1.2 API", e);
+            } 
+        }
         
         // Update API 2.0
-        try {
-            s3Updater.updateS3(orcid, record);
-        } catch(Exception e) {
-            //Unable to update record in S3
-            LOG.error("Unable to update S3 bucket for 2.0 API", e);
+        if(record != null) {
+            try {
+                s3Updater.updateS3(orcid, record);
+            } catch(Exception e) {
+                //Unable to update record in S3
+                LOG.error("Unable to update S3 bucket for 2.0 API", e);
+            }
         }
     }
         
