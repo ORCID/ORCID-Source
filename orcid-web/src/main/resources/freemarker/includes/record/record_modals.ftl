@@ -20,7 +20,9 @@
 <script type="text/ng-template" id="edit-aka">	
 	<!-- Other Names -->	
 	<div class="lightbox-container" id="aka-popover">
-		<div class="edit-record edit-aka">
+		<div class="edit-record	<#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-aka">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -37,21 +39,18 @@
 				</div>				
 				<div class="row">
 					<div class="col-md-12 col-sm-12 col-xs-12 padding-right-reset">
-						<span class="right"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
+						<span class="right custom-control-title"><@orcid.msg 'groups.common.edit_individual_privacy' /></span>	
 					</div>
 				</div>		
 			</#if>
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>
-						<div class="scroll-area 
-							
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">
-
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>
+						<div class="scroll-area">
 	        	      	   <div class="row aka-row" ng-repeat="otherName in otherNamesForm.otherNames" ng-cloak>							 								
 								<div class="col-md-6 col-sm-6 col-xs-12">
 									<div class="aka">		

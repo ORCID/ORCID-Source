@@ -6328,10 +6328,14 @@ a:hover .mozilla-badge{
 
 .edit-record{	
 	width: 600px;
-	min-height: 600px;
+	min-height: 500px;
 	height: auto;
 	padding: 15px 0 15px 15px;
 	overflow: visible;	 
+}
+
+.edit-record-bulk-edit{
+	min-height: 610px;
 }
 
 .edit-record-emails{	
@@ -6339,7 +6343,6 @@ a:hover .mozilla-badge{
 	padding: 15px 0 15px 15px;
 	min-height: 678px; 
 }
-
 
 .fixed-area .scroll-area input[type="textbox"],
 .fixed-area .scroll-area input[type="text"],
@@ -6696,10 +6699,8 @@ a:hover .mozilla-badge{
 	margin-right: 30px;
 }
 
-.bulk-edit-modal .custom-control-title{
+.edit-record .custom-control-title{
 	text-transform: uppercase;
-	width: 100%;
-	text-align: center;
 	display: block;
 	font-size: 12px;	
 }
@@ -6869,6 +6870,10 @@ a:hover .mozilla-badge{
 #ul li.bio-edit{
 	display: inline-block;
     vertical-align: top;
+}
+
+.no-bulk-margin-fix{
+	margin-top: 30px;
 }
 	
 
