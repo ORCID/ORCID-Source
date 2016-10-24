@@ -27,6 +27,8 @@ import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.clients.SolrIndexUpdater;
+import org.orcid.listener.common.ExceptionHandler;
+import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
@@ -54,6 +56,9 @@ public class ReIndexListener {
     
     @Resource
     private S3Updater s3Updater; 
+    
+    @Resource
+    private ExceptionHandler exceptionHandler;
 
     /**
      * Processes messages on receipt.
@@ -64,23 +69,49 @@ public class ReIndexListener {
      * @throws AmazonClientException 
      */
     @JmsListener(destination = MessageConstants.Queues.REINDEX)
-    public void processMessage(final Map<String, String> map) throws JsonProcessingException, AmazonClientException, JAXBException {
+    public void processMessage(final Map<String, String> map) throws JsonProcessingException, AmazonClientException, JAXBException {        
         LastModifiedMessage message = new LastModifiedMessage(map);
-        LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
-
-        try{
-            OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
-            Record record = orcid20ApiClient.fetchPublicProfile(message.getOrcid());//can we not just transform the above?
+        String orcid = message.getOrcid();
+        LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + orcid + " " + message.getLastUpdated());
+        OrcidMessage profile = null;
+        Record record = null;
+        
+        //If record is locked
+        try {
+            profile = orcid12ApiClient.fetchPublicProfile(orcid);
+        } catch(LockedRecordException lre) {
+            try {
+                exceptionHandler.handleLockedRecordException(message, lre.getOrcidMessage());                
+            } catch (DeprecatedRecordException e) {
+                // Should never happen, since it is already locked
+            }
+            return; 
+        } catch (DeprecatedRecordException dre) {
+            try {
+                exceptionHandler.handleDeprecatedRecordException(message, dre.getOrcidDeprecated());
+            } catch (LockedRecordException e) {
+                // Should never happen, since it is already deprecated
+            }
+            return;
+        }
+                
+        //Fetch 2.0 record
+        try {
+            record = orcid20ApiClient.fetchPublicProfile(orcid);
+        } catch(Exception e) {
+            LOG.warn("Unable to fetch record " + orcid + " from 2.0 API");            
+        }
+        
+        if(profile != null) {
+            //Update solr
             solrIndexUpdater.updateSolrIndex(record,profile.toString());
             //Update 1.2 buckets
-            s3Updater.updateS3(message.getOrcid(), profile);   
-            //Update 2.0 buckets
-            s3Updater.updateS3(message.getOrcid(), record);
-        }catch (LockedRecordException e){
-            //if the record is locked then 'blank' it in Solr.
-            solrIndexUpdater.updateSolrIndexForLockedRecord(message.getOrcid(), message.getLastUpdated());
-            //TODO: s3 does what here?
+            s3Updater.updateS3(orcid, profile);               
         }
-
-    }
+        
+        if(record != null) {
+            //Update 2.0 buckets          
+            s3Updater.updateS3(orcid, record);
+        }                
+    }        
 }

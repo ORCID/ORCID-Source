@@ -23,6 +23,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.orcid.jaxb.model.error_rc3.OrcidError;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.service.S3MessagingService;
@@ -48,6 +50,8 @@ public class S3Updater {
 
     private final Marshaller marshaller1_2;
     private final Marshaller marshaller2_0;
+    private final Marshaller marshaller_error_2_0;
+    private final Marshaller marshaller_error_1_2;
    
     private final String bucketPrefix;
     
@@ -80,31 +84,59 @@ public class S3Updater {
         // for pretty-print XML in JAXB
         marshaller1_2.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         
+        //Initialize 1.2 error Marshaller
+        context = JAXBContext.newInstance(OrcidDeprecated.class);
+        marshaller_error_1_2 = context.createMarshaller();
+        // for pretty-print XML in JAXB
+        marshaller_error_1_2.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        
         //Initialize 2.0 Marshaller
         context = JAXBContext.newInstance(Record.class);
         marshaller2_0 = context.createMarshaller();
         // for pretty-print XML in JAXB
         marshaller2_0.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         
+        //Initialize 2.0 error Marshaller
+        context = JAXBContext.newInstance(OrcidError.class);
+        marshaller_error_2_0 = context.createMarshaller();
+        // for pretty-print XML in JAXB
+        marshaller_error_2_0.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        
         this.bucketPrefix = bucketPrefix;
     }
 
-    public void updateS3(String orcid, Object profile) throws JsonProcessingException, AmazonClientException, JAXBException {
+    public void updateS3(String orcid, Object object) throws JsonProcessingException, AmazonClientException, JAXBException {
         // API 1.2            
-        if(OrcidMessage.class.isAssignableFrom(profile.getClass())) {
-            OrcidMessage orcidProfile = (OrcidMessage) profile;
+        if(OrcidMessage.class.isAssignableFrom(object.getClass())) {
+            OrcidMessage orcidProfile = (OrcidMessage) object;
             putJsonElement(orcid, orcidProfile);
             putXmlElement(orcid, orcidProfile);
             return;
         }
         
+        // API 1.2 ERROR
+        if(OrcidDeprecated.class.isAssignableFrom(object.getClass())) {
+            OrcidDeprecated error = (OrcidDeprecated) object;
+            putJsonElement(orcid, error);
+            putXmlElement(orcid, error);
+            return;
+        }
+        
         // API 2.0_rc3
-        if(Record.class.isAssignableFrom(profile.getClass())) {
-            Record record = (Record) profile;
+        if(Record.class.isAssignableFrom(object.getClass())) {
+            Record record = (Record) object;
             putJsonElement(orcid, record);
             putXmlElement(orcid, record);
             return;
-        }        
+        }     
+        
+        // API 2.0 Error
+        if(OrcidError.class.isAssignableFrom(object.getClass())) {
+            OrcidError error = (OrcidError) object;
+            putJsonElement(orcid, error);
+            putXmlElement(orcid, error);
+            return;
+        }
     }
 
     private void putJsonElement(String orcid, OrcidMessage profile) throws JsonProcessingException {
@@ -120,6 +152,24 @@ public class S3Updater {
         try {
             String bucket = bucketPrefix + "-api-1-2-xml-" + getBucketCheckSum(orcid);
             s3MessagingService.send(bucket, orcid + ".xml", toXML(profile));
+        } catch (AmazonServiceException e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
+    private void putJsonElement(String orcid, OrcidDeprecated error) throws JsonProcessingException {
+        try {
+            String bucket = bucketPrefix + "-api-1-2-json-" + getBucketCheckSum(orcid);
+            s3MessagingService.send(bucket, orcid + ".json", toJson(error));
+        } catch (AmazonServiceException e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
+    private void putXmlElement(String orcid, OrcidDeprecated error) throws AmazonClientException, JAXBException {
+        try {
+            String bucket = bucketPrefix + "-api-1-2-xml-" + getBucketCheckSum(orcid);
+            s3MessagingService.send(bucket, orcid + ".xml", toXML(error));
         } catch (AmazonServiceException e) {
             LOG.error(e.getMessage());
         }
@@ -143,17 +193,39 @@ public class S3Updater {
         }
     }
     
+    private void putJsonElement(String orcid, OrcidError error) throws JsonProcessingException {
+        try {
+            String bucket = bucketPrefix + "-api-2-0-json-" + getBucketCheckSum(orcid);
+            s3MessagingService.send(bucket, orcid + ".json", toJson(error));
+        } catch (AmazonServiceException e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
+    private void putXmlElement(String orcid, OrcidError error) throws AmazonClientException, JAXBException {
+        try {
+            String bucket = bucketPrefix + "-api-2-0-xml-" + getBucketCheckSum(orcid);
+            s3MessagingService.send(bucket, orcid + ".xml", toXML(error));
+        } catch (AmazonServiceException e) {
+            LOG.error(e.getMessage());
+        }
+    }
+    
     private String toJson(Object profile) throws JsonProcessingException {
         return mapper.writeValueAsString(profile);
     }
 
-    private String toXML(Object profile) throws JAXBException {
+    private String toXML(Object object) throws JAXBException {
         StringWriter sw = new StringWriter();
-        if(OrcidMessage.class.isAssignableFrom(profile.getClass())) {
-            marshaller1_2.marshal(profile, sw);
+        if(OrcidMessage.class.isAssignableFrom(object.getClass())) {
+            marshaller1_2.marshal(object, sw);
+        } else if(Record.class.isAssignableFrom(object.getClass())){
+            marshaller2_0.marshal(object, sw);
+        } else if(OrcidError.class.isAssignableFrom(object.getClass())) {
+            marshaller_error_2_0.marshal(object, sw);
         } else {
-            marshaller2_0.marshal(profile, sw);
-        }        
+            marshaller_error_1_2.marshal(object, sw);
+        }
         return sw.toString();
     }
     
