@@ -170,7 +170,7 @@ cd ..
     
 sudo su - postgres
     
-psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
+psql -d orcid -f orcid-persistence/src/main/resources/db/updates/json-setup.sql
     
 ```
 
