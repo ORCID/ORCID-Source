@@ -120,7 +120,7 @@ We'll set up postgres using the default settings in
 
 ## Clone the git ORCID-Fonts-Dot-Com repository
 
-Do to licensing issues this is only available to ORCID.org employees.
+Due to licensing issues this is only available to ORCID.org employees.
 
 * Clone the ORCID-Fonts-Dot-Com repository into the static directory
 
