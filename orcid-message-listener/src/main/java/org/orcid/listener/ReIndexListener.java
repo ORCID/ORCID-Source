@@ -34,6 +34,7 @@ import org.orcid.utils.listener.LastModifiedMessage;
 import org.orcid.utils.listener.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -45,6 +46,9 @@ public class ReIndexListener {
 
     Logger LOG = LoggerFactory.getLogger(ReIndexListener.class);
 
+    @Value("${org.orcid.persistence.messaging.solr_indexing.enabled}")
+    private boolean isSolrIndexingEnalbed;
+    
     @Resource
     private Orcid12APIClient orcid12ApiClient;
     
@@ -104,7 +108,9 @@ public class ReIndexListener {
         
         if(profile != null) {
             //Update solr
-            solrIndexUpdater.updateSolrIndex(record,profile.toString());
+            if(isSolrIndexingEnalbed) {
+                solrIndexUpdater.updateSolrIndex(profile.getOrcidProfile());
+            }
             //Update 1.2 buckets
             s3Updater.updateS3(orcid, profile);               
         }
