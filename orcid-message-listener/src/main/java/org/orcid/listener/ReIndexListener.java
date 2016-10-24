@@ -21,7 +21,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.xml.bind.JAXBException;
 
-import org.orcid.jaxb.model.message.OrcidProfile;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
@@ -69,7 +69,7 @@ public class ReIndexListener {
         LOG.info("Recieved " + MessageConstants.Queues.REINDEX + " message for orcid " + message.getOrcid() + " " + message.getLastUpdated());
 
         try{
-            OrcidProfile profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
+            OrcidMessage profile = orcid12ApiClient.fetchPublicProfile(message.getOrcid());
             Record record = orcid20ApiClient.fetchPublicProfile(message.getOrcid());//can we not just transform the above?
             solrIndexUpdater.updateSolrIndex(record,profile.toString());
             //Update 1.2 buckets

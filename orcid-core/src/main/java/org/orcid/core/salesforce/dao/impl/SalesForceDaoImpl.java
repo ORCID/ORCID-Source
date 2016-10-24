@@ -66,7 +66,7 @@ public class SalesForceDaoImpl implements SalesForceDao {
     @Value("${org.orcid.core.salesForce.tokenEndPointUrl:https://test.salesforce.com/services/oauth2/token}")
     private String tokenEndPointUrl;
 
-    @Value("${org.orcid.core.salesForce.apiBaseUrl:https://cs43.salesforce.com}")
+    @Value("${org.orcid.core.salesForce.apiBaseUrl:https://cs10.salesforce.com}")
     private String apiBaseUrl;
 
     @Resource
