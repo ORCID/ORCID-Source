@@ -8,7 +8,7 @@
     
 * Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 
-* Install [Postgres](http://www.postgresql.org/download/). (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
+* Install [Postgres](http://www.postgresql.org/download/) version 9.3.x. (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
 
 	If you are using a Mac install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
 	  
