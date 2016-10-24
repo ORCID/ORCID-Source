@@ -70,6 +70,7 @@ We'll set up postgres using the default settings in
     psql -U orcid -d orcid -c "\list" -h localhost
     psql -U statistics -d statistics -c "\list" -h localhost
     ```
+	
 ## Install Java and JCE
 
     Follow intructions at [Oracle Install Overview](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html#CJAGAACB)
@@ -85,6 +86,7 @@ We'll set up postgres using the default settings in
     mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
     cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
     ```    
+	
 ## Setup Maven & Tomcat
 
     Extract next files into ~/Bin folder (Create if it does not exist)
@@ -157,7 +159,7 @@ Tip: use the same command for rebuilding.
 
 ## Create the Database Schema - First Time Only
 
-Intialize the database schema (runs as orcid the first time, but then you need to run it again as postgres because some tasks require superuser).
+Intialize the database schema
 
 ```
 cd ~/git/ORCID-Source/orcid-core
