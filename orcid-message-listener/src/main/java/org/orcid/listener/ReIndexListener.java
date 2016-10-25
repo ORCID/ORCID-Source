@@ -109,7 +109,7 @@ public class ReIndexListener {
         if(profile != null) {
             //Update solr
             if(isSolrIndexingEnalbed) {
-                solrIndexUpdater.updateSolrIndex(profile.getOrcidProfile());
+                solrIndexUpdater.updateSolrIndex(record,profile.toString());
             }
             //Update 1.2 buckets
             s3Updater.updateS3(orcid, profile);               
