@@ -19,7 +19,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
         
-    <changeSet id="FIX-EMPTY-WORKS-EXTERNAL-IDENTIFIERS" author="Angel Montenegro">
+    <changeSet id="FIX-EMPTY-WORKS-EXTERNAL-IDENTIFIERS" author="Angel Montenegro" dbms="postgresql">
     	<sql>drop table if exists empty_work_identifiers;</sql>
 		<sql>create temp table empty_work_identifiers (work_id bigint, orcid character varying(19), external_ids_json json, fixed_external_ids_json json);</sql>
 		<sql>insert into empty_work_identifiers select work_id, orcid, external_ids_json from work where external_ids_json::text like '%"workExternalIdentifierId":null%';</sql>
