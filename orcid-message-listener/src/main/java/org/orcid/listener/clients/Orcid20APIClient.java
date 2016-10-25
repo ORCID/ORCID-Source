@@ -19,7 +19,6 @@ package org.orcid.listener.clients;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
@@ -33,28 +32,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 @Component
 public class Orcid20APIClient {
 
     Logger LOG = LoggerFactory.getLogger(Orcid20APIClient.class);
     
-    @Resource
-    protected Client jerseyClient;
-    
-    protected final URI baseUri;
-    
+    protected final URI baseUri;    
     protected final String host;
+    protected final Client jerseyClient;
 
     @Autowired
     public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri, @Value("${org.orcid.message-listener.host_header_override}") String hostHeaderOverride) throws URISyntaxException {
         LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri + " and host = " + hostHeaderOverride);
         this.baseUri = new URI(baseUri);
         this.host = hostHeaderOverride;
+        
+        ClientConfig config = new DefaultClientConfig();
+        config.getClasses().add(JacksonJaxbJsonProvider.class);
+        jerseyClient = Client.create(config);
     }
 
     /**
