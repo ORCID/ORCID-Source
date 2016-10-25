@@ -79,8 +79,9 @@
 	</bean>
 	
 	<!-- Jersey client -->
-	<bean id="jerseyClient" class="com.sun.jersey.api.client.Client" factory-method="create">
+	<bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
         <constructor-arg ref="clientConfig"/>
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
     </bean>
 
 	<util:map id="jerseyProperties">

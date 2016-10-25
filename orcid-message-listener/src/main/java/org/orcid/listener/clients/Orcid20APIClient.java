@@ -57,6 +57,10 @@ public class Orcid20APIClient {
         this.host = hostHeaderOverride;
     }
 
+    private Client createJerseyClient() {
+     return null;   
+    }
+    
     /**
      * Fetches the profile from the ORCID public API v1.2
      * 
