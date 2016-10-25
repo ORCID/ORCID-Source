@@ -66,8 +66,7 @@ public class RecordManagerImpl implements RecordManager {
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(profileEntityManager.getPublicActivitiesSummary(orcid));
-        record.setPerson(profileEntityManager.getPublicPersonDetails(orcid));
-        record.setLastModifiedDate(getLastModifiedDate(orcid));
+        record.setPerson(profileEntityManager.getPublicPersonDetails(orcid));        
         return record;
     }
 
@@ -79,14 +78,8 @@ public class RecordManagerImpl implements RecordManager {
         record.setOrcidIdentifier(getOrcidIdentifier(orcid));
         record.setPreferences(getPreferences(orcid));
         record.setActivitiesSummary(profileEntityManager.getActivitiesSummary(orcid));
-        record.setPerson(profileEntityManager.getPersonDetails(orcid));
-        record.setLastModifiedDate(getLastModifiedDate(orcid));
+        record.setPerson(profileEntityManager.getPersonDetails(orcid));        
         return record;
-    }
-
-    private LastModifiedDate getLastModifiedDate(String orcid) {
-        ProfileEntity profile = profileEntityCacheManager.retrieve(orcid);
-        return new LastModifiedDate(DateUtils.convertToXMLGregorianCalendar(profile.getLastModified()));
     }
     
     private OrcidIdentifier getOrcidIdentifier(String orcid) {

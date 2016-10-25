@@ -176,7 +176,7 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     }
         
     private void updateSolr(String orcid,Record record, String v12profileXML) {
-        Date lastModifiedFromprofile = record.getLastModifiedDate().getValue().toGregorianCalendar().getTime();
+        Date lastModifiedFromprofile = record.getHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime();
         Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(orcid);
         // note this is slightly different from existing behaviour
         if (lastModifiedFromprofile.after(lastModifiedFromSolr))
