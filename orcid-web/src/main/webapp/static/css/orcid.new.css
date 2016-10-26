@@ -2368,7 +2368,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
     position: absolute;
     left: -134px;
     top: 17px;
-    min-width: 250px;
+    min-width: 270px;
     width: auto;
     max-width: none;
     background-color: #ffffff;
@@ -6328,7 +6328,7 @@ a:hover .mozilla-badge{
 
 .edit-record{	
 	width: 600px;
-	min-height: 500px;
+	min-height: 550px;
 	height: auto;
 	padding: 15px 0 15px 15px;
 	overflow: visible;	 

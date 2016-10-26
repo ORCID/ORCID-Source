@@ -32,8 +32,7 @@
 				</div>			
 			</div>
 
-			<#if RequestParameters['bulkEdit']??>
-				<!-- When removing this conditional remove also the conditional inside to the container with class scroll-area -->
+			<#if RequestParameters['bulkEdit']??>				
 				<div class="row bottomBuffer">							
 					<div ng-include="'bulk-edit'"></div>					
 				</div>				
@@ -110,7 +109,9 @@
 <script type="text/ng-template" id="edit-country">
 	<!-- Country -->
 	<div class="lightbox-container" id="country-popover">
-		<div class="edit-record edit-country">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-country">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -134,12 +135,11 @@
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="country in countryForm.addresses">
 								<div class="col-md-6">									
 									<div class="aka">
@@ -208,7 +208,9 @@
 <script type="text/ng-template" id="edit-keyword">
 	<!-- Keywords -->
 	<div class="lightbox-container" id="keyword-popover">
-		<div class="edit-record edit-keyword">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-keyword">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -232,12 +234,11 @@
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row" ng-repeat="keyword in keywordsForm.keywords">		
 								<div class="col-md-6">
 									<div class="aka">										
@@ -297,7 +298,9 @@
 
 <script type="text/ng-template" id="edit-websites">
 	<div class="lightbox-container" id="websites-popover">
-		<div class="edit-record edit-websites">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-websites">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -321,12 +324,11 @@
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row websites" ng-repeat="website in websitesForm.websites">
 								<div class="col-md-6">
 									<div class="aka">										
@@ -394,7 +396,9 @@
 
 <script type="text/ng-template" id="edit-external-identifiers">
 	<div class="lightbox-container" id="extids-popover">
-		<div class="edit-record edit-external-identifiers">
+		<div class="edit-record <#if RequestParameters['bulkEdit']??>
+			edit-record-bulk-edit
+			</#if> edit-external-identifiers">
 			<!-- Title -->
 			<div class="row">			
 				<div class="col-md-12 col-sm-12 col-xs-12">	
@@ -418,12 +422,11 @@
 
 			<div class="row">
 				<div class="col-md-12 col-xs-12 col-sm-12" style="position: static">
-					<div class="fixed-area" scroll>				
-						<div class="scroll-area 
-							<#if RequestParameters['bulkEdit']??>
-							scroll-area-padding
-							</#if>
-						   ">		
+					<div class="fixed-area 
+						<#if !RequestParameters['bulkEdit']??>
+							no-bulk-margin-fix
+						</#if>" scroll>				
+						<div class="scroll-area">		
 							<div class="row aka-row external-identifiers" ng-repeat="externalIdentifier in externalIdentifiersForm.externalIdentifiers">
 								<div class="col-md-6">
 									<div class="aka">										
