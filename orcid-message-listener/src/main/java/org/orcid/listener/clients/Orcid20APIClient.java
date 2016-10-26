@@ -56,7 +56,7 @@ public class Orcid20APIClient {
         this.baseUri = new URI(baseUri);
         this.host = hostHeaderOverride;
     }
-
+    
     /**
      * Fetches the profile from the ORCID public API v1.2
      * 
