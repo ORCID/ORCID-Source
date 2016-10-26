@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.orcid.jaxb.model.message.OrcidProfile;
 import org.orcid.jaxb.model.record.summary_rc3.FundingGroup;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
 import org.orcid.jaxb.model.record.summary_rc3.WorkGroup;
@@ -36,7 +35,6 @@ import org.orcid.jaxb.model.record_rc3.ExternalID;
 import org.orcid.jaxb.model.record_rc3.PersonExternalIdentifier;
 import org.orcid.jaxb.model.record_rc3.Record;
 import org.orcid.jaxb.model.record_rc3.Relationship;
-import org.orcid.listener.clients.SolrIndexUpdater;
 import org.orcid.utils.NullUtils;
 import org.orcid.utils.solr.entities.OrcidSolrDocument;
 import org.orcid.utils.solr.entities.SolrConstants;
@@ -58,11 +56,14 @@ public class OrcidRecordToSolrDocument {
         OrcidSolrDocument profileIndexDocument = new OrcidSolrDocument();
         profileIndexDocument.setOrcid(record.getOrcidIdentifier().getPath());
         
-        if (record.getLastModifiedDate() != null){
-            profileIndexDocument.setProfileLastModifiedDate(record.getLastModifiedDate().getValue().toGregorianCalendar().getTime());            
-        }
-        if (record.getHistory() != null && record.getHistory().getSubmissionDate() != null){
-            profileIndexDocument.setProfileSubmissionDate(record.getHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime());            
+        
+        if(record.getHistory() != null) {
+            if (record.getHistory().getLastModifiedDate() != null){
+                profileIndexDocument.setProfileLastModifiedDate(record.getHistory().getLastModifiedDate().getValue().toGregorianCalendar().getTime());            
+            }
+            if (record.getHistory().getSubmissionDate() != null){
+                profileIndexDocument.setProfileSubmissionDate(record.getHistory().getSubmissionDate().getValue().toGregorianCalendar().getTime());
+            }
         }
         
         if (record.getDeprecated() != null) {

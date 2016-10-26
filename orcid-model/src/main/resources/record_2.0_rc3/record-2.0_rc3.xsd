@@ -78,14 +78,13 @@
 					present
 					when the type attribute is "group" or "client". This
 					attribute
-					indicates the API privledges held by the group as
+					indicates the API privileges held by the group as
 					indicated by
 					their
 					ORCID Membership Agreement.
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence>
-				<xs:element ref="common:last-modified-date" minOccurs="0" maxOccurs="1" />
 				<xs:element ref="common:orcid-identifier" minOccurs="0"
 					maxOccurs="1" />
 				<xs:element ref="deprecated:deprecated" minOccurs="0"

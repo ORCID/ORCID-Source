@@ -3418,8 +3418,7 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertNotNull(record.getHistory());
         assertEquals(OrcidType.USER, record.getOrcidType());        
         assertNotNull(record.getPreferences());
-        assertEquals(Locale.EN, record.getPreferences().getLocale());
-        assertNotNull(record.getLastModifiedDate());
+        assertEquals(Locale.EN, record.getPreferences().getLocale());        
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());
@@ -3676,7 +3675,6 @@ public class MemberV2ApiServiceDelegatorTest extends DBUnitTest {
         assertEquals(OrcidType.USER, record.getOrcidType());        
         assertNotNull(record.getPreferences());
         assertEquals(Locale.EN, record.getPreferences().getLocale());
-        assertNotNull(record.getLastModifiedDate());
         History history = record.getHistory();
         assertTrue(history.getClaimed());
         assertNotNull(history.getCompletionDate());
