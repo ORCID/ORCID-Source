@@ -317,13 +317,14 @@ public class PublicV2ApiServiceDelegatorImpl
     @Override
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEducations(String orcid) {        
-        List<EducationSummary> educations = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));
-        visibilityFilter.filter(educations, orcid);
+        List<EducationSummary> educations = affiliationsManager.getEducationSummaryList(orcid, getLastModifiedTime(orcid));        
         Educations publicEducations = new Educations();
         for(EducationSummary summary : educations) {
-            ActivityUtils.setPathToActivity(summary, orcid);
-            sourceUtils.setSourceName(summary);
-            publicEducations.getSummaries().add(summary);
+            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtils.setSourceName(summary);
+                publicEducations.getSummaries().add(summary);
+            }
         }
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEducations);
         return Response.ok(publicEducations).build();
@@ -353,12 +354,13 @@ public class PublicV2ApiServiceDelegatorImpl
     @AccessControl(requiredScope = ScopePathType.AFFILIATIONS_READ_LIMITED, enableAnonymousAccess = true)
     public Response viewEmployments(String orcid) {        
         List<EmploymentSummary> employments = affiliationsManager.getEmploymentSummaryList(orcid, getLastModifiedTime(orcid));
-        visibilityFilter.filter(employments, orcid);
         Employments publicEmployments = new Employments();
         for(EmploymentSummary summary : employments) {
-            ActivityUtils.setPathToActivity(summary, orcid);
-            sourceUtils.setSourceName(summary);
-            publicEmployments.getSummaries().add(summary);
+            if(Visibility.PUBLIC.equals(summary.getVisibility())) {
+                ActivityUtils.setPathToActivity(summary, orcid);
+                sourceUtils.setSourceName(summary);
+                publicEmployments.getSummaries().add(summary);
+            }
         }
         Api2_0_rc3_LastModifiedDatesHelper.calculateLatest(publicEmployments);
         return Response.ok(publicEmployments).build();
