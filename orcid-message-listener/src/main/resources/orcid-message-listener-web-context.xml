@@ -80,8 +80,8 @@
 	
 	<!-- Jersey client -->
 	<bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
-        <constructor-arg ref="clientConfig"/>
         <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
+        <constructor-arg ref="jerseyProperties" />
     </bean>
 
 	<util:map id="jerseyProperties">
@@ -91,25 +91,4 @@
 
 	<bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
 
-    <bean id="clientConfig" class="org.orcid.util.OrcidJerseyClientConfig">
-        <constructor-arg ref="providers"/>
-        <property name="properties" ref="jerseyProperties"/>
-        <property name="keyStore" ref="keyStore"/>
-        <property name="keyStorePassword" value="${org.orcid.t2.client.keyStorePass:#{null}}"/>
-        <property name="trustStore" ref="trustStore"/>
-    </bean>
-    
-    <util:set id="providers">
-        <value>com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider</value>        
-    </util:set>
-    
-	<bean id="keyStore" class="org.orcid.util.KeyStoreFactoryBean">
-        <property name="location" value="${org.orcid.t2.client.keyStoreLocation:#{null}}"/>
-        <property name="password" value="${org.orcid.t2.client.keyStorePass:#{null}}"/>
-    </bean>
-
-    <bean id="trustStore" class="org.orcid.util.KeyStoreFactoryBean">
-        <property name="location" value="${org.orcid.t2.client.trustStoreLocation:#{null}}"/>
-        <property name="password" value="${org.orcid.t2.client.trustStorePass:#{null}}"/>
-    </bean>
 </beans>
