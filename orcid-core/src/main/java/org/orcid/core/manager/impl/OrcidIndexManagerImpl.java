@@ -374,7 +374,6 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
      *            The list of external identifiers
      * */
     private void addExternalIdentifiersToIndexDocument(OrcidSolrDocument profileIndexDocument, Map<WorkExternalIdentifierType, List<String>> externalIdentifiers) {
-        initializeExternalIdentifiersOnIdexDocument(profileIndexDocument);
         Iterator<Entry<WorkExternalIdentifierType, List<String>>> it = externalIdentifiers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<WorkExternalIdentifierType, List<String>> entry = (Map.Entry<WorkExternalIdentifierType, List<String>>) it.next();
@@ -483,49 +482,4 @@ public class OrcidIndexManagerImpl implements OrcidIndexManager {
         }
     }
 
-    private void initializeExternalIdentifiersOnIdexDocument(OrcidSolrDocument profileIndexDocument) {
-        if (profileIndexDocument.getArxiv() == null)
-            profileIndexDocument.setArxiv(new ArrayList<String>());
-        if (profileIndexDocument.getAsin() == null)
-            profileIndexDocument.setAsin(new ArrayList<String>());
-        if (profileIndexDocument.getAsintld() == null)
-            profileIndexDocument.setAsintld(new ArrayList<String>());
-        if (profileIndexDocument.getBibcode() == null)
-            profileIndexDocument.setBibcode(new ArrayList<String>());
-        if (profileIndexDocument.getDigitalObjectIds() == null)
-            profileIndexDocument.setDigitalObjectIds(new ArrayList<String>());
-        if (profileIndexDocument.getEid() == null)
-            profileIndexDocument.setEid(new ArrayList<String>());
-        if (profileIndexDocument.getIsbn() == null)
-            profileIndexDocument.setIsbn(new ArrayList<String>());
-        if (profileIndexDocument.getIssn() == null)
-            profileIndexDocument.setIssn(new ArrayList<String>());
-        if (profileIndexDocument.getJfm() == null)
-            profileIndexDocument.setJfm(new ArrayList<String>());
-        if (profileIndexDocument.getJstor() == null)
-            profileIndexDocument.setJstor(new ArrayList<String>());
-        if (profileIndexDocument.getLccn() == null)
-            profileIndexDocument.setLccn(new ArrayList<String>());
-        if (profileIndexDocument.getMr() == null)
-            profileIndexDocument.setMr(new ArrayList<String>());
-        if (profileIndexDocument.getOclc() == null)
-            profileIndexDocument.setOclc(new ArrayList<String>());
-        if (profileIndexDocument.getOl() == null)
-            profileIndexDocument.setOl(new ArrayList<String>());
-        if (profileIndexDocument.getOsti() == null)
-            profileIndexDocument.setOsti(new ArrayList<String>());
-        if (profileIndexDocument.getOtherIdentifierType() == null)
-            profileIndexDocument.setOtherIdentifierType(new ArrayList<String>());
-        if (profileIndexDocument.getPmc() == null)
-            profileIndexDocument.setPmc(new ArrayList<String>());
-        if (profileIndexDocument.getPmid() == null)
-            profileIndexDocument.setPmid(new ArrayList<String>());
-        if (profileIndexDocument.getRfc() == null)
-            profileIndexDocument.setRfc(new ArrayList<String>());
-        if (profileIndexDocument.getSsrn() == null)
-            profileIndexDocument.setSsrn(new ArrayList<String>());
-        if (profileIndexDocument.getZbl() == null)
-            profileIndexDocument.setZbl(new ArrayList<String>());
-
-    }
 }

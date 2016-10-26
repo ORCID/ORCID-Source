@@ -455,7 +455,7 @@ public class OrcidApiServiceDelegatorImpl implements OrcidApiServiceDelegator {
             OrcidMessage orcidMessage = new OrcidMessage();
             orcidMessage.setMessageVersion("1.2");
             orcidMessage.setOrcidSearchResults(orcidSearchResults);
-            orcidMessageUtil.setSourceName(orcidMessage);
+            orcidMessageUtil.setSourceName(orcidMessage); //TODO: THIS FAILS if there is no profile in SOLR (org.orcid.core.indexPublicProfile=false or via message-listener)
             return Response.ok(orcidMessage).build();
         } else {
             Object params[] = { query };

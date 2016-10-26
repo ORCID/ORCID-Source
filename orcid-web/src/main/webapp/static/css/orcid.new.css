@@ -2281,6 +2281,7 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 .settings-table .popover {
 	top: 80%;
 	left: -220px;
+	min-width: 270px;	 
 }
 
 .settings-table .table-responsive{
@@ -2368,9 +2369,19 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	position: absolute;
 	left: -134px;
 	top: 17px;
-	width: 300px;
+	max-width: 800px;
+	width: auto;
 	background-color: #ffffff;
 	font-size: 14px;
+}
+
+.popover-pos{
+	width: 100%;
+	display: inline;
+}
+
+.popover-pos .popover-help-container .popover{
+	min-width: 250px;
 }
 
 .workspace-top .popover-help-container .popover{
@@ -5225,6 +5236,7 @@ ul.sources-actions > li .popover-tooltip > .arrow{
 	top: -143px;
 	left: -138px;
 	min-width: 242px;
+	width: auto;
 }
 
 .popover-help-container > .privacy-myorcid3 >.arrow{
@@ -5811,11 +5823,6 @@ textarea.form-control,
 	padding: 0;
 }
 
-.settings-table .popover{
-	left: -138px;
-  	top: -178px;
-}
-
 /* Widget */
 
 .widget-container{
@@ -6357,11 +6364,6 @@ a:hover .mozilla-badge{
 	padding-right: 0;
 }
 
-.fixed-bar .popover-help-container{
-	top: -195 !important;
-    left: -4 !important;
-}
-
 .aka-row{
 	margin-bottom: 25px;
 	min-height:55px;
@@ -6399,19 +6401,19 @@ a:hover .mozilla-badge{
     color: #494a4c;
 }
 
-.record-settings span{
+.record-settings div{
 	margin: 0 5px;
 	cursor: pointer;
 }
 
-.record-settings span.circle{
+.record-settings div.circle{
 	background: #494a4c;
     padding: 5px;
     border-radius: 50%;
     color: #FFF;        
 }
 
-.record-settings span.circle:hover{
+.record-settings div.circle:hover{
 	background: #a6ce39;    
     color: #FFF;
 }
@@ -6419,8 +6421,6 @@ a:hover .mozilla-badge{
 .fixed-area ul.record-settings li .glyphicon-trash:hover{
 	color: #a6ce39;
 }
-
-
 
 .record-buttons .cancel-option{
 	margin: 5px 15px 0 0;
@@ -6433,14 +6433,9 @@ a:hover .mozilla-badge{
     color: #FFF; 
 }
 
-.fixed-area .scroll-area .popover-help-container{
-	position: absolute;
-	top: 0;
+.fixed-area .popover-help-container{
+	position: absolute;	
 	width: 100%;
-}
-
-.fixed-area .scroll-area .popover-help-container .popover{
-	top: -143px;
 }
 
 .not-allowed{
@@ -6526,8 +6521,6 @@ a:hover .mozilla-badge{
 .settings-table .table-responsive{
 	overflow-x: initial;
 }
-
-
 
 .workspace-section .workspace-section-heading li:last-child{
 	float: right;
@@ -6682,6 +6675,38 @@ a:hover .mozilla-badge{
 	color: #a6ce39;
 }
 
+.member-list select{
+	margin: 0;
+}
+
+.member-list .btn-primary{
+	height: 30px;
+	background: #338caf;
+	border: #338caf;
+}
+
+.member-list .btn-primary:hover, .member-list .btn-primary:active{
+	background: #a6ce39;
+	border: #a6ce39;
+}
+
+.member-list a{
+	padding: 2px 4px;
+}
+.member-list .active a {
+  color: #fff;
+  background: #338caf;
+  border-radius: 2px;
+}
+.member-list .filter li {
+  display: inline;
+  padding: 3px;
+}
+.member-list ul.filter {
+  list-style-type: none;
+  margin: 6px 0;
+}
+
 /* Bulk edit bio*/
 
 .bio-edit-modal{
@@ -6734,6 +6759,84 @@ a:hover .mozilla-badge{
 	color: #494A4C;
 }
 
+.peer-review-delete{
+	display: inline;
+	position: relative;
+	color: #337ab7;
+}
+
+.peer-review-delete:hover{
+	color: #a6ce39;
+	cursor: pointer;
+}
+
+.peer-review-delete .popover-tooltip{
+	display: none;
+	color: #939598;
+}
+
+.peer-review-delete .popover-tooltip .arrow{
+	left: 63px;
+}
+
+.peer-review-delete:hover .popover-tooltip{
+	display: block;
+	color: #939598;
+	top: -42px;
+    left: -48px;	
+    cursor: default;
+}
+
+.edit-record  .popover-tooltip{
+	display: none;
+}
+
+.edit-record .popover{
+	border: 1px solid #ccc;
+	box-shadow: none;	
+}
+
+.edit-record .popover .arrow{
+	border-top-color: #ccc;
+	background: none;
+}
+
+.edit-record a span.glyphicon-plus:hover .popover-tooltip-add{
+	display: block;
+	top: -40px;
+    left: -16px;        
+}
+
+.edit-record a span.glyphicon-plus .popover-tooltip-add .arrow{
+	left: 28px;
+}
+
+.edit-record a span.glyphicon-plus:hover .popover-tooltip-add .popover-content span{
+	color: #494a4c;
+}
+
+.tooltip-container a.glyphicon-trash .popover-tooltip{
+	display: none;
+	min-width: 30px;
+	top: -43px;
+    left: -27px;
+}
+
+.tooltip-container a.glyphicon-trash:hover .popover-tooltip{
+	display: block;
+	cursor: normal;
+	color: #494a4c;
+}
+
+.tooltip-container a.glyphicon-trash:hover .arrow{
+	left: 34px;
+}
+
+.settings-table #name-help.popover{
+	left: -127px;
+    top: 17px;
+}
+ 
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */

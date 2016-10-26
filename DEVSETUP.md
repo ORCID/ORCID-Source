@@ -8,7 +8,7 @@
     
 * Install [Maven](http://maven.apache.org/index.html). Add an environment variable M2_HOME. (Verify Maven. Go to cmd and type "mvn -version". It should display the version of Maven)
 
-* Install [Postgres](http://www.postgresql.org/download/). (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
+* Install [Postgres](http://www.postgresql.org/download/) version 9.3.x. (Verify Postgres. Go to cmd. Navigate to /postgres/xx/bin and execute the command "psql -U postgres". Type the password entered during the installation, if prompted. It should show a postgres console.)
 
 	If you are using a Mac install postgres following the directions at http://postgresapp.com/ and add the postgres path to your bash profile
 	  
@@ -55,7 +55,7 @@ We'll set up postgres using the default settings in
     
     psql -c "CREATE USER orcidro WITH PASSWORD 'orcidro';"
     psql -c "GRANT CONNECT ON DATABASE orcid to orcidro;"
-    psql -d postgres -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
+    psql -d orcid -c "GRANT SELECT ON ALL TABLES IN SCHEMA public to orcidro;"
     ```
     
 * Exit postgres user prompt
@@ -70,6 +70,7 @@ We'll set up postgres using the default settings in
     psql -U orcid -d orcid -c "\list" -h localhost
     psql -U statistics -d statistics -c "\list" -h localhost
     ```
+	
 ## Install Java and JCE
 
     Follow intructions at [Oracle Install Overview](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html#CJAGAACB)
@@ -85,6 +86,7 @@ We'll set up postgres using the default settings in
     mv /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/US_export_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/local_policy.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/old
     cp /Users/jeffrey/Sites/UnlimitedJCEPolicy/*.jar /Library/Java/JavaVirtualMachines/jdk1.8.0_92.jdk/Contents/Home/jre/lib/security/
     ```    
+	
 ## Setup Maven & Tomcat
 
     Extract next files into ~/Bin folder (Create if it does not exist)
@@ -120,7 +122,7 @@ We'll set up postgres using the default settings in
 
 ## Clone the git ORCID-Fonts-Dot-Com repository
 
-Do to licensing issues this is only available to ORCID.org employees.
+Due to licensing issues this is only available to ORCID.org employees.
 
 * Clone the ORCID-Fonts-Dot-Com repository into the static directory
 
@@ -157,7 +159,7 @@ Tip: use the same command for rebuilding.
 
 ## Create the Database Schema - First Time Only
 
-Intialize the database schema (runs as orcid the first time, but then you need to run it again as postgres because some tasks require superuser).
+Intialize the database schema
 
 ```
 cd ~/git/ORCID-Source/orcid-core
@@ -168,7 +170,7 @@ cd ..
     
 sudo su - postgres
     
-psql -d orcid -f orcid-persistence/src/main/resources/db/updates/work-external-ids-as-json.sql
+psql -d orcid -f orcid-persistence/src/main/resources/db/updates/json-setup.sql
     
 ```
 

@@ -41,6 +41,8 @@ public interface OrcidSearchManager {
      */
     OrcidMessage findPublicProfileById(String orcid);
 
+    //only ref is in test...?
+    @Deprecated()
     OrcidMessage findOrcidsByQuery(String query);
 
     OrcidMessage findOrcidsByQuery(String query, Integer start, Integer rows);
