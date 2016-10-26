@@ -28,8 +28,7 @@
 
 			<#if RequestParameters['bulkEdit']??>
 				<div class="row bulk-edit-modal">					
-					<div class="pull-right bulk-privacy-bar">							
-						<span class="custom-control-title"><@spring.message "groups.common.bulk_edit_privacy"/></span>
+					<div class="pull-right bulk-privacy-bar">
 						<div style="position: static">
 							<@orcid.privacyToggle3 angularModel="bioModel"
 						    	questionClick="toggleClickPrivacyHelp($index)"
@@ -38,16 +37,7 @@
 				            	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
 				            	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
 				            	elementId="$index" />
-							</div>
-							<div class="bulk-help popover-help-container">
-	            				<a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                				<div id="bulk-help" class="popover bottom">
-	                				<div class="arrow"></div>
-                    				<div class="popover-content">
-	                    				<p><@orcid.msg "groups.common.bulk_edit_privacy_help" /></p>
-                    			</div>	
-               				</div>
-            			</div>
+						</div>
 					</div>
 				</div>
 			</#if>
