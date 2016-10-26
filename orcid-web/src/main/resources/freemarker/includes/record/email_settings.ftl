@@ -27,17 +27,16 @@
 	        </div>
 
 			<#if RequestParameters['bulkEdit']??>
-				<div class="row bulk-edit-modal">
-					<div class="pull-right">							
-						<span class="custom-control-title"><@orcid.msg "groups.common.bulk_edit" /></span>
+				<div class="row bulk-edit-modal">					
+					<div class="pull-right bulk-privacy-bar">
 						<div style="position: static">
-						<@orcid.privacyToggle3 angularModel="bioModel"
-					    	questionClick="toggleClickPrivacyHelp($index)"
-					        clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-					        publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
-				            limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
-				            privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-				            elementId="$index" />
+							<@orcid.privacyToggle3 angularModel="bioModel"
+						    	questionClick="toggleClickPrivacyHelp($index)"
+					        	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+					        	publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
+				            	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
+				            	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
+				            	elementId="$index" />
 						</div>
 					</div>
 				</div>

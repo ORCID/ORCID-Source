@@ -2358,21 +2358,21 @@ ul.workspace-private-toolbar li.bulk-checkbox-item input{
 	width: 452px;
 	overflow-y: hidden
 }
-
-.popover-help-container {
-	position: relative;
+/* Do not modify */
+.popover-help-container {	
 	display: inline;
 }
-
+/* Do not modify */
 .popover-help-container .popover {
 	display: none;
-	position: absolute;
-	left: -134px;
-	top: 17px;
-	max-width: 800px;
-	width: auto;
-	background-color: #ffffff;
-	font-size: 14px;
+    position: absolute;
+    left: -134px;
+    top: 17px;
+    min-width: 270px;
+    width: auto;
+    max-width: none;
+    background-color: #ffffff;
+    font-size: 14px;    
 }
 
 .popover-pos{
@@ -6313,10 +6313,9 @@ a:hover .mozilla-badge{
 
 .fixed-area{ /* Global class for edit profile */
 	width: 100%;
-	height: 300px;
+	height: 350px;
 	overflow-y: scroll;	
-	overflow-x: hidden;
-	margin-top: 30px; 	
+	overflow-x: hidden;	 	
 }
 
 .record-buttons{
@@ -6329,28 +6328,20 @@ a:hover .mozilla-badge{
 
 .edit-record{	
 	width: 600px;
-	min-height: 480px;
+	min-height: 550px;
 	height: auto;
 	padding: 15px 0 15px 15px;
 	overflow: visible;	 
+}
+
+.edit-record-bulk-edit{
+	min-height: 610px;
 }
 
 .edit-record-emails{	
 	width: 600px;
 	padding: 15px 0 15px 15px;
 	min-height: 678px; 
-}
-
-.scroll-area-padding{
-	padding-top: 66px;
-}
-
-.fixed-area .fixed-bar{
-	position: absolute;
-	z-index: 500;
-	background: white;
-	width: 568px;
-	height: 65px;
 }
 
 .fixed-area .scroll-area input[type="textbox"],
@@ -6431,11 +6422,6 @@ a:hover .mozilla-badge{
     padding: 5px;
     border-radius: 50%;
     color: #FFF; 
-}
-
-.fixed-area .popover-help-container{
-	position: absolute;	
-	width: 100%;
 }
 
 .not-allowed{
@@ -6713,10 +6699,8 @@ a:hover .mozilla-badge{
 	margin-right: 30px;
 }
 
-.bulk-edit-modal .custom-control-title{
+.edit-record .custom-control-title{
 	text-transform: uppercase;
-	width: 100%;
-	text-align: center;
 	display: block;
 	font-size: 12px;	
 }
@@ -6836,7 +6820,64 @@ a:hover .mozilla-badge{
 	left: -127px;
     top: 17px;
 }
+
+.edit-record .record-settings .popover-help-container,
+.edit-record .bulk-privacy-bar .popover-help-container{
+	position: absolute;	
+	width: 100%;
+}
  
+
+.edit-record .bulk-edit-modal #privacy-bar{
+	float: right;	
+}
+
+.fixed-area .col-md-12.padding-right-reset{
+	padding-right: 30px;
+	margin-top: 15px;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+
+.bulk-edit-modal .bulk-help{
+	float: right;
+	margin-right: 5px;
+	position: relative;
+}
+
+.bulk-edit-modal #bulk-help{
+	left: -180px;
+	width: 300px;	
+}
+
+.bulk-edit-modal #bulk-help .arrow{
+	left: 187px;
+}
+
+#social-login-help,
+#institution-login-help{
+	left: -115px;
+}
+
+#qrcode-help{	
+	left: -113px;
+}
+
+#qrcode-help .arrow{
+	left: 119px;
+}
+
+#ul li.bio-edit{
+	display: inline-block;
+    vertical-align: top;
+}
+
+.no-bulk-margin-fix{
+	margin-top: 30px;
+}
+
+
+	
 
 /* Media Queries */
 @media ( max-width : 767px) { /* Mobile */
