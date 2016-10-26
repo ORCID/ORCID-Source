@@ -19,6 +19,7 @@ package org.orcid.listener.listeners.updated;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.xml.bind.JAXBException;
 
 import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.jaxb.model.record_rc3.Record;
@@ -26,6 +27,8 @@ import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
 import org.orcid.listener.clients.SolrIndexUpdater;
+import org.orcid.listener.common.ExceptionHandler;
+import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.utils.listener.LastModifiedMessage;
 import org.slf4j.Logger;
@@ -33,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.amazonaws.AmazonClientException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
@@ -55,6 +60,8 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     private SolrIndexUpdater solrIndexUpdater;
     @Resource
     private S3Updater s3Updater;
+    @Resource
+    private ExceptionHandler exceptionHandler;
 
     /**
      * Populates the Amazon S3 buckets and updates solr index
@@ -68,26 +75,34 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
             try{
                 String orcid = m.getOrcid();
                 
-                //TODO: Update S3 buckets for deprecated or locked files: 
-                //See https://trello.com/c/LSrdG59t/3162-deprecated-or-locked-in-s3-for-2-0
                 OrcidMessage profile = fetchPublicProfile(orcid);
                 Record record = fetchPublicRecord(orcid);
                 
                 // Phase #1: update S3 
                 if(dumpIndexingEnabled) {
-                    updateS3(m.getOrcid(), profile, record);    
+                    updateS3(orcid, profile, record);    
                 }
                 
                 // Phase # 2 - update solr
                 if(solrIndexingEnabled) {
-                    updateSolr(m.getOrcid(), record, profile.toString());    
+                    updateSolr(orcid, record, profile.toString());    
                 } 
-
-            } catch(LockedRecordException e) {
-                // note this is slightly different from existing behaviour
-                Date lastModifiedFromSolr = solrIndexUpdater.retrieveLastModified(m.getOrcid());                
-                if (m.getLastUpdated().after(lastModifiedFromSolr))
-                    solrIndexUpdater.updateSolrIndexForLockedRecord(m.getOrcid(), m.getLastUpdated());                
+            } catch(LockedRecordException lre) {                
+                try {
+                    exceptionHandler.handleLockedRecordException(m, lre.getOrcidMessage());
+                } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+                    LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
+                } catch (DeprecatedRecordException e1) {
+                    // Should never happen, since it is already locked
+                }                
+            } catch(DeprecatedRecordException dre) {
+                try {
+                    exceptionHandler.handleDeprecatedRecordException(m, dre.getOrcidDeprecated());
+                } catch (JsonProcessingException | AmazonClientException | JAXBException e1) {
+                    LOG.error("Unable to handle LockedRecordException for record " + m.getOrcid(), e1);
+                } catch (LockedRecordException e1) {
+                    // Should never happen, since it is already deprecated
+                } 
             } catch(Exception e) {
                 LOG.error("Unable to fetch record " + m.getOrcid() + " so, unable to feed nor S3 nor SOLR");
             }
@@ -104,6 +119,9 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
     private OrcidMessage fetchPublicProfile(String orcid) throws Exception {
         try {
             return orcid12ApiClient.fetchPublicProfile(orcid);
+        } catch(LockedRecordException lre) {
+            LOG.error("Record " + orcid + " is deprecated");
+            throw lre;
         } catch (Exception e) {
             // If we can't fetch the record from 1.2, we should throw any
             // exception, since we will not be able to index SOLR nor feed S3
@@ -119,9 +137,12 @@ public class UpdatedOrcidWorker implements RemovalListener<String, LastModifiedM
      * @return public Record or null in case an exception happens
      * @throws LockedRecordException          
      * */
-    private Record fetchPublicRecord(String orcid) {
+    private Record fetchPublicRecord(String orcid) throws LockedRecordException {
         try {
             return orcid20ApiClient.fetchPublicProfile(orcid);
+        } catch(LockedRecordException lre) {
+            LOG.error("Record " + orcid + " is deprecated");
+            throw lre;
         } catch(Exception e) {
             // If we can't fetch the record from 2.0 we can ignore the error for
             // now, since the only thing that will fail is feeding S3, which is

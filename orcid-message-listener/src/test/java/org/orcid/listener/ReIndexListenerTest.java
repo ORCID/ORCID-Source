@@ -20,7 +20,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,10 +32,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
+import org.orcid.jaxb.model.message.OrcidMessage;
 import org.orcid.listener.clients.Orcid12APIClient;
 import org.orcid.listener.clients.Orcid20APIClient;
 import org.orcid.listener.clients.S3Updater;
-import org.orcid.listener.clients.SolrIndexUpdater;
+import org.orcid.listener.common.ExceptionHandler;
+import org.orcid.listener.exception.DeprecatedRecordException;
 import org.orcid.listener.exception.LockedRecordException;
 import org.orcid.test.OrcidJUnit4ClassRunner;
 import org.orcid.test.TargetProxyHelper;
@@ -60,23 +62,23 @@ public class ReIndexListenerTest {
     private Orcid20APIClient mock_orcid20ApiClient;
     
     @Mock
-    private SolrIndexUpdater mock_solrIndexUpdater;
+    private S3Updater mock_s3Updater; 
     
     @Mock
-    private S3Updater mock_s3Updater; 
+    private ExceptionHandler mock_exceptionHandler;
     
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
         TargetProxyHelper.injectIntoProxy(reIndexListener, "orcid12ApiClient", mock_orcid12ApiClient);                
         TargetProxyHelper.injectIntoProxy(reIndexListener, "orcid20ApiClient", mock_orcid20ApiClient);
-        TargetProxyHelper.injectIntoProxy(reIndexListener, "solrIndexUpdater", mock_solrIndexUpdater);
+        TargetProxyHelper.injectIntoProxy(reIndexListener, "exceptionHandler", mock_exceptionHandler);
         TargetProxyHelper.injectIntoProxy(reIndexListener, "s3Updater", mock_s3Updater);
     }
     
     @Test
-    public void recordLockedExceptionTest() throws LockedRecordException, JsonProcessingException, AmazonClientException, JAXBException {
-        when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new LockedRecordException());
+    public void recordLockedExceptionTest() throws LockedRecordException, JsonProcessingException, AmazonClientException, JAXBException, DeprecatedRecordException {
+        when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new LockedRecordException(new OrcidMessage()));
         Map<String, String> map = new HashMap<String, String>();
         String orcid = "0000-0000-0000-0000";
         String date = String.valueOf(System.currentTimeMillis());
@@ -84,6 +86,19 @@ public class ReIndexListenerTest {
         map.put(MessageConstants.DATE.value, date);
         map.put(MessageConstants.TYPE.value, MessageConstants.TYPE_LAST_UPDATED.value);
         reIndexListener.processMessage(map);
-        verify(mock_solrIndexUpdater, times(1)).updateSolrIndexForLockedRecord(orcid, new Date(Long.valueOf(date)));
+        verify(mock_exceptionHandler, times(1)).handleLockedRecordException(Matchers.any(), Matchers.any());
+    }
+    
+    @Test
+    public void deprecatedRecordExceptionTest() throws LockedRecordException, JsonProcessingException, AmazonClientException, JAXBException, DeprecatedRecordException {
+        when(mock_orcid12ApiClient.fetchPublicProfile(Matchers.anyString())).thenThrow(new DeprecatedRecordException(new OrcidDeprecated()));
+        Map<String, String> map = new HashMap<String, String>();
+        String orcid = "0000-0000-0000-0000";
+        String date = String.valueOf(System.currentTimeMillis());
+        map.put(MessageConstants.ORCID.value, orcid);
+        map.put(MessageConstants.DATE.value, date);
+        map.put(MessageConstants.TYPE.value, MessageConstants.TYPE_LAST_UPDATED.value);
+        reIndexListener.processMessage(map);
+        verify(mock_exceptionHandler, times(1)).handleDeprecatedRecordException(Matchers.any(), Matchers.any());
     }
 }

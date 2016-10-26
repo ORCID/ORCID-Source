@@ -17,30 +17,30 @@
 package org.orcid.listener.exception;
 
 import org.orcid.jaxb.model.error_rc3.OrcidError;
-import org.orcid.jaxb.model.message.OrcidMessage;
+import org.orcid.jaxb.model.message.OrcidDeprecated;
 
-public class LockedRecordException extends Exception {
+public class DeprecatedRecordException extends Exception {
     private static final long serialVersionUID = 1L;
     
     //1.2 Error message
-    OrcidMessage orcidMessage;
+    OrcidDeprecated orcidDeprecated;
     
     //2.0 Error message
     OrcidError orcidError;
     
-    public LockedRecordException (OrcidMessage orcidMessage) {
-        this.orcidMessage = orcidMessage;
+    public DeprecatedRecordException (OrcidDeprecated orcidDeprecated) {
+        this.orcidDeprecated = orcidDeprecated;
     }
     
-    public LockedRecordException (OrcidError orcidError) {
+    public DeprecatedRecordException (OrcidError orcidError) {
         this.orcidError = orcidError;
     }
 
-    public OrcidMessage getOrcidMessage() {
-        return orcidMessage;
+    public OrcidDeprecated getOrcidDeprecated() {
+        return orcidDeprecated;
     }
 
     public OrcidError getOrcidError() {
         return orcidError;
-    }        
+    }    
 }
