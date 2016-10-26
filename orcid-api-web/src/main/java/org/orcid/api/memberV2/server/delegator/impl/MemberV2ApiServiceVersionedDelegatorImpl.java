@@ -67,6 +67,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewWork(orcid, putCode));
     }
+    
+    @Override
+    public Response viewWorks(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewWorks(orcid));
+    }
 
     @Override
     public Response viewWorkSummary(String orcid, Long putCode) {
@@ -110,6 +116,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     }
 
     @Override
+    public Response viewFundings(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewFundings(orcid));
+    }
+    
+    @Override
     public Response viewFundingSummary(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewFundingSummary(orcid, putCode));
@@ -142,6 +154,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewEducation(orcid, putCode));
     }
+    
+    @Override
+    public Response viewEducations(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEducations(orcid));
+    }
 
     @Override
     public Response viewEducationSummary(String orcid, Long putCode) {
@@ -169,6 +187,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response viewEmployment(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewEmployment(orcid, putCode));
+    }
+    
+    @Override
+    public Response viewEmployments(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewEmployments(orcid));
     }
 
     @Override
@@ -203,6 +227,12 @@ public class MemberV2ApiServiceVersionedDelegatorImpl implements
     public Response viewPeerReview(String orcid, Long putCode) {
         checkProfileStatus(orcid);
         return downgradeResponse(memberV2ApiServiceDelegator.viewPeerReview(orcid, putCode));
+    }
+    
+    @Override
+    public Response viewPeerReviews(String orcid) {
+        checkProfileStatus(orcid);
+        return downgradeResponse(memberV2ApiServiceDelegator.viewPeerReviews(orcid));
     }
 
     @Override

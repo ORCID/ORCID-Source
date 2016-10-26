@@ -33,23 +33,33 @@ public interface PublicV2ApiServiceDelegator<EDUCATION, EMPLOYMENT, EXTERNAL_IDE
 
     Response viewWork(String orcid, Long putCode);
     
+    Response viewWorks(String orcid);
+    
     Response viewWorkCitation(String orcid, Long putCode);
 
     Response viewWorkSummary(String orcid, Long putCode);
 
     Response viewFunding(String orcid, Long putCode);
+    
+    Response viewFundings(String orcid);
 
     Response viewFundingSummary(String orcid, Long putCode);
 
     Response viewEducation(String orcid, Long putCode);
+    
+    Response viewEducations(String orcid);
 
     Response viewEducationSummary(String orcid, Long putCode);
 
     Response viewEmployment(String orcid, Long putCode);
+    
+    Response viewEmployments(String orcid);
 
     Response viewEmploymentSummary(String orcid, Long putCode);
 
     Response viewPeerReview(String orcid, Long putCode);
+    
+    Response viewPeerReviews(String orcid);
 
     Response viewPeerReviewSummary(String orcid, Long putCode);
 
