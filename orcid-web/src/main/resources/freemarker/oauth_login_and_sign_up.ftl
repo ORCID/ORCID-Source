@@ -171,7 +171,7 @@
 						    		<p>${springMacroRequestContext.getMessage("register.labelClause")}</p>
 						    	</div>
 						    	<!-- First name -->
-					       		<div class="form-group">
+					       		<div class="form-group clear-fix">
 							        <label for="givelNames" class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelfirstname'/></label>
 							        <div class="col-sm-9  col-xs-9-fix bottomBuffer">			        	
 							            <input id="register-form-given-names" name="givenNames" type="text" tabindex="1" class="" ng-model="registrationForm.givenNames.value" ng-model-onblur ng-change="serverValidate('GivenNames')"/>									        
@@ -194,7 +194,7 @@
 							        </div>
 							    </div>
 							    <!-- Last name -->
-							    <div class="form-group">
+							    <div class="form-group clear-fix">
 									<div>
 								        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labellastname'/></label>
 								        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
@@ -206,7 +206,7 @@
 								     </div>
 							    </div>
 								<!-- Email -->		    			    
-							    <div class="form-group">
+							    <div class="form-group clear-fix">
 							        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelemail'/></label>
 							        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 							            <input id="register-form-email" name="email" type="email" tabindex="3" class="" ng-model="registrationForm.email.value" ng-model-onblur ng-change="serverValidate('Email')" />
@@ -217,7 +217,7 @@
 							        </div>			       
 							    </div>				
 							    
-							    <div class="form-group">
+							    <div class="form-group clear-fix">
 							        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelreenteremail'/></label>
 							        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 							            <input id="register-form-confirm-email" name="confirmedEmail" type="email" tabindex="4" class="" ng-model="registrationForm.emailConfirm.value" ng-model-onblur ng-change="serverValidate('EmailConfirm')" />
@@ -228,7 +228,7 @@
 							        </div>			        
 							    </div>				
 							    
-							    <div class="form-group">
+							    <div class="form-group clear-fix">
 							        <label class="col-sm-3 col-xs-3-fix control-label"><@orcid.msg 'oauth_sign_up.labelpassword'/></label>
 							        <div class="col-sm-9 col-xs-9-fix bottomBuffer">
 							            <input id="register-form-password" type="password" name="password" tabindex="5" class="" ng-model="registrationForm.password.value" ng-change="serverValidate('Password')"/>
@@ -250,7 +250,7 @@
 							   			</span>
 							        </div>			        
 							    </div>
-								<div class="form-group">
+								<div class="form-group clear-fix">
 									<div class="oauth-privacy"">							        
 								        <label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault")}</label> 
 	        							<label class="privacy-toggle-lbl">${springMacroRequestContext.getMessage("privacy_preferences.activitiesVisibilityDefault.who_can_see_this")}</label>
