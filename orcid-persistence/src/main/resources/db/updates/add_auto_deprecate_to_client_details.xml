@@ -24,10 +24,9 @@
         	<not>
         		<columnExists tableName="client_details" columnName="allow_auto_deprecate"/>
         	</not>
-        	<sql>ALTER TABLE client_details ADD allow_auto_deprecate boolean;</sql>
-        	<sql>UPDATE client_details set allow_auto_deprecate=false, last_modified=now();</sql>
-        	<sql>ALTER TABLE client_details ALTER COLUMN allow_auto_deprecate SET DEFAULT false;</sql>
-        </preConditions>
-    </changeSet>
-    
+		</preConditions>
+		<sql>ALTER TABLE client_details ADD allow_auto_deprecate boolean;</sql>
+		<sql>UPDATE client_details set allow_auto_deprecate=false, last_modified=now();</sql>
+		<sql>ALTER TABLE client_details ALTER COLUMN allow_auto_deprecate SET DEFAULT false;</sql>
+	</changeSet>        
 </databaseChangeLog>
