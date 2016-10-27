@@ -57,8 +57,11 @@ public class DevJerseyClientConfig extends DefaultClientConfig {
         HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
         getProperties().put(HTTPSProperties.PROPERTY_HTTPS_PROPERTIES, new HTTPSProperties(new HostnameVerifier() {
             @Override
-            public boolean verify(String s, SSLSession sslSession) {
-                return true;
+            public boolean verify(String hostname, SSLSession sslSession) {
+                if (hostname.equals("localhost")) {
+                    return true;
+                }
+                return false;
             }
         }, ctx));
     }
