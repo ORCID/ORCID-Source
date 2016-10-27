@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc3.PeerReviewSummary;
+import org.orcid.jaxb.model.record.summary_rc3.PeerReviews;
 import org.orcid.jaxb.model.record_rc3.PeerReview;
 import org.orcid.persistence.jpa.entities.PeerReviewEntity;
 
@@ -151,4 +152,15 @@ public interface PeerReviewManager {
      * @return the list of peer reviews that belongs to this user
      * */
     List<PeerReviewSummary> getPeerReviewSummaryList(String orcid, long lastModified);
+    
+    /**
+     * Generate a grouped list of peer reviews with the given list of peer reviews
+     * 
+     * @param peerReviews
+     *          The list of peer reviews to group
+     * @param justPublic
+     *          Specify if we want to group only the public elements in the given list
+     * @return PeerReviews element with the PeerReviewSummary elements grouped                  
+     * */
+    PeerReviews groupPeerReviews(List<PeerReviewSummary> peerReviews, boolean justPublic);
 }

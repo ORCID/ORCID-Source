@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.orcid.jaxb.model.message.Visibility;
 import org.orcid.jaxb.model.record.summary_rc3.FundingSummary;
+import org.orcid.jaxb.model.record.summary_rc3.Fundings;
 import org.orcid.jaxb.model.record_rc3.Funding;
 import org.orcid.persistence.jpa.entities.ProfileFundingEntity;
 
@@ -175,4 +176,15 @@ public interface ProfileFundingManager {
      * @return the list of fundings that belongs to this user
      * */
     List<Funding> getFundingList(String userOrcid, long lastModified);
+    
+    /**
+     * Generate a grouped list of funding with the given list of funding
+     * 
+     * @param fundings
+     *          The list of fundings to group
+     * @param justPublic
+     *          Specify if we want to group only the public elements in the given list
+     * @return Fundings element with the FundingSummary elements grouped                  
+     * */
+    Fundings groupFundings(List<FundingSummary> fundings, boolean justPublic);
 }

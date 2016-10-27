@@ -19,34 +19,45 @@ package org.orcid.listener.clients;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.annotation.Resource;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.orcid.jaxb.model.error_rc3.OrcidError;
 import org.orcid.jaxb.model.record_rc3.Record;
+import org.orcid.listener.exception.DeprecatedRecordException;
+import org.orcid.listener.exception.LockedRecordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 @Component
 public class Orcid20APIClient {
 
     Logger LOG = LoggerFactory.getLogger(Orcid20APIClient.class);
     
-    @Resource
-    protected Client jerseyClient;
+    protected final Client jerseyClient;
     
     protected final URI baseUri;
+    
+    protected final String host;
 
     @Autowired
-    public Orcid20APIClient(@Value("${org.orcid.message-lisener.api20BaseURI}") String baseUri) throws URISyntaxException {
-        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri);
+    public Orcid20APIClient(@Value("${org.orcid.message-listener.api20BaseURI}") String baseUri, @Value("${org.orcid.message-listener.host_header_override}") String hostHeaderOverride) throws URISyntaxException {
+        LOG.info("Creating Orcid20APIClient with baseUri = " + baseUri + " and host = " + hostHeaderOverride);
         this.baseUri = new URI(baseUri);
+        this.host = hostHeaderOverride;
+        ClientConfig config = new DefaultClientConfig();
+        config.getClasses().add(JacksonJaxbJsonProvider.class);
+        jerseyClient = Client.create(config);
     }
 
     /**
@@ -55,14 +66,24 @@ public class Orcid20APIClient {
      * @param orcid
      * @return
      */
-    public Record fetchPublicProfile(String orcid) throws LockedRecordException{
-        WebResource webResource = jerseyClient.resource(baseUri);
-        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).get(ClientResponse.class);
-        if (response.getStatus() != 200) {
-            if (response.getStatus() == 409)
-                throw new LockedRecordException();
-            throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+    public Record fetchPublicProfile(String orcid) throws LockedRecordException, DeprecatedRecordException {
+        WebResource webResource = jerseyClient.resource(baseUri);  
+        webResource.getProperties().put(ClientConfig.PROPERTY_FOLLOW_REDIRECTS, false);
+        ClientResponse response = webResource.path(orcid + "/record").accept(MediaType.APPLICATION_XML).header(HttpHeaders.HOST, host).get(ClientResponse.class);        
+        if (response.getStatus() != 200) {  
+            OrcidError orcidError = null;
+            switch(response.getStatus()) {
+            case 301:
+                orcidError = response.getEntity(OrcidError.class);
+                throw new DeprecatedRecordException(orcidError);
+            case 409:
+                orcidError = response.getEntity(OrcidError.class);
+                throw new LockedRecordException(orcidError);
+            default:
+                LOG.error("Unable to fetch public record " + orcid + " on API 2.0 HTTP error code: " + response.getStatus());
+                throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
+            }            
         }
         return response.getEntity(Record.class);
-    }
+    }        
 }

@@ -27,17 +27,16 @@
 	        </div>
 
 			<#if RequestParameters['bulkEdit']??>
-				<div class="row bulk-edit-modal">
-					<div class="pull-right">							
-						<span class="custom-control-title"><@orcid.msg "groups.common.bulk_edit" /></span>
+				<div class="row bulk-edit-modal">					
+					<div class="pull-right bulk-privacy-bar">
 						<div style="position: static">
-						<@orcid.privacyToggle3 angularModel="bioModel"
-					    	questionClick="toggleClickPrivacyHelp($index)"
-					        clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
-					        publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
-				            limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
-				            privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
-				            elementId="$index" />
+							<@orcid.privacyToggle3 angularModel="bioModel"
+						    	questionClick="toggleClickPrivacyHelp($index)"
+					        	clickedClassCheck="{'popover-help-container-show':privacyHelp==true}" 
+					        	publicClick="setBulkGroupPrivacy('PUBLIC', $event, bioModel)" 
+				            	limitedClick="setBulkGroupPrivacy('LIMITED', $event, bioModel)" 
+				            	privateClick="setBulkGroupPrivacy('PRIVATE', $event, bioModel)"
+				            	elementId="$index" />
 						</div>
 					</div>
 				</div>
@@ -77,13 +76,27 @@
 								${springMacroRequestContext.getMessage("manage.email.verified")}
 							</span>
 	                    </td>
-	                    <td width="26">
+	                    <td width="26" class="tooltip-container">
 	                        <a name="delete-email" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && !emailSrvc.popUp"
-	                            ng-click="confirmDeleteEmail(email)" ng-cloak></a>
+	                            ng-click="confirmDeleteEmail(email)" ng-cloak>
+									<div class="popover small-popover popover-tooltip top">
+	    								<div class="arrow"></div>
+	    								<div class="popover-content">
+											<span><@spring.message "common.modals.delete"/></span>
+	    								</div>
+	   								</div>
+								</a>
 							<a name="delete-email-inline" class="glyphicon glyphicon-trash grey"
 	                            ng-show="email.primary == false && emailSrvc.popUp"
-	                            ng-click="confirmDeleteEmailInline(email, $event)" ng-cloak></a>
+	                            ng-click="confirmDeleteEmailInline(email, $event)" ng-cloak>
+								<div class="popover small-popover popover-tooltip top">
+	    							<div class="arrow"></div>
+	    							<div class="popover-content">
+										<span><@spring.message "common.modals.delete"/></span>
+	    							</div>
+	   							</div>
+							</a>
 	                    </td>
 	                    <td width="100" style="padding-top: 0; position: static">
 	                        <div class="emailVisibility" style="float: right; position: static">

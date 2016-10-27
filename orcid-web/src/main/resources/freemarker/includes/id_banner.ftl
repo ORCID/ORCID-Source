@@ -32,7 +32,7 @@
 								<div class="popover popover-tooltip top">
 								    <div class="arrow"></div>
 								    <div class="popover-content">
-								        <span>Edit</span>
+								        <span><@orcid.msg 'manage_bio_settings.editName'/></span>
 								    </div>                
 							    </div>
 							</div>

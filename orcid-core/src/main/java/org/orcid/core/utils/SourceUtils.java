@@ -256,4 +256,34 @@ public class SourceUtils {
             }
         }
     }
+    
+    public void setSourceName(Works works) {
+        if(works != null) {
+            for(WorkGroup group : works.getWorkGroup()) {
+                for(WorkSummary summary : group.getWorkSummary()) {
+                    setSourceName(summary);
+                }                
+            }
+        }
+    }
+    
+    public void setSourceName(Fundings fundings) {
+        if(fundings != null) {
+            for(FundingGroup group : fundings.getFundingGroup()) {
+                for(FundingSummary summary : group.getFundingSummary()) {
+                    setSourceName(summary);
+                }                
+            }
+        }
+    }
+    
+    public void setSourceName(PeerReviews peerReviews) {
+        if(peerReviews != null) {
+            for(PeerReviewGroup group : peerReviews.getPeerReviewGroup()) {
+                for(PeerReviewSummary summary : group.getPeerReviewSummary()) {
+                    setSourceName(summary);
+                }                
+            }
+        }
+    }
 }

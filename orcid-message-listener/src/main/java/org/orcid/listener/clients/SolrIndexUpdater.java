@@ -61,26 +61,13 @@ public class SolrIndexUpdater {
         recordConv = new OrcidRecordToSolrDocument(indexPublicProfile);
     }
     
-    public void updateSolrIndex(Record record, String v12profileXML) {
+    public void updateSolrIndex(Record record, String v12profileXML) {        
         LOG.info("Updating using Record " + record.getOrcidIdentifier().getPath() + " in SOLR index");
         if(!isSolrIndexingEnalbed) {
             LOG.info("Solr indexing is disabled");
             return;
-        }
-        this.persist(recordConv.convert(record,v12profileXML));
-    }
-    
-    /** Converts the profile to a OrcidSolrDocument and persists it
-     * 
-     * @param profile
-     */
-    public void updateSolrIndex(OrcidProfile profile) {
-        LOG.info("Updating " + profile.getOrcidIdentifier().getPath() + " in SOLR index");
-        if(!isSolrIndexingEnalbed) {
-            LOG.info("Solr indexing is disabled");
-            return;
-        }
-        this.persist(conv.convert(profile));
+        }        
+        this.persist(recordConv.convert(record, v12profileXML));
     }
 
     public void persist(OrcidSolrDocument orcidSolrDocument) {

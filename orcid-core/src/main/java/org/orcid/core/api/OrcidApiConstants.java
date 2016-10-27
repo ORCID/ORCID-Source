@@ -41,15 +41,19 @@ public class OrcidApiConstants {
     public static final String WORKS = "/{orcid}/works";
     public static final String WORK_SUMMARY = "/{orcid}/work/summary";
     public static final String FUNDING = "/{orcid}/funding";
+    public static final String FUNDINGS = "/{orcid}/fundings";
     public static final String FUNDING_SUMMARY = "/{orcid}/funding/summary";
     public static final String EDUCATION = "/{orcid}/education";
+    public static final String EDUCATIONS = "/{orcid}/educations";
     public static final String EDUCATION_SUMMARY = "/{orcid}/education/summary";
     public static final String EMPLOYMENT = "/{orcid}/employment";
+    public static final String EMPLOYMENTS = "/{orcid}/employments";
     public static final String EMPLOYMENT_SUMMARY = "/{orcid}/employment/summary";
     public static final String PUTCODE = "/{putCode}"; // concated on the end of
                                                        // other paths like
                                                        // FUNDINGS
     public static final String PEER_REVIEW = "/{orcid}/peer-review";
+    public static final String PEER_REVIEWS = "/{orcid}/peer-reviews";
     public static final String PEER_REVIEW_SUMMARY = "/{orcid}/peer-review/summary";
     public static final String GROUP_ID_RECORD = "/group-id-record";
     public static final String STATS_PATH = "/statistics";

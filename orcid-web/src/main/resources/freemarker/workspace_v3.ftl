@@ -56,16 +56,17 @@
             <#include "includes/print_record.ftl"/>
             
             <div class="qrcode-container">
-                <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/></a>
-                <div class="popover-help-container">
-                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
-                    <div id="qrcode-help" class="popover bottom">
-                        <div class="arrow"></div>
-                        <div class="popover-content">
-                            <p><@orcid.msg 'workspace.qrcode.help'/></p>
-                        </div>
-                    </div>
-                </div>
+                <a href="http://qrcode.orcid.org" target="_blank"><span class="glyphicons qrcode orcid-qr"></span><@orcid.msg 'workspace.qrcode.link.text'/>
+	                <div class="popover-help-container">
+	                    <a href="javascript:void(0);"><i class="glyphicon glyphicon-question-sign"></i></a>
+	                    <div id="qrcode-help" class="popover bottom">
+	                        <div class="arrow"></div>
+	                        <div class="popover-content">
+	                            <p><@orcid.msg 'workspace.qrcode.help'/></p>
+	                        </div>
+	                    </div>
+	                </div>
+                </a>
             </div>
             
 	       	<!-- Other Names -->	       	
@@ -173,7 +174,7 @@
 	        	   				<div class="popover popover-tooltip top">
 								    <div class="arrow"></div>
 								    <div class="popover-content">
-								        <span><@orcid.msg 'manage_bio_settings.editEmail' /></span>
+								        <span><@orcid.msg 'manage_bio_settings.editEmails' /></span>
 								    </div>                
 							    </div>
 	        	   			</div>	        	   		

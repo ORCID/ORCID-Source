@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.orcid.jaxb.model.common_rc3.LastModifiedDate;
 import org.orcid.jaxb.model.common_rc3.OrcidIdentifier;
 import org.orcid.jaxb.model.message.OrcidType;
 import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
@@ -36,12 +35,10 @@ import org.orcid.jaxb.model.record.summary_rc3.ActivitiesSummary;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { "lastModifiedDate", "orcidIdentifier", "deprecated", "preferences", "history", "person", "activitiesSummary" })
+@XmlType(propOrder = { "orcidIdentifier", "deprecated", "preferences", "history", "person", "activitiesSummary" })
 @XmlRootElement(name = "record", namespace = "http://www.orcid.org/ns/record")
 public class Record implements Serializable {
     private static final long serialVersionUID = 1086932594400451295L;
-    @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "last-modified-date")
-    protected LastModifiedDate lastModifiedDate;
     @XmlElement(namespace = "http://www.orcid.org/ns/common", name = "orcid-identifier")
     protected OrcidIdentifier orcidIdentifier;
     @XmlElement(namespace = "http://www.orcid.org/ns/deprecated", name = "deprecated")
@@ -56,14 +53,6 @@ public class Record implements Serializable {
     protected ActivitiesSummary activitiesSummary;
     @XmlTransient
     protected OrcidType orcidType;
-
-    public LastModifiedDate getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LastModifiedDate lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
 
     public OrcidIdentifier getOrcidIdentifier() {
         return orcidIdentifier;
@@ -128,7 +117,6 @@ public class Record implements Serializable {
         result = prime * result + ((activitiesSummary == null) ? 0 : activitiesSummary.hashCode());
         result = prime * result + ((deprecated == null) ? 0 : deprecated.hashCode());
         result = prime * result + ((history == null) ? 0 : history.hashCode());
-        result = prime * result + ((lastModifiedDate == null) ? 0 : lastModifiedDate.hashCode());
         result = prime * result + ((orcidIdentifier == null) ? 0 : orcidIdentifier.hashCode());
         result = prime * result + ((orcidType == null) ? 0 : orcidType.hashCode());
         result = prime * result + ((person == null) ? 0 : person.hashCode());
@@ -159,11 +147,6 @@ public class Record implements Serializable {
             if (other.history != null)
                 return false;
         } else if (!history.equals(other.history))
-            return false;
-        if (lastModifiedDate == null) {
-            if (other.lastModifiedDate != null)
-                return false;
-        } else if (!lastModifiedDate.equals(other.lastModifiedDate))
             return false;
         if (orcidIdentifier == null) {
             if (other.orcidIdentifier != null)
