@@ -79,36 +79,16 @@
 	</bean>	
 	
 	<!-- Jersey client -->
-	<bean id="jerseyClient" class="com.sun.jersey.api.client.Client" factory-method="create">
-        <constructor-arg ref="clientConfig"/>
+    <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
+        <constructor-arg ref="jerseyProperties" />
     </bean>
 
-	<util:map id="jerseyProperties">
+    <util:map id="jerseyProperties">
         <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
                value-ref="multiThreadedConnectionManager"/>
     </util:map>
 
-	<bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
-
-    <bean id="clientConfig" class="org.orcid.util.OrcidJerseyClientConfig">
-        <constructor-arg ref="providers"/>
-        <property name="properties" ref="jerseyProperties"/>
-        <property name="keyStore" ref="keyStore"/>
-        <property name="keyStorePassword" value="${org.orcid.t2.client.keyStorePass:#{null}}"/>
-        <property name="trustStore" ref="trustStore"/>
-    </bean>
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
     
-    <util:set id="providers">
-        <value>com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider</value>        
-    </util:set>
-    
-	<bean id="keyStore" class="org.orcid.util.KeyStoreFactoryBean">
-        <property name="location" value="${org.orcid.t2.client.keyStoreLocation:#{null}}"/>
-        <property name="password" value="${org.orcid.t2.client.keyStorePass:#{null}}"/>
-    </bean>
-
-    <bean id="trustStore" class="org.orcid.util.KeyStoreFactoryBean">
-        <property name="location" value="${org.orcid.t2.client.trustStoreLocation:#{null}}"/>
-        <property name="password" value="${org.orcid.t2.client.trustStorePass:#{null}}"/>
-    </bean>	
 </beans>

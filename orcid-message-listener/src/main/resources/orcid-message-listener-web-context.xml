@@ -77,4 +77,18 @@
 		<property name="connectionFactory" ref="jmsConnectionFactory" />
 		<property name="defaultDestination" ref="defaultJmsDestination" />
 	</bean>
+    
+    <!-- Jersey client -->
+    <bean id="jerseyClient" class="org.orcid.listener.jersey.OrcidJerseyClientHandler" factory-method="create">
+        <constructor-arg value="${org.orcid.message-listener.development_mode:false}" />
+        <constructor-arg ref="jerseyProperties" />
+    </bean>
+
+    <util:map id="jerseyProperties">
+        <entry key="com.sun.jersey.client.apache4.config.ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER"
+               value-ref="multiThreadedConnectionManager"/>
+    </util:map>
+
+    <bean id="multiThreadedConnectionManager" class="org.apache.http.impl.conn.PoolingClientConnectionManager"/>
+
 </beans>

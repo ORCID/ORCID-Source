@@ -59,7 +59,7 @@ public class Orcid20APIClient {
         config.getClasses().add(JacksonJaxbJsonProvider.class);
         jerseyClient = Client.create(config);
     }
-
+    
     /**
      * Fetches the profile from the ORCID public API v1.2
      * 
